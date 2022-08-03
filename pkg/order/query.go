@@ -33,6 +33,7 @@ func GetOrder(ctx context.Context, id string) (info *npool.Order, err error) {
 			Query().
 			Select(
 				order1.FieldID,
+				order1.FieldAppID,
 				order1.FieldUserID,
 				order1.FieldGoodID,
 				order1.FieldUnits,
