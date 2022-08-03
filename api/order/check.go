@@ -47,7 +47,7 @@ func validate(info *npool.OrderReq) error { //nolint
 
 	if info.PaymentCoinID == nil {
 		logger.Sugar().Errorw("validate", "PaymentCoinID", info.PaymentCoinID)
-		return status.Error(codes.InvalidArgument, "UserID is empty")
+		return status.Error(codes.InvalidArgument, "PaymentCoinID is empty")
 	}
 
 	if _, err := uuid.Parse(info.GetPaymentCoinID()); err != nil {
@@ -57,7 +57,7 @@ func validate(info *npool.OrderReq) error { //nolint
 
 	if info.PaymentAccountID == nil {
 		logger.Sugar().Errorw("validate", "PaymentAccountID", info.PaymentAccountID)
-		return status.Error(codes.InvalidArgument, "UserID is empty")
+		return status.Error(codes.InvalidArgument, "PaymentAccountID is empty")
 	}
 
 	if _, err := uuid.Parse(info.GetPaymentAccountID()); err != nil {
@@ -75,14 +75,16 @@ func validate(info *npool.OrderReq) error { //nolint
 		return status.Error(codes.InvalidArgument, "PaymentAmount is less than 0")
 	}
 
-	amount, err = decimal.NewFromString(info.GetPayWithBalanceAmount())
-	if err != nil {
-		logger.Sugar().Errorw("validate", "PayWithBalanceAmount", info.GetPayWithBalanceAmount(), "error", err)
-		return status.Error(codes.InvalidArgument, fmt.Sprintf("PayWithBalanceAmount is invalid: %v", err))
-	}
-	if amount.Cmp(decimal.NewFromInt(0)) < 0 {
-		logger.Sugar().Errorw("validate", "PayWithBalanceAmount", info.GetPayWithBalanceAmount(), "error", "less than 0")
-		return status.Error(codes.InvalidArgument, "PayWithBalanceAmount is less than 0")
+	if info.PayWithBalanceAmount != nil {
+		amount, err = decimal.NewFromString(info.GetPayWithBalanceAmount())
+		if err != nil {
+			logger.Sugar().Errorw("validate", "PayWithBalanceAmount", info.GetPayWithBalanceAmount(), "error", err)
+			return status.Error(codes.InvalidArgument, fmt.Sprintf("PayWithBalanceAmount is invalid: %v", err))
+		}
+		if amount.Cmp(decimal.NewFromInt(0)) < 0 {
+			logger.Sugar().Errorw("validate", "PayWithBalanceAmount", info.GetPayWithBalanceAmount(), "error", "less than 0")
+			return status.Error(codes.InvalidArgument, "PayWithBalanceAmount is less than 0")
+		}
 	}
 
 	amount, err = decimal.NewFromString(info.GetPaymentAccountStartAmount())

@@ -5,7 +5,7 @@ go 1.17
 require (
 	entgo.io/ent v0.11.1
 	github.com/NpoolPlatform/api-manager v0.0.0-20220328101926-8907b2f76c6d
-	github.com/NpoolPlatform/cloud-hashing-order v0.0.0-20220803093342-a9a3c5e5a8d7
+	github.com/NpoolPlatform/cloud-hashing-order v0.0.0-20220803115438-6b2e2b78db7e
 	github.com/NpoolPlatform/go-service-framework v0.0.0-20220722111225-08c2156ac8bf
 	github.com/NpoolPlatform/libent-cruder v0.0.0-20220621110548-8f3f8049ecc5
 	github.com/NpoolPlatform/message v0.0.0-20220803113620-84db61c646a2

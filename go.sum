@@ -75,8 +75,8 @@ github.com/NpoolPlatform/api-manager v0.0.0-20220328101926-8907b2f76c6d h1:lbBWd
 github.com/NpoolPlatform/api-manager v0.0.0-20220328101926-8907b2f76c6d/go.mod h1:ubnvHuhc0o6drhdYrT+nM5DXZW/yEesObWky6oRsHoQ=
 github.com/NpoolPlatform/cloud-hashing-inspire v0.0.0-20220224025352-b4d29cbbeebc h1:cqdD6f0QAZYsUm4tLg5hgaUiOFUdbdg2mc/1Nm6YV1w=
 github.com/NpoolPlatform/cloud-hashing-inspire v0.0.0-20220224025352-b4d29cbbeebc/go.mod h1:WpshYcxRNkUjYI+oIf+iL3KKiG/zR6Go3ha1xswHDjE=
-github.com/NpoolPlatform/cloud-hashing-order v0.0.0-20220803093342-a9a3c5e5a8d7 h1:2/4/zdyQl5RELvWqBdyUy0EvIntvP1JRiZL3yz2we8o=
-github.com/NpoolPlatform/cloud-hashing-order v0.0.0-20220803093342-a9a3c5e5a8d7/go.mod h1:85JQ5lyFcf7PeWA2pTf8J+pB68sol1K9Iv5kxyW6Cv0=
+github.com/NpoolPlatform/cloud-hashing-order v0.0.0-20220803115438-6b2e2b78db7e h1:GJqe9All6WNJN15t9/kmDSgyS47JMzN9j2ZtEw1EFNg=
+github.com/NpoolPlatform/cloud-hashing-order v0.0.0-20220803115438-6b2e2b78db7e/go.mod h1:UVvr/kgvM3jWviLa0orxrKfdtGbgeLFfUPLF8Lu2fg0=
 github.com/NpoolPlatform/go-service-framework v0.0.0-20220120091626-4e8035637592/go.mod h1:JqrktA7gNQe/Uprnr6DCs5UCFpheCZ30lDd0OkyRtC4=
 github.com/NpoolPlatform/go-service-framework v0.0.0-20220722111225-08c2156ac8bf h1:HX2tl99WkC7Q0x2MxGpfFYeaWk0PX+GdxEoFrWgZAxI=
 github.com/NpoolPlatform/go-service-framework v0.0.0-20220722111225-08c2156ac8bf/go.mod h1:o9I+ipazkngO2E5yC7LOdLTA6nlvf4uTUMOOZ2sRiRU=
