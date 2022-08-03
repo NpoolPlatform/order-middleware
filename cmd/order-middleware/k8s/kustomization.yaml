@@ -1,0 +1,5 @@
+resources:
+  - 01-order-middleware.viper.yaml
+  - 02-order-middleware.yaml
+  - 03-strip-prefix.yaml
+  - 04-service-monitor.yaml

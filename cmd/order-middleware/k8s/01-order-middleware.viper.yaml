@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: order-middleware-config
+  namespace: kube-system
+data:
+  service-conf: |
+    config:
+      hostname: "order-middleware.npool.top"
+      http_port: 50440
+      grpc_port: 50441
+      healthz_port: 50442
+      prometheus_port: 50443
+      appid: "89089012783789789719823798127398"
+      serviceid: "a403e582-12ee-11ed-809d-d35bd3bea66a"
+      logdir: "./"
+      apolloAccessKey: "0147fb70b815403790e8634b899fac07"
