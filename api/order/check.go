@@ -160,6 +160,13 @@ func validate(info *npool.OrderReq) error { //nolint
 		}
 	}
 
+	if info.PromotionID != nil {
+		if _, err := uuid.Parse(info.GetPromotionID()); err != nil {
+			logger.Sugar().Errorw("validate", "PromotionID", info.GetPromotionID(), "error", err)
+			return status.Error(codes.InvalidArgument, fmt.Sprintf("PromotionID is invalid: %v", err))
+		}
+	}
+
 	return nil
 }
 
