@@ -1,9 +1,7 @@
-//nolint:dupl
 package order
 
 import (
 	"context"
-	"fmt"
 	"time"
 
 	grpc2 "github.com/NpoolPlatform/go-service-framework/pkg/grpc"
@@ -24,7 +22,7 @@ func withCRUD(ctx context.Context, handler handler) (cruder.Any, error) {
 
 	conn, err := grpc2.GetGRPCConn(constant.ServiceName, grpc2.GRPCTAG)
 	if err != nil {
-		return nil, fmt.Errorf("fail get order connection: %v", err)
+		return nil, err
 	}
 
 	defer conn.Close()
@@ -40,12 +38,28 @@ func CreateOrder(ctx context.Context, in *npool.OrderReq) (*npool.Order, error) 
 			Info: in,
 		})
 		if err != nil {
-			return nil, fmt.Errorf("fail create order: %v", err)
+			return nil, err
 		}
 		return resp.GetInfo(), nil
 	})
 	if err != nil {
-		return nil, fmt.Errorf("fail create order: %v", err)
+		return nil, err
+	}
+	return info.(*npool.Order), nil
+}
+
+func GetOrder(ctx context.Context, id string) (*npool.Order, error) {
+	info, err := withCRUD(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
+		resp, err := cli.GetOrder(ctx, &npool.GetOrderRequest{
+			ID: id,
+		})
+		if err != nil {
+			return nil, err
+		}
+		return resp.GetInfo(), nil
+	})
+	if err != nil {
+		return nil, err
 	}
 	return info.(*npool.Order), nil
 }

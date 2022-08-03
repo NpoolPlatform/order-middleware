@@ -169,20 +169,3 @@ func validate(info *npool.OrderReq) error { //nolint
 
 	return nil
 }
-
-func duplicate(infos []*npool.OrderReq) error {
-	apps := map[string]struct{}{}
-
-	for _, info := range infos {
-		if err := validate(info); err != nil {
-			return status.Error(codes.InvalidArgument, fmt.Sprintf("Infos has invalid element %v", err))
-		}
-		apps[info.GetAppID()] = struct{}{}
-	}
-
-	if len(apps) > 1 {
-		return status.Error(codes.InvalidArgument, "Infos has different AppID")
-	}
-
-	return nil
-}

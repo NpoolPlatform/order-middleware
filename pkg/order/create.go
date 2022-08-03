@@ -35,7 +35,7 @@ func CreateOrder(ctx context.Context, in *npool.OrderReq) (info *npool.Order, er
 			return payment.State(constant.PaymentStateDone)
 		case orderstatepb.EState_PaymentTimeout:
 			return payment.State(constant.PaymentStateTimeout)
-		case orderstatepb.EState_Cancelled:
+		case orderstatepb.EState_Canceled:
 			return payment.State(constant.PaymentStateCanceled)
 		default:
 			return payment.State(constant.PaymentStateWait)
@@ -96,6 +96,9 @@ func CreateOrder(ctx context.Context, in *npool.OrderReq) (info *npool.Order, er
 		_, err = stm1.Save(ctx)
 		return err
 	})
+	if err != nil {
+		return nil, err
+	}
 
 	return GetOrder(ctx, id)
 }

@@ -23,6 +23,7 @@ import (
 	"github.com/google/uuid"
 )
 
+// nolint
 func GetOrder(ctx context.Context, id string) (info *npool.Order, err error) {
 	infos := []*npool.Order{}
 
@@ -107,7 +108,7 @@ func GetOrder(ctx context.Context, id string) (info *npool.Order, err error) {
 	case constant.PaymentStateTimeout:
 		info.State = orderstatepb.EState_PaymentTimeout
 	case constant.PaymentStateCanceled:
-		info.State = orderstatepb.EState_Cancelled
+		info.State = orderstatepb.EState_Canceled
 	case constant.PaymentStateWait:
 		info.State = orderstatepb.EState_WaitPayment
 	case orderstatepb.EState_WaitPayment.String():
@@ -116,8 +117,8 @@ func GetOrder(ctx context.Context, id string) (info *npool.Order, err error) {
 		info.State = orderstatepb.EState_Paid
 	case orderstatepb.EState_PaymentTimeout.String():
 		info.State = orderstatepb.EState_PaymentTimeout
-	case orderstatepb.EState_Cancelled.String():
-		info.State = orderstatepb.EState_Cancelled
+	case orderstatepb.EState_Canceled.String():
+		info.State = orderstatepb.EState_Canceled
 	case orderstatepb.EState_InService.String():
 		info.State = orderstatepb.EState_InService
 	case orderstatepb.EState_Expired.String():
@@ -137,9 +138,18 @@ func GetOrder(ctx context.Context, id string) (info *npool.Order, err error) {
 		}
 	}
 
+	invalidID := uuid.UUID{}.String()
+	if info.PaymentID == invalidID {
+		info.State = orderstatepb.EState_WaitPayment
+		if now > info.CreatedAt+constant.TimeoutSeconds {
+			info.State = orderstatepb.EState_PaymentTimeout
+		}
+	}
+
 	const accuracy = 1000000000000
 	damount := func(amount uint64) decimal.Decimal {
-		return decimal.NewFromInt(int64(amount)).Div(decimal.NewFromInt(int64(accuracy)))
+		return decimal.NewFromInt(int64(amount)).
+			Div(decimal.NewFromInt(int64(accuracy)))
 	}
 
 	info.PaymentCoinUSDCurrency = damount(info.PaymentCoinUSDCurrencyUint).String()
