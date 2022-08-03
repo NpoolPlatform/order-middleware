@@ -69,6 +69,17 @@ func GetOrder(ctx context.Context, id string) (info *npool.Order, err error) {
 						sql.As(t1.C(payment.FieldPayWithBalanceAmount), "pay_with_balance_amount"),
 						sql.As(t1.C(payment.FieldUpdateAt), "paid_at"),
 					)
+
+				t2 := sql.Table(order1.Table)
+				s.
+					LeftJoin(t2).
+					On(
+						s.C(order1.FieldParentOrderID),
+						t2.C(order1.FieldID),
+					).
+					AppendSelect(
+						sql.As(t2.C(order1.FieldGoodID), "parent_order_good_id"),
+					)
 			}).
 			Scan(ctx, &infos)
 	})
