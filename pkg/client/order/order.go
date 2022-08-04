@@ -40,7 +40,7 @@ func CreateOrder(ctx context.Context, in *npool.OrderReq) (*npool.Order, error) 
 		if err != nil {
 			return nil, err
 		}
-		return resp.GetInfo(), nil
+		return resp.Info, nil
 	})
 	if err != nil {
 		return nil, err
@@ -56,10 +56,29 @@ func GetOrder(ctx context.Context, id string) (*npool.Order, error) {
 		if err != nil {
 			return nil, err
 		}
-		return resp.GetInfo(), nil
+		return resp.Info, nil
 	})
 	if err != nil {
 		return nil, err
 	}
 	return info.(*npool.Order), nil
+}
+
+func GetOrders(ctx context.Context, appID, userID string, offset, limit int32) ([]*npool.Order, error) {
+	infos, err := withCRUD(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
+		resp, err := cli.GetOrders(ctx, &npool.GetOrdersRequest{
+			AppID:  appID,
+			UserID: userID,
+			Offset: offset,
+			Limit:  limit,
+		})
+		if err != nil {
+			return nil, err
+		}
+		return resp.Infos, nil
+	})
+	if err != nil {
+		return nil, err
+	}
+	return infos.([]*npool.Order), nil
 }
