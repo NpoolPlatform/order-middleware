@@ -50,6 +50,40 @@ func GetOrder(ctx context.Context, id string) (info *npool.Order, err error) {
 	return post(infos[0]), nil
 }
 
+func GetOrders(ctx context.Context, appID, userID string, offset, limit int32) (infos []*npool.Order, total uint32, err error) {
+	err = db.WithClient(ctx, func(ctx context.Context, cli *ent.Client) error {
+		stm := cli.
+			Order.
+			Query().
+			Where(
+				order1.AppID(uuid.MustParse(appID)),
+				order1.UserID(uuid.MustParse(userID)),
+			)
+
+		_total, err := stm.Count(ctx)
+		if err != nil {
+			return err
+		}
+		total = uint32(_total)
+
+		stm = stm.
+			Offset(int(offset)).
+			Limit(int(limit))
+
+		return join(stm).
+			Scan(ctx, &infos)
+	})
+	if err != nil {
+		return nil, 0, err
+	}
+
+	for i, info := range infos {
+		infos[i] = post(info)
+	}
+
+	return infos, total, nil
+}
+
 func join(stm *ent.OrderQuery) *ent.OrderSelect {
 	return stm.
 		Select(

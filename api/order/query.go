@@ -7,6 +7,7 @@ import (
 	order1 "github.com/NpoolPlatform/order-middleware/pkg/order"
 	commontracer "github.com/NpoolPlatform/order-middleware/pkg/tracer"
 
+	constant1 "github.com/NpoolPlatform/order-middleware/pkg/const"
 	constant "github.com/NpoolPlatform/order-middleware/pkg/message/const"
 
 	"go.opentelemetry.io/otel"
@@ -34,7 +35,7 @@ func (s *Server) GetOrder(ctx context.Context, in *npool.GetOrderRequest) (*npoo
 	}()
 
 	span = commontracer.TraceID(span, in.GetID())
-	span = commontracer.TraceInvoker(span, "order", "middleware", "Get")
+	span = commontracer.TraceInvoker(span, "order", "middleware", "GetOrder")
 
 	if _, err := uuid.Parse(in.GetID()); err != nil {
 		logger.Sugar().Errorw("GetOrder", "ID", in.GetID(), "error", err)
@@ -49,5 +50,46 @@ func (s *Server) GetOrder(ctx context.Context, in *npool.GetOrderRequest) (*npoo
 
 	return &npool.GetOrderResponse{
 		Info: info,
+	}, nil
+}
+
+func (s *Server) GetOrders(ctx context.Context, in *npool.GetOrdersRequest) (*npool.GetOrdersResponse, error) {
+	var err error
+
+	_, span := otel.Tracer(constant.ServiceName).Start(ctx, "GetOrders")
+	defer span.End()
+
+	defer func() {
+		if err != nil {
+			span.SetStatus(scodes.Error, err.Error())
+			span.RecordError(err)
+		}
+	}()
+
+	span = commontracer.TraceInvoker(span, "order", "middleware", "GetOrders")
+
+	if _, err := uuid.Parse(in.GetAppID()); err != nil {
+		logger.Sugar().Errorw("GetOrders", "AppID", in.GetAppID(), "error", err)
+		return &npool.GetOrdersResponse{}, status.Error(codes.InvalidArgument, err.Error())
+	}
+	if _, err := uuid.Parse(in.GetUserID()); err != nil {
+		logger.Sugar().Errorw("GetOrders", "UserID", in.GetUserID(), "error", err)
+		return &npool.GetOrdersResponse{}, status.Error(codes.InvalidArgument, err.Error())
+	}
+
+	limit := in.GetLimit()
+	if limit == 0 {
+		limit = constant1.DefaultLimitRows
+	}
+
+	infos, total, err := order1.GetOrders(ctx, in.GetAppID(), in.GetUserID(), in.GetOffset(), limit)
+	if err != nil {
+		logger.Sugar().Errorw("GetOrders", "error", err)
+		return &npool.GetOrdersResponse{}, status.Error(codes.Internal, err.Error())
+	}
+
+	return &npool.GetOrdersResponse{
+		Infos: infos,
+		Total: total,
 	}, nil
 }
