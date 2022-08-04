@@ -23,65 +23,18 @@ import (
 	"github.com/google/uuid"
 )
 
-// nolint
 func GetOrder(ctx context.Context, id string) (info *npool.Order, err error) {
 	infos := []*npool.Order{}
 
 	err = db.WithClient(ctx, func(ctx context.Context, cli *ent.Client) error {
-		return cli.
+		stm := cli.
 			Order.
 			Query().
-			Select(
-				order1.FieldID,
-				order1.FieldAppID,
-				order1.FieldUserID,
-				order1.FieldGoodID,
-				order1.FieldUnits,
-				order1.FieldOrderType,
-				order1.FieldParentOrderID,
-				order1.FieldCouponID,
-				order1.FieldDiscountCouponID,
-				order1.FieldUserSpecialReductionID,
-				order1.FieldCreateAt,
-				order1.FieldPayWithParent,
-				order1.FieldStart,
-				order1.FieldEnd,
-			).
 			Where(
 				order1.ID(uuid.MustParse(id)),
-			).
-			Modify(func(s *sql.Selector) {
-				t1 := sql.Table(payment.Table)
-				s.
-					LeftJoin(t1).
-					On(
-						s.C(order1.FieldID),
-						t1.C(payment.FieldOrderID),
-					).
-					AppendSelect(
-						sql.As(t1.C(payment.FieldID), "payment_id"),
-						sql.As(t1.C(payment.FieldCoinInfoID), "payment_coin_type_id"),
-						sql.As(t1.C(payment.FieldCoinUsdCurrency), "payment_coin_usd_currency"),
-						sql.As(t1.C(payment.FieldLiveCoinUsdCurrency), "payment_live_coin_usd_currency"),
-						sql.As(t1.C(payment.FieldLocalCoinUsdCurrency), "payment_local_coin_usd_currency"),
-						sql.As(t1.C(payment.FieldAccountID), "payment_account_id"),
-						sql.As(t1.C(payment.FieldAmount), "payment_amount"),
-						sql.As(t1.C(payment.FieldState), "payment_state"),
-						sql.As(t1.C(payment.FieldPayWithBalanceAmount), "pay_with_balance_amount"),
-						sql.As(t1.C(payment.FieldUpdateAt), "paid_at"),
-					)
+			)
 
-				t2 := sql.Table(order1.Table)
-				s.
-					LeftJoin(t2).
-					On(
-						s.C(order1.FieldParentOrderID),
-						t2.C(order1.FieldID),
-					).
-					AppendSelect(
-						sql.As(t2.C(order1.FieldGoodID), "parent_order_good_id"),
-					)
-			}).
+		return join(stm).
 			Scan(ctx, &infos)
 	})
 	if err != nil {
@@ -94,7 +47,62 @@ func GetOrder(ctx context.Context, id string) (info *npool.Order, err error) {
 		return nil, fmt.Errorf("too many records")
 	}
 
-	info = infos[0]
+	return post(infos[0]), nil
+}
+
+func join(stm *ent.OrderQuery) *ent.OrderSelect {
+	return stm.
+		Select(
+			order1.FieldID,
+			order1.FieldAppID,
+			order1.FieldUserID,
+			order1.FieldGoodID,
+			order1.FieldUnits,
+			order1.FieldOrderType,
+			order1.FieldParentOrderID,
+			order1.FieldCouponID,
+			order1.FieldDiscountCouponID,
+			order1.FieldUserSpecialReductionID,
+			order1.FieldCreateAt,
+			order1.FieldPayWithParent,
+			order1.FieldStart,
+			order1.FieldEnd,
+		).
+		Modify(func(s *sql.Selector) {
+			t1 := sql.Table(payment.Table)
+			s.
+				LeftJoin(t1).
+				On(
+					s.C(order1.FieldID),
+					t1.C(payment.FieldOrderID),
+				).
+				AppendSelect(
+					sql.As(t1.C(payment.FieldID), "payment_id"),
+					sql.As(t1.C(payment.FieldCoinInfoID), "payment_coin_type_id"),
+					sql.As(t1.C(payment.FieldCoinUsdCurrency), "payment_coin_usd_currency"),
+					sql.As(t1.C(payment.FieldLiveCoinUsdCurrency), "payment_live_coin_usd_currency"),
+					sql.As(t1.C(payment.FieldLocalCoinUsdCurrency), "payment_local_coin_usd_currency"),
+					sql.As(t1.C(payment.FieldAccountID), "payment_account_id"),
+					sql.As(t1.C(payment.FieldAmount), "payment_amount"),
+					sql.As(t1.C(payment.FieldState), "payment_state"),
+					sql.As(t1.C(payment.FieldPayWithBalanceAmount), "pay_with_balance_amount"),
+					sql.As(t1.C(payment.FieldUpdateAt), "paid_at"),
+				)
+
+			t2 := sql.Table(order1.Table)
+			s.
+				LeftJoin(t2).
+				On(
+					s.C(order1.FieldParentOrderID),
+					t2.C(order1.FieldID),
+				).
+				AppendSelect(
+					sql.As(t2.C(order1.FieldGoodID), "parent_order_good_id"),
+				)
+		})
+}
+
+func post(info *npool.Order) *npool.Order { //nolint
 	info.PayWithParent = info.PayWithParentInt != 0
 
 	switch info.OrderType {
@@ -140,8 +148,7 @@ func GetOrder(ctx context.Context, id string) (info *npool.Order, err error) {
 	}
 
 	now := uint32(time.Now().Unix())
-	switch info.State {
-	case orderstatepb.EState_Paid:
+	if orderstatepb.EState_Paid == info.State {
 		if info.Start >= now {
 			info.State = orderstatepb.EState_InService
 		}
@@ -169,5 +176,5 @@ func GetOrder(ctx context.Context, id string) (info *npool.Order, err error) {
 	info.PaymentLocalCoinUSDCurrency = damount(info.PaymentLocalUSDCurrencyUint).String()
 	info.PaymentAmount = damount(info.PaymentAmountUint).String()
 
-	return info, nil
+	return info
 }
