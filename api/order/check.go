@@ -122,7 +122,7 @@ func validate(info *npool.OrderReq) error { //nolint
 		logger.Sugar().Errorw("validate", "PaymentLocalUSDCurrency", info.GetPaymentLocalUSDCurrency(), "error", err)
 		return status.Error(codes.InvalidArgument, fmt.Sprintf("PaymentLocalUSDCurrency is invalid: %v", err))
 	}
-	if currency.Cmp(decimal.NewFromInt(0)) <= 0 {
+	if currency.Cmp(decimal.NewFromInt(0)) < 0 {
 		logger.Sugar().Errorw("validate", "PaymentLocalUSDCurrency", info.GetPaymentLocalUSDCurrency(), "error", "less than 0")
 		return status.Error(codes.InvalidArgument, "PaymentLocalUSDCurrency is less than 0")
 	}
