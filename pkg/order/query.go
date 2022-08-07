@@ -261,6 +261,8 @@ func post(info *npool.Order) *npool.Order { //nolint
 	info.PaymentCoinUSDCurrency = damount(info.PaymentCoinUSDCurrency)
 	info.PaymentLiveUSDCurrency = damount(info.PaymentLiveUSDCurrency)
 	info.PaymentLocalUSDCurrency = damount(info.PaymentLocalUSDCurrency)
+	info.PaymentStartAmount = damount(info.PaymentStartAmount)
+	info.PaymentFinishAmount = damount(info.PaymentFinishAmount)
 
 	return info
 }
