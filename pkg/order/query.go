@@ -121,6 +121,7 @@ func join(stm *ent.OrderQuery) *ent.OrderSelect {
 					sql.As(t1.C(payment.FieldState), "payment_state"),
 					sql.As(t1.C(payment.FieldPayWithBalanceAmount), "pay_with_balance_amount"),
 					sql.As(t1.C(payment.FieldUpdateAt), "paid_at"),
+					sql.As(t1.C(payment.FieldUserSetCanceled), "user_canceled"),
 				)
 
 			t2 := sql.Table(order1.Table)
@@ -139,52 +140,59 @@ func join(stm *ent.OrderQuery) *ent.OrderSelect {
 func post(info *npool.Order) *npool.Order { //nolint
 	info.PayWithParent = info.PayWithParentInt != 0
 
-	switch info.OrderType {
+	switch info.OrderTypeStr {
 	case constant.OrderTypeNormal:
-		info.Type = ordermgrpb.OrderType_Normal
-	case constant.OrderTypeOffline:
-		info.Type = ordermgrpb.OrderType_Offline
-	case constant.OrderTypeAirdrop:
-		info.Type = ordermgrpb.OrderType_Airdrop
+		info.OrderType = ordermgrpb.OrderType_Normal
 	case ordermgrpb.OrderType_Normal.String():
-		info.Type = ordermgrpb.OrderType_Normal
+		info.OrderType = ordermgrpb.OrderType_Normal
+
+	case constant.OrderTypeOffline:
+		info.OrderType = ordermgrpb.OrderType_Offline
 	case ordermgrpb.OrderType_Offline.String():
-		info.Type = ordermgrpb.OrderType_Offline
+		info.OrderType = ordermgrpb.OrderType_Offline
+
+	case constant.OrderTypeAirdrop:
+		info.OrderType = ordermgrpb.OrderType_Airdrop
 	case ordermgrpb.OrderType_Airdrop.String():
-		info.Type = ordermgrpb.OrderType_Airdrop
+		info.OrderType = ordermgrpb.OrderType_Airdrop
+
 	default:
-		info.Type = ordermgrpb.OrderType_Normal
+		info.OrderType = ordermgrpb.OrderType_Normal
 	}
 
+	// TODO: state should from order state table
 	switch info.PaymentState {
-	case constant.PaymentStateDone:
-		info.State = orderstatepb.EState_Paid
 	case constant.PaymentStateTimeout:
 		info.State = orderstatepb.EState_PaymentTimeout
-	case constant.PaymentStateCanceled:
-		info.State = orderstatepb.EState_Canceled
+	case orderstatepb.EState_PaymentTimeout.String():
+		info.State = orderstatepb.EState_PaymentTimeout
+
 	case constant.PaymentStateWait:
 		info.State = orderstatepb.EState_WaitPayment
 	case orderstatepb.EState_WaitPayment.String():
 		info.State = orderstatepb.EState_WaitPayment
+
+	case constant.PaymentStateDone:
+		info.State = orderstatepb.EState_Paid
 	case orderstatepb.EState_Paid.String():
 		info.State = orderstatepb.EState_Paid
-	case orderstatepb.EState_PaymentTimeout.String():
-		info.State = orderstatepb.EState_PaymentTimeout
+
+	case constant.PaymentStateCanceled:
+		info.State = orderstatepb.EState_Canceled
 	case orderstatepb.EState_Canceled.String():
 		info.State = orderstatepb.EState_Canceled
-	case orderstatepb.EState_InService.String():
-		info.State = orderstatepb.EState_InService
-	case orderstatepb.EState_Expired.String():
-		info.State = orderstatepb.EState_Expired
+
 	default:
 		info.State = orderstatepb.EState_WaitPayment
 	}
 
-	if info.State == orderstatepb.EState_WaitPayment {
+	if info.State == orderstatepb.EState_WaitPayment && info.UserCanceled != 0 {
 		info.State = orderstatepb.EState_UserCanceled
 	}
 
+	info.PaymentState = info.State.String()
+
+	// TODO: Should from order state table
 	now := uint32(time.Now().Unix())
 	if orderstatepb.EState_Paid == info.State {
 		if info.Start >= now {
@@ -204,15 +212,16 @@ func post(info *npool.Order) *npool.Order { //nolint
 	}
 
 	const accuracy = 1000000000000
-	damount := func(amount uint64) decimal.Decimal {
-		return decimal.NewFromInt(int64(amount)).
-			Div(decimal.NewFromInt(int64(accuracy)))
+	damount := func(samount string) string {
+		return decimal.RequireFromString(samount).
+			Div(decimal.NewFromInt(int64(accuracy))).
+			String()
 	}
 
-	info.PaymentCoinUSDCurrency = damount(info.PaymentCoinUSDCurrencyUint).String()
-	info.PaymentLiveCoinUSDCurrency = damount(info.PaymentLiveUSDCurrencyUint).String()
-	info.PaymentLocalCoinUSDCurrency = damount(info.PaymentLocalUSDCurrencyUint).String()
-	info.PaymentAmount = damount(info.PaymentAmountUint).String()
+	info.PaymentAmount = damount(info.PaymentAmount)
+	info.PaymentCoinUSDCurrency = damount(info.PaymentCoinUSDCurrency)
+	info.PaymentLiveUSDCurrency = damount(info.PaymentLiveUSDCurrency)
+	info.PaymentLocalUSDCurrency = damount(info.PaymentLocalUSDCurrency)
 
 	return info
 }
