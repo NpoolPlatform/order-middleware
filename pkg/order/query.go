@@ -155,6 +155,8 @@ func join(stm *ent.OrderQuery) *ent.OrderSelect {
 					sql.As(t1.C(payment.FieldPayWithBalanceAmount), "pay_with_balance_amount"),
 					sql.As(t1.C(payment.FieldUpdateAt), "paid_at"),
 					sql.As(t1.C(payment.FieldUserSetCanceled), "user_canceled"),
+					sql.As(t1.C(payment.FieldStartAmount), "payment_start_amount"),
+					sql.As(t1.C(payment.FieldFinishAmount), "payment_finish_amount"),
 				)
 
 			t2 := sql.Table(order1.Table)
