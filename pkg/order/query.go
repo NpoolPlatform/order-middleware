@@ -136,6 +136,10 @@ func join(stm *ent.OrderQuery) *ent.OrderSelect {
 		})
 }
 
+func Join(stm *ent.OrderQuery) *ent.OrderSelect {
+	return join(stm)
+}
+
 func post(info *npool.Order) *npool.Order { //nolint
 	info.PayWithParent = info.PayWithParentInt != 0
 
@@ -215,4 +219,8 @@ func post(info *npool.Order) *npool.Order { //nolint
 	info.PaymentAmount = damount(info.PaymentAmountUint).String()
 
 	return info
+}
+
+func Post(info *npool.Order) *npool.Order {
+	return post(info)
 }
