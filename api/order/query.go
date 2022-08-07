@@ -93,3 +93,39 @@ func (s *Server) GetOrders(ctx context.Context, in *npool.GetOrdersRequest) (*np
 		Total: total,
 	}, nil
 }
+
+func (s *Server) GetAppOrders(ctx context.Context, in *npool.GetAppOrdersRequest) (*npool.GetAppOrdersResponse, error) {
+	var err error
+
+	_, span := otel.Tracer(constant.ServiceName).Start(ctx, "GetAppOrders")
+	defer span.End()
+
+	defer func() {
+		if err != nil {
+			span.SetStatus(scodes.Error, err.Error())
+			span.RecordError(err)
+		}
+	}()
+
+	span = commontracer.TraceInvoker(span, "order", "middleware", "GetAppOrders")
+
+	if _, err := uuid.Parse(in.GetAppID()); err != nil {
+		logger.Sugar().Errorw("GetAppOrders", "AppID", in.GetAppID(), "error", err)
+		return &npool.GetAppOrdersResponse{}, status.Error(codes.InvalidArgument, err.Error())
+	}
+	limit := in.GetLimit()
+	if limit == 0 {
+		limit = constant1.DefaultLimitRows
+	}
+
+	infos, total, err := order1.GetAppOrders(ctx, in.GetAppID(), in.GetOffset(), limit)
+	if err != nil {
+		logger.Sugar().Errorw("GetAppOrders", "error", err)
+		return &npool.GetAppOrdersResponse{}, status.Error(codes.Internal, err.Error())
+	}
+
+	return &npool.GetAppOrdersResponse{
+		Infos: infos,
+		Total: total,
+	}, nil
+}

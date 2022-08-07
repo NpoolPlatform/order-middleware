@@ -102,3 +102,26 @@ func GetOrders(ctx context.Context, appID, userID string, offset, limit int32) (
 	}
 	return infos.([]*npool.Order), total, nil
 }
+
+func GetAppOrders(ctx context.Context, appID string, offset, limit int32) ([]*npool.Order, uint32, error) {
+	total := uint32(0)
+
+	infos, err := withCRUD(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
+		resp, err := cli.GetAppOrders(ctx, &npool.GetAppOrdersRequest{
+			AppID:  appID,
+			Offset: offset,
+			Limit:  limit,
+		})
+		if err != nil {
+			return nil, err
+		}
+
+		total = resp.Total
+
+		return resp.Infos, nil
+	})
+	if err != nil {
+		return nil, 0, err
+	}
+	return infos.([]*npool.Order), total, nil
+}
