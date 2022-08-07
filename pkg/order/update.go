@@ -5,9 +5,13 @@ import (
 	"fmt"
 
 	paymentcrud "github.com/NpoolPlatform/cloud-hashing-order/pkg/crud/payment"
+	"github.com/NpoolPlatform/cloud-hashing-order/pkg/db/ent"
+	"github.com/NpoolPlatform/order-middleware/pkg/db"
 
 	orderpb "github.com/NpoolPlatform/message/npool/cloud-hashing-order"
 	npool "github.com/NpoolPlatform/message/npool/order/mw/v1/order"
+
+	"github.com/google/uuid"
 )
 
 func UpdateOrder(ctx context.Context, in *npool.OrderReq) (info *npool.Order, err error) {
@@ -21,11 +25,13 @@ func UpdateOrder(ctx context.Context, in *npool.OrderReq) (info *npool.Order, er
 		return nil, fmt.Errorf("invalid order")
 	}
 
-	if in.Canceled != nil {
-		p.Info.UserSetCanceled = in.GetCanceled()
-	}
-	_, err = paymentcrud.Update(ctx, &orderpb.UpdatePaymentRequest{
-		Info: p.Info,
+	err = db.WithClient(ctx, func(ctx context.Context, cli *ent.Client) error {
+		_, err = cli.
+			Payment.
+			UpdateOneID(uuid.MustParse(in.GetPaymentID())).
+			SetUserSetCanceled(in.GetCanceled()).
+			Save(ctx)
+		return err
 	})
 	if err != nil {
 		return nil, err
