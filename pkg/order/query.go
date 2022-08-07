@@ -181,6 +181,10 @@ func post(info *npool.Order) *npool.Order { //nolint
 		info.State = orderstatepb.EState_WaitPayment
 	}
 
+	if info.State == orderstatepb.EState_WaitPayment {
+		info.State = orderstatepb.EState_UserCanceled
+	}
+
 	now := uint32(time.Now().Unix())
 	if orderstatepb.EState_Paid == info.State {
 		if info.Start >= now {
