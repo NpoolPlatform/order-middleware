@@ -43,7 +43,9 @@ func UpdateOrder(ctx context.Context, in *npool.OrderReq) (info *npool.Order, er
 		}
 
 		if info.State != orderconst.PaymentStateWait {
-			return fmt.Errorf("not wait payment")
+			if in.GetCanceled() {
+				return fmt.Errorf("not wait payment")
+			}
 		}
 
 		_, err = info.
