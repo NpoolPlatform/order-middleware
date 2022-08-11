@@ -41,7 +41,7 @@ func GetOrder(ctx context.Context, id string) (info *npool.Order, err error) {
 		return nil, err
 	}
 	if len(infos) == 0 {
-		return nil, nil
+		return nil, fmt.Errorf("invalid order id")
 	}
 	if len(infos) > 1 {
 		return nil, fmt.Errorf("too many records")
