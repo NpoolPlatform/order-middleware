@@ -234,7 +234,7 @@ func post(info *npool.Order) *npool.Order { //nolint
 	// TODO: Should from order state table
 	now := uint32(time.Now().Unix())
 	if orderstatepb.EState_Paid == info.State {
-		if info.Start >= now {
+		if info.Start < now {
 			info.State = orderstatepb.EState_InService
 		}
 		if now > info.End {
