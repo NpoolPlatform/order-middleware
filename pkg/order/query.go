@@ -252,7 +252,8 @@ func post(info *npool.Order) *npool.Order { //nolint
 
 	const accuracy = 1000000000000
 	damount := func(samount string) string {
-		return decimal.RequireFromString(samount).
+		amount, _ := decimal.NewFromString(samount)
+		return amount.
 			Div(decimal.NewFromInt(int64(accuracy))).
 			String()
 	}
