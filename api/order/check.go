@@ -8,7 +8,7 @@ import (
 	"google.golang.org/grpc/status"
 
 	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
-	ordermgrpb "github.com/NpoolPlatform/message/npool/order/mgr/v1/order/order"
+	ordermgrpb "github.com/NpoolPlatform/message/npool/order/mgr/v1/order"
 	npool "github.com/NpoolPlatform/message/npool/order/mw/v1/order"
 
 	"github.com/google/uuid"

@@ -4,32 +4,30 @@ import (
 	"context"
 	"fmt"
 
-	paymentcrud "github.com/NpoolPlatform/cloud-hashing-order/pkg/crud/payment"
+	paymentcrud "github.com/NpoolPlatform/order-manager/pkg/crud/payment"
 
-	"github.com/NpoolPlatform/cloud-hashing-order/pkg/db/ent"
-	"github.com/NpoolPlatform/cloud-hashing-order/pkg/db/ent/payment"
-	"github.com/NpoolPlatform/order-middleware/pkg/db"
+	"github.com/NpoolPlatform/order-manager/pkg/db"
+	"github.com/NpoolPlatform/order-manager/pkg/db/ent"
 
-	orderconst "github.com/NpoolPlatform/cloud-hashing-order/pkg/const"
+	"github.com/NpoolPlatform/order-manager/pkg/db/ent/payment"
 
-	orderpb "github.com/NpoolPlatform/message/npool/cloud-hashing-order"
 	npool "github.com/NpoolPlatform/message/npool/order/mw/v1/order"
+
+	paymentpb "github.com/NpoolPlatform/message/npool/order/mgr/v1/payment"
 
 	"github.com/google/uuid"
 )
 
 func UpdateOrder(ctx context.Context, in *npool.OrderReq) (info *npool.Order, err error) {
-	p, err := paymentcrud.Get(ctx, &orderpb.GetPaymentRequest{
-		ID: in.GetPaymentID(),
-	})
+	p, err := paymentcrud.Row(ctx, uuid.MustParse(in.GetPaymentID()))
 	if err != nil {
 		return nil, err
 	}
-	if p.Info.OrderID != in.GetID() {
+	if p.OrderID.String() != in.GetID() {
 		return nil, fmt.Errorf("invalid order")
 	}
 
-	err = db.WithTx(ctx, func(ctx context.Context, tx *ent.Tx) error {
+	err = db.WithTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {
 		info, err := tx.
 			Payment.
 			Query().
@@ -42,17 +40,28 @@ func UpdateOrder(ctx context.Context, in *npool.OrderReq) (info *npool.Order, er
 			return err
 		}
 
-		if info.State != orderconst.PaymentStateWait {
+		if info.State != paymentpb.PaymentState_Wait.String() {
 			if in.GetCanceled() {
 				return fmt.Errorf("not wait payment")
 			}
 		}
 
-		_, err = info.
-			Update().
-			SetUserSetCanceled(in.GetCanceled()).
-			Save(ctx)
-		return err
+		u1, err := paymentcrud.UpdateSet(
+			info.Update(),
+			&paymentpb.PaymentReq{
+				UserSetCanceled: in.Canceled,
+			},
+		)
+		if err != nil {
+			return err
+		}
+
+		_, err = u1.Save(_ctx)
+		if err != nil {
+			return err
+		}
+
+		return nil
 	})
 	if err != nil {
 		return nil, err

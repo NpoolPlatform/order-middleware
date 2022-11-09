@@ -2,7 +2,8 @@ package main
 
 import (
 	"github.com/NpoolPlatform/order-middleware/api"
-	"github.com/NpoolPlatform/order-middleware/pkg/db"
+
+	"github.com/NpoolPlatform/order-manager/pkg/db"
 	"github.com/NpoolPlatform/order-middleware/pkg/migrator"
 
 	grpc2 "github.com/NpoolPlatform/go-service-framework/pkg/grpc"
