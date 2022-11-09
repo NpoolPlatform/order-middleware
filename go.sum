@@ -77,11 +77,10 @@ github.com/Masterminds/sprig v2.22.0+incompatible/go.mod h1:y6hNFY5UBTIWBxnzTeuN
 github.com/NpoolPlatform/api-manager v0.0.0-20220205130236-69d286e72dba/go.mod h1:ubnvHuhc0o6drhdYrT+nM5DXZW/yEesObWky6oRsHoQ=
 github.com/NpoolPlatform/api-manager v0.0.0-20220826022307-d72866fe3ec0 h1:yIEwS7NTQhBBmfpf6yigvPCbxffMOrtBK/yUPM5ukbo=
 github.com/NpoolPlatform/api-manager v0.0.0-20220826022307-d72866fe3ec0/go.mod h1:+Xj8fVgWZWGakBtqZbFn/zY0qd47AywCjLPOGdTqJDU=
-github.com/NpoolPlatform/cloud-hashing-billing v0.0.0-20220211112041-cb90970f6df1 h1:2m3VjFmEtmR+YmKYB/tKbEbLklaZGM50yKEYI0hwHHE=
 github.com/NpoolPlatform/cloud-hashing-inspire v0.0.0-20220224025352-b4d29cbbeebc h1:cqdD6f0QAZYsUm4tLg5hgaUiOFUdbdg2mc/1Nm6YV1w=
 github.com/NpoolPlatform/cloud-hashing-inspire v0.0.0-20220224025352-b4d29cbbeebc/go.mod h1:WpshYcxRNkUjYI+oIf+iL3KKiG/zR6Go3ha1xswHDjE=
-github.com/NpoolPlatform/cloud-hashing-order v0.0.0-20220803115438-6b2e2b78db7e h1:GJqe9All6WNJN15t9/kmDSgyS47JMzN9j2ZtEw1EFNg=
-github.com/NpoolPlatform/cloud-hashing-order v0.0.0-20220803115438-6b2e2b78db7e/go.mod h1:UVvr/kgvM3jWviLa0orxrKfdtGbgeLFfUPLF8Lu2fg0=
+github.com/NpoolPlatform/cloud-hashing-order v0.0.0-20221101065506-ed1fa1f491e8 h1:6H58Wx3qrdlXQpY6dj9hm9FGXCMBoVrfQ4MPVytLSuQ=
+github.com/NpoolPlatform/cloud-hashing-order v0.0.0-20221101065506-ed1fa1f491e8/go.mod h1:XnpLD5yylx5kU0bOc5YYeA2e/Gz8BimZYJNuL1Yx6RQ=
 github.com/NpoolPlatform/go-service-framework v0.0.0-20220120091626-4e8035637592/go.mod h1:JqrktA7gNQe/Uprnr6DCs5UCFpheCZ30lDd0OkyRtC4=
 github.com/NpoolPlatform/go-service-framework v0.0.0-20220818105452-9457611ae070 h1:BARdOYP/2s4Oxk7GnM0oXw5oSGevx2TZL+wPfgPz7Nc=
 github.com/NpoolPlatform/go-service-framework v0.0.0-20220818105452-9457611ae070/go.mod h1:QPI3Fu/AU5iUOUnf9EictZP1lqPQdPcVLqveIB2HovI=
