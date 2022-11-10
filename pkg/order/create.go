@@ -2,7 +2,6 @@ package order
 
 import (
 	"context"
-	"fmt"
 
 	"go.opentelemetry.io/otel"
 
@@ -61,9 +60,6 @@ func CreateOrder(ctx context.Context, in *npool.OrderReq) (info *npool.Order, er
 
 		ord, err := stm.Save(_ctx)
 		if err != nil {
-
-			fmt.Println("************err")
-			fmt.Println(err)
 			return err
 		}
 
@@ -72,7 +68,7 @@ func CreateOrder(ctx context.Context, in *npool.OrderReq) (info *npool.Order, er
 
 		c1 := tx.Payment.Create()
 		stm1, err := paymentcrud.CreateSet(c1, &paymentpb.PaymentReq{
-			ID:                   in.ID,
+			ID:                   in.PaymentID,
 			AppID:                in.AppID,
 			UserID:               in.UserID,
 			GoodID:               in.GoodID,

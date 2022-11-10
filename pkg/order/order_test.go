@@ -7,12 +7,7 @@ import (
 	"strconv"
 	"testing"
 
-	"bou.ke/monkey"
-	"github.com/NpoolPlatform/go-service-framework/pkg/config"
-	grpc2 "github.com/NpoolPlatform/go-service-framework/pkg/grpc"
 	paymentmgrpb "github.com/NpoolPlatform/message/npool/order/mgr/v1/payment"
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/credentials/insecure"
 
 	npool "github.com/NpoolPlatform/message/npool/order/mw/v1/order"
 
@@ -139,11 +134,6 @@ func TestDetail(t *testing.T) {
 	if runByGithubAction, err := strconv.ParseBool(os.Getenv("RUN_BY_GITHUB_ACTION")); err == nil && runByGithubAction {
 		return
 	}
-	gport := config.GetIntValueWithNameSpace("", config.KeyGRPCPort)
-
-	monkey.Patch(grpc2.GetGRPCConn, func(service string, tags ...string) (*grpc.ClientConn, error) {
-		return grpc.Dial(fmt.Sprintf("localhost:%v", gport), grpc.WithTransportCredentials(insecure.NewCredentials()))
-	})
 	t.Run("create", create)
 	t.Run("update", update)
 	t.Run("getOrder", getOrder)

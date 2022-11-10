@@ -4,6 +4,8 @@ import (
 	"context"
 	"fmt"
 
+	mgrpb "github.com/NpoolPlatform/message/npool/order/mgr/v1/order"
+
 	"entgo.io/ent/dialect/sql"
 
 	"github.com/NpoolPlatform/order-manager/pkg/db/ent"
@@ -41,6 +43,11 @@ func GetOrder(ctx context.Context, id string) (info *npool.Order, err error) {
 		return nil, fmt.Errorf("too many records")
 	}
 
+	infos, err = expand(infos)
+	if err != nil {
+		return nil, err
+	}
+
 	return infos[0], nil
 }
 
@@ -71,6 +78,11 @@ func GetOrders(ctx context.Context, appID, userID string, offset, limit int32) (
 		return nil, 0, err
 	}
 
+	infos, err = expand(infos)
+	if err != nil {
+		return nil, 0, err
+	}
+
 	return infos, total, nil
 }
 
@@ -96,6 +108,11 @@ func GetAppOrders(ctx context.Context, appID string, offset, limit int32) (infos
 		return join(stm).
 			Scan(ctx, &infos)
 	})
+	if err != nil {
+		return nil, 0, err
+	}
+
+	infos, err = expand(infos)
 	if err != nil {
 		return nil, 0, err
 	}
@@ -159,6 +176,10 @@ func join(stm *ent.OrderQuery) *ent.OrderSelect {
 		})
 }
 
-func Join(stm *ent.OrderQuery) *ent.OrderSelect {
-	return join(stm)
+func expand(infos []*npool.Order) ([]*npool.Order, error) { //nolint
+	for _, info := range infos {
+		info.OrderType = mgrpb.OrderType(mgrpb.OrderType_value[info.OrderTypeStr])
+		info.OrderState = mgrpb.OrderState(mgrpb.OrderState_value[info.OrderStateStr])
+	}
+	return infos, nil
 }
