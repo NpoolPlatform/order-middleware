@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	mgrpb "github.com/NpoolPlatform/message/npool/order/mgr/v1/order"
+	paymentmgrpb "github.com/NpoolPlatform/message/npool/order/mgr/v1/payment"
 
 	"entgo.io/ent/dialect/sql"
 
@@ -51,15 +52,26 @@ func GetOrder(ctx context.Context, id string) (info *npool.Order, err error) {
 	return infos[0], nil
 }
 
-func GetOrders(ctx context.Context, appID, userID string, offset, limit int32) (infos []*npool.Order, total uint32, err error) {
+func GetOrders(ctx context.Context, conds *mgrpb.Conds, offset, limit int32) (infos []*npool.Order, total uint32, err error) {
 	err = db.WithClient(ctx, func(ctx context.Context, cli *ent.Client) error {
 		stm := cli.
 			Order.
-			Query().
-			Where(
-				order1.AppID(uuid.MustParse(appID)),
-				order1.UserID(uuid.MustParse(userID)),
-			)
+			Query()
+
+		if conds != nil {
+			if conds.AppID != nil {
+				stm.Where(order1.AppID(uuid.MustParse(conds.AppID.GetValue())))
+			}
+			if conds.ID != nil {
+				stm.Where(order1.ID(uuid.MustParse(conds.ID.GetValue())))
+			}
+			if conds.UserID != nil {
+				stm.Where(order1.UserID(uuid.MustParse(conds.UserID.GetValue())))
+			}
+			if conds.GoodID != nil {
+				stm.Where(order1.UserID(uuid.MustParse(conds.UserID.GetValue())))
+			}
+		}
 
 		_total, err := stm.Count(ctx)
 		if err != nil {
@@ -180,6 +192,7 @@ func expand(infos []*npool.Order) ([]*npool.Order, error) { //nolint
 	for _, info := range infos {
 		info.OrderType = mgrpb.OrderType(mgrpb.OrderType_value[info.OrderTypeStr])
 		info.OrderState = mgrpb.OrderState(mgrpb.OrderState_value[info.OrderStateStr])
+		info.PaymentState = paymentmgrpb.PaymentState(paymentmgrpb.PaymentState_value[info.PaymentStateStr])
 	}
 	return infos, nil
 }

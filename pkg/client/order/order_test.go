@@ -7,6 +7,8 @@ import (
 	"strconv"
 	"testing"
 
+	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
+
 	"bou.ke/monkey"
 	"github.com/NpoolPlatform/go-service-framework/pkg/config"
 	grpc2 "github.com/NpoolPlatform/go-service-framework/pkg/grpc"
@@ -22,6 +24,8 @@ import (
 	"github.com/stretchr/testify/assert"
 
 	mgrpb "github.com/NpoolPlatform/message/npool/order/mgr/v1/order"
+
+	npoolpb "github.com/NpoolPlatform/message/npool"
 )
 
 func init() {
@@ -44,6 +48,7 @@ var deviceInfo = npool.Order{
 	OrderStateStr:           mgrpb.OrderState_WaitPayment.String(),
 	OrderState:              mgrpb.OrderState_WaitPayment,
 	ParentOrderID:           uuid.NewString(),
+	ParentOrderGoodID:       "",
 	Start:                   10002,
 	End:                     10003,
 	PaymentCoinTypeID:       uuid.NewString(),
@@ -53,7 +58,8 @@ var deviceInfo = npool.Order{
 	PaymentID:               uuid.NewString(),
 	PaymentAccountID:        uuid.NewString(),
 	PaymentAmount:           "1007.000000000000000000",
-	PaymentState:            paymentmgrpb.PaymentState_Wait.String(),
+	PaymentStateStr:         paymentmgrpb.PaymentState_Wait.String(),
+	PaymentState:            paymentmgrpb.PaymentState_Wait,
 	PayWithBalanceAmount:    "1008.000000000000000000",
 	PaidAt:                  1009,
 	PaymentStartAmount:      "1010.000000000000000000",
@@ -61,6 +67,7 @@ var deviceInfo = npool.Order{
 	FixAmountID:             uuid.NewString(),
 	DiscountID:              uuid.NewString(),
 	SpecialOfferID:          uuid.NewString(),
+	CreatedAt:               0,
 	UserCanceled:            false,
 	PayWithParent:           false,
 }
@@ -126,11 +133,16 @@ func getOrder(t *testing.T) {
 	}
 }
 
-func getAppOrders(t *testing.T) {
-	infos, _, err := GetAppOrders(context.Background(), deviceInfo.AppID, 0, 1)
+func getOrders(t *testing.T) {
+	infos, _, err := GetOrders(context.Background(), &mgrpb.Conds{
+		ID: &npoolpb.StringVal{
+			Op:    cruder.EQ,
+			Value: deviceInfo.ID,
+		},
+	}, 0, 1)
 	if assert.Nil(t, err) {
-		deviceInfo.CreatedAt = info.CreatedAt
-		deviceInfo.PaidAt = info.PaidAt
+		deviceInfo.CreatedAt = infos[0].CreatedAt
+		deviceInfo.PaidAt = infos[0].PaidAt
 		assert.Equal(t, infos[0].String(), deviceInfo.String())
 	}
 }
@@ -147,5 +159,5 @@ func TestDetail(t *testing.T) {
 	t.Run("create", create)
 	t.Run("update", update)
 	t.Run("getOrder", getOrder)
-	t.Run("getAppOrders", getAppOrders)
+	t.Run("getOrders", getOrders)
 }

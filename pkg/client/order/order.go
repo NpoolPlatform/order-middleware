@@ -4,6 +4,8 @@ import (
 	"context"
 	"time"
 
+	mgrpb "github.com/NpoolPlatform/message/npool/order/mgr/v1/order"
+
 	grpc2 "github.com/NpoolPlatform/go-service-framework/pkg/grpc"
 
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
@@ -79,36 +81,12 @@ func GetOrder(ctx context.Context, id string) (*npool.Order, error) {
 	return info.(*npool.Order), nil
 }
 
-func GetOrders(ctx context.Context, appID, userID string, offset, limit int32) ([]*npool.Order, uint32, error) {
+func GetOrders(ctx context.Context, conds *mgrpb.Conds, offset, limit int32) ([]*npool.Order, uint32, error) {
 	total := uint32(0)
 
 	infos, err := withCRUD(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
 		resp, err := cli.GetOrders(ctx, &npool.GetOrdersRequest{
-			AppID:  appID,
-			UserID: userID,
-			Offset: offset,
-			Limit:  limit,
-		})
-		if err != nil {
-			return nil, err
-		}
-
-		total = resp.Total
-
-		return resp.Infos, nil
-	})
-	if err != nil {
-		return nil, 0, err
-	}
-	return infos.([]*npool.Order), total, nil
-}
-
-func GetAppOrders(ctx context.Context, appID string, offset, limit int32) ([]*npool.Order, uint32, error) {
-	total := uint32(0)
-
-	infos, err := withCRUD(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
-		resp, err := cli.GetAppOrders(ctx, &npool.GetAppOrdersRequest{
-			AppID:  appID,
+			Conds:  conds,
 			Offset: offset,
 			Limit:  limit,
 		})
