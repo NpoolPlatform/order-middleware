@@ -4,6 +4,10 @@ import (
 	"context"
 	"fmt"
 
+	mgrpb "github.com/NpoolPlatform/message/npool/order/mgr/v1/order"
+	ordercrud "github.com/NpoolPlatform/order-manager/pkg/crud/order"
+	"github.com/NpoolPlatform/order-manager/pkg/db/ent/order"
+
 	paymentcrud "github.com/NpoolPlatform/order-manager/pkg/crud/payment"
 
 	"github.com/NpoolPlatform/order-manager/pkg/db"
@@ -28,7 +32,34 @@ func UpdateOrder(ctx context.Context, in *npool.OrderReq) (info *npool.Order, er
 	}
 
 	err = db.WithTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {
-		info, err := tx.
+		orderInfo, err := tx.
+			Order.
+			Query().
+			Where(
+				order.ID(uuid.MustParse(in.GetID())),
+			).
+			ForUpdate().
+			Only(ctx)
+		if err != nil {
+			return err
+		}
+
+		u1, err := ordercrud.UpdateSet(
+			orderInfo.Update(),
+			&mgrpb.OrderReq{
+				State: in.State,
+			},
+		)
+		if err != nil {
+			return err
+		}
+
+		_, err = u1.Save(_ctx)
+		if err != nil {
+			return err
+		}
+
+		paymentInfo, err := tx.
 			Payment.
 			Query().
 			Where(
@@ -40,14 +71,14 @@ func UpdateOrder(ctx context.Context, in *npool.OrderReq) (info *npool.Order, er
 			return err
 		}
 
-		if info.State != paymentpb.PaymentState_Wait.String() {
+		if paymentInfo.State != paymentpb.PaymentState_Wait.String() {
 			if in.GetCanceled() {
 				return fmt.Errorf("not wait payment")
 			}
 		}
 
-		u1, err := paymentcrud.UpdateSet(
-			info.Update(),
+		u2, err := paymentcrud.UpdateSet(
+			paymentInfo.Update(),
 			&paymentpb.PaymentReq{
 				UserSetCanceled: in.Canceled,
 				State:           in.PaymentState,
@@ -59,7 +90,7 @@ func UpdateOrder(ctx context.Context, in *npool.OrderReq) (info *npool.Order, er
 			return err
 		}
 
-		_, err = u1.Save(_ctx)
+		_, err = u2.Save(_ctx)
 		if err != nil {
 			return err
 		}
