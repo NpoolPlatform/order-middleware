@@ -51,6 +51,8 @@ func UpdateOrder(ctx context.Context, in *npool.OrderReq) (info *npool.Order, er
 			&paymentpb.PaymentReq{
 				UserSetCanceled: in.Canceled,
 				State:           in.PaymentState,
+				FinishAmount:    in.PaymentFinishAmount,
+				FakePayment:     in.FakePayment,
 			},
 		)
 		if err != nil {
