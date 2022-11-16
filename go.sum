@@ -77,8 +77,8 @@ github.com/NpoolPlatform/message v0.0.0-20220501030927-34f296682c0c/go.mod h1:i/
 github.com/NpoolPlatform/message v0.0.0-20220819134247-1dc75c85fe43/go.mod h1:8YXp4MghMHLZ9bBdQQyfjcRtLI2RbEHAQoNCejT2nZU=
 github.com/NpoolPlatform/message v0.0.0-20221115102529-8c746f90660a h1:AmMoCewCMGOCKFpTYII25u/eakJZuBkL17nPJNDIeag=
 github.com/NpoolPlatform/message v0.0.0-20221115102529-8c746f90660a/go.mod h1:PPu6xSY6EEmKktC6azkYreJVM4gaGkmxuusqHok2IEA=
-github.com/NpoolPlatform/order-manager v0.0.0-20221109095151-af781a3bbd2d h1:Cs6XzKzOqCehxeaUb4HfC9I72EjgD5rLcW3XYN1p61w=
-github.com/NpoolPlatform/order-manager v0.0.0-20221109095151-af781a3bbd2d/go.mod h1:I+DRgD8deFRblL+tilpJiz76RYPmucNePkAmKDoW7wg=
+github.com/NpoolPlatform/order-manager v0.0.0-20221116014019-9d3c7ce9e122 h1:gr5VFPPoEBZerMAlnEboWKCoPUSBsfLAxXymBZxf+cA=
+github.com/NpoolPlatform/order-manager v0.0.0-20221116014019-9d3c7ce9e122/go.mod h1:hOuuSEGRvgnWDQF/Xe0dSMLXI7JwlTvYjNT2hajfs/8=
 github.com/OneOfOne/xxhash v1.2.2 h1:KMrpdQIwFcEqXDklaen+P1axHaj9BSKzvpUUfnHldSE=
 github.com/OneOfOne/xxhash v1.2.2/go.mod h1:HSdplMjZKSmBqAxg5vPj2TmRDmfkzw+cTzAElWljhcU=
 github.com/Shonminh/apollo-client v0.4.0 h1:AXGp4wOahrEKjheMXehgsG9B8dEfLQHttRLHeEefvus=
