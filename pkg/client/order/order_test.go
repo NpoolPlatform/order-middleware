@@ -134,7 +134,7 @@ func getOrder(t *testing.T) {
 }
 
 func getOrders(t *testing.T) {
-	infos, _, err := GetOrders(context.Background(), &mgrpb.Conds{
+	infos, _, err := GetOrders(context.Background(), &npool.Conds{
 		ID: &npoolpb.StringVal{
 			Op:    cruder.EQ,
 			Value: deviceInfo.ID,

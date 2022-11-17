@@ -166,7 +166,6 @@ func (s *Server) GetOrderOnly(ctx context.Context, in *npool.GetOrderOnlyRequest
 		case ordermgrpb.OrderState_WaitPayment:
 		case ordermgrpb.OrderState_Paid:
 		case ordermgrpb.OrderState_PaymentTimeout:
-		case ordermgrpb.OrderState_UserCanceled:
 		case ordermgrpb.OrderState_Canceled:
 		case ordermgrpb.OrderState_InService:
 		case ordermgrpb.OrderState_Expired:
