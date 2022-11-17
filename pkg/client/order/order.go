@@ -4,8 +4,6 @@ import (
 	"context"
 	"time"
 
-	mgrpb "github.com/NpoolPlatform/message/npool/order/mgr/v1/order"
-
 	grpc2 "github.com/NpoolPlatform/go-service-framework/pkg/grpc"
 
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
@@ -81,7 +79,7 @@ func GetOrder(ctx context.Context, id string) (*npool.Order, error) {
 	return info.(*npool.Order), nil
 }
 
-func GetOrders(ctx context.Context, conds *mgrpb.Conds, offset, limit int32) ([]*npool.Order, uint32, error) {
+func GetOrders(ctx context.Context, conds *npool.Conds, offset, limit int32) ([]*npool.Order, uint32, error) {
 	total := uint32(0)
 
 	infos, err := withCRUD(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
@@ -104,7 +102,7 @@ func GetOrders(ctx context.Context, conds *mgrpb.Conds, offset, limit int32) ([]
 	return infos.([]*npool.Order), total, nil
 }
 
-func GetOrderOnly(ctx context.Context, conds *mgrpb.Conds) (*npool.Order, error) {
+func GetOrderOnly(ctx context.Context, conds *npool.Conds) (*npool.Order, error) {
 	info, err := withCRUD(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
 		resp, err := cli.GetOrderOnly(ctx, &npool.GetOrderOnlyRequest{
 			Conds: conds,

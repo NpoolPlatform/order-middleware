@@ -4,11 +4,12 @@ package order
 import (
 	"context"
 	"fmt"
+	mgrpb "github.com/NpoolPlatform/message/npool/order/mgr/v1/order"
 
 	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
 
-	mgrpb "github.com/NpoolPlatform/message/npool/order/mgr/v1/order"
 	paymentmgrpb "github.com/NpoolPlatform/message/npool/order/mgr/v1/payment"
+	orderpb "github.com/NpoolPlatform/message/npool/order/mw/v1/order"
 
 	"entgo.io/ent/dialect/sql"
 
@@ -55,7 +56,7 @@ func GetOrder(ctx context.Context, id string) (info *npool.Order, err error) {
 	return infos[0], nil
 }
 
-func GetOrders(ctx context.Context, conds *mgrpb.Conds, offset, limit int32) (infos []*npool.Order, total uint32, err error) {
+func GetOrders(ctx context.Context, conds *orderpb.Conds, offset, limit int32) (infos []*npool.Order, total uint32, err error) {
 	err = db.WithClient(ctx, func(ctx context.Context, cli *ent.Client) error {
 		stm := cli.
 			Order.
@@ -114,7 +115,7 @@ func GetOrders(ctx context.Context, conds *mgrpb.Conds, offset, limit int32) (in
 
 	return infos, total, nil
 }
-func GetOrderOnly(ctx context.Context, conds *mgrpb.Conds) (info *npool.Order, err error) {
+func GetOrderOnly(ctx context.Context, conds *npool.Conds) (info *npool.Order, err error) {
 	infos := []*npool.Order{}
 	err = db.WithClient(ctx, func(ctx context.Context, cli *ent.Client) error {
 		stm := cli.
