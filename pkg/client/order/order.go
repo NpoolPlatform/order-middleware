@@ -79,13 +79,12 @@ func GetOrder(ctx context.Context, id string) (*npool.Order, error) {
 	return info.(*npool.Order), nil
 }
 
-func GetOrders(ctx context.Context, appID, userID string, offset, limit int32) ([]*npool.Order, uint32, error) {
+func GetOrders(ctx context.Context, conds *npool.Conds, offset, limit int32) ([]*npool.Order, uint32, error) {
 	total := uint32(0)
 
 	infos, err := withCRUD(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
 		resp, err := cli.GetOrders(ctx, &npool.GetOrdersRequest{
-			AppID:  appID,
-			UserID: userID,
+			Conds:  conds,
 			Offset: offset,
 			Limit:  limit,
 		})
@@ -103,25 +102,19 @@ func GetOrders(ctx context.Context, appID, userID string, offset, limit int32) (
 	return infos.([]*npool.Order), total, nil
 }
 
-func GetAppOrders(ctx context.Context, appID string, offset, limit int32) ([]*npool.Order, uint32, error) {
-	total := uint32(0)
-
-	infos, err := withCRUD(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
-		resp, err := cli.GetAppOrders(ctx, &npool.GetAppOrdersRequest{
-			AppID:  appID,
-			Offset: offset,
-			Limit:  limit,
+func GetOrderOnly(ctx context.Context, conds *npool.Conds) (*npool.Order, error) {
+	info, err := withCRUD(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
+		resp, err := cli.GetOrderOnly(ctx, &npool.GetOrderOnlyRequest{
+			Conds: conds,
 		})
 		if err != nil {
 			return nil, err
 		}
 
-		total = resp.Total
-
-		return resp.Infos, nil
+		return resp.Info, nil
 	})
 	if err != nil {
-		return nil, 0, err
+		return nil, err
 	}
-	return infos.([]*npool.Order), total, nil
+	return info.(*npool.Order), nil
 }

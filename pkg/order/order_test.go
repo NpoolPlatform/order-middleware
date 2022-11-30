@@ -7,14 +7,7 @@ import (
 	"strconv"
 	"testing"
 
-	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
-
-	"bou.ke/monkey"
-	"github.com/NpoolPlatform/go-service-framework/pkg/config"
-	grpc2 "github.com/NpoolPlatform/go-service-framework/pkg/grpc"
 	paymentmgrpb "github.com/NpoolPlatform/message/npool/order/mgr/v1/payment"
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/credentials/insecure"
 
 	npool "github.com/NpoolPlatform/message/npool/order/mw/v1/order"
 
@@ -24,8 +17,6 @@ import (
 	"github.com/stretchr/testify/assert"
 
 	mgrpb "github.com/NpoolPlatform/message/npool/order/mgr/v1/order"
-
-	npoolpb "github.com/NpoolPlatform/message/npool"
 )
 
 func init() {
@@ -48,7 +39,6 @@ var deviceInfo = npool.Order{
 	OrderStateStr:           mgrpb.OrderState_WaitPayment.String(),
 	OrderState:              mgrpb.OrderState_WaitPayment,
 	ParentOrderID:           uuid.NewString(),
-	ParentOrderGoodID:       "",
 	Start:                   10002,
 	End:                     10003,
 	PaymentCoinTypeID:       uuid.NewString(),
@@ -67,7 +57,6 @@ var deviceInfo = npool.Order{
 	FixAmountID:             uuid.NewString(),
 	DiscountID:              uuid.NewString(),
 	SpecialOfferID:          uuid.NewString(),
-	CreatedAt:               0,
 	UserCanceled:            false,
 	PayWithParent:           false,
 }
@@ -133,16 +122,11 @@ func getOrder(t *testing.T) {
 	}
 }
 
-func getOrders(t *testing.T) {
-	infos, _, err := GetOrders(context.Background(), &npool.Conds{
-		ID: &npoolpb.StringVal{
-			Op:    cruder.EQ,
-			Value: deviceInfo.ID,
-		},
-	}, 0, 1)
+func getAppOrders(t *testing.T) {
+	infos, _, err := GetAppOrders(context.Background(), deviceInfo.AppID, 0, 1)
 	if assert.Nil(t, err) {
-		deviceInfo.CreatedAt = infos[0].CreatedAt
-		deviceInfo.PaidAt = infos[0].PaidAt
+		deviceInfo.CreatedAt = info.CreatedAt
+		deviceInfo.PaidAt = info.PaidAt
 		assert.Equal(t, infos[0].String(), deviceInfo.String())
 	}
 }
@@ -151,13 +135,8 @@ func TestDetail(t *testing.T) {
 	if runByGithubAction, err := strconv.ParseBool(os.Getenv("RUN_BY_GITHUB_ACTION")); err == nil && runByGithubAction {
 		return
 	}
-	gport := config.GetIntValueWithNameSpace("", config.KeyGRPCPort)
-
-	monkey.Patch(grpc2.GetGRPCConn, func(service string, tags ...string) (*grpc.ClientConn, error) {
-		return grpc.Dial(fmt.Sprintf("localhost:%v", gport), grpc.WithTransportCredentials(insecure.NewCredentials()))
-	})
 	t.Run("create", create)
 	t.Run("update", update)
 	t.Run("getOrder", getOrder)
-	t.Run("getOrders", getOrders)
+	t.Run("getAppOrders", getAppOrders)
 }

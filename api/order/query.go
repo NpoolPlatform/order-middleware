@@ -1,8 +1,10 @@
-//nolint:nolintlint,dupl
+//nolint:nolintlint,dupl,gocyclo
 package order
 
 import (
 	"context"
+
+	ordermgrpb "github.com/NpoolPlatform/message/npool/order/mgr/v1/order"
 
 	order1 "github.com/NpoolPlatform/order-middleware/pkg/order"
 	commontracer "github.com/NpoolPlatform/order-middleware/pkg/tracer"
@@ -68,13 +70,31 @@ func (s *Server) GetOrders(ctx context.Context, in *npool.GetOrdersRequest) (*np
 
 	span = commontracer.TraceInvoker(span, "order", "middleware", "GetOrders")
 
-	if _, err := uuid.Parse(in.GetAppID()); err != nil {
-		logger.Sugar().Errorw("GetOrders", "AppID", in.GetAppID(), "error", err)
-		return &npool.GetOrdersResponse{}, status.Error(codes.InvalidArgument, err.Error())
-	}
-	if _, err := uuid.Parse(in.GetUserID()); err != nil {
-		logger.Sugar().Errorw("GetOrders", "UserID", in.GetUserID(), "error", err)
-		return &npool.GetOrdersResponse{}, status.Error(codes.InvalidArgument, err.Error())
+	if in.Conds != nil {
+		if in.GetConds().ID != nil {
+			if _, err := uuid.Parse(in.GetConds().GetID().GetValue()); err != nil {
+				logger.Sugar().Errorw("GetOrders", "ID", in.GetConds().GetID().GetValue(), "error", err)
+				return &npool.GetOrdersResponse{}, status.Error(codes.InvalidArgument, err.Error())
+			}
+		}
+		if in.GetConds().GoodID != nil {
+			if _, err := uuid.Parse(in.GetConds().GetGoodID().GetValue()); err != nil {
+				logger.Sugar().Errorw("GetOrders", "GoodID", in.GetConds().GetGoodID().GetValue(), "error", err)
+				return &npool.GetOrdersResponse{}, status.Error(codes.InvalidArgument, err.Error())
+			}
+		}
+		if in.GetConds().AppID != nil {
+			if _, err := uuid.Parse(in.GetConds().GetAppID().GetValue()); err != nil {
+				logger.Sugar().Errorw("GetOrders", "AppID", in.GetConds().GetAppID().GetValue(), "error", err)
+				return &npool.GetOrdersResponse{}, status.Error(codes.InvalidArgument, err.Error())
+			}
+		}
+		if in.GetConds().UserID != nil {
+			if _, err := uuid.Parse(in.GetConds().GetUserID().GetValue()); err != nil {
+				logger.Sugar().Errorw("GetOrders", "UserID", in.GetConds().GetUserID().GetValue(), "error", err)
+				return &npool.GetOrdersResponse{}, status.Error(codes.InvalidArgument, err.Error())
+			}
+		}
 	}
 
 	limit := in.GetLimit()
@@ -82,7 +102,7 @@ func (s *Server) GetOrders(ctx context.Context, in *npool.GetOrdersRequest) (*np
 		limit = constant1.DefaultLimitRows
 	}
 
-	infos, total, err := order1.GetOrders(ctx, in.GetAppID(), in.GetUserID(), in.GetOffset(), limit)
+	infos, total, err := order1.GetOrders(ctx, in.Conds, in.GetOffset(), limit)
 	if err != nil {
 		logger.Sugar().Errorw("GetOrders", "error", err)
 		return &npool.GetOrdersResponse{}, status.Error(codes.Internal, err.Error())
@@ -94,10 +114,10 @@ func (s *Server) GetOrders(ctx context.Context, in *npool.GetOrdersRequest) (*np
 	}, nil
 }
 
-func (s *Server) GetAppOrders(ctx context.Context, in *npool.GetAppOrdersRequest) (*npool.GetAppOrdersResponse, error) {
+func (s *Server) GetOrderOnly(ctx context.Context, in *npool.GetOrderOnlyRequest) (*npool.GetOrderOnlyResponse, error) {
 	var err error
 
-	_, span := otel.Tracer(constant.ServiceName).Start(ctx, "GetAppOrders")
+	_, span := otel.Tracer(constant.ServiceName).Start(ctx, "GetOrders")
 	defer span.End()
 
 	defer func() {
@@ -107,25 +127,63 @@ func (s *Server) GetAppOrders(ctx context.Context, in *npool.GetAppOrdersRequest
 		}
 	}()
 
-	span = commontracer.TraceInvoker(span, "order", "middleware", "GetAppOrders")
+	span = commontracer.TraceInvoker(span, "order", "middleware", "GetOrders")
 
-	if _, err := uuid.Parse(in.GetAppID()); err != nil {
-		logger.Sugar().Errorw("GetAppOrders", "AppID", in.GetAppID(), "error", err)
-		return &npool.GetAppOrdersResponse{}, status.Error(codes.InvalidArgument, err.Error())
+	if in.GetConds().ID != nil {
+		if _, err := uuid.Parse(in.GetConds().GetID().GetValue()); err != nil {
+			logger.Sugar().Errorw("GetOrders", "ID", in.GetConds().GetID().GetValue(), "error", err)
+			return &npool.GetOrderOnlyResponse{}, status.Error(codes.InvalidArgument, err.Error())
+		}
 	}
-	limit := in.GetLimit()
-	if limit == 0 {
-		limit = constant1.DefaultLimitRows
+	if in.GetConds().GoodID != nil {
+		if _, err := uuid.Parse(in.GetConds().GetGoodID().GetValue()); err != nil {
+			logger.Sugar().Errorw("GetOrders", "GoodID", in.GetConds().GetGoodID().GetValue(), "error", err)
+			return &npool.GetOrderOnlyResponse{}, status.Error(codes.InvalidArgument, err.Error())
+		}
+	}
+	if in.GetConds().AppID != nil {
+		if _, err := uuid.Parse(in.GetConds().GetAppID().GetValue()); err != nil {
+			logger.Sugar().Errorw("GetOrders", "AppID", in.GetConds().GetAppID().GetValue(), "error", err)
+			return &npool.GetOrderOnlyResponse{}, status.Error(codes.InvalidArgument, err.Error())
+		}
+	}
+	if in.GetConds().UserID != nil {
+		if _, err := uuid.Parse(in.GetConds().GetUserID().GetValue()); err != nil {
+			logger.Sugar().Errorw("GetOrders", "UserID", in.GetConds().GetUserID().GetValue(), "error", err)
+			return &npool.GetOrderOnlyResponse{}, status.Error(codes.InvalidArgument, err.Error())
+		}
+	}
+	if in.GetConds().Type != nil {
+		switch ordermgrpb.OrderType(in.GetConds().Type.GetValue()) {
+		case ordermgrpb.OrderType_Normal:
+		case ordermgrpb.OrderType_Offline:
+		case ordermgrpb.OrderType_Airdrop:
+		default:
+			logger.Sugar().Errorw("validate", "OrderType", in.GetConds().Type)
+			return &npool.GetOrderOnlyResponse{}, status.Error(codes.InvalidArgument, "OrderType is invalid")
+		}
+	}
+	if in.GetConds().State != nil {
+		switch ordermgrpb.OrderState(in.GetConds().State.GetValue()) {
+		case ordermgrpb.OrderState_WaitPayment:
+		case ordermgrpb.OrderState_Paid:
+		case ordermgrpb.OrderState_PaymentTimeout:
+		case ordermgrpb.OrderState_Canceled:
+		case ordermgrpb.OrderState_InService:
+		case ordermgrpb.OrderState_Expired:
+		default:
+			logger.Sugar().Errorw("validate", "OrderType", in.GetConds().Type)
+			return &npool.GetOrderOnlyResponse{}, status.Error(codes.InvalidArgument, "OrderType is invalid")
+		}
 	}
 
-	infos, total, err := order1.GetAppOrders(ctx, in.GetAppID(), in.GetOffset(), limit)
+	info, err := order1.GetOrderOnly(ctx, in.Conds)
 	if err != nil {
-		logger.Sugar().Errorw("GetAppOrders", "error", err)
-		return &npool.GetAppOrdersResponse{}, status.Error(codes.Internal, err.Error())
+		logger.Sugar().Errorw("GetOrders", "error", err)
+		return &npool.GetOrderOnlyResponse{}, status.Error(codes.Internal, err.Error())
 	}
 
-	return &npool.GetAppOrdersResponse{
-		Infos: infos,
-		Total: total,
+	return &npool.GetOrderOnlyResponse{
+		Info: info,
 	}, nil
 }
