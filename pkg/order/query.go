@@ -1,11 +1,8 @@
-//nolint:dupl
 package order
 
 import (
 	"context"
 	"fmt"
-
-	mgrpb "github.com/NpoolPlatform/message/npool/order/mgr/v1/order"
 
 	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
 
@@ -232,8 +229,8 @@ func join(stm *ent.OrderQuery) *ent.OrderSelect {
 
 func expand(infos []*npool.Order) ([]*npool.Order, error) { //nolint
 	for _, info := range infos {
-		info.OrderType = mgrpb.OrderType(mgrpb.OrderType_value[info.OrderTypeStr])
-		info.OrderState = mgrpb.OrderState(mgrpb.OrderState_value[info.OrderStateStr])
+		info.OrderType = ordermgrpb.OrderType(ordermgrpb.OrderType_value[info.OrderTypeStr])
+		info.OrderState = ordermgrpb.OrderState(ordermgrpb.OrderState_value[info.OrderStateStr])
 		info.PaymentState = paymentmgrpb.PaymentState(paymentmgrpb.PaymentState_value[info.PaymentStateStr])
 	}
 	return infos, nil
