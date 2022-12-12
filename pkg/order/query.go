@@ -63,17 +63,17 @@ func GetOrders(ctx context.Context, conds *npool.Conds, offset, limit int32) (in
 			Query()
 
 		if conds != nil {
-			if conds.AppID != nil {
-				stm.Where(order1.AppID(uuid.MustParse(conds.AppID.GetValue())))
-			}
 			if conds.ID != nil {
 				stm.Where(order1.ID(uuid.MustParse(conds.ID.GetValue())))
+			}
+			if conds.AppID != nil {
+				stm.Where(order1.AppID(uuid.MustParse(conds.AppID.GetValue())))
 			}
 			if conds.UserID != nil {
 				stm.Where(order1.UserID(uuid.MustParse(conds.UserID.GetValue())))
 			}
 			if conds.GoodID != nil {
-				stm.Where(order1.UserID(uuid.MustParse(conds.UserID.GetValue())))
+				stm.Where(order1.UserID(uuid.MustParse(conds.GoodID.GetValue())))
 			}
 			if conds.Type != nil {
 				stm.Where(order1.Type(mgrpb.OrderState(conds.Type.GetValue()).String()))
@@ -91,6 +91,7 @@ func GetOrders(ctx context.Context, conds *npool.Conds, offset, limit int32) (in
 				stm.Where(order1.UserSpecialReductionID(uuid.MustParse(conds.UserSpecialReductionID.GetValue())))
 			}
 		}
+
 		_total, err := stm.Count(ctx)
 		if err != nil {
 			return err
@@ -133,7 +134,7 @@ func GetOrderOnly(ctx context.Context, conds *npool.Conds) (info *npool.Order, e
 				stm.Where(order1.UserID(uuid.MustParse(conds.UserID.GetValue())))
 			}
 			if conds.GoodID != nil {
-				stm.Where(order1.UserID(uuid.MustParse(conds.UserID.GetValue())))
+				stm.Where(order1.UserID(uuid.MustParse(conds.GoodID.GetValue())))
 			}
 			if conds.Type != nil {
 				stm.Where(order1.Type(mgrpb.OrderState(conds.Type.GetValue()).String()))
