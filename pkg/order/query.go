@@ -9,6 +9,7 @@ import (
 
 	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
 
+	ordermgrpb "github.com/NpoolPlatform/message/npool/order/mgr/v1/order"
 	paymentmgrpb "github.com/NpoolPlatform/message/npool/order/mgr/v1/payment"
 
 	"entgo.io/ent/dialect/sql"
@@ -16,6 +17,7 @@ import (
 	"github.com/NpoolPlatform/order-manager/pkg/db/ent"
 	order1 "github.com/NpoolPlatform/order-manager/pkg/db/ent/order"
 
+	crud "github.com/NpoolPlatform/order-manager/pkg/crud/order"
 	"github.com/NpoolPlatform/order-manager/pkg/db"
 	"github.com/NpoolPlatform/order-manager/pkg/db/ent/payment"
 
@@ -58,38 +60,19 @@ func GetOrder(ctx context.Context, id string) (info *npool.Order, err error) {
 
 func GetOrders(ctx context.Context, conds *npool.Conds, offset, limit int32) (infos []*npool.Order, total uint32, err error) {
 	err = db.WithClient(ctx, func(ctx context.Context, cli *ent.Client) error {
-		stm := cli.
-			Order.
-			Query()
-
-		if conds != nil {
-			if conds.ID != nil {
-				stm.Where(order1.ID(uuid.MustParse(conds.ID.GetValue())))
-			}
-			if conds.AppID != nil {
-				stm.Where(order1.AppID(uuid.MustParse(conds.AppID.GetValue())))
-			}
-			if conds.UserID != nil {
-				stm.Where(order1.UserID(uuid.MustParse(conds.UserID.GetValue())))
-			}
-			if conds.GoodID != nil {
-				stm.Where(order1.UserID(uuid.MustParse(conds.GoodID.GetValue())))
-			}
-			if conds.Type != nil {
-				stm.Where(order1.Type(mgrpb.OrderState(conds.Type.GetValue()).String()))
-			}
-			if conds.State != nil {
-				stm.Where(order1.State(mgrpb.OrderState(conds.State.GetValue()).String()))
-			}
-			if conds.FixAmountCouponID != nil {
-				stm.Where(order1.FixAmountCouponID(uuid.MustParse(conds.FixAmountCouponID.GetValue())))
-			}
-			if conds.DiscountCouponID != nil {
-				stm.Where(order1.DiscountCouponID(uuid.MustParse(conds.DiscountCouponID.GetValue())))
-			}
-			if conds.UserSpecialReductionID != nil {
-				stm.Where(order1.UserSpecialReductionID(uuid.MustParse(conds.UserSpecialReductionID.GetValue())))
-			}
+		stm, err := crud.SetQueryConds(&ordermgrpb.Conds{
+			ID:                     conds.ID,
+			GoodID:                 conds.GoodID,
+			AppID:                  conds.AppID,
+			UserID:                 conds.UserID,
+			Type:                   conds.Type,
+			State:                  conds.State,
+			FixAmountCouponID:      conds.FixAmountCouponID,
+			DiscountCouponID:       conds.DiscountCouponID,
+			UserSpecialReductionID: conds.UserSpecialReductionID,
+		}, cli)
+		if err != nil {
+			return err
 		}
 
 		_total, err := stm.Count(ctx)
@@ -119,38 +102,19 @@ func GetOrders(ctx context.Context, conds *npool.Conds, offset, limit int32) (in
 func GetOrderOnly(ctx context.Context, conds *npool.Conds) (info *npool.Order, err error) {
 	infos := []*npool.Order{}
 	err = db.WithClient(ctx, func(ctx context.Context, cli *ent.Client) error {
-		stm := cli.
-			Order.
-			Query()
-
-		if conds != nil {
-			if conds.AppID != nil {
-				stm.Where(order1.AppID(uuid.MustParse(conds.AppID.GetValue())))
-			}
-			if conds.ID != nil {
-				stm.Where(order1.ID(uuid.MustParse(conds.ID.GetValue())))
-			}
-			if conds.UserID != nil {
-				stm.Where(order1.UserID(uuid.MustParse(conds.UserID.GetValue())))
-			}
-			if conds.GoodID != nil {
-				stm.Where(order1.UserID(uuid.MustParse(conds.GoodID.GetValue())))
-			}
-			if conds.Type != nil {
-				stm.Where(order1.Type(mgrpb.OrderState(conds.Type.GetValue()).String()))
-			}
-			if conds.State != nil {
-				stm.Where(order1.State(mgrpb.OrderState(conds.State.GetValue()).String()))
-			}
-			if conds.FixAmountCouponID != nil {
-				stm.Where(order1.FixAmountCouponID(uuid.MustParse(conds.FixAmountCouponID.GetValue())))
-			}
-			if conds.DiscountCouponID != nil {
-				stm.Where(order1.DiscountCouponID(uuid.MustParse(conds.DiscountCouponID.GetValue())))
-			}
-			if conds.UserSpecialReductionID != nil {
-				stm.Where(order1.UserSpecialReductionID(uuid.MustParse(conds.UserSpecialReductionID.GetValue())))
-			}
+		stm, err := crud.SetQueryConds(&ordermgrpb.Conds{
+			ID:                     conds.ID,
+			GoodID:                 conds.GoodID,
+			AppID:                  conds.AppID,
+			UserID:                 conds.UserID,
+			Type:                   conds.Type,
+			State:                  conds.State,
+			FixAmountCouponID:      conds.FixAmountCouponID,
+			DiscountCouponID:       conds.DiscountCouponID,
+			UserSpecialReductionID: conds.UserSpecialReductionID,
+		}, cli)
+		if err != nil {
+			return err
 		}
 
 		return join(stm).
