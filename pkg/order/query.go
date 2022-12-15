@@ -9,6 +9,9 @@ import (
 	ordermgrpb "github.com/NpoolPlatform/message/npool/order/mgr/v1/order"
 	paymentmgrpb "github.com/NpoolPlatform/message/npool/order/mgr/v1/payment"
 
+	cruder "github.com/NpoolPlatform/libent-cruder/pkg/cruder"
+	commonpb "github.com/NpoolPlatform/message/npool"
+
 	"entgo.io/ent/dialect/sql"
 
 	"github.com/NpoolPlatform/order-manager/pkg/db/ent"
@@ -59,6 +62,7 @@ func GetOrders(ctx context.Context, conds *npool.Conds, offset, limit int32) (in
 	err = db.WithClient(ctx, func(ctx context.Context, cli *ent.Client) error {
 		stm, err := crud.SetQueryConds(&ordermgrpb.Conds{
 			ID:                     conds.ID,
+			IDs:                    conds.IDs,
 			GoodID:                 conds.GoodID,
 			AppID:                  conds.AppID,
 			UserID:                 conds.UserID,
@@ -96,6 +100,17 @@ func GetOrders(ctx context.Context, conds *npool.Conds, offset, limit int32) (in
 
 	return infos, total, nil
 }
+
+func GetManyOrders(ctx context.Context, ids []string) (infos []*npool.Order, err error) {
+	infos, _, err = GetOrders(ctx, &npool.Conds{
+		IDs: &commonpb.StringSliceVal{
+			Op:    cruder.IN,
+			Value: ids,
+		},
+	}, int32(0), int32(len(ids)))
+	return infos, err
+}
+
 func GetOrderOnly(ctx context.Context, conds *npool.Conds) (info *npool.Order, err error) {
 	infos := []*npool.Order{}
 	err = db.WithClient(ctx, func(ctx context.Context, cli *ent.Client) error {

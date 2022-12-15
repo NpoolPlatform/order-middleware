@@ -57,3 +57,44 @@ func (s *Server) UpdateOrder(ctx context.Context, in *npool.UpdateOrderRequest) 
 		Info: info,
 	}, nil
 }
+
+func (s *Server) UpdateOrders(ctx context.Context, in *npool.UpdateOrdersRequest) (*npool.UpdateOrdersResponse, error) {
+	var err error
+
+	_, span := otel.Tracer(constant.ServiceName).Start(ctx, "UpdateOrders")
+	defer span.End()
+
+	defer func() {
+		if err != nil {
+			span.SetStatus(scodes.Error, err.Error())
+			span.RecordError(err)
+		}
+	}()
+
+	if len(in.GetInfos()) == 0 {
+		return &npool.UpdateOrdersResponse{}, status.Error(codes.InvalidArgument, "Infos is empty")
+	}
+
+	for _, info := range in.GetInfos() {
+		if _, err := uuid.Parse(info.GetID()); err != nil {
+			logger.Sugar().Errorw("UpdateOrders", "ID", info.GetID(), "error", err)
+			return &npool.UpdateOrdersResponse{}, err
+		}
+		if _, err := uuid.Parse(info.GetPaymentID()); err != nil {
+			logger.Sugar().Errorw("UpdateOrders", "PaymentID", info.GetPaymentID(), "error", err)
+			return &npool.UpdateOrdersResponse{}, err
+		}
+	}
+
+	span = commontracer.TraceInvoker(span, "order", "middleware", "Update")
+
+	infos, err := order1.UpdateOrders(ctx, in.GetInfos())
+	if err != nil {
+		logger.Sugar().Errorw("UpdateOrders", "error", err)
+		return &npool.UpdateOrdersResponse{}, status.Error(codes.Internal, err.Error())
+	}
+
+	return &npool.UpdateOrdersResponse{
+		Infos: infos,
+	}, nil
+}
