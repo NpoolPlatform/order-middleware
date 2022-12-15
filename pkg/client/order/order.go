@@ -63,6 +63,23 @@ func UpdateOrder(ctx context.Context, in *npool.OrderReq) (*npool.Order, error) 
 	}
 	return info.(*npool.Order), nil
 }
+
+func UpdateOrders(ctx context.Context, in []*npool.OrderReq) ([]*npool.Order, error) {
+	infos, err := withCRUD(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
+		resp, err := cli.UpdateOrders(ctx, &npool.UpdateOrdersRequest{
+			Infos: in,
+		})
+		if err != nil {
+			return nil, err
+		}
+		return resp.Infos, nil
+	})
+	if err != nil {
+		return nil, err
+	}
+	return infos.([]*npool.Order), nil
+}
+
 func GetOrder(ctx context.Context, id string) (*npool.Order, error) {
 	info, err := withCRUD(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
 		resp, err := cli.GetOrder(ctx, &npool.GetOrderRequest{
