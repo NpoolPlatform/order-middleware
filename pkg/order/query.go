@@ -227,6 +227,7 @@ func join(stm *ent.OrderQuery) *ent.OrderSelect {
 			order1.FieldDiscountCouponID,
 			order1.FieldUserSpecialReductionID,
 			order1.FieldCreatedAt,
+			order1.FieldCouponIds,
 		).
 		Modify(func(s *sql.Selector) {
 			t1 := sql.Table(payment.Table)
