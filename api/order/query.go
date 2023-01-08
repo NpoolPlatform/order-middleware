@@ -95,6 +95,18 @@ func (s *Server) GetOrders(ctx context.Context, in *npool.GetOrdersRequest) (*np
 				return &npool.GetOrdersResponse{}, status.Error(codes.InvalidArgument, err.Error())
 			}
 		}
+		if in.GetConds().CouponID != nil {
+			if _, err := uuid.Parse(in.GetConds().GetCouponID().GetValue()); err != nil {
+				logger.Sugar().Errorw("GetOrders", "CouponID", in.GetConds().GetCouponID().GetValue(), "error", err)
+				return &npool.GetOrdersResponse{}, status.Error(codes.InvalidArgument, err.Error())
+			}
+		}
+		for _, id := range in.GetConds().GetCouponIDs().GetValue() {
+			if _, err := uuid.Parse(id); err != nil {
+				logger.Sugar().Errorw("GetOrders", "error", err)
+				return &npool.GetOrdersResponse{}, status.Error(codes.InvalidArgument, err.Error())
+			}
+		}
 	}
 
 	limit := in.GetLimit()
