@@ -54,9 +54,10 @@ func UpdateOrder(ctx context.Context, in *npool.OrderReq) (info *npool.Order, er
 		u1, err := ordercrud.UpdateSet(
 			orderInfo.Update(),
 			&mgrpb.OrderReq{
-				State:   in.State,
-				StartAt: &startAt,
-				EndAt:   &endAt,
+				State:         in.State,
+				StartAt:       &startAt,
+				EndAt:         &endAt,
+				LastBenefitAt: in.LastBenefitAt,
 			},
 		)
 		if err != nil {
@@ -148,9 +149,10 @@ func UpdateOrders(ctx context.Context, in []*npool.OrderReq) (infos []*npool.Ord
 			u1, err := ordercrud.UpdateSet(
 				orderInfo.Update(),
 				&mgrpb.OrderReq{
-					State:   info.State,
-					StartAt: &startAt,
-					EndAt:   &endAt,
+					State:         info.State,
+					StartAt:       &startAt,
+					EndAt:         &endAt,
+					LastBenefitAt: info.LastBenefitAt,
 				},
 			)
 			if err != nil {

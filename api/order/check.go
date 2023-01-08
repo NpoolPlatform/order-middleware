@@ -169,5 +169,12 @@ func validate(info *npool.OrderReq) error { //nolint
 		}
 	}
 
+	for _, id := range info.GetCouponIDs() {
+		if _, err := uuid.Parse(id); err != nil {
+			logger.Sugar().Errorw("validate", "Error", err)
+			return status.Error(codes.InvalidArgument, err.Error())
+		}
+	}
+
 	return nil
 }
