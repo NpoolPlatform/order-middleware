@@ -53,6 +53,7 @@ func CreateOrder(ctx context.Context, in *npool.OrderReq) (info *npool.Order, er
 			FixAmountCouponID:      in.FixAmountID,
 			Type:                   in.OrderType,
 			State:                  &orderState,
+			CouponIDs:              in.CouponIDs,
 		})
 		if err != nil {
 			return err

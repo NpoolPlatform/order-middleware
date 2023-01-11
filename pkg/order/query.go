@@ -2,6 +2,7 @@ package order
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 
 	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
@@ -71,6 +72,9 @@ func GetOrders(ctx context.Context, conds *npool.Conds, offset, limit int32) (in
 			FixAmountCouponID:      conds.FixAmountCouponID,
 			DiscountCouponID:       conds.DiscountCouponID,
 			UserSpecialReductionID: conds.UserSpecialReductionID,
+			CouponID:               conds.CouponID,
+			CouponIDs:              conds.CouponIDs,
+			LastBenefitAt:          conds.LastBenefitAt,
 		}, cli)
 		if err != nil {
 			return err
@@ -124,6 +128,9 @@ func GetOrderOnly(ctx context.Context, conds *npool.Conds) (info *npool.Order, e
 			FixAmountCouponID:      conds.FixAmountCouponID,
 			DiscountCouponID:       conds.DiscountCouponID,
 			UserSpecialReductionID: conds.UserSpecialReductionID,
+			CouponID:               conds.CouponID,
+			CouponIDs:              conds.CouponIDs,
+			LastBenefitAt:          conds.LastBenefitAt,
 		}, cli)
 		if err != nil {
 			return err
@@ -204,6 +211,7 @@ func join(stm *ent.OrderQuery) *ent.OrderSelect {
 			order1.FieldDiscountCouponID,
 			order1.FieldUserSpecialReductionID,
 			order1.FieldCreatedAt,
+			order1.FieldCouponIds,
 		).
 		Modify(func(s *sql.Selector) {
 			t1 := sql.Table(payment.Table)
@@ -247,6 +255,8 @@ func expand(infos []*npool.Order) ([]*npool.Order, error) { //nolint
 		info.OrderType = ordermgrpb.OrderType(ordermgrpb.OrderType_value[info.OrderTypeStr])
 		info.OrderState = ordermgrpb.OrderState(ordermgrpb.OrderState_value[info.OrderStateStr])
 		info.PaymentState = paymentmgrpb.PaymentState(paymentmgrpb.PaymentState_value[info.PaymentStateStr])
+
+		_ = json.Unmarshal([]byte(info.CouponIDsStr), &info.CouponIDs)
 	}
 	return infos, nil
 }

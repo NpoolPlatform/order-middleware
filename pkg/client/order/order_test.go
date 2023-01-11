@@ -37,7 +37,7 @@ func init() {
 	}
 }
 
-var deviceInfo = npool.Order{
+var ret = npool.Order{
 	ID:                      uuid.NewString(),
 	AppID:                   uuid.NewString(),
 	UserID:                  uuid.NewString(),
@@ -75,30 +75,30 @@ var deviceInfo = npool.Order{
 var (
 	promotionID = uuid.NewString()
 	req         = npool.OrderReq{
-		AppID:                     &deviceInfo.AppID,
-		UserID:                    &deviceInfo.UserID,
-		GoodID:                    &deviceInfo.GoodID,
-		Units:                     &deviceInfo.Units,
-		OrderType:                 &deviceInfo.OrderType,
-		ParentOrderID:             &deviceInfo.ParentOrderID,
-		PayWithParent:             &deviceInfo.PayWithParent,
-		PaymentCoinID:             &deviceInfo.PaymentCoinTypeID,
-		PayWithBalanceAmount:      &deviceInfo.PayWithBalanceAmount,
-		PaymentAccountID:          &deviceInfo.PaymentAccountID,
-		PaymentAmount:             &deviceInfo.PaymentAmount,
-		PaymentAccountStartAmount: &deviceInfo.PaymentStartAmount,
-		PaymentCoinUSDCurrency:    &deviceInfo.PaymentCoinUSDCurrency,
-		PaymentLiveUSDCurrency:    &deviceInfo.PaymentLiveUSDCurrency,
-		PaymentLocalUSDCurrency:   &deviceInfo.PaymentLocalUSDCurrency,
-		FixAmountID:               &deviceInfo.FixAmountID,
-		DiscountID:                &deviceInfo.DiscountID,
-		SpecialOfferID:            &deviceInfo.SpecialOfferID,
-		Start:                     &deviceInfo.Start,
-		End:                       &deviceInfo.End,
+		AppID:                     &ret.AppID,
+		UserID:                    &ret.UserID,
+		GoodID:                    &ret.GoodID,
+		Units:                     &ret.Units,
+		OrderType:                 &ret.OrderType,
+		ParentOrderID:             &ret.ParentOrderID,
+		PayWithParent:             &ret.PayWithParent,
+		PaymentCoinID:             &ret.PaymentCoinTypeID,
+		PayWithBalanceAmount:      &ret.PayWithBalanceAmount,
+		PaymentAccountID:          &ret.PaymentAccountID,
+		PaymentAmount:             &ret.PaymentAmount,
+		PaymentAccountStartAmount: &ret.PaymentStartAmount,
+		PaymentCoinUSDCurrency:    &ret.PaymentCoinUSDCurrency,
+		PaymentLiveUSDCurrency:    &ret.PaymentLiveUSDCurrency,
+		PaymentLocalUSDCurrency:   &ret.PaymentLocalUSDCurrency,
+		FixAmountID:               &ret.FixAmountID,
+		DiscountID:                &ret.DiscountID,
+		SpecialOfferID:            &ret.SpecialOfferID,
+		Start:                     &ret.Start,
+		End:                       &ret.End,
 		PromotionID:               &promotionID,
-		ID:                        &deviceInfo.ID,
-		PaymentID:                 &deviceInfo.PaymentID,
-		Canceled:                  &deviceInfo.UserCanceled,
+		ID:                        &ret.ID,
+		PaymentID:                 &ret.PaymentID,
+		Canceled:                  &ret.UserCanceled,
 	}
 )
 
@@ -108,9 +108,11 @@ func create(t *testing.T) {
 	var err error
 	info, err = CreateOrder(context.Background(), &req)
 	if assert.Nil(t, err) {
-		deviceInfo.CreatedAt = info.CreatedAt
-		deviceInfo.PaidAt = info.PaidAt
-		assert.Equal(t, info, &deviceInfo)
+		ret.CreatedAt = info.CreatedAt
+		ret.PaidAt = info.PaidAt
+		ret.CouponIDs = info.CouponIDs
+		ret.CouponIDsStr = info.CouponIDsStr
+		assert.Equal(t, info, &ret)
 	}
 }
 
@@ -118,18 +120,18 @@ func update(t *testing.T) {
 	var err error
 	info, err = UpdateOrder(context.Background(), &req)
 	if assert.Nil(t, err) {
-		deviceInfo.CreatedAt = info.CreatedAt
-		deviceInfo.PaidAt = info.PaidAt
-		assert.Equal(t, info.String(), deviceInfo.String())
+		ret.CreatedAt = info.CreatedAt
+		ret.PaidAt = info.PaidAt
+		assert.Equal(t, info.String(), ret.String())
 	}
 }
 func getOrder(t *testing.T) {
 	var err error
-	info, err = GetOrder(context.Background(), deviceInfo.ID)
+	info, err = GetOrder(context.Background(), ret.ID)
 	if assert.Nil(t, err) {
-		deviceInfo.CreatedAt = info.CreatedAt
-		deviceInfo.PaidAt = info.PaidAt
-		assert.Equal(t, info.String(), deviceInfo.String())
+		ret.CreatedAt = info.CreatedAt
+		ret.PaidAt = info.PaidAt
+		assert.Equal(t, info.String(), ret.String())
 	}
 }
 
@@ -137,13 +139,13 @@ func getOrders(t *testing.T) {
 	infos, _, err := GetOrders(context.Background(), &npool.Conds{
 		ID: &npoolpb.StringVal{
 			Op:    cruder.EQ,
-			Value: deviceInfo.ID,
+			Value: ret.ID,
 		},
 	}, 0, 1)
 	if assert.Nil(t, err) {
-		deviceInfo.CreatedAt = infos[0].CreatedAt
-		deviceInfo.PaidAt = infos[0].PaidAt
-		assert.Equal(t, infos[0].String(), deviceInfo.String())
+		ret.CreatedAt = infos[0].CreatedAt
+		ret.PaidAt = infos[0].PaidAt
+		assert.Equal(t, infos[0].String(), ret.String())
 	}
 }
 
