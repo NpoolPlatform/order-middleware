@@ -74,6 +74,7 @@ func GetOrders(ctx context.Context, conds *npool.Conds, offset, limit int32) (in
 			UserSpecialReductionID: conds.UserSpecialReductionID,
 			CouponID:               conds.CouponID,
 			CouponIDs:              conds.CouponIDs,
+			LastBenefitAt:          conds.LastBenefitAt,
 		}, cli)
 		if err != nil {
 			return err
@@ -129,6 +130,7 @@ func GetOrderOnly(ctx context.Context, conds *npool.Conds) (info *npool.Order, e
 			UserSpecialReductionID: conds.UserSpecialReductionID,
 			CouponID:               conds.CouponID,
 			CouponIDs:              conds.CouponIDs,
+			LastBenefitAt:          conds.LastBenefitAt,
 		}, cli)
 		if err != nil {
 			return err
