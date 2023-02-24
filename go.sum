@@ -56,6 +56,7 @@ github.com/NpoolPlatform/go-service-framework v0.0.0-20221102072657-7fcc5e6f1012
 github.com/NpoolPlatform/libent-cruder v0.0.0-20221104072329-1d7b4d7f09cb h1:9/IMP+C36DVU513bLLIdG5gisVIIY7gQpSlmqi+X7a8=
 github.com/NpoolPlatform/libent-cruder v0.0.0-20221104072329-1d7b4d7f09cb/go.mod h1:zvvqlRwbOdTUauPQ9dFDhDuxa91ILV0CQfVdPBZj+eA=
 <<<<<<< HEAD
+<<<<<<< HEAD
 github.com/NpoolPlatform/message v0.0.0-20230226021727-29812bde6ee5 h1:A1Qba4tqkkfvdfupR036NtFT8kNeuld4q19ncauCqDE=
 github.com/NpoolPlatform/message v0.0.0-20230226021727-29812bde6ee5/go.mod h1:bblNegLa6PLnrfbc7MEzwa1pjQOjJ8vJ/5K497ckiig=
 github.com/NpoolPlatform/order-manager v0.0.0-20230226024220-9751e14c7cf9 h1:Ht27+vZlQku5Aq6wd7OpEEoVWva0kqedtMpN1AoLnGI=
@@ -66,6 +67,12 @@ github.com/NpoolPlatform/message v0.0.0-20230224021414-b0db7b2d6167/go.mod h1:bb
 github.com/NpoolPlatform/order-manager v0.0.0-20230111061107-a2737f006192 h1:J5IQVT9N//7R2DUvmwlkDOfi/YPgNSJCxVw8sqCj6uc=
 github.com/NpoolPlatform/order-manager v0.0.0-20230111061107-a2737f006192/go.mod h1:9HU7zvhF76LuPuMJDCnUqaqc1ELvHvvzUr/m4vNlJE0=
 >>>>>>> Add count order api
+=======
+github.com/NpoolPlatform/message v0.0.0-20230224025904-b752713856a4 h1:+mlDwnFIriuqzlNZT9yLpivuRlUv2sK3okPSb9wlTTA=
+github.com/NpoolPlatform/message v0.0.0-20230224025904-b752713856a4/go.mod h1:bblNegLa6PLnrfbc7MEzwa1pjQOjJ8vJ/5K497ckiig=
+github.com/NpoolPlatform/order-manager v0.0.0-20230224030450-82c2f6a4525d h1:YzoRAlG96uPtoDkVWtFlM1DgRQ1inYEkSapkqECgApI=
+github.com/NpoolPlatform/order-manager v0.0.0-20230224030450-82c2f6a4525d/go.mod h1:4oI+kvQ/gYvXOwzy/yazrvYY785+nFt2NaaUhT5YdIQ=
+>>>>>>> Support multiplex states query
 github.com/OneOfOne/xxhash v1.2.2 h1:KMrpdQIwFcEqXDklaen+P1axHaj9BSKzvpUUfnHldSE=
 github.com/OneOfOne/xxhash v1.2.2/go.mod h1:HSdplMjZKSmBqAxg5vPj2TmRDmfkzw+cTzAElWljhcU=
 github.com/Shonminh/apollo-client v0.4.0 h1:AXGp4wOahrEKjheMXehgsG9B8dEfLQHttRLHeEefvus=

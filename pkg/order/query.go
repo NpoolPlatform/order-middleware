@@ -75,6 +75,7 @@ func GetOrders(ctx context.Context, conds *npool.Conds, offset, limit int32) (in
 			CouponID:               conds.CouponID,
 			CouponIDs:              conds.CouponIDs,
 			LastBenefitAt:          conds.LastBenefitAt,
+			States:                 conds.States,
 		}, cli)
 		if err != nil {
 			return err
@@ -278,6 +279,7 @@ func CountOrders(ctx context.Context, conds *npool.Conds) (uint32, error) {
 			CouponID:               conds.CouponID,
 			CouponIDs:              conds.CouponIDs,
 			LastBenefitAt:          conds.LastBenefitAt,
+			States:                 conds.States,
 		}, cli)
 		if err != nil {
 			return err
