@@ -3,6 +3,7 @@ package order
 
 import (
 	"context"
+	"fmt"
 
 	ordermgrpb "github.com/NpoolPlatform/message/npool/order/mgr/v1/order"
 
@@ -55,6 +56,74 @@ func (s *Server) GetOrder(ctx context.Context, in *npool.GetOrderRequest) (*npoo
 	}, nil
 }
 
+func ValidateConds(conds *npool.Conds) error {
+	if conds == nil {
+		return nil
+	}
+
+	if conds.ID != nil {
+		if _, err := uuid.Parse(conds.GetID().GetValue()); err != nil {
+			logger.Sugar().Errorw("GetOrders", "ID", conds.GetID().GetValue(), "error", err)
+			return err
+		}
+	}
+	if conds.GoodID != nil {
+		if _, err := uuid.Parse(conds.GetGoodID().GetValue()); err != nil {
+			logger.Sugar().Errorw("GetOrders", "GoodID", conds.GetGoodID().GetValue(), "error", err)
+			return err
+		}
+	}
+	if conds.AppID != nil {
+		if _, err := uuid.Parse(conds.GetAppID().GetValue()); err != nil {
+			logger.Sugar().Errorw("GetOrders", "AppID", conds.GetAppID().GetValue(), "error", err)
+			return err
+		}
+	}
+	if conds.UserID != nil {
+		if _, err := uuid.Parse(conds.GetUserID().GetValue()); err != nil {
+			logger.Sugar().Errorw("GetOrders", "UserID", conds.GetUserID().GetValue(), "error", err)
+			return err
+		}
+	}
+	if conds.Type != nil {
+		switch ordermgrpb.OrderType(conds.Type.GetValue()) {
+		case ordermgrpb.OrderType_Normal:
+		case ordermgrpb.OrderType_Offline:
+		case ordermgrpb.OrderType_Airdrop:
+		default:
+			logger.Sugar().Errorw("validate", "OrderType", conds.GetType().GetValue())
+			return fmt.Errorf("ordertype is invalid")
+		}
+	}
+	if conds.State != nil {
+		switch ordermgrpb.OrderState(conds.State.GetValue()) {
+		case ordermgrpb.OrderState_WaitPayment:
+		case ordermgrpb.OrderState_Paid:
+		case ordermgrpb.OrderState_PaymentTimeout:
+		case ordermgrpb.OrderState_Canceled:
+		case ordermgrpb.OrderState_InService:
+		case ordermgrpb.OrderState_Expired:
+		default:
+			logger.Sugar().Errorw("validate", "OrderState", conds.GetState().GetValue())
+			return fmt.Errorf("orderstate is invalid")
+		}
+	}
+	if conds.CouponID != nil {
+		if _, err := uuid.Parse(conds.GetCouponID().GetValue()); err != nil {
+			logger.Sugar().Errorw("GetOrders", "CouponID", conds.GetCouponID().GetValue(), "error", err)
+			return err
+		}
+	}
+	for _, id := range conds.GetCouponIDs().GetValue() {
+		if _, err := uuid.Parse(id); err != nil {
+			logger.Sugar().Errorw("GetOrders", "error", err)
+			return err
+		}
+	}
+
+	return nil
+}
+
 func (s *Server) GetOrders(ctx context.Context, in *npool.GetOrdersRequest) (*npool.GetOrdersResponse, error) {
 	var err error
 
@@ -70,43 +139,8 @@ func (s *Server) GetOrders(ctx context.Context, in *npool.GetOrdersRequest) (*np
 
 	span = commontracer.TraceInvoker(span, "order", "middleware", "GetOrders")
 
-	if in.Conds != nil {
-		if in.GetConds().ID != nil {
-			if _, err := uuid.Parse(in.GetConds().GetID().GetValue()); err != nil {
-				logger.Sugar().Errorw("GetOrders", "ID", in.GetConds().GetID().GetValue(), "error", err)
-				return &npool.GetOrdersResponse{}, status.Error(codes.InvalidArgument, err.Error())
-			}
-		}
-		if in.GetConds().GoodID != nil {
-			if _, err := uuid.Parse(in.GetConds().GetGoodID().GetValue()); err != nil {
-				logger.Sugar().Errorw("GetOrders", "GoodID", in.GetConds().GetGoodID().GetValue(), "error", err)
-				return &npool.GetOrdersResponse{}, status.Error(codes.InvalidArgument, err.Error())
-			}
-		}
-		if in.GetConds().AppID != nil {
-			if _, err := uuid.Parse(in.GetConds().GetAppID().GetValue()); err != nil {
-				logger.Sugar().Errorw("GetOrders", "AppID", in.GetConds().GetAppID().GetValue(), "error", err)
-				return &npool.GetOrdersResponse{}, status.Error(codes.InvalidArgument, err.Error())
-			}
-		}
-		if in.GetConds().UserID != nil {
-			if _, err := uuid.Parse(in.GetConds().GetUserID().GetValue()); err != nil {
-				logger.Sugar().Errorw("GetOrders", "UserID", in.GetConds().GetUserID().GetValue(), "error", err)
-				return &npool.GetOrdersResponse{}, status.Error(codes.InvalidArgument, err.Error())
-			}
-		}
-		if in.GetConds().CouponID != nil {
-			if _, err := uuid.Parse(in.GetConds().GetCouponID().GetValue()); err != nil {
-				logger.Sugar().Errorw("GetOrders", "CouponID", in.GetConds().GetCouponID().GetValue(), "error", err)
-				return &npool.GetOrdersResponse{}, status.Error(codes.InvalidArgument, err.Error())
-			}
-		}
-		for _, id := range in.GetConds().GetCouponIDs().GetValue() {
-			if _, err := uuid.Parse(id); err != nil {
-				logger.Sugar().Errorw("GetOrders", "error", err)
-				return &npool.GetOrdersResponse{}, status.Error(codes.InvalidArgument, err.Error())
-			}
-		}
+	if err := ValidateConds(in.GetConds()); err != nil {
+		return &npool.GetOrdersResponse{}, status.Error(codes.InvalidArgument, err.Error())
 	}
 
 	limit := in.GetLimit()
@@ -129,7 +163,7 @@ func (s *Server) GetOrders(ctx context.Context, in *npool.GetOrdersRequest) (*np
 func (s *Server) GetOrderOnly(ctx context.Context, in *npool.GetOrderOnlyRequest) (*npool.GetOrderOnlyResponse, error) {
 	var err error
 
-	_, span := otel.Tracer(constant.ServiceName).Start(ctx, "GetOrders")
+	_, span := otel.Tracer(constant.ServiceName).Start(ctx, "GetOrderOnly")
 	defer span.End()
 
 	defer func() {
@@ -139,63 +173,49 @@ func (s *Server) GetOrderOnly(ctx context.Context, in *npool.GetOrderOnlyRequest
 		}
 	}()
 
-	span = commontracer.TraceInvoker(span, "order", "middleware", "GetOrders")
+	span = commontracer.TraceInvoker(span, "order", "middleware", "GetOrderOnly")
 
-	if in.GetConds().ID != nil {
-		if _, err := uuid.Parse(in.GetConds().GetID().GetValue()); err != nil {
-			logger.Sugar().Errorw("GetOrders", "ID", in.GetConds().GetID().GetValue(), "error", err)
-			return &npool.GetOrderOnlyResponse{}, status.Error(codes.InvalidArgument, err.Error())
-		}
-	}
-	if in.GetConds().GoodID != nil {
-		if _, err := uuid.Parse(in.GetConds().GetGoodID().GetValue()); err != nil {
-			logger.Sugar().Errorw("GetOrders", "GoodID", in.GetConds().GetGoodID().GetValue(), "error", err)
-			return &npool.GetOrderOnlyResponse{}, status.Error(codes.InvalidArgument, err.Error())
-		}
-	}
-	if in.GetConds().AppID != nil {
-		if _, err := uuid.Parse(in.GetConds().GetAppID().GetValue()); err != nil {
-			logger.Sugar().Errorw("GetOrders", "AppID", in.GetConds().GetAppID().GetValue(), "error", err)
-			return &npool.GetOrderOnlyResponse{}, status.Error(codes.InvalidArgument, err.Error())
-		}
-	}
-	if in.GetConds().UserID != nil {
-		if _, err := uuid.Parse(in.GetConds().GetUserID().GetValue()); err != nil {
-			logger.Sugar().Errorw("GetOrders", "UserID", in.GetConds().GetUserID().GetValue(), "error", err)
-			return &npool.GetOrderOnlyResponse{}, status.Error(codes.InvalidArgument, err.Error())
-		}
-	}
-	if in.GetConds().Type != nil {
-		switch ordermgrpb.OrderType(in.GetConds().Type.GetValue()) {
-		case ordermgrpb.OrderType_Normal:
-		case ordermgrpb.OrderType_Offline:
-		case ordermgrpb.OrderType_Airdrop:
-		default:
-			logger.Sugar().Errorw("validate", "OrderType", in.GetConds().Type)
-			return &npool.GetOrderOnlyResponse{}, status.Error(codes.InvalidArgument, "OrderType is invalid")
-		}
-	}
-	if in.GetConds().State != nil {
-		switch ordermgrpb.OrderState(in.GetConds().State.GetValue()) {
-		case ordermgrpb.OrderState_WaitPayment:
-		case ordermgrpb.OrderState_Paid:
-		case ordermgrpb.OrderState_PaymentTimeout:
-		case ordermgrpb.OrderState_Canceled:
-		case ordermgrpb.OrderState_InService:
-		case ordermgrpb.OrderState_Expired:
-		default:
-			logger.Sugar().Errorw("validate", "OrderType", in.GetConds().Type)
-			return &npool.GetOrderOnlyResponse{}, status.Error(codes.InvalidArgument, "OrderType is invalid")
-		}
+	if err := ValidateConds(in.GetConds()); err != nil {
+		return &npool.GetOrderOnlyResponse{}, status.Error(codes.InvalidArgument, err.Error())
 	}
 
-	info, err := order1.GetOrderOnly(ctx, in.Conds)
+	info, err := order1.GetOrderOnly(ctx, in.GetConds())
 	if err != nil {
-		logger.Sugar().Errorw("GetOrders", "error", err)
+		logger.Sugar().Errorw("GetOrderOnly", "error", err)
 		return &npool.GetOrderOnlyResponse{}, status.Error(codes.Internal, err.Error())
 	}
 
 	return &npool.GetOrderOnlyResponse{
 		Info: info,
+	}, nil
+}
+
+func (s *Server) CountOrders(ctx context.Context, in *npool.CountOrdersRequest) (*npool.CountOrdersResponse, error) {
+	var err error
+
+	_, span := otel.Tracer(constant.ServiceName).Start(ctx, "CountOrders")
+	defer span.End()
+
+	defer func() {
+		if err != nil {
+			span.SetStatus(scodes.Error, err.Error())
+			span.RecordError(err)
+		}
+	}()
+
+	span = commontracer.TraceInvoker(span, "order", "middleware", "CountOrders")
+
+	if err := ValidateConds(in.GetConds()); err != nil {
+		return &npool.CountOrdersResponse{}, status.Error(codes.InvalidArgument, err.Error())
+	}
+
+	count, err := order1.CountOrders(ctx, in.GetConds())
+	if err != nil {
+		logger.Sugar().Errorw("CountOrders", "error", err)
+		return &npool.CountOrdersResponse{}, status.Error(codes.Internal, err.Error())
+	}
+
+	return &npool.CountOrdersResponse{
+		Info: count,
 	}, nil
 }
