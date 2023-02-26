@@ -200,7 +200,6 @@ func join(stm *ent.OrderQuery) *ent.OrderSelect {
 			order1.FieldAppID,
 			order1.FieldUserID,
 			order1.FieldGoodID,
-			order1.FieldUnits,
 			order1.FieldType,
 			order1.FieldState,
 			order1.FieldParentOrderID,
@@ -222,6 +221,7 @@ func join(stm *ent.OrderQuery) *ent.OrderSelect {
 					t1.C(payment.FieldOrderID),
 				).
 				AppendSelect(
+					sql.As(s.C(order1.FieldUnitsV1), "units"),
 					sql.As(t1.C(payment.FieldCoinInfoID), "payment_coin_type_id"),
 					sql.As(t1.C(payment.FieldCoinUsdCurrency), "payment_coin_usd_currency"),
 					sql.As(t1.C(payment.FieldLiveCoinUsdCurrency), "payment_live_coin_usd_currency"),

@@ -33,7 +33,7 @@ var ret = npool.Order{
 	AppID:                   uuid.NewString(),
 	UserID:                  uuid.NewString(),
 	GoodID:                  uuid.NewString(),
-	Units:                   10001,
+	Units:                   "10001.000000000000000000",
 	OrderTypeStr:            mgrpb.OrderType_Normal.String(),
 	OrderType:               mgrpb.OrderType_Normal,
 	OrderStateStr:           mgrpb.OrderState_WaitPayment.String(),
