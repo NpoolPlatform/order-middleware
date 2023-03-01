@@ -75,6 +75,7 @@ func GetOrders(ctx context.Context, conds *npool.Conds, offset, limit int32) (in
 			CouponID:               conds.CouponID,
 			CouponIDs:              conds.CouponIDs,
 			LastBenefitAt:          conds.LastBenefitAt,
+			States:                 conds.States,
 		}, cli)
 		if err != nil {
 			return err
@@ -259,4 +260,39 @@ func expand(infos []*npool.Order) ([]*npool.Order, error) { //nolint
 		_ = json.Unmarshal([]byte(info.CouponIDsStr), &info.CouponIDs)
 	}
 	return infos, nil
+}
+
+func CountOrders(ctx context.Context, conds *npool.Conds) (uint32, error) {
+	count := uint32(0)
+	err := db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
+		stm, err := crud.SetQueryConds(&ordermgrpb.Conds{
+			ID:                     conds.ID,
+			IDs:                    conds.IDs,
+			GoodID:                 conds.GoodID,
+			AppID:                  conds.AppID,
+			UserID:                 conds.UserID,
+			Type:                   conds.Type,
+			State:                  conds.State,
+			FixAmountCouponID:      conds.FixAmountCouponID,
+			DiscountCouponID:       conds.DiscountCouponID,
+			UserSpecialReductionID: conds.UserSpecialReductionID,
+			CouponID:               conds.CouponID,
+			CouponIDs:              conds.CouponIDs,
+			LastBenefitAt:          conds.LastBenefitAt,
+			States:                 conds.States,
+		}, cli)
+		if err != nil {
+			return err
+		}
+
+		_count, err := stm.Count(_ctx)
+		if err != nil {
+			return err
+		}
+
+		count = uint32(_count)
+
+		return nil
+	})
+	return count, err
 }
