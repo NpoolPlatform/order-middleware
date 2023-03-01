@@ -81,12 +81,6 @@ func UpdateOrder(ctx context.Context, in *npool.OrderReq) (info *npool.Order, er
 			return err
 		}
 
-		if paymentInfo.State != paymentpb.PaymentState_Wait.String() && orderInfo.Type == mgrpb.OrderType_Normal.String() {
-			if in.GetCanceled() {
-				return fmt.Errorf("not wait payment")
-			}
-		}
-
 		u2, err := paymentcrud.UpdateSet(
 			paymentInfo.Update(),
 			&paymentpb.PaymentReq{
