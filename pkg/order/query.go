@@ -323,7 +323,7 @@ func SumOrderUnits(ctx context.Context, conds *npool.Conds) (string, error) {
 		}
 		_sum, err := stm.
 			Modify(func(s *sql.Selector) {
-				s.Select(sql.Sum(order1.FieldUnits))
+				s.Select(sql.Sum(order1.FieldUnitsV1))
 			}).
 			String(ctx)
 		if err != nil {
