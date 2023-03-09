@@ -219,3 +219,33 @@ func (s *Server) CountOrders(ctx context.Context, in *npool.CountOrdersRequest) 
 		Info: count,
 	}, nil
 }
+
+func (s *Server) SumOrderUnits(ctx context.Context, in *npool.SumOrderUnitsRequest) (*npool.SumOrderUnitsResponse, error) {
+	var err error
+
+	_, span := otel.Tracer(constant.ServiceName).Start(ctx, "SumOrderUnits")
+	defer span.End()
+
+	defer func() {
+		if err != nil {
+			span.SetStatus(scodes.Error, err.Error())
+			span.RecordError(err)
+		}
+	}()
+
+	span = commontracer.TraceInvoker(span, "order", "middleware", "SumOrderUnits")
+
+	if err := ValidateConds(in.GetConds()); err != nil {
+		return &npool.SumOrderUnitsResponse{}, status.Error(codes.InvalidArgument, err.Error())
+	}
+
+	count, err := order1.SumOrderUnits(ctx, in.GetConds())
+	if err != nil {
+		logger.Sugar().Errorw("SumOrderUnits", "error", err)
+		return &npool.SumOrderUnitsResponse{}, status.Error(codes.Internal, err.Error())
+	}
+
+	return &npool.SumOrderUnitsResponse{
+		Info: count,
+	}, nil
+}

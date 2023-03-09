@@ -296,3 +296,40 @@ func CountOrders(ctx context.Context, conds *npool.Conds) (uint32, error) {
 	})
 	return count, err
 }
+
+func SumOrderUnits(ctx context.Context, conds *npool.Conds) (uint32, error) {
+	sum := uint32(0)
+	err := db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
+		stm, err := crud.SetQueryConds(&ordermgrpb.Conds{
+			ID:                     conds.ID,
+			IDs:                    conds.IDs,
+			GoodID:                 conds.GoodID,
+			AppID:                  conds.AppID,
+			UserID:                 conds.UserID,
+			Type:                   conds.Type,
+			State:                  conds.State,
+			FixAmountCouponID:      conds.FixAmountCouponID,
+			DiscountCouponID:       conds.DiscountCouponID,
+			UserSpecialReductionID: conds.UserSpecialReductionID,
+			CouponID:               conds.CouponID,
+			CouponIDs:              conds.CouponIDs,
+			LastBenefitAt:          conds.LastBenefitAt,
+			States:                 conds.States,
+		}, cli)
+		if err != nil {
+			return err
+		}
+		_sum, err := stm.
+			Modify(func(s *sql.Selector) {
+				s.Select(sql.Sum(order1.FieldUnits))
+			}).
+			Int(ctx)
+		if err != nil {
+			return err
+		}
+		sum = uint32(_sum)
+
+		return nil
+	})
+	return sum, err
+}
