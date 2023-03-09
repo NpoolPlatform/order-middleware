@@ -136,7 +136,7 @@ func GetOrderOnly(ctx context.Context, conds *npool.Conds) (*npool.Order, error)
 	return info.(*npool.Order), nil
 }
 
-func SumOrderUnits(ctx context.Context, conds *npool.Conds) (uint32, error) {
+func SumOrderUnits(ctx context.Context, conds *npool.Conds) (string, error) {
 	info, err := withCRUD(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
 		resp, err := cli.SumOrderUnits(ctx, &npool.SumOrderUnitsRequest{
 			Conds: conds,
@@ -147,7 +147,7 @@ func SumOrderUnits(ctx context.Context, conds *npool.Conds) (uint32, error) {
 		return resp.Info, nil
 	})
 	if err != nil {
-		return 0, err
+		return "", err
 	}
-	return info.(uint32), nil
+	return info.(string), nil
 }

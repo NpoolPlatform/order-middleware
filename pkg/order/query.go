@@ -5,6 +5,8 @@ import (
 	"encoding/json"
 	"fmt"
 
+	"github.com/shopspring/decimal"
+
 	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
 
 	ordermgrpb "github.com/NpoolPlatform/message/npool/order/mgr/v1/order"
@@ -297,8 +299,8 @@ func CountOrders(ctx context.Context, conds *npool.Conds) (uint32, error) {
 	return count, err
 }
 
-func SumOrderUnits(ctx context.Context, conds *npool.Conds) (uint32, error) {
-	sum := uint32(0)
+func SumOrderUnits(ctx context.Context, conds *npool.Conds) (string, error) {
+	sum := decimal.NewFromInt(0).String()
 	err := db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
 		stm, err := crud.SetQueryConds(&ordermgrpb.Conds{
 			ID:                     conds.ID,
@@ -323,11 +325,11 @@ func SumOrderUnits(ctx context.Context, conds *npool.Conds) (uint32, error) {
 			Modify(func(s *sql.Selector) {
 				s.Select(sql.Sum(order1.FieldUnits))
 			}).
-			Int(ctx)
+			String(ctx)
 		if err != nil {
 			return err
 		}
-		sum = uint32(_sum)
+		sum = _sum
 
 		return nil
 	})
