@@ -321,6 +321,13 @@ func SumOrderUnits(ctx context.Context, conds *npool.Conds) (string, error) {
 		if err != nil {
 			return err
 		}
+		_count, err := stm.Count(ctx)
+		if err != nil {
+			return err
+		}
+		if _count == 0 {
+			return nil
+		}
 		_sum, err := stm.
 			Modify(func(s *sql.Selector) {
 				s.Select(sql.Sum(order1.FieldUnitsV1))
