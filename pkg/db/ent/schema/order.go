@@ -4,7 +4,7 @@ import (
 	"entgo.io/ent"
 	"entgo.io/ent/dialect"
 	"entgo.io/ent/schema/field"
-	"github.com/NpoolPlatform/message/npool/order/mw/v1/order"
+	basetypes "github.com/NpoolPlatform/message/npool/basetypes/v1"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/mixin"
 	"github.com/shopspring/decimal"
 
@@ -91,11 +91,11 @@ func (Order) Fields() []ent.Field {
 		field.
 			String("type").
 			Optional().
-			Default(order.OrderType_DefaultOrderType.String()),
+			Default(basetypes.OrderType_DefaultOrderType.String()),
 		field.
 			String("state").
 			Optional().
-			Default(order.OrderState_DefaultState.String()),
+			Default(basetypes.OrderState_DefaultOrderState.String()),
 		field.
 			JSON("coupon_ids", []uuid.UUID{}).
 			Optional().

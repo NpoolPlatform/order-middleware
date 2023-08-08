@@ -45,7 +45,7 @@ var (
 		{Name: "end_at", Type: field.TypeUint32, Nullable: true, Default: 0},
 		{Name: "fix_amount_coupon_id", Type: field.TypeUUID, Nullable: true},
 		{Name: "type", Type: field.TypeString, Nullable: true, Default: "DefaultOrderType"},
-		{Name: "state", Type: field.TypeString, Nullable: true, Default: "DefaultState"},
+		{Name: "state", Type: field.TypeString, Nullable: true, Default: "DefaultOrderState"},
 		{Name: "coupon_ids", Type: field.TypeJSON, Nullable: true},
 		{Name: "last_benefit_at", Type: field.TypeUint32, Nullable: true, Default: 0},
 	}
@@ -90,7 +90,7 @@ var (
 		{Name: "local_coin_usd_currency", Type: field.TypeOther, Nullable: true, SchemaType: map[string]string{"mysql": "decimal(37, 18)"}},
 		{Name: "live_coin_usd_currency", Type: field.TypeOther, Nullable: true, SchemaType: map[string]string{"mysql": "decimal(37, 18)"}},
 		{Name: "coin_info_id", Type: field.TypeUUID},
-		{Name: "state", Type: field.TypeString, Nullable: true, Default: "DefaultState"},
+		{Name: "state", Type: field.TypeString, Nullable: true, Default: "DefaultPaymentState"},
 		{Name: "chain_transaction_id", Type: field.TypeString, Nullable: true, Default: ""},
 		{Name: "user_set_paid", Type: field.TypeBool, Nullable: true, Default: false},
 		{Name: "user_set_canceled", Type: field.TypeBool, Nullable: true, Default: false},

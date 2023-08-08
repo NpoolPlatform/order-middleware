@@ -6,10 +6,9 @@ import (
 	"entgo.io/ent/schema/field"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/mixin"
 
+	basetypes "github.com/NpoolPlatform/message/npool/basetypes/v1"
 	"github.com/google/uuid"
 	"github.com/shopspring/decimal"
-
-	"github.com/NpoolPlatform/message/npool/order/mw/v1/payment"
 )
 
 // Payment holds the schema definition for the Payment entity.
@@ -93,7 +92,7 @@ func (Payment) Fields() []ent.Field {
 			UUID("coin_info_id", uuid.UUID{}),
 		field.String("state").
 			Optional().
-			Default(payment.PaymentState_DefaultState.String()),
+			Default(basetypes.PaymentState_DefaultPaymentState.String()),
 		field.
 			String("chain_transaction_id").
 			Optional().
