@@ -12,27 +12,40 @@ import (
 )
 
 type Req struct {
-	ID                     *uuid.UUID
-	AppID                  *uuid.UUID
-	GoodID                 *uuid.UUID
-	UserID                 *uuid.UUID
-	ParentOrderID          *uuid.UUID
-	PayWithParent          *bool
-	Units                  *decimal.Decimal
-	PromotionID            *uuid.UUID
-	DiscountCouponID       *uuid.UUID
-	UserSpecialReductionID *uuid.UUID
-	StartAt                *uint32
-	EndAt                  *uint32
-	FixAmountCouponID      *uuid.UUID
-	Type                   *basetypes.OrderType
-	State                  *basetypes.OrderState
-	CouponIDs              *[]uuid.UUID
-	LastBenefitAt          *uint32
-	CreatedAt              *uint32
-	DeletedAt              *uint32
+	ID                        *uuid.UUID
+	AppID                     *uuid.UUID
+	GoodID                    *uuid.UUID
+	UserID                    *uuid.UUID
+	ParentOrderID             *uuid.UUID
+	PayWithParent             *bool
+	Units                     *decimal.Decimal
+	PromotionID               *uuid.UUID
+	DiscountCouponID          *uuid.UUID
+	UserSpecialReductionID    *uuid.UUID
+	StartAt                   *uint32
+	EndAt                     *uint32
+	FixAmountCouponID         *uuid.UUID
+	Type                      *basetypes.OrderType
+	State                     *basetypes.OrderState
+	CouponIDs                 *[]uuid.UUID
+	LastBenefitAt             *uint32
+	CreatedAt                 *uint32
+	DeletedAt                 *uint32
+	PaymentID                 *uuid.UUID
+	PaymentAccountID          *uuid.UUID
+	PaymentAccountStartAmount *decimal.Decimal
+	PaymentAmount             *decimal.Decimal
+	PayWithBalanceAmount      *decimal.Decimal
+	PaymentCoinUSDCurrency    *decimal.Decimal
+	PaymentLocalUSDCurrency   *decimal.Decimal
+	PaymentLiveUSDCurrency    *decimal.Decimal
+	PaymentCoinID             *uuid.UUID
+	PaymentFinishAmount       *decimal.Decimal
+	PaymentUserSetCanceled    *bool
+	PaymentFakePayment        *bool
 }
 
+//nolint:gocyclo
 func CreateSet(c *ent.OrderCreate, req *Req) *ent.OrderCreate {
 	if req.ID != nil {
 		c.SetID(*req.ID)

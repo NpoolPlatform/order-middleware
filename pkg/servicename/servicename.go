@@ -1,3 +1,6 @@
 package servicename
 
-const ServiceName = "Order Middleware"
+const (
+	ServiceName   = "Order Middleware"
+	ServiceDomain = "order-middleware.npool.top"
+)

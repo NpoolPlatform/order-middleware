@@ -2,6 +2,7 @@ package order
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	grpc2 "github.com/NpoolPlatform/go-service-framework/pkg/grpc"
@@ -9,18 +10,18 @@ import (
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
 	npool "github.com/NpoolPlatform/message/npool/order/mw/v1/order"
 
-	constant "github.com/NpoolPlatform/order-middleware/pkg/message/const"
+	servicename "github.com/NpoolPlatform/order-middleware/pkg/servicename"
 )
 
 var timeout = 10 * time.Second
 
 type handler func(context.Context, npool.MiddlewareClient) (cruder.Any, error)
 
-func withCRUD(ctx context.Context, handler handler) (cruder.Any, error) {
+func do(ctx context.Context, handler handler) (cruder.Any, error) {
 	_ctx, cancel := context.WithTimeout(ctx, timeout)
 	defer cancel()
 
-	conn, err := grpc2.GetGRPCConn(constant.ServiceName, grpc2.GRPCTAG)
+	conn, err := grpc2.GetGRPCConn(servicename.ServiceDomain, grpc2.GRPCTAG)
 	if err != nil {
 		return nil, err
 	}
@@ -33,7 +34,7 @@ func withCRUD(ctx context.Context, handler handler) (cruder.Any, error) {
 }
 
 func CreateOrder(ctx context.Context, in *npool.OrderReq) (*npool.Order, error) {
-	info, err := withCRUD(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
+	info, err := do(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
 		resp, err := cli.CreateOrder(ctx, &npool.CreateOrderRequest{
 			Info: in,
 		})
@@ -49,7 +50,7 @@ func CreateOrder(ctx context.Context, in *npool.OrderReq) (*npool.Order, error) 
 }
 
 func UpdateOrder(ctx context.Context, in *npool.OrderReq) (*npool.Order, error) {
-	info, err := withCRUD(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
+	info, err := do(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
 		resp, err := cli.UpdateOrder(ctx, &npool.UpdateOrderRequest{
 			Info: in,
 		})
@@ -65,7 +66,7 @@ func UpdateOrder(ctx context.Context, in *npool.OrderReq) (*npool.Order, error) 
 }
 
 func UpdateOrders(ctx context.Context, in []*npool.OrderReq) ([]*npool.Order, error) {
-	infos, err := withCRUD(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
+	infos, err := do(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
 		resp, err := cli.UpdateOrders(ctx, &npool.UpdateOrdersRequest{
 			Infos: in,
 		})
@@ -81,7 +82,7 @@ func UpdateOrders(ctx context.Context, in []*npool.OrderReq) ([]*npool.Order, er
 }
 
 func GetOrder(ctx context.Context, id string) (*npool.Order, error) {
-	info, err := withCRUD(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
+	info, err := do(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
 		resp, err := cli.GetOrder(ctx, &npool.GetOrderRequest{
 			ID: id,
 		})
@@ -99,7 +100,7 @@ func GetOrder(ctx context.Context, id string) (*npool.Order, error) {
 func GetOrders(ctx context.Context, conds *npool.Conds, offset, limit int32) ([]*npool.Order, uint32, error) {
 	total := uint32(0)
 
-	infos, err := withCRUD(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
+	infos, err := do(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
 		resp, err := cli.GetOrders(ctx, &npool.GetOrdersRequest{
 			Conds:  conds,
 			Offset: offset,
@@ -120,24 +121,35 @@ func GetOrders(ctx context.Context, conds *npool.Conds, offset, limit int32) ([]
 }
 
 func GetOrderOnly(ctx context.Context, conds *npool.Conds) (*npool.Order, error) {
-	info, err := withCRUD(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
-		resp, err := cli.GetOrderOnly(ctx, &npool.GetOrderOnlyRequest{
-			Conds: conds,
+	const limit = 2
+	infos, err := do(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
+		resp, err := cli.GetOrders(ctx, &npool.GetOrdersRequest{
+			Conds:  conds,
+			Offset: 0,
+			Limit:  limit,
 		})
 		if err != nil {
 			return nil, err
 		}
-
-		return resp.Info, nil
+		return resp.Infos, nil
 	})
 	if err != nil {
 		return nil, err
 	}
-	return info.(*npool.Order), nil
+	if err != nil {
+		return nil, err
+	}
+	if len(infos.([]*npool.Order)) == 0 {
+		return nil, nil
+	}
+	if len(infos.([]*npool.Order)) > 1 {
+		return nil, fmt.Errorf("too many records")
+	}
+	return infos.([]*npool.Order)[0], nil
 }
 
 func SumOrderUnits(ctx context.Context, conds *npool.Conds) (string, error) {
-	info, err := withCRUD(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
+	info, err := do(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
 		resp, err := cli.SumOrderUnits(ctx, &npool.SumOrderUnitsRequest{
 			Conds: conds,
 		})

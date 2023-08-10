@@ -4,47 +4,59 @@ package order
 import (
 	"context"
 
-	order1 "github.com/NpoolPlatform/order-middleware/pkg/order"
-	commontracer "github.com/NpoolPlatform/order-middleware/pkg/tracer"
-	tracer "github.com/NpoolPlatform/order-middleware/pkg/tracer/order"
-
-	constant "github.com/NpoolPlatform/order-middleware/pkg/message/const"
-
-	"go.opentelemetry.io/otel"
-	scodes "go.opentelemetry.io/otel/codes"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
 	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
 	npool "github.com/NpoolPlatform/message/npool/order/mw/v1/order"
+
+	order1 "github.com/NpoolPlatform/order-middleware/pkg/mw/order"
 )
 
 func (s *Server) CreateOrder(ctx context.Context, in *npool.CreateOrderRequest) (*npool.CreateOrderResponse, error) {
-	var err error
-
-	_, span := otel.Tracer(constant.ServiceName).Start(ctx, "CreateOrder")
-	defer span.End()
-
-	defer func() {
-		if err != nil {
-			span.SetStatus(scodes.Error, err.Error())
-			span.RecordError(err)
-		}
-	}()
-
-	span = tracer.Trace(span, in.GetInfo())
-
-	err = validate(in.GetInfo())
+	req := in.GetInfo()
+	handler, err := order1.NewHandler(
+		ctx,
+		order1.WithID(req.ID),
+		order1.WithGoodID(req.GoodID),
+		order1.WithAppID(req.AppID),
+		order1.WithUserID(req.UserID),
+		order1.WithParentOrderID(req.ParentOrderID),
+		order1.WithPayWithParent(req.PayWithParent),
+		order1.WithUnits(req.Units),
+		order1.WithPromotionID(req.PromotionID),
+		order1.WithDiscountCouponID(req.DiscountID),
+		order1.WithUserSpecialReductionID(req.SpecialOfferID),
+		order1.WithStartAt(req.Start),
+		order1.WithEndAt(req.End),
+		order1.WithFixAmountCouponID(req.FixAmountID),
+		order1.WithCouponIDs(req.CouponIDs),
+		order1.WithPaymentID(req.PaymentID),
+		order1.WithPaymentAccountID(req.PaymentAccountID),
+		order1.WithPaymentAccountStartAmount(req.PaymentAccountStartAmount),
+		order1.WithPaymentAmount(req.PaymentAmount),
+		order1.WithPayWithBalanceAmount(req.PayWithBalanceAmount),
+		order1.WithPaymentCoinUSDCurrency(req.PaymentCoinUSDCurrency),
+		order1.WithPaymentLocalUSDCurrency(req.PaymentLocalUSDCurrency),
+		order1.WithPaymentLiveUSDCurrency(req.PaymentLiveUSDCurrency),
+		order1.WithPaymentCoinID(req.PaymentCoinID),
+	)
 	if err != nil {
-		return &npool.CreateOrderResponse{}, err
+		logger.Sugar().Errorw(
+			"CreateOrder",
+			"Req", req,
+			"error", err,
+		)
+		return &npool.CreateOrderResponse{}, status.Error(codes.InvalidArgument, err.Error())
 	}
-
-	span = commontracer.TraceInvoker(span, "order", "middleware", "Create")
-
-	info, err := order1.CreateOrder(ctx, in.GetInfo())
+	info, err := handler.CreateOrder(ctx)
 	if err != nil {
-		logger.Sugar().Errorw("CreateOrder", "error", err)
-		return &npool.CreateOrderResponse{}, status.Error(codes.Internal, err.Error())
+		logger.Sugar().Errorw(
+			"CreateOrder",
+			"Req", req,
+			"error", err,
+		)
+		return &npool.CreateOrderResponse{}, status.Error(codes.Aborted, err.Error())
 	}
 
 	return &npool.CreateOrderResponse{
