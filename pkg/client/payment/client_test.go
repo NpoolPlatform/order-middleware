@@ -21,7 +21,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 
-	"github.com/NpoolPlatform/appuser-middleware/pkg/testinit"
+	"github.com/NpoolPlatform/order-middleware/pkg/testinit"
 
 	basetypes "github.com/NpoolPlatform/message/npool/basetypes/v1"
 )
