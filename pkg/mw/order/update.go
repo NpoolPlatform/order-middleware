@@ -57,10 +57,16 @@ func (h *updateHandler) updateOrder(ctx context.Context, tx *ent.Tx, req *orderc
 	}
 	endAt := startAt + duration
 
+	if payment.State != basetypes.PaymentState_PaymentStateWait.String() && order.Type == basetypes.OrderType_OrderTypeNormal.String() {
+		if req.PaymentUserSetCanceled != nil && *req.PaymentUserSetCanceled {
+			return fmt.Errorf("not wait payment")
+		}
+	}
+
 	if _, err := ordercrud.UpdateSet(
 		order.Update(),
 		&ordercrud.Req{
-			State:         basetypes.OrderState_DefaultOrderState.Enum(),
+			State:         req.State,
 			StartAt:       &startAt,
 			EndAt:         &endAt,
 			LastBenefitAt: req.LastBenefitAt,
@@ -73,7 +79,7 @@ func (h *updateHandler) updateOrder(ctx context.Context, tx *ent.Tx, req *orderc
 		payment.Update(),
 		&paymentcrud.Req{
 			UserSetCanceled: req.PaymentUserSetCanceled,
-			State:           basetypes.PaymentState_DefaultPaymentState.Enum(),
+			State:           req.PaymentState,
 			FinishAmount:    req.PaymentFinishAmount,
 			FakePayment:     req.PaymentFakePayment,
 		},

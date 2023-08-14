@@ -127,7 +127,7 @@ func (h *Handler) CreateOrder(ctx context.Context) (*npool.Order, error) {
 				StartAt:                h.StartAt,
 				EndAt:                  h.EndAt,
 				FixAmountCouponID:      h.FixAmountCouponID,
-				Type:                   basetypes.OrderType_DefaultOrderType.Enum(),
+				Type:                   h.Type,
 				State:                  &orderState,
 				CouponIDs:              &h.CouponIDs,
 			},

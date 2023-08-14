@@ -33,6 +33,7 @@ type Handler struct {
 	State                     *basetypes.OrderState
 	CouponIDs                 []uuid.UUID
 	LastBenefitAt             *uint32
+	PaymentState              *basetypes.PaymentState
 	PaymentID                 *uuid.UUID
 	PaymentAccountID          *uuid.UUID
 	PaymentAccountStartAmount *decimal.Decimal
@@ -234,7 +235,7 @@ func WithFixAmountCouponID(id *string) func(context.Context, *Handler) error {
 func WithCouponIDs(ids []string) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if len(ids) == 0 {
-			return fmt.Errorf("invalid ids")
+			return nil
 		}
 		_ids := []uuid.UUID{}
 		for _, id := range ids {
@@ -282,6 +283,24 @@ func WithState(state *basetypes.OrderState) func(context.Context, *Handler) erro
 			return fmt.Errorf("invalid lockedby")
 		}
 		h.State = state
+		return nil
+	}
+}
+
+func WithPaymentState(state *basetypes.PaymentState) func(context.Context, *Handler) error {
+	return func(ctx context.Context, h *Handler) error {
+		if state == nil {
+			return nil
+		}
+		switch *state {
+		case basetypes.PaymentState_PaymentStateWait:
+		case basetypes.PaymentState_PaymentStateCanceled:
+		case basetypes.PaymentState_PaymentStateTimeOut:
+		case basetypes.PaymentState_PaymentStateDone:
+		default:
+			return fmt.Errorf("invalid paymentstate")
+		}
+		h.PaymentState = state
 		return nil
 	}
 }
@@ -535,7 +554,7 @@ func WithConds(conds *npool.Conds) func(context.Context, *Handler) error {
 				return fmt.Errorf("invalid order type")
 			}
 			_type := conds.GetType().GetValue()
-			h.Conds.Type = &cruder.Cond{Op: conds.GetType().GetOp(), Val: basetypes.PaymentState(_type)}
+			h.Conds.Type = &cruder.Cond{Op: conds.GetType().GetOp(), Val: basetypes.OrderType(_type)}
 		}
 		if conds.CouponID != nil {
 			id, err := uuid.Parse(conds.GetCouponID().GetValue())
@@ -622,6 +641,17 @@ func WithReqs(reqs []*npool.OrderReq) func(context.Context, *Handler) error {
 			}
 			if req.Start != nil {
 				_req.StartAt = req.Start
+			}
+			if req.PaymentState != nil {
+				switch req.GetPaymentState() {
+				case basetypes.PaymentState_PaymentStateWait:
+				case basetypes.PaymentState_PaymentStateDone:
+				case basetypes.PaymentState_PaymentStateCanceled:
+				case basetypes.PaymentState_PaymentStateTimeOut:
+				default:
+					return fmt.Errorf("invalid State")
+				}
+				_req.PaymentState = req.PaymentState
 			}
 			if req.LastBenefitAt != nil {
 				_req.LastBenefitAt = req.LastBenefitAt

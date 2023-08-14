@@ -40,6 +40,7 @@ func (s *Server) CreateOrder(ctx context.Context, in *npool.CreateOrderRequest) 
 		order1.WithPaymentLocalUSDCurrency(req.PaymentLocalUSDCurrency),
 		order1.WithPaymentLiveUSDCurrency(req.PaymentLiveUSDCurrency),
 		order1.WithPaymentCoinID(req.PaymentCoinID),
+		order1.WithType(req.OrderType),
 	)
 	if err != nil {
 		logger.Sugar().Errorw(

@@ -298,7 +298,7 @@ func WithState(state *basetypes.PaymentState) func(context.Context, *Handler) er
 		case basetypes.PaymentState_PaymentStateTimeOut:
 		case basetypes.PaymentState_PaymentStateDone:
 		default:
-			return fmt.Errorf("invalid lockedby")
+			return fmt.Errorf("invalid state")
 		}
 		h.State = state
 		return nil

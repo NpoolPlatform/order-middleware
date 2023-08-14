@@ -33,6 +33,7 @@ type Req struct {
 	LastBenefitAt             *uint32
 	CreatedAt                 *uint32
 	DeletedAt                 *uint32
+	PaymentState              *basetypes.PaymentState
 	PaymentID                 *uuid.UUID
 	PaymentAccountID          *uuid.UUID
 	PaymentAccountStartAmount *decimal.Decimal
