@@ -3,10 +3,12 @@ package order
 import (
 	"fmt"
 
+	"entgo.io/ent/dialect/sql"
+	"entgo.io/ent/dialect/sql/sqljson"
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
 	basetypes "github.com/NpoolPlatform/message/npool/basetypes/v1"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent"
-	entpayment "github.com/NpoolPlatform/order-middleware/pkg/db/ent/order"
+	entorder "github.com/NpoolPlatform/order-middleware/pkg/db/ent/order"
 	"github.com/google/uuid"
 	"github.com/shopspring/decimal"
 )
@@ -152,9 +154,9 @@ func SetQueryConds(q *ent.OrderQuery, conds *Conds) (*ent.OrderQuery, error) {
 		}
 		switch conds.ID.Op {
 		case cruder.EQ:
-			q.Where(entpayment.ID(id))
+			q.Where(entorder.ID(id))
 		default:
-			return nil, fmt.Errorf("invalid payment field")
+			return nil, fmt.Errorf("invalid order field")
 		}
 	}
 	if conds.IDs != nil {
@@ -165,9 +167,9 @@ func SetQueryConds(q *ent.OrderQuery, conds *Conds) (*ent.OrderQuery, error) {
 		if len(ids) > 0 {
 			switch conds.IDs.Op {
 			case cruder.IN:
-				q.Where(entpayment.IDIn(ids...))
+				q.Where(entorder.IDIn(ids...))
 			default:
-				return nil, fmt.Errorf("invalid payment field")
+				return nil, fmt.Errorf("invalid order field")
 			}
 		}
 	}
@@ -178,9 +180,9 @@ func SetQueryConds(q *ent.OrderQuery, conds *Conds) (*ent.OrderQuery, error) {
 		}
 		switch conds.AppID.Op {
 		case cruder.EQ:
-			q.Where(entpayment.AppID(id))
+			q.Where(entorder.AppID(id))
 		default:
-			return nil, fmt.Errorf("invalid payment field")
+			return nil, fmt.Errorf("invalid order field")
 		}
 	}
 	if conds.UserID != nil {
@@ -190,9 +192,9 @@ func SetQueryConds(q *ent.OrderQuery, conds *Conds) (*ent.OrderQuery, error) {
 		}
 		switch conds.UserID.Op {
 		case cruder.EQ:
-			q.Where(entpayment.UserID(id))
+			q.Where(entorder.UserID(id))
 		default:
-			return nil, fmt.Errorf("invalid payment field")
+			return nil, fmt.Errorf("invalid order field")
 		}
 	}
 	if conds.GoodID != nil {
@@ -202,9 +204,9 @@ func SetQueryConds(q *ent.OrderQuery, conds *Conds) (*ent.OrderQuery, error) {
 		}
 		switch conds.GoodID.Op {
 		case cruder.EQ:
-			q.Where(entpayment.GoodID(id))
+			q.Where(entorder.GoodID(id))
 		default:
-			return nil, fmt.Errorf("invalid payment field")
+			return nil, fmt.Errorf("invalid order field")
 		}
 	}
 	if conds.FixAmountCouponID != nil {
@@ -214,9 +216,9 @@ func SetQueryConds(q *ent.OrderQuery, conds *Conds) (*ent.OrderQuery, error) {
 		}
 		switch conds.FixAmountCouponID.Op {
 		case cruder.EQ:
-			q.Where(entpayment.FixAmountCouponID(id))
+			q.Where(entorder.FixAmountCouponID(id))
 		default:
-			return nil, fmt.Errorf("invalid payment field")
+			return nil, fmt.Errorf("invalid order field")
 		}
 	}
 	if conds.DiscountCouponID != nil {
@@ -226,9 +228,9 @@ func SetQueryConds(q *ent.OrderQuery, conds *Conds) (*ent.OrderQuery, error) {
 		}
 		switch conds.DiscountCouponID.Op {
 		case cruder.EQ:
-			q.Where(entpayment.DiscountCouponID(id))
+			q.Where(entorder.DiscountCouponID(id))
 		default:
-			return nil, fmt.Errorf("invalid payment field")
+			return nil, fmt.Errorf("invalid order field")
 		}
 	}
 	if conds.UserSpecialReductionID != nil {
@@ -238,9 +240,9 @@ func SetQueryConds(q *ent.OrderQuery, conds *Conds) (*ent.OrderQuery, error) {
 		}
 		switch conds.UserSpecialReductionID.Op {
 		case cruder.EQ:
-			q.Where(entpayment.UserSpecialReductionID(id))
+			q.Where(entorder.UserSpecialReductionID(id))
 		default:
-			return nil, fmt.Errorf("invalid payment field")
+			return nil, fmt.Errorf("invalid order field")
 		}
 	}
 	if conds.State != nil {
@@ -250,9 +252,9 @@ func SetQueryConds(q *ent.OrderQuery, conds *Conds) (*ent.OrderQuery, error) {
 		}
 		switch conds.State.Op {
 		case cruder.EQ:
-			q.Where(entpayment.State(state.String()))
+			q.Where(entorder.State(state.String()))
 		default:
-			return nil, fmt.Errorf("invalid payment field")
+			return nil, fmt.Errorf("invalid order field")
 		}
 	}
 	if conds.States != nil {
@@ -263,9 +265,9 @@ func SetQueryConds(q *ent.OrderQuery, conds *Conds) (*ent.OrderQuery, error) {
 		if len(states) > 0 {
 			switch conds.States.Op {
 			case cruder.IN:
-				q.Where(entpayment.StateIn(states...))
+				q.Where(entorder.StateIn(states...))
 			default:
-				return nil, fmt.Errorf("invalid payment field")
+				return nil, fmt.Errorf("invalid order field")
 			}
 		}
 	}
@@ -276,11 +278,47 @@ func SetQueryConds(q *ent.OrderQuery, conds *Conds) (*ent.OrderQuery, error) {
 		}
 		switch conds.LastBenefitAt.Op {
 		case cruder.EQ:
-			q.Where(entpayment.LastBenefitAt(lastBenefitAt))
+			q.Where(entorder.LastBenefitAt(lastBenefitAt))
 		default:
-			return nil, fmt.Errorf("invalid payment field")
+			return nil, fmt.Errorf("invalid order field")
 		}
 	}
-	q.Where(entpayment.DeletedAt(0))
+	if conds.CouponID != nil {
+		id, ok := conds.CouponID.Val.(uuid.UUID)
+		if !ok {
+			return nil, fmt.Errorf("invalid goodid")
+		}
+		switch conds.CouponID.Op {
+		case cruder.LIKE:
+			q.Where(func(selector *sql.Selector) {
+				selector.Where(sqljson.ValueContains(entorder.FieldCouponIds, id))
+			})
+		default:
+			return nil, fmt.Errorf("invalid order field")
+		}
+	}
+	if conds.CouponIDs != nil {
+		ids, ok := conds.CouponIDs.Val.([]uuid.UUID)
+		if !ok {
+			return nil, fmt.Errorf("invalid couponids")
+		}
+		switch conds.CouponIDs.Op {
+		case cruder.EQ:
+			if len(ids) > 0 {
+				q.Where(func(selector *sql.Selector) {
+					for i := 0; i < len(ids); i++ {
+						if i == 0 {
+							selector.Where(sqljson.ValueContains(entorder.FieldCouponIds, ids[i]))
+						} else {
+							selector.Or().Where(sqljson.ValueContains(entorder.FieldCouponIds, ids[i]))
+						}
+					}
+				})
+			}
+		default:
+			return nil, fmt.Errorf("invalid order field")
+		}
+	}
+	q.Where(entorder.DeletedAt(0))
 	return q, nil
 }
