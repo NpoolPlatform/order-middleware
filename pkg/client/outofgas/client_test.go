@@ -79,6 +79,8 @@ func updateOutOfGas(t *testing.T) {
 		)
 		info, err := UpdateOutOfGas(context.Background(), &req)
 		if assert.Nil(t, err) {
+			ret.Start = info.Start
+			ret.End = info.End
 			ret.UpdatedAt = info.UpdatedAt
 			assert.Equal(t, info, &ret)
 		}

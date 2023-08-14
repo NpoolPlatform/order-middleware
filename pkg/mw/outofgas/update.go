@@ -54,5 +54,5 @@ func (h *Handler) UpdateOutOfGas(ctx context.Context) (*npool.OutOfGas, error) {
 		return nil, err
 	}
 
-	return info, nil
+	return h.GetOutOfGas(ctx)
 }
