@@ -55,5 +55,5 @@ func (h *Handler) UpdateCompensate(ctx context.Context) (*npool.Compensate, erro
 		return nil, err
 	}
 
-	return info, nil
+	return h.GetCompensate(ctx)
 }

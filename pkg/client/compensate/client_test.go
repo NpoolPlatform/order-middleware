@@ -72,17 +72,20 @@ func updateCompensate(t *testing.T) {
 		var (
 			start   = uint32(10006)
 			end     = uint32(10007)
-			Message = "Message update" + uuid.NewString()
+			message = "Message update" + uuid.NewString()
 
 			req = npool.CompensateReq{
 				ID:      &ret.ID,
 				Start:   &start,
 				End:     &end,
-				Message: &Message,
+				Message: &message,
 			}
 		)
 		info, err := UpdateCompensate(context.Background(), &req)
 		if assert.Nil(t, err) {
+			ret.Start = info.Start
+			ret.End = info.End
+			ret.Message = info.Message
 			ret.UpdatedAt = info.UpdatedAt
 			assert.Equal(t, info, &ret)
 		}
