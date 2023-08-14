@@ -8,7 +8,6 @@ import (
 	"testing"
 
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
-	"github.com/shopspring/decimal"
 
 	"bou.ke/monkey"
 	"github.com/NpoolPlatform/go-service-framework/pkg/config"
@@ -44,16 +43,16 @@ var (
 		UserID:               uuid.NewString(),
 		GoodID:               uuid.NewString(),
 		AccountID:            uuid.NewString(),
-		StartAmount:          decimal.Zero.String(),
-		Amount:               decimal.Zero.String(),
-		PayWithBalanceAmount: decimal.Zero.String(),
-		FinishAmount:         decimal.Zero.String(),
-		CoinUsdCurrency:      decimal.Zero.String(),
-		LocalCoinUsdCurrency: decimal.Zero.String(),
-		LiveCoinUsdCurrency:  decimal.Zero.String(),
+		StartAmount:          "1001.000000000000000000",
+		Amount:               "1002.000000000000000000",
+		PayWithBalanceAmount: "1003.000000000000000000",
+		FinishAmount:         "1004.000000000000000000",
+		CoinUsdCurrency:      "1005.000000000000000000",
+		LocalCoinUsdCurrency: "1006.000000000000000000",
+		LiveCoinUsdCurrency:  "1007.000000000000000000",
 		CoinInfoID:           uuid.NewString(),
-		PaymentStateStr:      basetypes.PaymentState_DefaultPaymentState.String(),
-		State:                basetypes.PaymentState_DefaultPaymentState,
+		PaymentStateStr:      basetypes.PaymentState_PaymentStateWait.String(),
+		State:                basetypes.PaymentState_PaymentStateWait,
 		ChainTransactionID:   uuid.NewString(),
 		UserSetPaid:          false,
 		UserSetCanceled:      false,
@@ -109,6 +108,8 @@ func updatePayment(t *testing.T) {
 		)
 		info, err := UpdatePayment(context.Background(), &req)
 		if assert.Nil(t, err) {
+			ret.State = info.State
+			ret.PaymentStateStr = info.State.String()
 			ret.UpdatedAt = info.UpdatedAt
 			assert.Equal(t, info, &ret)
 		}

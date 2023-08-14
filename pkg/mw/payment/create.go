@@ -106,10 +106,10 @@ func (h *Handler) CreatePayment(ctx context.Context) (*npool.Payment, error) {
 		stm, err := paymentcrud.SetQueryConds(
 			tx.Payment.Query(),
 			&paymentcrud.Conds{
-				AppID:     &cruder.Cond{Op: cruder.EQ, Val: h.AppID},
-				UserID:    &cruder.Cond{Op: cruder.EQ, Val: h.UserID},
-				OrderID:   &cruder.Cond{Op: cruder.EQ, Val: h.OrderID},
-				AccountID: &cruder.Cond{Op: cruder.EQ, Val: h.AccountID},
+				AppID:     &cruder.Cond{Op: cruder.EQ, Val: *h.AppID},
+				UserID:    &cruder.Cond{Op: cruder.EQ, Val: *h.UserID},
+				OrderID:   &cruder.Cond{Op: cruder.EQ, Val: *h.OrderID},
+				AccountID: &cruder.Cond{Op: cruder.EQ, Val: *h.AccountID},
 			},
 		)
 		if err != nil {

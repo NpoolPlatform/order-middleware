@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 
+	basetypes "github.com/NpoolPlatform/message/npool/basetypes/v1"
 	"github.com/NpoolPlatform/order-middleware/pkg/db"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent"
 	entpayment "github.com/NpoolPlatform/order-middleware/pkg/db/ent/payment"
@@ -76,6 +77,12 @@ func (h *queryHandler) scan(ctx context.Context) error {
 	return h.stm.Scan(ctx, &h.infos)
 }
 
+func (h *queryHandler) formalize() {
+	for _, info := range h.infos {
+		info.State = basetypes.PaymentState(basetypes.PaymentState_value[info.PaymentStateStr])
+	}
+}
+
 func (h *Handler) GetPayment(ctx context.Context) (*npool.Payment, error) {
 	if h.ID == nil {
 		return nil, fmt.Errorf("invalid id")
@@ -98,6 +105,8 @@ func (h *Handler) GetPayment(ctx context.Context) (*npool.Payment, error) {
 	if len(handler.infos) > 1 {
 		return nil, fmt.Errorf("too many records")
 	}
+
+	handler.formalize()
 
 	return handler.infos[0], nil
 }
@@ -125,6 +134,8 @@ func (h *Handler) GetPayments(ctx context.Context) ([]*npool.Payment, uint32, er
 	if err != nil {
 		return nil, 0, err
 	}
+
+	handler.formalize()
 
 	return handler.infos, handler.total, nil
 }

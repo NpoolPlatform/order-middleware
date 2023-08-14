@@ -57,5 +57,5 @@ func (h *Handler) UpdatePayment(ctx context.Context) (*npool.Payment, error) {
 		return nil, err
 	}
 
-	return info, nil
+	return h.GetPayment(ctx)
 }
