@@ -5,7 +5,7 @@ import (
 	"fmt"
 
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
-	basetypes "github.com/NpoolPlatform/message/npool/basetypes/v1"
+	basetypes "github.com/NpoolPlatform/message/npool/basetypes/order/v1"
 	npool "github.com/NpoolPlatform/message/npool/order/mw/v1/order"
 	ordercrud "github.com/NpoolPlatform/order-middleware/pkg/crud/order"
 	paymentcrud "github.com/NpoolPlatform/order-middleware/pkg/crud/payment"
@@ -57,7 +57,7 @@ func (h *updateHandler) updateOrder(ctx context.Context, tx *ent.Tx, req *orderc
 	}
 	endAt := startAt + duration
 
-	if payment.State != basetypes.PaymentState_PaymentStateWait.String() && order.Type == basetypes.OrderType_OrderTypeNormal.String() {
+	if payment.State != basetypes.PaymentState_PaymentStateWait.String() && order.Type == basetypes.OrderType_Normal.String() {
 		if req.PaymentUserSetCanceled != nil && *req.PaymentUserSetCanceled {
 			return fmt.Errorf("not wait payment")
 		}

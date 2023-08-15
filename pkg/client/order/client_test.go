@@ -12,6 +12,7 @@ import (
 	"bou.ke/monkey"
 	"github.com/NpoolPlatform/go-service-framework/pkg/config"
 	grpc2 "github.com/NpoolPlatform/go-service-framework/pkg/grpc"
+	orderbasetypes "github.com/NpoolPlatform/message/npool/basetypes/order/v1"
 	basetypes "github.com/NpoolPlatform/message/npool/basetypes/v1"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
@@ -39,10 +40,10 @@ var ret = npool.Order{
 	UserID:                  uuid.NewString(),
 	GoodID:                  uuid.NewString(),
 	Units:                   "10001.000000000000000000",
-	OrderTypeStr:            basetypes.OrderType_OrderTypeNormal.String(),
-	OrderType:               basetypes.OrderType_OrderTypeNormal,
-	OrderStateStr:           basetypes.OrderState_OrderStateWaitPayment.String(),
-	OrderState:              basetypes.OrderState_OrderStateWaitPayment,
+	OrderTypeStr:            orderbasetypes.OrderType_Normal.String(),
+	OrderType:               orderbasetypes.OrderType_Normal,
+	OrderStateStr:           orderbasetypes.OrderState_OrderStateWaitPayment.String(),
+	OrderState:              orderbasetypes.OrderState_OrderStateWaitPayment,
 	ParentOrderID:           uuid.NewString(),
 	ParentOrderGoodID:       "",
 	Start:                   10002,
@@ -54,8 +55,8 @@ var ret = npool.Order{
 	PaymentID:               uuid.NewString(),
 	PaymentAccountID:        uuid.NewString(),
 	PaymentAmount:           "1007.000000000000000000",
-	PaymentStateStr:         basetypes.PaymentState_PaymentStateWait.String(),
-	PaymentState:            basetypes.PaymentState_PaymentStateWait,
+	PaymentStateStr:         orderbasetypes.PaymentState_PaymentStateWait.String(),
+	PaymentState:            orderbasetypes.PaymentState_PaymentStateWait,
 	PayWithBalanceAmount:    "1008.000000000000000000",
 	PaidAt:                  1009,
 	PaymentStartAmount:      "1010.000000000000000000",

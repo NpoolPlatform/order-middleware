@@ -8,6 +8,7 @@ import (
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent"
 	"github.com/shopspring/decimal"
 
+	orderbasetypes "github.com/NpoolPlatform/message/npool/basetypes/order/v1"
 	basetypes "github.com/NpoolPlatform/message/npool/basetypes/v1"
 	npool "github.com/NpoolPlatform/message/npool/order/mw/v1/order"
 	ordercrud "github.com/NpoolPlatform/order-middleware/pkg/crud/order"
@@ -77,9 +78,9 @@ func (h *createHandler) validate() error {
 		return fmt.Errorf("invalid ordertype")
 	}
 	switch *h.Type {
-	case basetypes.OrderType_OrderTypeNormal:
-	case basetypes.OrderType_OrderTypeOffline:
-	case basetypes.OrderType_OrderTypeAirdrop:
+	case orderbasetypes.OrderType_Normal:
+	case orderbasetypes.OrderType_Offline:
+	case orderbasetypes.OrderType_Airdrop:
 	default:
 		return fmt.Errorf("invalid ordertype")
 	}
@@ -109,7 +110,7 @@ func (h *Handler) CreateOrder(ctx context.Context) (*npool.Order, error) {
 	}
 
 	err := db.WithTx(ctx, func(ctx context.Context, tx *ent.Tx) error {
-		orderState := basetypes.OrderState_OrderStateWaitPayment
+		orderState := orderbasetypes.OrderState_OrderStateWaitPayment
 
 		if _, err := ordercrud.CreateSet(
 			tx.Order.Create(),
@@ -135,7 +136,7 @@ func (h *Handler) CreateOrder(ctx context.Context) (*npool.Order, error) {
 			return err
 		}
 
-		paymentState := basetypes.PaymentState_PaymentStateWait
+		paymentState := orderbasetypes.PaymentState_PaymentStateWait
 
 		if _, err := paymentcrud.CreateSet(
 			tx.Payment.Create(),

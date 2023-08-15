@@ -9,6 +9,7 @@ import (
 	"github.com/shopspring/decimal"
 
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
+	orderbasetypes "github.com/NpoolPlatform/message/npool/basetypes/order/v1"
 	basetypes "github.com/NpoolPlatform/message/npool/basetypes/v1"
 	npool "github.com/NpoolPlatform/message/npool/order/mw/v1/payment"
 	paymentcrud "github.com/NpoolPlatform/order-middleware/pkg/crud/payment"
@@ -73,7 +74,7 @@ func (h *createHandler) validate() error {
 		return fmt.Errorf("invalid coininfoid")
 	}
 	switch *h.State {
-	case basetypes.PaymentState_PaymentStateWait:
+	case orderbasetypes.PaymentState_PaymentStateWait:
 	default:
 		return fmt.Errorf("invalid state")
 	}

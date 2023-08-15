@@ -22,6 +22,7 @@ import (
 
 	"github.com/NpoolPlatform/order-middleware/pkg/testinit"
 
+	orderbasetypes "github.com/NpoolPlatform/message/npool/basetypes/order/v1"
 	basetypes "github.com/NpoolPlatform/message/npool/basetypes/v1"
 )
 
@@ -51,8 +52,8 @@ var (
 		LocalCoinUsdCurrency: "1006.000000000000000000",
 		LiveCoinUsdCurrency:  "1007.000000000000000000",
 		CoinInfoID:           uuid.NewString(),
-		PaymentStateStr:      basetypes.PaymentState_PaymentStateWait.String(),
-		State:                basetypes.PaymentState_PaymentStateWait,
+		PaymentStateStr:      orderbasetypes.PaymentState_PaymentStateWait.String(),
+		State:                orderbasetypes.PaymentState_PaymentStateWait,
 		ChainTransactionID:   uuid.NewString(),
 		UserSetPaid:          false,
 		UserSetCanceled:      false,
@@ -99,7 +100,7 @@ func createPayment(t *testing.T) {
 func updatePayment(t *testing.T) {
 	if ret.ID == id {
 		var (
-			state = basetypes.PaymentState_PaymentStateDone
+			state = orderbasetypes.PaymentState_PaymentStateDone
 
 			req = npool.PaymentReq{
 				ID:    &ret.ID,

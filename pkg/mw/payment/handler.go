@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	basetypes "github.com/NpoolPlatform/message/npool/basetypes/v1"
+	basetypes "github.com/NpoolPlatform/message/npool/basetypes/order/v1"
 	npool "github.com/NpoolPlatform/message/npool/order/mw/v1/payment"
 	constant "github.com/NpoolPlatform/order-middleware/pkg/const"
 	paymentcrud "github.com/NpoolPlatform/order-middleware/pkg/crud/payment"

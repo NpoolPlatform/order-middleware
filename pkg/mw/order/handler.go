@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	basetypes "github.com/NpoolPlatform/message/npool/basetypes/v1"
+	basetypes "github.com/NpoolPlatform/message/npool/basetypes/order/v1"
 	npool "github.com/NpoolPlatform/message/npool/order/mw/v1/order"
 	constant "github.com/NpoolPlatform/order-middleware/pkg/const"
 	ordercrud "github.com/NpoolPlatform/order-middleware/pkg/crud/order"
@@ -256,9 +256,9 @@ func WithType(orderType *basetypes.OrderType) func(context.Context, *Handler) er
 			return nil
 		}
 		switch *orderType {
-		case basetypes.OrderType_OrderTypeAirdrop:
-		case basetypes.OrderType_OrderTypeOffline:
-		case basetypes.OrderType_OrderTypeNormal:
+		case basetypes.OrderType_Airdrop:
+		case basetypes.OrderType_Offline:
+		case basetypes.OrderType_Normal:
 		default:
 			return fmt.Errorf("invalid order type")
 		}
@@ -475,7 +475,7 @@ func WithPaymentFakePayment(value *bool) func(context.Context, *Handler) error {
 	}
 }
 
-//nolint:funlen,gocyclo
+//nolint:gocyclo
 func WithConds(conds *npool.Conds) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		h.Conds = &ordercrud.Conds{}
@@ -510,20 +510,6 @@ func WithConds(conds *npool.Conds) func(context.Context, *Handler) error {
 			}
 			h.Conds.GoodID = &cruder.Cond{Op: conds.GetGoodID().GetOp(), Val: id}
 		}
-		if conds.FixAmountCouponID != nil {
-			id, err := uuid.Parse(conds.GetFixAmountCouponID().GetValue())
-			if err != nil {
-				return err
-			}
-			h.Conds.FixAmountCouponID = &cruder.Cond{Op: conds.GetFixAmountCouponID().GetOp(), Val: id}
-		}
-		if conds.DiscountCouponID != nil {
-			id, err := uuid.Parse(conds.GetDiscountCouponID().GetValue())
-			if err != nil {
-				return err
-			}
-			h.Conds.DiscountCouponID = &cruder.Cond{Op: conds.GetDiscountCouponID().GetOp(), Val: id}
-		}
 		if conds.UserSpecialReductionID != nil {
 			id, err := uuid.Parse(conds.GetUserSpecialReductionID().GetValue())
 			if err != nil {
@@ -547,9 +533,9 @@ func WithConds(conds *npool.Conds) func(context.Context, *Handler) error {
 		}
 		if conds.Type != nil {
 			switch conds.GetType().GetValue() {
-			case uint32(basetypes.OrderType_OrderTypeAirdrop):
-			case uint32(basetypes.OrderType_OrderTypeNormal):
-			case uint32(basetypes.OrderType_OrderTypeOffline):
+			case uint32(basetypes.OrderType_Airdrop):
+			case uint32(basetypes.OrderType_Normal):
+			case uint32(basetypes.OrderType_Offline):
 			default:
 				return fmt.Errorf("invalid order type")
 			}

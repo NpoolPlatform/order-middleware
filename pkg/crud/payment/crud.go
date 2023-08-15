@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
-	basetypes "github.com/NpoolPlatform/message/npool/basetypes/v1"
+	basetypes "github.com/NpoolPlatform/message/npool/basetypes/order/v1"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent"
 	entpayment "github.com/NpoolPlatform/order-middleware/pkg/db/ent/payment"
 	"github.com/google/uuid"
