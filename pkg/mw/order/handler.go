@@ -24,11 +24,9 @@ type Handler struct {
 	PayWithParent             *bool
 	Units                     *decimal.Decimal
 	PromotionID               *uuid.UUID
-	DiscountCouponID          *uuid.UUID
 	UserSpecialReductionID    *uuid.UUID
 	StartAt                   *uint32
 	EndAt                     *uint32
-	FixAmountCouponID         *uuid.UUID
 	Type                      *basetypes.OrderType
 	State                     *basetypes.OrderState
 	CouponIDs                 []uuid.UUID
@@ -170,20 +168,6 @@ func WithPromotionID(id *string) func(context.Context, *Handler) error {
 	}
 }
 
-func WithDiscountCouponID(id *string) func(context.Context, *Handler) error {
-	return func(ctx context.Context, h *Handler) error {
-		if id == nil {
-			return nil
-		}
-		_id, err := uuid.Parse(*id)
-		if err != nil {
-			return err
-		}
-		h.DiscountCouponID = &_id
-		return nil
-	}
-}
-
 func WithUserSpecialReductionID(id *string) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if id == nil {
@@ -214,20 +198,6 @@ func WithEndAt(end *uint32) func(context.Context, *Handler) error {
 			return nil
 		}
 		h.EndAt = end
-		return nil
-	}
-}
-
-func WithFixAmountCouponID(id *string) func(context.Context, *Handler) error {
-	return func(ctx context.Context, h *Handler) error {
-		if id == nil {
-			return nil
-		}
-		_id, err := uuid.Parse(*id)
-		if err != nil {
-			return err
-		}
-		h.FixAmountCouponID = &_id
 		return nil
 	}
 }

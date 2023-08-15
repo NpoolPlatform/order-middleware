@@ -61,8 +61,6 @@ func (h *queryHandler) queryJoinMyself(s *sql.Selector) {
 		t.C(entorder.FieldStartAt),
 		t.C(entorder.FieldEndAt),
 		t.C(entorder.FieldPayWithParent),
-		t.C(entorder.FieldFixAmountCouponID),
-		t.C(entorder.FieldDiscountCouponID),
 		t.C(entorder.FieldUserSpecialReductionID),
 		t.C(entorder.FieldCreatedAt),
 		t.C(entorder.FieldCouponIds),
