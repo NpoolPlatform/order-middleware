@@ -6,7 +6,7 @@ import (
 	"entgo.io/ent/schema/field"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/mixin"
 
-	basetypes "github.com/NpoolPlatform/message/npool/basetypes/v1"
+	basetypes "github.com/NpoolPlatform/message/npool/basetypes/order/v1"
 	"github.com/google/uuid"
 	"github.com/shopspring/decimal"
 )
