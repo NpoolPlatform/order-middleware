@@ -17,10 +17,10 @@ func (s *Server) UpdateCompensate(ctx context.Context, in *npool.UpdateCompensat
 	req := in.GetInfo()
 	handler, err := compensate1.NewHandler(
 		ctx,
-		compensate1.WithID(req.ID),
-		compensate1.WithStart(req.Start),
-		compensate1.WithEnd(req.End),
-		compensate1.WithMessage(req.Message),
+		compensate1.WithID(req.ID, true),
+		compensate1.WithStart(req.Start, false),
+		compensate1.WithEnd(req.End, false),
+		compensate1.WithMessage(req.Message, false),
 	)
 	if err != nil {
 		logger.Sugar().Errorw(

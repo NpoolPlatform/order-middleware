@@ -35,7 +35,7 @@ func NewHandler(ctx context.Context, options ...func(context.Context, *Handler) 
 	return handler, nil
 }
 
-func WithID(id *string) func(context.Context, *Handler) error {
+func WithID(id *string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if id == nil {
 			return nil
@@ -49,7 +49,7 @@ func WithID(id *string) func(context.Context, *Handler) error {
 	}
 }
 
-func WithOrderID(id *string) func(context.Context, *Handler) error {
+func WithOrderID(id *string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if id == nil {
 			return nil
@@ -63,7 +63,7 @@ func WithOrderID(id *string) func(context.Context, *Handler) error {
 	}
 }
 
-func WithMessage(message *string) func(context.Context, *Handler) error {
+func WithMessage(message *string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if message == nil {
 			return nil
@@ -73,7 +73,7 @@ func WithMessage(message *string) func(context.Context, *Handler) error {
 	}
 }
 
-func WithStart(start *uint32) func(context.Context, *Handler) error {
+func WithStart(start *uint32, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if start == nil {
 			return nil
@@ -83,7 +83,7 @@ func WithStart(start *uint32) func(context.Context, *Handler) error {
 	}
 }
 
-func WithEnd(end *uint32) func(context.Context, *Handler) error {
+func WithEnd(end *uint32, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if end == nil {
 			return nil

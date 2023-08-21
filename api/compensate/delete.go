@@ -17,7 +17,7 @@ func (s *Server) DeleteCompensate(ctx context.Context, in *npool.DeleteCompensat
 	req := in.GetInfo()
 	handler, err := compensate1.NewHandler(
 		ctx,
-		compensate1.WithID(req.ID),
+		compensate1.WithID(req.ID, true),
 	)
 	if err != nil {
 		logger.Sugar().Errorw(
