@@ -17,9 +17,9 @@ func (s *Server) UpdateOutOfGas(ctx context.Context, in *npool.UpdateOutOfGasReq
 	req := in.GetInfo()
 	handler, err := outofgas1.NewHandler(
 		ctx,
-		outofgas1.WithID(req.ID),
-		outofgas1.WithStart(req.Start),
-		outofgas1.WithEnd(req.End),
+		outofgas1.WithID(req.ID, true),
+		outofgas1.WithStart(req.Start, false),
+		outofgas1.WithEnd(req.End, false),
 	)
 	if err != nil {
 		logger.Sugar().Errorw(

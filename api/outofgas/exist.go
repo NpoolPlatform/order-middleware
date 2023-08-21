@@ -16,7 +16,7 @@ import (
 func (s *Server) ExistOutOfGas(ctx context.Context, in *npool.ExistOutOfGasRequest) (*npool.ExistOutOfGasResponse, error) {
 	handler, err := outofgas1.NewHandler(
 		ctx,
-		outofgas1.WithID(&in.ID),
+		outofgas1.WithID(&in.ID, true),
 	)
 	if err != nil {
 		logger.Sugar().Errorw(

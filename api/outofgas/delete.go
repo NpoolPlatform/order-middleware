@@ -17,7 +17,7 @@ func (s *Server) DeleteOutOfGas(ctx context.Context, in *npool.DeleteOutOfGasReq
 	req := in.GetInfo()
 	handler, err := outofgas1.NewHandler(
 		ctx,
-		outofgas1.WithID(req.ID),
+		outofgas1.WithID(req.ID, true),
 	)
 	if err != nil {
 		logger.Sugar().Errorw(
