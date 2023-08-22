@@ -206,6 +206,13 @@ func State(v string) predicate.Order {
 	})
 }
 
+// InvestmentType applies equality check predicate on the "investment_type" field. It's identical to InvestmentTypeEQ.
+func InvestmentType(v string) predicate.Order {
+	return predicate.Order(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldInvestmentType), v))
+	})
+}
+
 // LastBenefitAt applies equality check predicate on the "last_benefit_at" field. It's identical to LastBenefitAtEQ.
 func LastBenefitAt(v uint32) predicate.Order {
 	return predicate.Order(func(s *sql.Selector) {
@@ -1550,6 +1557,119 @@ func StateEqualFold(v string) predicate.Order {
 func StateContainsFold(v string) predicate.Order {
 	return predicate.Order(func(s *sql.Selector) {
 		s.Where(sql.ContainsFold(s.C(FieldState), v))
+	})
+}
+
+// InvestmentTypeEQ applies the EQ predicate on the "investment_type" field.
+func InvestmentTypeEQ(v string) predicate.Order {
+	return predicate.Order(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldInvestmentType), v))
+	})
+}
+
+// InvestmentTypeNEQ applies the NEQ predicate on the "investment_type" field.
+func InvestmentTypeNEQ(v string) predicate.Order {
+	return predicate.Order(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldInvestmentType), v))
+	})
+}
+
+// InvestmentTypeIn applies the In predicate on the "investment_type" field.
+func InvestmentTypeIn(vs ...string) predicate.Order {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Order(func(s *sql.Selector) {
+		s.Where(sql.In(s.C(FieldInvestmentType), v...))
+	})
+}
+
+// InvestmentTypeNotIn applies the NotIn predicate on the "investment_type" field.
+func InvestmentTypeNotIn(vs ...string) predicate.Order {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Order(func(s *sql.Selector) {
+		s.Where(sql.NotIn(s.C(FieldInvestmentType), v...))
+	})
+}
+
+// InvestmentTypeGT applies the GT predicate on the "investment_type" field.
+func InvestmentTypeGT(v string) predicate.Order {
+	return predicate.Order(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldInvestmentType), v))
+	})
+}
+
+// InvestmentTypeGTE applies the GTE predicate on the "investment_type" field.
+func InvestmentTypeGTE(v string) predicate.Order {
+	return predicate.Order(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldInvestmentType), v))
+	})
+}
+
+// InvestmentTypeLT applies the LT predicate on the "investment_type" field.
+func InvestmentTypeLT(v string) predicate.Order {
+	return predicate.Order(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldInvestmentType), v))
+	})
+}
+
+// InvestmentTypeLTE applies the LTE predicate on the "investment_type" field.
+func InvestmentTypeLTE(v string) predicate.Order {
+	return predicate.Order(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldInvestmentType), v))
+	})
+}
+
+// InvestmentTypeContains applies the Contains predicate on the "investment_type" field.
+func InvestmentTypeContains(v string) predicate.Order {
+	return predicate.Order(func(s *sql.Selector) {
+		s.Where(sql.Contains(s.C(FieldInvestmentType), v))
+	})
+}
+
+// InvestmentTypeHasPrefix applies the HasPrefix predicate on the "investment_type" field.
+func InvestmentTypeHasPrefix(v string) predicate.Order {
+	return predicate.Order(func(s *sql.Selector) {
+		s.Where(sql.HasPrefix(s.C(FieldInvestmentType), v))
+	})
+}
+
+// InvestmentTypeHasSuffix applies the HasSuffix predicate on the "investment_type" field.
+func InvestmentTypeHasSuffix(v string) predicate.Order {
+	return predicate.Order(func(s *sql.Selector) {
+		s.Where(sql.HasSuffix(s.C(FieldInvestmentType), v))
+	})
+}
+
+// InvestmentTypeIsNil applies the IsNil predicate on the "investment_type" field.
+func InvestmentTypeIsNil() predicate.Order {
+	return predicate.Order(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldInvestmentType)))
+	})
+}
+
+// InvestmentTypeNotNil applies the NotNil predicate on the "investment_type" field.
+func InvestmentTypeNotNil() predicate.Order {
+	return predicate.Order(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldInvestmentType)))
+	})
+}
+
+// InvestmentTypeEqualFold applies the EqualFold predicate on the "investment_type" field.
+func InvestmentTypeEqualFold(v string) predicate.Order {
+	return predicate.Order(func(s *sql.Selector) {
+		s.Where(sql.EqualFold(s.C(FieldInvestmentType), v))
+	})
+}
+
+// InvestmentTypeContainsFold applies the ContainsFold predicate on the "investment_type" field.
+func InvestmentTypeContainsFold(v string) predicate.Order {
+	return predicate.Order(func(s *sql.Selector) {
+		s.Where(sql.ContainsFold(s.C(FieldInvestmentType), v))
 	})
 }
 

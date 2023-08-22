@@ -935,6 +935,7 @@ type OrderMutation struct {
 	fix_amount_coupon_id      *uuid.UUID
 	_type                     *string
 	state                     *string
+	investment_type           *string
 	coupon_ids                *[]uuid.UUID
 	last_benefit_at           *uint32
 	addlast_benefit_at        *int32
@@ -1975,6 +1976,55 @@ func (m *OrderMutation) ResetState() {
 	delete(m.clearedFields, order.FieldState)
 }
 
+// SetInvestmentType sets the "investment_type" field.
+func (m *OrderMutation) SetInvestmentType(s string) {
+	m.investment_type = &s
+}
+
+// InvestmentType returns the value of the "investment_type" field in the mutation.
+func (m *OrderMutation) InvestmentType() (r string, exists bool) {
+	v := m.investment_type
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldInvestmentType returns the old "investment_type" field's value of the Order entity.
+// If the Order object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *OrderMutation) OldInvestmentType(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldInvestmentType is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldInvestmentType requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldInvestmentType: %w", err)
+	}
+	return oldValue.InvestmentType, nil
+}
+
+// ClearInvestmentType clears the value of the "investment_type" field.
+func (m *OrderMutation) ClearInvestmentType() {
+	m.investment_type = nil
+	m.clearedFields[order.FieldInvestmentType] = struct{}{}
+}
+
+// InvestmentTypeCleared returns if the "investment_type" field was cleared in this mutation.
+func (m *OrderMutation) InvestmentTypeCleared() bool {
+	_, ok := m.clearedFields[order.FieldInvestmentType]
+	return ok
+}
+
+// ResetInvestmentType resets all changes to the "investment_type" field.
+func (m *OrderMutation) ResetInvestmentType() {
+	m.investment_type = nil
+	delete(m.clearedFields, order.FieldInvestmentType)
+}
+
 // SetCouponIds sets the "coupon_ids" field.
 func (m *OrderMutation) SetCouponIds(u []uuid.UUID) {
 	m.coupon_ids = &u
@@ -2113,7 +2163,7 @@ func (m *OrderMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *OrderMutation) Fields() []string {
-	fields := make([]string, 0, 20)
+	fields := make([]string, 0, 21)
 	if m.created_at != nil {
 		fields = append(fields, order.FieldCreatedAt)
 	}
@@ -2168,6 +2218,9 @@ func (m *OrderMutation) Fields() []string {
 	if m.state != nil {
 		fields = append(fields, order.FieldState)
 	}
+	if m.investment_type != nil {
+		fields = append(fields, order.FieldInvestmentType)
+	}
 	if m.coupon_ids != nil {
 		fields = append(fields, order.FieldCouponIds)
 	}
@@ -2218,6 +2271,8 @@ func (m *OrderMutation) Field(name string) (ent.Value, bool) {
 		return m.GetType()
 	case order.FieldState:
 		return m.State()
+	case order.FieldInvestmentType:
+		return m.InvestmentType()
 	case order.FieldCouponIds:
 		return m.CouponIds()
 	case order.FieldLastBenefitAt:
@@ -2267,6 +2322,8 @@ func (m *OrderMutation) OldField(ctx context.Context, name string) (ent.Value, e
 		return m.OldType(ctx)
 	case order.FieldState:
 		return m.OldState(ctx)
+	case order.FieldInvestmentType:
+		return m.OldInvestmentType(ctx)
 	case order.FieldCouponIds:
 		return m.OldCouponIds(ctx)
 	case order.FieldLastBenefitAt:
@@ -2405,6 +2462,13 @@ func (m *OrderMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetState(v)
+		return nil
+	case order.FieldInvestmentType:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetInvestmentType(v)
 		return nil
 	case order.FieldCouponIds:
 		v, ok := value.([]uuid.UUID)
@@ -2573,6 +2637,9 @@ func (m *OrderMutation) ClearedFields() []string {
 	if m.FieldCleared(order.FieldState) {
 		fields = append(fields, order.FieldState)
 	}
+	if m.FieldCleared(order.FieldInvestmentType) {
+		fields = append(fields, order.FieldInvestmentType)
+	}
 	if m.FieldCleared(order.FieldCouponIds) {
 		fields = append(fields, order.FieldCouponIds)
 	}
@@ -2628,6 +2695,9 @@ func (m *OrderMutation) ClearField(name string) error {
 		return nil
 	case order.FieldState:
 		m.ClearState()
+		return nil
+	case order.FieldInvestmentType:
+		m.ClearInvestmentType()
 		return nil
 	case order.FieldCouponIds:
 		m.ClearCouponIds()
@@ -2696,6 +2766,9 @@ func (m *OrderMutation) ResetField(name string) error {
 		return nil
 	case order.FieldState:
 		m.ResetState()
+		return nil
+	case order.FieldInvestmentType:
+		m.ResetInvestmentType()
 		return nil
 	case order.FieldCouponIds:
 		m.ResetCouponIds()

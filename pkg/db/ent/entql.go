@@ -66,6 +66,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			order.FieldFixAmountCouponID:      {Type: field.TypeUUID, Column: order.FieldFixAmountCouponID},
 			order.FieldType:                   {Type: field.TypeString, Column: order.FieldType},
 			order.FieldState:                  {Type: field.TypeString, Column: order.FieldState},
+			order.FieldInvestmentType:         {Type: field.TypeString, Column: order.FieldInvestmentType},
 			order.FieldCouponIds:              {Type: field.TypeJSON, Column: order.FieldCouponIds},
 			order.FieldLastBenefitAt:          {Type: field.TypeUint32, Column: order.FieldLastBenefitAt},
 		},
@@ -335,6 +336,11 @@ func (f *OrderFilter) WhereType(p entql.StringP) {
 // WhereState applies the entql string predicate on the state field.
 func (f *OrderFilter) WhereState(p entql.StringP) {
 	f.Where(p.Field(order.FieldState))
+}
+
+// WhereInvestmentType applies the entql string predicate on the investment_type field.
+func (f *OrderFilter) WhereInvestmentType(p entql.StringP) {
+	f.Where(p.Field(order.FieldInvestmentType))
 }
 
 // WhereCouponIds applies the entql json.RawMessage predicate on the coupon_ids field.

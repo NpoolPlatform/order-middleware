@@ -49,6 +49,8 @@ const (
 	FieldType = "type"
 	// FieldState holds the string denoting the state field in the database.
 	FieldState = "state"
+	// FieldInvestmentType holds the string denoting the investment_type field in the database.
+	FieldInvestmentType = "investment_type"
 	// FieldCouponIds holds the string denoting the coupon_ids field in the database.
 	FieldCouponIds = "coupon_ids"
 	// FieldLastBenefitAt holds the string denoting the last_benefit_at field in the database.
@@ -78,6 +80,7 @@ var Columns = []string{
 	FieldFixAmountCouponID,
 	FieldType,
 	FieldState,
+	FieldInvestmentType,
 	FieldCouponIds,
 	FieldLastBenefitAt,
 }
@@ -133,6 +136,8 @@ var (
 	DefaultType string
 	// DefaultState holds the default value on creation for the "state" field.
 	DefaultState string
+	// DefaultInvestmentType holds the default value on creation for the "investment_type" field.
+	DefaultInvestmentType string
 	// DefaultCouponIds holds the default value on creation for the "coupon_ids" field.
 	DefaultCouponIds func() []uuid.UUID
 	// DefaultLastBenefitAt holds the default value on creation for the "last_benefit_at" field.

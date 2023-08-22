@@ -141,12 +141,16 @@ func init() {
 	orderDescState := orderFields[15].Descriptor()
 	// order.DefaultState holds the default value on creation for the state field.
 	order.DefaultState = orderDescState.Default.(string)
+	// orderDescInvestmentType is the schema descriptor for investment_type field.
+	orderDescInvestmentType := orderFields[16].Descriptor()
+	// order.DefaultInvestmentType holds the default value on creation for the investment_type field.
+	order.DefaultInvestmentType = orderDescInvestmentType.Default.(string)
 	// orderDescCouponIds is the schema descriptor for coupon_ids field.
-	orderDescCouponIds := orderFields[16].Descriptor()
+	orderDescCouponIds := orderFields[17].Descriptor()
 	// order.DefaultCouponIds holds the default value on creation for the coupon_ids field.
 	order.DefaultCouponIds = orderDescCouponIds.Default.(func() []uuid.UUID)
 	// orderDescLastBenefitAt is the schema descriptor for last_benefit_at field.
-	orderDescLastBenefitAt := orderFields[17].Descriptor()
+	orderDescLastBenefitAt := orderFields[18].Descriptor()
 	// order.DefaultLastBenefitAt holds the default value on creation for the last_benefit_at field.
 	order.DefaultLastBenefitAt = orderDescLastBenefitAt.Default.(uint32)
 	// orderDescID is the schema descriptor for id field.

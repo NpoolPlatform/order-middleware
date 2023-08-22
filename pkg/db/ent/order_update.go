@@ -364,6 +364,26 @@ func (ou *OrderUpdate) ClearState() *OrderUpdate {
 	return ou
 }
 
+// SetInvestmentType sets the "investment_type" field.
+func (ou *OrderUpdate) SetInvestmentType(s string) *OrderUpdate {
+	ou.mutation.SetInvestmentType(s)
+	return ou
+}
+
+// SetNillableInvestmentType sets the "investment_type" field if the given value is not nil.
+func (ou *OrderUpdate) SetNillableInvestmentType(s *string) *OrderUpdate {
+	if s != nil {
+		ou.SetInvestmentType(*s)
+	}
+	return ou
+}
+
+// ClearInvestmentType clears the value of the "investment_type" field.
+func (ou *OrderUpdate) ClearInvestmentType() *OrderUpdate {
+	ou.mutation.ClearInvestmentType()
+	return ou
+}
+
 // SetCouponIds sets the "coupon_ids" field.
 func (ou *OrderUpdate) SetCouponIds(u []uuid.UUID) *OrderUpdate {
 	ou.mutation.SetCouponIds(u)
@@ -739,6 +759,19 @@ func (ou *OrderUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
 			Column: order.FieldState,
+		})
+	}
+	if value, ok := ou.mutation.InvestmentType(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: order.FieldInvestmentType,
+		})
+	}
+	if ou.mutation.InvestmentTypeCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Column: order.FieldInvestmentType,
 		})
 	}
 	if value, ok := ou.mutation.CouponIds(); ok {
@@ -1126,6 +1159,26 @@ func (ouo *OrderUpdateOne) SetNillableState(s *string) *OrderUpdateOne {
 // ClearState clears the value of the "state" field.
 func (ouo *OrderUpdateOne) ClearState() *OrderUpdateOne {
 	ouo.mutation.ClearState()
+	return ouo
+}
+
+// SetInvestmentType sets the "investment_type" field.
+func (ouo *OrderUpdateOne) SetInvestmentType(s string) *OrderUpdateOne {
+	ouo.mutation.SetInvestmentType(s)
+	return ouo
+}
+
+// SetNillableInvestmentType sets the "investment_type" field if the given value is not nil.
+func (ouo *OrderUpdateOne) SetNillableInvestmentType(s *string) *OrderUpdateOne {
+	if s != nil {
+		ouo.SetInvestmentType(*s)
+	}
+	return ouo
+}
+
+// ClearInvestmentType clears the value of the "investment_type" field.
+func (ouo *OrderUpdateOne) ClearInvestmentType() *OrderUpdateOne {
+	ouo.mutation.ClearInvestmentType()
 	return ouo
 }
 
@@ -1534,6 +1587,19 @@ func (ouo *OrderUpdateOne) sqlSave(ctx context.Context) (_node *Order, err error
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
 			Column: order.FieldState,
+		})
+	}
+	if value, ok := ouo.mutation.InvestmentType(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: order.FieldInvestmentType,
+		})
+	}
+	if ouo.mutation.InvestmentTypeCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Column: order.FieldInvestmentType,
 		})
 	}
 	if value, ok := ouo.mutation.CouponIds(); ok {

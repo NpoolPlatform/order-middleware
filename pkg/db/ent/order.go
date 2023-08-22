@@ -54,6 +54,8 @@ type Order struct {
 	Type string `json:"type,omitempty"`
 	// State holds the value of the "state" field.
 	State string `json:"state,omitempty"`
+	// InvestmentType holds the value of the "investment_type" field.
+	InvestmentType string `json:"investment_type,omitempty"`
 	// CouponIds holds the value of the "coupon_ids" field.
 	CouponIds []uuid.UUID `json:"coupon_ids,omitempty"`
 	// LastBenefitAt holds the value of the "last_benefit_at" field.
@@ -73,7 +75,7 @@ func (*Order) scanValues(columns []string) ([]interface{}, error) {
 			values[i] = new(sql.NullBool)
 		case order.FieldCreatedAt, order.FieldUpdatedAt, order.FieldDeletedAt, order.FieldUnits, order.FieldStartAt, order.FieldEndAt, order.FieldLastBenefitAt:
 			values[i] = new(sql.NullInt64)
-		case order.FieldType, order.FieldState:
+		case order.FieldType, order.FieldState, order.FieldInvestmentType:
 			values[i] = new(sql.NullString)
 		case order.FieldID, order.FieldGoodID, order.FieldAppID, order.FieldUserID, order.FieldParentOrderID, order.FieldPromotionID, order.FieldDiscountCouponID, order.FieldUserSpecialReductionID, order.FieldFixAmountCouponID:
 			values[i] = new(uuid.UUID)
@@ -206,6 +208,12 @@ func (o *Order) assignValues(columns []string, values []interface{}) error {
 			} else if value.Valid {
 				o.State = value.String
 			}
+		case order.FieldInvestmentType:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field investment_type", values[i])
+			} else if value.Valid {
+				o.InvestmentType = value.String
+			}
 		case order.FieldCouponIds:
 			if value, ok := values[i].(*[]byte); !ok {
 				return fmt.Errorf("unexpected type %T for field coupon_ids", values[i])
@@ -301,6 +309,9 @@ func (o *Order) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("state=")
 	builder.WriteString(o.State)
+	builder.WriteString(", ")
+	builder.WriteString("investment_type=")
+	builder.WriteString(o.InvestmentType)
 	builder.WriteString(", ")
 	builder.WriteString("coupon_ids=")
 	builder.WriteString(fmt.Sprintf("%v", o.CouponIds))

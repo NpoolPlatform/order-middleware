@@ -252,6 +252,20 @@ func (oc *OrderCreate) SetNillableState(s *string) *OrderCreate {
 	return oc
 }
 
+// SetInvestmentType sets the "investment_type" field.
+func (oc *OrderCreate) SetInvestmentType(s string) *OrderCreate {
+	oc.mutation.SetInvestmentType(s)
+	return oc
+}
+
+// SetNillableInvestmentType sets the "investment_type" field if the given value is not nil.
+func (oc *OrderCreate) SetNillableInvestmentType(s *string) *OrderCreate {
+	if s != nil {
+		oc.SetInvestmentType(*s)
+	}
+	return oc
+}
+
 // SetCouponIds sets the "coupon_ids" field.
 func (oc *OrderCreate) SetCouponIds(u []uuid.UUID) *OrderCreate {
 	oc.mutation.SetCouponIds(u)
@@ -448,6 +462,10 @@ func (oc *OrderCreate) defaults() error {
 	if _, ok := oc.mutation.State(); !ok {
 		v := order.DefaultState
 		oc.mutation.SetState(v)
+	}
+	if _, ok := oc.mutation.InvestmentType(); !ok {
+		v := order.DefaultInvestmentType
+		oc.mutation.SetInvestmentType(v)
 	}
 	if _, ok := oc.mutation.CouponIds(); !ok {
 		if order.DefaultCouponIds == nil {
@@ -670,6 +688,14 @@ func (oc *OrderCreate) createSpec() (*Order, *sqlgraph.CreateSpec) {
 			Column: order.FieldState,
 		})
 		_node.State = value
+	}
+	if value, ok := oc.mutation.InvestmentType(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: order.FieldInvestmentType,
+		})
+		_node.InvestmentType = value
 	}
 	if value, ok := oc.mutation.CouponIds(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -1062,6 +1088,24 @@ func (u *OrderUpsert) UpdateState() *OrderUpsert {
 // ClearState clears the value of the "state" field.
 func (u *OrderUpsert) ClearState() *OrderUpsert {
 	u.SetNull(order.FieldState)
+	return u
+}
+
+// SetInvestmentType sets the "investment_type" field.
+func (u *OrderUpsert) SetInvestmentType(v string) *OrderUpsert {
+	u.Set(order.FieldInvestmentType, v)
+	return u
+}
+
+// UpdateInvestmentType sets the "investment_type" field to the value that was provided on create.
+func (u *OrderUpsert) UpdateInvestmentType() *OrderUpsert {
+	u.SetExcluded(order.FieldInvestmentType)
+	return u
+}
+
+// ClearInvestmentType clears the value of the "investment_type" field.
+func (u *OrderUpsert) ClearInvestmentType() *OrderUpsert {
+	u.SetNull(order.FieldInvestmentType)
 	return u
 }
 
@@ -1532,6 +1576,27 @@ func (u *OrderUpsertOne) UpdateState() *OrderUpsertOne {
 func (u *OrderUpsertOne) ClearState() *OrderUpsertOne {
 	return u.Update(func(s *OrderUpsert) {
 		s.ClearState()
+	})
+}
+
+// SetInvestmentType sets the "investment_type" field.
+func (u *OrderUpsertOne) SetInvestmentType(v string) *OrderUpsertOne {
+	return u.Update(func(s *OrderUpsert) {
+		s.SetInvestmentType(v)
+	})
+}
+
+// UpdateInvestmentType sets the "investment_type" field to the value that was provided on create.
+func (u *OrderUpsertOne) UpdateInvestmentType() *OrderUpsertOne {
+	return u.Update(func(s *OrderUpsert) {
+		s.UpdateInvestmentType()
+	})
+}
+
+// ClearInvestmentType clears the value of the "investment_type" field.
+func (u *OrderUpsertOne) ClearInvestmentType() *OrderUpsertOne {
+	return u.Update(func(s *OrderUpsert) {
+		s.ClearInvestmentType()
 	})
 }
 
@@ -2175,6 +2240,27 @@ func (u *OrderUpsertBulk) UpdateState() *OrderUpsertBulk {
 func (u *OrderUpsertBulk) ClearState() *OrderUpsertBulk {
 	return u.Update(func(s *OrderUpsert) {
 		s.ClearState()
+	})
+}
+
+// SetInvestmentType sets the "investment_type" field.
+func (u *OrderUpsertBulk) SetInvestmentType(v string) *OrderUpsertBulk {
+	return u.Update(func(s *OrderUpsert) {
+		s.SetInvestmentType(v)
+	})
+}
+
+// UpdateInvestmentType sets the "investment_type" field to the value that was provided on create.
+func (u *OrderUpsertBulk) UpdateInvestmentType() *OrderUpsertBulk {
+	return u.Update(func(s *OrderUpsert) {
+		s.UpdateInvestmentType()
+	})
+}
+
+// ClearInvestmentType clears the value of the "investment_type" field.
+func (u *OrderUpsertBulk) ClearInvestmentType() *OrderUpsertBulk {
+	return u.Update(func(s *OrderUpsert) {
+		s.ClearInvestmentType()
 	})
 }
 
