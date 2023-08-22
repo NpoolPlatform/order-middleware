@@ -17,12 +17,12 @@ func (s *Server) UpdatePayment(ctx context.Context, in *npool.UpdatePaymentReque
 	req := in.GetInfo()
 	handler, err := payment1.NewHandler(
 		ctx,
-		payment1.WithID(req.ID),
-		payment1.WithState(req.State),
-		payment1.WithUserSetPaid(req.UserSetPaid),
-		payment1.WithUserSetCanceled(req.UserSetCanceled),
-		payment1.WithFakePayment(req.FakePayment),
-		payment1.WithFinishAmount(req.FinishAmount),
+		payment1.WithID(req.ID, true),
+		payment1.WithState(req.State, false),
+		payment1.WithUserSetPaid(req.UserSetPaid, false),
+		payment1.WithUserSetCanceled(req.UserSetCanceled, false),
+		payment1.WithFakePayment(req.FakePayment, false),
+		payment1.WithFinishAmount(req.FinishAmount, false),
 	)
 	if err != nil {
 		logger.Sugar().Errorw(

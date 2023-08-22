@@ -60,7 +60,7 @@ func updateCompensate(t *testing.T) {
 	handler, err := NewHandler(
 		context.Background(),
 		WithID(&ret.ID, true),
-		WithOrderID(&ret.ID, false),
+		WithOrderID(&ret.OrderID, false),
 		WithStart(&ret.Start, false),
 		WithEnd(&ret.End, false),
 		WithMessage(&ret.Message, false),

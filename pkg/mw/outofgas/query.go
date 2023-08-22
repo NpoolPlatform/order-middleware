@@ -62,10 +62,6 @@ func (h *queryHandler) scan(ctx context.Context) error {
 }
 
 func (h *Handler) GetOutOfGas(ctx context.Context) (*npool.OutOfGas, error) {
-	if h.ID == nil {
-		return nil, fmt.Errorf("invalid id")
-	}
-
 	handler := &queryHandler{
 		Handler: h,
 	}

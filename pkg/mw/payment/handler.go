@@ -51,9 +51,12 @@ func NewHandler(ctx context.Context, options ...func(context.Context, *Handler) 
 	return handler, nil
 }
 
-func WithID(id *string) func(context.Context, *Handler) error {
+func WithID(id *string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if id == nil {
+			if must {
+				return fmt.Errorf("invalid id")
+			}
 			return nil
 		}
 		_id, err := uuid.Parse(*id)
@@ -65,9 +68,12 @@ func WithID(id *string) func(context.Context, *Handler) error {
 	}
 }
 
-func WithAppID(id *string) func(context.Context, *Handler) error {
+func WithAppID(id *string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if id == nil {
+			if must {
+				return fmt.Errorf("invalid appid")
+			}
 			return nil
 		}
 		_id, err := uuid.Parse(*id)
@@ -79,9 +85,12 @@ func WithAppID(id *string) func(context.Context, *Handler) error {
 	}
 }
 
-func WithGoodID(id *string) func(context.Context, *Handler) error {
+func WithGoodID(id *string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if id == nil {
+			if must {
+				return fmt.Errorf("invalid goodid")
+			}
 			return nil
 		}
 		_id, err := uuid.Parse(*id)
@@ -93,9 +102,12 @@ func WithGoodID(id *string) func(context.Context, *Handler) error {
 	}
 }
 
-func WithUserID(id *string) func(context.Context, *Handler) error {
+func WithUserID(id *string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if id == nil {
+			if must {
+				return fmt.Errorf("invalid userid")
+			}
 			return nil
 		}
 		_id, err := uuid.Parse(*id)
@@ -107,9 +119,12 @@ func WithUserID(id *string) func(context.Context, *Handler) error {
 	}
 }
 
-func WithOrderID(id *string) func(context.Context, *Handler) error {
+func WithOrderID(id *string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if id == nil {
+			if must {
+				return fmt.Errorf("invalid orderid")
+			}
 			return nil
 		}
 		_id, err := uuid.Parse(*id)
@@ -121,9 +136,12 @@ func WithOrderID(id *string) func(context.Context, *Handler) error {
 	}
 }
 
-func WithAccountID(id *string) func(context.Context, *Handler) error {
+func WithAccountID(id *string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if id == nil {
+			if must {
+				return fmt.Errorf("invalid accountid")
+			}
 			return nil
 		}
 		_id, err := uuid.Parse(*id)
@@ -135,9 +153,12 @@ func WithAccountID(id *string) func(context.Context, *Handler) error {
 	}
 }
 
-func WithStartAmount(value *string) func(context.Context, *Handler) error {
+func WithStartAmount(value *string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if value == nil {
+			if must {
+				return fmt.Errorf("invalid startamount")
+			}
 			return nil
 		}
 		amount, err := decimal.NewFromString(*value)
@@ -149,9 +170,12 @@ func WithStartAmount(value *string) func(context.Context, *Handler) error {
 	}
 }
 
-func WithAmount(value *string) func(context.Context, *Handler) error {
+func WithAmount(value *string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if value == nil {
+			if must {
+				return fmt.Errorf("invalid amount")
+			}
 			return nil
 		}
 		amount, err := decimal.NewFromString(*value)
@@ -163,9 +187,12 @@ func WithAmount(value *string) func(context.Context, *Handler) error {
 	}
 }
 
-func WithPayWithBalanceAmount(value *string) func(context.Context, *Handler) error {
+func WithPayWithBalanceAmount(value *string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if value == nil {
+			if must {
+				return fmt.Errorf("invalid paywithbalanceamount")
+			}
 			return nil
 		}
 		amount, err := decimal.NewFromString(*value)
@@ -177,9 +204,12 @@ func WithPayWithBalanceAmount(value *string) func(context.Context, *Handler) err
 	}
 }
 
-func WithFinishAmount(value *string) func(context.Context, *Handler) error {
+func WithFinishAmount(value *string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if value == nil {
+			if must {
+				return fmt.Errorf("invalid finishamount")
+			}
 			return nil
 		}
 		amount, err := decimal.NewFromString(*value)
@@ -191,9 +221,12 @@ func WithFinishAmount(value *string) func(context.Context, *Handler) error {
 	}
 }
 
-func WithCoinUsdCurrency(value *string) func(context.Context, *Handler) error {
+func WithCoinUsdCurrency(value *string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if value == nil {
+			if must {
+				return fmt.Errorf("invalid coinusdcurrency")
+			}
 			return nil
 		}
 		amount, err := decimal.NewFromString(*value)
@@ -205,9 +238,12 @@ func WithCoinUsdCurrency(value *string) func(context.Context, *Handler) error {
 	}
 }
 
-func WithLocalCoinUsdCurrency(value *string) func(context.Context, *Handler) error {
+func WithLocalCoinUsdCurrency(value *string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if value == nil {
+			if must {
+				return fmt.Errorf("invalid localcoinusdcurrency")
+			}
 			return nil
 		}
 		amount, err := decimal.NewFromString(*value)
@@ -219,9 +255,12 @@ func WithLocalCoinUsdCurrency(value *string) func(context.Context, *Handler) err
 	}
 }
 
-func WithLiveCoinUsdCurrency(value *string) func(context.Context, *Handler) error {
+func WithLiveCoinUsdCurrency(value *string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if value == nil {
+			if must {
+				return fmt.Errorf("invalid livecoinusdcurrency")
+			}
 			return nil
 		}
 		amount, err := decimal.NewFromString(*value)
@@ -233,9 +272,12 @@ func WithLiveCoinUsdCurrency(value *string) func(context.Context, *Handler) erro
 	}
 }
 
-func WithCoinInfoID(id *string) func(context.Context, *Handler) error {
+func WithCoinInfoID(id *string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if id == nil {
+			if must {
+				return fmt.Errorf("invalid coininfoid")
+			}
 			return nil
 		}
 		_id, err := uuid.Parse(*id)
@@ -247,9 +289,12 @@ func WithCoinInfoID(id *string) func(context.Context, *Handler) error {
 	}
 }
 
-func WithChainTransactionID(id *string) func(context.Context, *Handler) error {
+func WithChainTransactionID(id *string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if id == nil {
+			if must {
+				return fmt.Errorf("invalid chaintransactionid")
+			}
 			return nil
 		}
 		h.ChainTransactionID = id
@@ -257,9 +302,12 @@ func WithChainTransactionID(id *string) func(context.Context, *Handler) error {
 	}
 }
 
-func WithUserSetPaid(value *bool) func(context.Context, *Handler) error {
+func WithUserSetPaid(value *bool, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if value == nil {
+			if must {
+				return fmt.Errorf("invalid usersetpaid")
+			}
 			return nil
 		}
 		h.UserSetPaid = value
@@ -267,9 +315,12 @@ func WithUserSetPaid(value *bool) func(context.Context, *Handler) error {
 	}
 }
 
-func WithUserSetCanceled(value *bool) func(context.Context, *Handler) error {
+func WithUserSetCanceled(value *bool, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if value == nil {
+			if must {
+				return fmt.Errorf("invalid usersetcanceled")
+			}
 			return nil
 		}
 		h.UserSetCanceled = value
@@ -277,9 +328,12 @@ func WithUserSetCanceled(value *bool) func(context.Context, *Handler) error {
 	}
 }
 
-func WithFakePayment(value *bool) func(context.Context, *Handler) error {
+func WithFakePayment(value *bool, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if value == nil {
+			if must {
+				return fmt.Errorf("invalid fakepayment")
+			}
 			return nil
 		}
 		h.FakePayment = value
@@ -287,9 +341,12 @@ func WithFakePayment(value *bool) func(context.Context, *Handler) error {
 	}
 }
 
-func WithState(state *basetypes.PaymentState) func(context.Context, *Handler) error {
+func WithState(state *basetypes.PaymentState, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if state == nil {
+			if must {
+				return fmt.Errorf("invalid state")
+			}
 			return nil
 		}
 		switch *state {

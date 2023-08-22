@@ -113,7 +113,7 @@ func update(t *testing.T) {
 	var err error
 	info, err = UpdateOrder(context.Background(), &req)
 	if assert.Nil(t, err) {
-		ret.CreatedAt = info.CreatedAt
+		ret.UpdatedAt = info.UpdatedAt
 		ret.PaidAt = info.PaidAt
 		assert.Equal(t, info.String(), ret.String())
 	}
@@ -122,7 +122,6 @@ func getOrder(t *testing.T) {
 	var err error
 	info, err = GetOrder(context.Background(), ret.ID)
 	if assert.Nil(t, err) {
-		ret.CreatedAt = info.CreatedAt
 		ret.PaidAt = info.PaidAt
 		assert.Equal(t, info.String(), ret.String())
 	}
@@ -136,10 +135,25 @@ func getOrders(t *testing.T) {
 		},
 	}, 0, 1)
 	if assert.Nil(t, err) {
-		ret.CreatedAt = infos[0].CreatedAt
 		ret.PaidAt = infos[0].PaidAt
 		assert.Equal(t, infos[0].String(), ret.String())
 	}
+}
+
+func deleteOrder(t *testing.T) {
+	var err error
+	info, err := DeleteOrder(context.Background(), &npool.OrderReq{
+		ID: &ret.ID,
+	})
+	if assert.Nil(t, err) {
+		ret.UpdatedAt = info.UpdatedAt
+		ret.PaidAt = info.PaidAt
+		assert.Equal(t, info.String(), ret.String())
+	}
+
+	info, err = GetOrder(context.Background(), ret.ID)
+	assert.Nil(t, err)
+	assert.Nil(t, info)
 }
 
 func TestDetail(t *testing.T) {
@@ -155,4 +169,5 @@ func TestDetail(t *testing.T) {
 	t.Run("update", update)
 	t.Run("getOrder", getOrder)
 	t.Run("getOrders", getOrders)
+	t.Run("deleteOrder", deleteOrder)
 }

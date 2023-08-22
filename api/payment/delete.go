@@ -17,7 +17,7 @@ func (s *Server) DeletePayment(ctx context.Context, in *npool.DeletePaymentReque
 	req := in.GetInfo()
 	handler, err := payment1.NewHandler(
 		ctx,
-		payment1.WithID(req.ID),
+		payment1.WithID(req.ID, true),
 	)
 	if err != nil {
 		logger.Sugar().Errorw(

@@ -18,16 +18,6 @@ import (
 )
 
 func (h *Handler) CreateOutOfGas(ctx context.Context) (*npool.OutOfGas, error) {
-	if h.OrderID == nil {
-		return nil, fmt.Errorf("invalid orderid")
-	}
-	if h.Start == nil {
-		return nil, fmt.Errorf("invalid start")
-	}
-	if h.End == nil {
-		return nil, fmt.Errorf("invalid end")
-	}
-
 	key := fmt.Sprintf("%v:%v", basetypes.Prefix_PrefixCreateUserTransfer, *h.OrderID)
 	if err := redis2.TryLock(key, 0); err != nil {
 		return nil, err

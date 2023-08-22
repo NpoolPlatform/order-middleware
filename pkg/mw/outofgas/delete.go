@@ -14,9 +14,6 @@ import (
 )
 
 func (h *Handler) DeleteOutOfGas(ctx context.Context) (*npool.OutOfGas, error) {
-	if h.ID == nil {
-		return nil, fmt.Errorf("invalid id")
-	}
 	info, err := h.GetOutOfGas(ctx)
 	if err != nil {
 		return nil, err

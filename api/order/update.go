@@ -17,14 +17,15 @@ func (s *Server) UpdateOrder(ctx context.Context, in *npool.UpdateOrderRequest) 
 	req := in.GetInfo()
 	handler, err := order1.NewHandler(
 		ctx,
-		order1.WithID(req.ID),
-		order1.WithAppID(req.AppID),
-		order1.WithPaymentID(req.PaymentID),
-		order1.WithStartAt(req.Start),
-		order1.WithLastBenefitAt(req.LastBenefitAt),
-		order1.WithPaymentUserSetCanceled(req.Canceled),
-		order1.WithPaymentFinishAmount(req.PaymentFinishAmount),
-		order1.WithPaymentFakePayment(req.FakePayment),
+		order1.WithID(req.ID, true),
+		order1.WithAppID(req.AppID, true),
+		order1.WithPaymentID(req.PaymentID, true),
+		order1.WithStartAt(req.Start, false),
+		order1.WithLastBenefitAt(req.LastBenefitAt, false),
+		order1.WithPaymentUserSetCanceled(req.Canceled, false),
+		order1.WithPaymentFinishAmount(req.PaymentFinishAmount, false),
+		order1.WithPaymentFakePayment(req.FakePayment, false),
+		order1.WithPaymentState(req.PaymentState, false),
 	)
 	if err != nil {
 		logger.Sugar().Errorw(

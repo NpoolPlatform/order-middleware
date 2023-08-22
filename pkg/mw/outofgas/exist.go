@@ -2,7 +2,6 @@ package outofgas
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/NpoolPlatform/order-middleware/pkg/db"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent"
@@ -35,10 +34,6 @@ func (h *existHandler) queryOutOfGass(cli *ent.Client) error {
 }
 
 func (h *Handler) ExistOutOfGas(ctx context.Context) (bool, error) {
-	if h.ID == nil {
-		return false, fmt.Errorf("invalid id")
-	}
-
 	handler := &existHandler{
 		Handler: h,
 	}

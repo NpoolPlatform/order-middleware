@@ -23,67 +23,26 @@ type createHandler struct {
 	*Handler
 }
 
-//nolint:gocyclo
 func (h *createHandler) validate() error {
-	if h.AppID == nil {
-		return fmt.Errorf("invalid appid")
-	}
-	if h.UserID == nil {
-		return fmt.Errorf("invalid userid")
-	}
-	if h.GoodID == nil {
-		return fmt.Errorf("invalid goodid")
-	}
-	if h.PaymentCoinID == nil {
-		return fmt.Errorf("invalid paymentcoinid")
-	}
-	if h.PaymentAccountID == nil {
-		return fmt.Errorf("invalid paymentaccountid")
-	}
-	if h.PaymentAmount == nil {
-		return fmt.Errorf("invalid startamount")
-	}
 	if h.PaymentAmount.Cmp(decimal.NewFromInt(0)) <= 0 {
 		return fmt.Errorf("startamount is less than or equal to 0")
 	}
 	if h.PayWithBalanceAmount != nil && h.PayWithBalanceAmount.Cmp(decimal.NewFromInt(0)) <= 0 {
 		return fmt.Errorf("amount is less than or equal to 0")
 	}
-
-	if h.PaymentAccountStartAmount == nil {
-		return fmt.Errorf("invalid coinusdcurrency")
-	}
 	if h.PaymentAccountStartAmount.Cmp(decimal.NewFromInt(0)) <= 0 {
 		return fmt.Errorf("coinusdcurrency is less than or equal to 0")
-	}
-	if h.PaymentCoinUSDCurrency == nil {
-		return fmt.Errorf("invalid localcoinusdcurrency")
 	}
 	if h.PaymentCoinUSDCurrency.Cmp(decimal.NewFromInt(0)) <= 0 {
 		return fmt.Errorf("localcoinusdcurrency is less than or equal to 0")
 	}
-	if h.PaymentLiveUSDCurrency == nil {
-		return fmt.Errorf("invalid livecoinusdcurrency")
-	}
 	if h.PaymentLiveUSDCurrency.Cmp(decimal.NewFromInt(0)) <= 0 {
 		return fmt.Errorf("livecoinusdcurrency is less than or equal to 0")
-	}
-	if h.PaymentLocalUSDCurrency == nil {
-		return fmt.Errorf("invalid livecoinusdcurrency")
 	}
 	if h.PaymentLocalUSDCurrency.Cmp(decimal.NewFromInt(0)) <= 0 {
 		return fmt.Errorf("livecoinusdcurrency is less than or equal to 0")
 	}
-	if h.Type == nil {
-		return fmt.Errorf("invalid ordertype")
-	}
-	switch *h.Type {
-	case orderbasetypes.OrderType_Normal:
-	case orderbasetypes.OrderType_Offline:
-	case orderbasetypes.OrderType_Airdrop:
-	default:
-		return fmt.Errorf("invalid ordertype")
-	}
+
 	return nil
 }
 
@@ -132,6 +91,11 @@ func (h *Handler) CreateOrder(ctx context.Context) (*npool.Order, error) {
 			},
 		).Save(ctx); err != nil {
 			return err
+		}
+
+		id := uuid.New()
+		if h.PaymentID == nil {
+			h.PaymentID = &id
 		}
 
 		paymentState := orderbasetypes.PaymentState_PaymentStateWait

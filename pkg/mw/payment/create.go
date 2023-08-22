@@ -9,7 +9,6 @@ import (
 	"github.com/shopspring/decimal"
 
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
-	orderbasetypes "github.com/NpoolPlatform/message/npool/basetypes/order/v1"
 	basetypes "github.com/NpoolPlatform/message/npool/basetypes/v1"
 	npool "github.com/NpoolPlatform/message/npool/order/mw/v1/payment"
 	paymentcrud "github.com/NpoolPlatform/order-middleware/pkg/crud/payment"
@@ -23,61 +22,23 @@ type createHandler struct {
 	*Handler
 }
 
-//nolint:gocyclo
 func (h *createHandler) validate() error {
-	if h.AppID == nil {
-		return fmt.Errorf("invalid appid")
-	}
-	if h.GoodID == nil {
-		return fmt.Errorf("invalid goodid")
-	}
-	if h.UserID == nil {
-		return fmt.Errorf("invalid userid")
-	}
-	if h.OrderID == nil {
-		return fmt.Errorf("invalid orderid")
-	}
-	if h.AccountID == nil {
-		return fmt.Errorf("invalid accountid")
-	}
-	if h.StartAmount == nil {
-		return fmt.Errorf("invalid startamount")
-	}
 	if h.StartAmount.Cmp(decimal.NewFromInt(0)) <= 0 {
 		return fmt.Errorf("startamount is less than or equal to 0")
-	}
-	if h.Amount == nil {
-		return fmt.Errorf("invalid amount")
 	}
 	if h.Amount.Cmp(decimal.NewFromInt(0)) <= 0 {
 		return fmt.Errorf("amount is less than or equal to 0")
 	}
-	if h.CoinUsdCurrency == nil {
-		return fmt.Errorf("invalid coinusdcurrency")
-	}
 	if h.CoinUsdCurrency.Cmp(decimal.NewFromInt(0)) <= 0 {
 		return fmt.Errorf("coinusdcurrency is less than or equal to 0")
-	}
-	if h.LocalCoinUsdCurrency == nil {
-		return fmt.Errorf("invalid localcoinusdcurrency")
 	}
 	if h.LocalCoinUsdCurrency.Cmp(decimal.NewFromInt(0)) <= 0 {
 		return fmt.Errorf("localcoinusdcurrency is less than or equal to 0")
 	}
-	if h.LiveCoinUsdCurrency == nil {
-		return fmt.Errorf("invalid livecoinusdcurrency")
-	}
 	if h.LiveCoinUsdCurrency.Cmp(decimal.NewFromInt(0)) <= 0 {
 		return fmt.Errorf("livecoinusdcurrency is less than or equal to 0")
 	}
-	if h.CoinInfoID == nil {
-		return fmt.Errorf("invalid coininfoid")
-	}
-	switch *h.State {
-	case orderbasetypes.PaymentState_PaymentStateWait:
-	default:
-		return fmt.Errorf("invalid state")
-	}
+
 	return nil
 }
 

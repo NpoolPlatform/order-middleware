@@ -13,9 +13,6 @@ import (
 )
 
 func (h *Handler) UpdatePayment(ctx context.Context) (*npool.Payment, error) {
-	if h.ID == nil {
-		return nil, fmt.Errorf("invalid id")
-	}
 	info, err := h.GetPayment(ctx)
 	if err != nil {
 		return nil, err

@@ -180,3 +180,19 @@ func ExistOrderConds(ctx context.Context, conds *npool.Conds) (bool, error) {
 	}
 	return exist.(bool), err
 }
+
+func DeleteOrder(ctx context.Context, in *npool.OrderReq) (*npool.Order, error) {
+	info, err := do(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
+		resp, err := cli.DeleteOrder(ctx, &npool.DeleteOrderRequest{
+			Info: in,
+		})
+		if err != nil {
+			return nil, err
+		}
+		return resp.Info, nil
+	})
+	if err != nil {
+		return nil, err
+	}
+	return info.(*npool.Order), nil
+}

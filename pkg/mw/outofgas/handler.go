@@ -2,6 +2,7 @@ package outofgas
 
 import (
 	"context"
+	"fmt"
 
 	basetypes "github.com/NpoolPlatform/message/npool/basetypes/v1"
 	npool "github.com/NpoolPlatform/message/npool/order/mw/v1/outofgas"
@@ -37,6 +38,9 @@ func NewHandler(ctx context.Context, options ...func(context.Context, *Handler) 
 func WithID(id *string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if id == nil {
+			if must {
+				return fmt.Errorf("invalid id")
+			}
 			return nil
 		}
 		_id, err := uuid.Parse(*id)
@@ -51,6 +55,9 @@ func WithID(id *string, must bool) func(context.Context, *Handler) error {
 func WithOrderID(id *string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if id == nil {
+			if must {
+				return fmt.Errorf("invalid orderid")
+			}
 			return nil
 		}
 		_id, err := uuid.Parse(*id)
@@ -65,6 +72,9 @@ func WithOrderID(id *string, must bool) func(context.Context, *Handler) error {
 func WithStart(start *uint32, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if start == nil {
+			if must {
+				return fmt.Errorf("invalid start")
+			}
 			return nil
 		}
 		h.Start = start
@@ -75,6 +85,9 @@ func WithStart(start *uint32, must bool) func(context.Context, *Handler) error {
 func WithEnd(end *uint32, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if end == nil {
+			if must {
+				return fmt.Errorf("invalid end")
+			}
 			return nil
 		}
 		h.End = end
