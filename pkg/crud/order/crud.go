@@ -46,6 +46,7 @@ type Req struct {
 	PaymentFinishAmount       *decimal.Decimal
 	PaymentUserSetCanceled    *bool
 	PaymentFakePayment        *bool
+	InvestmentType            *basetypes.InvestmentType
 }
 
 //nolint:gocyclo
@@ -95,6 +96,9 @@ func CreateSet(c *ent.OrderCreate, req *Req) *ent.OrderCreate {
 	if req.State != nil {
 		c.SetState(req.State.String())
 	}
+	if req.InvestmentType != nil {
+		c.SetInvestmentType(req.InvestmentType.String())
+	}
 	if req.CouponIDs != nil {
 		c.SetCouponIds(*req.CouponIDs)
 	}
@@ -141,6 +145,7 @@ type Conds struct {
 	LastBenefitAt          *cruder.Cond
 	CouponID               *cruder.Cond
 	CouponIDs              *cruder.Cond
+	InvestmentType         *cruder.Cond
 }
 
 //nolint
@@ -254,6 +259,18 @@ func SetQueryConds(q *ent.OrderQuery, conds *Conds) (*ent.OrderQuery, error) {
 		switch conds.State.Op {
 		case cruder.EQ:
 			q.Where(entorder.State(state.String()))
+		default:
+			return nil, fmt.Errorf("invalid order field")
+		}
+	}
+	if conds.InvestmentType != nil {
+		investmenttype, ok := conds.InvestmentType.Val.(basetypes.InvestmentType)
+		if !ok {
+			return nil, fmt.Errorf("invalid investmenttype")
+		}
+		switch conds.InvestmentType.Op {
+		case cruder.EQ:
+			q.Where(entorder.InvestmentType(investmenttype.String()))
 		default:
 			return nil, fmt.Errorf("invalid order field")
 		}

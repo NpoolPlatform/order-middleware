@@ -88,6 +88,7 @@ func (h *Handler) CreateOrder(ctx context.Context) (*npool.Order, error) {
 				Type:                   h.Type,
 				State:                  &orderState,
 				CouponIDs:              &h.CouponIDs,
+				InvestmentType:         h.InvestmentType,
 			},
 		).Save(ctx); err != nil {
 			return err

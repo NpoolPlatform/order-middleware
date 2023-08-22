@@ -60,6 +60,8 @@ var (
 		CreatedAt:               0,
 		UserCanceled:            false,
 		PayWithParent:           false,
+		InvestmentType:          ordertypes.InvestmentType_FullPayment,
+		InvestmentTypeStr:       ordertypes.InvestmentType_FullPayment.String(),
 	}
 )
 
@@ -88,6 +90,7 @@ func createOrder(t *testing.T) {
 		WithPromotionID(&promotionID, true),
 		WithPaymentID(&ret.PaymentID, false),
 		WithPaymentUserSetCanceled(&ret.UserCanceled, true),
+		WithInvestmentType(&ret.InvestmentType, true),
 	)
 	if assert.Nil(t, err) {
 		info, err := handler.CreateOrder(context.Background())

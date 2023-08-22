@@ -64,6 +64,7 @@ func (h *queryHandler) queryJoinMyself(s *sql.Selector) {
 		t.C(entorder.FieldUserSpecialReductionID),
 		t.C(entorder.FieldCreatedAt),
 		t.C(entorder.FieldCouponIds),
+		t.C(entorder.FieldInvestmentType),
 	)
 }
 
@@ -124,7 +125,7 @@ func (h *queryHandler) formalize() {
 		info.OrderType = basetypes.OrderType(basetypes.OrderType_value[info.OrderTypeStr])
 		info.OrderState = basetypes.OrderState(basetypes.OrderState_value[info.OrderStateStr])
 		info.PaymentState = basetypes.PaymentState(basetypes.PaymentState_value[info.PaymentStateStr])
-
+		info.InvestmentType = basetypes.InvestmentType(basetypes.InvestmentType_value[info.InvestmentTypeStr])
 		_ = json.Unmarshal([]byte(info.CouponIDsStr), &info.CouponIDs)
 	}
 }

@@ -65,6 +65,8 @@ var ret = npool.Order{
 	CreatedAt:               0,
 	UserCanceled:            false,
 	PayWithParent:           false,
+	InvestmentType:          orderbasetypes.InvestmentType_FullPayment,
+	InvestmentTypeStr:       orderbasetypes.InvestmentType_FullPayment.String(),
 }
 
 var (
@@ -92,6 +94,7 @@ var (
 		ID:                        &ret.ID,
 		PaymentID:                 &ret.PaymentID,
 		Canceled:                  &ret.UserCanceled,
+		InvestmentType:            &ret.InvestmentType,
 	}
 )
 

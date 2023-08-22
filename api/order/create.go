@@ -39,6 +39,7 @@ func (s *Server) CreateOrder(ctx context.Context, in *npool.CreateOrderRequest) 
 		order1.WithPaymentLiveUSDCurrency(req.PaymentLiveUSDCurrency, true),
 		order1.WithPaymentCoinID(req.PaymentCoinID, true),
 		order1.WithType(req.OrderType, true),
+		order1.WithInvestmentType(req.InvestmentType, true),
 	)
 	if err != nil {
 		logger.Sugar().Errorw(

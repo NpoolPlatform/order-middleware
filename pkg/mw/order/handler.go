@@ -32,6 +32,7 @@ type Handler struct {
 	CouponIDs                 []uuid.UUID
 	LastBenefitAt             *uint32
 	PaymentState              *basetypes.PaymentState
+	InvestmentType            *basetypes.InvestmentType
 	PaymentID                 *uuid.UUID
 	PaymentAccountID          *uuid.UUID
 	PaymentAccountStartAmount *decimal.Decimal
@@ -316,6 +317,25 @@ func WithPaymentState(state *basetypes.PaymentState, must bool) func(context.Con
 			return fmt.Errorf("invalid paymentstate")
 		}
 		h.PaymentState = state
+		return nil
+	}
+}
+
+func WithInvestmentType(_type *basetypes.InvestmentType, must bool) func(context.Context, *Handler) error {
+	return func(ctx context.Context, h *Handler) error {
+		if _type == nil {
+			if must {
+				return fmt.Errorf("invalid investmenttype")
+			}
+			return nil
+		}
+		switch *_type {
+		case basetypes.InvestmentType_FullPayment:
+		case basetypes.InvestmentType_UnionMining:
+		default:
+			return fmt.Errorf("invalid investmenttype")
+		}
+		h.InvestmentType = _type
 		return nil
 	}
 }
