@@ -47,6 +47,8 @@ const (
 	FieldCoinInfoID = "coin_info_id"
 	// FieldState holds the string denoting the state field in the database.
 	FieldState = "state"
+	// FieldStateV1 holds the string denoting the state_v1 field in the database.
+	FieldStateV1 = "state_v1"
 	// FieldChainTransactionID holds the string denoting the chain_transaction_id field in the database.
 	FieldChainTransactionID = "chain_transaction_id"
 	// FieldUserSetPaid holds the string denoting the user_set_paid field in the database.
@@ -79,6 +81,7 @@ var Columns = []string{
 	FieldLiveCoinUsdCurrency,
 	FieldCoinInfoID,
 	FieldState,
+	FieldStateV1,
 	FieldChainTransactionID,
 	FieldUserSetPaid,
 	FieldUserSetCanceled,
@@ -128,6 +131,8 @@ var (
 	DefaultLiveCoinUsdCurrency decimal.Decimal
 	// DefaultState holds the default value on creation for the "state" field.
 	DefaultState string
+	// DefaultStateV1 holds the default value on creation for the "state_v1" field.
+	DefaultStateV1 string
 	// DefaultChainTransactionID holds the default value on creation for the "chain_transaction_id" field.
 	DefaultChainTransactionID string
 	// DefaultUserSetPaid holds the default value on creation for the "user_set_paid" field.

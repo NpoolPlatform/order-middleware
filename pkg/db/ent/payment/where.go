@@ -199,6 +199,13 @@ func State(v string) predicate.Payment {
 	})
 }
 
+// StateV1 applies equality check predicate on the "state_v1" field. It's identical to StateV1EQ.
+func StateV1(v string) predicate.Payment {
+	return predicate.Payment(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldStateV1), v))
+	})
+}
+
 // ChainTransactionID applies equality check predicate on the "chain_transaction_id" field. It's identical to ChainTransactionIDEQ.
 func ChainTransactionID(v string) predicate.Payment {
 	return predicate.Payment(func(s *sql.Selector) {
@@ -1459,6 +1466,119 @@ func StateEqualFold(v string) predicate.Payment {
 func StateContainsFold(v string) predicate.Payment {
 	return predicate.Payment(func(s *sql.Selector) {
 		s.Where(sql.ContainsFold(s.C(FieldState), v))
+	})
+}
+
+// StateV1EQ applies the EQ predicate on the "state_v1" field.
+func StateV1EQ(v string) predicate.Payment {
+	return predicate.Payment(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldStateV1), v))
+	})
+}
+
+// StateV1NEQ applies the NEQ predicate on the "state_v1" field.
+func StateV1NEQ(v string) predicate.Payment {
+	return predicate.Payment(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldStateV1), v))
+	})
+}
+
+// StateV1In applies the In predicate on the "state_v1" field.
+func StateV1In(vs ...string) predicate.Payment {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Payment(func(s *sql.Selector) {
+		s.Where(sql.In(s.C(FieldStateV1), v...))
+	})
+}
+
+// StateV1NotIn applies the NotIn predicate on the "state_v1" field.
+func StateV1NotIn(vs ...string) predicate.Payment {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Payment(func(s *sql.Selector) {
+		s.Where(sql.NotIn(s.C(FieldStateV1), v...))
+	})
+}
+
+// StateV1GT applies the GT predicate on the "state_v1" field.
+func StateV1GT(v string) predicate.Payment {
+	return predicate.Payment(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldStateV1), v))
+	})
+}
+
+// StateV1GTE applies the GTE predicate on the "state_v1" field.
+func StateV1GTE(v string) predicate.Payment {
+	return predicate.Payment(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldStateV1), v))
+	})
+}
+
+// StateV1LT applies the LT predicate on the "state_v1" field.
+func StateV1LT(v string) predicate.Payment {
+	return predicate.Payment(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldStateV1), v))
+	})
+}
+
+// StateV1LTE applies the LTE predicate on the "state_v1" field.
+func StateV1LTE(v string) predicate.Payment {
+	return predicate.Payment(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldStateV1), v))
+	})
+}
+
+// StateV1Contains applies the Contains predicate on the "state_v1" field.
+func StateV1Contains(v string) predicate.Payment {
+	return predicate.Payment(func(s *sql.Selector) {
+		s.Where(sql.Contains(s.C(FieldStateV1), v))
+	})
+}
+
+// StateV1HasPrefix applies the HasPrefix predicate on the "state_v1" field.
+func StateV1HasPrefix(v string) predicate.Payment {
+	return predicate.Payment(func(s *sql.Selector) {
+		s.Where(sql.HasPrefix(s.C(FieldStateV1), v))
+	})
+}
+
+// StateV1HasSuffix applies the HasSuffix predicate on the "state_v1" field.
+func StateV1HasSuffix(v string) predicate.Payment {
+	return predicate.Payment(func(s *sql.Selector) {
+		s.Where(sql.HasSuffix(s.C(FieldStateV1), v))
+	})
+}
+
+// StateV1IsNil applies the IsNil predicate on the "state_v1" field.
+func StateV1IsNil() predicate.Payment {
+	return predicate.Payment(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldStateV1)))
+	})
+}
+
+// StateV1NotNil applies the NotNil predicate on the "state_v1" field.
+func StateV1NotNil() predicate.Payment {
+	return predicate.Payment(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldStateV1)))
+	})
+}
+
+// StateV1EqualFold applies the EqualFold predicate on the "state_v1" field.
+func StateV1EqualFold(v string) predicate.Payment {
+	return predicate.Payment(func(s *sql.Selector) {
+		s.Where(sql.EqualFold(s.C(FieldStateV1), v))
+	})
+}
+
+// StateV1ContainsFold applies the ContainsFold predicate on the "state_v1" field.
+func StateV1ContainsFold(v string) predicate.Payment {
+	return predicate.Payment(func(s *sql.Selector) {
+		s.Where(sql.ContainsFold(s.C(FieldStateV1), v))
 	})
 }
 

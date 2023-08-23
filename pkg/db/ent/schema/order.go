@@ -97,6 +97,10 @@ func (Order) Fields() []ent.Field {
 			Optional().
 			Default(basetypes.OrderState_DefaultOrderState.String()),
 		field.
+			String("state_v1").
+			Optional().
+			Default(basetypes.OrderState_DefaultOrderState.String()),
+		field.
 			String("investment_type").
 			Optional().
 			Default(basetypes.InvestmentType_FullPayment.String()),

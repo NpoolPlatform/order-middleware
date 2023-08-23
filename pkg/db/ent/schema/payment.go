@@ -93,6 +93,9 @@ func (Payment) Fields() []ent.Field {
 		field.String("state").
 			Optional().
 			Default(basetypes.PaymentState_DefaultPaymentState.String()),
+		field.String("state_v1").
+			Optional().
+			Default(basetypes.PaymentState_DefaultPaymentState.String()),
 		field.
 			String("chain_transaction_id").
 			Optional().

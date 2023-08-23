@@ -364,6 +364,26 @@ func (ou *OrderUpdate) ClearState() *OrderUpdate {
 	return ou
 }
 
+// SetStateV1 sets the "state_v1" field.
+func (ou *OrderUpdate) SetStateV1(s string) *OrderUpdate {
+	ou.mutation.SetStateV1(s)
+	return ou
+}
+
+// SetNillableStateV1 sets the "state_v1" field if the given value is not nil.
+func (ou *OrderUpdate) SetNillableStateV1(s *string) *OrderUpdate {
+	if s != nil {
+		ou.SetStateV1(*s)
+	}
+	return ou
+}
+
+// ClearStateV1 clears the value of the "state_v1" field.
+func (ou *OrderUpdate) ClearStateV1() *OrderUpdate {
+	ou.mutation.ClearStateV1()
+	return ou
+}
+
 // SetInvestmentType sets the "investment_type" field.
 func (ou *OrderUpdate) SetInvestmentType(s string) *OrderUpdate {
 	ou.mutation.SetInvestmentType(s)
@@ -759,6 +779,19 @@ func (ou *OrderUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
 			Column: order.FieldState,
+		})
+	}
+	if value, ok := ou.mutation.StateV1(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: order.FieldStateV1,
+		})
+	}
+	if ou.mutation.StateV1Cleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Column: order.FieldStateV1,
 		})
 	}
 	if value, ok := ou.mutation.InvestmentType(); ok {
@@ -1159,6 +1192,26 @@ func (ouo *OrderUpdateOne) SetNillableState(s *string) *OrderUpdateOne {
 // ClearState clears the value of the "state" field.
 func (ouo *OrderUpdateOne) ClearState() *OrderUpdateOne {
 	ouo.mutation.ClearState()
+	return ouo
+}
+
+// SetStateV1 sets the "state_v1" field.
+func (ouo *OrderUpdateOne) SetStateV1(s string) *OrderUpdateOne {
+	ouo.mutation.SetStateV1(s)
+	return ouo
+}
+
+// SetNillableStateV1 sets the "state_v1" field if the given value is not nil.
+func (ouo *OrderUpdateOne) SetNillableStateV1(s *string) *OrderUpdateOne {
+	if s != nil {
+		ouo.SetStateV1(*s)
+	}
+	return ouo
+}
+
+// ClearStateV1 clears the value of the "state_v1" field.
+func (ouo *OrderUpdateOne) ClearStateV1() *OrderUpdateOne {
+	ouo.mutation.ClearStateV1()
 	return ouo
 }
 
@@ -1587,6 +1640,19 @@ func (ouo *OrderUpdateOne) sqlSave(ctx context.Context) (_node *Order, err error
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
 			Column: order.FieldState,
+		})
+	}
+	if value, ok := ouo.mutation.StateV1(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: order.FieldStateV1,
+		})
+	}
+	if ouo.mutation.StateV1Cleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Column: order.FieldStateV1,
 		})
 	}
 	if value, ok := ouo.mutation.InvestmentType(); ok {

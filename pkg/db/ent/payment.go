@@ -51,6 +51,8 @@ type Payment struct {
 	CoinInfoID uuid.UUID `json:"coin_info_id,omitempty"`
 	// State holds the value of the "state" field.
 	State string `json:"state,omitempty"`
+	// StateV1 holds the value of the "state_v1" field.
+	StateV1 string `json:"state_v1,omitempty"`
 	// ChainTransactionID holds the value of the "chain_transaction_id" field.
 	ChainTransactionID string `json:"chain_transaction_id,omitempty"`
 	// UserSetPaid holds the value of the "user_set_paid" field.
@@ -72,7 +74,7 @@ func (*Payment) scanValues(columns []string) ([]interface{}, error) {
 			values[i] = new(sql.NullBool)
 		case payment.FieldCreatedAt, payment.FieldUpdatedAt, payment.FieldDeletedAt:
 			values[i] = new(sql.NullInt64)
-		case payment.FieldState, payment.FieldChainTransactionID:
+		case payment.FieldState, payment.FieldStateV1, payment.FieldChainTransactionID:
 			values[i] = new(sql.NullString)
 		case payment.FieldID, payment.FieldAppID, payment.FieldUserID, payment.FieldGoodID, payment.FieldOrderID, payment.FieldAccountID, payment.FieldCoinInfoID:
 			values[i] = new(uuid.UUID)
@@ -199,6 +201,12 @@ func (pa *Payment) assignValues(columns []string, values []interface{}) error {
 			} else if value.Valid {
 				pa.State = value.String
 			}
+		case payment.FieldStateV1:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field state_v1", values[i])
+			} else if value.Valid {
+				pa.StateV1 = value.String
+			}
 		case payment.FieldChainTransactionID:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field chain_transaction_id", values[i])
@@ -301,6 +309,9 @@ func (pa *Payment) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("state=")
 	builder.WriteString(pa.State)
+	builder.WriteString(", ")
+	builder.WriteString("state_v1=")
+	builder.WriteString(pa.StateV1)
 	builder.WriteString(", ")
 	builder.WriteString("chain_transaction_id=")
 	builder.WriteString(pa.ChainTransactionID)

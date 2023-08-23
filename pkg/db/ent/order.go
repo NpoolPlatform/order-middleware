@@ -54,6 +54,8 @@ type Order struct {
 	Type string `json:"type,omitempty"`
 	// State holds the value of the "state" field.
 	State string `json:"state,omitempty"`
+	// StateV1 holds the value of the "state_v1" field.
+	StateV1 string `json:"state_v1,omitempty"`
 	// InvestmentType holds the value of the "investment_type" field.
 	InvestmentType string `json:"investment_type,omitempty"`
 	// CouponIds holds the value of the "coupon_ids" field.
@@ -75,7 +77,7 @@ func (*Order) scanValues(columns []string) ([]interface{}, error) {
 			values[i] = new(sql.NullBool)
 		case order.FieldCreatedAt, order.FieldUpdatedAt, order.FieldDeletedAt, order.FieldUnits, order.FieldStartAt, order.FieldEndAt, order.FieldLastBenefitAt:
 			values[i] = new(sql.NullInt64)
-		case order.FieldType, order.FieldState, order.FieldInvestmentType:
+		case order.FieldType, order.FieldState, order.FieldStateV1, order.FieldInvestmentType:
 			values[i] = new(sql.NullString)
 		case order.FieldID, order.FieldGoodID, order.FieldAppID, order.FieldUserID, order.FieldParentOrderID, order.FieldPromotionID, order.FieldDiscountCouponID, order.FieldUserSpecialReductionID, order.FieldFixAmountCouponID:
 			values[i] = new(uuid.UUID)
@@ -208,6 +210,12 @@ func (o *Order) assignValues(columns []string, values []interface{}) error {
 			} else if value.Valid {
 				o.State = value.String
 			}
+		case order.FieldStateV1:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field state_v1", values[i])
+			} else if value.Valid {
+				o.StateV1 = value.String
+			}
 		case order.FieldInvestmentType:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field investment_type", values[i])
@@ -309,6 +317,9 @@ func (o *Order) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("state=")
 	builder.WriteString(o.State)
+	builder.WriteString(", ")
+	builder.WriteString("state_v1=")
+	builder.WriteString(o.StateV1)
 	builder.WriteString(", ")
 	builder.WriteString("investment_type=")
 	builder.WriteString(o.InvestmentType)

@@ -935,6 +935,7 @@ type OrderMutation struct {
 	fix_amount_coupon_id      *uuid.UUID
 	_type                     *string
 	state                     *string
+	state_v1                  *string
 	investment_type           *string
 	coupon_ids                *[]uuid.UUID
 	last_benefit_at           *uint32
@@ -1976,6 +1977,55 @@ func (m *OrderMutation) ResetState() {
 	delete(m.clearedFields, order.FieldState)
 }
 
+// SetStateV1 sets the "state_v1" field.
+func (m *OrderMutation) SetStateV1(s string) {
+	m.state_v1 = &s
+}
+
+// StateV1 returns the value of the "state_v1" field in the mutation.
+func (m *OrderMutation) StateV1() (r string, exists bool) {
+	v := m.state_v1
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldStateV1 returns the old "state_v1" field's value of the Order entity.
+// If the Order object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *OrderMutation) OldStateV1(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldStateV1 is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldStateV1 requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldStateV1: %w", err)
+	}
+	return oldValue.StateV1, nil
+}
+
+// ClearStateV1 clears the value of the "state_v1" field.
+func (m *OrderMutation) ClearStateV1() {
+	m.state_v1 = nil
+	m.clearedFields[order.FieldStateV1] = struct{}{}
+}
+
+// StateV1Cleared returns if the "state_v1" field was cleared in this mutation.
+func (m *OrderMutation) StateV1Cleared() bool {
+	_, ok := m.clearedFields[order.FieldStateV1]
+	return ok
+}
+
+// ResetStateV1 resets all changes to the "state_v1" field.
+func (m *OrderMutation) ResetStateV1() {
+	m.state_v1 = nil
+	delete(m.clearedFields, order.FieldStateV1)
+}
+
 // SetInvestmentType sets the "investment_type" field.
 func (m *OrderMutation) SetInvestmentType(s string) {
 	m.investment_type = &s
@@ -2163,7 +2213,7 @@ func (m *OrderMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *OrderMutation) Fields() []string {
-	fields := make([]string, 0, 21)
+	fields := make([]string, 0, 22)
 	if m.created_at != nil {
 		fields = append(fields, order.FieldCreatedAt)
 	}
@@ -2218,6 +2268,9 @@ func (m *OrderMutation) Fields() []string {
 	if m.state != nil {
 		fields = append(fields, order.FieldState)
 	}
+	if m.state_v1 != nil {
+		fields = append(fields, order.FieldStateV1)
+	}
 	if m.investment_type != nil {
 		fields = append(fields, order.FieldInvestmentType)
 	}
@@ -2271,6 +2324,8 @@ func (m *OrderMutation) Field(name string) (ent.Value, bool) {
 		return m.GetType()
 	case order.FieldState:
 		return m.State()
+	case order.FieldStateV1:
+		return m.StateV1()
 	case order.FieldInvestmentType:
 		return m.InvestmentType()
 	case order.FieldCouponIds:
@@ -2322,6 +2377,8 @@ func (m *OrderMutation) OldField(ctx context.Context, name string) (ent.Value, e
 		return m.OldType(ctx)
 	case order.FieldState:
 		return m.OldState(ctx)
+	case order.FieldStateV1:
+		return m.OldStateV1(ctx)
 	case order.FieldInvestmentType:
 		return m.OldInvestmentType(ctx)
 	case order.FieldCouponIds:
@@ -2462,6 +2519,13 @@ func (m *OrderMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetState(v)
+		return nil
+	case order.FieldStateV1:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetStateV1(v)
 		return nil
 	case order.FieldInvestmentType:
 		v, ok := value.(string)
@@ -2637,6 +2701,9 @@ func (m *OrderMutation) ClearedFields() []string {
 	if m.FieldCleared(order.FieldState) {
 		fields = append(fields, order.FieldState)
 	}
+	if m.FieldCleared(order.FieldStateV1) {
+		fields = append(fields, order.FieldStateV1)
+	}
 	if m.FieldCleared(order.FieldInvestmentType) {
 		fields = append(fields, order.FieldInvestmentType)
 	}
@@ -2695,6 +2762,9 @@ func (m *OrderMutation) ClearField(name string) error {
 		return nil
 	case order.FieldState:
 		m.ClearState()
+		return nil
+	case order.FieldStateV1:
+		m.ClearStateV1()
 		return nil
 	case order.FieldInvestmentType:
 		m.ClearInvestmentType()
@@ -2766,6 +2836,9 @@ func (m *OrderMutation) ResetField(name string) error {
 		return nil
 	case order.FieldState:
 		m.ResetState()
+		return nil
+	case order.FieldStateV1:
+		m.ResetStateV1()
 		return nil
 	case order.FieldInvestmentType:
 		m.ResetInvestmentType()
@@ -3652,6 +3725,7 @@ type PaymentMutation struct {
 	live_coin_usd_currency  *decimal.Decimal
 	coin_info_id            *uuid.UUID
 	state                   *string
+	state_v1                *string
 	chain_transaction_id    *string
 	user_set_paid           *bool
 	user_set_canceled       *bool
@@ -4542,6 +4616,55 @@ func (m *PaymentMutation) ResetState() {
 	delete(m.clearedFields, payment.FieldState)
 }
 
+// SetStateV1 sets the "state_v1" field.
+func (m *PaymentMutation) SetStateV1(s string) {
+	m.state_v1 = &s
+}
+
+// StateV1 returns the value of the "state_v1" field in the mutation.
+func (m *PaymentMutation) StateV1() (r string, exists bool) {
+	v := m.state_v1
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldStateV1 returns the old "state_v1" field's value of the Payment entity.
+// If the Payment object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PaymentMutation) OldStateV1(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldStateV1 is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldStateV1 requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldStateV1: %w", err)
+	}
+	return oldValue.StateV1, nil
+}
+
+// ClearStateV1 clears the value of the "state_v1" field.
+func (m *PaymentMutation) ClearStateV1() {
+	m.state_v1 = nil
+	m.clearedFields[payment.FieldStateV1] = struct{}{}
+}
+
+// StateV1Cleared returns if the "state_v1" field was cleared in this mutation.
+func (m *PaymentMutation) StateV1Cleared() bool {
+	_, ok := m.clearedFields[payment.FieldStateV1]
+	return ok
+}
+
+// ResetStateV1 resets all changes to the "state_v1" field.
+func (m *PaymentMutation) ResetStateV1() {
+	m.state_v1 = nil
+	delete(m.clearedFields, payment.FieldStateV1)
+}
+
 // SetChainTransactionID sets the "chain_transaction_id" field.
 func (m *PaymentMutation) SetChainTransactionID(s string) {
 	m.chain_transaction_id = &s
@@ -4757,7 +4880,7 @@ func (m *PaymentMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *PaymentMutation) Fields() []string {
-	fields := make([]string, 0, 21)
+	fields := make([]string, 0, 22)
 	if m.created_at != nil {
 		fields = append(fields, payment.FieldCreatedAt)
 	}
@@ -4808,6 +4931,9 @@ func (m *PaymentMutation) Fields() []string {
 	}
 	if m.state != nil {
 		fields = append(fields, payment.FieldState)
+	}
+	if m.state_v1 != nil {
+		fields = append(fields, payment.FieldStateV1)
 	}
 	if m.chain_transaction_id != nil {
 		fields = append(fields, payment.FieldChainTransactionID)
@@ -4863,6 +4989,8 @@ func (m *PaymentMutation) Field(name string) (ent.Value, bool) {
 		return m.CoinInfoID()
 	case payment.FieldState:
 		return m.State()
+	case payment.FieldStateV1:
+		return m.StateV1()
 	case payment.FieldChainTransactionID:
 		return m.ChainTransactionID()
 	case payment.FieldUserSetPaid:
@@ -4914,6 +5042,8 @@ func (m *PaymentMutation) OldField(ctx context.Context, name string) (ent.Value,
 		return m.OldCoinInfoID(ctx)
 	case payment.FieldState:
 		return m.OldState(ctx)
+	case payment.FieldStateV1:
+		return m.OldStateV1(ctx)
 	case payment.FieldChainTransactionID:
 		return m.OldChainTransactionID(ctx)
 	case payment.FieldUserSetPaid:
@@ -5050,6 +5180,13 @@ func (m *PaymentMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetState(v)
 		return nil
+	case payment.FieldStateV1:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetStateV1(v)
+		return nil
 	case payment.FieldChainTransactionID:
 		v, ok := value.(string)
 		if !ok {
@@ -5171,6 +5308,9 @@ func (m *PaymentMutation) ClearedFields() []string {
 	if m.FieldCleared(payment.FieldState) {
 		fields = append(fields, payment.FieldState)
 	}
+	if m.FieldCleared(payment.FieldStateV1) {
+		fields = append(fields, payment.FieldStateV1)
+	}
 	if m.FieldCleared(payment.FieldChainTransactionID) {
 		fields = append(fields, payment.FieldChainTransactionID)
 	}
@@ -5220,6 +5360,9 @@ func (m *PaymentMutation) ClearField(name string) error {
 		return nil
 	case payment.FieldState:
 		m.ClearState()
+		return nil
+	case payment.FieldStateV1:
+		m.ClearStateV1()
 		return nil
 	case payment.FieldChainTransactionID:
 		m.ClearChainTransactionID()
@@ -5291,6 +5434,9 @@ func (m *PaymentMutation) ResetField(name string) error {
 		return nil
 	case payment.FieldState:
 		m.ResetState()
+		return nil
+	case payment.FieldStateV1:
+		m.ResetStateV1()
 		return nil
 	case payment.FieldChainTransactionID:
 		m.ResetChainTransactionID()

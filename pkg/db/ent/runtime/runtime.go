@@ -141,16 +141,20 @@ func init() {
 	orderDescState := orderFields[15].Descriptor()
 	// order.DefaultState holds the default value on creation for the state field.
 	order.DefaultState = orderDescState.Default.(string)
+	// orderDescStateV1 is the schema descriptor for state_v1 field.
+	orderDescStateV1 := orderFields[16].Descriptor()
+	// order.DefaultStateV1 holds the default value on creation for the state_v1 field.
+	order.DefaultStateV1 = orderDescStateV1.Default.(string)
 	// orderDescInvestmentType is the schema descriptor for investment_type field.
-	orderDescInvestmentType := orderFields[16].Descriptor()
+	orderDescInvestmentType := orderFields[17].Descriptor()
 	// order.DefaultInvestmentType holds the default value on creation for the investment_type field.
 	order.DefaultInvestmentType = orderDescInvestmentType.Default.(string)
 	// orderDescCouponIds is the schema descriptor for coupon_ids field.
-	orderDescCouponIds := orderFields[17].Descriptor()
+	orderDescCouponIds := orderFields[18].Descriptor()
 	// order.DefaultCouponIds holds the default value on creation for the coupon_ids field.
 	order.DefaultCouponIds = orderDescCouponIds.Default.(func() []uuid.UUID)
 	// orderDescLastBenefitAt is the schema descriptor for last_benefit_at field.
-	orderDescLastBenefitAt := orderFields[18].Descriptor()
+	orderDescLastBenefitAt := orderFields[19].Descriptor()
 	// order.DefaultLastBenefitAt holds the default value on creation for the last_benefit_at field.
 	order.DefaultLastBenefitAt = orderDescLastBenefitAt.Default.(uint32)
 	// orderDescID is the schema descriptor for id field.
@@ -257,20 +261,24 @@ func init() {
 	paymentDescState := paymentFields[14].Descriptor()
 	// payment.DefaultState holds the default value on creation for the state field.
 	payment.DefaultState = paymentDescState.Default.(string)
+	// paymentDescStateV1 is the schema descriptor for state_v1 field.
+	paymentDescStateV1 := paymentFields[15].Descriptor()
+	// payment.DefaultStateV1 holds the default value on creation for the state_v1 field.
+	payment.DefaultStateV1 = paymentDescStateV1.Default.(string)
 	// paymentDescChainTransactionID is the schema descriptor for chain_transaction_id field.
-	paymentDescChainTransactionID := paymentFields[15].Descriptor()
+	paymentDescChainTransactionID := paymentFields[16].Descriptor()
 	// payment.DefaultChainTransactionID holds the default value on creation for the chain_transaction_id field.
 	payment.DefaultChainTransactionID = paymentDescChainTransactionID.Default.(string)
 	// paymentDescUserSetPaid is the schema descriptor for user_set_paid field.
-	paymentDescUserSetPaid := paymentFields[16].Descriptor()
+	paymentDescUserSetPaid := paymentFields[17].Descriptor()
 	// payment.DefaultUserSetPaid holds the default value on creation for the user_set_paid field.
 	payment.DefaultUserSetPaid = paymentDescUserSetPaid.Default.(bool)
 	// paymentDescUserSetCanceled is the schema descriptor for user_set_canceled field.
-	paymentDescUserSetCanceled := paymentFields[17].Descriptor()
+	paymentDescUserSetCanceled := paymentFields[18].Descriptor()
 	// payment.DefaultUserSetCanceled holds the default value on creation for the user_set_canceled field.
 	payment.DefaultUserSetCanceled = paymentDescUserSetCanceled.Default.(bool)
 	// paymentDescFakePayment is the schema descriptor for fake_payment field.
-	paymentDescFakePayment := paymentFields[18].Descriptor()
+	paymentDescFakePayment := paymentFields[19].Descriptor()
 	// payment.DefaultFakePayment holds the default value on creation for the fake_payment field.
 	payment.DefaultFakePayment = paymentDescFakePayment.Default.(bool)
 	// paymentDescID is the schema descriptor for id field.

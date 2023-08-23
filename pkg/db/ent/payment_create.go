@@ -214,6 +214,20 @@ func (pc *PaymentCreate) SetNillableState(s *string) *PaymentCreate {
 	return pc
 }
 
+// SetStateV1 sets the "state_v1" field.
+func (pc *PaymentCreate) SetStateV1(s string) *PaymentCreate {
+	pc.mutation.SetStateV1(s)
+	return pc
+}
+
+// SetNillableStateV1 sets the "state_v1" field if the given value is not nil.
+func (pc *PaymentCreate) SetNillableStateV1(s *string) *PaymentCreate {
+	if s != nil {
+		pc.SetStateV1(*s)
+	}
+	return pc
+}
+
 // SetChainTransactionID sets the "chain_transaction_id" field.
 func (pc *PaymentCreate) SetChainTransactionID(s string) *PaymentCreate {
 	pc.mutation.SetChainTransactionID(s)
@@ -415,6 +429,10 @@ func (pc *PaymentCreate) defaults() error {
 	if _, ok := pc.mutation.State(); !ok {
 		v := payment.DefaultState
 		pc.mutation.SetState(v)
+	}
+	if _, ok := pc.mutation.StateV1(); !ok {
+		v := payment.DefaultStateV1
+		pc.mutation.SetStateV1(v)
 	}
 	if _, ok := pc.mutation.ChainTransactionID(); !ok {
 		v := payment.DefaultChainTransactionID
@@ -643,6 +661,14 @@ func (pc *PaymentCreate) createSpec() (*Payment, *sqlgraph.CreateSpec) {
 			Column: payment.FieldState,
 		})
 		_node.State = value
+	}
+	if value, ok := pc.mutation.StateV1(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: payment.FieldStateV1,
+		})
+		_node.StateV1 = value
 	}
 	if value, ok := pc.mutation.ChainTransactionID(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -997,6 +1023,24 @@ func (u *PaymentUpsert) UpdateState() *PaymentUpsert {
 // ClearState clears the value of the "state" field.
 func (u *PaymentUpsert) ClearState() *PaymentUpsert {
 	u.SetNull(payment.FieldState)
+	return u
+}
+
+// SetStateV1 sets the "state_v1" field.
+func (u *PaymentUpsert) SetStateV1(v string) *PaymentUpsert {
+	u.Set(payment.FieldStateV1, v)
+	return u
+}
+
+// UpdateStateV1 sets the "state_v1" field to the value that was provided on create.
+func (u *PaymentUpsert) UpdateStateV1() *PaymentUpsert {
+	u.SetExcluded(payment.FieldStateV1)
+	return u
+}
+
+// ClearStateV1 clears the value of the "state_v1" field.
+func (u *PaymentUpsert) ClearStateV1() *PaymentUpsert {
+	u.SetNull(payment.FieldStateV1)
 	return u
 }
 
@@ -1434,6 +1478,27 @@ func (u *PaymentUpsertOne) UpdateState() *PaymentUpsertOne {
 func (u *PaymentUpsertOne) ClearState() *PaymentUpsertOne {
 	return u.Update(func(s *PaymentUpsert) {
 		s.ClearState()
+	})
+}
+
+// SetStateV1 sets the "state_v1" field.
+func (u *PaymentUpsertOne) SetStateV1(v string) *PaymentUpsertOne {
+	return u.Update(func(s *PaymentUpsert) {
+		s.SetStateV1(v)
+	})
+}
+
+// UpdateStateV1 sets the "state_v1" field to the value that was provided on create.
+func (u *PaymentUpsertOne) UpdateStateV1() *PaymentUpsertOne {
+	return u.Update(func(s *PaymentUpsert) {
+		s.UpdateStateV1()
+	})
+}
+
+// ClearStateV1 clears the value of the "state_v1" field.
+func (u *PaymentUpsertOne) ClearStateV1() *PaymentUpsertOne {
+	return u.Update(func(s *PaymentUpsert) {
+		s.ClearStateV1()
 	})
 }
 
@@ -2049,6 +2114,27 @@ func (u *PaymentUpsertBulk) UpdateState() *PaymentUpsertBulk {
 func (u *PaymentUpsertBulk) ClearState() *PaymentUpsertBulk {
 	return u.Update(func(s *PaymentUpsert) {
 		s.ClearState()
+	})
+}
+
+// SetStateV1 sets the "state_v1" field.
+func (u *PaymentUpsertBulk) SetStateV1(v string) *PaymentUpsertBulk {
+	return u.Update(func(s *PaymentUpsert) {
+		s.SetStateV1(v)
+	})
+}
+
+// UpdateStateV1 sets the "state_v1" field to the value that was provided on create.
+func (u *PaymentUpsertBulk) UpdateStateV1() *PaymentUpsertBulk {
+	return u.Update(func(s *PaymentUpsert) {
+		s.UpdateStateV1()
+	})
+}
+
+// ClearStateV1 clears the value of the "state_v1" field.
+func (u *PaymentUpsertBulk) ClearStateV1() *PaymentUpsertBulk {
+	return u.Update(func(s *PaymentUpsert) {
+		s.ClearStateV1()
 	})
 }
 

@@ -66,6 +66,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			order.FieldFixAmountCouponID:      {Type: field.TypeUUID, Column: order.FieldFixAmountCouponID},
 			order.FieldType:                   {Type: field.TypeString, Column: order.FieldType},
 			order.FieldState:                  {Type: field.TypeString, Column: order.FieldState},
+			order.FieldStateV1:                {Type: field.TypeString, Column: order.FieldStateV1},
 			order.FieldInvestmentType:         {Type: field.TypeString, Column: order.FieldInvestmentType},
 			order.FieldCouponIds:              {Type: field.TypeJSON, Column: order.FieldCouponIds},
 			order.FieldLastBenefitAt:          {Type: field.TypeUint32, Column: order.FieldLastBenefitAt},
@@ -118,6 +119,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			payment.FieldLiveCoinUsdCurrency:  {Type: field.TypeOther, Column: payment.FieldLiveCoinUsdCurrency},
 			payment.FieldCoinInfoID:           {Type: field.TypeUUID, Column: payment.FieldCoinInfoID},
 			payment.FieldState:                {Type: field.TypeString, Column: payment.FieldState},
+			payment.FieldStateV1:              {Type: field.TypeString, Column: payment.FieldStateV1},
 			payment.FieldChainTransactionID:   {Type: field.TypeString, Column: payment.FieldChainTransactionID},
 			payment.FieldUserSetPaid:          {Type: field.TypeBool, Column: payment.FieldUserSetPaid},
 			payment.FieldUserSetCanceled:      {Type: field.TypeBool, Column: payment.FieldUserSetCanceled},
@@ -338,6 +340,11 @@ func (f *OrderFilter) WhereState(p entql.StringP) {
 	f.Where(p.Field(order.FieldState))
 }
 
+// WhereStateV1 applies the entql string predicate on the state_v1 field.
+func (f *OrderFilter) WhereStateV1(p entql.StringP) {
+	f.Where(p.Field(order.FieldStateV1))
+}
+
 // WhereInvestmentType applies the entql string predicate on the investment_type field.
 func (f *OrderFilter) WhereInvestmentType(p entql.StringP) {
 	f.Where(p.Field(order.FieldInvestmentType))
@@ -546,6 +553,11 @@ func (f *PaymentFilter) WhereCoinInfoID(p entql.ValueP) {
 // WhereState applies the entql string predicate on the state field.
 func (f *PaymentFilter) WhereState(p entql.StringP) {
 	f.Where(p.Field(payment.FieldState))
+}
+
+// WhereStateV1 applies the entql string predicate on the state_v1 field.
+func (f *PaymentFilter) WhereStateV1(p entql.StringP) {
+	f.Where(p.Field(payment.FieldStateV1))
 }
 
 // WhereChainTransactionID applies the entql string predicate on the chain_transaction_id field.

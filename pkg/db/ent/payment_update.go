@@ -281,6 +281,26 @@ func (pu *PaymentUpdate) ClearState() *PaymentUpdate {
 	return pu
 }
 
+// SetStateV1 sets the "state_v1" field.
+func (pu *PaymentUpdate) SetStateV1(s string) *PaymentUpdate {
+	pu.mutation.SetStateV1(s)
+	return pu
+}
+
+// SetNillableStateV1 sets the "state_v1" field if the given value is not nil.
+func (pu *PaymentUpdate) SetNillableStateV1(s *string) *PaymentUpdate {
+	if s != nil {
+		pu.SetStateV1(*s)
+	}
+	return pu
+}
+
+// ClearStateV1 clears the value of the "state_v1" field.
+func (pu *PaymentUpdate) ClearStateV1() *PaymentUpdate {
+	pu.mutation.ClearStateV1()
+	return pu
+}
+
 // SetChainTransactionID sets the "chain_transaction_id" field.
 func (pu *PaymentUpdate) SetChainTransactionID(s string) *PaymentUpdate {
 	pu.mutation.SetChainTransactionID(s)
@@ -647,6 +667,19 @@ func (pu *PaymentUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: payment.FieldState,
 		})
 	}
+	if value, ok := pu.mutation.StateV1(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: payment.FieldStateV1,
+		})
+	}
+	if pu.mutation.StateV1Cleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Column: payment.FieldStateV1,
+		})
+	}
 	if value, ok := pu.mutation.ChainTransactionID(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
@@ -968,6 +1001,26 @@ func (puo *PaymentUpdateOne) SetNillableState(s *string) *PaymentUpdateOne {
 // ClearState clears the value of the "state" field.
 func (puo *PaymentUpdateOne) ClearState() *PaymentUpdateOne {
 	puo.mutation.ClearState()
+	return puo
+}
+
+// SetStateV1 sets the "state_v1" field.
+func (puo *PaymentUpdateOne) SetStateV1(s string) *PaymentUpdateOne {
+	puo.mutation.SetStateV1(s)
+	return puo
+}
+
+// SetNillableStateV1 sets the "state_v1" field if the given value is not nil.
+func (puo *PaymentUpdateOne) SetNillableStateV1(s *string) *PaymentUpdateOne {
+	if s != nil {
+		puo.SetStateV1(*s)
+	}
+	return puo
+}
+
+// ClearStateV1 clears the value of the "state_v1" field.
+func (puo *PaymentUpdateOne) ClearStateV1() *PaymentUpdateOne {
+	puo.mutation.ClearStateV1()
 	return puo
 }
 
@@ -1365,6 +1418,19 @@ func (puo *PaymentUpdateOne) sqlSave(ctx context.Context) (_node *Payment, err e
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
 			Column: payment.FieldState,
+		})
+	}
+	if value, ok := puo.mutation.StateV1(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: payment.FieldStateV1,
+		})
+	}
+	if puo.mutation.StateV1Cleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Column: payment.FieldStateV1,
 		})
 	}
 	if value, ok := puo.mutation.ChainTransactionID(); ok {

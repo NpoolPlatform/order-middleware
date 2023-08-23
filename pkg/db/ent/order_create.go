@@ -252,6 +252,20 @@ func (oc *OrderCreate) SetNillableState(s *string) *OrderCreate {
 	return oc
 }
 
+// SetStateV1 sets the "state_v1" field.
+func (oc *OrderCreate) SetStateV1(s string) *OrderCreate {
+	oc.mutation.SetStateV1(s)
+	return oc
+}
+
+// SetNillableStateV1 sets the "state_v1" field if the given value is not nil.
+func (oc *OrderCreate) SetNillableStateV1(s *string) *OrderCreate {
+	if s != nil {
+		oc.SetStateV1(*s)
+	}
+	return oc
+}
+
 // SetInvestmentType sets the "investment_type" field.
 func (oc *OrderCreate) SetInvestmentType(s string) *OrderCreate {
 	oc.mutation.SetInvestmentType(s)
@@ -462,6 +476,10 @@ func (oc *OrderCreate) defaults() error {
 	if _, ok := oc.mutation.State(); !ok {
 		v := order.DefaultState
 		oc.mutation.SetState(v)
+	}
+	if _, ok := oc.mutation.StateV1(); !ok {
+		v := order.DefaultStateV1
+		oc.mutation.SetStateV1(v)
 	}
 	if _, ok := oc.mutation.InvestmentType(); !ok {
 		v := order.DefaultInvestmentType
@@ -688,6 +706,14 @@ func (oc *OrderCreate) createSpec() (*Order, *sqlgraph.CreateSpec) {
 			Column: order.FieldState,
 		})
 		_node.State = value
+	}
+	if value, ok := oc.mutation.StateV1(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: order.FieldStateV1,
+		})
+		_node.StateV1 = value
 	}
 	if value, ok := oc.mutation.InvestmentType(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -1088,6 +1114,24 @@ func (u *OrderUpsert) UpdateState() *OrderUpsert {
 // ClearState clears the value of the "state" field.
 func (u *OrderUpsert) ClearState() *OrderUpsert {
 	u.SetNull(order.FieldState)
+	return u
+}
+
+// SetStateV1 sets the "state_v1" field.
+func (u *OrderUpsert) SetStateV1(v string) *OrderUpsert {
+	u.Set(order.FieldStateV1, v)
+	return u
+}
+
+// UpdateStateV1 sets the "state_v1" field to the value that was provided on create.
+func (u *OrderUpsert) UpdateStateV1() *OrderUpsert {
+	u.SetExcluded(order.FieldStateV1)
+	return u
+}
+
+// ClearStateV1 clears the value of the "state_v1" field.
+func (u *OrderUpsert) ClearStateV1() *OrderUpsert {
+	u.SetNull(order.FieldStateV1)
 	return u
 }
 
@@ -1576,6 +1620,27 @@ func (u *OrderUpsertOne) UpdateState() *OrderUpsertOne {
 func (u *OrderUpsertOne) ClearState() *OrderUpsertOne {
 	return u.Update(func(s *OrderUpsert) {
 		s.ClearState()
+	})
+}
+
+// SetStateV1 sets the "state_v1" field.
+func (u *OrderUpsertOne) SetStateV1(v string) *OrderUpsertOne {
+	return u.Update(func(s *OrderUpsert) {
+		s.SetStateV1(v)
+	})
+}
+
+// UpdateStateV1 sets the "state_v1" field to the value that was provided on create.
+func (u *OrderUpsertOne) UpdateStateV1() *OrderUpsertOne {
+	return u.Update(func(s *OrderUpsert) {
+		s.UpdateStateV1()
+	})
+}
+
+// ClearStateV1 clears the value of the "state_v1" field.
+func (u *OrderUpsertOne) ClearStateV1() *OrderUpsertOne {
+	return u.Update(func(s *OrderUpsert) {
+		s.ClearStateV1()
 	})
 }
 
@@ -2240,6 +2305,27 @@ func (u *OrderUpsertBulk) UpdateState() *OrderUpsertBulk {
 func (u *OrderUpsertBulk) ClearState() *OrderUpsertBulk {
 	return u.Update(func(s *OrderUpsert) {
 		s.ClearState()
+	})
+}
+
+// SetStateV1 sets the "state_v1" field.
+func (u *OrderUpsertBulk) SetStateV1(v string) *OrderUpsertBulk {
+	return u.Update(func(s *OrderUpsert) {
+		s.SetStateV1(v)
+	})
+}
+
+// UpdateStateV1 sets the "state_v1" field to the value that was provided on create.
+func (u *OrderUpsertBulk) UpdateStateV1() *OrderUpsertBulk {
+	return u.Update(func(s *OrderUpsert) {
+		s.UpdateStateV1()
+	})
+}
+
+// ClearStateV1 clears the value of the "state_v1" field.
+func (u *OrderUpsertBulk) ClearStateV1() *OrderUpsertBulk {
+	return u.Update(func(s *OrderUpsert) {
+		s.ClearStateV1()
 	})
 }
 
