@@ -80,7 +80,7 @@ func CreateSet(c *ent.PaymentCreate, req *Req) *ent.PaymentCreate {
 		c.SetCoinInfoID(*req.CoinInfoID)
 	}
 	if req.State != nil {
-		c.SetState(req.State.String())
+		c.SetStateV1(req.State.String())
 	}
 	if req.ChainTransactionID != nil {
 		c.SetChainTransactionID(*req.ChainTransactionID)
@@ -105,7 +105,7 @@ func UpdateSet(u *ent.PaymentUpdateOne, req *Req) *ent.PaymentUpdateOne {
 		u.SetFinishAmount(*req.FinishAmount)
 	}
 	if req.State != nil {
-		u.SetState(req.State.String())
+		u.SetStateV1(req.State.String())
 	}
 	if req.UserSetPaid != nil {
 		u.SetUserSetPaid(*req.UserSetPaid)
@@ -244,7 +244,7 @@ func SetQueryConds(q *ent.PaymentQuery, conds *Conds) (*ent.PaymentQuery, error)
 		}
 		switch conds.State.Op {
 		case cruder.EQ:
-			q.Where(entpayment.State(state.String()))
+			q.Where(entpayment.StateV1(state.String()))
 		default:
 			return nil, fmt.Errorf("invalid payment field")
 		}

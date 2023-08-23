@@ -56,7 +56,7 @@ func (h *queryHandler) queryJoinMyself(s *sql.Selector) {
 		t.C(entorder.FieldUserID),
 		t.C(entorder.FieldGoodID),
 		t.C(entorder.FieldType),
-		t.C(entorder.FieldState),
+		sql.As(t.C(entorder.FieldStateV1), "state"),
 		t.C(entorder.FieldParentOrderID),
 		t.C(entorder.FieldStartAt),
 		t.C(entorder.FieldEndAt),
@@ -88,7 +88,7 @@ func (h *queryHandler) queryJoinPayment(s *sql.Selector) error { //nolint
 		sql.As(t.C(entpayment.FieldID), "payment_id"),
 		sql.As(t.C(entpayment.FieldAccountID), "payment_account_id"),
 		sql.As(t.C(entpayment.FieldAmount), "payment_amount"),
-		sql.As(t.C(entpayment.FieldState), "payment_state"),
+		sql.As(t.C(entpayment.FieldStateV1), "payment_state"),
 		sql.As(t.C(entpayment.FieldPayWithBalanceAmount), "pay_with_balance_amount"),
 		sql.As(t.C(entpayment.FieldUpdatedAt), "paid_at"),
 		sql.As(t.C(entpayment.FieldStartAmount), "payment_start_amount"),
@@ -131,10 +131,6 @@ func (h *queryHandler) formalize() {
 }
 
 func (h *Handler) GetOrder(ctx context.Context) (*npool.Order, error) {
-	if h.ID == nil {
-		return nil, fmt.Errorf("invalid id")
-	}
-
 	handler := &queryHandler{
 		Handler: h,
 	}

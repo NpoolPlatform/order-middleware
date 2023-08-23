@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 
+	"entgo.io/ent/dialect/sql"
 	basetypes "github.com/NpoolPlatform/message/npool/basetypes/order/v1"
 	"github.com/NpoolPlatform/order-middleware/pkg/db"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent"
@@ -15,39 +16,18 @@ import (
 
 type queryHandler struct {
 	*Handler
-	stm   *ent.PaymentSelect
-	infos []*npool.Payment
-	total uint32
+	stmSelect *ent.PaymentSelect
+	stmCount  *ent.PaymentSelect
+	infos     []*npool.Payment
+	total     uint32
 }
 
-func (h *queryHandler) selectPayment(stm *ent.PaymentQuery) {
-	h.stm = stm.Select(
-		entpayment.FieldID,
-		entpayment.FieldAppID,
-		entpayment.FieldGoodID,
-		entpayment.FieldUserID,
-		entpayment.FieldOrderID,
-		entpayment.FieldAccountID,
-		entpayment.FieldStartAmount,
-		entpayment.FieldAmount,
-		entpayment.FieldPayWithBalanceAmount,
-		entpayment.FieldFinishAmount,
-		entpayment.FieldCoinUsdCurrency,
-		entpayment.FieldLocalCoinUsdCurrency,
-		entpayment.FieldLiveCoinUsdCurrency,
-		entpayment.FieldCoinInfoID,
-		entpayment.FieldState,
-		entpayment.FieldChainTransactionID,
-		entpayment.FieldUserSetPaid,
-		entpayment.FieldUserSetCanceled,
-		entpayment.FieldFakePayment,
-		entpayment.FieldCreatedAt,
-		entpayment.FieldUpdatedAt,
-	)
+func (h *queryHandler) selectPayment(stm *ent.PaymentQuery) *ent.PaymentSelect {
+	return stm.Select(entpayment.FieldID)
 }
 
 func (h *queryHandler) queryPayment(cli *ent.Client) {
-	h.selectPayment(
+	h.stmSelect = h.selectPayment(
 		cli.Payment.
 			Query().
 			Where(
@@ -57,24 +37,58 @@ func (h *queryHandler) queryPayment(cli *ent.Client) {
 	)
 }
 
-func (h *queryHandler) queryPayments(ctx context.Context, cli *ent.Client) error {
+func (h *queryHandler) queryPayments(cli *ent.Client) (*ent.PaymentSelect, error) {
 	stm, err := paymentcrud.SetQueryConds(cli.Payment.Query(), h.Conds)
 	if err != nil {
-		return err
+		return nil, err
 	}
+	return h.selectPayment(stm), nil
+}
 
-	_total, err := stm.Count(ctx)
+func (h *queryHandler) queryJoinMyself(s *sql.Selector) {
+	t := sql.Table(entpayment.Table)
+	s.AppendSelect(
+		t.C(entpayment.FieldID),
+		t.C(entpayment.FieldAppID),
+		t.C(entpayment.FieldGoodID),
+		t.C(entpayment.FieldUserID),
+		t.C(entpayment.FieldOrderID),
+		t.C(entpayment.FieldAccountID),
+		t.C(entpayment.FieldStartAmount),
+		t.C(entpayment.FieldAmount),
+		t.C(entpayment.FieldPayWithBalanceAmount),
+		t.C(entpayment.FieldFinishAmount),
+		t.C(entpayment.FieldCoinUsdCurrency),
+		t.C(entpayment.FieldLocalCoinUsdCurrency),
+		t.C(entpayment.FieldLiveCoinUsdCurrency),
+		t.C(entpayment.FieldCoinInfoID),
+		sql.As(t.C(entpayment.FieldStateV1), "state"),
+		t.C(entpayment.FieldChainTransactionID),
+		t.C(entpayment.FieldUserSetPaid),
+		t.C(entpayment.FieldUserSetCanceled),
+		t.C(entpayment.FieldFakePayment),
+		t.C(entpayment.FieldCreatedAt),
+		t.C(entpayment.FieldUpdatedAt),
+	)
+}
+
+func (h *queryHandler) queryJoin() error {
+	var err error
+	h.stmSelect.Modify(func(s *sql.Selector) {
+		h.queryJoinMyself(s)
+	})
 	if err != nil {
 		return err
 	}
-
-	h.total = uint32(_total)
-	h.selectPayment(stm)
-	return nil
+	if h.stmCount == nil {
+		return nil
+	}
+	h.stmCount.Modify(func(s *sql.Selector) {})
+	return err
 }
 
 func (h *queryHandler) scan(ctx context.Context) error {
-	return h.stm.Scan(ctx, &h.infos)
+	return h.stmSelect.Scan(ctx, &h.infos)
 }
 
 func (h *queryHandler) formalize() {
@@ -84,16 +98,15 @@ func (h *queryHandler) formalize() {
 }
 
 func (h *Handler) GetPayment(ctx context.Context) (*npool.Payment, error) {
-	if h.ID == nil {
-		return nil, fmt.Errorf("invalid id")
-	}
-
 	handler := &queryHandler{
 		Handler: h,
 	}
 
 	err := db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
 		handler.queryPayment(cli)
+		if err := handler.queryJoin(); err != nil {
+			return err
+		}
 		return handler.scan(_ctx)
 	})
 	if err != nil {
@@ -116,20 +129,33 @@ func (h *Handler) GetPayments(ctx context.Context) ([]*npool.Payment, uint32, er
 		Handler: h,
 	}
 
-	err := db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
-		if err := handler.queryPayments(_ctx, cli); err != nil {
+	var err error
+	err = db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
+		handler.stmSelect, err = handler.queryPayments(cli)
+		if err != nil {
+			return err
+		}
+		handler.stmCount, err = handler.queryPayments(cli)
+		if err != nil {
 			return err
 		}
 
-		handler.
-			stm.
-			Offset(int(handler.Offset)).
-			Limit(int(handler.Limit)).
-			Order(ent.Desc(entpayment.FieldCreatedAt))
-		if err := handler.scan(ctx); err != nil {
+		if err := handler.queryJoin(); err != nil {
 			return err
 		}
-		return nil
+
+		_total, err := handler.stmCount.Count(_ctx)
+		if err != nil {
+			return err
+		}
+		handler.total = uint32(_total)
+
+		handler.stmSelect.
+			Offset(int(h.Offset)).
+			Limit(int(h.Limit)).
+			Order(ent.Desc(entpayment.FieldCreatedAt))
+
+		return handler.scan(_ctx)
 	})
 	if err != nil {
 		return nil, 0, err

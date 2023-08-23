@@ -95,7 +95,7 @@ func CreateSet(c *ent.OrderCreate, req *Req) *ent.OrderCreate {
 		c.SetType(req.Type.String())
 	}
 	if req.State != nil {
-		c.SetState(req.State.String())
+		c.SetStateV1(req.State.String())
 	}
 	if req.InvestmentType != nil {
 		c.SetInvestmentType(req.InvestmentType.String())
@@ -114,7 +114,7 @@ func CreateSet(c *ent.OrderCreate, req *Req) *ent.OrderCreate {
 
 func UpdateSet(u *ent.OrderUpdateOne, req *Req) *ent.OrderUpdateOne {
 	if req.State != nil {
-		u.SetState(req.State.String())
+		u.SetStateV1(req.State.String())
 	}
 	if req.StartAt != nil {
 		u.SetStartAt(*req.StartAt)
@@ -259,7 +259,7 @@ func SetQueryConds(q *ent.OrderQuery, conds *Conds) (*ent.OrderQuery, error) {
 		}
 		switch conds.State.Op {
 		case cruder.EQ:
-			q.Where(entorder.State(state.String()))
+			q.Where(entorder.StateV1(state.String()))
 		default:
 			return nil, fmt.Errorf("invalid order field")
 		}
@@ -284,7 +284,7 @@ func SetQueryConds(q *ent.OrderQuery, conds *Conds) (*ent.OrderQuery, error) {
 		if len(states) > 0 {
 			switch conds.States.Op {
 			case cruder.IN:
-				q.Where(entorder.StateIn(states...))
+				q.Where(entorder.StateV1In(states...))
 			default:
 				return nil, fmt.Errorf("invalid order field")
 			}
