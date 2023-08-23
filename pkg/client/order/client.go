@@ -180,6 +180,23 @@ func SumOrderUnits(ctx context.Context, conds *npool.Conds) (string, error) {
 	return info.(string), nil
 }
 
+func ExistOrder(ctx context.Context, id string) (bool, error) {
+	exist, err := do(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
+		resp, err := cli.ExistOrder(ctx, &npool.ExistOrderRequest{
+			ID: id,
+		})
+		if err != nil {
+			return false, err
+		}
+
+		return resp.Info, nil
+	})
+	if err != nil {
+		return false, err
+	}
+	return exist.(bool), err
+}
+
 func ExistOrderConds(ctx context.Context, conds *npool.Conds) (bool, error) {
 	exist, err := do(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
 		resp, err := cli.ExistOrderConds(ctx, &npool.ExistOrderCondsRequest{
