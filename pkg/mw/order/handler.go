@@ -726,6 +726,9 @@ func WithReqs(reqs []*npool.OrderReq) func(context.Context, *Handler) error {
 				}
 				_req.PaymentFinishAmount = &amount
 			}
+			if req.IsMainGood != nil {
+				_req.IsMainGood = req.IsMainGood
+			}
 			_reqs = append(_reqs, _req)
 		}
 		h.Reqs = _reqs

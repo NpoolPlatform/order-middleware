@@ -47,6 +47,7 @@ type Req struct {
 	PaymentUserSetCanceled    *bool
 	PaymentFakePayment        *bool
 	InvestmentType            *basetypes.InvestmentType
+	IsMainGood                *bool
 }
 
 //nolint:gocyclo

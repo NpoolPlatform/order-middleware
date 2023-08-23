@@ -63,3 +63,30 @@ func (s *Server) CreateOrder(ctx context.Context, in *npool.CreateOrderRequest) 
 		Info: info,
 	}, nil
 }
+
+func (s *Server) CreateOrders(ctx context.Context, in *npool.CreateOrdersRequest) (*npool.CreateOrdersResponse, error) {
+	handler, err := order1.NewHandler(
+		ctx,
+		order1.WithReqs(in.GetInfos()),
+	)
+	if err != nil {
+		logger.Sugar().Errorw(
+			"CreateOrders",
+			"In", in,
+			"Error", err,
+		)
+		return &npool.CreateOrdersResponse{}, status.Error(codes.Aborted, err.Error())
+	}
+	infos, _, err := handler.CreateOrders(ctx)
+	if err != nil {
+		logger.Sugar().Errorw(
+			"CreateOrders",
+			"In", in,
+			"Error", err,
+		)
+		return &npool.CreateOrdersResponse{}, status.Error(codes.Aborted, err.Error())
+	}
+	return &npool.CreateOrdersResponse{
+		Infos: infos,
+	}, nil
+}
