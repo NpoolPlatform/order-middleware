@@ -51,7 +51,7 @@ func (h *Handler) CreatePayment(ctx context.Context) (*npool.Payment, error) {
 		return nil, err
 	}
 
-	key := fmt.Sprintf("%v:%v", basetypes.Prefix_PrefixCreateUserTransfer, *h.OrderID)
+	key := fmt.Sprintf("%v:%v:%v:%v", basetypes.Prefix_PrefixCreateUserTransfer, *h.AppID, *h.UserID, *h.OrderID)
 	if err := redis2.TryLock(key, 0); err != nil {
 		return nil, err
 	}

@@ -104,8 +104,10 @@ func (h *Handler) UpdateOrder(ctx context.Context) (*npool.Order, error) {
 		AppID:                  handler.AppID,
 		PaymentID:              handler.PaymentID,
 		StartAt:                handler.StartAt,
+		State:                  handler.State,
 		LastBenefitAt:          handler.LastBenefitAt,
 		PaymentUserSetCanceled: handler.PaymentUserSetCanceled,
+		PaymentState:           handler.PaymentState,
 		PaymentFinishAmount:    handler.PaymentFinishAmount,
 		PaymentFakePayment:     handler.PaymentFakePayment,
 	}

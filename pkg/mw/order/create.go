@@ -55,7 +55,7 @@ func (h *Handler) CreateOrder(ctx context.Context) (*npool.Order, error) {
 		return nil, err
 	}
 
-	key := fmt.Sprintf("%v:%v", basetypes.Prefix_PrefixCreateUserTransfer, *h.ParentOrderID)
+	key := fmt.Sprintf("%v:%v:%v:%v", basetypes.Prefix_PrefixCreateUserTransfer, *h.AppID, *h.GoodID, *h.UserID)
 	if err := redis2.TryLock(key, 0); err != nil {
 		return nil, err
 	}
