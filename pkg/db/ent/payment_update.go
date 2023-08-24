@@ -115,9 +115,9 @@ func (pu *PaymentUpdate) SetAccountID(u uuid.UUID) *PaymentUpdate {
 	return pu
 }
 
-// SetCoinInfoID sets the "coin_info_id" field.
-func (pu *PaymentUpdate) SetCoinInfoID(u uuid.UUID) *PaymentUpdate {
-	pu.mutation.SetCoinInfoID(u)
+// SetCoinTypeID sets the "coin_type_id" field.
+func (pu *PaymentUpdate) SetCoinTypeID(u uuid.UUID) *PaymentUpdate {
+	pu.mutation.SetCoinTypeID(u)
 	return pu
 }
 
@@ -416,11 +416,11 @@ func (pu *PaymentUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: payment.FieldAccountID,
 		})
 	}
-	if value, ok := pu.mutation.CoinInfoID(); ok {
+	if value, ok := pu.mutation.CoinTypeID(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeUUID,
 			Value:  value,
-			Column: payment.FieldCoinInfoID,
+			Column: payment.FieldCoinTypeID,
 		})
 	}
 	if value, ok := pu.mutation.StartAmount(); ok {
@@ -607,9 +607,9 @@ func (puo *PaymentUpdateOne) SetAccountID(u uuid.UUID) *PaymentUpdateOne {
 	return puo
 }
 
-// SetCoinInfoID sets the "coin_info_id" field.
-func (puo *PaymentUpdateOne) SetCoinInfoID(u uuid.UUID) *PaymentUpdateOne {
-	puo.mutation.SetCoinInfoID(u)
+// SetCoinTypeID sets the "coin_type_id" field.
+func (puo *PaymentUpdateOne) SetCoinTypeID(u uuid.UUID) *PaymentUpdateOne {
+	puo.mutation.SetCoinTypeID(u)
 	return puo
 }
 
@@ -938,11 +938,11 @@ func (puo *PaymentUpdateOne) sqlSave(ctx context.Context) (_node *Payment, err e
 			Column: payment.FieldAccountID,
 		})
 	}
-	if value, ok := puo.mutation.CoinInfoID(); ok {
+	if value, ok := puo.mutation.CoinTypeID(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeUUID,
 			Value:  value,
-			Column: payment.FieldCoinInfoID,
+			Column: payment.FieldCoinTypeID,
 		})
 	}
 	if value, ok := puo.mutation.StartAmount(); ok {

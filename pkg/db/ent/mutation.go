@@ -5173,7 +5173,7 @@ type PaymentMutation struct {
 	good_id                 *uuid.UUID
 	order_id                *uuid.UUID
 	account_id              *uuid.UUID
-	coin_info_id            *uuid.UUID
+	coin_type_id            *uuid.UUID
 	start_amount            *decimal.Decimal
 	transfer_amount         *decimal.Decimal
 	balance_amount          *decimal.Decimal
@@ -5638,40 +5638,40 @@ func (m *PaymentMutation) ResetAccountID() {
 	m.account_id = nil
 }
 
-// SetCoinInfoID sets the "coin_info_id" field.
-func (m *PaymentMutation) SetCoinInfoID(u uuid.UUID) {
-	m.coin_info_id = &u
+// SetCoinTypeID sets the "coin_type_id" field.
+func (m *PaymentMutation) SetCoinTypeID(u uuid.UUID) {
+	m.coin_type_id = &u
 }
 
-// CoinInfoID returns the value of the "coin_info_id" field in the mutation.
-func (m *PaymentMutation) CoinInfoID() (r uuid.UUID, exists bool) {
-	v := m.coin_info_id
+// CoinTypeID returns the value of the "coin_type_id" field in the mutation.
+func (m *PaymentMutation) CoinTypeID() (r uuid.UUID, exists bool) {
+	v := m.coin_type_id
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// OldCoinInfoID returns the old "coin_info_id" field's value of the Payment entity.
+// OldCoinTypeID returns the old "coin_type_id" field's value of the Payment entity.
 // If the Payment object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *PaymentMutation) OldCoinInfoID(ctx context.Context) (v uuid.UUID, err error) {
+func (m *PaymentMutation) OldCoinTypeID(ctx context.Context) (v uuid.UUID, err error) {
 	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldCoinInfoID is only allowed on UpdateOne operations")
+		return v, errors.New("OldCoinTypeID is only allowed on UpdateOne operations")
 	}
 	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldCoinInfoID requires an ID field in the mutation")
+		return v, errors.New("OldCoinTypeID requires an ID field in the mutation")
 	}
 	oldValue, err := m.oldValue(ctx)
 	if err != nil {
-		return v, fmt.Errorf("querying old value for OldCoinInfoID: %w", err)
+		return v, fmt.Errorf("querying old value for OldCoinTypeID: %w", err)
 	}
-	return oldValue.CoinInfoID, nil
+	return oldValue.CoinTypeID, nil
 }
 
-// ResetCoinInfoID resets all changes to the "coin_info_id" field.
-func (m *PaymentMutation) ResetCoinInfoID() {
-	m.coin_info_id = nil
+// ResetCoinTypeID resets all changes to the "coin_type_id" field.
+func (m *PaymentMutation) ResetCoinTypeID() {
+	m.coin_type_id = nil
 }
 
 // SetStartAmount sets the "start_amount" field.
@@ -6012,8 +6012,8 @@ func (m *PaymentMutation) Fields() []string {
 	if m.account_id != nil {
 		fields = append(fields, payment.FieldAccountID)
 	}
-	if m.coin_info_id != nil {
-		fields = append(fields, payment.FieldCoinInfoID)
+	if m.coin_type_id != nil {
+		fields = append(fields, payment.FieldCoinTypeID)
 	}
 	if m.start_amount != nil {
 		fields = append(fields, payment.FieldStartAmount)
@@ -6057,8 +6057,8 @@ func (m *PaymentMutation) Field(name string) (ent.Value, bool) {
 		return m.OrderID()
 	case payment.FieldAccountID:
 		return m.AccountID()
-	case payment.FieldCoinInfoID:
-		return m.CoinInfoID()
+	case payment.FieldCoinTypeID:
+		return m.CoinTypeID()
 	case payment.FieldStartAmount:
 		return m.StartAmount()
 	case payment.FieldTransferAmount:
@@ -6096,8 +6096,8 @@ func (m *PaymentMutation) OldField(ctx context.Context, name string) (ent.Value,
 		return m.OldOrderID(ctx)
 	case payment.FieldAccountID:
 		return m.OldAccountID(ctx)
-	case payment.FieldCoinInfoID:
-		return m.OldCoinInfoID(ctx)
+	case payment.FieldCoinTypeID:
+		return m.OldCoinTypeID(ctx)
 	case payment.FieldStartAmount:
 		return m.OldStartAmount(ctx)
 	case payment.FieldTransferAmount:
@@ -6175,12 +6175,12 @@ func (m *PaymentMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetAccountID(v)
 		return nil
-	case payment.FieldCoinInfoID:
+	case payment.FieldCoinTypeID:
 		v, ok := value.(uuid.UUID)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.SetCoinInfoID(v)
+		m.SetCoinTypeID(v)
 		return nil
 	case payment.FieldStartAmount:
 		v, ok := value.(decimal.Decimal)
@@ -6375,8 +6375,8 @@ func (m *PaymentMutation) ResetField(name string) error {
 	case payment.FieldAccountID:
 		m.ResetAccountID()
 		return nil
-	case payment.FieldCoinInfoID:
-		m.ResetCoinInfoID()
+	case payment.FieldCoinTypeID:
+		m.ResetCoinTypeID()
 		return nil
 	case payment.FieldStartAmount:
 		m.ResetStartAmount()

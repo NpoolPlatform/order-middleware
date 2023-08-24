@@ -38,7 +38,7 @@ func (Payment) Fields() []ent.Field {
 		field.
 			UUID("account_id", uuid.UUID{}),
 		field.
-			UUID("coin_info_id", uuid.UUID{}),
+			UUID("coin_type_id", uuid.UUID{}),
 		field.
 			Other("start_amount", decimal.Decimal{}).
 			SchemaType(map[string]string{

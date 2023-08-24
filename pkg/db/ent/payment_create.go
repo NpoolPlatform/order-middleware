@@ -96,9 +96,9 @@ func (pc *PaymentCreate) SetAccountID(u uuid.UUID) *PaymentCreate {
 	return pc
 }
 
-// SetCoinInfoID sets the "coin_info_id" field.
-func (pc *PaymentCreate) SetCoinInfoID(u uuid.UUID) *PaymentCreate {
-	pc.mutation.SetCoinInfoID(u)
+// SetCoinTypeID sets the "coin_type_id" field.
+func (pc *PaymentCreate) SetCoinTypeID(u uuid.UUID) *PaymentCreate {
+	pc.mutation.SetCoinTypeID(u)
 	return pc
 }
 
@@ -360,8 +360,8 @@ func (pc *PaymentCreate) check() error {
 	if _, ok := pc.mutation.AccountID(); !ok {
 		return &ValidationError{Name: "account_id", err: errors.New(`ent: missing required field "Payment.account_id"`)}
 	}
-	if _, ok := pc.mutation.CoinInfoID(); !ok {
-		return &ValidationError{Name: "coin_info_id", err: errors.New(`ent: missing required field "Payment.coin_info_id"`)}
+	if _, ok := pc.mutation.CoinTypeID(); !ok {
+		return &ValidationError{Name: "coin_type_id", err: errors.New(`ent: missing required field "Payment.coin_type_id"`)}
 	}
 	return nil
 }
@@ -464,13 +464,13 @@ func (pc *PaymentCreate) createSpec() (*Payment, *sqlgraph.CreateSpec) {
 		})
 		_node.AccountID = value
 	}
-	if value, ok := pc.mutation.CoinInfoID(); ok {
+	if value, ok := pc.mutation.CoinTypeID(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
 			Type:   field.TypeUUID,
 			Value:  value,
-			Column: payment.FieldCoinInfoID,
+			Column: payment.FieldCoinTypeID,
 		})
-		_node.CoinInfoID = value
+		_node.CoinTypeID = value
 	}
 	if value, ok := pc.mutation.StartAmount(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -688,15 +688,15 @@ func (u *PaymentUpsert) UpdateAccountID() *PaymentUpsert {
 	return u
 }
 
-// SetCoinInfoID sets the "coin_info_id" field.
-func (u *PaymentUpsert) SetCoinInfoID(v uuid.UUID) *PaymentUpsert {
-	u.Set(payment.FieldCoinInfoID, v)
+// SetCoinTypeID sets the "coin_type_id" field.
+func (u *PaymentUpsert) SetCoinTypeID(v uuid.UUID) *PaymentUpsert {
+	u.Set(payment.FieldCoinTypeID, v)
 	return u
 }
 
-// UpdateCoinInfoID sets the "coin_info_id" field to the value that was provided on create.
-func (u *PaymentUpsert) UpdateCoinInfoID() *PaymentUpsert {
-	u.SetExcluded(payment.FieldCoinInfoID)
+// UpdateCoinTypeID sets the "coin_type_id" field to the value that was provided on create.
+func (u *PaymentUpsert) UpdateCoinTypeID() *PaymentUpsert {
+	u.SetExcluded(payment.FieldCoinTypeID)
 	return u
 }
 
@@ -991,17 +991,17 @@ func (u *PaymentUpsertOne) UpdateAccountID() *PaymentUpsertOne {
 	})
 }
 
-// SetCoinInfoID sets the "coin_info_id" field.
-func (u *PaymentUpsertOne) SetCoinInfoID(v uuid.UUID) *PaymentUpsertOne {
+// SetCoinTypeID sets the "coin_type_id" field.
+func (u *PaymentUpsertOne) SetCoinTypeID(v uuid.UUID) *PaymentUpsertOne {
 	return u.Update(func(s *PaymentUpsert) {
-		s.SetCoinInfoID(v)
+		s.SetCoinTypeID(v)
 	})
 }
 
-// UpdateCoinInfoID sets the "coin_info_id" field to the value that was provided on create.
-func (u *PaymentUpsertOne) UpdateCoinInfoID() *PaymentUpsertOne {
+// UpdateCoinTypeID sets the "coin_type_id" field to the value that was provided on create.
+func (u *PaymentUpsertOne) UpdateCoinTypeID() *PaymentUpsertOne {
 	return u.Update(func(s *PaymentUpsert) {
-		s.UpdateCoinInfoID()
+		s.UpdateCoinTypeID()
 	})
 }
 
@@ -1480,17 +1480,17 @@ func (u *PaymentUpsertBulk) UpdateAccountID() *PaymentUpsertBulk {
 	})
 }
 
-// SetCoinInfoID sets the "coin_info_id" field.
-func (u *PaymentUpsertBulk) SetCoinInfoID(v uuid.UUID) *PaymentUpsertBulk {
+// SetCoinTypeID sets the "coin_type_id" field.
+func (u *PaymentUpsertBulk) SetCoinTypeID(v uuid.UUID) *PaymentUpsertBulk {
 	return u.Update(func(s *PaymentUpsert) {
-		s.SetCoinInfoID(v)
+		s.SetCoinTypeID(v)
 	})
 }
 
-// UpdateCoinInfoID sets the "coin_info_id" field to the value that was provided on create.
-func (u *PaymentUpsertBulk) UpdateCoinInfoID() *PaymentUpsertBulk {
+// UpdateCoinTypeID sets the "coin_type_id" field to the value that was provided on create.
+func (u *PaymentUpsertBulk) UpdateCoinTypeID() *PaymentUpsertBulk {
 	return u.Update(func(s *PaymentUpsert) {
-		s.UpdateCoinInfoID()
+		s.UpdateCoinTypeID()
 	})
 }
 
