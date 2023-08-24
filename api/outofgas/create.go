@@ -19,8 +19,8 @@ func (s *Server) CreateOutOfGas(ctx context.Context, in *npool.CreateOutOfGasReq
 		ctx,
 		outofgas1.WithID(req.ID, true),
 		outofgas1.WithOrderID(req.OrderID, true),
-		outofgas1.WithStart(req.Start, true),
-		outofgas1.WithEnd(req.End, true),
+		outofgas1.WithStartAt(req.StartAt, true),
+		outofgas1.WithEndAt(req.EndAt, true),
 	)
 	if err != nil {
 		logger.Sugar().Errorw(

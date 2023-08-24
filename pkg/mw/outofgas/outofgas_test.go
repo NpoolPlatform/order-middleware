@@ -29,8 +29,8 @@ func init() {
 var ret = npool.OutOfGas{
 	ID:      uuid.NewString(),
 	OrderID: uuid.NewString(),
-	Start:   10002,
-	End:     10003,
+	StartAt: 10002,
+	EndAt:   10003,
 }
 
 func createOutOfGas(t *testing.T) {
@@ -38,8 +38,8 @@ func createOutOfGas(t *testing.T) {
 		context.Background(),
 		WithID(&ret.ID, true),
 		WithOrderID(&ret.OrderID, true),
-		WithStart(&ret.Start, true),
-		WithEnd(&ret.End, true),
+		WithStartAt(&ret.StartAt, true),
+		WithEndAt(&ret.EndAt, true),
 	)
 	if assert.Nil(t, err) {
 		info, err := handler.CreateOutOfGas(context.Background())
@@ -52,14 +52,14 @@ func createOutOfGas(t *testing.T) {
 }
 
 func updateOutOfGas(t *testing.T) {
-	ret.Start = uint32(10007)
-	ret.End = uint32(10008)
+	ret.StartAt = uint32(10007)
+	ret.EndAt = uint32(10008)
 	handler, err := NewHandler(
 		context.Background(),
 		WithID(&ret.ID, true),
 		WithOrderID(&ret.OrderID, false),
-		WithStart(&ret.Start, false),
-		WithEnd(&ret.End, false),
+		WithStartAt(&ret.StartAt, false),
+		WithEndAt(&ret.EndAt, false),
 	)
 	if assert.Nil(t, err) {
 		info, err := handler.UpdateOutOfGas(context.Background())

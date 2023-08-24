@@ -17,8 +17,8 @@ import (
 type Handler struct {
 	ID      *uuid.UUID
 	OrderID *uuid.UUID
-	Start   *uint32
-	End     *uint32
+	StartAt *uint32
+	EndAt   *uint32
 	Message *string
 	Reqs    []*npool.CompensateReq
 	Conds   *compensatecrud.Conds
@@ -83,28 +83,28 @@ func WithMessage(message *string, must bool) func(context.Context, *Handler) err
 	}
 }
 
-func WithStart(start *uint32, must bool) func(context.Context, *Handler) error {
+func WithStartAt(startAt *uint32, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
-		if start == nil {
+		if startAt == nil {
 			if must {
 				return fmt.Errorf("invalid start")
 			}
 			return nil
 		}
-		h.Start = start
+		h.StartAt = startAt
 		return nil
 	}
 }
 
-func WithEnd(end *uint32, must bool) func(context.Context, *Handler) error {
+func WithEndAt(endAt *uint32, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
-		if end == nil {
+		if endAt == nil {
 			if must {
 				return fmt.Errorf("invalid end")
 			}
 			return nil
 		}
-		h.End = end
+		h.EndAt = endAt
 		return nil
 	}
 }
@@ -129,11 +129,11 @@ func WithConds(conds *npool.Conds) func(context.Context, *Handler) error {
 			}
 			h.Conds.OrderID = &cruder.Cond{Op: conds.GetOrderID().GetOp(), Val: id}
 		}
-		if conds.Start != nil {
-			h.Conds.Start = &cruder.Cond{Op: conds.GetStart().GetOp(), Val: basetypes.SignMethod(conds.GetStart().GetValue())}
+		if conds.StartAt != nil {
+			h.Conds.StartAt = &cruder.Cond{Op: conds.GetStartAt().GetOp(), Val: basetypes.SignMethod(conds.GetStartAt().GetValue())}
 		}
-		if conds.End != nil {
-			h.Conds.End = &cruder.Cond{Op: conds.GetEnd().GetOp(), Val: basetypes.SignMethod(conds.GetEnd().GetValue())}
+		if conds.EndAt != nil {
+			h.Conds.EndAt = &cruder.Cond{Op: conds.GetEndAt().GetOp(), Val: basetypes.SignMethod(conds.GetEndAt().GetValue())}
 		}
 
 		return nil

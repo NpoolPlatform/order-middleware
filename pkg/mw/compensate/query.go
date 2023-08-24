@@ -23,8 +23,8 @@ func (h *queryHandler) selectCompensate(stm *ent.CompensateQuery) {
 	h.stm = stm.Select(
 		entcompensate.FieldID,
 		entcompensate.FieldOrderID,
-		entcompensate.FieldStart,
-		entcompensate.FieldEnd,
+		entcompensate.FieldStartAt,
+		entcompensate.FieldEndAt,
 		entcompensate.FieldMessage,
 		entcompensate.FieldCreatedAt,
 		entcompensate.FieldUpdatedAt,

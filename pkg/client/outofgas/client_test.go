@@ -39,8 +39,8 @@ var (
 	ret = npool.OutOfGas{
 		ID:      id,
 		OrderID: uuid.NewString(),
-		Start:   10002,
-		End:     10003,
+		StartAt: 10002,
+		EndAt:   10003,
 	}
 )
 
@@ -49,8 +49,8 @@ func createOutOfGas(t *testing.T) {
 		req = npool.OutOfGasReq{
 			ID:      &ret.ID,
 			OrderID: &ret.OrderID,
-			Start:   &ret.Start,
-			End:     &ret.End,
+			StartAt: &ret.StartAt,
+			EndAt:   &ret.EndAt,
 		}
 	)
 
@@ -68,19 +68,19 @@ func createOutOfGas(t *testing.T) {
 func updateOutOfGas(t *testing.T) {
 	if ret.ID == id {
 		var (
-			start = uint32(10006)
-			end   = uint32(10007)
+			startAt = uint32(10006)
+			endAt   = uint32(10007)
 
 			req = npool.OutOfGasReq{
-				ID:    &ret.ID,
-				Start: &start,
-				End:   &end,
+				ID:      &ret.ID,
+				StartAt: &startAt,
+				EndAt:   &endAt,
 			}
 		)
 		info, err := UpdateOutOfGas(context.Background(), &req)
 		if assert.Nil(t, err) {
-			ret.Start = info.Start
-			ret.End = info.End
+			ret.StartAt = info.StartAt
+			ret.EndAt = info.EndAt
 			ret.UpdatedAt = info.UpdatedAt
 			assert.Equal(t, info, &ret)
 		}

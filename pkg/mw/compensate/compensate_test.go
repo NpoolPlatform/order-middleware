@@ -29,8 +29,8 @@ func init() {
 var ret = npool.Compensate{
 	ID:      uuid.NewString(),
 	OrderID: uuid.NewString(),
-	Start:   10002,
-	End:     10003,
+	StartAt: 10002,
+	EndAt:   10003,
 	Message: "message " + uuid.NewString(),
 }
 
@@ -39,8 +39,8 @@ func createCompensate(t *testing.T) {
 		context.Background(),
 		WithID(&ret.ID, true),
 		WithOrderID(&ret.OrderID, true),
-		WithStart(&ret.Start, true),
-		WithEnd(&ret.End, true),
+		WithStartAt(&ret.StartAt, true),
+		WithEndAt(&ret.EndAt, true),
 		WithMessage(&ret.Message, true),
 	)
 	if assert.Nil(t, err) {
@@ -55,14 +55,14 @@ func createCompensate(t *testing.T) {
 
 func updateCompensate(t *testing.T) {
 	ret.Message = "change message " + uuid.NewString()
-	ret.Start = uint32(10007)
-	ret.End = uint32(10008)
+	ret.StartAt = uint32(10007)
+	ret.EndAt = uint32(10008)
 	handler, err := NewHandler(
 		context.Background(),
 		WithID(&ret.ID, true),
 		WithOrderID(&ret.OrderID, false),
-		WithStart(&ret.Start, false),
-		WithEnd(&ret.End, false),
+		WithStartAt(&ret.StartAt, false),
+		WithEndAt(&ret.EndAt, false),
 		WithMessage(&ret.Message, false),
 	)
 	if assert.Nil(t, err) {

@@ -54,8 +54,8 @@ func (h *Handler) CreateOutOfGas(ctx context.Context) (*npool.OutOfGas, error) {
 			&outofgascrud.Req{
 				ID:      h.ID,
 				OrderID: h.OrderID,
-				Start:   h.Start,
-				End:     h.End,
+				StartAt: h.StartAt,
+				EndAt:   h.EndAt,
 			},
 		).Save(ctx); err != nil {
 			return err

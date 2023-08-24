@@ -18,8 +18,8 @@ func (s *Server) UpdateCompensate(ctx context.Context, in *npool.UpdateCompensat
 	handler, err := compensate1.NewHandler(
 		ctx,
 		compensate1.WithID(req.ID, true),
-		compensate1.WithStart(req.Start, false),
-		compensate1.WithEnd(req.End, false),
+		compensate1.WithStartAt(req.StartAt, false),
+		compensate1.WithEndAt(req.EndAt, false),
 		compensate1.WithMessage(req.Message, false),
 	)
 	if err != nil {

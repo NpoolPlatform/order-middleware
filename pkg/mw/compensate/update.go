@@ -42,8 +42,8 @@ func (h *Handler) UpdateCompensate(ctx context.Context) (*npool.Compensate, erro
 		if _, err := compensatecrud.UpdateSet(
 			compensate.Update(),
 			&compensatecrud.Req{
-				Start:   h.Start,
-				End:     h.End,
+				StartAt: h.StartAt,
+				EndAt:   h.EndAt,
 				Message: h.Message,
 			},
 		).Save(_ctx); err != nil {

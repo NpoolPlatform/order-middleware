@@ -23,8 +23,8 @@ func (h *queryHandler) selectOutOfGas(stm *ent.OutOfGasQuery) {
 	h.stm = stm.Select(
 		entoutofgas.FieldID,
 		entoutofgas.FieldOrderID,
-		entoutofgas.FieldStart,
-		entoutofgas.FieldEnd,
+		entoutofgas.FieldStartAt,
+		entoutofgas.FieldEndAt,
 		entoutofgas.FieldCreatedAt,
 		entoutofgas.FieldUpdatedAt,
 	)

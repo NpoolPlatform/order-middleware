@@ -39,8 +39,8 @@ func (h *Handler) UpdateOutOfGas(ctx context.Context) (*npool.OutOfGas, error) {
 		if _, err := outofgascrud.UpdateSet(
 			outofgas.Update(),
 			&outofgascrud.Req{
-				Start: h.Start,
-				End:   h.End,
+				StartAt: h.StartAt,
+				EndAt:   h.EndAt,
 			},
 		).Save(_ctx); err != nil {
 			return err

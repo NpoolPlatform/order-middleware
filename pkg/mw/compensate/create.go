@@ -54,8 +54,8 @@ func (h *Handler) CreateCompensate(ctx context.Context) (*npool.Compensate, erro
 			&compensatecrud.Req{
 				ID:      h.ID,
 				OrderID: h.OrderID,
-				Start:   h.Start,
-				End:     h.End,
+				StartAt: h.StartAt,
+				EndAt:   h.EndAt,
 				Message: h.Message,
 			},
 		).Save(ctx); err != nil {

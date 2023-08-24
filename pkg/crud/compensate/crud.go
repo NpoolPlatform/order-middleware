@@ -12,8 +12,8 @@ import (
 type Req struct {
 	ID        *uuid.UUID
 	OrderID   *uuid.UUID
-	Start     *uint32
-	End       *uint32
+	StartAt   *uint32
+	EndAt     *uint32
 	Message   *string
 	CreatedAt *uint32
 	DeletedAt *uint32
@@ -26,11 +26,11 @@ func CreateSet(c *ent.CompensateCreate, req *Req) *ent.CompensateCreate {
 	if req.OrderID != nil {
 		c.SetOrderID(*req.OrderID)
 	}
-	if req.Start != nil {
-		c.SetStart(*req.Start)
+	if req.StartAt != nil {
+		c.SetStartAt(*req.StartAt)
 	}
-	if req.End != nil {
-		c.SetEnd(*req.End)
+	if req.EndAt != nil {
+		c.SetEndAt(*req.EndAt)
 	}
 	if req.Message != nil {
 		c.SetMessage(*req.Message)
@@ -42,11 +42,11 @@ func CreateSet(c *ent.CompensateCreate, req *Req) *ent.CompensateCreate {
 }
 
 func UpdateSet(u *ent.CompensateUpdateOne, req *Req) *ent.CompensateUpdateOne {
-	if req.Start != nil {
-		u.SetStart(*req.Start)
+	if req.StartAt != nil {
+		u.SetStartAt(*req.StartAt)
 	}
-	if req.End != nil {
-		u.SetEnd(*req.End)
+	if req.EndAt != nil {
+		u.SetEndAt(*req.EndAt)
 	}
 	if req.Message != nil {
 		u.SetMessage(*req.Message)
@@ -61,8 +61,8 @@ type Conds struct {
 	ID      *cruder.Cond
 	IDs     *cruder.Cond
 	OrderID *cruder.Cond
-	Start   *cruder.Cond
-	End     *cruder.Cond
+	StartAt *cruder.Cond
+	EndAt   *cruder.Cond
 }
 
 //nolint
@@ -108,30 +108,30 @@ func SetQueryConds(q *ent.CompensateQuery, conds *Conds) (*ent.CompensateQuery, 
 			return nil, fmt.Errorf("invalid compensate field")
 		}
 	}
-	if conds.Start != nil {
-		start, ok := conds.Start.Val.(uint32)
+	if conds.StartAt != nil {
+		start, ok := conds.StartAt.Val.(uint32)
 		if !ok {
-			return nil, fmt.Errorf("invalid start")
+			return nil, fmt.Errorf("invalid startat")
 		}
-		switch conds.Start.Op {
+		switch conds.StartAt.Op {
 		case cruder.LTE:
-			q.Where(entcompensate.StartLTE(start))
+			q.Where(entcompensate.StartAtLTE(start))
 		case cruder.GTE:
-			q.Where(entcompensate.StartGTE(start))
+			q.Where(entcompensate.StartAtGTE(start))
 		default:
 			return nil, fmt.Errorf("invalid compensate field")
 		}
 	}
-	if conds.End != nil {
-		end, ok := conds.End.Val.(uint32)
+	if conds.EndAt != nil {
+		end, ok := conds.EndAt.Val.(uint32)
 		if !ok {
-			return nil, fmt.Errorf("invalid end")
+			return nil, fmt.Errorf("invalid endat")
 		}
-		switch conds.End.Op {
+		switch conds.EndAt.Op {
 		case cruder.LTE:
-			q.Where(entcompensate.EndLTE(end))
+			q.Where(entcompensate.EndAtLTE(end))
 		case cruder.GTE:
-			q.Where(entcompensate.EndGTE(end))
+			q.Where(entcompensate.EndAtGTE(end))
 		default:
 			return nil, fmt.Errorf("invalid compensate field")
 		}
