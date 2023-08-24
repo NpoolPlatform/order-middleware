@@ -19,44 +19,40 @@ const (
 	FieldUpdatedAt = "updated_at"
 	// FieldDeletedAt holds the string denoting the deleted_at field in the database.
 	FieldDeletedAt = "deleted_at"
-	// FieldGoodID holds the string denoting the good_id field in the database.
-	FieldGoodID = "good_id"
 	// FieldAppID holds the string denoting the app_id field in the database.
 	FieldAppID = "app_id"
 	// FieldUserID holds the string denoting the user_id field in the database.
 	FieldUserID = "user_id"
+	// FieldGoodID holds the string denoting the good_id field in the database.
+	FieldGoodID = "good_id"
+	// FieldPaymentID holds the string denoting the payment_id field in the database.
+	FieldPaymentID = "payment_id"
 	// FieldParentOrderID holds the string denoting the parent_order_id field in the database.
 	FieldParentOrderID = "parent_order_id"
-	// FieldPayWithParent holds the string denoting the pay_with_parent field in the database.
-	FieldPayWithParent = "pay_with_parent"
-	// FieldUnits holds the string denoting the units field in the database.
-	FieldUnits = "units"
 	// FieldUnitsV1 holds the string denoting the units_v1 field in the database.
 	FieldUnitsV1 = "units_v1"
+	// FieldGoodValue holds the string denoting the good_value field in the database.
+	FieldGoodValue = "good_value"
+	// FieldPaymentAmount holds the string denoting the payment_amount field in the database.
+	FieldPaymentAmount = "payment_amount"
+	// FieldDiscountAmount holds the string denoting the discount_amount field in the database.
+	FieldDiscountAmount = "discount_amount"
 	// FieldPromotionID holds the string denoting the promotion_id field in the database.
 	FieldPromotionID = "promotion_id"
-	// FieldDiscountCouponID holds the string denoting the discount_coupon_id field in the database.
-	FieldDiscountCouponID = "discount_coupon_id"
-	// FieldUserSpecialReductionID holds the string denoting the user_special_reduction_id field in the database.
-	FieldUserSpecialReductionID = "user_special_reduction_id"
 	// FieldStartAt holds the string denoting the start_at field in the database.
 	FieldStartAt = "start_at"
-	// FieldEndAt holds the string denoting the end_at field in the database.
-	FieldEndAt = "end_at"
-	// FieldFixAmountCouponID holds the string denoting the fix_amount_coupon_id field in the database.
-	FieldFixAmountCouponID = "fix_amount_coupon_id"
-	// FieldType holds the string denoting the type field in the database.
-	FieldType = "type"
-	// FieldState holds the string denoting the state field in the database.
-	FieldState = "state"
-	// FieldStateV1 holds the string denoting the state_v1 field in the database.
-	FieldStateV1 = "state_v1"
+	// FieldStartMode holds the string denoting the start_mode field in the database.
+	FieldStartMode = "start_mode"
+	// FieldDurationDays holds the string denoting the duration_days field in the database.
+	FieldDurationDays = "duration_days"
+	// FieldOrderType holds the string denoting the order_type field in the database.
+	FieldOrderType = "order_type"
 	// FieldInvestmentType holds the string denoting the investment_type field in the database.
 	FieldInvestmentType = "investment_type"
 	// FieldCouponIds holds the string denoting the coupon_ids field in the database.
 	FieldCouponIds = "coupon_ids"
-	// FieldLastBenefitAt holds the string denoting the last_benefit_at field in the database.
-	FieldLastBenefitAt = "last_benefit_at"
+	// FieldPaymentType holds the string denoting the payment_type field in the database.
+	FieldPaymentType = "payment_type"
 	// Table holds the table name of the order in the database.
 	Table = "orders"
 )
@@ -67,25 +63,23 @@ var Columns = []string{
 	FieldCreatedAt,
 	FieldUpdatedAt,
 	FieldDeletedAt,
-	FieldGoodID,
 	FieldAppID,
 	FieldUserID,
+	FieldGoodID,
+	FieldPaymentID,
 	FieldParentOrderID,
-	FieldPayWithParent,
-	FieldUnits,
 	FieldUnitsV1,
+	FieldGoodValue,
+	FieldPaymentAmount,
+	FieldDiscountAmount,
 	FieldPromotionID,
-	FieldDiscountCouponID,
-	FieldUserSpecialReductionID,
 	FieldStartAt,
-	FieldEndAt,
-	FieldFixAmountCouponID,
-	FieldType,
-	FieldState,
-	FieldStateV1,
+	FieldStartMode,
+	FieldDurationDays,
+	FieldOrderType,
 	FieldInvestmentType,
 	FieldCouponIds,
-	FieldLastBenefitAt,
+	FieldPaymentType,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -115,38 +109,34 @@ var (
 	UpdateDefaultUpdatedAt func() uint32
 	// DefaultDeletedAt holds the default value on creation for the "deleted_at" field.
 	DefaultDeletedAt func() uint32
+	// DefaultPaymentID holds the default value on creation for the "payment_id" field.
+	DefaultPaymentID func() uuid.UUID
 	// DefaultParentOrderID holds the default value on creation for the "parent_order_id" field.
 	DefaultParentOrderID func() uuid.UUID
-	// DefaultPayWithParent holds the default value on creation for the "pay_with_parent" field.
-	DefaultPayWithParent bool
-	// DefaultUnits holds the default value on creation for the "units" field.
-	DefaultUnits uint32
 	// DefaultUnitsV1 holds the default value on creation for the "units_v1" field.
 	DefaultUnitsV1 decimal.Decimal
+	// DefaultGoodValue holds the default value on creation for the "good_value" field.
+	DefaultGoodValue decimal.Decimal
+	// DefaultPaymentAmount holds the default value on creation for the "payment_amount" field.
+	DefaultPaymentAmount decimal.Decimal
+	// DefaultDiscountAmount holds the default value on creation for the "discount_amount" field.
+	DefaultDiscountAmount decimal.Decimal
 	// DefaultPromotionID holds the default value on creation for the "promotion_id" field.
 	DefaultPromotionID func() uuid.UUID
-	// DefaultDiscountCouponID holds the default value on creation for the "discount_coupon_id" field.
-	DefaultDiscountCouponID func() uuid.UUID
-	// DefaultUserSpecialReductionID holds the default value on creation for the "user_special_reduction_id" field.
-	DefaultUserSpecialReductionID func() uuid.UUID
 	// DefaultStartAt holds the default value on creation for the "start_at" field.
 	DefaultStartAt uint32
-	// DefaultEndAt holds the default value on creation for the "end_at" field.
-	DefaultEndAt uint32
-	// DefaultFixAmountCouponID holds the default value on creation for the "fix_amount_coupon_id" field.
-	DefaultFixAmountCouponID func() uuid.UUID
-	// DefaultType holds the default value on creation for the "type" field.
-	DefaultType string
-	// DefaultState holds the default value on creation for the "state" field.
-	DefaultState string
-	// DefaultStateV1 holds the default value on creation for the "state_v1" field.
-	DefaultStateV1 string
+	// DefaultStartMode holds the default value on creation for the "start_mode" field.
+	DefaultStartMode string
+	// DefaultDurationDays holds the default value on creation for the "duration_days" field.
+	DefaultDurationDays uint32
+	// DefaultOrderType holds the default value on creation for the "order_type" field.
+	DefaultOrderType string
 	// DefaultInvestmentType holds the default value on creation for the "investment_type" field.
 	DefaultInvestmentType string
 	// DefaultCouponIds holds the default value on creation for the "coupon_ids" field.
 	DefaultCouponIds func() []uuid.UUID
-	// DefaultLastBenefitAt holds the default value on creation for the "last_benefit_at" field.
-	DefaultLastBenefitAt uint32
+	// DefaultPaymentType holds the default value on creation for the "payment_type" field.
+	DefaultPaymentType string
 	// DefaultID holds the default value on creation for the "id" field.
 	DefaultID func() uuid.UUID
 )

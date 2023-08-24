@@ -24,10 +24,10 @@ type OutOfGas struct {
 	DeletedAt uint32 `json:"deleted_at,omitempty"`
 	// OrderID holds the value of the "order_id" field.
 	OrderID uuid.UUID `json:"order_id,omitempty"`
-	// Start holds the value of the "start" field.
-	Start uint32 `json:"start,omitempty"`
-	// End holds the value of the "end" field.
-	End uint32 `json:"end,omitempty"`
+	// StartAt holds the value of the "start_at" field.
+	StartAt uint32 `json:"start_at,omitempty"`
+	// EndAt holds the value of the "end_at" field.
+	EndAt uint32 `json:"end_at,omitempty"`
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -35,7 +35,7 @@ func (*OutOfGas) scanValues(columns []string) ([]interface{}, error) {
 	values := make([]interface{}, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case outofgas.FieldCreatedAt, outofgas.FieldUpdatedAt, outofgas.FieldDeletedAt, outofgas.FieldStart, outofgas.FieldEnd:
+		case outofgas.FieldCreatedAt, outofgas.FieldUpdatedAt, outofgas.FieldDeletedAt, outofgas.FieldStartAt, outofgas.FieldEndAt:
 			values[i] = new(sql.NullInt64)
 		case outofgas.FieldID, outofgas.FieldOrderID:
 			values[i] = new(uuid.UUID)
@@ -84,17 +84,17 @@ func (oog *OutOfGas) assignValues(columns []string, values []interface{}) error 
 			} else if value != nil {
 				oog.OrderID = *value
 			}
-		case outofgas.FieldStart:
+		case outofgas.FieldStartAt:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for field start", values[i])
+				return fmt.Errorf("unexpected type %T for field start_at", values[i])
 			} else if value.Valid {
-				oog.Start = uint32(value.Int64)
+				oog.StartAt = uint32(value.Int64)
 			}
-		case outofgas.FieldEnd:
+		case outofgas.FieldEndAt:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for field end", values[i])
+				return fmt.Errorf("unexpected type %T for field end_at", values[i])
 			} else if value.Valid {
-				oog.End = uint32(value.Int64)
+				oog.EndAt = uint32(value.Int64)
 			}
 		}
 	}
@@ -136,11 +136,11 @@ func (oog *OutOfGas) String() string {
 	builder.WriteString("order_id=")
 	builder.WriteString(fmt.Sprintf("%v", oog.OrderID))
 	builder.WriteString(", ")
-	builder.WriteString("start=")
-	builder.WriteString(fmt.Sprintf("%v", oog.Start))
+	builder.WriteString("start_at=")
+	builder.WriteString(fmt.Sprintf("%v", oog.StartAt))
 	builder.WriteString(", ")
-	builder.WriteString("end=")
-	builder.WriteString(fmt.Sprintf("%v", oog.End))
+	builder.WriteString("end_at=")
+	builder.WriteString(fmt.Sprintf("%v", oog.EndAt))
 	builder.WriteByte(')')
 	return builder.String()
 }

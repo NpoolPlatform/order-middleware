@@ -85,12 +85,6 @@ func (ou *OrderUpdate) AddDeletedAt(u int32) *OrderUpdate {
 	return ou
 }
 
-// SetGoodID sets the "good_id" field.
-func (ou *OrderUpdate) SetGoodID(u uuid.UUID) *OrderUpdate {
-	ou.mutation.SetGoodID(u)
-	return ou
-}
-
 // SetAppID sets the "app_id" field.
 func (ou *OrderUpdate) SetAppID(u uuid.UUID) *OrderUpdate {
 	ou.mutation.SetAppID(u)
@@ -100,6 +94,32 @@ func (ou *OrderUpdate) SetAppID(u uuid.UUID) *OrderUpdate {
 // SetUserID sets the "user_id" field.
 func (ou *OrderUpdate) SetUserID(u uuid.UUID) *OrderUpdate {
 	ou.mutation.SetUserID(u)
+	return ou
+}
+
+// SetGoodID sets the "good_id" field.
+func (ou *OrderUpdate) SetGoodID(u uuid.UUID) *OrderUpdate {
+	ou.mutation.SetGoodID(u)
+	return ou
+}
+
+// SetPaymentID sets the "payment_id" field.
+func (ou *OrderUpdate) SetPaymentID(u uuid.UUID) *OrderUpdate {
+	ou.mutation.SetPaymentID(u)
+	return ou
+}
+
+// SetNillablePaymentID sets the "payment_id" field if the given value is not nil.
+func (ou *OrderUpdate) SetNillablePaymentID(u *uuid.UUID) *OrderUpdate {
+	if u != nil {
+		ou.SetPaymentID(*u)
+	}
+	return ou
+}
+
+// ClearPaymentID clears the value of the "payment_id" field.
+func (ou *OrderUpdate) ClearPaymentID() *OrderUpdate {
+	ou.mutation.ClearPaymentID()
 	return ou
 }
 
@@ -123,53 +143,6 @@ func (ou *OrderUpdate) ClearParentOrderID() *OrderUpdate {
 	return ou
 }
 
-// SetPayWithParent sets the "pay_with_parent" field.
-func (ou *OrderUpdate) SetPayWithParent(b bool) *OrderUpdate {
-	ou.mutation.SetPayWithParent(b)
-	return ou
-}
-
-// SetNillablePayWithParent sets the "pay_with_parent" field if the given value is not nil.
-func (ou *OrderUpdate) SetNillablePayWithParent(b *bool) *OrderUpdate {
-	if b != nil {
-		ou.SetPayWithParent(*b)
-	}
-	return ou
-}
-
-// ClearPayWithParent clears the value of the "pay_with_parent" field.
-func (ou *OrderUpdate) ClearPayWithParent() *OrderUpdate {
-	ou.mutation.ClearPayWithParent()
-	return ou
-}
-
-// SetUnits sets the "units" field.
-func (ou *OrderUpdate) SetUnits(u uint32) *OrderUpdate {
-	ou.mutation.ResetUnits()
-	ou.mutation.SetUnits(u)
-	return ou
-}
-
-// SetNillableUnits sets the "units" field if the given value is not nil.
-func (ou *OrderUpdate) SetNillableUnits(u *uint32) *OrderUpdate {
-	if u != nil {
-		ou.SetUnits(*u)
-	}
-	return ou
-}
-
-// AddUnits adds u to the "units" field.
-func (ou *OrderUpdate) AddUnits(u int32) *OrderUpdate {
-	ou.mutation.AddUnits(u)
-	return ou
-}
-
-// ClearUnits clears the value of the "units" field.
-func (ou *OrderUpdate) ClearUnits() *OrderUpdate {
-	ou.mutation.ClearUnits()
-	return ou
-}
-
 // SetUnitsV1 sets the "units_v1" field.
 func (ou *OrderUpdate) SetUnitsV1(d decimal.Decimal) *OrderUpdate {
 	ou.mutation.SetUnitsV1(d)
@@ -190,6 +163,66 @@ func (ou *OrderUpdate) ClearUnitsV1() *OrderUpdate {
 	return ou
 }
 
+// SetGoodValue sets the "good_value" field.
+func (ou *OrderUpdate) SetGoodValue(d decimal.Decimal) *OrderUpdate {
+	ou.mutation.SetGoodValue(d)
+	return ou
+}
+
+// SetNillableGoodValue sets the "good_value" field if the given value is not nil.
+func (ou *OrderUpdate) SetNillableGoodValue(d *decimal.Decimal) *OrderUpdate {
+	if d != nil {
+		ou.SetGoodValue(*d)
+	}
+	return ou
+}
+
+// ClearGoodValue clears the value of the "good_value" field.
+func (ou *OrderUpdate) ClearGoodValue() *OrderUpdate {
+	ou.mutation.ClearGoodValue()
+	return ou
+}
+
+// SetPaymentAmount sets the "payment_amount" field.
+func (ou *OrderUpdate) SetPaymentAmount(d decimal.Decimal) *OrderUpdate {
+	ou.mutation.SetPaymentAmount(d)
+	return ou
+}
+
+// SetNillablePaymentAmount sets the "payment_amount" field if the given value is not nil.
+func (ou *OrderUpdate) SetNillablePaymentAmount(d *decimal.Decimal) *OrderUpdate {
+	if d != nil {
+		ou.SetPaymentAmount(*d)
+	}
+	return ou
+}
+
+// ClearPaymentAmount clears the value of the "payment_amount" field.
+func (ou *OrderUpdate) ClearPaymentAmount() *OrderUpdate {
+	ou.mutation.ClearPaymentAmount()
+	return ou
+}
+
+// SetDiscountAmount sets the "discount_amount" field.
+func (ou *OrderUpdate) SetDiscountAmount(d decimal.Decimal) *OrderUpdate {
+	ou.mutation.SetDiscountAmount(d)
+	return ou
+}
+
+// SetNillableDiscountAmount sets the "discount_amount" field if the given value is not nil.
+func (ou *OrderUpdate) SetNillableDiscountAmount(d *decimal.Decimal) *OrderUpdate {
+	if d != nil {
+		ou.SetDiscountAmount(*d)
+	}
+	return ou
+}
+
+// ClearDiscountAmount clears the value of the "discount_amount" field.
+func (ou *OrderUpdate) ClearDiscountAmount() *OrderUpdate {
+	ou.mutation.ClearDiscountAmount()
+	return ou
+}
+
 // SetPromotionID sets the "promotion_id" field.
 func (ou *OrderUpdate) SetPromotionID(u uuid.UUID) *OrderUpdate {
 	ou.mutation.SetPromotionID(u)
@@ -207,46 +240,6 @@ func (ou *OrderUpdate) SetNillablePromotionID(u *uuid.UUID) *OrderUpdate {
 // ClearPromotionID clears the value of the "promotion_id" field.
 func (ou *OrderUpdate) ClearPromotionID() *OrderUpdate {
 	ou.mutation.ClearPromotionID()
-	return ou
-}
-
-// SetDiscountCouponID sets the "discount_coupon_id" field.
-func (ou *OrderUpdate) SetDiscountCouponID(u uuid.UUID) *OrderUpdate {
-	ou.mutation.SetDiscountCouponID(u)
-	return ou
-}
-
-// SetNillableDiscountCouponID sets the "discount_coupon_id" field if the given value is not nil.
-func (ou *OrderUpdate) SetNillableDiscountCouponID(u *uuid.UUID) *OrderUpdate {
-	if u != nil {
-		ou.SetDiscountCouponID(*u)
-	}
-	return ou
-}
-
-// ClearDiscountCouponID clears the value of the "discount_coupon_id" field.
-func (ou *OrderUpdate) ClearDiscountCouponID() *OrderUpdate {
-	ou.mutation.ClearDiscountCouponID()
-	return ou
-}
-
-// SetUserSpecialReductionID sets the "user_special_reduction_id" field.
-func (ou *OrderUpdate) SetUserSpecialReductionID(u uuid.UUID) *OrderUpdate {
-	ou.mutation.SetUserSpecialReductionID(u)
-	return ou
-}
-
-// SetNillableUserSpecialReductionID sets the "user_special_reduction_id" field if the given value is not nil.
-func (ou *OrderUpdate) SetNillableUserSpecialReductionID(u *uuid.UUID) *OrderUpdate {
-	if u != nil {
-		ou.SetUserSpecialReductionID(*u)
-	}
-	return ou
-}
-
-// ClearUserSpecialReductionID clears the value of the "user_special_reduction_id" field.
-func (ou *OrderUpdate) ClearUserSpecialReductionID() *OrderUpdate {
-	ou.mutation.ClearUserSpecialReductionID()
 	return ou
 }
 
@@ -277,110 +270,70 @@ func (ou *OrderUpdate) ClearStartAt() *OrderUpdate {
 	return ou
 }
 
-// SetEndAt sets the "end_at" field.
-func (ou *OrderUpdate) SetEndAt(u uint32) *OrderUpdate {
-	ou.mutation.ResetEndAt()
-	ou.mutation.SetEndAt(u)
+// SetStartMode sets the "start_mode" field.
+func (ou *OrderUpdate) SetStartMode(s string) *OrderUpdate {
+	ou.mutation.SetStartMode(s)
 	return ou
 }
 
-// SetNillableEndAt sets the "end_at" field if the given value is not nil.
-func (ou *OrderUpdate) SetNillableEndAt(u *uint32) *OrderUpdate {
+// SetNillableStartMode sets the "start_mode" field if the given value is not nil.
+func (ou *OrderUpdate) SetNillableStartMode(s *string) *OrderUpdate {
+	if s != nil {
+		ou.SetStartMode(*s)
+	}
+	return ou
+}
+
+// ClearStartMode clears the value of the "start_mode" field.
+func (ou *OrderUpdate) ClearStartMode() *OrderUpdate {
+	ou.mutation.ClearStartMode()
+	return ou
+}
+
+// SetDurationDays sets the "duration_days" field.
+func (ou *OrderUpdate) SetDurationDays(u uint32) *OrderUpdate {
+	ou.mutation.ResetDurationDays()
+	ou.mutation.SetDurationDays(u)
+	return ou
+}
+
+// SetNillableDurationDays sets the "duration_days" field if the given value is not nil.
+func (ou *OrderUpdate) SetNillableDurationDays(u *uint32) *OrderUpdate {
 	if u != nil {
-		ou.SetEndAt(*u)
+		ou.SetDurationDays(*u)
 	}
 	return ou
 }
 
-// AddEndAt adds u to the "end_at" field.
-func (ou *OrderUpdate) AddEndAt(u int32) *OrderUpdate {
-	ou.mutation.AddEndAt(u)
+// AddDurationDays adds u to the "duration_days" field.
+func (ou *OrderUpdate) AddDurationDays(u int32) *OrderUpdate {
+	ou.mutation.AddDurationDays(u)
 	return ou
 }
 
-// ClearEndAt clears the value of the "end_at" field.
-func (ou *OrderUpdate) ClearEndAt() *OrderUpdate {
-	ou.mutation.ClearEndAt()
+// ClearDurationDays clears the value of the "duration_days" field.
+func (ou *OrderUpdate) ClearDurationDays() *OrderUpdate {
+	ou.mutation.ClearDurationDays()
 	return ou
 }
 
-// SetFixAmountCouponID sets the "fix_amount_coupon_id" field.
-func (ou *OrderUpdate) SetFixAmountCouponID(u uuid.UUID) *OrderUpdate {
-	ou.mutation.SetFixAmountCouponID(u)
+// SetOrderType sets the "order_type" field.
+func (ou *OrderUpdate) SetOrderType(s string) *OrderUpdate {
+	ou.mutation.SetOrderType(s)
 	return ou
 }
 
-// SetNillableFixAmountCouponID sets the "fix_amount_coupon_id" field if the given value is not nil.
-func (ou *OrderUpdate) SetNillableFixAmountCouponID(u *uuid.UUID) *OrderUpdate {
-	if u != nil {
-		ou.SetFixAmountCouponID(*u)
-	}
-	return ou
-}
-
-// ClearFixAmountCouponID clears the value of the "fix_amount_coupon_id" field.
-func (ou *OrderUpdate) ClearFixAmountCouponID() *OrderUpdate {
-	ou.mutation.ClearFixAmountCouponID()
-	return ou
-}
-
-// SetType sets the "type" field.
-func (ou *OrderUpdate) SetType(s string) *OrderUpdate {
-	ou.mutation.SetType(s)
-	return ou
-}
-
-// SetNillableType sets the "type" field if the given value is not nil.
-func (ou *OrderUpdate) SetNillableType(s *string) *OrderUpdate {
+// SetNillableOrderType sets the "order_type" field if the given value is not nil.
+func (ou *OrderUpdate) SetNillableOrderType(s *string) *OrderUpdate {
 	if s != nil {
-		ou.SetType(*s)
+		ou.SetOrderType(*s)
 	}
 	return ou
 }
 
-// ClearType clears the value of the "type" field.
-func (ou *OrderUpdate) ClearType() *OrderUpdate {
-	ou.mutation.ClearType()
-	return ou
-}
-
-// SetState sets the "state" field.
-func (ou *OrderUpdate) SetState(s string) *OrderUpdate {
-	ou.mutation.SetState(s)
-	return ou
-}
-
-// SetNillableState sets the "state" field if the given value is not nil.
-func (ou *OrderUpdate) SetNillableState(s *string) *OrderUpdate {
-	if s != nil {
-		ou.SetState(*s)
-	}
-	return ou
-}
-
-// ClearState clears the value of the "state" field.
-func (ou *OrderUpdate) ClearState() *OrderUpdate {
-	ou.mutation.ClearState()
-	return ou
-}
-
-// SetStateV1 sets the "state_v1" field.
-func (ou *OrderUpdate) SetStateV1(s string) *OrderUpdate {
-	ou.mutation.SetStateV1(s)
-	return ou
-}
-
-// SetNillableStateV1 sets the "state_v1" field if the given value is not nil.
-func (ou *OrderUpdate) SetNillableStateV1(s *string) *OrderUpdate {
-	if s != nil {
-		ou.SetStateV1(*s)
-	}
-	return ou
-}
-
-// ClearStateV1 clears the value of the "state_v1" field.
-func (ou *OrderUpdate) ClearStateV1() *OrderUpdate {
-	ou.mutation.ClearStateV1()
+// ClearOrderType clears the value of the "order_type" field.
+func (ou *OrderUpdate) ClearOrderType() *OrderUpdate {
+	ou.mutation.ClearOrderType()
 	return ou
 }
 
@@ -416,30 +369,23 @@ func (ou *OrderUpdate) ClearCouponIds() *OrderUpdate {
 	return ou
 }
 
-// SetLastBenefitAt sets the "last_benefit_at" field.
-func (ou *OrderUpdate) SetLastBenefitAt(u uint32) *OrderUpdate {
-	ou.mutation.ResetLastBenefitAt()
-	ou.mutation.SetLastBenefitAt(u)
+// SetPaymentType sets the "payment_type" field.
+func (ou *OrderUpdate) SetPaymentType(s string) *OrderUpdate {
+	ou.mutation.SetPaymentType(s)
 	return ou
 }
 
-// SetNillableLastBenefitAt sets the "last_benefit_at" field if the given value is not nil.
-func (ou *OrderUpdate) SetNillableLastBenefitAt(u *uint32) *OrderUpdate {
-	if u != nil {
-		ou.SetLastBenefitAt(*u)
+// SetNillablePaymentType sets the "payment_type" field if the given value is not nil.
+func (ou *OrderUpdate) SetNillablePaymentType(s *string) *OrderUpdate {
+	if s != nil {
+		ou.SetPaymentType(*s)
 	}
 	return ou
 }
 
-// AddLastBenefitAt adds u to the "last_benefit_at" field.
-func (ou *OrderUpdate) AddLastBenefitAt(u int32) *OrderUpdate {
-	ou.mutation.AddLastBenefitAt(u)
-	return ou
-}
-
-// ClearLastBenefitAt clears the value of the "last_benefit_at" field.
-func (ou *OrderUpdate) ClearLastBenefitAt() *OrderUpdate {
-	ou.mutation.ClearLastBenefitAt()
+// ClearPaymentType clears the value of the "payment_type" field.
+func (ou *OrderUpdate) ClearPaymentType() *OrderUpdate {
+	ou.mutation.ClearPaymentType()
 	return ou
 }
 
@@ -583,13 +529,6 @@ func (ou *OrderUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: order.FieldDeletedAt,
 		})
 	}
-	if value, ok := ou.mutation.GoodID(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeUUID,
-			Value:  value,
-			Column: order.FieldGoodID,
-		})
-	}
 	if value, ok := ou.mutation.AppID(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeUUID,
@@ -602,6 +541,26 @@ func (ou *OrderUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Type:   field.TypeUUID,
 			Value:  value,
 			Column: order.FieldUserID,
+		})
+	}
+	if value, ok := ou.mutation.GoodID(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Value:  value,
+			Column: order.FieldGoodID,
+		})
+	}
+	if value, ok := ou.mutation.PaymentID(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Value:  value,
+			Column: order.FieldPaymentID,
+		})
+	}
+	if ou.mutation.PaymentIDCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Column: order.FieldPaymentID,
 		})
 	}
 	if value, ok := ou.mutation.ParentOrderID(); ok {
@@ -617,39 +576,6 @@ func (ou *OrderUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: order.FieldParentOrderID,
 		})
 	}
-	if value, ok := ou.mutation.PayWithParent(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeBool,
-			Value:  value,
-			Column: order.FieldPayWithParent,
-		})
-	}
-	if ou.mutation.PayWithParentCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeBool,
-			Column: order.FieldPayWithParent,
-		})
-	}
-	if value, ok := ou.mutation.Units(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeUint32,
-			Value:  value,
-			Column: order.FieldUnits,
-		})
-	}
-	if value, ok := ou.mutation.AddedUnits(); ok {
-		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
-			Type:   field.TypeUint32,
-			Value:  value,
-			Column: order.FieldUnits,
-		})
-	}
-	if ou.mutation.UnitsCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeUint32,
-			Column: order.FieldUnits,
-		})
-	}
 	if value, ok := ou.mutation.UnitsV1(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeOther,
@@ -663,6 +589,45 @@ func (ou *OrderUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: order.FieldUnitsV1,
 		})
 	}
+	if value, ok := ou.mutation.GoodValue(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeOther,
+			Value:  value,
+			Column: order.FieldGoodValue,
+		})
+	}
+	if ou.mutation.GoodValueCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeOther,
+			Column: order.FieldGoodValue,
+		})
+	}
+	if value, ok := ou.mutation.PaymentAmount(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeOther,
+			Value:  value,
+			Column: order.FieldPaymentAmount,
+		})
+	}
+	if ou.mutation.PaymentAmountCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeOther,
+			Column: order.FieldPaymentAmount,
+		})
+	}
+	if value, ok := ou.mutation.DiscountAmount(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeOther,
+			Value:  value,
+			Column: order.FieldDiscountAmount,
+		})
+	}
+	if ou.mutation.DiscountAmountCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeOther,
+			Column: order.FieldDiscountAmount,
+		})
+	}
 	if value, ok := ou.mutation.PromotionID(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeUUID,
@@ -674,32 +639,6 @@ func (ou *OrderUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeUUID,
 			Column: order.FieldPromotionID,
-		})
-	}
-	if value, ok := ou.mutation.DiscountCouponID(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeUUID,
-			Value:  value,
-			Column: order.FieldDiscountCouponID,
-		})
-	}
-	if ou.mutation.DiscountCouponIDCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeUUID,
-			Column: order.FieldDiscountCouponID,
-		})
-	}
-	if value, ok := ou.mutation.UserSpecialReductionID(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeUUID,
-			Value:  value,
-			Column: order.FieldUserSpecialReductionID,
-		})
-	}
-	if ou.mutation.UserSpecialReductionIDCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeUUID,
-			Column: order.FieldUserSpecialReductionID,
 		})
 	}
 	if value, ok := ou.mutation.StartAt(); ok {
@@ -722,76 +661,50 @@ func (ou *OrderUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: order.FieldStartAt,
 		})
 	}
-	if value, ok := ou.mutation.EndAt(); ok {
+	if value, ok := ou.mutation.StartMode(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: order.FieldStartMode,
+		})
+	}
+	if ou.mutation.StartModeCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Column: order.FieldStartMode,
+		})
+	}
+	if value, ok := ou.mutation.DurationDays(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeUint32,
 			Value:  value,
-			Column: order.FieldEndAt,
+			Column: order.FieldDurationDays,
 		})
 	}
-	if value, ok := ou.mutation.AddedEndAt(); ok {
+	if value, ok := ou.mutation.AddedDurationDays(); ok {
 		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
 			Type:   field.TypeUint32,
 			Value:  value,
-			Column: order.FieldEndAt,
+			Column: order.FieldDurationDays,
 		})
 	}
-	if ou.mutation.EndAtCleared() {
+	if ou.mutation.DurationDaysCleared() {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeUint32,
-			Column: order.FieldEndAt,
+			Column: order.FieldDurationDays,
 		})
 	}
-	if value, ok := ou.mutation.FixAmountCouponID(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeUUID,
-			Value:  value,
-			Column: order.FieldFixAmountCouponID,
-		})
-	}
-	if ou.mutation.FixAmountCouponIDCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeUUID,
-			Column: order.FieldFixAmountCouponID,
-		})
-	}
-	if value, ok := ou.mutation.GetType(); ok {
+	if value, ok := ou.mutation.OrderType(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
 			Value:  value,
-			Column: order.FieldType,
+			Column: order.FieldOrderType,
 		})
 	}
-	if ou.mutation.TypeCleared() {
+	if ou.mutation.OrderTypeCleared() {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
-			Column: order.FieldType,
-		})
-	}
-	if value, ok := ou.mutation.State(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Value:  value,
-			Column: order.FieldState,
-		})
-	}
-	if ou.mutation.StateCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Column: order.FieldState,
-		})
-	}
-	if value, ok := ou.mutation.StateV1(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Value:  value,
-			Column: order.FieldStateV1,
-		})
-	}
-	if ou.mutation.StateV1Cleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Column: order.FieldStateV1,
+			Column: order.FieldOrderType,
 		})
 	}
 	if value, ok := ou.mutation.InvestmentType(); ok {
@@ -820,24 +733,17 @@ func (ou *OrderUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: order.FieldCouponIds,
 		})
 	}
-	if value, ok := ou.mutation.LastBenefitAt(); ok {
+	if value, ok := ou.mutation.PaymentType(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeUint32,
+			Type:   field.TypeString,
 			Value:  value,
-			Column: order.FieldLastBenefitAt,
+			Column: order.FieldPaymentType,
 		})
 	}
-	if value, ok := ou.mutation.AddedLastBenefitAt(); ok {
-		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
-			Type:   field.TypeUint32,
-			Value:  value,
-			Column: order.FieldLastBenefitAt,
-		})
-	}
-	if ou.mutation.LastBenefitAtCleared() {
+	if ou.mutation.PaymentTypeCleared() {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeUint32,
-			Column: order.FieldLastBenefitAt,
+			Type:   field.TypeString,
+			Column: order.FieldPaymentType,
 		})
 	}
 	_spec.Modifiers = ou.modifiers
@@ -916,12 +822,6 @@ func (ouo *OrderUpdateOne) AddDeletedAt(u int32) *OrderUpdateOne {
 	return ouo
 }
 
-// SetGoodID sets the "good_id" field.
-func (ouo *OrderUpdateOne) SetGoodID(u uuid.UUID) *OrderUpdateOne {
-	ouo.mutation.SetGoodID(u)
-	return ouo
-}
-
 // SetAppID sets the "app_id" field.
 func (ouo *OrderUpdateOne) SetAppID(u uuid.UUID) *OrderUpdateOne {
 	ouo.mutation.SetAppID(u)
@@ -931,6 +831,32 @@ func (ouo *OrderUpdateOne) SetAppID(u uuid.UUID) *OrderUpdateOne {
 // SetUserID sets the "user_id" field.
 func (ouo *OrderUpdateOne) SetUserID(u uuid.UUID) *OrderUpdateOne {
 	ouo.mutation.SetUserID(u)
+	return ouo
+}
+
+// SetGoodID sets the "good_id" field.
+func (ouo *OrderUpdateOne) SetGoodID(u uuid.UUID) *OrderUpdateOne {
+	ouo.mutation.SetGoodID(u)
+	return ouo
+}
+
+// SetPaymentID sets the "payment_id" field.
+func (ouo *OrderUpdateOne) SetPaymentID(u uuid.UUID) *OrderUpdateOne {
+	ouo.mutation.SetPaymentID(u)
+	return ouo
+}
+
+// SetNillablePaymentID sets the "payment_id" field if the given value is not nil.
+func (ouo *OrderUpdateOne) SetNillablePaymentID(u *uuid.UUID) *OrderUpdateOne {
+	if u != nil {
+		ouo.SetPaymentID(*u)
+	}
+	return ouo
+}
+
+// ClearPaymentID clears the value of the "payment_id" field.
+func (ouo *OrderUpdateOne) ClearPaymentID() *OrderUpdateOne {
+	ouo.mutation.ClearPaymentID()
 	return ouo
 }
 
@@ -954,53 +880,6 @@ func (ouo *OrderUpdateOne) ClearParentOrderID() *OrderUpdateOne {
 	return ouo
 }
 
-// SetPayWithParent sets the "pay_with_parent" field.
-func (ouo *OrderUpdateOne) SetPayWithParent(b bool) *OrderUpdateOne {
-	ouo.mutation.SetPayWithParent(b)
-	return ouo
-}
-
-// SetNillablePayWithParent sets the "pay_with_parent" field if the given value is not nil.
-func (ouo *OrderUpdateOne) SetNillablePayWithParent(b *bool) *OrderUpdateOne {
-	if b != nil {
-		ouo.SetPayWithParent(*b)
-	}
-	return ouo
-}
-
-// ClearPayWithParent clears the value of the "pay_with_parent" field.
-func (ouo *OrderUpdateOne) ClearPayWithParent() *OrderUpdateOne {
-	ouo.mutation.ClearPayWithParent()
-	return ouo
-}
-
-// SetUnits sets the "units" field.
-func (ouo *OrderUpdateOne) SetUnits(u uint32) *OrderUpdateOne {
-	ouo.mutation.ResetUnits()
-	ouo.mutation.SetUnits(u)
-	return ouo
-}
-
-// SetNillableUnits sets the "units" field if the given value is not nil.
-func (ouo *OrderUpdateOne) SetNillableUnits(u *uint32) *OrderUpdateOne {
-	if u != nil {
-		ouo.SetUnits(*u)
-	}
-	return ouo
-}
-
-// AddUnits adds u to the "units" field.
-func (ouo *OrderUpdateOne) AddUnits(u int32) *OrderUpdateOne {
-	ouo.mutation.AddUnits(u)
-	return ouo
-}
-
-// ClearUnits clears the value of the "units" field.
-func (ouo *OrderUpdateOne) ClearUnits() *OrderUpdateOne {
-	ouo.mutation.ClearUnits()
-	return ouo
-}
-
 // SetUnitsV1 sets the "units_v1" field.
 func (ouo *OrderUpdateOne) SetUnitsV1(d decimal.Decimal) *OrderUpdateOne {
 	ouo.mutation.SetUnitsV1(d)
@@ -1021,6 +900,66 @@ func (ouo *OrderUpdateOne) ClearUnitsV1() *OrderUpdateOne {
 	return ouo
 }
 
+// SetGoodValue sets the "good_value" field.
+func (ouo *OrderUpdateOne) SetGoodValue(d decimal.Decimal) *OrderUpdateOne {
+	ouo.mutation.SetGoodValue(d)
+	return ouo
+}
+
+// SetNillableGoodValue sets the "good_value" field if the given value is not nil.
+func (ouo *OrderUpdateOne) SetNillableGoodValue(d *decimal.Decimal) *OrderUpdateOne {
+	if d != nil {
+		ouo.SetGoodValue(*d)
+	}
+	return ouo
+}
+
+// ClearGoodValue clears the value of the "good_value" field.
+func (ouo *OrderUpdateOne) ClearGoodValue() *OrderUpdateOne {
+	ouo.mutation.ClearGoodValue()
+	return ouo
+}
+
+// SetPaymentAmount sets the "payment_amount" field.
+func (ouo *OrderUpdateOne) SetPaymentAmount(d decimal.Decimal) *OrderUpdateOne {
+	ouo.mutation.SetPaymentAmount(d)
+	return ouo
+}
+
+// SetNillablePaymentAmount sets the "payment_amount" field if the given value is not nil.
+func (ouo *OrderUpdateOne) SetNillablePaymentAmount(d *decimal.Decimal) *OrderUpdateOne {
+	if d != nil {
+		ouo.SetPaymentAmount(*d)
+	}
+	return ouo
+}
+
+// ClearPaymentAmount clears the value of the "payment_amount" field.
+func (ouo *OrderUpdateOne) ClearPaymentAmount() *OrderUpdateOne {
+	ouo.mutation.ClearPaymentAmount()
+	return ouo
+}
+
+// SetDiscountAmount sets the "discount_amount" field.
+func (ouo *OrderUpdateOne) SetDiscountAmount(d decimal.Decimal) *OrderUpdateOne {
+	ouo.mutation.SetDiscountAmount(d)
+	return ouo
+}
+
+// SetNillableDiscountAmount sets the "discount_amount" field if the given value is not nil.
+func (ouo *OrderUpdateOne) SetNillableDiscountAmount(d *decimal.Decimal) *OrderUpdateOne {
+	if d != nil {
+		ouo.SetDiscountAmount(*d)
+	}
+	return ouo
+}
+
+// ClearDiscountAmount clears the value of the "discount_amount" field.
+func (ouo *OrderUpdateOne) ClearDiscountAmount() *OrderUpdateOne {
+	ouo.mutation.ClearDiscountAmount()
+	return ouo
+}
+
 // SetPromotionID sets the "promotion_id" field.
 func (ouo *OrderUpdateOne) SetPromotionID(u uuid.UUID) *OrderUpdateOne {
 	ouo.mutation.SetPromotionID(u)
@@ -1038,46 +977,6 @@ func (ouo *OrderUpdateOne) SetNillablePromotionID(u *uuid.UUID) *OrderUpdateOne 
 // ClearPromotionID clears the value of the "promotion_id" field.
 func (ouo *OrderUpdateOne) ClearPromotionID() *OrderUpdateOne {
 	ouo.mutation.ClearPromotionID()
-	return ouo
-}
-
-// SetDiscountCouponID sets the "discount_coupon_id" field.
-func (ouo *OrderUpdateOne) SetDiscountCouponID(u uuid.UUID) *OrderUpdateOne {
-	ouo.mutation.SetDiscountCouponID(u)
-	return ouo
-}
-
-// SetNillableDiscountCouponID sets the "discount_coupon_id" field if the given value is not nil.
-func (ouo *OrderUpdateOne) SetNillableDiscountCouponID(u *uuid.UUID) *OrderUpdateOne {
-	if u != nil {
-		ouo.SetDiscountCouponID(*u)
-	}
-	return ouo
-}
-
-// ClearDiscountCouponID clears the value of the "discount_coupon_id" field.
-func (ouo *OrderUpdateOne) ClearDiscountCouponID() *OrderUpdateOne {
-	ouo.mutation.ClearDiscountCouponID()
-	return ouo
-}
-
-// SetUserSpecialReductionID sets the "user_special_reduction_id" field.
-func (ouo *OrderUpdateOne) SetUserSpecialReductionID(u uuid.UUID) *OrderUpdateOne {
-	ouo.mutation.SetUserSpecialReductionID(u)
-	return ouo
-}
-
-// SetNillableUserSpecialReductionID sets the "user_special_reduction_id" field if the given value is not nil.
-func (ouo *OrderUpdateOne) SetNillableUserSpecialReductionID(u *uuid.UUID) *OrderUpdateOne {
-	if u != nil {
-		ouo.SetUserSpecialReductionID(*u)
-	}
-	return ouo
-}
-
-// ClearUserSpecialReductionID clears the value of the "user_special_reduction_id" field.
-func (ouo *OrderUpdateOne) ClearUserSpecialReductionID() *OrderUpdateOne {
-	ouo.mutation.ClearUserSpecialReductionID()
 	return ouo
 }
 
@@ -1108,110 +1007,70 @@ func (ouo *OrderUpdateOne) ClearStartAt() *OrderUpdateOne {
 	return ouo
 }
 
-// SetEndAt sets the "end_at" field.
-func (ouo *OrderUpdateOne) SetEndAt(u uint32) *OrderUpdateOne {
-	ouo.mutation.ResetEndAt()
-	ouo.mutation.SetEndAt(u)
+// SetStartMode sets the "start_mode" field.
+func (ouo *OrderUpdateOne) SetStartMode(s string) *OrderUpdateOne {
+	ouo.mutation.SetStartMode(s)
 	return ouo
 }
 
-// SetNillableEndAt sets the "end_at" field if the given value is not nil.
-func (ouo *OrderUpdateOne) SetNillableEndAt(u *uint32) *OrderUpdateOne {
+// SetNillableStartMode sets the "start_mode" field if the given value is not nil.
+func (ouo *OrderUpdateOne) SetNillableStartMode(s *string) *OrderUpdateOne {
+	if s != nil {
+		ouo.SetStartMode(*s)
+	}
+	return ouo
+}
+
+// ClearStartMode clears the value of the "start_mode" field.
+func (ouo *OrderUpdateOne) ClearStartMode() *OrderUpdateOne {
+	ouo.mutation.ClearStartMode()
+	return ouo
+}
+
+// SetDurationDays sets the "duration_days" field.
+func (ouo *OrderUpdateOne) SetDurationDays(u uint32) *OrderUpdateOne {
+	ouo.mutation.ResetDurationDays()
+	ouo.mutation.SetDurationDays(u)
+	return ouo
+}
+
+// SetNillableDurationDays sets the "duration_days" field if the given value is not nil.
+func (ouo *OrderUpdateOne) SetNillableDurationDays(u *uint32) *OrderUpdateOne {
 	if u != nil {
-		ouo.SetEndAt(*u)
+		ouo.SetDurationDays(*u)
 	}
 	return ouo
 }
 
-// AddEndAt adds u to the "end_at" field.
-func (ouo *OrderUpdateOne) AddEndAt(u int32) *OrderUpdateOne {
-	ouo.mutation.AddEndAt(u)
+// AddDurationDays adds u to the "duration_days" field.
+func (ouo *OrderUpdateOne) AddDurationDays(u int32) *OrderUpdateOne {
+	ouo.mutation.AddDurationDays(u)
 	return ouo
 }
 
-// ClearEndAt clears the value of the "end_at" field.
-func (ouo *OrderUpdateOne) ClearEndAt() *OrderUpdateOne {
-	ouo.mutation.ClearEndAt()
+// ClearDurationDays clears the value of the "duration_days" field.
+func (ouo *OrderUpdateOne) ClearDurationDays() *OrderUpdateOne {
+	ouo.mutation.ClearDurationDays()
 	return ouo
 }
 
-// SetFixAmountCouponID sets the "fix_amount_coupon_id" field.
-func (ouo *OrderUpdateOne) SetFixAmountCouponID(u uuid.UUID) *OrderUpdateOne {
-	ouo.mutation.SetFixAmountCouponID(u)
+// SetOrderType sets the "order_type" field.
+func (ouo *OrderUpdateOne) SetOrderType(s string) *OrderUpdateOne {
+	ouo.mutation.SetOrderType(s)
 	return ouo
 }
 
-// SetNillableFixAmountCouponID sets the "fix_amount_coupon_id" field if the given value is not nil.
-func (ouo *OrderUpdateOne) SetNillableFixAmountCouponID(u *uuid.UUID) *OrderUpdateOne {
-	if u != nil {
-		ouo.SetFixAmountCouponID(*u)
-	}
-	return ouo
-}
-
-// ClearFixAmountCouponID clears the value of the "fix_amount_coupon_id" field.
-func (ouo *OrderUpdateOne) ClearFixAmountCouponID() *OrderUpdateOne {
-	ouo.mutation.ClearFixAmountCouponID()
-	return ouo
-}
-
-// SetType sets the "type" field.
-func (ouo *OrderUpdateOne) SetType(s string) *OrderUpdateOne {
-	ouo.mutation.SetType(s)
-	return ouo
-}
-
-// SetNillableType sets the "type" field if the given value is not nil.
-func (ouo *OrderUpdateOne) SetNillableType(s *string) *OrderUpdateOne {
+// SetNillableOrderType sets the "order_type" field if the given value is not nil.
+func (ouo *OrderUpdateOne) SetNillableOrderType(s *string) *OrderUpdateOne {
 	if s != nil {
-		ouo.SetType(*s)
+		ouo.SetOrderType(*s)
 	}
 	return ouo
 }
 
-// ClearType clears the value of the "type" field.
-func (ouo *OrderUpdateOne) ClearType() *OrderUpdateOne {
-	ouo.mutation.ClearType()
-	return ouo
-}
-
-// SetState sets the "state" field.
-func (ouo *OrderUpdateOne) SetState(s string) *OrderUpdateOne {
-	ouo.mutation.SetState(s)
-	return ouo
-}
-
-// SetNillableState sets the "state" field if the given value is not nil.
-func (ouo *OrderUpdateOne) SetNillableState(s *string) *OrderUpdateOne {
-	if s != nil {
-		ouo.SetState(*s)
-	}
-	return ouo
-}
-
-// ClearState clears the value of the "state" field.
-func (ouo *OrderUpdateOne) ClearState() *OrderUpdateOne {
-	ouo.mutation.ClearState()
-	return ouo
-}
-
-// SetStateV1 sets the "state_v1" field.
-func (ouo *OrderUpdateOne) SetStateV1(s string) *OrderUpdateOne {
-	ouo.mutation.SetStateV1(s)
-	return ouo
-}
-
-// SetNillableStateV1 sets the "state_v1" field if the given value is not nil.
-func (ouo *OrderUpdateOne) SetNillableStateV1(s *string) *OrderUpdateOne {
-	if s != nil {
-		ouo.SetStateV1(*s)
-	}
-	return ouo
-}
-
-// ClearStateV1 clears the value of the "state_v1" field.
-func (ouo *OrderUpdateOne) ClearStateV1() *OrderUpdateOne {
-	ouo.mutation.ClearStateV1()
+// ClearOrderType clears the value of the "order_type" field.
+func (ouo *OrderUpdateOne) ClearOrderType() *OrderUpdateOne {
+	ouo.mutation.ClearOrderType()
 	return ouo
 }
 
@@ -1247,30 +1106,23 @@ func (ouo *OrderUpdateOne) ClearCouponIds() *OrderUpdateOne {
 	return ouo
 }
 
-// SetLastBenefitAt sets the "last_benefit_at" field.
-func (ouo *OrderUpdateOne) SetLastBenefitAt(u uint32) *OrderUpdateOne {
-	ouo.mutation.ResetLastBenefitAt()
-	ouo.mutation.SetLastBenefitAt(u)
+// SetPaymentType sets the "payment_type" field.
+func (ouo *OrderUpdateOne) SetPaymentType(s string) *OrderUpdateOne {
+	ouo.mutation.SetPaymentType(s)
 	return ouo
 }
 
-// SetNillableLastBenefitAt sets the "last_benefit_at" field if the given value is not nil.
-func (ouo *OrderUpdateOne) SetNillableLastBenefitAt(u *uint32) *OrderUpdateOne {
-	if u != nil {
-		ouo.SetLastBenefitAt(*u)
+// SetNillablePaymentType sets the "payment_type" field if the given value is not nil.
+func (ouo *OrderUpdateOne) SetNillablePaymentType(s *string) *OrderUpdateOne {
+	if s != nil {
+		ouo.SetPaymentType(*s)
 	}
 	return ouo
 }
 
-// AddLastBenefitAt adds u to the "last_benefit_at" field.
-func (ouo *OrderUpdateOne) AddLastBenefitAt(u int32) *OrderUpdateOne {
-	ouo.mutation.AddLastBenefitAt(u)
-	return ouo
-}
-
-// ClearLastBenefitAt clears the value of the "last_benefit_at" field.
-func (ouo *OrderUpdateOne) ClearLastBenefitAt() *OrderUpdateOne {
-	ouo.mutation.ClearLastBenefitAt()
+// ClearPaymentType clears the value of the "payment_type" field.
+func (ouo *OrderUpdateOne) ClearPaymentType() *OrderUpdateOne {
+	ouo.mutation.ClearPaymentType()
 	return ouo
 }
 
@@ -1444,13 +1296,6 @@ func (ouo *OrderUpdateOne) sqlSave(ctx context.Context) (_node *Order, err error
 			Column: order.FieldDeletedAt,
 		})
 	}
-	if value, ok := ouo.mutation.GoodID(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeUUID,
-			Value:  value,
-			Column: order.FieldGoodID,
-		})
-	}
 	if value, ok := ouo.mutation.AppID(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeUUID,
@@ -1463,6 +1308,26 @@ func (ouo *OrderUpdateOne) sqlSave(ctx context.Context) (_node *Order, err error
 			Type:   field.TypeUUID,
 			Value:  value,
 			Column: order.FieldUserID,
+		})
+	}
+	if value, ok := ouo.mutation.GoodID(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Value:  value,
+			Column: order.FieldGoodID,
+		})
+	}
+	if value, ok := ouo.mutation.PaymentID(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Value:  value,
+			Column: order.FieldPaymentID,
+		})
+	}
+	if ouo.mutation.PaymentIDCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Column: order.FieldPaymentID,
 		})
 	}
 	if value, ok := ouo.mutation.ParentOrderID(); ok {
@@ -1478,39 +1343,6 @@ func (ouo *OrderUpdateOne) sqlSave(ctx context.Context) (_node *Order, err error
 			Column: order.FieldParentOrderID,
 		})
 	}
-	if value, ok := ouo.mutation.PayWithParent(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeBool,
-			Value:  value,
-			Column: order.FieldPayWithParent,
-		})
-	}
-	if ouo.mutation.PayWithParentCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeBool,
-			Column: order.FieldPayWithParent,
-		})
-	}
-	if value, ok := ouo.mutation.Units(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeUint32,
-			Value:  value,
-			Column: order.FieldUnits,
-		})
-	}
-	if value, ok := ouo.mutation.AddedUnits(); ok {
-		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
-			Type:   field.TypeUint32,
-			Value:  value,
-			Column: order.FieldUnits,
-		})
-	}
-	if ouo.mutation.UnitsCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeUint32,
-			Column: order.FieldUnits,
-		})
-	}
 	if value, ok := ouo.mutation.UnitsV1(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeOther,
@@ -1524,6 +1356,45 @@ func (ouo *OrderUpdateOne) sqlSave(ctx context.Context) (_node *Order, err error
 			Column: order.FieldUnitsV1,
 		})
 	}
+	if value, ok := ouo.mutation.GoodValue(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeOther,
+			Value:  value,
+			Column: order.FieldGoodValue,
+		})
+	}
+	if ouo.mutation.GoodValueCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeOther,
+			Column: order.FieldGoodValue,
+		})
+	}
+	if value, ok := ouo.mutation.PaymentAmount(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeOther,
+			Value:  value,
+			Column: order.FieldPaymentAmount,
+		})
+	}
+	if ouo.mutation.PaymentAmountCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeOther,
+			Column: order.FieldPaymentAmount,
+		})
+	}
+	if value, ok := ouo.mutation.DiscountAmount(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeOther,
+			Value:  value,
+			Column: order.FieldDiscountAmount,
+		})
+	}
+	if ouo.mutation.DiscountAmountCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeOther,
+			Column: order.FieldDiscountAmount,
+		})
+	}
 	if value, ok := ouo.mutation.PromotionID(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeUUID,
@@ -1535,32 +1406,6 @@ func (ouo *OrderUpdateOne) sqlSave(ctx context.Context) (_node *Order, err error
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeUUID,
 			Column: order.FieldPromotionID,
-		})
-	}
-	if value, ok := ouo.mutation.DiscountCouponID(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeUUID,
-			Value:  value,
-			Column: order.FieldDiscountCouponID,
-		})
-	}
-	if ouo.mutation.DiscountCouponIDCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeUUID,
-			Column: order.FieldDiscountCouponID,
-		})
-	}
-	if value, ok := ouo.mutation.UserSpecialReductionID(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeUUID,
-			Value:  value,
-			Column: order.FieldUserSpecialReductionID,
-		})
-	}
-	if ouo.mutation.UserSpecialReductionIDCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeUUID,
-			Column: order.FieldUserSpecialReductionID,
 		})
 	}
 	if value, ok := ouo.mutation.StartAt(); ok {
@@ -1583,76 +1428,50 @@ func (ouo *OrderUpdateOne) sqlSave(ctx context.Context) (_node *Order, err error
 			Column: order.FieldStartAt,
 		})
 	}
-	if value, ok := ouo.mutation.EndAt(); ok {
+	if value, ok := ouo.mutation.StartMode(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: order.FieldStartMode,
+		})
+	}
+	if ouo.mutation.StartModeCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Column: order.FieldStartMode,
+		})
+	}
+	if value, ok := ouo.mutation.DurationDays(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeUint32,
 			Value:  value,
-			Column: order.FieldEndAt,
+			Column: order.FieldDurationDays,
 		})
 	}
-	if value, ok := ouo.mutation.AddedEndAt(); ok {
+	if value, ok := ouo.mutation.AddedDurationDays(); ok {
 		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
 			Type:   field.TypeUint32,
 			Value:  value,
-			Column: order.FieldEndAt,
+			Column: order.FieldDurationDays,
 		})
 	}
-	if ouo.mutation.EndAtCleared() {
+	if ouo.mutation.DurationDaysCleared() {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeUint32,
-			Column: order.FieldEndAt,
+			Column: order.FieldDurationDays,
 		})
 	}
-	if value, ok := ouo.mutation.FixAmountCouponID(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeUUID,
-			Value:  value,
-			Column: order.FieldFixAmountCouponID,
-		})
-	}
-	if ouo.mutation.FixAmountCouponIDCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeUUID,
-			Column: order.FieldFixAmountCouponID,
-		})
-	}
-	if value, ok := ouo.mutation.GetType(); ok {
+	if value, ok := ouo.mutation.OrderType(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
 			Value:  value,
-			Column: order.FieldType,
+			Column: order.FieldOrderType,
 		})
 	}
-	if ouo.mutation.TypeCleared() {
+	if ouo.mutation.OrderTypeCleared() {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
-			Column: order.FieldType,
-		})
-	}
-	if value, ok := ouo.mutation.State(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Value:  value,
-			Column: order.FieldState,
-		})
-	}
-	if ouo.mutation.StateCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Column: order.FieldState,
-		})
-	}
-	if value, ok := ouo.mutation.StateV1(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Value:  value,
-			Column: order.FieldStateV1,
-		})
-	}
-	if ouo.mutation.StateV1Cleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Column: order.FieldStateV1,
+			Column: order.FieldOrderType,
 		})
 	}
 	if value, ok := ouo.mutation.InvestmentType(); ok {
@@ -1681,24 +1500,17 @@ func (ouo *OrderUpdateOne) sqlSave(ctx context.Context) (_node *Order, err error
 			Column: order.FieldCouponIds,
 		})
 	}
-	if value, ok := ouo.mutation.LastBenefitAt(); ok {
+	if value, ok := ouo.mutation.PaymentType(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeUint32,
+			Type:   field.TypeString,
 			Value:  value,
-			Column: order.FieldLastBenefitAt,
+			Column: order.FieldPaymentType,
 		})
 	}
-	if value, ok := ouo.mutation.AddedLastBenefitAt(); ok {
-		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
-			Type:   field.TypeUint32,
-			Value:  value,
-			Column: order.FieldLastBenefitAt,
-		})
-	}
-	if ouo.mutation.LastBenefitAtCleared() {
+	if ouo.mutation.PaymentTypeCleared() {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeUint32,
-			Column: order.FieldLastBenefitAt,
+			Type:   field.TypeString,
+			Column: order.FieldPaymentType,
 		})
 	}
 	_spec.Modifiers = ouo.modifiers

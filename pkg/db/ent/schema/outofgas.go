@@ -4,7 +4,6 @@ import (
 	"entgo.io/ent"
 	"entgo.io/ent/schema/field"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/mixin"
-
 	"github.com/google/uuid"
 )
 
@@ -29,11 +28,11 @@ func (OutOfGas) Fields() []ent.Field {
 		field.
 			UUID("order_id", uuid.UUID{}),
 		field.
-			Uint32("start").
+			Uint32("start_at").
 			Optional().
 			Default(0),
 		field.
-			Uint32("end").
+			Uint32("end_at").
 			Optional().
 			Default(0),
 	}

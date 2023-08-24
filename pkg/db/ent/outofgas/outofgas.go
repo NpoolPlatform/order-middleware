@@ -20,10 +20,10 @@ const (
 	FieldDeletedAt = "deleted_at"
 	// FieldOrderID holds the string denoting the order_id field in the database.
 	FieldOrderID = "order_id"
-	// FieldStart holds the string denoting the start field in the database.
-	FieldStart = "start"
-	// FieldEnd holds the string denoting the end field in the database.
-	FieldEnd = "end"
+	// FieldStartAt holds the string denoting the start_at field in the database.
+	FieldStartAt = "start_at"
+	// FieldEndAt holds the string denoting the end_at field in the database.
+	FieldEndAt = "end_at"
 	// Table holds the table name of the outofgas in the database.
 	Table = "out_of_gas"
 )
@@ -35,8 +35,8 @@ var Columns = []string{
 	FieldUpdatedAt,
 	FieldDeletedAt,
 	FieldOrderID,
-	FieldStart,
-	FieldEnd,
+	FieldStartAt,
+	FieldEndAt,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -66,10 +66,10 @@ var (
 	UpdateDefaultUpdatedAt func() uint32
 	// DefaultDeletedAt holds the default value on creation for the "deleted_at" field.
 	DefaultDeletedAt func() uint32
-	// DefaultStart holds the default value on creation for the "start" field.
-	DefaultStart uint32
-	// DefaultEnd holds the default value on creation for the "end" field.
-	DefaultEnd uint32
+	// DefaultStartAt holds the default value on creation for the "start_at" field.
+	DefaultStartAt uint32
+	// DefaultEndAt holds the default value on creation for the "end_at" field.
+	DefaultEndAt uint32
 	// DefaultID holds the default value on creation for the "id" field.
 	DefaultID func() uuid.UUID
 )

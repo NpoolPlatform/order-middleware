@@ -20,10 +20,14 @@ const (
 	FieldDeletedAt = "deleted_at"
 	// FieldOrderID holds the string denoting the order_id field in the database.
 	FieldOrderID = "order_id"
-	// FieldStart holds the string denoting the start field in the database.
-	FieldStart = "start"
-	// FieldEnd holds the string denoting the end field in the database.
-	FieldEnd = "end"
+	// FieldStartAt holds the string denoting the start_at field in the database.
+	FieldStartAt = "start_at"
+	// FieldEndAt holds the string denoting the end_at field in the database.
+	FieldEndAt = "end_at"
+	// FieldCompensateType holds the string denoting the compensate_type field in the database.
+	FieldCompensateType = "compensate_type"
+	// FieldTitle holds the string denoting the title field in the database.
+	FieldTitle = "title"
 	// FieldMessage holds the string denoting the message field in the database.
 	FieldMessage = "message"
 	// Table holds the table name of the compensate in the database.
@@ -37,8 +41,10 @@ var Columns = []string{
 	FieldUpdatedAt,
 	FieldDeletedAt,
 	FieldOrderID,
-	FieldStart,
-	FieldEnd,
+	FieldStartAt,
+	FieldEndAt,
+	FieldCompensateType,
+	FieldTitle,
 	FieldMessage,
 }
 
@@ -69,10 +75,14 @@ var (
 	UpdateDefaultUpdatedAt func() uint32
 	// DefaultDeletedAt holds the default value on creation for the "deleted_at" field.
 	DefaultDeletedAt func() uint32
-	// DefaultStart holds the default value on creation for the "start" field.
-	DefaultStart uint32
-	// DefaultEnd holds the default value on creation for the "end" field.
-	DefaultEnd uint32
+	// DefaultStartAt holds the default value on creation for the "start_at" field.
+	DefaultStartAt uint32
+	// DefaultEndAt holds the default value on creation for the "end_at" field.
+	DefaultEndAt uint32
+	// DefaultCompensateType holds the default value on creation for the "compensate_type" field.
+	DefaultCompensateType string
+	// DefaultTitle holds the default value on creation for the "title" field.
+	DefaultTitle string
 	// DefaultMessage holds the default value on creation for the "message" field.
 	DefaultMessage string
 	// DefaultID holds the default value on creation for the "id" field.

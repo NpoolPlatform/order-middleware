@@ -90,57 +90,57 @@ func (oogu *OutOfGasUpdate) SetOrderID(u uuid.UUID) *OutOfGasUpdate {
 	return oogu
 }
 
-// SetStart sets the "start" field.
-func (oogu *OutOfGasUpdate) SetStart(u uint32) *OutOfGasUpdate {
-	oogu.mutation.ResetStart()
-	oogu.mutation.SetStart(u)
+// SetStartAt sets the "start_at" field.
+func (oogu *OutOfGasUpdate) SetStartAt(u uint32) *OutOfGasUpdate {
+	oogu.mutation.ResetStartAt()
+	oogu.mutation.SetStartAt(u)
 	return oogu
 }
 
-// SetNillableStart sets the "start" field if the given value is not nil.
-func (oogu *OutOfGasUpdate) SetNillableStart(u *uint32) *OutOfGasUpdate {
+// SetNillableStartAt sets the "start_at" field if the given value is not nil.
+func (oogu *OutOfGasUpdate) SetNillableStartAt(u *uint32) *OutOfGasUpdate {
 	if u != nil {
-		oogu.SetStart(*u)
+		oogu.SetStartAt(*u)
 	}
 	return oogu
 }
 
-// AddStart adds u to the "start" field.
-func (oogu *OutOfGasUpdate) AddStart(u int32) *OutOfGasUpdate {
-	oogu.mutation.AddStart(u)
+// AddStartAt adds u to the "start_at" field.
+func (oogu *OutOfGasUpdate) AddStartAt(u int32) *OutOfGasUpdate {
+	oogu.mutation.AddStartAt(u)
 	return oogu
 }
 
-// ClearStart clears the value of the "start" field.
-func (oogu *OutOfGasUpdate) ClearStart() *OutOfGasUpdate {
-	oogu.mutation.ClearStart()
+// ClearStartAt clears the value of the "start_at" field.
+func (oogu *OutOfGasUpdate) ClearStartAt() *OutOfGasUpdate {
+	oogu.mutation.ClearStartAt()
 	return oogu
 }
 
-// SetEnd sets the "end" field.
-func (oogu *OutOfGasUpdate) SetEnd(u uint32) *OutOfGasUpdate {
-	oogu.mutation.ResetEnd()
-	oogu.mutation.SetEnd(u)
+// SetEndAt sets the "end_at" field.
+func (oogu *OutOfGasUpdate) SetEndAt(u uint32) *OutOfGasUpdate {
+	oogu.mutation.ResetEndAt()
+	oogu.mutation.SetEndAt(u)
 	return oogu
 }
 
-// SetNillableEnd sets the "end" field if the given value is not nil.
-func (oogu *OutOfGasUpdate) SetNillableEnd(u *uint32) *OutOfGasUpdate {
+// SetNillableEndAt sets the "end_at" field if the given value is not nil.
+func (oogu *OutOfGasUpdate) SetNillableEndAt(u *uint32) *OutOfGasUpdate {
 	if u != nil {
-		oogu.SetEnd(*u)
+		oogu.SetEndAt(*u)
 	}
 	return oogu
 }
 
-// AddEnd adds u to the "end" field.
-func (oogu *OutOfGasUpdate) AddEnd(u int32) *OutOfGasUpdate {
-	oogu.mutation.AddEnd(u)
+// AddEndAt adds u to the "end_at" field.
+func (oogu *OutOfGasUpdate) AddEndAt(u int32) *OutOfGasUpdate {
+	oogu.mutation.AddEndAt(u)
 	return oogu
 }
 
-// ClearEnd clears the value of the "end" field.
-func (oogu *OutOfGasUpdate) ClearEnd() *OutOfGasUpdate {
-	oogu.mutation.ClearEnd()
+// ClearEndAt clears the value of the "end_at" field.
+func (oogu *OutOfGasUpdate) ClearEndAt() *OutOfGasUpdate {
+	oogu.mutation.ClearEndAt()
 	return oogu
 }
 
@@ -291,44 +291,44 @@ func (oogu *OutOfGasUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: outofgas.FieldOrderID,
 		})
 	}
-	if value, ok := oogu.mutation.Start(); ok {
+	if value, ok := oogu.mutation.StartAt(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeUint32,
 			Value:  value,
-			Column: outofgas.FieldStart,
+			Column: outofgas.FieldStartAt,
 		})
 	}
-	if value, ok := oogu.mutation.AddedStart(); ok {
+	if value, ok := oogu.mutation.AddedStartAt(); ok {
 		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
 			Type:   field.TypeUint32,
 			Value:  value,
-			Column: outofgas.FieldStart,
+			Column: outofgas.FieldStartAt,
 		})
 	}
-	if oogu.mutation.StartCleared() {
+	if oogu.mutation.StartAtCleared() {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeUint32,
-			Column: outofgas.FieldStart,
+			Column: outofgas.FieldStartAt,
 		})
 	}
-	if value, ok := oogu.mutation.End(); ok {
+	if value, ok := oogu.mutation.EndAt(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeUint32,
 			Value:  value,
-			Column: outofgas.FieldEnd,
+			Column: outofgas.FieldEndAt,
 		})
 	}
-	if value, ok := oogu.mutation.AddedEnd(); ok {
+	if value, ok := oogu.mutation.AddedEndAt(); ok {
 		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
 			Type:   field.TypeUint32,
 			Value:  value,
-			Column: outofgas.FieldEnd,
+			Column: outofgas.FieldEndAt,
 		})
 	}
-	if oogu.mutation.EndCleared() {
+	if oogu.mutation.EndAtCleared() {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeUint32,
-			Column: outofgas.FieldEnd,
+			Column: outofgas.FieldEndAt,
 		})
 	}
 	_spec.Modifiers = oogu.modifiers
@@ -413,57 +413,57 @@ func (ooguo *OutOfGasUpdateOne) SetOrderID(u uuid.UUID) *OutOfGasUpdateOne {
 	return ooguo
 }
 
-// SetStart sets the "start" field.
-func (ooguo *OutOfGasUpdateOne) SetStart(u uint32) *OutOfGasUpdateOne {
-	ooguo.mutation.ResetStart()
-	ooguo.mutation.SetStart(u)
+// SetStartAt sets the "start_at" field.
+func (ooguo *OutOfGasUpdateOne) SetStartAt(u uint32) *OutOfGasUpdateOne {
+	ooguo.mutation.ResetStartAt()
+	ooguo.mutation.SetStartAt(u)
 	return ooguo
 }
 
-// SetNillableStart sets the "start" field if the given value is not nil.
-func (ooguo *OutOfGasUpdateOne) SetNillableStart(u *uint32) *OutOfGasUpdateOne {
+// SetNillableStartAt sets the "start_at" field if the given value is not nil.
+func (ooguo *OutOfGasUpdateOne) SetNillableStartAt(u *uint32) *OutOfGasUpdateOne {
 	if u != nil {
-		ooguo.SetStart(*u)
+		ooguo.SetStartAt(*u)
 	}
 	return ooguo
 }
 
-// AddStart adds u to the "start" field.
-func (ooguo *OutOfGasUpdateOne) AddStart(u int32) *OutOfGasUpdateOne {
-	ooguo.mutation.AddStart(u)
+// AddStartAt adds u to the "start_at" field.
+func (ooguo *OutOfGasUpdateOne) AddStartAt(u int32) *OutOfGasUpdateOne {
+	ooguo.mutation.AddStartAt(u)
 	return ooguo
 }
 
-// ClearStart clears the value of the "start" field.
-func (ooguo *OutOfGasUpdateOne) ClearStart() *OutOfGasUpdateOne {
-	ooguo.mutation.ClearStart()
+// ClearStartAt clears the value of the "start_at" field.
+func (ooguo *OutOfGasUpdateOne) ClearStartAt() *OutOfGasUpdateOne {
+	ooguo.mutation.ClearStartAt()
 	return ooguo
 }
 
-// SetEnd sets the "end" field.
-func (ooguo *OutOfGasUpdateOne) SetEnd(u uint32) *OutOfGasUpdateOne {
-	ooguo.mutation.ResetEnd()
-	ooguo.mutation.SetEnd(u)
+// SetEndAt sets the "end_at" field.
+func (ooguo *OutOfGasUpdateOne) SetEndAt(u uint32) *OutOfGasUpdateOne {
+	ooguo.mutation.ResetEndAt()
+	ooguo.mutation.SetEndAt(u)
 	return ooguo
 }
 
-// SetNillableEnd sets the "end" field if the given value is not nil.
-func (ooguo *OutOfGasUpdateOne) SetNillableEnd(u *uint32) *OutOfGasUpdateOne {
+// SetNillableEndAt sets the "end_at" field if the given value is not nil.
+func (ooguo *OutOfGasUpdateOne) SetNillableEndAt(u *uint32) *OutOfGasUpdateOne {
 	if u != nil {
-		ooguo.SetEnd(*u)
+		ooguo.SetEndAt(*u)
 	}
 	return ooguo
 }
 
-// AddEnd adds u to the "end" field.
-func (ooguo *OutOfGasUpdateOne) AddEnd(u int32) *OutOfGasUpdateOne {
-	ooguo.mutation.AddEnd(u)
+// AddEndAt adds u to the "end_at" field.
+func (ooguo *OutOfGasUpdateOne) AddEndAt(u int32) *OutOfGasUpdateOne {
+	ooguo.mutation.AddEndAt(u)
 	return ooguo
 }
 
-// ClearEnd clears the value of the "end" field.
-func (ooguo *OutOfGasUpdateOne) ClearEnd() *OutOfGasUpdateOne {
-	ooguo.mutation.ClearEnd()
+// ClearEndAt clears the value of the "end_at" field.
+func (ooguo *OutOfGasUpdateOne) ClearEndAt() *OutOfGasUpdateOne {
+	ooguo.mutation.ClearEndAt()
 	return ooguo
 }
 
@@ -644,44 +644,44 @@ func (ooguo *OutOfGasUpdateOne) sqlSave(ctx context.Context) (_node *OutOfGas, e
 			Column: outofgas.FieldOrderID,
 		})
 	}
-	if value, ok := ooguo.mutation.Start(); ok {
+	if value, ok := ooguo.mutation.StartAt(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeUint32,
 			Value:  value,
-			Column: outofgas.FieldStart,
+			Column: outofgas.FieldStartAt,
 		})
 	}
-	if value, ok := ooguo.mutation.AddedStart(); ok {
+	if value, ok := ooguo.mutation.AddedStartAt(); ok {
 		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
 			Type:   field.TypeUint32,
 			Value:  value,
-			Column: outofgas.FieldStart,
+			Column: outofgas.FieldStartAt,
 		})
 	}
-	if ooguo.mutation.StartCleared() {
+	if ooguo.mutation.StartAtCleared() {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeUint32,
-			Column: outofgas.FieldStart,
+			Column: outofgas.FieldStartAt,
 		})
 	}
-	if value, ok := ooguo.mutation.End(); ok {
+	if value, ok := ooguo.mutation.EndAt(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeUint32,
 			Value:  value,
-			Column: outofgas.FieldEnd,
+			Column: outofgas.FieldEndAt,
 		})
 	}
-	if value, ok := ooguo.mutation.AddedEnd(); ok {
+	if value, ok := ooguo.mutation.AddedEndAt(); ok {
 		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
 			Type:   field.TypeUint32,
 			Value:  value,
-			Column: outofgas.FieldEnd,
+			Column: outofgas.FieldEndAt,
 		})
 	}
-	if ooguo.mutation.EndCleared() {
+	if ooguo.mutation.EndAtCleared() {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeUint32,
-			Column: outofgas.FieldEnd,
+			Column: outofgas.FieldEndAt,
 		})
 	}
 	_spec.Modifiers = ooguo.modifiers

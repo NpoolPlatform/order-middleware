@@ -33,34 +33,20 @@ type Payment struct {
 	OrderID uuid.UUID `json:"order_id,omitempty"`
 	// AccountID holds the value of the "account_id" field.
 	AccountID uuid.UUID `json:"account_id,omitempty"`
+	// CoinInfoID holds the value of the "coin_info_id" field.
+	CoinInfoID uuid.UUID `json:"coin_info_id,omitempty"`
 	// StartAmount holds the value of the "start_amount" field.
 	StartAmount decimal.Decimal `json:"start_amount,omitempty"`
-	// Amount holds the value of the "amount" field.
-	Amount decimal.Decimal `json:"amount,omitempty"`
-	// PayWithBalanceAmount holds the value of the "pay_with_balance_amount" field.
-	PayWithBalanceAmount decimal.Decimal `json:"pay_with_balance_amount,omitempty"`
-	// FinishAmount holds the value of the "finish_amount" field.
-	FinishAmount decimal.Decimal `json:"finish_amount,omitempty"`
+	// TransferAmount holds the value of the "transfer_amount" field.
+	TransferAmount decimal.Decimal `json:"transfer_amount,omitempty"`
+	// BalanceAmount holds the value of the "balance_amount" field.
+	BalanceAmount decimal.Decimal `json:"balance_amount,omitempty"`
 	// CoinUsdCurrency holds the value of the "coin_usd_currency" field.
 	CoinUsdCurrency decimal.Decimal `json:"coin_usd_currency,omitempty"`
 	// LocalCoinUsdCurrency holds the value of the "local_coin_usd_currency" field.
 	LocalCoinUsdCurrency decimal.Decimal `json:"local_coin_usd_currency,omitempty"`
 	// LiveCoinUsdCurrency holds the value of the "live_coin_usd_currency" field.
 	LiveCoinUsdCurrency decimal.Decimal `json:"live_coin_usd_currency,omitempty"`
-	// CoinInfoID holds the value of the "coin_info_id" field.
-	CoinInfoID uuid.UUID `json:"coin_info_id,omitempty"`
-	// State holds the value of the "state" field.
-	State string `json:"state,omitempty"`
-	// StateV1 holds the value of the "state_v1" field.
-	StateV1 string `json:"state_v1,omitempty"`
-	// ChainTransactionID holds the value of the "chain_transaction_id" field.
-	ChainTransactionID string `json:"chain_transaction_id,omitempty"`
-	// UserSetPaid holds the value of the "user_set_paid" field.
-	UserSetPaid bool `json:"user_set_paid,omitempty"`
-	// UserSetCanceled holds the value of the "user_set_canceled" field.
-	UserSetCanceled bool `json:"user_set_canceled,omitempty"`
-	// FakePayment holds the value of the "fake_payment" field.
-	FakePayment bool `json:"fake_payment,omitempty"`
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -68,14 +54,10 @@ func (*Payment) scanValues(columns []string) ([]interface{}, error) {
 	values := make([]interface{}, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case payment.FieldStartAmount, payment.FieldAmount, payment.FieldPayWithBalanceAmount, payment.FieldFinishAmount, payment.FieldCoinUsdCurrency, payment.FieldLocalCoinUsdCurrency, payment.FieldLiveCoinUsdCurrency:
+		case payment.FieldStartAmount, payment.FieldTransferAmount, payment.FieldBalanceAmount, payment.FieldCoinUsdCurrency, payment.FieldLocalCoinUsdCurrency, payment.FieldLiveCoinUsdCurrency:
 			values[i] = new(decimal.Decimal)
-		case payment.FieldUserSetPaid, payment.FieldUserSetCanceled, payment.FieldFakePayment:
-			values[i] = new(sql.NullBool)
 		case payment.FieldCreatedAt, payment.FieldUpdatedAt, payment.FieldDeletedAt:
 			values[i] = new(sql.NullInt64)
-		case payment.FieldState, payment.FieldStateV1, payment.FieldChainTransactionID:
-			values[i] = new(sql.NullString)
 		case payment.FieldID, payment.FieldAppID, payment.FieldUserID, payment.FieldGoodID, payment.FieldOrderID, payment.FieldAccountID, payment.FieldCoinInfoID:
 			values[i] = new(uuid.UUID)
 		default:
@@ -147,29 +129,29 @@ func (pa *Payment) assignValues(columns []string, values []interface{}) error {
 			} else if value != nil {
 				pa.AccountID = *value
 			}
+		case payment.FieldCoinInfoID:
+			if value, ok := values[i].(*uuid.UUID); !ok {
+				return fmt.Errorf("unexpected type %T for field coin_info_id", values[i])
+			} else if value != nil {
+				pa.CoinInfoID = *value
+			}
 		case payment.FieldStartAmount:
 			if value, ok := values[i].(*decimal.Decimal); !ok {
 				return fmt.Errorf("unexpected type %T for field start_amount", values[i])
 			} else if value != nil {
 				pa.StartAmount = *value
 			}
-		case payment.FieldAmount:
+		case payment.FieldTransferAmount:
 			if value, ok := values[i].(*decimal.Decimal); !ok {
-				return fmt.Errorf("unexpected type %T for field amount", values[i])
+				return fmt.Errorf("unexpected type %T for field transfer_amount", values[i])
 			} else if value != nil {
-				pa.Amount = *value
+				pa.TransferAmount = *value
 			}
-		case payment.FieldPayWithBalanceAmount:
+		case payment.FieldBalanceAmount:
 			if value, ok := values[i].(*decimal.Decimal); !ok {
-				return fmt.Errorf("unexpected type %T for field pay_with_balance_amount", values[i])
+				return fmt.Errorf("unexpected type %T for field balance_amount", values[i])
 			} else if value != nil {
-				pa.PayWithBalanceAmount = *value
-			}
-		case payment.FieldFinishAmount:
-			if value, ok := values[i].(*decimal.Decimal); !ok {
-				return fmt.Errorf("unexpected type %T for field finish_amount", values[i])
-			} else if value != nil {
-				pa.FinishAmount = *value
+				pa.BalanceAmount = *value
 			}
 		case payment.FieldCoinUsdCurrency:
 			if value, ok := values[i].(*decimal.Decimal); !ok {
@@ -188,48 +170,6 @@ func (pa *Payment) assignValues(columns []string, values []interface{}) error {
 				return fmt.Errorf("unexpected type %T for field live_coin_usd_currency", values[i])
 			} else if value != nil {
 				pa.LiveCoinUsdCurrency = *value
-			}
-		case payment.FieldCoinInfoID:
-			if value, ok := values[i].(*uuid.UUID); !ok {
-				return fmt.Errorf("unexpected type %T for field coin_info_id", values[i])
-			} else if value != nil {
-				pa.CoinInfoID = *value
-			}
-		case payment.FieldState:
-			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field state", values[i])
-			} else if value.Valid {
-				pa.State = value.String
-			}
-		case payment.FieldStateV1:
-			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field state_v1", values[i])
-			} else if value.Valid {
-				pa.StateV1 = value.String
-			}
-		case payment.FieldChainTransactionID:
-			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field chain_transaction_id", values[i])
-			} else if value.Valid {
-				pa.ChainTransactionID = value.String
-			}
-		case payment.FieldUserSetPaid:
-			if value, ok := values[i].(*sql.NullBool); !ok {
-				return fmt.Errorf("unexpected type %T for field user_set_paid", values[i])
-			} else if value.Valid {
-				pa.UserSetPaid = value.Bool
-			}
-		case payment.FieldUserSetCanceled:
-			if value, ok := values[i].(*sql.NullBool); !ok {
-				return fmt.Errorf("unexpected type %T for field user_set_canceled", values[i])
-			} else if value.Valid {
-				pa.UserSetCanceled = value.Bool
-			}
-		case payment.FieldFakePayment:
-			if value, ok := values[i].(*sql.NullBool); !ok {
-				return fmt.Errorf("unexpected type %T for field fake_payment", values[i])
-			} else if value.Valid {
-				pa.FakePayment = value.Bool
 			}
 		}
 	}
@@ -283,17 +223,17 @@ func (pa *Payment) String() string {
 	builder.WriteString("account_id=")
 	builder.WriteString(fmt.Sprintf("%v", pa.AccountID))
 	builder.WriteString(", ")
+	builder.WriteString("coin_info_id=")
+	builder.WriteString(fmt.Sprintf("%v", pa.CoinInfoID))
+	builder.WriteString(", ")
 	builder.WriteString("start_amount=")
 	builder.WriteString(fmt.Sprintf("%v", pa.StartAmount))
 	builder.WriteString(", ")
-	builder.WriteString("amount=")
-	builder.WriteString(fmt.Sprintf("%v", pa.Amount))
+	builder.WriteString("transfer_amount=")
+	builder.WriteString(fmt.Sprintf("%v", pa.TransferAmount))
 	builder.WriteString(", ")
-	builder.WriteString("pay_with_balance_amount=")
-	builder.WriteString(fmt.Sprintf("%v", pa.PayWithBalanceAmount))
-	builder.WriteString(", ")
-	builder.WriteString("finish_amount=")
-	builder.WriteString(fmt.Sprintf("%v", pa.FinishAmount))
+	builder.WriteString("balance_amount=")
+	builder.WriteString(fmt.Sprintf("%v", pa.BalanceAmount))
 	builder.WriteString(", ")
 	builder.WriteString("coin_usd_currency=")
 	builder.WriteString(fmt.Sprintf("%v", pa.CoinUsdCurrency))
@@ -303,27 +243,6 @@ func (pa *Payment) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("live_coin_usd_currency=")
 	builder.WriteString(fmt.Sprintf("%v", pa.LiveCoinUsdCurrency))
-	builder.WriteString(", ")
-	builder.WriteString("coin_info_id=")
-	builder.WriteString(fmt.Sprintf("%v", pa.CoinInfoID))
-	builder.WriteString(", ")
-	builder.WriteString("state=")
-	builder.WriteString(pa.State)
-	builder.WriteString(", ")
-	builder.WriteString("state_v1=")
-	builder.WriteString(pa.StateV1)
-	builder.WriteString(", ")
-	builder.WriteString("chain_transaction_id=")
-	builder.WriteString(pa.ChainTransactionID)
-	builder.WriteString(", ")
-	builder.WriteString("user_set_paid=")
-	builder.WriteString(fmt.Sprintf("%v", pa.UserSetPaid))
-	builder.WriteString(", ")
-	builder.WriteString("user_set_canceled=")
-	builder.WriteString(fmt.Sprintf("%v", pa.UserSetCanceled))
-	builder.WriteString(", ")
-	builder.WriteString("fake_payment=")
-	builder.WriteString(fmt.Sprintf("%v", pa.FakePayment))
 	builder.WriteByte(')')
 	return builder.String()
 }

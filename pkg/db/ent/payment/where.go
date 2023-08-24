@@ -136,6 +136,13 @@ func AccountID(v uuid.UUID) predicate.Payment {
 	})
 }
 
+// CoinInfoID applies equality check predicate on the "coin_info_id" field. It's identical to CoinInfoIDEQ.
+func CoinInfoID(v uuid.UUID) predicate.Payment {
+	return predicate.Payment(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldCoinInfoID), v))
+	})
+}
+
 // StartAmount applies equality check predicate on the "start_amount" field. It's identical to StartAmountEQ.
 func StartAmount(v decimal.Decimal) predicate.Payment {
 	return predicate.Payment(func(s *sql.Selector) {
@@ -143,24 +150,17 @@ func StartAmount(v decimal.Decimal) predicate.Payment {
 	})
 }
 
-// Amount applies equality check predicate on the "amount" field. It's identical to AmountEQ.
-func Amount(v decimal.Decimal) predicate.Payment {
+// TransferAmount applies equality check predicate on the "transfer_amount" field. It's identical to TransferAmountEQ.
+func TransferAmount(v decimal.Decimal) predicate.Payment {
 	return predicate.Payment(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldAmount), v))
+		s.Where(sql.EQ(s.C(FieldTransferAmount), v))
 	})
 }
 
-// PayWithBalanceAmount applies equality check predicate on the "pay_with_balance_amount" field. It's identical to PayWithBalanceAmountEQ.
-func PayWithBalanceAmount(v decimal.Decimal) predicate.Payment {
+// BalanceAmount applies equality check predicate on the "balance_amount" field. It's identical to BalanceAmountEQ.
+func BalanceAmount(v decimal.Decimal) predicate.Payment {
 	return predicate.Payment(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldPayWithBalanceAmount), v))
-	})
-}
-
-// FinishAmount applies equality check predicate on the "finish_amount" field. It's identical to FinishAmountEQ.
-func FinishAmount(v decimal.Decimal) predicate.Payment {
-	return predicate.Payment(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldFinishAmount), v))
+		s.Where(sql.EQ(s.C(FieldBalanceAmount), v))
 	})
 }
 
@@ -182,55 +182,6 @@ func LocalCoinUsdCurrency(v decimal.Decimal) predicate.Payment {
 func LiveCoinUsdCurrency(v decimal.Decimal) predicate.Payment {
 	return predicate.Payment(func(s *sql.Selector) {
 		s.Where(sql.EQ(s.C(FieldLiveCoinUsdCurrency), v))
-	})
-}
-
-// CoinInfoID applies equality check predicate on the "coin_info_id" field. It's identical to CoinInfoIDEQ.
-func CoinInfoID(v uuid.UUID) predicate.Payment {
-	return predicate.Payment(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldCoinInfoID), v))
-	})
-}
-
-// State applies equality check predicate on the "state" field. It's identical to StateEQ.
-func State(v string) predicate.Payment {
-	return predicate.Payment(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldState), v))
-	})
-}
-
-// StateV1 applies equality check predicate on the "state_v1" field. It's identical to StateV1EQ.
-func StateV1(v string) predicate.Payment {
-	return predicate.Payment(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldStateV1), v))
-	})
-}
-
-// ChainTransactionID applies equality check predicate on the "chain_transaction_id" field. It's identical to ChainTransactionIDEQ.
-func ChainTransactionID(v string) predicate.Payment {
-	return predicate.Payment(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldChainTransactionID), v))
-	})
-}
-
-// UserSetPaid applies equality check predicate on the "user_set_paid" field. It's identical to UserSetPaidEQ.
-func UserSetPaid(v bool) predicate.Payment {
-	return predicate.Payment(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldUserSetPaid), v))
-	})
-}
-
-// UserSetCanceled applies equality check predicate on the "user_set_canceled" field. It's identical to UserSetCanceledEQ.
-func UserSetCanceled(v bool) predicate.Payment {
-	return predicate.Payment(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldUserSetCanceled), v))
-	})
-}
-
-// FakePayment applies equality check predicate on the "fake_payment" field. It's identical to FakePaymentEQ.
-func FakePayment(v bool) predicate.Payment {
-	return predicate.Payment(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldFakePayment), v))
 	})
 }
 
@@ -746,6 +697,70 @@ func AccountIDLTE(v uuid.UUID) predicate.Payment {
 	})
 }
 
+// CoinInfoIDEQ applies the EQ predicate on the "coin_info_id" field.
+func CoinInfoIDEQ(v uuid.UUID) predicate.Payment {
+	return predicate.Payment(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldCoinInfoID), v))
+	})
+}
+
+// CoinInfoIDNEQ applies the NEQ predicate on the "coin_info_id" field.
+func CoinInfoIDNEQ(v uuid.UUID) predicate.Payment {
+	return predicate.Payment(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldCoinInfoID), v))
+	})
+}
+
+// CoinInfoIDIn applies the In predicate on the "coin_info_id" field.
+func CoinInfoIDIn(vs ...uuid.UUID) predicate.Payment {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Payment(func(s *sql.Selector) {
+		s.Where(sql.In(s.C(FieldCoinInfoID), v...))
+	})
+}
+
+// CoinInfoIDNotIn applies the NotIn predicate on the "coin_info_id" field.
+func CoinInfoIDNotIn(vs ...uuid.UUID) predicate.Payment {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Payment(func(s *sql.Selector) {
+		s.Where(sql.NotIn(s.C(FieldCoinInfoID), v...))
+	})
+}
+
+// CoinInfoIDGT applies the GT predicate on the "coin_info_id" field.
+func CoinInfoIDGT(v uuid.UUID) predicate.Payment {
+	return predicate.Payment(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldCoinInfoID), v))
+	})
+}
+
+// CoinInfoIDGTE applies the GTE predicate on the "coin_info_id" field.
+func CoinInfoIDGTE(v uuid.UUID) predicate.Payment {
+	return predicate.Payment(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldCoinInfoID), v))
+	})
+}
+
+// CoinInfoIDLT applies the LT predicate on the "coin_info_id" field.
+func CoinInfoIDLT(v uuid.UUID) predicate.Payment {
+	return predicate.Payment(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldCoinInfoID), v))
+	})
+}
+
+// CoinInfoIDLTE applies the LTE predicate on the "coin_info_id" field.
+func CoinInfoIDLTE(v uuid.UUID) predicate.Payment {
+	return predicate.Payment(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldCoinInfoID), v))
+	})
+}
+
 // StartAmountEQ applies the EQ predicate on the "start_amount" field.
 func StartAmountEQ(v decimal.Decimal) predicate.Payment {
 	return predicate.Payment(func(s *sql.Selector) {
@@ -824,237 +839,159 @@ func StartAmountNotNil() predicate.Payment {
 	})
 }
 
-// AmountEQ applies the EQ predicate on the "amount" field.
-func AmountEQ(v decimal.Decimal) predicate.Payment {
+// TransferAmountEQ applies the EQ predicate on the "transfer_amount" field.
+func TransferAmountEQ(v decimal.Decimal) predicate.Payment {
 	return predicate.Payment(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldAmount), v))
+		s.Where(sql.EQ(s.C(FieldTransferAmount), v))
 	})
 }
 
-// AmountNEQ applies the NEQ predicate on the "amount" field.
-func AmountNEQ(v decimal.Decimal) predicate.Payment {
+// TransferAmountNEQ applies the NEQ predicate on the "transfer_amount" field.
+func TransferAmountNEQ(v decimal.Decimal) predicate.Payment {
 	return predicate.Payment(func(s *sql.Selector) {
-		s.Where(sql.NEQ(s.C(FieldAmount), v))
+		s.Where(sql.NEQ(s.C(FieldTransferAmount), v))
 	})
 }
 
-// AmountIn applies the In predicate on the "amount" field.
-func AmountIn(vs ...decimal.Decimal) predicate.Payment {
+// TransferAmountIn applies the In predicate on the "transfer_amount" field.
+func TransferAmountIn(vs ...decimal.Decimal) predicate.Payment {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
 	}
 	return predicate.Payment(func(s *sql.Selector) {
-		s.Where(sql.In(s.C(FieldAmount), v...))
+		s.Where(sql.In(s.C(FieldTransferAmount), v...))
 	})
 }
 
-// AmountNotIn applies the NotIn predicate on the "amount" field.
-func AmountNotIn(vs ...decimal.Decimal) predicate.Payment {
+// TransferAmountNotIn applies the NotIn predicate on the "transfer_amount" field.
+func TransferAmountNotIn(vs ...decimal.Decimal) predicate.Payment {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
 	}
 	return predicate.Payment(func(s *sql.Selector) {
-		s.Where(sql.NotIn(s.C(FieldAmount), v...))
+		s.Where(sql.NotIn(s.C(FieldTransferAmount), v...))
 	})
 }
 
-// AmountGT applies the GT predicate on the "amount" field.
-func AmountGT(v decimal.Decimal) predicate.Payment {
+// TransferAmountGT applies the GT predicate on the "transfer_amount" field.
+func TransferAmountGT(v decimal.Decimal) predicate.Payment {
 	return predicate.Payment(func(s *sql.Selector) {
-		s.Where(sql.GT(s.C(FieldAmount), v))
+		s.Where(sql.GT(s.C(FieldTransferAmount), v))
 	})
 }
 
-// AmountGTE applies the GTE predicate on the "amount" field.
-func AmountGTE(v decimal.Decimal) predicate.Payment {
+// TransferAmountGTE applies the GTE predicate on the "transfer_amount" field.
+func TransferAmountGTE(v decimal.Decimal) predicate.Payment {
 	return predicate.Payment(func(s *sql.Selector) {
-		s.Where(sql.GTE(s.C(FieldAmount), v))
+		s.Where(sql.GTE(s.C(FieldTransferAmount), v))
 	})
 }
 
-// AmountLT applies the LT predicate on the "amount" field.
-func AmountLT(v decimal.Decimal) predicate.Payment {
+// TransferAmountLT applies the LT predicate on the "transfer_amount" field.
+func TransferAmountLT(v decimal.Decimal) predicate.Payment {
 	return predicate.Payment(func(s *sql.Selector) {
-		s.Where(sql.LT(s.C(FieldAmount), v))
+		s.Where(sql.LT(s.C(FieldTransferAmount), v))
 	})
 }
 
-// AmountLTE applies the LTE predicate on the "amount" field.
-func AmountLTE(v decimal.Decimal) predicate.Payment {
+// TransferAmountLTE applies the LTE predicate on the "transfer_amount" field.
+func TransferAmountLTE(v decimal.Decimal) predicate.Payment {
 	return predicate.Payment(func(s *sql.Selector) {
-		s.Where(sql.LTE(s.C(FieldAmount), v))
+		s.Where(sql.LTE(s.C(FieldTransferAmount), v))
 	})
 }
 
-// AmountIsNil applies the IsNil predicate on the "amount" field.
-func AmountIsNil() predicate.Payment {
+// TransferAmountIsNil applies the IsNil predicate on the "transfer_amount" field.
+func TransferAmountIsNil() predicate.Payment {
 	return predicate.Payment(func(s *sql.Selector) {
-		s.Where(sql.IsNull(s.C(FieldAmount)))
+		s.Where(sql.IsNull(s.C(FieldTransferAmount)))
 	})
 }
 
-// AmountNotNil applies the NotNil predicate on the "amount" field.
-func AmountNotNil() predicate.Payment {
+// TransferAmountNotNil applies the NotNil predicate on the "transfer_amount" field.
+func TransferAmountNotNil() predicate.Payment {
 	return predicate.Payment(func(s *sql.Selector) {
-		s.Where(sql.NotNull(s.C(FieldAmount)))
+		s.Where(sql.NotNull(s.C(FieldTransferAmount)))
 	})
 }
 
-// PayWithBalanceAmountEQ applies the EQ predicate on the "pay_with_balance_amount" field.
-func PayWithBalanceAmountEQ(v decimal.Decimal) predicate.Payment {
+// BalanceAmountEQ applies the EQ predicate on the "balance_amount" field.
+func BalanceAmountEQ(v decimal.Decimal) predicate.Payment {
 	return predicate.Payment(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldPayWithBalanceAmount), v))
+		s.Where(sql.EQ(s.C(FieldBalanceAmount), v))
 	})
 }
 
-// PayWithBalanceAmountNEQ applies the NEQ predicate on the "pay_with_balance_amount" field.
-func PayWithBalanceAmountNEQ(v decimal.Decimal) predicate.Payment {
+// BalanceAmountNEQ applies the NEQ predicate on the "balance_amount" field.
+func BalanceAmountNEQ(v decimal.Decimal) predicate.Payment {
 	return predicate.Payment(func(s *sql.Selector) {
-		s.Where(sql.NEQ(s.C(FieldPayWithBalanceAmount), v))
+		s.Where(sql.NEQ(s.C(FieldBalanceAmount), v))
 	})
 }
 
-// PayWithBalanceAmountIn applies the In predicate on the "pay_with_balance_amount" field.
-func PayWithBalanceAmountIn(vs ...decimal.Decimal) predicate.Payment {
+// BalanceAmountIn applies the In predicate on the "balance_amount" field.
+func BalanceAmountIn(vs ...decimal.Decimal) predicate.Payment {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
 	}
 	return predicate.Payment(func(s *sql.Selector) {
-		s.Where(sql.In(s.C(FieldPayWithBalanceAmount), v...))
+		s.Where(sql.In(s.C(FieldBalanceAmount), v...))
 	})
 }
 
-// PayWithBalanceAmountNotIn applies the NotIn predicate on the "pay_with_balance_amount" field.
-func PayWithBalanceAmountNotIn(vs ...decimal.Decimal) predicate.Payment {
+// BalanceAmountNotIn applies the NotIn predicate on the "balance_amount" field.
+func BalanceAmountNotIn(vs ...decimal.Decimal) predicate.Payment {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
 	}
 	return predicate.Payment(func(s *sql.Selector) {
-		s.Where(sql.NotIn(s.C(FieldPayWithBalanceAmount), v...))
+		s.Where(sql.NotIn(s.C(FieldBalanceAmount), v...))
 	})
 }
 
-// PayWithBalanceAmountGT applies the GT predicate on the "pay_with_balance_amount" field.
-func PayWithBalanceAmountGT(v decimal.Decimal) predicate.Payment {
+// BalanceAmountGT applies the GT predicate on the "balance_amount" field.
+func BalanceAmountGT(v decimal.Decimal) predicate.Payment {
 	return predicate.Payment(func(s *sql.Selector) {
-		s.Where(sql.GT(s.C(FieldPayWithBalanceAmount), v))
+		s.Where(sql.GT(s.C(FieldBalanceAmount), v))
 	})
 }
 
-// PayWithBalanceAmountGTE applies the GTE predicate on the "pay_with_balance_amount" field.
-func PayWithBalanceAmountGTE(v decimal.Decimal) predicate.Payment {
+// BalanceAmountGTE applies the GTE predicate on the "balance_amount" field.
+func BalanceAmountGTE(v decimal.Decimal) predicate.Payment {
 	return predicate.Payment(func(s *sql.Selector) {
-		s.Where(sql.GTE(s.C(FieldPayWithBalanceAmount), v))
+		s.Where(sql.GTE(s.C(FieldBalanceAmount), v))
 	})
 }
 
-// PayWithBalanceAmountLT applies the LT predicate on the "pay_with_balance_amount" field.
-func PayWithBalanceAmountLT(v decimal.Decimal) predicate.Payment {
+// BalanceAmountLT applies the LT predicate on the "balance_amount" field.
+func BalanceAmountLT(v decimal.Decimal) predicate.Payment {
 	return predicate.Payment(func(s *sql.Selector) {
-		s.Where(sql.LT(s.C(FieldPayWithBalanceAmount), v))
+		s.Where(sql.LT(s.C(FieldBalanceAmount), v))
 	})
 }
 
-// PayWithBalanceAmountLTE applies the LTE predicate on the "pay_with_balance_amount" field.
-func PayWithBalanceAmountLTE(v decimal.Decimal) predicate.Payment {
+// BalanceAmountLTE applies the LTE predicate on the "balance_amount" field.
+func BalanceAmountLTE(v decimal.Decimal) predicate.Payment {
 	return predicate.Payment(func(s *sql.Selector) {
-		s.Where(sql.LTE(s.C(FieldPayWithBalanceAmount), v))
+		s.Where(sql.LTE(s.C(FieldBalanceAmount), v))
 	})
 }
 
-// PayWithBalanceAmountIsNil applies the IsNil predicate on the "pay_with_balance_amount" field.
-func PayWithBalanceAmountIsNil() predicate.Payment {
+// BalanceAmountIsNil applies the IsNil predicate on the "balance_amount" field.
+func BalanceAmountIsNil() predicate.Payment {
 	return predicate.Payment(func(s *sql.Selector) {
-		s.Where(sql.IsNull(s.C(FieldPayWithBalanceAmount)))
+		s.Where(sql.IsNull(s.C(FieldBalanceAmount)))
 	})
 }
 
-// PayWithBalanceAmountNotNil applies the NotNil predicate on the "pay_with_balance_amount" field.
-func PayWithBalanceAmountNotNil() predicate.Payment {
+// BalanceAmountNotNil applies the NotNil predicate on the "balance_amount" field.
+func BalanceAmountNotNil() predicate.Payment {
 	return predicate.Payment(func(s *sql.Selector) {
-		s.Where(sql.NotNull(s.C(FieldPayWithBalanceAmount)))
-	})
-}
-
-// FinishAmountEQ applies the EQ predicate on the "finish_amount" field.
-func FinishAmountEQ(v decimal.Decimal) predicate.Payment {
-	return predicate.Payment(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldFinishAmount), v))
-	})
-}
-
-// FinishAmountNEQ applies the NEQ predicate on the "finish_amount" field.
-func FinishAmountNEQ(v decimal.Decimal) predicate.Payment {
-	return predicate.Payment(func(s *sql.Selector) {
-		s.Where(sql.NEQ(s.C(FieldFinishAmount), v))
-	})
-}
-
-// FinishAmountIn applies the In predicate on the "finish_amount" field.
-func FinishAmountIn(vs ...decimal.Decimal) predicate.Payment {
-	v := make([]interface{}, len(vs))
-	for i := range v {
-		v[i] = vs[i]
-	}
-	return predicate.Payment(func(s *sql.Selector) {
-		s.Where(sql.In(s.C(FieldFinishAmount), v...))
-	})
-}
-
-// FinishAmountNotIn applies the NotIn predicate on the "finish_amount" field.
-func FinishAmountNotIn(vs ...decimal.Decimal) predicate.Payment {
-	v := make([]interface{}, len(vs))
-	for i := range v {
-		v[i] = vs[i]
-	}
-	return predicate.Payment(func(s *sql.Selector) {
-		s.Where(sql.NotIn(s.C(FieldFinishAmount), v...))
-	})
-}
-
-// FinishAmountGT applies the GT predicate on the "finish_amount" field.
-func FinishAmountGT(v decimal.Decimal) predicate.Payment {
-	return predicate.Payment(func(s *sql.Selector) {
-		s.Where(sql.GT(s.C(FieldFinishAmount), v))
-	})
-}
-
-// FinishAmountGTE applies the GTE predicate on the "finish_amount" field.
-func FinishAmountGTE(v decimal.Decimal) predicate.Payment {
-	return predicate.Payment(func(s *sql.Selector) {
-		s.Where(sql.GTE(s.C(FieldFinishAmount), v))
-	})
-}
-
-// FinishAmountLT applies the LT predicate on the "finish_amount" field.
-func FinishAmountLT(v decimal.Decimal) predicate.Payment {
-	return predicate.Payment(func(s *sql.Selector) {
-		s.Where(sql.LT(s.C(FieldFinishAmount), v))
-	})
-}
-
-// FinishAmountLTE applies the LTE predicate on the "finish_amount" field.
-func FinishAmountLTE(v decimal.Decimal) predicate.Payment {
-	return predicate.Payment(func(s *sql.Selector) {
-		s.Where(sql.LTE(s.C(FieldFinishAmount), v))
-	})
-}
-
-// FinishAmountIsNil applies the IsNil predicate on the "finish_amount" field.
-func FinishAmountIsNil() predicate.Payment {
-	return predicate.Payment(func(s *sql.Selector) {
-		s.Where(sql.IsNull(s.C(FieldFinishAmount)))
-	})
-}
-
-// FinishAmountNotNil applies the NotNil predicate on the "finish_amount" field.
-func FinishAmountNotNil() predicate.Payment {
-	return predicate.Payment(func(s *sql.Selector) {
-		s.Where(sql.NotNull(s.C(FieldFinishAmount)))
+		s.Where(sql.NotNull(s.C(FieldBalanceAmount)))
 	})
 }
 
@@ -1289,493 +1226,6 @@ func LiveCoinUsdCurrencyIsNil() predicate.Payment {
 func LiveCoinUsdCurrencyNotNil() predicate.Payment {
 	return predicate.Payment(func(s *sql.Selector) {
 		s.Where(sql.NotNull(s.C(FieldLiveCoinUsdCurrency)))
-	})
-}
-
-// CoinInfoIDEQ applies the EQ predicate on the "coin_info_id" field.
-func CoinInfoIDEQ(v uuid.UUID) predicate.Payment {
-	return predicate.Payment(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldCoinInfoID), v))
-	})
-}
-
-// CoinInfoIDNEQ applies the NEQ predicate on the "coin_info_id" field.
-func CoinInfoIDNEQ(v uuid.UUID) predicate.Payment {
-	return predicate.Payment(func(s *sql.Selector) {
-		s.Where(sql.NEQ(s.C(FieldCoinInfoID), v))
-	})
-}
-
-// CoinInfoIDIn applies the In predicate on the "coin_info_id" field.
-func CoinInfoIDIn(vs ...uuid.UUID) predicate.Payment {
-	v := make([]interface{}, len(vs))
-	for i := range v {
-		v[i] = vs[i]
-	}
-	return predicate.Payment(func(s *sql.Selector) {
-		s.Where(sql.In(s.C(FieldCoinInfoID), v...))
-	})
-}
-
-// CoinInfoIDNotIn applies the NotIn predicate on the "coin_info_id" field.
-func CoinInfoIDNotIn(vs ...uuid.UUID) predicate.Payment {
-	v := make([]interface{}, len(vs))
-	for i := range v {
-		v[i] = vs[i]
-	}
-	return predicate.Payment(func(s *sql.Selector) {
-		s.Where(sql.NotIn(s.C(FieldCoinInfoID), v...))
-	})
-}
-
-// CoinInfoIDGT applies the GT predicate on the "coin_info_id" field.
-func CoinInfoIDGT(v uuid.UUID) predicate.Payment {
-	return predicate.Payment(func(s *sql.Selector) {
-		s.Where(sql.GT(s.C(FieldCoinInfoID), v))
-	})
-}
-
-// CoinInfoIDGTE applies the GTE predicate on the "coin_info_id" field.
-func CoinInfoIDGTE(v uuid.UUID) predicate.Payment {
-	return predicate.Payment(func(s *sql.Selector) {
-		s.Where(sql.GTE(s.C(FieldCoinInfoID), v))
-	})
-}
-
-// CoinInfoIDLT applies the LT predicate on the "coin_info_id" field.
-func CoinInfoIDLT(v uuid.UUID) predicate.Payment {
-	return predicate.Payment(func(s *sql.Selector) {
-		s.Where(sql.LT(s.C(FieldCoinInfoID), v))
-	})
-}
-
-// CoinInfoIDLTE applies the LTE predicate on the "coin_info_id" field.
-func CoinInfoIDLTE(v uuid.UUID) predicate.Payment {
-	return predicate.Payment(func(s *sql.Selector) {
-		s.Where(sql.LTE(s.C(FieldCoinInfoID), v))
-	})
-}
-
-// StateEQ applies the EQ predicate on the "state" field.
-func StateEQ(v string) predicate.Payment {
-	return predicate.Payment(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldState), v))
-	})
-}
-
-// StateNEQ applies the NEQ predicate on the "state" field.
-func StateNEQ(v string) predicate.Payment {
-	return predicate.Payment(func(s *sql.Selector) {
-		s.Where(sql.NEQ(s.C(FieldState), v))
-	})
-}
-
-// StateIn applies the In predicate on the "state" field.
-func StateIn(vs ...string) predicate.Payment {
-	v := make([]interface{}, len(vs))
-	for i := range v {
-		v[i] = vs[i]
-	}
-	return predicate.Payment(func(s *sql.Selector) {
-		s.Where(sql.In(s.C(FieldState), v...))
-	})
-}
-
-// StateNotIn applies the NotIn predicate on the "state" field.
-func StateNotIn(vs ...string) predicate.Payment {
-	v := make([]interface{}, len(vs))
-	for i := range v {
-		v[i] = vs[i]
-	}
-	return predicate.Payment(func(s *sql.Selector) {
-		s.Where(sql.NotIn(s.C(FieldState), v...))
-	})
-}
-
-// StateGT applies the GT predicate on the "state" field.
-func StateGT(v string) predicate.Payment {
-	return predicate.Payment(func(s *sql.Selector) {
-		s.Where(sql.GT(s.C(FieldState), v))
-	})
-}
-
-// StateGTE applies the GTE predicate on the "state" field.
-func StateGTE(v string) predicate.Payment {
-	return predicate.Payment(func(s *sql.Selector) {
-		s.Where(sql.GTE(s.C(FieldState), v))
-	})
-}
-
-// StateLT applies the LT predicate on the "state" field.
-func StateLT(v string) predicate.Payment {
-	return predicate.Payment(func(s *sql.Selector) {
-		s.Where(sql.LT(s.C(FieldState), v))
-	})
-}
-
-// StateLTE applies the LTE predicate on the "state" field.
-func StateLTE(v string) predicate.Payment {
-	return predicate.Payment(func(s *sql.Selector) {
-		s.Where(sql.LTE(s.C(FieldState), v))
-	})
-}
-
-// StateContains applies the Contains predicate on the "state" field.
-func StateContains(v string) predicate.Payment {
-	return predicate.Payment(func(s *sql.Selector) {
-		s.Where(sql.Contains(s.C(FieldState), v))
-	})
-}
-
-// StateHasPrefix applies the HasPrefix predicate on the "state" field.
-func StateHasPrefix(v string) predicate.Payment {
-	return predicate.Payment(func(s *sql.Selector) {
-		s.Where(sql.HasPrefix(s.C(FieldState), v))
-	})
-}
-
-// StateHasSuffix applies the HasSuffix predicate on the "state" field.
-func StateHasSuffix(v string) predicate.Payment {
-	return predicate.Payment(func(s *sql.Selector) {
-		s.Where(sql.HasSuffix(s.C(FieldState), v))
-	})
-}
-
-// StateIsNil applies the IsNil predicate on the "state" field.
-func StateIsNil() predicate.Payment {
-	return predicate.Payment(func(s *sql.Selector) {
-		s.Where(sql.IsNull(s.C(FieldState)))
-	})
-}
-
-// StateNotNil applies the NotNil predicate on the "state" field.
-func StateNotNil() predicate.Payment {
-	return predicate.Payment(func(s *sql.Selector) {
-		s.Where(sql.NotNull(s.C(FieldState)))
-	})
-}
-
-// StateEqualFold applies the EqualFold predicate on the "state" field.
-func StateEqualFold(v string) predicate.Payment {
-	return predicate.Payment(func(s *sql.Selector) {
-		s.Where(sql.EqualFold(s.C(FieldState), v))
-	})
-}
-
-// StateContainsFold applies the ContainsFold predicate on the "state" field.
-func StateContainsFold(v string) predicate.Payment {
-	return predicate.Payment(func(s *sql.Selector) {
-		s.Where(sql.ContainsFold(s.C(FieldState), v))
-	})
-}
-
-// StateV1EQ applies the EQ predicate on the "state_v1" field.
-func StateV1EQ(v string) predicate.Payment {
-	return predicate.Payment(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldStateV1), v))
-	})
-}
-
-// StateV1NEQ applies the NEQ predicate on the "state_v1" field.
-func StateV1NEQ(v string) predicate.Payment {
-	return predicate.Payment(func(s *sql.Selector) {
-		s.Where(sql.NEQ(s.C(FieldStateV1), v))
-	})
-}
-
-// StateV1In applies the In predicate on the "state_v1" field.
-func StateV1In(vs ...string) predicate.Payment {
-	v := make([]interface{}, len(vs))
-	for i := range v {
-		v[i] = vs[i]
-	}
-	return predicate.Payment(func(s *sql.Selector) {
-		s.Where(sql.In(s.C(FieldStateV1), v...))
-	})
-}
-
-// StateV1NotIn applies the NotIn predicate on the "state_v1" field.
-func StateV1NotIn(vs ...string) predicate.Payment {
-	v := make([]interface{}, len(vs))
-	for i := range v {
-		v[i] = vs[i]
-	}
-	return predicate.Payment(func(s *sql.Selector) {
-		s.Where(sql.NotIn(s.C(FieldStateV1), v...))
-	})
-}
-
-// StateV1GT applies the GT predicate on the "state_v1" field.
-func StateV1GT(v string) predicate.Payment {
-	return predicate.Payment(func(s *sql.Selector) {
-		s.Where(sql.GT(s.C(FieldStateV1), v))
-	})
-}
-
-// StateV1GTE applies the GTE predicate on the "state_v1" field.
-func StateV1GTE(v string) predicate.Payment {
-	return predicate.Payment(func(s *sql.Selector) {
-		s.Where(sql.GTE(s.C(FieldStateV1), v))
-	})
-}
-
-// StateV1LT applies the LT predicate on the "state_v1" field.
-func StateV1LT(v string) predicate.Payment {
-	return predicate.Payment(func(s *sql.Selector) {
-		s.Where(sql.LT(s.C(FieldStateV1), v))
-	})
-}
-
-// StateV1LTE applies the LTE predicate on the "state_v1" field.
-func StateV1LTE(v string) predicate.Payment {
-	return predicate.Payment(func(s *sql.Selector) {
-		s.Where(sql.LTE(s.C(FieldStateV1), v))
-	})
-}
-
-// StateV1Contains applies the Contains predicate on the "state_v1" field.
-func StateV1Contains(v string) predicate.Payment {
-	return predicate.Payment(func(s *sql.Selector) {
-		s.Where(sql.Contains(s.C(FieldStateV1), v))
-	})
-}
-
-// StateV1HasPrefix applies the HasPrefix predicate on the "state_v1" field.
-func StateV1HasPrefix(v string) predicate.Payment {
-	return predicate.Payment(func(s *sql.Selector) {
-		s.Where(sql.HasPrefix(s.C(FieldStateV1), v))
-	})
-}
-
-// StateV1HasSuffix applies the HasSuffix predicate on the "state_v1" field.
-func StateV1HasSuffix(v string) predicate.Payment {
-	return predicate.Payment(func(s *sql.Selector) {
-		s.Where(sql.HasSuffix(s.C(FieldStateV1), v))
-	})
-}
-
-// StateV1IsNil applies the IsNil predicate on the "state_v1" field.
-func StateV1IsNil() predicate.Payment {
-	return predicate.Payment(func(s *sql.Selector) {
-		s.Where(sql.IsNull(s.C(FieldStateV1)))
-	})
-}
-
-// StateV1NotNil applies the NotNil predicate on the "state_v1" field.
-func StateV1NotNil() predicate.Payment {
-	return predicate.Payment(func(s *sql.Selector) {
-		s.Where(sql.NotNull(s.C(FieldStateV1)))
-	})
-}
-
-// StateV1EqualFold applies the EqualFold predicate on the "state_v1" field.
-func StateV1EqualFold(v string) predicate.Payment {
-	return predicate.Payment(func(s *sql.Selector) {
-		s.Where(sql.EqualFold(s.C(FieldStateV1), v))
-	})
-}
-
-// StateV1ContainsFold applies the ContainsFold predicate on the "state_v1" field.
-func StateV1ContainsFold(v string) predicate.Payment {
-	return predicate.Payment(func(s *sql.Selector) {
-		s.Where(sql.ContainsFold(s.C(FieldStateV1), v))
-	})
-}
-
-// ChainTransactionIDEQ applies the EQ predicate on the "chain_transaction_id" field.
-func ChainTransactionIDEQ(v string) predicate.Payment {
-	return predicate.Payment(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldChainTransactionID), v))
-	})
-}
-
-// ChainTransactionIDNEQ applies the NEQ predicate on the "chain_transaction_id" field.
-func ChainTransactionIDNEQ(v string) predicate.Payment {
-	return predicate.Payment(func(s *sql.Selector) {
-		s.Where(sql.NEQ(s.C(FieldChainTransactionID), v))
-	})
-}
-
-// ChainTransactionIDIn applies the In predicate on the "chain_transaction_id" field.
-func ChainTransactionIDIn(vs ...string) predicate.Payment {
-	v := make([]interface{}, len(vs))
-	for i := range v {
-		v[i] = vs[i]
-	}
-	return predicate.Payment(func(s *sql.Selector) {
-		s.Where(sql.In(s.C(FieldChainTransactionID), v...))
-	})
-}
-
-// ChainTransactionIDNotIn applies the NotIn predicate on the "chain_transaction_id" field.
-func ChainTransactionIDNotIn(vs ...string) predicate.Payment {
-	v := make([]interface{}, len(vs))
-	for i := range v {
-		v[i] = vs[i]
-	}
-	return predicate.Payment(func(s *sql.Selector) {
-		s.Where(sql.NotIn(s.C(FieldChainTransactionID), v...))
-	})
-}
-
-// ChainTransactionIDGT applies the GT predicate on the "chain_transaction_id" field.
-func ChainTransactionIDGT(v string) predicate.Payment {
-	return predicate.Payment(func(s *sql.Selector) {
-		s.Where(sql.GT(s.C(FieldChainTransactionID), v))
-	})
-}
-
-// ChainTransactionIDGTE applies the GTE predicate on the "chain_transaction_id" field.
-func ChainTransactionIDGTE(v string) predicate.Payment {
-	return predicate.Payment(func(s *sql.Selector) {
-		s.Where(sql.GTE(s.C(FieldChainTransactionID), v))
-	})
-}
-
-// ChainTransactionIDLT applies the LT predicate on the "chain_transaction_id" field.
-func ChainTransactionIDLT(v string) predicate.Payment {
-	return predicate.Payment(func(s *sql.Selector) {
-		s.Where(sql.LT(s.C(FieldChainTransactionID), v))
-	})
-}
-
-// ChainTransactionIDLTE applies the LTE predicate on the "chain_transaction_id" field.
-func ChainTransactionIDLTE(v string) predicate.Payment {
-	return predicate.Payment(func(s *sql.Selector) {
-		s.Where(sql.LTE(s.C(FieldChainTransactionID), v))
-	})
-}
-
-// ChainTransactionIDContains applies the Contains predicate on the "chain_transaction_id" field.
-func ChainTransactionIDContains(v string) predicate.Payment {
-	return predicate.Payment(func(s *sql.Selector) {
-		s.Where(sql.Contains(s.C(FieldChainTransactionID), v))
-	})
-}
-
-// ChainTransactionIDHasPrefix applies the HasPrefix predicate on the "chain_transaction_id" field.
-func ChainTransactionIDHasPrefix(v string) predicate.Payment {
-	return predicate.Payment(func(s *sql.Selector) {
-		s.Where(sql.HasPrefix(s.C(FieldChainTransactionID), v))
-	})
-}
-
-// ChainTransactionIDHasSuffix applies the HasSuffix predicate on the "chain_transaction_id" field.
-func ChainTransactionIDHasSuffix(v string) predicate.Payment {
-	return predicate.Payment(func(s *sql.Selector) {
-		s.Where(sql.HasSuffix(s.C(FieldChainTransactionID), v))
-	})
-}
-
-// ChainTransactionIDIsNil applies the IsNil predicate on the "chain_transaction_id" field.
-func ChainTransactionIDIsNil() predicate.Payment {
-	return predicate.Payment(func(s *sql.Selector) {
-		s.Where(sql.IsNull(s.C(FieldChainTransactionID)))
-	})
-}
-
-// ChainTransactionIDNotNil applies the NotNil predicate on the "chain_transaction_id" field.
-func ChainTransactionIDNotNil() predicate.Payment {
-	return predicate.Payment(func(s *sql.Selector) {
-		s.Where(sql.NotNull(s.C(FieldChainTransactionID)))
-	})
-}
-
-// ChainTransactionIDEqualFold applies the EqualFold predicate on the "chain_transaction_id" field.
-func ChainTransactionIDEqualFold(v string) predicate.Payment {
-	return predicate.Payment(func(s *sql.Selector) {
-		s.Where(sql.EqualFold(s.C(FieldChainTransactionID), v))
-	})
-}
-
-// ChainTransactionIDContainsFold applies the ContainsFold predicate on the "chain_transaction_id" field.
-func ChainTransactionIDContainsFold(v string) predicate.Payment {
-	return predicate.Payment(func(s *sql.Selector) {
-		s.Where(sql.ContainsFold(s.C(FieldChainTransactionID), v))
-	})
-}
-
-// UserSetPaidEQ applies the EQ predicate on the "user_set_paid" field.
-func UserSetPaidEQ(v bool) predicate.Payment {
-	return predicate.Payment(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldUserSetPaid), v))
-	})
-}
-
-// UserSetPaidNEQ applies the NEQ predicate on the "user_set_paid" field.
-func UserSetPaidNEQ(v bool) predicate.Payment {
-	return predicate.Payment(func(s *sql.Selector) {
-		s.Where(sql.NEQ(s.C(FieldUserSetPaid), v))
-	})
-}
-
-// UserSetPaidIsNil applies the IsNil predicate on the "user_set_paid" field.
-func UserSetPaidIsNil() predicate.Payment {
-	return predicate.Payment(func(s *sql.Selector) {
-		s.Where(sql.IsNull(s.C(FieldUserSetPaid)))
-	})
-}
-
-// UserSetPaidNotNil applies the NotNil predicate on the "user_set_paid" field.
-func UserSetPaidNotNil() predicate.Payment {
-	return predicate.Payment(func(s *sql.Selector) {
-		s.Where(sql.NotNull(s.C(FieldUserSetPaid)))
-	})
-}
-
-// UserSetCanceledEQ applies the EQ predicate on the "user_set_canceled" field.
-func UserSetCanceledEQ(v bool) predicate.Payment {
-	return predicate.Payment(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldUserSetCanceled), v))
-	})
-}
-
-// UserSetCanceledNEQ applies the NEQ predicate on the "user_set_canceled" field.
-func UserSetCanceledNEQ(v bool) predicate.Payment {
-	return predicate.Payment(func(s *sql.Selector) {
-		s.Where(sql.NEQ(s.C(FieldUserSetCanceled), v))
-	})
-}
-
-// UserSetCanceledIsNil applies the IsNil predicate on the "user_set_canceled" field.
-func UserSetCanceledIsNil() predicate.Payment {
-	return predicate.Payment(func(s *sql.Selector) {
-		s.Where(sql.IsNull(s.C(FieldUserSetCanceled)))
-	})
-}
-
-// UserSetCanceledNotNil applies the NotNil predicate on the "user_set_canceled" field.
-func UserSetCanceledNotNil() predicate.Payment {
-	return predicate.Payment(func(s *sql.Selector) {
-		s.Where(sql.NotNull(s.C(FieldUserSetCanceled)))
-	})
-}
-
-// FakePaymentEQ applies the EQ predicate on the "fake_payment" field.
-func FakePaymentEQ(v bool) predicate.Payment {
-	return predicate.Payment(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldFakePayment), v))
-	})
-}
-
-// FakePaymentNEQ applies the NEQ predicate on the "fake_payment" field.
-func FakePaymentNEQ(v bool) predicate.Payment {
-	return predicate.Payment(func(s *sql.Selector) {
-		s.Where(sql.NEQ(s.C(FieldFakePayment), v))
-	})
-}
-
-// FakePaymentIsNil applies the IsNil predicate on the "fake_payment" field.
-func FakePaymentIsNil() predicate.Payment {
-	return predicate.Payment(func(s *sql.Selector) {
-		s.Where(sql.IsNull(s.C(FieldFakePayment)))
-	})
-}
-
-// FakePaymentNotNil applies the NotNil predicate on the "fake_payment" field.
-func FakePaymentNotNil() predicate.Payment {
-	return predicate.Payment(func(s *sql.Selector) {
-		s.Where(sql.NotNull(s.C(FieldFakePayment)))
 	})
 }
 

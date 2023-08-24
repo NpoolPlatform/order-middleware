@@ -4,11 +4,10 @@ import (
 	"entgo.io/ent"
 	"entgo.io/ent/dialect"
 	"entgo.io/ent/schema/field"
-	basetypes "github.com/NpoolPlatform/message/npool/basetypes/order/v1"
+	types "github.com/NpoolPlatform/message/npool/basetypes/order/v1"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/mixin"
-	"github.com/shopspring/decimal"
-
 	"github.com/google/uuid"
+	"github.com/shopspring/decimal"
 )
 
 // Order holds the schema definition for the Order entity.
@@ -30,27 +29,46 @@ func (Order) Fields() []ent.Field {
 			Default(uuid.New).
 			Unique(),
 		field.
-			UUID("good_id", uuid.UUID{}),
-		field.
 			UUID("app_id", uuid.UUID{}),
 		field.
 			UUID("user_id", uuid.UUID{}),
 		field.
+			UUID("good_id", uuid.UUID{}),
+		field.
+			UUID("payment_id", uuid.UUID{}).
+			Optional().
+			Default(func() uuid.UUID {
+				return uuid.Nil
+			}),
+		field.
 			UUID("parent_order_id", uuid.UUID{}).
 			Optional().
 			Default(func() uuid.UUID {
-				return uuid.UUID{}
+				return uuid.Nil
 			}),
 		field.
-			Bool("pay_with_parent").
-			Optional().
-			Default(false),
-		field.
-			Uint32("units").
-			Optional().
-			Default(0),
-		field.
 			Other("units_v1", decimal.Decimal{}).
+			SchemaType(map[string]string{
+				dialect.MySQL: "decimal(37,18)",
+			}).
+			Optional().
+			Default(decimal.Decimal{}),
+		field.
+			Other("good_value", decimal.Decimal{}).
+			SchemaType(map[string]string{
+				dialect.MySQL: "decimal(37,18)",
+			}).
+			Optional().
+			Default(decimal.Decimal{}),
+		field.
+			Other("payment_amount", decimal.Decimal{}).
+			SchemaType(map[string]string{
+				dialect.MySQL: "decimal(37,18)",
+			}).
+			Optional().
+			Default(decimal.Decimal{}),
+		field.
+			Other("discount_amount", decimal.Decimal{}).
 			SchemaType(map[string]string{
 				dialect.MySQL: "decimal(37,18)",
 			}).
@@ -63,47 +81,25 @@ func (Order) Fields() []ent.Field {
 				return uuid.UUID{}
 			}),
 		field.
-			UUID("discount_coupon_id", uuid.UUID{}).
-			Optional().
-			Default(func() uuid.UUID {
-				return uuid.UUID{}
-			}),
-		field.
-			UUID("user_special_reduction_id", uuid.UUID{}).
-			Optional().
-			Default(func() uuid.UUID {
-				return uuid.UUID{}
-			}),
-		field.
 			Uint32("start_at").
 			Optional().
 			Default(0),
 		field.
-			Uint32("end_at").
+			String("start_mode").
+			Optional().
+			Default(types.OrderStartMode_OrderStartConfirmed.String()),
+		field.
+			Uint32("duration_days").
 			Optional().
 			Default(0),
 		field.
-			UUID("fix_amount_coupon_id", uuid.UUID{}).
+			String("order_type").
 			Optional().
-			Default(func() uuid.UUID {
-				return uuid.UUID{}
-			}),
-		field.
-			String("type").
-			Optional().
-			Default(basetypes.OrderType_DefaultOrderType.String()),
-		field.
-			String("state").
-			Optional().
-			Default(basetypes.OrderState_DefaultOrderState.String()),
-		field.
-			String("state_v1").
-			Optional().
-			Default(basetypes.OrderState_DefaultOrderState.String()),
+			Default(types.OrderType_Normal.String()),
 		field.
 			String("investment_type").
 			Optional().
-			Default(basetypes.InvestmentType_FullPayment.String()),
+			Default(types.InvestmentType_FullPayment.String()),
 		field.
 			JSON("coupon_ids", []uuid.UUID{}).
 			Optional().
@@ -111,9 +107,9 @@ func (Order) Fields() []ent.Field {
 				return []uuid.UUID{}
 			}),
 		field.
-			Uint32("last_benefit_at").
+			String("payment_type").
 			Optional().
-			Default(0),
+			Default(types.PaymentType_PayWithBalanceOnly.String()),
 	}
 }
 

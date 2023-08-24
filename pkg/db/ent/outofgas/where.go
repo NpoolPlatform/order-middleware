@@ -107,17 +107,17 @@ func OrderID(v uuid.UUID) predicate.OutOfGas {
 	})
 }
 
-// Start applies equality check predicate on the "start" field. It's identical to StartEQ.
-func Start(v uint32) predicate.OutOfGas {
+// StartAt applies equality check predicate on the "start_at" field. It's identical to StartAtEQ.
+func StartAt(v uint32) predicate.OutOfGas {
 	return predicate.OutOfGas(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldStart), v))
+		s.Where(sql.EQ(s.C(FieldStartAt), v))
 	})
 }
 
-// End applies equality check predicate on the "end" field. It's identical to EndEQ.
-func End(v uint32) predicate.OutOfGas {
+// EndAt applies equality check predicate on the "end_at" field. It's identical to EndAtEQ.
+func EndAt(v uint32) predicate.OutOfGas {
 	return predicate.OutOfGas(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldEnd), v))
+		s.Where(sql.EQ(s.C(FieldEndAt), v))
 	})
 }
 
@@ -377,159 +377,159 @@ func OrderIDLTE(v uuid.UUID) predicate.OutOfGas {
 	})
 }
 
-// StartEQ applies the EQ predicate on the "start" field.
-func StartEQ(v uint32) predicate.OutOfGas {
+// StartAtEQ applies the EQ predicate on the "start_at" field.
+func StartAtEQ(v uint32) predicate.OutOfGas {
 	return predicate.OutOfGas(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldStart), v))
+		s.Where(sql.EQ(s.C(FieldStartAt), v))
 	})
 }
 
-// StartNEQ applies the NEQ predicate on the "start" field.
-func StartNEQ(v uint32) predicate.OutOfGas {
+// StartAtNEQ applies the NEQ predicate on the "start_at" field.
+func StartAtNEQ(v uint32) predicate.OutOfGas {
 	return predicate.OutOfGas(func(s *sql.Selector) {
-		s.Where(sql.NEQ(s.C(FieldStart), v))
+		s.Where(sql.NEQ(s.C(FieldStartAt), v))
 	})
 }
 
-// StartIn applies the In predicate on the "start" field.
-func StartIn(vs ...uint32) predicate.OutOfGas {
+// StartAtIn applies the In predicate on the "start_at" field.
+func StartAtIn(vs ...uint32) predicate.OutOfGas {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
 	}
 	return predicate.OutOfGas(func(s *sql.Selector) {
-		s.Where(sql.In(s.C(FieldStart), v...))
+		s.Where(sql.In(s.C(FieldStartAt), v...))
 	})
 }
 
-// StartNotIn applies the NotIn predicate on the "start" field.
-func StartNotIn(vs ...uint32) predicate.OutOfGas {
+// StartAtNotIn applies the NotIn predicate on the "start_at" field.
+func StartAtNotIn(vs ...uint32) predicate.OutOfGas {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
 	}
 	return predicate.OutOfGas(func(s *sql.Selector) {
-		s.Where(sql.NotIn(s.C(FieldStart), v...))
+		s.Where(sql.NotIn(s.C(FieldStartAt), v...))
 	})
 }
 
-// StartGT applies the GT predicate on the "start" field.
-func StartGT(v uint32) predicate.OutOfGas {
+// StartAtGT applies the GT predicate on the "start_at" field.
+func StartAtGT(v uint32) predicate.OutOfGas {
 	return predicate.OutOfGas(func(s *sql.Selector) {
-		s.Where(sql.GT(s.C(FieldStart), v))
+		s.Where(sql.GT(s.C(FieldStartAt), v))
 	})
 }
 
-// StartGTE applies the GTE predicate on the "start" field.
-func StartGTE(v uint32) predicate.OutOfGas {
+// StartAtGTE applies the GTE predicate on the "start_at" field.
+func StartAtGTE(v uint32) predicate.OutOfGas {
 	return predicate.OutOfGas(func(s *sql.Selector) {
-		s.Where(sql.GTE(s.C(FieldStart), v))
+		s.Where(sql.GTE(s.C(FieldStartAt), v))
 	})
 }
 
-// StartLT applies the LT predicate on the "start" field.
-func StartLT(v uint32) predicate.OutOfGas {
+// StartAtLT applies the LT predicate on the "start_at" field.
+func StartAtLT(v uint32) predicate.OutOfGas {
 	return predicate.OutOfGas(func(s *sql.Selector) {
-		s.Where(sql.LT(s.C(FieldStart), v))
+		s.Where(sql.LT(s.C(FieldStartAt), v))
 	})
 }
 
-// StartLTE applies the LTE predicate on the "start" field.
-func StartLTE(v uint32) predicate.OutOfGas {
+// StartAtLTE applies the LTE predicate on the "start_at" field.
+func StartAtLTE(v uint32) predicate.OutOfGas {
 	return predicate.OutOfGas(func(s *sql.Selector) {
-		s.Where(sql.LTE(s.C(FieldStart), v))
+		s.Where(sql.LTE(s.C(FieldStartAt), v))
 	})
 }
 
-// StartIsNil applies the IsNil predicate on the "start" field.
-func StartIsNil() predicate.OutOfGas {
+// StartAtIsNil applies the IsNil predicate on the "start_at" field.
+func StartAtIsNil() predicate.OutOfGas {
 	return predicate.OutOfGas(func(s *sql.Selector) {
-		s.Where(sql.IsNull(s.C(FieldStart)))
+		s.Where(sql.IsNull(s.C(FieldStartAt)))
 	})
 }
 
-// StartNotNil applies the NotNil predicate on the "start" field.
-func StartNotNil() predicate.OutOfGas {
+// StartAtNotNil applies the NotNil predicate on the "start_at" field.
+func StartAtNotNil() predicate.OutOfGas {
 	return predicate.OutOfGas(func(s *sql.Selector) {
-		s.Where(sql.NotNull(s.C(FieldStart)))
+		s.Where(sql.NotNull(s.C(FieldStartAt)))
 	})
 }
 
-// EndEQ applies the EQ predicate on the "end" field.
-func EndEQ(v uint32) predicate.OutOfGas {
+// EndAtEQ applies the EQ predicate on the "end_at" field.
+func EndAtEQ(v uint32) predicate.OutOfGas {
 	return predicate.OutOfGas(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldEnd), v))
+		s.Where(sql.EQ(s.C(FieldEndAt), v))
 	})
 }
 
-// EndNEQ applies the NEQ predicate on the "end" field.
-func EndNEQ(v uint32) predicate.OutOfGas {
+// EndAtNEQ applies the NEQ predicate on the "end_at" field.
+func EndAtNEQ(v uint32) predicate.OutOfGas {
 	return predicate.OutOfGas(func(s *sql.Selector) {
-		s.Where(sql.NEQ(s.C(FieldEnd), v))
+		s.Where(sql.NEQ(s.C(FieldEndAt), v))
 	})
 }
 
-// EndIn applies the In predicate on the "end" field.
-func EndIn(vs ...uint32) predicate.OutOfGas {
+// EndAtIn applies the In predicate on the "end_at" field.
+func EndAtIn(vs ...uint32) predicate.OutOfGas {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
 	}
 	return predicate.OutOfGas(func(s *sql.Selector) {
-		s.Where(sql.In(s.C(FieldEnd), v...))
+		s.Where(sql.In(s.C(FieldEndAt), v...))
 	})
 }
 
-// EndNotIn applies the NotIn predicate on the "end" field.
-func EndNotIn(vs ...uint32) predicate.OutOfGas {
+// EndAtNotIn applies the NotIn predicate on the "end_at" field.
+func EndAtNotIn(vs ...uint32) predicate.OutOfGas {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
 	}
 	return predicate.OutOfGas(func(s *sql.Selector) {
-		s.Where(sql.NotIn(s.C(FieldEnd), v...))
+		s.Where(sql.NotIn(s.C(FieldEndAt), v...))
 	})
 }
 
-// EndGT applies the GT predicate on the "end" field.
-func EndGT(v uint32) predicate.OutOfGas {
+// EndAtGT applies the GT predicate on the "end_at" field.
+func EndAtGT(v uint32) predicate.OutOfGas {
 	return predicate.OutOfGas(func(s *sql.Selector) {
-		s.Where(sql.GT(s.C(FieldEnd), v))
+		s.Where(sql.GT(s.C(FieldEndAt), v))
 	})
 }
 
-// EndGTE applies the GTE predicate on the "end" field.
-func EndGTE(v uint32) predicate.OutOfGas {
+// EndAtGTE applies the GTE predicate on the "end_at" field.
+func EndAtGTE(v uint32) predicate.OutOfGas {
 	return predicate.OutOfGas(func(s *sql.Selector) {
-		s.Where(sql.GTE(s.C(FieldEnd), v))
+		s.Where(sql.GTE(s.C(FieldEndAt), v))
 	})
 }
 
-// EndLT applies the LT predicate on the "end" field.
-func EndLT(v uint32) predicate.OutOfGas {
+// EndAtLT applies the LT predicate on the "end_at" field.
+func EndAtLT(v uint32) predicate.OutOfGas {
 	return predicate.OutOfGas(func(s *sql.Selector) {
-		s.Where(sql.LT(s.C(FieldEnd), v))
+		s.Where(sql.LT(s.C(FieldEndAt), v))
 	})
 }
 
-// EndLTE applies the LTE predicate on the "end" field.
-func EndLTE(v uint32) predicate.OutOfGas {
+// EndAtLTE applies the LTE predicate on the "end_at" field.
+func EndAtLTE(v uint32) predicate.OutOfGas {
 	return predicate.OutOfGas(func(s *sql.Selector) {
-		s.Where(sql.LTE(s.C(FieldEnd), v))
+		s.Where(sql.LTE(s.C(FieldEndAt), v))
 	})
 }
 
-// EndIsNil applies the IsNil predicate on the "end" field.
-func EndIsNil() predicate.OutOfGas {
+// EndAtIsNil applies the IsNil predicate on the "end_at" field.
+func EndAtIsNil() predicate.OutOfGas {
 	return predicate.OutOfGas(func(s *sql.Selector) {
-		s.Where(sql.IsNull(s.C(FieldEnd)))
+		s.Where(sql.IsNull(s.C(FieldEndAt)))
 	})
 }
 
-// EndNotNil applies the NotNil predicate on the "end" field.
-func EndNotNil() predicate.OutOfGas {
+// EndAtNotNil applies the NotNil predicate on the "end_at" field.
+func EndAtNotNil() predicate.OutOfGas {
 	return predicate.OutOfGas(func(s *sql.Selector) {
-		s.Where(sql.NotNull(s.C(FieldEnd)))
+		s.Where(sql.NotNull(s.C(FieldEndAt)))
 	})
 }
 

@@ -3,8 +3,8 @@ package schema
 import (
 	"entgo.io/ent"
 	"entgo.io/ent/schema/field"
+	types "github.com/NpoolPlatform/message/npool/basetypes/order/v1"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/mixin"
-
 	"github.com/google/uuid"
 )
 
@@ -29,13 +29,21 @@ func (Compensate) Fields() []ent.Field {
 		field.
 			UUID("order_id", uuid.UUID{}),
 		field.
-			Uint32("start").
+			Uint32("start_at").
 			Optional().
 			Default(0),
 		field.
-			Uint32("end").
+			Uint32("end_at").
 			Optional().
 			Default(0),
+		field.
+			String("compensate_type").
+			Optional().
+			Default(types.CompensateType_DefaultCompensateType.String()),
+		field.
+			String("title").
+			Optional().
+			Default(""),
 		field.
 			String("message").
 			Optional().

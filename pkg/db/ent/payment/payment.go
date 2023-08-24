@@ -29,34 +29,20 @@ const (
 	FieldOrderID = "order_id"
 	// FieldAccountID holds the string denoting the account_id field in the database.
 	FieldAccountID = "account_id"
+	// FieldCoinInfoID holds the string denoting the coin_info_id field in the database.
+	FieldCoinInfoID = "coin_info_id"
 	// FieldStartAmount holds the string denoting the start_amount field in the database.
 	FieldStartAmount = "start_amount"
-	// FieldAmount holds the string denoting the amount field in the database.
-	FieldAmount = "amount"
-	// FieldPayWithBalanceAmount holds the string denoting the pay_with_balance_amount field in the database.
-	FieldPayWithBalanceAmount = "pay_with_balance_amount"
-	// FieldFinishAmount holds the string denoting the finish_amount field in the database.
-	FieldFinishAmount = "finish_amount"
+	// FieldTransferAmount holds the string denoting the transfer_amount field in the database.
+	FieldTransferAmount = "transfer_amount"
+	// FieldBalanceAmount holds the string denoting the balance_amount field in the database.
+	FieldBalanceAmount = "balance_amount"
 	// FieldCoinUsdCurrency holds the string denoting the coin_usd_currency field in the database.
 	FieldCoinUsdCurrency = "coin_usd_currency"
 	// FieldLocalCoinUsdCurrency holds the string denoting the local_coin_usd_currency field in the database.
 	FieldLocalCoinUsdCurrency = "local_coin_usd_currency"
 	// FieldLiveCoinUsdCurrency holds the string denoting the live_coin_usd_currency field in the database.
 	FieldLiveCoinUsdCurrency = "live_coin_usd_currency"
-	// FieldCoinInfoID holds the string denoting the coin_info_id field in the database.
-	FieldCoinInfoID = "coin_info_id"
-	// FieldState holds the string denoting the state field in the database.
-	FieldState = "state"
-	// FieldStateV1 holds the string denoting the state_v1 field in the database.
-	FieldStateV1 = "state_v1"
-	// FieldChainTransactionID holds the string denoting the chain_transaction_id field in the database.
-	FieldChainTransactionID = "chain_transaction_id"
-	// FieldUserSetPaid holds the string denoting the user_set_paid field in the database.
-	FieldUserSetPaid = "user_set_paid"
-	// FieldUserSetCanceled holds the string denoting the user_set_canceled field in the database.
-	FieldUserSetCanceled = "user_set_canceled"
-	// FieldFakePayment holds the string denoting the fake_payment field in the database.
-	FieldFakePayment = "fake_payment"
 	// Table holds the table name of the payment in the database.
 	Table = "payments"
 )
@@ -72,20 +58,13 @@ var Columns = []string{
 	FieldGoodID,
 	FieldOrderID,
 	FieldAccountID,
+	FieldCoinInfoID,
 	FieldStartAmount,
-	FieldAmount,
-	FieldPayWithBalanceAmount,
-	FieldFinishAmount,
+	FieldTransferAmount,
+	FieldBalanceAmount,
 	FieldCoinUsdCurrency,
 	FieldLocalCoinUsdCurrency,
 	FieldLiveCoinUsdCurrency,
-	FieldCoinInfoID,
-	FieldState,
-	FieldStateV1,
-	FieldChainTransactionID,
-	FieldUserSetPaid,
-	FieldUserSetCanceled,
-	FieldFakePayment,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -117,30 +96,16 @@ var (
 	DefaultDeletedAt func() uint32
 	// DefaultStartAmount holds the default value on creation for the "start_amount" field.
 	DefaultStartAmount decimal.Decimal
-	// DefaultAmount holds the default value on creation for the "amount" field.
-	DefaultAmount decimal.Decimal
-	// DefaultPayWithBalanceAmount holds the default value on creation for the "pay_with_balance_amount" field.
-	DefaultPayWithBalanceAmount decimal.Decimal
-	// DefaultFinishAmount holds the default value on creation for the "finish_amount" field.
-	DefaultFinishAmount decimal.Decimal
+	// DefaultTransferAmount holds the default value on creation for the "transfer_amount" field.
+	DefaultTransferAmount decimal.Decimal
+	// DefaultBalanceAmount holds the default value on creation for the "balance_amount" field.
+	DefaultBalanceAmount decimal.Decimal
 	// DefaultCoinUsdCurrency holds the default value on creation for the "coin_usd_currency" field.
 	DefaultCoinUsdCurrency decimal.Decimal
 	// DefaultLocalCoinUsdCurrency holds the default value on creation for the "local_coin_usd_currency" field.
 	DefaultLocalCoinUsdCurrency decimal.Decimal
 	// DefaultLiveCoinUsdCurrency holds the default value on creation for the "live_coin_usd_currency" field.
 	DefaultLiveCoinUsdCurrency decimal.Decimal
-	// DefaultState holds the default value on creation for the "state" field.
-	DefaultState string
-	// DefaultStateV1 holds the default value on creation for the "state_v1" field.
-	DefaultStateV1 string
-	// DefaultChainTransactionID holds the default value on creation for the "chain_transaction_id" field.
-	DefaultChainTransactionID string
-	// DefaultUserSetPaid holds the default value on creation for the "user_set_paid" field.
-	DefaultUserSetPaid bool
-	// DefaultUserSetCanceled holds the default value on creation for the "user_set_canceled" field.
-	DefaultUserSetCanceled bool
-	// DefaultFakePayment holds the default value on creation for the "fake_payment" field.
-	DefaultFakePayment bool
 	// DefaultID holds the default value on creation for the "id" field.
 	DefaultID func() uuid.UUID
 )

@@ -71,30 +71,30 @@ func (oogc *OutOfGasCreate) SetOrderID(u uuid.UUID) *OutOfGasCreate {
 	return oogc
 }
 
-// SetStart sets the "start" field.
-func (oogc *OutOfGasCreate) SetStart(u uint32) *OutOfGasCreate {
-	oogc.mutation.SetStart(u)
+// SetStartAt sets the "start_at" field.
+func (oogc *OutOfGasCreate) SetStartAt(u uint32) *OutOfGasCreate {
+	oogc.mutation.SetStartAt(u)
 	return oogc
 }
 
-// SetNillableStart sets the "start" field if the given value is not nil.
-func (oogc *OutOfGasCreate) SetNillableStart(u *uint32) *OutOfGasCreate {
+// SetNillableStartAt sets the "start_at" field if the given value is not nil.
+func (oogc *OutOfGasCreate) SetNillableStartAt(u *uint32) *OutOfGasCreate {
 	if u != nil {
-		oogc.SetStart(*u)
+		oogc.SetStartAt(*u)
 	}
 	return oogc
 }
 
-// SetEnd sets the "end" field.
-func (oogc *OutOfGasCreate) SetEnd(u uint32) *OutOfGasCreate {
-	oogc.mutation.SetEnd(u)
+// SetEndAt sets the "end_at" field.
+func (oogc *OutOfGasCreate) SetEndAt(u uint32) *OutOfGasCreate {
+	oogc.mutation.SetEndAt(u)
 	return oogc
 }
 
-// SetNillableEnd sets the "end" field if the given value is not nil.
-func (oogc *OutOfGasCreate) SetNillableEnd(u *uint32) *OutOfGasCreate {
+// SetNillableEndAt sets the "end_at" field if the given value is not nil.
+func (oogc *OutOfGasCreate) SetNillableEndAt(u *uint32) *OutOfGasCreate {
 	if u != nil {
-		oogc.SetEnd(*u)
+		oogc.SetEndAt(*u)
 	}
 	return oogc
 }
@@ -213,13 +213,13 @@ func (oogc *OutOfGasCreate) defaults() error {
 		v := outofgas.DefaultDeletedAt()
 		oogc.mutation.SetDeletedAt(v)
 	}
-	if _, ok := oogc.mutation.Start(); !ok {
-		v := outofgas.DefaultStart
-		oogc.mutation.SetStart(v)
+	if _, ok := oogc.mutation.StartAt(); !ok {
+		v := outofgas.DefaultStartAt
+		oogc.mutation.SetStartAt(v)
 	}
-	if _, ok := oogc.mutation.End(); !ok {
-		v := outofgas.DefaultEnd
-		oogc.mutation.SetEnd(v)
+	if _, ok := oogc.mutation.EndAt(); !ok {
+		v := outofgas.DefaultEndAt
+		oogc.mutation.SetEndAt(v)
 	}
 	if _, ok := oogc.mutation.ID(); !ok {
 		if outofgas.DefaultID == nil {
@@ -314,21 +314,21 @@ func (oogc *OutOfGasCreate) createSpec() (*OutOfGas, *sqlgraph.CreateSpec) {
 		})
 		_node.OrderID = value
 	}
-	if value, ok := oogc.mutation.Start(); ok {
+	if value, ok := oogc.mutation.StartAt(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
 			Type:   field.TypeUint32,
 			Value:  value,
-			Column: outofgas.FieldStart,
+			Column: outofgas.FieldStartAt,
 		})
-		_node.Start = value
+		_node.StartAt = value
 	}
-	if value, ok := oogc.mutation.End(); ok {
+	if value, ok := oogc.mutation.EndAt(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
 			Type:   field.TypeUint32,
 			Value:  value,
-			Column: outofgas.FieldEnd,
+			Column: outofgas.FieldEndAt,
 		})
-		_node.End = value
+		_node.EndAt = value
 	}
 	return _node, _spec
 }
@@ -450,51 +450,51 @@ func (u *OutOfGasUpsert) UpdateOrderID() *OutOfGasUpsert {
 	return u
 }
 
-// SetStart sets the "start" field.
-func (u *OutOfGasUpsert) SetStart(v uint32) *OutOfGasUpsert {
-	u.Set(outofgas.FieldStart, v)
+// SetStartAt sets the "start_at" field.
+func (u *OutOfGasUpsert) SetStartAt(v uint32) *OutOfGasUpsert {
+	u.Set(outofgas.FieldStartAt, v)
 	return u
 }
 
-// UpdateStart sets the "start" field to the value that was provided on create.
-func (u *OutOfGasUpsert) UpdateStart() *OutOfGasUpsert {
-	u.SetExcluded(outofgas.FieldStart)
+// UpdateStartAt sets the "start_at" field to the value that was provided on create.
+func (u *OutOfGasUpsert) UpdateStartAt() *OutOfGasUpsert {
+	u.SetExcluded(outofgas.FieldStartAt)
 	return u
 }
 
-// AddStart adds v to the "start" field.
-func (u *OutOfGasUpsert) AddStart(v uint32) *OutOfGasUpsert {
-	u.Add(outofgas.FieldStart, v)
+// AddStartAt adds v to the "start_at" field.
+func (u *OutOfGasUpsert) AddStartAt(v uint32) *OutOfGasUpsert {
+	u.Add(outofgas.FieldStartAt, v)
 	return u
 }
 
-// ClearStart clears the value of the "start" field.
-func (u *OutOfGasUpsert) ClearStart() *OutOfGasUpsert {
-	u.SetNull(outofgas.FieldStart)
+// ClearStartAt clears the value of the "start_at" field.
+func (u *OutOfGasUpsert) ClearStartAt() *OutOfGasUpsert {
+	u.SetNull(outofgas.FieldStartAt)
 	return u
 }
 
-// SetEnd sets the "end" field.
-func (u *OutOfGasUpsert) SetEnd(v uint32) *OutOfGasUpsert {
-	u.Set(outofgas.FieldEnd, v)
+// SetEndAt sets the "end_at" field.
+func (u *OutOfGasUpsert) SetEndAt(v uint32) *OutOfGasUpsert {
+	u.Set(outofgas.FieldEndAt, v)
 	return u
 }
 
-// UpdateEnd sets the "end" field to the value that was provided on create.
-func (u *OutOfGasUpsert) UpdateEnd() *OutOfGasUpsert {
-	u.SetExcluded(outofgas.FieldEnd)
+// UpdateEndAt sets the "end_at" field to the value that was provided on create.
+func (u *OutOfGasUpsert) UpdateEndAt() *OutOfGasUpsert {
+	u.SetExcluded(outofgas.FieldEndAt)
 	return u
 }
 
-// AddEnd adds v to the "end" field.
-func (u *OutOfGasUpsert) AddEnd(v uint32) *OutOfGasUpsert {
-	u.Add(outofgas.FieldEnd, v)
+// AddEndAt adds v to the "end_at" field.
+func (u *OutOfGasUpsert) AddEndAt(v uint32) *OutOfGasUpsert {
+	u.Add(outofgas.FieldEndAt, v)
 	return u
 }
 
-// ClearEnd clears the value of the "end" field.
-func (u *OutOfGasUpsert) ClearEnd() *OutOfGasUpsert {
-	u.SetNull(outofgas.FieldEnd)
+// ClearEndAt clears the value of the "end_at" field.
+func (u *OutOfGasUpsert) ClearEndAt() *OutOfGasUpsert {
+	u.SetNull(outofgas.FieldEndAt)
 	return u
 }
 
@@ -625,59 +625,59 @@ func (u *OutOfGasUpsertOne) UpdateOrderID() *OutOfGasUpsertOne {
 	})
 }
 
-// SetStart sets the "start" field.
-func (u *OutOfGasUpsertOne) SetStart(v uint32) *OutOfGasUpsertOne {
+// SetStartAt sets the "start_at" field.
+func (u *OutOfGasUpsertOne) SetStartAt(v uint32) *OutOfGasUpsertOne {
 	return u.Update(func(s *OutOfGasUpsert) {
-		s.SetStart(v)
+		s.SetStartAt(v)
 	})
 }
 
-// AddStart adds v to the "start" field.
-func (u *OutOfGasUpsertOne) AddStart(v uint32) *OutOfGasUpsertOne {
+// AddStartAt adds v to the "start_at" field.
+func (u *OutOfGasUpsertOne) AddStartAt(v uint32) *OutOfGasUpsertOne {
 	return u.Update(func(s *OutOfGasUpsert) {
-		s.AddStart(v)
+		s.AddStartAt(v)
 	})
 }
 
-// UpdateStart sets the "start" field to the value that was provided on create.
-func (u *OutOfGasUpsertOne) UpdateStart() *OutOfGasUpsertOne {
+// UpdateStartAt sets the "start_at" field to the value that was provided on create.
+func (u *OutOfGasUpsertOne) UpdateStartAt() *OutOfGasUpsertOne {
 	return u.Update(func(s *OutOfGasUpsert) {
-		s.UpdateStart()
+		s.UpdateStartAt()
 	})
 }
 
-// ClearStart clears the value of the "start" field.
-func (u *OutOfGasUpsertOne) ClearStart() *OutOfGasUpsertOne {
+// ClearStartAt clears the value of the "start_at" field.
+func (u *OutOfGasUpsertOne) ClearStartAt() *OutOfGasUpsertOne {
 	return u.Update(func(s *OutOfGasUpsert) {
-		s.ClearStart()
+		s.ClearStartAt()
 	})
 }
 
-// SetEnd sets the "end" field.
-func (u *OutOfGasUpsertOne) SetEnd(v uint32) *OutOfGasUpsertOne {
+// SetEndAt sets the "end_at" field.
+func (u *OutOfGasUpsertOne) SetEndAt(v uint32) *OutOfGasUpsertOne {
 	return u.Update(func(s *OutOfGasUpsert) {
-		s.SetEnd(v)
+		s.SetEndAt(v)
 	})
 }
 
-// AddEnd adds v to the "end" field.
-func (u *OutOfGasUpsertOne) AddEnd(v uint32) *OutOfGasUpsertOne {
+// AddEndAt adds v to the "end_at" field.
+func (u *OutOfGasUpsertOne) AddEndAt(v uint32) *OutOfGasUpsertOne {
 	return u.Update(func(s *OutOfGasUpsert) {
-		s.AddEnd(v)
+		s.AddEndAt(v)
 	})
 }
 
-// UpdateEnd sets the "end" field to the value that was provided on create.
-func (u *OutOfGasUpsertOne) UpdateEnd() *OutOfGasUpsertOne {
+// UpdateEndAt sets the "end_at" field to the value that was provided on create.
+func (u *OutOfGasUpsertOne) UpdateEndAt() *OutOfGasUpsertOne {
 	return u.Update(func(s *OutOfGasUpsert) {
-		s.UpdateEnd()
+		s.UpdateEndAt()
 	})
 }
 
-// ClearEnd clears the value of the "end" field.
-func (u *OutOfGasUpsertOne) ClearEnd() *OutOfGasUpsertOne {
+// ClearEndAt clears the value of the "end_at" field.
+func (u *OutOfGasUpsertOne) ClearEndAt() *OutOfGasUpsertOne {
 	return u.Update(func(s *OutOfGasUpsert) {
-		s.ClearEnd()
+		s.ClearEndAt()
 	})
 }
 
@@ -974,59 +974,59 @@ func (u *OutOfGasUpsertBulk) UpdateOrderID() *OutOfGasUpsertBulk {
 	})
 }
 
-// SetStart sets the "start" field.
-func (u *OutOfGasUpsertBulk) SetStart(v uint32) *OutOfGasUpsertBulk {
+// SetStartAt sets the "start_at" field.
+func (u *OutOfGasUpsertBulk) SetStartAt(v uint32) *OutOfGasUpsertBulk {
 	return u.Update(func(s *OutOfGasUpsert) {
-		s.SetStart(v)
+		s.SetStartAt(v)
 	})
 }
 
-// AddStart adds v to the "start" field.
-func (u *OutOfGasUpsertBulk) AddStart(v uint32) *OutOfGasUpsertBulk {
+// AddStartAt adds v to the "start_at" field.
+func (u *OutOfGasUpsertBulk) AddStartAt(v uint32) *OutOfGasUpsertBulk {
 	return u.Update(func(s *OutOfGasUpsert) {
-		s.AddStart(v)
+		s.AddStartAt(v)
 	})
 }
 
-// UpdateStart sets the "start" field to the value that was provided on create.
-func (u *OutOfGasUpsertBulk) UpdateStart() *OutOfGasUpsertBulk {
+// UpdateStartAt sets the "start_at" field to the value that was provided on create.
+func (u *OutOfGasUpsertBulk) UpdateStartAt() *OutOfGasUpsertBulk {
 	return u.Update(func(s *OutOfGasUpsert) {
-		s.UpdateStart()
+		s.UpdateStartAt()
 	})
 }
 
-// ClearStart clears the value of the "start" field.
-func (u *OutOfGasUpsertBulk) ClearStart() *OutOfGasUpsertBulk {
+// ClearStartAt clears the value of the "start_at" field.
+func (u *OutOfGasUpsertBulk) ClearStartAt() *OutOfGasUpsertBulk {
 	return u.Update(func(s *OutOfGasUpsert) {
-		s.ClearStart()
+		s.ClearStartAt()
 	})
 }
 
-// SetEnd sets the "end" field.
-func (u *OutOfGasUpsertBulk) SetEnd(v uint32) *OutOfGasUpsertBulk {
+// SetEndAt sets the "end_at" field.
+func (u *OutOfGasUpsertBulk) SetEndAt(v uint32) *OutOfGasUpsertBulk {
 	return u.Update(func(s *OutOfGasUpsert) {
-		s.SetEnd(v)
+		s.SetEndAt(v)
 	})
 }
 
-// AddEnd adds v to the "end" field.
-func (u *OutOfGasUpsertBulk) AddEnd(v uint32) *OutOfGasUpsertBulk {
+// AddEndAt adds v to the "end_at" field.
+func (u *OutOfGasUpsertBulk) AddEndAt(v uint32) *OutOfGasUpsertBulk {
 	return u.Update(func(s *OutOfGasUpsert) {
-		s.AddEnd(v)
+		s.AddEndAt(v)
 	})
 }
 
-// UpdateEnd sets the "end" field to the value that was provided on create.
-func (u *OutOfGasUpsertBulk) UpdateEnd() *OutOfGasUpsertBulk {
+// UpdateEndAt sets the "end_at" field to the value that was provided on create.
+func (u *OutOfGasUpsertBulk) UpdateEndAt() *OutOfGasUpsertBulk {
 	return u.Update(func(s *OutOfGasUpsert) {
-		s.UpdateEnd()
+		s.UpdateEndAt()
 	})
 }
 
-// ClearEnd clears the value of the "end" field.
-func (u *OutOfGasUpsertBulk) ClearEnd() *OutOfGasUpsertBulk {
+// ClearEndAt clears the value of the "end_at" field.
+func (u *OutOfGasUpsertBulk) ClearEndAt() *OutOfGasUpsertBulk {
 	return u.Update(func(s *OutOfGasUpsert) {
-		s.ClearEnd()
+		s.ClearEndAt()
 	})
 }
 

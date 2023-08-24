@@ -18,6 +18,8 @@ type Tx struct {
 	Compensate *CompensateClient
 	// Order is the client for interacting with the Order builders.
 	Order *OrderClient
+	// OrderState is the client for interacting with the OrderState builders.
+	OrderState *OrderStateClient
 	// OutOfGas is the client for interacting with the OutOfGas builders.
 	OutOfGas *OutOfGasClient
 	// Payment is the client for interacting with the Payment builders.
@@ -159,6 +161,7 @@ func (tx *Tx) Client() *Client {
 func (tx *Tx) init() {
 	tx.Compensate = NewCompensateClient(tx.config)
 	tx.Order = NewOrderClient(tx.config)
+	tx.OrderState = NewOrderStateClient(tx.config)
 	tx.OutOfGas = NewOutOfGasClient(tx.config)
 	tx.Payment = NewPaymentClient(tx.config)
 }

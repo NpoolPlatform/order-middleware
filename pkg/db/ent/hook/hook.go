@@ -35,6 +35,19 @@ func (f OrderFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error
 	return f(ctx, mv)
 }
 
+// The OrderStateFunc type is an adapter to allow the use of ordinary
+// function as OrderState mutator.
+type OrderStateFunc func(context.Context, *ent.OrderStateMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f OrderStateFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	mv, ok := m.(*ent.OrderStateMutation)
+	if !ok {
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.OrderStateMutation", m)
+	}
+	return f(ctx, mv)
+}
+
 // The OutOfGasFunc type is an adapter to allow the use of ordinary
 // function as OutOfGas mutator.
 type OutOfGasFunc func(context.Context, *ent.OutOfGasMutation) (ent.Value, error)

@@ -15,8 +15,10 @@ var (
 		{Name: "updated_at", Type: field.TypeUint32},
 		{Name: "deleted_at", Type: field.TypeUint32},
 		{Name: "order_id", Type: field.TypeUUID},
-		{Name: "start", Type: field.TypeUint32, Nullable: true, Default: 0},
-		{Name: "end", Type: field.TypeUint32, Nullable: true, Default: 0},
+		{Name: "start_at", Type: field.TypeUint32, Nullable: true, Default: 0},
+		{Name: "end_at", Type: field.TypeUint32, Nullable: true, Default: 0},
+		{Name: "compensate_type", Type: field.TypeString, Nullable: true, Default: "DefaultCompensateType"},
+		{Name: "title", Type: field.TypeString, Nullable: true, Default: ""},
 		{Name: "message", Type: field.TypeString, Nullable: true, Default: ""},
 	}
 	// CompensatesTable holds the schema information for the "compensates" table.
@@ -31,31 +33,52 @@ var (
 		{Name: "created_at", Type: field.TypeUint32},
 		{Name: "updated_at", Type: field.TypeUint32},
 		{Name: "deleted_at", Type: field.TypeUint32},
-		{Name: "good_id", Type: field.TypeUUID},
 		{Name: "app_id", Type: field.TypeUUID},
 		{Name: "user_id", Type: field.TypeUUID},
+		{Name: "good_id", Type: field.TypeUUID},
+		{Name: "payment_id", Type: field.TypeUUID, Nullable: true},
 		{Name: "parent_order_id", Type: field.TypeUUID, Nullable: true},
-		{Name: "pay_with_parent", Type: field.TypeBool, Nullable: true, Default: false},
-		{Name: "units", Type: field.TypeUint32, Nullable: true, Default: 0},
 		{Name: "units_v1", Type: field.TypeOther, Nullable: true, SchemaType: map[string]string{"mysql": "decimal(37,18)"}},
+		{Name: "good_value", Type: field.TypeOther, Nullable: true, SchemaType: map[string]string{"mysql": "decimal(37,18)"}},
+		{Name: "payment_amount", Type: field.TypeOther, Nullable: true, SchemaType: map[string]string{"mysql": "decimal(37,18)"}},
+		{Name: "discount_amount", Type: field.TypeOther, Nullable: true, SchemaType: map[string]string{"mysql": "decimal(37,18)"}},
 		{Name: "promotion_id", Type: field.TypeUUID, Nullable: true},
-		{Name: "discount_coupon_id", Type: field.TypeUUID, Nullable: true},
-		{Name: "user_special_reduction_id", Type: field.TypeUUID, Nullable: true},
 		{Name: "start_at", Type: field.TypeUint32, Nullable: true, Default: 0},
-		{Name: "end_at", Type: field.TypeUint32, Nullable: true, Default: 0},
-		{Name: "fix_amount_coupon_id", Type: field.TypeUUID, Nullable: true},
-		{Name: "type", Type: field.TypeString, Nullable: true, Default: "DefaultOrderType"},
-		{Name: "state", Type: field.TypeString, Nullable: true, Default: "DefaultOrderState"},
-		{Name: "state_v1", Type: field.TypeString, Nullable: true, Default: "DefaultOrderState"},
+		{Name: "start_mode", Type: field.TypeString, Nullable: true, Default: "OrderStartConfirmed"},
+		{Name: "duration_days", Type: field.TypeUint32, Nullable: true, Default: 0},
+		{Name: "order_type", Type: field.TypeString, Nullable: true, Default: "Normal"},
 		{Name: "investment_type", Type: field.TypeString, Nullable: true, Default: "FullPayment"},
 		{Name: "coupon_ids", Type: field.TypeJSON, Nullable: true},
-		{Name: "last_benefit_at", Type: field.TypeUint32, Nullable: true, Default: 0},
+		{Name: "payment_type", Type: field.TypeString, Nullable: true, Default: "PayWithBalanceOnly"},
 	}
 	// OrdersTable holds the schema information for the "orders" table.
 	OrdersTable = &schema.Table{
 		Name:       "orders",
 		Columns:    OrdersColumns,
 		PrimaryKey: []*schema.Column{OrdersColumns[0]},
+	}
+	// OrderStatesColumns holds the columns for the "order_states" table.
+	OrderStatesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUUID, Unique: true},
+		{Name: "created_at", Type: field.TypeUint32},
+		{Name: "updated_at", Type: field.TypeUint32},
+		{Name: "deleted_at", Type: field.TypeUint32},
+		{Name: "order_id", Type: field.TypeUUID},
+		{Name: "order_state", Type: field.TypeString, Nullable: true, Default: "OrderStateWaitPayment"},
+		{Name: "end_at", Type: field.TypeUint32, Nullable: true, Default: 0},
+		{Name: "last_benefit_at", Type: field.TypeUint32, Nullable: true, Default: 0},
+		{Name: "benefit_state", Type: field.TypeString, Nullable: true, Default: "BenefitWait"},
+		{Name: "user_set_paid", Type: field.TypeBool, Nullable: true, Default: false},
+		{Name: "user_set_cancelled", Type: field.TypeBool, Nullable: true, Default: false},
+		{Name: "payment_transaction_id", Type: field.TypeString, Nullable: true, Default: ""},
+		{Name: "payment_finish_amount", Type: field.TypeOther, Nullable: true, SchemaType: map[string]string{"mysql": "decimal(37,18)"}},
+		{Name: "payment_state", Type: field.TypeString, Nullable: true, Default: "PaymentStateWait"},
+	}
+	// OrderStatesTable holds the schema information for the "order_states" table.
+	OrderStatesTable = &schema.Table{
+		Name:       "order_states",
+		Columns:    OrderStatesColumns,
+		PrimaryKey: []*schema.Column{OrderStatesColumns[0]},
 	}
 	// OutOfGasColumns holds the columns for the "out_of_gas" table.
 	OutOfGasColumns = []*schema.Column{
@@ -64,8 +87,8 @@ var (
 		{Name: "updated_at", Type: field.TypeUint32},
 		{Name: "deleted_at", Type: field.TypeUint32},
 		{Name: "order_id", Type: field.TypeUUID},
-		{Name: "start", Type: field.TypeUint32, Nullable: true, Default: 0},
-		{Name: "end", Type: field.TypeUint32, Nullable: true, Default: 0},
+		{Name: "start_at", Type: field.TypeUint32, Nullable: true, Default: 0},
+		{Name: "end_at", Type: field.TypeUint32, Nullable: true, Default: 0},
 	}
 	// OutOfGasTable holds the schema information for the "out_of_gas" table.
 	OutOfGasTable = &schema.Table{
@@ -84,20 +107,13 @@ var (
 		{Name: "good_id", Type: field.TypeUUID},
 		{Name: "order_id", Type: field.TypeUUID},
 		{Name: "account_id", Type: field.TypeUUID},
+		{Name: "coin_info_id", Type: field.TypeUUID},
 		{Name: "start_amount", Type: field.TypeOther, Nullable: true, SchemaType: map[string]string{"mysql": "decimal(37,18)"}},
-		{Name: "amount", Type: field.TypeOther, Nullable: true, SchemaType: map[string]string{"mysql": "decimal(37,18)"}},
-		{Name: "pay_with_balance_amount", Type: field.TypeOther, Nullable: true, SchemaType: map[string]string{"mysql": "decimal(37, 18)"}},
-		{Name: "finish_amount", Type: field.TypeOther, Nullable: true, SchemaType: map[string]string{"mysql": "decimal(37, 18)"}},
+		{Name: "transfer_amount", Type: field.TypeOther, Nullable: true, SchemaType: map[string]string{"mysql": "decimal(37,18)"}},
+		{Name: "balance_amount", Type: field.TypeOther, Nullable: true, SchemaType: map[string]string{"mysql": "decimal(37, 18)"}},
 		{Name: "coin_usd_currency", Type: field.TypeOther, Nullable: true, SchemaType: map[string]string{"mysql": "decimal(37, 18)"}},
 		{Name: "local_coin_usd_currency", Type: field.TypeOther, Nullable: true, SchemaType: map[string]string{"mysql": "decimal(37, 18)"}},
 		{Name: "live_coin_usd_currency", Type: field.TypeOther, Nullable: true, SchemaType: map[string]string{"mysql": "decimal(37, 18)"}},
-		{Name: "coin_info_id", Type: field.TypeUUID},
-		{Name: "state", Type: field.TypeString, Nullable: true, Default: "DefaultPaymentState"},
-		{Name: "state_v1", Type: field.TypeString, Nullable: true, Default: "DefaultPaymentState"},
-		{Name: "chain_transaction_id", Type: field.TypeString, Nullable: true, Default: ""},
-		{Name: "user_set_paid", Type: field.TypeBool, Nullable: true, Default: false},
-		{Name: "user_set_canceled", Type: field.TypeBool, Nullable: true, Default: false},
-		{Name: "fake_payment", Type: field.TypeBool, Nullable: true, Default: false},
 	}
 	// PaymentsTable holds the schema information for the "payments" table.
 	PaymentsTable = &schema.Table{
@@ -109,6 +125,7 @@ var (
 	Tables = []*schema.Table{
 		CompensatesTable,
 		OrdersTable,
+		OrderStatesTable,
 		OutOfGasTable,
 		PaymentsTable,
 	}

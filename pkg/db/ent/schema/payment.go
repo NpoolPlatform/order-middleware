@@ -5,8 +5,6 @@ import (
 	"entgo.io/ent/dialect"
 	"entgo.io/ent/schema/field"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/mixin"
-
-	basetypes "github.com/NpoolPlatform/message/npool/basetypes/order/v1"
 	"github.com/google/uuid"
 	"github.com/shopspring/decimal"
 )
@@ -40,6 +38,8 @@ func (Payment) Fields() []ent.Field {
 		field.
 			UUID("account_id", uuid.UUID{}),
 		field.
+			UUID("coin_info_id", uuid.UUID{}),
+		field.
 			Other("start_amount", decimal.Decimal{}).
 			SchemaType(map[string]string{
 				dialect.MySQL: "decimal(37,18)",
@@ -47,21 +47,14 @@ func (Payment) Fields() []ent.Field {
 			Optional().
 			Default(decimal.Decimal{}),
 		field.
-			Other("amount", decimal.Decimal{}).
+			Other("transfer_amount", decimal.Decimal{}).
 			SchemaType(map[string]string{
 				dialect.MySQL: "decimal(37,18)",
 			}).
 			Optional().
 			Default(decimal.Decimal{}),
 		field.
-			Other("pay_with_balance_amount", decimal.Decimal{}).
-			SchemaType(map[string]string{
-				dialect.MySQL: "decimal(37, 18)",
-			}).
-			Optional().
-			Default(decimal.Decimal{}),
-		field.
-			Other("finish_amount", decimal.Decimal{}).
+			Other("balance_amount", decimal.Decimal{}).
 			SchemaType(map[string]string{
 				dialect.MySQL: "decimal(37, 18)",
 			}).
@@ -88,27 +81,6 @@ func (Payment) Fields() []ent.Field {
 			}).
 			Optional().
 			Default(decimal.Decimal{}),
-		field.
-			UUID("coin_info_id", uuid.UUID{}),
-		field.String("state").
-			Optional().
-			Default(basetypes.PaymentState_DefaultPaymentState.String()),
-		field.String("state_v1").
-			Optional().
-			Default(basetypes.PaymentState_DefaultPaymentState.String()),
-		field.
-			String("chain_transaction_id").
-			Optional().
-			Default(""),
-		field.Bool("user_set_paid").
-			Optional().
-			Default(false),
-		field.Bool("user_set_canceled").
-			Optional().
-			Default(false),
-		field.Bool("fake_payment").
-			Optional().
-			Default(false),
 	}
 }
 

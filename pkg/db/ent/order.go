@@ -24,44 +24,40 @@ type Order struct {
 	UpdatedAt uint32 `json:"updated_at,omitempty"`
 	// DeletedAt holds the value of the "deleted_at" field.
 	DeletedAt uint32 `json:"deleted_at,omitempty"`
-	// GoodID holds the value of the "good_id" field.
-	GoodID uuid.UUID `json:"good_id,omitempty"`
 	// AppID holds the value of the "app_id" field.
 	AppID uuid.UUID `json:"app_id,omitempty"`
 	// UserID holds the value of the "user_id" field.
 	UserID uuid.UUID `json:"user_id,omitempty"`
+	// GoodID holds the value of the "good_id" field.
+	GoodID uuid.UUID `json:"good_id,omitempty"`
+	// PaymentID holds the value of the "payment_id" field.
+	PaymentID uuid.UUID `json:"payment_id,omitempty"`
 	// ParentOrderID holds the value of the "parent_order_id" field.
 	ParentOrderID uuid.UUID `json:"parent_order_id,omitempty"`
-	// PayWithParent holds the value of the "pay_with_parent" field.
-	PayWithParent bool `json:"pay_with_parent,omitempty"`
-	// Units holds the value of the "units" field.
-	Units uint32 `json:"units,omitempty"`
 	// UnitsV1 holds the value of the "units_v1" field.
 	UnitsV1 decimal.Decimal `json:"units_v1,omitempty"`
+	// GoodValue holds the value of the "good_value" field.
+	GoodValue decimal.Decimal `json:"good_value,omitempty"`
+	// PaymentAmount holds the value of the "payment_amount" field.
+	PaymentAmount decimal.Decimal `json:"payment_amount,omitempty"`
+	// DiscountAmount holds the value of the "discount_amount" field.
+	DiscountAmount decimal.Decimal `json:"discount_amount,omitempty"`
 	// PromotionID holds the value of the "promotion_id" field.
 	PromotionID uuid.UUID `json:"promotion_id,omitempty"`
-	// DiscountCouponID holds the value of the "discount_coupon_id" field.
-	DiscountCouponID uuid.UUID `json:"discount_coupon_id,omitempty"`
-	// UserSpecialReductionID holds the value of the "user_special_reduction_id" field.
-	UserSpecialReductionID uuid.UUID `json:"user_special_reduction_id,omitempty"`
 	// StartAt holds the value of the "start_at" field.
 	StartAt uint32 `json:"start_at,omitempty"`
-	// EndAt holds the value of the "end_at" field.
-	EndAt uint32 `json:"end_at,omitempty"`
-	// FixAmountCouponID holds the value of the "fix_amount_coupon_id" field.
-	FixAmountCouponID uuid.UUID `json:"fix_amount_coupon_id,omitempty"`
-	// Type holds the value of the "type" field.
-	Type string `json:"type,omitempty"`
-	// State holds the value of the "state" field.
-	State string `json:"state,omitempty"`
-	// StateV1 holds the value of the "state_v1" field.
-	StateV1 string `json:"state_v1,omitempty"`
+	// StartMode holds the value of the "start_mode" field.
+	StartMode string `json:"start_mode,omitempty"`
+	// DurationDays holds the value of the "duration_days" field.
+	DurationDays uint32 `json:"duration_days,omitempty"`
+	// OrderType holds the value of the "order_type" field.
+	OrderType string `json:"order_type,omitempty"`
 	// InvestmentType holds the value of the "investment_type" field.
 	InvestmentType string `json:"investment_type,omitempty"`
 	// CouponIds holds the value of the "coupon_ids" field.
 	CouponIds []uuid.UUID `json:"coupon_ids,omitempty"`
-	// LastBenefitAt holds the value of the "last_benefit_at" field.
-	LastBenefitAt uint32 `json:"last_benefit_at,omitempty"`
+	// PaymentType holds the value of the "payment_type" field.
+	PaymentType string `json:"payment_type,omitempty"`
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -71,15 +67,13 @@ func (*Order) scanValues(columns []string) ([]interface{}, error) {
 		switch columns[i] {
 		case order.FieldCouponIds:
 			values[i] = new([]byte)
-		case order.FieldUnitsV1:
+		case order.FieldUnitsV1, order.FieldGoodValue, order.FieldPaymentAmount, order.FieldDiscountAmount:
 			values[i] = new(decimal.Decimal)
-		case order.FieldPayWithParent:
-			values[i] = new(sql.NullBool)
-		case order.FieldCreatedAt, order.FieldUpdatedAt, order.FieldDeletedAt, order.FieldUnits, order.FieldStartAt, order.FieldEndAt, order.FieldLastBenefitAt:
+		case order.FieldCreatedAt, order.FieldUpdatedAt, order.FieldDeletedAt, order.FieldStartAt, order.FieldDurationDays:
 			values[i] = new(sql.NullInt64)
-		case order.FieldType, order.FieldState, order.FieldStateV1, order.FieldInvestmentType:
+		case order.FieldStartMode, order.FieldOrderType, order.FieldInvestmentType, order.FieldPaymentType:
 			values[i] = new(sql.NullString)
-		case order.FieldID, order.FieldGoodID, order.FieldAppID, order.FieldUserID, order.FieldParentOrderID, order.FieldPromotionID, order.FieldDiscountCouponID, order.FieldUserSpecialReductionID, order.FieldFixAmountCouponID:
+		case order.FieldID, order.FieldAppID, order.FieldUserID, order.FieldGoodID, order.FieldPaymentID, order.FieldParentOrderID, order.FieldPromotionID:
 			values[i] = new(uuid.UUID)
 		default:
 			return nil, fmt.Errorf("unexpected column %q for type Order", columns[i])
@@ -120,12 +114,6 @@ func (o *Order) assignValues(columns []string, values []interface{}) error {
 			} else if value.Valid {
 				o.DeletedAt = uint32(value.Int64)
 			}
-		case order.FieldGoodID:
-			if value, ok := values[i].(*uuid.UUID); !ok {
-				return fmt.Errorf("unexpected type %T for field good_id", values[i])
-			} else if value != nil {
-				o.GoodID = *value
-			}
 		case order.FieldAppID:
 			if value, ok := values[i].(*uuid.UUID); !ok {
 				return fmt.Errorf("unexpected type %T for field app_id", values[i])
@@ -138,23 +126,23 @@ func (o *Order) assignValues(columns []string, values []interface{}) error {
 			} else if value != nil {
 				o.UserID = *value
 			}
+		case order.FieldGoodID:
+			if value, ok := values[i].(*uuid.UUID); !ok {
+				return fmt.Errorf("unexpected type %T for field good_id", values[i])
+			} else if value != nil {
+				o.GoodID = *value
+			}
+		case order.FieldPaymentID:
+			if value, ok := values[i].(*uuid.UUID); !ok {
+				return fmt.Errorf("unexpected type %T for field payment_id", values[i])
+			} else if value != nil {
+				o.PaymentID = *value
+			}
 		case order.FieldParentOrderID:
 			if value, ok := values[i].(*uuid.UUID); !ok {
 				return fmt.Errorf("unexpected type %T for field parent_order_id", values[i])
 			} else if value != nil {
 				o.ParentOrderID = *value
-			}
-		case order.FieldPayWithParent:
-			if value, ok := values[i].(*sql.NullBool); !ok {
-				return fmt.Errorf("unexpected type %T for field pay_with_parent", values[i])
-			} else if value.Valid {
-				o.PayWithParent = value.Bool
-			}
-		case order.FieldUnits:
-			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for field units", values[i])
-			} else if value.Valid {
-				o.Units = uint32(value.Int64)
 			}
 		case order.FieldUnitsV1:
 			if value, ok := values[i].(*decimal.Decimal); !ok {
@@ -162,23 +150,29 @@ func (o *Order) assignValues(columns []string, values []interface{}) error {
 			} else if value != nil {
 				o.UnitsV1 = *value
 			}
+		case order.FieldGoodValue:
+			if value, ok := values[i].(*decimal.Decimal); !ok {
+				return fmt.Errorf("unexpected type %T for field good_value", values[i])
+			} else if value != nil {
+				o.GoodValue = *value
+			}
+		case order.FieldPaymentAmount:
+			if value, ok := values[i].(*decimal.Decimal); !ok {
+				return fmt.Errorf("unexpected type %T for field payment_amount", values[i])
+			} else if value != nil {
+				o.PaymentAmount = *value
+			}
+		case order.FieldDiscountAmount:
+			if value, ok := values[i].(*decimal.Decimal); !ok {
+				return fmt.Errorf("unexpected type %T for field discount_amount", values[i])
+			} else if value != nil {
+				o.DiscountAmount = *value
+			}
 		case order.FieldPromotionID:
 			if value, ok := values[i].(*uuid.UUID); !ok {
 				return fmt.Errorf("unexpected type %T for field promotion_id", values[i])
 			} else if value != nil {
 				o.PromotionID = *value
-			}
-		case order.FieldDiscountCouponID:
-			if value, ok := values[i].(*uuid.UUID); !ok {
-				return fmt.Errorf("unexpected type %T for field discount_coupon_id", values[i])
-			} else if value != nil {
-				o.DiscountCouponID = *value
-			}
-		case order.FieldUserSpecialReductionID:
-			if value, ok := values[i].(*uuid.UUID); !ok {
-				return fmt.Errorf("unexpected type %T for field user_special_reduction_id", values[i])
-			} else if value != nil {
-				o.UserSpecialReductionID = *value
 			}
 		case order.FieldStartAt:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
@@ -186,35 +180,23 @@ func (o *Order) assignValues(columns []string, values []interface{}) error {
 			} else if value.Valid {
 				o.StartAt = uint32(value.Int64)
 			}
-		case order.FieldEndAt:
+		case order.FieldStartMode:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field start_mode", values[i])
+			} else if value.Valid {
+				o.StartMode = value.String
+			}
+		case order.FieldDurationDays:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for field end_at", values[i])
+				return fmt.Errorf("unexpected type %T for field duration_days", values[i])
 			} else if value.Valid {
-				o.EndAt = uint32(value.Int64)
+				o.DurationDays = uint32(value.Int64)
 			}
-		case order.FieldFixAmountCouponID:
-			if value, ok := values[i].(*uuid.UUID); !ok {
-				return fmt.Errorf("unexpected type %T for field fix_amount_coupon_id", values[i])
-			} else if value != nil {
-				o.FixAmountCouponID = *value
-			}
-		case order.FieldType:
+		case order.FieldOrderType:
 			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field type", values[i])
+				return fmt.Errorf("unexpected type %T for field order_type", values[i])
 			} else if value.Valid {
-				o.Type = value.String
-			}
-		case order.FieldState:
-			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field state", values[i])
-			} else if value.Valid {
-				o.State = value.String
-			}
-		case order.FieldStateV1:
-			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field state_v1", values[i])
-			} else if value.Valid {
-				o.StateV1 = value.String
+				o.OrderType = value.String
 			}
 		case order.FieldInvestmentType:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -230,11 +212,11 @@ func (o *Order) assignValues(columns []string, values []interface{}) error {
 					return fmt.Errorf("unmarshal field coupon_ids: %w", err)
 				}
 			}
-		case order.FieldLastBenefitAt:
-			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for field last_benefit_at", values[i])
+		case order.FieldPaymentType:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field payment_type", values[i])
 			} else if value.Valid {
-				o.LastBenefitAt = uint32(value.Int64)
+				o.PaymentType = value.String
 			}
 		}
 	}
@@ -273,53 +255,47 @@ func (o *Order) String() string {
 	builder.WriteString("deleted_at=")
 	builder.WriteString(fmt.Sprintf("%v", o.DeletedAt))
 	builder.WriteString(", ")
-	builder.WriteString("good_id=")
-	builder.WriteString(fmt.Sprintf("%v", o.GoodID))
-	builder.WriteString(", ")
 	builder.WriteString("app_id=")
 	builder.WriteString(fmt.Sprintf("%v", o.AppID))
 	builder.WriteString(", ")
 	builder.WriteString("user_id=")
 	builder.WriteString(fmt.Sprintf("%v", o.UserID))
 	builder.WriteString(", ")
+	builder.WriteString("good_id=")
+	builder.WriteString(fmt.Sprintf("%v", o.GoodID))
+	builder.WriteString(", ")
+	builder.WriteString("payment_id=")
+	builder.WriteString(fmt.Sprintf("%v", o.PaymentID))
+	builder.WriteString(", ")
 	builder.WriteString("parent_order_id=")
 	builder.WriteString(fmt.Sprintf("%v", o.ParentOrderID))
-	builder.WriteString(", ")
-	builder.WriteString("pay_with_parent=")
-	builder.WriteString(fmt.Sprintf("%v", o.PayWithParent))
-	builder.WriteString(", ")
-	builder.WriteString("units=")
-	builder.WriteString(fmt.Sprintf("%v", o.Units))
 	builder.WriteString(", ")
 	builder.WriteString("units_v1=")
 	builder.WriteString(fmt.Sprintf("%v", o.UnitsV1))
 	builder.WriteString(", ")
+	builder.WriteString("good_value=")
+	builder.WriteString(fmt.Sprintf("%v", o.GoodValue))
+	builder.WriteString(", ")
+	builder.WriteString("payment_amount=")
+	builder.WriteString(fmt.Sprintf("%v", o.PaymentAmount))
+	builder.WriteString(", ")
+	builder.WriteString("discount_amount=")
+	builder.WriteString(fmt.Sprintf("%v", o.DiscountAmount))
+	builder.WriteString(", ")
 	builder.WriteString("promotion_id=")
 	builder.WriteString(fmt.Sprintf("%v", o.PromotionID))
-	builder.WriteString(", ")
-	builder.WriteString("discount_coupon_id=")
-	builder.WriteString(fmt.Sprintf("%v", o.DiscountCouponID))
-	builder.WriteString(", ")
-	builder.WriteString("user_special_reduction_id=")
-	builder.WriteString(fmt.Sprintf("%v", o.UserSpecialReductionID))
 	builder.WriteString(", ")
 	builder.WriteString("start_at=")
 	builder.WriteString(fmt.Sprintf("%v", o.StartAt))
 	builder.WriteString(", ")
-	builder.WriteString("end_at=")
-	builder.WriteString(fmt.Sprintf("%v", o.EndAt))
+	builder.WriteString("start_mode=")
+	builder.WriteString(o.StartMode)
 	builder.WriteString(", ")
-	builder.WriteString("fix_amount_coupon_id=")
-	builder.WriteString(fmt.Sprintf("%v", o.FixAmountCouponID))
+	builder.WriteString("duration_days=")
+	builder.WriteString(fmt.Sprintf("%v", o.DurationDays))
 	builder.WriteString(", ")
-	builder.WriteString("type=")
-	builder.WriteString(o.Type)
-	builder.WriteString(", ")
-	builder.WriteString("state=")
-	builder.WriteString(o.State)
-	builder.WriteString(", ")
-	builder.WriteString("state_v1=")
-	builder.WriteString(o.StateV1)
+	builder.WriteString("order_type=")
+	builder.WriteString(o.OrderType)
 	builder.WriteString(", ")
 	builder.WriteString("investment_type=")
 	builder.WriteString(o.InvestmentType)
@@ -327,8 +303,8 @@ func (o *Order) String() string {
 	builder.WriteString("coupon_ids=")
 	builder.WriteString(fmt.Sprintf("%v", o.CouponIds))
 	builder.WriteString(", ")
-	builder.WriteString("last_benefit_at=")
-	builder.WriteString(fmt.Sprintf("%v", o.LastBenefitAt))
+	builder.WriteString("payment_type=")
+	builder.WriteString(o.PaymentType)
 	builder.WriteByte(')')
 	return builder.String()
 }

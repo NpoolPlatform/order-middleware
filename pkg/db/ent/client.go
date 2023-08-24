@@ -13,6 +13,7 @@ import (
 
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/compensate"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/order"
+	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/orderstate"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/outofgas"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/payment"
 
@@ -29,6 +30,8 @@ type Client struct {
 	Compensate *CompensateClient
 	// Order is the client for interacting with the Order builders.
 	Order *OrderClient
+	// OrderState is the client for interacting with the OrderState builders.
+	OrderState *OrderStateClient
 	// OutOfGas is the client for interacting with the OutOfGas builders.
 	OutOfGas *OutOfGasClient
 	// Payment is the client for interacting with the Payment builders.
@@ -48,6 +51,7 @@ func (c *Client) init() {
 	c.Schema = migrate.NewSchema(c.driver)
 	c.Compensate = NewCompensateClient(c.config)
 	c.Order = NewOrderClient(c.config)
+	c.OrderState = NewOrderStateClient(c.config)
 	c.OutOfGas = NewOutOfGasClient(c.config)
 	c.Payment = NewPaymentClient(c.config)
 }
@@ -85,6 +89,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		config:     cfg,
 		Compensate: NewCompensateClient(cfg),
 		Order:      NewOrderClient(cfg),
+		OrderState: NewOrderStateClient(cfg),
 		OutOfGas:   NewOutOfGasClient(cfg),
 		Payment:    NewPaymentClient(cfg),
 	}, nil
@@ -108,6 +113,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		config:     cfg,
 		Compensate: NewCompensateClient(cfg),
 		Order:      NewOrderClient(cfg),
+		OrderState: NewOrderStateClient(cfg),
 		OutOfGas:   NewOutOfGasClient(cfg),
 		Payment:    NewPaymentClient(cfg),
 	}, nil
@@ -141,6 +147,7 @@ func (c *Client) Close() error {
 func (c *Client) Use(hooks ...Hook) {
 	c.Compensate.Use(hooks...)
 	c.Order.Use(hooks...)
+	c.OrderState.Use(hooks...)
 	c.OutOfGas.Use(hooks...)
 	c.Payment.Use(hooks...)
 }
@@ -325,6 +332,97 @@ func (c *OrderClient) GetX(ctx context.Context, id uuid.UUID) *Order {
 func (c *OrderClient) Hooks() []Hook {
 	hooks := c.hooks.Order
 	return append(hooks[:len(hooks):len(hooks)], order.Hooks[:]...)
+}
+
+// OrderStateClient is a client for the OrderState schema.
+type OrderStateClient struct {
+	config
+}
+
+// NewOrderStateClient returns a client for the OrderState from the given config.
+func NewOrderStateClient(c config) *OrderStateClient {
+	return &OrderStateClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `orderstate.Hooks(f(g(h())))`.
+func (c *OrderStateClient) Use(hooks ...Hook) {
+	c.hooks.OrderState = append(c.hooks.OrderState, hooks...)
+}
+
+// Create returns a builder for creating a OrderState entity.
+func (c *OrderStateClient) Create() *OrderStateCreate {
+	mutation := newOrderStateMutation(c.config, OpCreate)
+	return &OrderStateCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of OrderState entities.
+func (c *OrderStateClient) CreateBulk(builders ...*OrderStateCreate) *OrderStateCreateBulk {
+	return &OrderStateCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for OrderState.
+func (c *OrderStateClient) Update() *OrderStateUpdate {
+	mutation := newOrderStateMutation(c.config, OpUpdate)
+	return &OrderStateUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *OrderStateClient) UpdateOne(os *OrderState) *OrderStateUpdateOne {
+	mutation := newOrderStateMutation(c.config, OpUpdateOne, withOrderState(os))
+	return &OrderStateUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *OrderStateClient) UpdateOneID(id uuid.UUID) *OrderStateUpdateOne {
+	mutation := newOrderStateMutation(c.config, OpUpdateOne, withOrderStateID(id))
+	return &OrderStateUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for OrderState.
+func (c *OrderStateClient) Delete() *OrderStateDelete {
+	mutation := newOrderStateMutation(c.config, OpDelete)
+	return &OrderStateDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *OrderStateClient) DeleteOne(os *OrderState) *OrderStateDeleteOne {
+	return c.DeleteOneID(os.ID)
+}
+
+// DeleteOne returns a builder for deleting the given entity by its id.
+func (c *OrderStateClient) DeleteOneID(id uuid.UUID) *OrderStateDeleteOne {
+	builder := c.Delete().Where(orderstate.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &OrderStateDeleteOne{builder}
+}
+
+// Query returns a query builder for OrderState.
+func (c *OrderStateClient) Query() *OrderStateQuery {
+	return &OrderStateQuery{
+		config: c.config,
+	}
+}
+
+// Get returns a OrderState entity by its id.
+func (c *OrderStateClient) Get(ctx context.Context, id uuid.UUID) (*OrderState, error) {
+	return c.Query().Where(orderstate.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *OrderStateClient) GetX(ctx context.Context, id uuid.UUID) *OrderState {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *OrderStateClient) Hooks() []Hook {
+	hooks := c.hooks.OrderState
+	return append(hooks[:len(hooks):len(hooks)], orderstate.Hooks[:]...)
 }
 
 // OutOfGasClient is a client for the OutOfGas schema.

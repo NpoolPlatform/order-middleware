@@ -66,12 +66,6 @@ func (oc *OrderCreate) SetNillableDeletedAt(u *uint32) *OrderCreate {
 	return oc
 }
 
-// SetGoodID sets the "good_id" field.
-func (oc *OrderCreate) SetGoodID(u uuid.UUID) *OrderCreate {
-	oc.mutation.SetGoodID(u)
-	return oc
-}
-
 // SetAppID sets the "app_id" field.
 func (oc *OrderCreate) SetAppID(u uuid.UUID) *OrderCreate {
 	oc.mutation.SetAppID(u)
@@ -81,6 +75,26 @@ func (oc *OrderCreate) SetAppID(u uuid.UUID) *OrderCreate {
 // SetUserID sets the "user_id" field.
 func (oc *OrderCreate) SetUserID(u uuid.UUID) *OrderCreate {
 	oc.mutation.SetUserID(u)
+	return oc
+}
+
+// SetGoodID sets the "good_id" field.
+func (oc *OrderCreate) SetGoodID(u uuid.UUID) *OrderCreate {
+	oc.mutation.SetGoodID(u)
+	return oc
+}
+
+// SetPaymentID sets the "payment_id" field.
+func (oc *OrderCreate) SetPaymentID(u uuid.UUID) *OrderCreate {
+	oc.mutation.SetPaymentID(u)
+	return oc
+}
+
+// SetNillablePaymentID sets the "payment_id" field if the given value is not nil.
+func (oc *OrderCreate) SetNillablePaymentID(u *uuid.UUID) *OrderCreate {
+	if u != nil {
+		oc.SetPaymentID(*u)
+	}
 	return oc
 }
 
@@ -94,34 +108,6 @@ func (oc *OrderCreate) SetParentOrderID(u uuid.UUID) *OrderCreate {
 func (oc *OrderCreate) SetNillableParentOrderID(u *uuid.UUID) *OrderCreate {
 	if u != nil {
 		oc.SetParentOrderID(*u)
-	}
-	return oc
-}
-
-// SetPayWithParent sets the "pay_with_parent" field.
-func (oc *OrderCreate) SetPayWithParent(b bool) *OrderCreate {
-	oc.mutation.SetPayWithParent(b)
-	return oc
-}
-
-// SetNillablePayWithParent sets the "pay_with_parent" field if the given value is not nil.
-func (oc *OrderCreate) SetNillablePayWithParent(b *bool) *OrderCreate {
-	if b != nil {
-		oc.SetPayWithParent(*b)
-	}
-	return oc
-}
-
-// SetUnits sets the "units" field.
-func (oc *OrderCreate) SetUnits(u uint32) *OrderCreate {
-	oc.mutation.SetUnits(u)
-	return oc
-}
-
-// SetNillableUnits sets the "units" field if the given value is not nil.
-func (oc *OrderCreate) SetNillableUnits(u *uint32) *OrderCreate {
-	if u != nil {
-		oc.SetUnits(*u)
 	}
 	return oc
 }
@@ -140,6 +126,48 @@ func (oc *OrderCreate) SetNillableUnitsV1(d *decimal.Decimal) *OrderCreate {
 	return oc
 }
 
+// SetGoodValue sets the "good_value" field.
+func (oc *OrderCreate) SetGoodValue(d decimal.Decimal) *OrderCreate {
+	oc.mutation.SetGoodValue(d)
+	return oc
+}
+
+// SetNillableGoodValue sets the "good_value" field if the given value is not nil.
+func (oc *OrderCreate) SetNillableGoodValue(d *decimal.Decimal) *OrderCreate {
+	if d != nil {
+		oc.SetGoodValue(*d)
+	}
+	return oc
+}
+
+// SetPaymentAmount sets the "payment_amount" field.
+func (oc *OrderCreate) SetPaymentAmount(d decimal.Decimal) *OrderCreate {
+	oc.mutation.SetPaymentAmount(d)
+	return oc
+}
+
+// SetNillablePaymentAmount sets the "payment_amount" field if the given value is not nil.
+func (oc *OrderCreate) SetNillablePaymentAmount(d *decimal.Decimal) *OrderCreate {
+	if d != nil {
+		oc.SetPaymentAmount(*d)
+	}
+	return oc
+}
+
+// SetDiscountAmount sets the "discount_amount" field.
+func (oc *OrderCreate) SetDiscountAmount(d decimal.Decimal) *OrderCreate {
+	oc.mutation.SetDiscountAmount(d)
+	return oc
+}
+
+// SetNillableDiscountAmount sets the "discount_amount" field if the given value is not nil.
+func (oc *OrderCreate) SetNillableDiscountAmount(d *decimal.Decimal) *OrderCreate {
+	if d != nil {
+		oc.SetDiscountAmount(*d)
+	}
+	return oc
+}
+
 // SetPromotionID sets the "promotion_id" field.
 func (oc *OrderCreate) SetPromotionID(u uuid.UUID) *OrderCreate {
 	oc.mutation.SetPromotionID(u)
@@ -150,34 +178,6 @@ func (oc *OrderCreate) SetPromotionID(u uuid.UUID) *OrderCreate {
 func (oc *OrderCreate) SetNillablePromotionID(u *uuid.UUID) *OrderCreate {
 	if u != nil {
 		oc.SetPromotionID(*u)
-	}
-	return oc
-}
-
-// SetDiscountCouponID sets the "discount_coupon_id" field.
-func (oc *OrderCreate) SetDiscountCouponID(u uuid.UUID) *OrderCreate {
-	oc.mutation.SetDiscountCouponID(u)
-	return oc
-}
-
-// SetNillableDiscountCouponID sets the "discount_coupon_id" field if the given value is not nil.
-func (oc *OrderCreate) SetNillableDiscountCouponID(u *uuid.UUID) *OrderCreate {
-	if u != nil {
-		oc.SetDiscountCouponID(*u)
-	}
-	return oc
-}
-
-// SetUserSpecialReductionID sets the "user_special_reduction_id" field.
-func (oc *OrderCreate) SetUserSpecialReductionID(u uuid.UUID) *OrderCreate {
-	oc.mutation.SetUserSpecialReductionID(u)
-	return oc
-}
-
-// SetNillableUserSpecialReductionID sets the "user_special_reduction_id" field if the given value is not nil.
-func (oc *OrderCreate) SetNillableUserSpecialReductionID(u *uuid.UUID) *OrderCreate {
-	if u != nil {
-		oc.SetUserSpecialReductionID(*u)
 	}
 	return oc
 }
@@ -196,72 +196,44 @@ func (oc *OrderCreate) SetNillableStartAt(u *uint32) *OrderCreate {
 	return oc
 }
 
-// SetEndAt sets the "end_at" field.
-func (oc *OrderCreate) SetEndAt(u uint32) *OrderCreate {
-	oc.mutation.SetEndAt(u)
+// SetStartMode sets the "start_mode" field.
+func (oc *OrderCreate) SetStartMode(s string) *OrderCreate {
+	oc.mutation.SetStartMode(s)
 	return oc
 }
 
-// SetNillableEndAt sets the "end_at" field if the given value is not nil.
-func (oc *OrderCreate) SetNillableEndAt(u *uint32) *OrderCreate {
+// SetNillableStartMode sets the "start_mode" field if the given value is not nil.
+func (oc *OrderCreate) SetNillableStartMode(s *string) *OrderCreate {
+	if s != nil {
+		oc.SetStartMode(*s)
+	}
+	return oc
+}
+
+// SetDurationDays sets the "duration_days" field.
+func (oc *OrderCreate) SetDurationDays(u uint32) *OrderCreate {
+	oc.mutation.SetDurationDays(u)
+	return oc
+}
+
+// SetNillableDurationDays sets the "duration_days" field if the given value is not nil.
+func (oc *OrderCreate) SetNillableDurationDays(u *uint32) *OrderCreate {
 	if u != nil {
-		oc.SetEndAt(*u)
+		oc.SetDurationDays(*u)
 	}
 	return oc
 }
 
-// SetFixAmountCouponID sets the "fix_amount_coupon_id" field.
-func (oc *OrderCreate) SetFixAmountCouponID(u uuid.UUID) *OrderCreate {
-	oc.mutation.SetFixAmountCouponID(u)
+// SetOrderType sets the "order_type" field.
+func (oc *OrderCreate) SetOrderType(s string) *OrderCreate {
+	oc.mutation.SetOrderType(s)
 	return oc
 }
 
-// SetNillableFixAmountCouponID sets the "fix_amount_coupon_id" field if the given value is not nil.
-func (oc *OrderCreate) SetNillableFixAmountCouponID(u *uuid.UUID) *OrderCreate {
-	if u != nil {
-		oc.SetFixAmountCouponID(*u)
-	}
-	return oc
-}
-
-// SetType sets the "type" field.
-func (oc *OrderCreate) SetType(s string) *OrderCreate {
-	oc.mutation.SetType(s)
-	return oc
-}
-
-// SetNillableType sets the "type" field if the given value is not nil.
-func (oc *OrderCreate) SetNillableType(s *string) *OrderCreate {
+// SetNillableOrderType sets the "order_type" field if the given value is not nil.
+func (oc *OrderCreate) SetNillableOrderType(s *string) *OrderCreate {
 	if s != nil {
-		oc.SetType(*s)
-	}
-	return oc
-}
-
-// SetState sets the "state" field.
-func (oc *OrderCreate) SetState(s string) *OrderCreate {
-	oc.mutation.SetState(s)
-	return oc
-}
-
-// SetNillableState sets the "state" field if the given value is not nil.
-func (oc *OrderCreate) SetNillableState(s *string) *OrderCreate {
-	if s != nil {
-		oc.SetState(*s)
-	}
-	return oc
-}
-
-// SetStateV1 sets the "state_v1" field.
-func (oc *OrderCreate) SetStateV1(s string) *OrderCreate {
-	oc.mutation.SetStateV1(s)
-	return oc
-}
-
-// SetNillableStateV1 sets the "state_v1" field if the given value is not nil.
-func (oc *OrderCreate) SetNillableStateV1(s *string) *OrderCreate {
-	if s != nil {
-		oc.SetStateV1(*s)
+		oc.SetOrderType(*s)
 	}
 	return oc
 }
@@ -286,16 +258,16 @@ func (oc *OrderCreate) SetCouponIds(u []uuid.UUID) *OrderCreate {
 	return oc
 }
 
-// SetLastBenefitAt sets the "last_benefit_at" field.
-func (oc *OrderCreate) SetLastBenefitAt(u uint32) *OrderCreate {
-	oc.mutation.SetLastBenefitAt(u)
+// SetPaymentType sets the "payment_type" field.
+func (oc *OrderCreate) SetPaymentType(s string) *OrderCreate {
+	oc.mutation.SetPaymentType(s)
 	return oc
 }
 
-// SetNillableLastBenefitAt sets the "last_benefit_at" field if the given value is not nil.
-func (oc *OrderCreate) SetNillableLastBenefitAt(u *uint32) *OrderCreate {
-	if u != nil {
-		oc.SetLastBenefitAt(*u)
+// SetNillablePaymentType sets the "payment_type" field if the given value is not nil.
+func (oc *OrderCreate) SetNillablePaymentType(s *string) *OrderCreate {
+	if s != nil {
+		oc.SetPaymentType(*s)
 	}
 	return oc
 }
@@ -414,6 +386,13 @@ func (oc *OrderCreate) defaults() error {
 		v := order.DefaultDeletedAt()
 		oc.mutation.SetDeletedAt(v)
 	}
+	if _, ok := oc.mutation.PaymentID(); !ok {
+		if order.DefaultPaymentID == nil {
+			return fmt.Errorf("ent: uninitialized order.DefaultPaymentID (forgotten import ent/runtime?)")
+		}
+		v := order.DefaultPaymentID()
+		oc.mutation.SetPaymentID(v)
+	}
 	if _, ok := oc.mutation.ParentOrderID(); !ok {
 		if order.DefaultParentOrderID == nil {
 			return fmt.Errorf("ent: uninitialized order.DefaultParentOrderID (forgotten import ent/runtime?)")
@@ -421,17 +400,21 @@ func (oc *OrderCreate) defaults() error {
 		v := order.DefaultParentOrderID()
 		oc.mutation.SetParentOrderID(v)
 	}
-	if _, ok := oc.mutation.PayWithParent(); !ok {
-		v := order.DefaultPayWithParent
-		oc.mutation.SetPayWithParent(v)
-	}
-	if _, ok := oc.mutation.Units(); !ok {
-		v := order.DefaultUnits
-		oc.mutation.SetUnits(v)
-	}
 	if _, ok := oc.mutation.UnitsV1(); !ok {
 		v := order.DefaultUnitsV1
 		oc.mutation.SetUnitsV1(v)
+	}
+	if _, ok := oc.mutation.GoodValue(); !ok {
+		v := order.DefaultGoodValue
+		oc.mutation.SetGoodValue(v)
+	}
+	if _, ok := oc.mutation.PaymentAmount(); !ok {
+		v := order.DefaultPaymentAmount
+		oc.mutation.SetPaymentAmount(v)
+	}
+	if _, ok := oc.mutation.DiscountAmount(); !ok {
+		v := order.DefaultDiscountAmount
+		oc.mutation.SetDiscountAmount(v)
 	}
 	if _, ok := oc.mutation.PromotionID(); !ok {
 		if order.DefaultPromotionID == nil {
@@ -440,46 +423,21 @@ func (oc *OrderCreate) defaults() error {
 		v := order.DefaultPromotionID()
 		oc.mutation.SetPromotionID(v)
 	}
-	if _, ok := oc.mutation.DiscountCouponID(); !ok {
-		if order.DefaultDiscountCouponID == nil {
-			return fmt.Errorf("ent: uninitialized order.DefaultDiscountCouponID (forgotten import ent/runtime?)")
-		}
-		v := order.DefaultDiscountCouponID()
-		oc.mutation.SetDiscountCouponID(v)
-	}
-	if _, ok := oc.mutation.UserSpecialReductionID(); !ok {
-		if order.DefaultUserSpecialReductionID == nil {
-			return fmt.Errorf("ent: uninitialized order.DefaultUserSpecialReductionID (forgotten import ent/runtime?)")
-		}
-		v := order.DefaultUserSpecialReductionID()
-		oc.mutation.SetUserSpecialReductionID(v)
-	}
 	if _, ok := oc.mutation.StartAt(); !ok {
 		v := order.DefaultStartAt
 		oc.mutation.SetStartAt(v)
 	}
-	if _, ok := oc.mutation.EndAt(); !ok {
-		v := order.DefaultEndAt
-		oc.mutation.SetEndAt(v)
+	if _, ok := oc.mutation.StartMode(); !ok {
+		v := order.DefaultStartMode
+		oc.mutation.SetStartMode(v)
 	}
-	if _, ok := oc.mutation.FixAmountCouponID(); !ok {
-		if order.DefaultFixAmountCouponID == nil {
-			return fmt.Errorf("ent: uninitialized order.DefaultFixAmountCouponID (forgotten import ent/runtime?)")
-		}
-		v := order.DefaultFixAmountCouponID()
-		oc.mutation.SetFixAmountCouponID(v)
+	if _, ok := oc.mutation.DurationDays(); !ok {
+		v := order.DefaultDurationDays
+		oc.mutation.SetDurationDays(v)
 	}
-	if _, ok := oc.mutation.GetType(); !ok {
-		v := order.DefaultType
-		oc.mutation.SetType(v)
-	}
-	if _, ok := oc.mutation.State(); !ok {
-		v := order.DefaultState
-		oc.mutation.SetState(v)
-	}
-	if _, ok := oc.mutation.StateV1(); !ok {
-		v := order.DefaultStateV1
-		oc.mutation.SetStateV1(v)
+	if _, ok := oc.mutation.OrderType(); !ok {
+		v := order.DefaultOrderType
+		oc.mutation.SetOrderType(v)
 	}
 	if _, ok := oc.mutation.InvestmentType(); !ok {
 		v := order.DefaultInvestmentType
@@ -492,9 +450,9 @@ func (oc *OrderCreate) defaults() error {
 		v := order.DefaultCouponIds()
 		oc.mutation.SetCouponIds(v)
 	}
-	if _, ok := oc.mutation.LastBenefitAt(); !ok {
-		v := order.DefaultLastBenefitAt
-		oc.mutation.SetLastBenefitAt(v)
+	if _, ok := oc.mutation.PaymentType(); !ok {
+		v := order.DefaultPaymentType
+		oc.mutation.SetPaymentType(v)
 	}
 	if _, ok := oc.mutation.ID(); !ok {
 		if order.DefaultID == nil {
@@ -517,14 +475,14 @@ func (oc *OrderCreate) check() error {
 	if _, ok := oc.mutation.DeletedAt(); !ok {
 		return &ValidationError{Name: "deleted_at", err: errors.New(`ent: missing required field "Order.deleted_at"`)}
 	}
-	if _, ok := oc.mutation.GoodID(); !ok {
-		return &ValidationError{Name: "good_id", err: errors.New(`ent: missing required field "Order.good_id"`)}
-	}
 	if _, ok := oc.mutation.AppID(); !ok {
 		return &ValidationError{Name: "app_id", err: errors.New(`ent: missing required field "Order.app_id"`)}
 	}
 	if _, ok := oc.mutation.UserID(); !ok {
 		return &ValidationError{Name: "user_id", err: errors.New(`ent: missing required field "Order.user_id"`)}
+	}
+	if _, ok := oc.mutation.GoodID(); !ok {
+		return &ValidationError{Name: "good_id", err: errors.New(`ent: missing required field "Order.good_id"`)}
 	}
 	return nil
 }
@@ -587,14 +545,6 @@ func (oc *OrderCreate) createSpec() (*Order, *sqlgraph.CreateSpec) {
 		})
 		_node.DeletedAt = value
 	}
-	if value, ok := oc.mutation.GoodID(); ok {
-		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
-			Type:   field.TypeUUID,
-			Value:  value,
-			Column: order.FieldGoodID,
-		})
-		_node.GoodID = value
-	}
 	if value, ok := oc.mutation.AppID(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
 			Type:   field.TypeUUID,
@@ -611,6 +561,22 @@ func (oc *OrderCreate) createSpec() (*Order, *sqlgraph.CreateSpec) {
 		})
 		_node.UserID = value
 	}
+	if value, ok := oc.mutation.GoodID(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Value:  value,
+			Column: order.FieldGoodID,
+		})
+		_node.GoodID = value
+	}
+	if value, ok := oc.mutation.PaymentID(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Value:  value,
+			Column: order.FieldPaymentID,
+		})
+		_node.PaymentID = value
+	}
 	if value, ok := oc.mutation.ParentOrderID(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
 			Type:   field.TypeUUID,
@@ -618,22 +584,6 @@ func (oc *OrderCreate) createSpec() (*Order, *sqlgraph.CreateSpec) {
 			Column: order.FieldParentOrderID,
 		})
 		_node.ParentOrderID = value
-	}
-	if value, ok := oc.mutation.PayWithParent(); ok {
-		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
-			Type:   field.TypeBool,
-			Value:  value,
-			Column: order.FieldPayWithParent,
-		})
-		_node.PayWithParent = value
-	}
-	if value, ok := oc.mutation.Units(); ok {
-		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
-			Type:   field.TypeUint32,
-			Value:  value,
-			Column: order.FieldUnits,
-		})
-		_node.Units = value
 	}
 	if value, ok := oc.mutation.UnitsV1(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -643,6 +593,30 @@ func (oc *OrderCreate) createSpec() (*Order, *sqlgraph.CreateSpec) {
 		})
 		_node.UnitsV1 = value
 	}
+	if value, ok := oc.mutation.GoodValue(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeOther,
+			Value:  value,
+			Column: order.FieldGoodValue,
+		})
+		_node.GoodValue = value
+	}
+	if value, ok := oc.mutation.PaymentAmount(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeOther,
+			Value:  value,
+			Column: order.FieldPaymentAmount,
+		})
+		_node.PaymentAmount = value
+	}
+	if value, ok := oc.mutation.DiscountAmount(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeOther,
+			Value:  value,
+			Column: order.FieldDiscountAmount,
+		})
+		_node.DiscountAmount = value
+	}
 	if value, ok := oc.mutation.PromotionID(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
 			Type:   field.TypeUUID,
@@ -650,22 +624,6 @@ func (oc *OrderCreate) createSpec() (*Order, *sqlgraph.CreateSpec) {
 			Column: order.FieldPromotionID,
 		})
 		_node.PromotionID = value
-	}
-	if value, ok := oc.mutation.DiscountCouponID(); ok {
-		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
-			Type:   field.TypeUUID,
-			Value:  value,
-			Column: order.FieldDiscountCouponID,
-		})
-		_node.DiscountCouponID = value
-	}
-	if value, ok := oc.mutation.UserSpecialReductionID(); ok {
-		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
-			Type:   field.TypeUUID,
-			Value:  value,
-			Column: order.FieldUserSpecialReductionID,
-		})
-		_node.UserSpecialReductionID = value
 	}
 	if value, ok := oc.mutation.StartAt(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -675,45 +633,29 @@ func (oc *OrderCreate) createSpec() (*Order, *sqlgraph.CreateSpec) {
 		})
 		_node.StartAt = value
 	}
-	if value, ok := oc.mutation.EndAt(); ok {
+	if value, ok := oc.mutation.StartMode(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: order.FieldStartMode,
+		})
+		_node.StartMode = value
+	}
+	if value, ok := oc.mutation.DurationDays(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
 			Type:   field.TypeUint32,
 			Value:  value,
-			Column: order.FieldEndAt,
+			Column: order.FieldDurationDays,
 		})
-		_node.EndAt = value
+		_node.DurationDays = value
 	}
-	if value, ok := oc.mutation.FixAmountCouponID(); ok {
-		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
-			Type:   field.TypeUUID,
-			Value:  value,
-			Column: order.FieldFixAmountCouponID,
-		})
-		_node.FixAmountCouponID = value
-	}
-	if value, ok := oc.mutation.GetType(); ok {
+	if value, ok := oc.mutation.OrderType(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
 			Value:  value,
-			Column: order.FieldType,
+			Column: order.FieldOrderType,
 		})
-		_node.Type = value
-	}
-	if value, ok := oc.mutation.State(); ok {
-		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Value:  value,
-			Column: order.FieldState,
-		})
-		_node.State = value
-	}
-	if value, ok := oc.mutation.StateV1(); ok {
-		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Value:  value,
-			Column: order.FieldStateV1,
-		})
-		_node.StateV1 = value
+		_node.OrderType = value
 	}
 	if value, ok := oc.mutation.InvestmentType(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -731,13 +673,13 @@ func (oc *OrderCreate) createSpec() (*Order, *sqlgraph.CreateSpec) {
 		})
 		_node.CouponIds = value
 	}
-	if value, ok := oc.mutation.LastBenefitAt(); ok {
+	if value, ok := oc.mutation.PaymentType(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
-			Type:   field.TypeUint32,
+			Type:   field.TypeString,
 			Value:  value,
-			Column: order.FieldLastBenefitAt,
+			Column: order.FieldPaymentType,
 		})
-		_node.LastBenefitAt = value
+		_node.PaymentType = value
 	}
 	return _node, _spec
 }
@@ -847,18 +789,6 @@ func (u *OrderUpsert) AddDeletedAt(v uint32) *OrderUpsert {
 	return u
 }
 
-// SetGoodID sets the "good_id" field.
-func (u *OrderUpsert) SetGoodID(v uuid.UUID) *OrderUpsert {
-	u.Set(order.FieldGoodID, v)
-	return u
-}
-
-// UpdateGoodID sets the "good_id" field to the value that was provided on create.
-func (u *OrderUpsert) UpdateGoodID() *OrderUpsert {
-	u.SetExcluded(order.FieldGoodID)
-	return u
-}
-
 // SetAppID sets the "app_id" field.
 func (u *OrderUpsert) SetAppID(v uuid.UUID) *OrderUpsert {
 	u.Set(order.FieldAppID, v)
@@ -883,6 +813,36 @@ func (u *OrderUpsert) UpdateUserID() *OrderUpsert {
 	return u
 }
 
+// SetGoodID sets the "good_id" field.
+func (u *OrderUpsert) SetGoodID(v uuid.UUID) *OrderUpsert {
+	u.Set(order.FieldGoodID, v)
+	return u
+}
+
+// UpdateGoodID sets the "good_id" field to the value that was provided on create.
+func (u *OrderUpsert) UpdateGoodID() *OrderUpsert {
+	u.SetExcluded(order.FieldGoodID)
+	return u
+}
+
+// SetPaymentID sets the "payment_id" field.
+func (u *OrderUpsert) SetPaymentID(v uuid.UUID) *OrderUpsert {
+	u.Set(order.FieldPaymentID, v)
+	return u
+}
+
+// UpdatePaymentID sets the "payment_id" field to the value that was provided on create.
+func (u *OrderUpsert) UpdatePaymentID() *OrderUpsert {
+	u.SetExcluded(order.FieldPaymentID)
+	return u
+}
+
+// ClearPaymentID clears the value of the "payment_id" field.
+func (u *OrderUpsert) ClearPaymentID() *OrderUpsert {
+	u.SetNull(order.FieldPaymentID)
+	return u
+}
+
 // SetParentOrderID sets the "parent_order_id" field.
 func (u *OrderUpsert) SetParentOrderID(v uuid.UUID) *OrderUpsert {
 	u.Set(order.FieldParentOrderID, v)
@@ -898,48 +858,6 @@ func (u *OrderUpsert) UpdateParentOrderID() *OrderUpsert {
 // ClearParentOrderID clears the value of the "parent_order_id" field.
 func (u *OrderUpsert) ClearParentOrderID() *OrderUpsert {
 	u.SetNull(order.FieldParentOrderID)
-	return u
-}
-
-// SetPayWithParent sets the "pay_with_parent" field.
-func (u *OrderUpsert) SetPayWithParent(v bool) *OrderUpsert {
-	u.Set(order.FieldPayWithParent, v)
-	return u
-}
-
-// UpdatePayWithParent sets the "pay_with_parent" field to the value that was provided on create.
-func (u *OrderUpsert) UpdatePayWithParent() *OrderUpsert {
-	u.SetExcluded(order.FieldPayWithParent)
-	return u
-}
-
-// ClearPayWithParent clears the value of the "pay_with_parent" field.
-func (u *OrderUpsert) ClearPayWithParent() *OrderUpsert {
-	u.SetNull(order.FieldPayWithParent)
-	return u
-}
-
-// SetUnits sets the "units" field.
-func (u *OrderUpsert) SetUnits(v uint32) *OrderUpsert {
-	u.Set(order.FieldUnits, v)
-	return u
-}
-
-// UpdateUnits sets the "units" field to the value that was provided on create.
-func (u *OrderUpsert) UpdateUnits() *OrderUpsert {
-	u.SetExcluded(order.FieldUnits)
-	return u
-}
-
-// AddUnits adds v to the "units" field.
-func (u *OrderUpsert) AddUnits(v uint32) *OrderUpsert {
-	u.Add(order.FieldUnits, v)
-	return u
-}
-
-// ClearUnits clears the value of the "units" field.
-func (u *OrderUpsert) ClearUnits() *OrderUpsert {
-	u.SetNull(order.FieldUnits)
 	return u
 }
 
@@ -961,6 +879,60 @@ func (u *OrderUpsert) ClearUnitsV1() *OrderUpsert {
 	return u
 }
 
+// SetGoodValue sets the "good_value" field.
+func (u *OrderUpsert) SetGoodValue(v decimal.Decimal) *OrderUpsert {
+	u.Set(order.FieldGoodValue, v)
+	return u
+}
+
+// UpdateGoodValue sets the "good_value" field to the value that was provided on create.
+func (u *OrderUpsert) UpdateGoodValue() *OrderUpsert {
+	u.SetExcluded(order.FieldGoodValue)
+	return u
+}
+
+// ClearGoodValue clears the value of the "good_value" field.
+func (u *OrderUpsert) ClearGoodValue() *OrderUpsert {
+	u.SetNull(order.FieldGoodValue)
+	return u
+}
+
+// SetPaymentAmount sets the "payment_amount" field.
+func (u *OrderUpsert) SetPaymentAmount(v decimal.Decimal) *OrderUpsert {
+	u.Set(order.FieldPaymentAmount, v)
+	return u
+}
+
+// UpdatePaymentAmount sets the "payment_amount" field to the value that was provided on create.
+func (u *OrderUpsert) UpdatePaymentAmount() *OrderUpsert {
+	u.SetExcluded(order.FieldPaymentAmount)
+	return u
+}
+
+// ClearPaymentAmount clears the value of the "payment_amount" field.
+func (u *OrderUpsert) ClearPaymentAmount() *OrderUpsert {
+	u.SetNull(order.FieldPaymentAmount)
+	return u
+}
+
+// SetDiscountAmount sets the "discount_amount" field.
+func (u *OrderUpsert) SetDiscountAmount(v decimal.Decimal) *OrderUpsert {
+	u.Set(order.FieldDiscountAmount, v)
+	return u
+}
+
+// UpdateDiscountAmount sets the "discount_amount" field to the value that was provided on create.
+func (u *OrderUpsert) UpdateDiscountAmount() *OrderUpsert {
+	u.SetExcluded(order.FieldDiscountAmount)
+	return u
+}
+
+// ClearDiscountAmount clears the value of the "discount_amount" field.
+func (u *OrderUpsert) ClearDiscountAmount() *OrderUpsert {
+	u.SetNull(order.FieldDiscountAmount)
+	return u
+}
+
 // SetPromotionID sets the "promotion_id" field.
 func (u *OrderUpsert) SetPromotionID(v uuid.UUID) *OrderUpsert {
 	u.Set(order.FieldPromotionID, v)
@@ -976,42 +948,6 @@ func (u *OrderUpsert) UpdatePromotionID() *OrderUpsert {
 // ClearPromotionID clears the value of the "promotion_id" field.
 func (u *OrderUpsert) ClearPromotionID() *OrderUpsert {
 	u.SetNull(order.FieldPromotionID)
-	return u
-}
-
-// SetDiscountCouponID sets the "discount_coupon_id" field.
-func (u *OrderUpsert) SetDiscountCouponID(v uuid.UUID) *OrderUpsert {
-	u.Set(order.FieldDiscountCouponID, v)
-	return u
-}
-
-// UpdateDiscountCouponID sets the "discount_coupon_id" field to the value that was provided on create.
-func (u *OrderUpsert) UpdateDiscountCouponID() *OrderUpsert {
-	u.SetExcluded(order.FieldDiscountCouponID)
-	return u
-}
-
-// ClearDiscountCouponID clears the value of the "discount_coupon_id" field.
-func (u *OrderUpsert) ClearDiscountCouponID() *OrderUpsert {
-	u.SetNull(order.FieldDiscountCouponID)
-	return u
-}
-
-// SetUserSpecialReductionID sets the "user_special_reduction_id" field.
-func (u *OrderUpsert) SetUserSpecialReductionID(v uuid.UUID) *OrderUpsert {
-	u.Set(order.FieldUserSpecialReductionID, v)
-	return u
-}
-
-// UpdateUserSpecialReductionID sets the "user_special_reduction_id" field to the value that was provided on create.
-func (u *OrderUpsert) UpdateUserSpecialReductionID() *OrderUpsert {
-	u.SetExcluded(order.FieldUserSpecialReductionID)
-	return u
-}
-
-// ClearUserSpecialReductionID clears the value of the "user_special_reduction_id" field.
-func (u *OrderUpsert) ClearUserSpecialReductionID() *OrderUpsert {
-	u.SetNull(order.FieldUserSpecialReductionID)
 	return u
 }
 
@@ -1039,99 +975,63 @@ func (u *OrderUpsert) ClearStartAt() *OrderUpsert {
 	return u
 }
 
-// SetEndAt sets the "end_at" field.
-func (u *OrderUpsert) SetEndAt(v uint32) *OrderUpsert {
-	u.Set(order.FieldEndAt, v)
+// SetStartMode sets the "start_mode" field.
+func (u *OrderUpsert) SetStartMode(v string) *OrderUpsert {
+	u.Set(order.FieldStartMode, v)
 	return u
 }
 
-// UpdateEndAt sets the "end_at" field to the value that was provided on create.
-func (u *OrderUpsert) UpdateEndAt() *OrderUpsert {
-	u.SetExcluded(order.FieldEndAt)
+// UpdateStartMode sets the "start_mode" field to the value that was provided on create.
+func (u *OrderUpsert) UpdateStartMode() *OrderUpsert {
+	u.SetExcluded(order.FieldStartMode)
 	return u
 }
 
-// AddEndAt adds v to the "end_at" field.
-func (u *OrderUpsert) AddEndAt(v uint32) *OrderUpsert {
-	u.Add(order.FieldEndAt, v)
+// ClearStartMode clears the value of the "start_mode" field.
+func (u *OrderUpsert) ClearStartMode() *OrderUpsert {
+	u.SetNull(order.FieldStartMode)
 	return u
 }
 
-// ClearEndAt clears the value of the "end_at" field.
-func (u *OrderUpsert) ClearEndAt() *OrderUpsert {
-	u.SetNull(order.FieldEndAt)
+// SetDurationDays sets the "duration_days" field.
+func (u *OrderUpsert) SetDurationDays(v uint32) *OrderUpsert {
+	u.Set(order.FieldDurationDays, v)
 	return u
 }
 
-// SetFixAmountCouponID sets the "fix_amount_coupon_id" field.
-func (u *OrderUpsert) SetFixAmountCouponID(v uuid.UUID) *OrderUpsert {
-	u.Set(order.FieldFixAmountCouponID, v)
+// UpdateDurationDays sets the "duration_days" field to the value that was provided on create.
+func (u *OrderUpsert) UpdateDurationDays() *OrderUpsert {
+	u.SetExcluded(order.FieldDurationDays)
 	return u
 }
 
-// UpdateFixAmountCouponID sets the "fix_amount_coupon_id" field to the value that was provided on create.
-func (u *OrderUpsert) UpdateFixAmountCouponID() *OrderUpsert {
-	u.SetExcluded(order.FieldFixAmountCouponID)
+// AddDurationDays adds v to the "duration_days" field.
+func (u *OrderUpsert) AddDurationDays(v uint32) *OrderUpsert {
+	u.Add(order.FieldDurationDays, v)
 	return u
 }
 
-// ClearFixAmountCouponID clears the value of the "fix_amount_coupon_id" field.
-func (u *OrderUpsert) ClearFixAmountCouponID() *OrderUpsert {
-	u.SetNull(order.FieldFixAmountCouponID)
+// ClearDurationDays clears the value of the "duration_days" field.
+func (u *OrderUpsert) ClearDurationDays() *OrderUpsert {
+	u.SetNull(order.FieldDurationDays)
 	return u
 }
 
-// SetType sets the "type" field.
-func (u *OrderUpsert) SetType(v string) *OrderUpsert {
-	u.Set(order.FieldType, v)
+// SetOrderType sets the "order_type" field.
+func (u *OrderUpsert) SetOrderType(v string) *OrderUpsert {
+	u.Set(order.FieldOrderType, v)
 	return u
 }
 
-// UpdateType sets the "type" field to the value that was provided on create.
-func (u *OrderUpsert) UpdateType() *OrderUpsert {
-	u.SetExcluded(order.FieldType)
+// UpdateOrderType sets the "order_type" field to the value that was provided on create.
+func (u *OrderUpsert) UpdateOrderType() *OrderUpsert {
+	u.SetExcluded(order.FieldOrderType)
 	return u
 }
 
-// ClearType clears the value of the "type" field.
-func (u *OrderUpsert) ClearType() *OrderUpsert {
-	u.SetNull(order.FieldType)
-	return u
-}
-
-// SetState sets the "state" field.
-func (u *OrderUpsert) SetState(v string) *OrderUpsert {
-	u.Set(order.FieldState, v)
-	return u
-}
-
-// UpdateState sets the "state" field to the value that was provided on create.
-func (u *OrderUpsert) UpdateState() *OrderUpsert {
-	u.SetExcluded(order.FieldState)
-	return u
-}
-
-// ClearState clears the value of the "state" field.
-func (u *OrderUpsert) ClearState() *OrderUpsert {
-	u.SetNull(order.FieldState)
-	return u
-}
-
-// SetStateV1 sets the "state_v1" field.
-func (u *OrderUpsert) SetStateV1(v string) *OrderUpsert {
-	u.Set(order.FieldStateV1, v)
-	return u
-}
-
-// UpdateStateV1 sets the "state_v1" field to the value that was provided on create.
-func (u *OrderUpsert) UpdateStateV1() *OrderUpsert {
-	u.SetExcluded(order.FieldStateV1)
-	return u
-}
-
-// ClearStateV1 clears the value of the "state_v1" field.
-func (u *OrderUpsert) ClearStateV1() *OrderUpsert {
-	u.SetNull(order.FieldStateV1)
+// ClearOrderType clears the value of the "order_type" field.
+func (u *OrderUpsert) ClearOrderType() *OrderUpsert {
+	u.SetNull(order.FieldOrderType)
 	return u
 }
 
@@ -1171,27 +1071,21 @@ func (u *OrderUpsert) ClearCouponIds() *OrderUpsert {
 	return u
 }
 
-// SetLastBenefitAt sets the "last_benefit_at" field.
-func (u *OrderUpsert) SetLastBenefitAt(v uint32) *OrderUpsert {
-	u.Set(order.FieldLastBenefitAt, v)
+// SetPaymentType sets the "payment_type" field.
+func (u *OrderUpsert) SetPaymentType(v string) *OrderUpsert {
+	u.Set(order.FieldPaymentType, v)
 	return u
 }
 
-// UpdateLastBenefitAt sets the "last_benefit_at" field to the value that was provided on create.
-func (u *OrderUpsert) UpdateLastBenefitAt() *OrderUpsert {
-	u.SetExcluded(order.FieldLastBenefitAt)
+// UpdatePaymentType sets the "payment_type" field to the value that was provided on create.
+func (u *OrderUpsert) UpdatePaymentType() *OrderUpsert {
+	u.SetExcluded(order.FieldPaymentType)
 	return u
 }
 
-// AddLastBenefitAt adds v to the "last_benefit_at" field.
-func (u *OrderUpsert) AddLastBenefitAt(v uint32) *OrderUpsert {
-	u.Add(order.FieldLastBenefitAt, v)
-	return u
-}
-
-// ClearLastBenefitAt clears the value of the "last_benefit_at" field.
-func (u *OrderUpsert) ClearLastBenefitAt() *OrderUpsert {
-	u.SetNull(order.FieldLastBenefitAt)
+// ClearPaymentType clears the value of the "payment_type" field.
+func (u *OrderUpsert) ClearPaymentType() *OrderUpsert {
+	u.SetNull(order.FieldPaymentType)
 	return u
 }
 
@@ -1308,20 +1202,6 @@ func (u *OrderUpsertOne) UpdateDeletedAt() *OrderUpsertOne {
 	})
 }
 
-// SetGoodID sets the "good_id" field.
-func (u *OrderUpsertOne) SetGoodID(v uuid.UUID) *OrderUpsertOne {
-	return u.Update(func(s *OrderUpsert) {
-		s.SetGoodID(v)
-	})
-}
-
-// UpdateGoodID sets the "good_id" field to the value that was provided on create.
-func (u *OrderUpsertOne) UpdateGoodID() *OrderUpsertOne {
-	return u.Update(func(s *OrderUpsert) {
-		s.UpdateGoodID()
-	})
-}
-
 // SetAppID sets the "app_id" field.
 func (u *OrderUpsertOne) SetAppID(v uuid.UUID) *OrderUpsertOne {
 	return u.Update(func(s *OrderUpsert) {
@@ -1350,6 +1230,41 @@ func (u *OrderUpsertOne) UpdateUserID() *OrderUpsertOne {
 	})
 }
 
+// SetGoodID sets the "good_id" field.
+func (u *OrderUpsertOne) SetGoodID(v uuid.UUID) *OrderUpsertOne {
+	return u.Update(func(s *OrderUpsert) {
+		s.SetGoodID(v)
+	})
+}
+
+// UpdateGoodID sets the "good_id" field to the value that was provided on create.
+func (u *OrderUpsertOne) UpdateGoodID() *OrderUpsertOne {
+	return u.Update(func(s *OrderUpsert) {
+		s.UpdateGoodID()
+	})
+}
+
+// SetPaymentID sets the "payment_id" field.
+func (u *OrderUpsertOne) SetPaymentID(v uuid.UUID) *OrderUpsertOne {
+	return u.Update(func(s *OrderUpsert) {
+		s.SetPaymentID(v)
+	})
+}
+
+// UpdatePaymentID sets the "payment_id" field to the value that was provided on create.
+func (u *OrderUpsertOne) UpdatePaymentID() *OrderUpsertOne {
+	return u.Update(func(s *OrderUpsert) {
+		s.UpdatePaymentID()
+	})
+}
+
+// ClearPaymentID clears the value of the "payment_id" field.
+func (u *OrderUpsertOne) ClearPaymentID() *OrderUpsertOne {
+	return u.Update(func(s *OrderUpsert) {
+		s.ClearPaymentID()
+	})
+}
+
 // SetParentOrderID sets the "parent_order_id" field.
 func (u *OrderUpsertOne) SetParentOrderID(v uuid.UUID) *OrderUpsertOne {
 	return u.Update(func(s *OrderUpsert) {
@@ -1368,55 +1283,6 @@ func (u *OrderUpsertOne) UpdateParentOrderID() *OrderUpsertOne {
 func (u *OrderUpsertOne) ClearParentOrderID() *OrderUpsertOne {
 	return u.Update(func(s *OrderUpsert) {
 		s.ClearParentOrderID()
-	})
-}
-
-// SetPayWithParent sets the "pay_with_parent" field.
-func (u *OrderUpsertOne) SetPayWithParent(v bool) *OrderUpsertOne {
-	return u.Update(func(s *OrderUpsert) {
-		s.SetPayWithParent(v)
-	})
-}
-
-// UpdatePayWithParent sets the "pay_with_parent" field to the value that was provided on create.
-func (u *OrderUpsertOne) UpdatePayWithParent() *OrderUpsertOne {
-	return u.Update(func(s *OrderUpsert) {
-		s.UpdatePayWithParent()
-	})
-}
-
-// ClearPayWithParent clears the value of the "pay_with_parent" field.
-func (u *OrderUpsertOne) ClearPayWithParent() *OrderUpsertOne {
-	return u.Update(func(s *OrderUpsert) {
-		s.ClearPayWithParent()
-	})
-}
-
-// SetUnits sets the "units" field.
-func (u *OrderUpsertOne) SetUnits(v uint32) *OrderUpsertOne {
-	return u.Update(func(s *OrderUpsert) {
-		s.SetUnits(v)
-	})
-}
-
-// AddUnits adds v to the "units" field.
-func (u *OrderUpsertOne) AddUnits(v uint32) *OrderUpsertOne {
-	return u.Update(func(s *OrderUpsert) {
-		s.AddUnits(v)
-	})
-}
-
-// UpdateUnits sets the "units" field to the value that was provided on create.
-func (u *OrderUpsertOne) UpdateUnits() *OrderUpsertOne {
-	return u.Update(func(s *OrderUpsert) {
-		s.UpdateUnits()
-	})
-}
-
-// ClearUnits clears the value of the "units" field.
-func (u *OrderUpsertOne) ClearUnits() *OrderUpsertOne {
-	return u.Update(func(s *OrderUpsert) {
-		s.ClearUnits()
 	})
 }
 
@@ -1441,6 +1307,69 @@ func (u *OrderUpsertOne) ClearUnitsV1() *OrderUpsertOne {
 	})
 }
 
+// SetGoodValue sets the "good_value" field.
+func (u *OrderUpsertOne) SetGoodValue(v decimal.Decimal) *OrderUpsertOne {
+	return u.Update(func(s *OrderUpsert) {
+		s.SetGoodValue(v)
+	})
+}
+
+// UpdateGoodValue sets the "good_value" field to the value that was provided on create.
+func (u *OrderUpsertOne) UpdateGoodValue() *OrderUpsertOne {
+	return u.Update(func(s *OrderUpsert) {
+		s.UpdateGoodValue()
+	})
+}
+
+// ClearGoodValue clears the value of the "good_value" field.
+func (u *OrderUpsertOne) ClearGoodValue() *OrderUpsertOne {
+	return u.Update(func(s *OrderUpsert) {
+		s.ClearGoodValue()
+	})
+}
+
+// SetPaymentAmount sets the "payment_amount" field.
+func (u *OrderUpsertOne) SetPaymentAmount(v decimal.Decimal) *OrderUpsertOne {
+	return u.Update(func(s *OrderUpsert) {
+		s.SetPaymentAmount(v)
+	})
+}
+
+// UpdatePaymentAmount sets the "payment_amount" field to the value that was provided on create.
+func (u *OrderUpsertOne) UpdatePaymentAmount() *OrderUpsertOne {
+	return u.Update(func(s *OrderUpsert) {
+		s.UpdatePaymentAmount()
+	})
+}
+
+// ClearPaymentAmount clears the value of the "payment_amount" field.
+func (u *OrderUpsertOne) ClearPaymentAmount() *OrderUpsertOne {
+	return u.Update(func(s *OrderUpsert) {
+		s.ClearPaymentAmount()
+	})
+}
+
+// SetDiscountAmount sets the "discount_amount" field.
+func (u *OrderUpsertOne) SetDiscountAmount(v decimal.Decimal) *OrderUpsertOne {
+	return u.Update(func(s *OrderUpsert) {
+		s.SetDiscountAmount(v)
+	})
+}
+
+// UpdateDiscountAmount sets the "discount_amount" field to the value that was provided on create.
+func (u *OrderUpsertOne) UpdateDiscountAmount() *OrderUpsertOne {
+	return u.Update(func(s *OrderUpsert) {
+		s.UpdateDiscountAmount()
+	})
+}
+
+// ClearDiscountAmount clears the value of the "discount_amount" field.
+func (u *OrderUpsertOne) ClearDiscountAmount() *OrderUpsertOne {
+	return u.Update(func(s *OrderUpsert) {
+		s.ClearDiscountAmount()
+	})
+}
+
 // SetPromotionID sets the "promotion_id" field.
 func (u *OrderUpsertOne) SetPromotionID(v uuid.UUID) *OrderUpsertOne {
 	return u.Update(func(s *OrderUpsert) {
@@ -1459,48 +1388,6 @@ func (u *OrderUpsertOne) UpdatePromotionID() *OrderUpsertOne {
 func (u *OrderUpsertOne) ClearPromotionID() *OrderUpsertOne {
 	return u.Update(func(s *OrderUpsert) {
 		s.ClearPromotionID()
-	})
-}
-
-// SetDiscountCouponID sets the "discount_coupon_id" field.
-func (u *OrderUpsertOne) SetDiscountCouponID(v uuid.UUID) *OrderUpsertOne {
-	return u.Update(func(s *OrderUpsert) {
-		s.SetDiscountCouponID(v)
-	})
-}
-
-// UpdateDiscountCouponID sets the "discount_coupon_id" field to the value that was provided on create.
-func (u *OrderUpsertOne) UpdateDiscountCouponID() *OrderUpsertOne {
-	return u.Update(func(s *OrderUpsert) {
-		s.UpdateDiscountCouponID()
-	})
-}
-
-// ClearDiscountCouponID clears the value of the "discount_coupon_id" field.
-func (u *OrderUpsertOne) ClearDiscountCouponID() *OrderUpsertOne {
-	return u.Update(func(s *OrderUpsert) {
-		s.ClearDiscountCouponID()
-	})
-}
-
-// SetUserSpecialReductionID sets the "user_special_reduction_id" field.
-func (u *OrderUpsertOne) SetUserSpecialReductionID(v uuid.UUID) *OrderUpsertOne {
-	return u.Update(func(s *OrderUpsert) {
-		s.SetUserSpecialReductionID(v)
-	})
-}
-
-// UpdateUserSpecialReductionID sets the "user_special_reduction_id" field to the value that was provided on create.
-func (u *OrderUpsertOne) UpdateUserSpecialReductionID() *OrderUpsertOne {
-	return u.Update(func(s *OrderUpsert) {
-		s.UpdateUserSpecialReductionID()
-	})
-}
-
-// ClearUserSpecialReductionID clears the value of the "user_special_reduction_id" field.
-func (u *OrderUpsertOne) ClearUserSpecialReductionID() *OrderUpsertOne {
-	return u.Update(func(s *OrderUpsert) {
-		s.ClearUserSpecialReductionID()
 	})
 }
 
@@ -1532,115 +1419,73 @@ func (u *OrderUpsertOne) ClearStartAt() *OrderUpsertOne {
 	})
 }
 
-// SetEndAt sets the "end_at" field.
-func (u *OrderUpsertOne) SetEndAt(v uint32) *OrderUpsertOne {
+// SetStartMode sets the "start_mode" field.
+func (u *OrderUpsertOne) SetStartMode(v string) *OrderUpsertOne {
 	return u.Update(func(s *OrderUpsert) {
-		s.SetEndAt(v)
+		s.SetStartMode(v)
 	})
 }
 
-// AddEndAt adds v to the "end_at" field.
-func (u *OrderUpsertOne) AddEndAt(v uint32) *OrderUpsertOne {
+// UpdateStartMode sets the "start_mode" field to the value that was provided on create.
+func (u *OrderUpsertOne) UpdateStartMode() *OrderUpsertOne {
 	return u.Update(func(s *OrderUpsert) {
-		s.AddEndAt(v)
+		s.UpdateStartMode()
 	})
 }
 
-// UpdateEndAt sets the "end_at" field to the value that was provided on create.
-func (u *OrderUpsertOne) UpdateEndAt() *OrderUpsertOne {
+// ClearStartMode clears the value of the "start_mode" field.
+func (u *OrderUpsertOne) ClearStartMode() *OrderUpsertOne {
 	return u.Update(func(s *OrderUpsert) {
-		s.UpdateEndAt()
+		s.ClearStartMode()
 	})
 }
 
-// ClearEndAt clears the value of the "end_at" field.
-func (u *OrderUpsertOne) ClearEndAt() *OrderUpsertOne {
+// SetDurationDays sets the "duration_days" field.
+func (u *OrderUpsertOne) SetDurationDays(v uint32) *OrderUpsertOne {
 	return u.Update(func(s *OrderUpsert) {
-		s.ClearEndAt()
+		s.SetDurationDays(v)
 	})
 }
 
-// SetFixAmountCouponID sets the "fix_amount_coupon_id" field.
-func (u *OrderUpsertOne) SetFixAmountCouponID(v uuid.UUID) *OrderUpsertOne {
+// AddDurationDays adds v to the "duration_days" field.
+func (u *OrderUpsertOne) AddDurationDays(v uint32) *OrderUpsertOne {
 	return u.Update(func(s *OrderUpsert) {
-		s.SetFixAmountCouponID(v)
+		s.AddDurationDays(v)
 	})
 }
 
-// UpdateFixAmountCouponID sets the "fix_amount_coupon_id" field to the value that was provided on create.
-func (u *OrderUpsertOne) UpdateFixAmountCouponID() *OrderUpsertOne {
+// UpdateDurationDays sets the "duration_days" field to the value that was provided on create.
+func (u *OrderUpsertOne) UpdateDurationDays() *OrderUpsertOne {
 	return u.Update(func(s *OrderUpsert) {
-		s.UpdateFixAmountCouponID()
+		s.UpdateDurationDays()
 	})
 }
 
-// ClearFixAmountCouponID clears the value of the "fix_amount_coupon_id" field.
-func (u *OrderUpsertOne) ClearFixAmountCouponID() *OrderUpsertOne {
+// ClearDurationDays clears the value of the "duration_days" field.
+func (u *OrderUpsertOne) ClearDurationDays() *OrderUpsertOne {
 	return u.Update(func(s *OrderUpsert) {
-		s.ClearFixAmountCouponID()
+		s.ClearDurationDays()
 	})
 }
 
-// SetType sets the "type" field.
-func (u *OrderUpsertOne) SetType(v string) *OrderUpsertOne {
+// SetOrderType sets the "order_type" field.
+func (u *OrderUpsertOne) SetOrderType(v string) *OrderUpsertOne {
 	return u.Update(func(s *OrderUpsert) {
-		s.SetType(v)
+		s.SetOrderType(v)
 	})
 }
 
-// UpdateType sets the "type" field to the value that was provided on create.
-func (u *OrderUpsertOne) UpdateType() *OrderUpsertOne {
+// UpdateOrderType sets the "order_type" field to the value that was provided on create.
+func (u *OrderUpsertOne) UpdateOrderType() *OrderUpsertOne {
 	return u.Update(func(s *OrderUpsert) {
-		s.UpdateType()
+		s.UpdateOrderType()
 	})
 }
 
-// ClearType clears the value of the "type" field.
-func (u *OrderUpsertOne) ClearType() *OrderUpsertOne {
+// ClearOrderType clears the value of the "order_type" field.
+func (u *OrderUpsertOne) ClearOrderType() *OrderUpsertOne {
 	return u.Update(func(s *OrderUpsert) {
-		s.ClearType()
-	})
-}
-
-// SetState sets the "state" field.
-func (u *OrderUpsertOne) SetState(v string) *OrderUpsertOne {
-	return u.Update(func(s *OrderUpsert) {
-		s.SetState(v)
-	})
-}
-
-// UpdateState sets the "state" field to the value that was provided on create.
-func (u *OrderUpsertOne) UpdateState() *OrderUpsertOne {
-	return u.Update(func(s *OrderUpsert) {
-		s.UpdateState()
-	})
-}
-
-// ClearState clears the value of the "state" field.
-func (u *OrderUpsertOne) ClearState() *OrderUpsertOne {
-	return u.Update(func(s *OrderUpsert) {
-		s.ClearState()
-	})
-}
-
-// SetStateV1 sets the "state_v1" field.
-func (u *OrderUpsertOne) SetStateV1(v string) *OrderUpsertOne {
-	return u.Update(func(s *OrderUpsert) {
-		s.SetStateV1(v)
-	})
-}
-
-// UpdateStateV1 sets the "state_v1" field to the value that was provided on create.
-func (u *OrderUpsertOne) UpdateStateV1() *OrderUpsertOne {
-	return u.Update(func(s *OrderUpsert) {
-		s.UpdateStateV1()
-	})
-}
-
-// ClearStateV1 clears the value of the "state_v1" field.
-func (u *OrderUpsertOne) ClearStateV1() *OrderUpsertOne {
-	return u.Update(func(s *OrderUpsert) {
-		s.ClearStateV1()
+		s.ClearOrderType()
 	})
 }
 
@@ -1686,31 +1531,24 @@ func (u *OrderUpsertOne) ClearCouponIds() *OrderUpsertOne {
 	})
 }
 
-// SetLastBenefitAt sets the "last_benefit_at" field.
-func (u *OrderUpsertOne) SetLastBenefitAt(v uint32) *OrderUpsertOne {
+// SetPaymentType sets the "payment_type" field.
+func (u *OrderUpsertOne) SetPaymentType(v string) *OrderUpsertOne {
 	return u.Update(func(s *OrderUpsert) {
-		s.SetLastBenefitAt(v)
+		s.SetPaymentType(v)
 	})
 }
 
-// AddLastBenefitAt adds v to the "last_benefit_at" field.
-func (u *OrderUpsertOne) AddLastBenefitAt(v uint32) *OrderUpsertOne {
+// UpdatePaymentType sets the "payment_type" field to the value that was provided on create.
+func (u *OrderUpsertOne) UpdatePaymentType() *OrderUpsertOne {
 	return u.Update(func(s *OrderUpsert) {
-		s.AddLastBenefitAt(v)
+		s.UpdatePaymentType()
 	})
 }
 
-// UpdateLastBenefitAt sets the "last_benefit_at" field to the value that was provided on create.
-func (u *OrderUpsertOne) UpdateLastBenefitAt() *OrderUpsertOne {
+// ClearPaymentType clears the value of the "payment_type" field.
+func (u *OrderUpsertOne) ClearPaymentType() *OrderUpsertOne {
 	return u.Update(func(s *OrderUpsert) {
-		s.UpdateLastBenefitAt()
-	})
-}
-
-// ClearLastBenefitAt clears the value of the "last_benefit_at" field.
-func (u *OrderUpsertOne) ClearLastBenefitAt() *OrderUpsertOne {
-	return u.Update(func(s *OrderUpsert) {
-		s.ClearLastBenefitAt()
+		s.ClearPaymentType()
 	})
 }
 
@@ -1993,20 +1831,6 @@ func (u *OrderUpsertBulk) UpdateDeletedAt() *OrderUpsertBulk {
 	})
 }
 
-// SetGoodID sets the "good_id" field.
-func (u *OrderUpsertBulk) SetGoodID(v uuid.UUID) *OrderUpsertBulk {
-	return u.Update(func(s *OrderUpsert) {
-		s.SetGoodID(v)
-	})
-}
-
-// UpdateGoodID sets the "good_id" field to the value that was provided on create.
-func (u *OrderUpsertBulk) UpdateGoodID() *OrderUpsertBulk {
-	return u.Update(func(s *OrderUpsert) {
-		s.UpdateGoodID()
-	})
-}
-
 // SetAppID sets the "app_id" field.
 func (u *OrderUpsertBulk) SetAppID(v uuid.UUID) *OrderUpsertBulk {
 	return u.Update(func(s *OrderUpsert) {
@@ -2035,6 +1859,41 @@ func (u *OrderUpsertBulk) UpdateUserID() *OrderUpsertBulk {
 	})
 }
 
+// SetGoodID sets the "good_id" field.
+func (u *OrderUpsertBulk) SetGoodID(v uuid.UUID) *OrderUpsertBulk {
+	return u.Update(func(s *OrderUpsert) {
+		s.SetGoodID(v)
+	})
+}
+
+// UpdateGoodID sets the "good_id" field to the value that was provided on create.
+func (u *OrderUpsertBulk) UpdateGoodID() *OrderUpsertBulk {
+	return u.Update(func(s *OrderUpsert) {
+		s.UpdateGoodID()
+	})
+}
+
+// SetPaymentID sets the "payment_id" field.
+func (u *OrderUpsertBulk) SetPaymentID(v uuid.UUID) *OrderUpsertBulk {
+	return u.Update(func(s *OrderUpsert) {
+		s.SetPaymentID(v)
+	})
+}
+
+// UpdatePaymentID sets the "payment_id" field to the value that was provided on create.
+func (u *OrderUpsertBulk) UpdatePaymentID() *OrderUpsertBulk {
+	return u.Update(func(s *OrderUpsert) {
+		s.UpdatePaymentID()
+	})
+}
+
+// ClearPaymentID clears the value of the "payment_id" field.
+func (u *OrderUpsertBulk) ClearPaymentID() *OrderUpsertBulk {
+	return u.Update(func(s *OrderUpsert) {
+		s.ClearPaymentID()
+	})
+}
+
 // SetParentOrderID sets the "parent_order_id" field.
 func (u *OrderUpsertBulk) SetParentOrderID(v uuid.UUID) *OrderUpsertBulk {
 	return u.Update(func(s *OrderUpsert) {
@@ -2053,55 +1912,6 @@ func (u *OrderUpsertBulk) UpdateParentOrderID() *OrderUpsertBulk {
 func (u *OrderUpsertBulk) ClearParentOrderID() *OrderUpsertBulk {
 	return u.Update(func(s *OrderUpsert) {
 		s.ClearParentOrderID()
-	})
-}
-
-// SetPayWithParent sets the "pay_with_parent" field.
-func (u *OrderUpsertBulk) SetPayWithParent(v bool) *OrderUpsertBulk {
-	return u.Update(func(s *OrderUpsert) {
-		s.SetPayWithParent(v)
-	})
-}
-
-// UpdatePayWithParent sets the "pay_with_parent" field to the value that was provided on create.
-func (u *OrderUpsertBulk) UpdatePayWithParent() *OrderUpsertBulk {
-	return u.Update(func(s *OrderUpsert) {
-		s.UpdatePayWithParent()
-	})
-}
-
-// ClearPayWithParent clears the value of the "pay_with_parent" field.
-func (u *OrderUpsertBulk) ClearPayWithParent() *OrderUpsertBulk {
-	return u.Update(func(s *OrderUpsert) {
-		s.ClearPayWithParent()
-	})
-}
-
-// SetUnits sets the "units" field.
-func (u *OrderUpsertBulk) SetUnits(v uint32) *OrderUpsertBulk {
-	return u.Update(func(s *OrderUpsert) {
-		s.SetUnits(v)
-	})
-}
-
-// AddUnits adds v to the "units" field.
-func (u *OrderUpsertBulk) AddUnits(v uint32) *OrderUpsertBulk {
-	return u.Update(func(s *OrderUpsert) {
-		s.AddUnits(v)
-	})
-}
-
-// UpdateUnits sets the "units" field to the value that was provided on create.
-func (u *OrderUpsertBulk) UpdateUnits() *OrderUpsertBulk {
-	return u.Update(func(s *OrderUpsert) {
-		s.UpdateUnits()
-	})
-}
-
-// ClearUnits clears the value of the "units" field.
-func (u *OrderUpsertBulk) ClearUnits() *OrderUpsertBulk {
-	return u.Update(func(s *OrderUpsert) {
-		s.ClearUnits()
 	})
 }
 
@@ -2126,6 +1936,69 @@ func (u *OrderUpsertBulk) ClearUnitsV1() *OrderUpsertBulk {
 	})
 }
 
+// SetGoodValue sets the "good_value" field.
+func (u *OrderUpsertBulk) SetGoodValue(v decimal.Decimal) *OrderUpsertBulk {
+	return u.Update(func(s *OrderUpsert) {
+		s.SetGoodValue(v)
+	})
+}
+
+// UpdateGoodValue sets the "good_value" field to the value that was provided on create.
+func (u *OrderUpsertBulk) UpdateGoodValue() *OrderUpsertBulk {
+	return u.Update(func(s *OrderUpsert) {
+		s.UpdateGoodValue()
+	})
+}
+
+// ClearGoodValue clears the value of the "good_value" field.
+func (u *OrderUpsertBulk) ClearGoodValue() *OrderUpsertBulk {
+	return u.Update(func(s *OrderUpsert) {
+		s.ClearGoodValue()
+	})
+}
+
+// SetPaymentAmount sets the "payment_amount" field.
+func (u *OrderUpsertBulk) SetPaymentAmount(v decimal.Decimal) *OrderUpsertBulk {
+	return u.Update(func(s *OrderUpsert) {
+		s.SetPaymentAmount(v)
+	})
+}
+
+// UpdatePaymentAmount sets the "payment_amount" field to the value that was provided on create.
+func (u *OrderUpsertBulk) UpdatePaymentAmount() *OrderUpsertBulk {
+	return u.Update(func(s *OrderUpsert) {
+		s.UpdatePaymentAmount()
+	})
+}
+
+// ClearPaymentAmount clears the value of the "payment_amount" field.
+func (u *OrderUpsertBulk) ClearPaymentAmount() *OrderUpsertBulk {
+	return u.Update(func(s *OrderUpsert) {
+		s.ClearPaymentAmount()
+	})
+}
+
+// SetDiscountAmount sets the "discount_amount" field.
+func (u *OrderUpsertBulk) SetDiscountAmount(v decimal.Decimal) *OrderUpsertBulk {
+	return u.Update(func(s *OrderUpsert) {
+		s.SetDiscountAmount(v)
+	})
+}
+
+// UpdateDiscountAmount sets the "discount_amount" field to the value that was provided on create.
+func (u *OrderUpsertBulk) UpdateDiscountAmount() *OrderUpsertBulk {
+	return u.Update(func(s *OrderUpsert) {
+		s.UpdateDiscountAmount()
+	})
+}
+
+// ClearDiscountAmount clears the value of the "discount_amount" field.
+func (u *OrderUpsertBulk) ClearDiscountAmount() *OrderUpsertBulk {
+	return u.Update(func(s *OrderUpsert) {
+		s.ClearDiscountAmount()
+	})
+}
+
 // SetPromotionID sets the "promotion_id" field.
 func (u *OrderUpsertBulk) SetPromotionID(v uuid.UUID) *OrderUpsertBulk {
 	return u.Update(func(s *OrderUpsert) {
@@ -2144,48 +2017,6 @@ func (u *OrderUpsertBulk) UpdatePromotionID() *OrderUpsertBulk {
 func (u *OrderUpsertBulk) ClearPromotionID() *OrderUpsertBulk {
 	return u.Update(func(s *OrderUpsert) {
 		s.ClearPromotionID()
-	})
-}
-
-// SetDiscountCouponID sets the "discount_coupon_id" field.
-func (u *OrderUpsertBulk) SetDiscountCouponID(v uuid.UUID) *OrderUpsertBulk {
-	return u.Update(func(s *OrderUpsert) {
-		s.SetDiscountCouponID(v)
-	})
-}
-
-// UpdateDiscountCouponID sets the "discount_coupon_id" field to the value that was provided on create.
-func (u *OrderUpsertBulk) UpdateDiscountCouponID() *OrderUpsertBulk {
-	return u.Update(func(s *OrderUpsert) {
-		s.UpdateDiscountCouponID()
-	})
-}
-
-// ClearDiscountCouponID clears the value of the "discount_coupon_id" field.
-func (u *OrderUpsertBulk) ClearDiscountCouponID() *OrderUpsertBulk {
-	return u.Update(func(s *OrderUpsert) {
-		s.ClearDiscountCouponID()
-	})
-}
-
-// SetUserSpecialReductionID sets the "user_special_reduction_id" field.
-func (u *OrderUpsertBulk) SetUserSpecialReductionID(v uuid.UUID) *OrderUpsertBulk {
-	return u.Update(func(s *OrderUpsert) {
-		s.SetUserSpecialReductionID(v)
-	})
-}
-
-// UpdateUserSpecialReductionID sets the "user_special_reduction_id" field to the value that was provided on create.
-func (u *OrderUpsertBulk) UpdateUserSpecialReductionID() *OrderUpsertBulk {
-	return u.Update(func(s *OrderUpsert) {
-		s.UpdateUserSpecialReductionID()
-	})
-}
-
-// ClearUserSpecialReductionID clears the value of the "user_special_reduction_id" field.
-func (u *OrderUpsertBulk) ClearUserSpecialReductionID() *OrderUpsertBulk {
-	return u.Update(func(s *OrderUpsert) {
-		s.ClearUserSpecialReductionID()
 	})
 }
 
@@ -2217,115 +2048,73 @@ func (u *OrderUpsertBulk) ClearStartAt() *OrderUpsertBulk {
 	})
 }
 
-// SetEndAt sets the "end_at" field.
-func (u *OrderUpsertBulk) SetEndAt(v uint32) *OrderUpsertBulk {
+// SetStartMode sets the "start_mode" field.
+func (u *OrderUpsertBulk) SetStartMode(v string) *OrderUpsertBulk {
 	return u.Update(func(s *OrderUpsert) {
-		s.SetEndAt(v)
+		s.SetStartMode(v)
 	})
 }
 
-// AddEndAt adds v to the "end_at" field.
-func (u *OrderUpsertBulk) AddEndAt(v uint32) *OrderUpsertBulk {
+// UpdateStartMode sets the "start_mode" field to the value that was provided on create.
+func (u *OrderUpsertBulk) UpdateStartMode() *OrderUpsertBulk {
 	return u.Update(func(s *OrderUpsert) {
-		s.AddEndAt(v)
+		s.UpdateStartMode()
 	})
 }
 
-// UpdateEndAt sets the "end_at" field to the value that was provided on create.
-func (u *OrderUpsertBulk) UpdateEndAt() *OrderUpsertBulk {
+// ClearStartMode clears the value of the "start_mode" field.
+func (u *OrderUpsertBulk) ClearStartMode() *OrderUpsertBulk {
 	return u.Update(func(s *OrderUpsert) {
-		s.UpdateEndAt()
+		s.ClearStartMode()
 	})
 }
 
-// ClearEndAt clears the value of the "end_at" field.
-func (u *OrderUpsertBulk) ClearEndAt() *OrderUpsertBulk {
+// SetDurationDays sets the "duration_days" field.
+func (u *OrderUpsertBulk) SetDurationDays(v uint32) *OrderUpsertBulk {
 	return u.Update(func(s *OrderUpsert) {
-		s.ClearEndAt()
+		s.SetDurationDays(v)
 	})
 }
 
-// SetFixAmountCouponID sets the "fix_amount_coupon_id" field.
-func (u *OrderUpsertBulk) SetFixAmountCouponID(v uuid.UUID) *OrderUpsertBulk {
+// AddDurationDays adds v to the "duration_days" field.
+func (u *OrderUpsertBulk) AddDurationDays(v uint32) *OrderUpsertBulk {
 	return u.Update(func(s *OrderUpsert) {
-		s.SetFixAmountCouponID(v)
+		s.AddDurationDays(v)
 	})
 }
 
-// UpdateFixAmountCouponID sets the "fix_amount_coupon_id" field to the value that was provided on create.
-func (u *OrderUpsertBulk) UpdateFixAmountCouponID() *OrderUpsertBulk {
+// UpdateDurationDays sets the "duration_days" field to the value that was provided on create.
+func (u *OrderUpsertBulk) UpdateDurationDays() *OrderUpsertBulk {
 	return u.Update(func(s *OrderUpsert) {
-		s.UpdateFixAmountCouponID()
+		s.UpdateDurationDays()
 	})
 }
 
-// ClearFixAmountCouponID clears the value of the "fix_amount_coupon_id" field.
-func (u *OrderUpsertBulk) ClearFixAmountCouponID() *OrderUpsertBulk {
+// ClearDurationDays clears the value of the "duration_days" field.
+func (u *OrderUpsertBulk) ClearDurationDays() *OrderUpsertBulk {
 	return u.Update(func(s *OrderUpsert) {
-		s.ClearFixAmountCouponID()
+		s.ClearDurationDays()
 	})
 }
 
-// SetType sets the "type" field.
-func (u *OrderUpsertBulk) SetType(v string) *OrderUpsertBulk {
+// SetOrderType sets the "order_type" field.
+func (u *OrderUpsertBulk) SetOrderType(v string) *OrderUpsertBulk {
 	return u.Update(func(s *OrderUpsert) {
-		s.SetType(v)
+		s.SetOrderType(v)
 	})
 }
 
-// UpdateType sets the "type" field to the value that was provided on create.
-func (u *OrderUpsertBulk) UpdateType() *OrderUpsertBulk {
+// UpdateOrderType sets the "order_type" field to the value that was provided on create.
+func (u *OrderUpsertBulk) UpdateOrderType() *OrderUpsertBulk {
 	return u.Update(func(s *OrderUpsert) {
-		s.UpdateType()
+		s.UpdateOrderType()
 	})
 }
 
-// ClearType clears the value of the "type" field.
-func (u *OrderUpsertBulk) ClearType() *OrderUpsertBulk {
+// ClearOrderType clears the value of the "order_type" field.
+func (u *OrderUpsertBulk) ClearOrderType() *OrderUpsertBulk {
 	return u.Update(func(s *OrderUpsert) {
-		s.ClearType()
-	})
-}
-
-// SetState sets the "state" field.
-func (u *OrderUpsertBulk) SetState(v string) *OrderUpsertBulk {
-	return u.Update(func(s *OrderUpsert) {
-		s.SetState(v)
-	})
-}
-
-// UpdateState sets the "state" field to the value that was provided on create.
-func (u *OrderUpsertBulk) UpdateState() *OrderUpsertBulk {
-	return u.Update(func(s *OrderUpsert) {
-		s.UpdateState()
-	})
-}
-
-// ClearState clears the value of the "state" field.
-func (u *OrderUpsertBulk) ClearState() *OrderUpsertBulk {
-	return u.Update(func(s *OrderUpsert) {
-		s.ClearState()
-	})
-}
-
-// SetStateV1 sets the "state_v1" field.
-func (u *OrderUpsertBulk) SetStateV1(v string) *OrderUpsertBulk {
-	return u.Update(func(s *OrderUpsert) {
-		s.SetStateV1(v)
-	})
-}
-
-// UpdateStateV1 sets the "state_v1" field to the value that was provided on create.
-func (u *OrderUpsertBulk) UpdateStateV1() *OrderUpsertBulk {
-	return u.Update(func(s *OrderUpsert) {
-		s.UpdateStateV1()
-	})
-}
-
-// ClearStateV1 clears the value of the "state_v1" field.
-func (u *OrderUpsertBulk) ClearStateV1() *OrderUpsertBulk {
-	return u.Update(func(s *OrderUpsert) {
-		s.ClearStateV1()
+		s.ClearOrderType()
 	})
 }
 
@@ -2371,31 +2160,24 @@ func (u *OrderUpsertBulk) ClearCouponIds() *OrderUpsertBulk {
 	})
 }
 
-// SetLastBenefitAt sets the "last_benefit_at" field.
-func (u *OrderUpsertBulk) SetLastBenefitAt(v uint32) *OrderUpsertBulk {
+// SetPaymentType sets the "payment_type" field.
+func (u *OrderUpsertBulk) SetPaymentType(v string) *OrderUpsertBulk {
 	return u.Update(func(s *OrderUpsert) {
-		s.SetLastBenefitAt(v)
+		s.SetPaymentType(v)
 	})
 }
 
-// AddLastBenefitAt adds v to the "last_benefit_at" field.
-func (u *OrderUpsertBulk) AddLastBenefitAt(v uint32) *OrderUpsertBulk {
+// UpdatePaymentType sets the "payment_type" field to the value that was provided on create.
+func (u *OrderUpsertBulk) UpdatePaymentType() *OrderUpsertBulk {
 	return u.Update(func(s *OrderUpsert) {
-		s.AddLastBenefitAt(v)
+		s.UpdatePaymentType()
 	})
 }
 
-// UpdateLastBenefitAt sets the "last_benefit_at" field to the value that was provided on create.
-func (u *OrderUpsertBulk) UpdateLastBenefitAt() *OrderUpsertBulk {
+// ClearPaymentType clears the value of the "payment_type" field.
+func (u *OrderUpsertBulk) ClearPaymentType() *OrderUpsertBulk {
 	return u.Update(func(s *OrderUpsert) {
-		s.UpdateLastBenefitAt()
-	})
-}
-
-// ClearLastBenefitAt clears the value of the "last_benefit_at" field.
-func (u *OrderUpsertBulk) ClearLastBenefitAt() *OrderUpsertBulk {
-	return u.Update(func(s *OrderUpsert) {
-		s.ClearLastBenefitAt()
+		s.ClearPaymentType()
 	})
 }
 
