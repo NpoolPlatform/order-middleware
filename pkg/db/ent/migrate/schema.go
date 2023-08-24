@@ -36,6 +36,7 @@ var (
 		{Name: "app_id", Type: field.TypeUUID},
 		{Name: "user_id", Type: field.TypeUUID},
 		{Name: "good_id", Type: field.TypeUUID},
+		{Name: "app_good_id", Type: field.TypeUUID},
 		{Name: "payment_id", Type: field.TypeUUID, Nullable: true},
 		{Name: "parent_order_id", Type: field.TypeUUID, Nullable: true},
 		{Name: "units_v1", Type: field.TypeOther, Nullable: true, SchemaType: map[string]string{"mysql": "decimal(37,18)"}},

@@ -1068,6 +1068,7 @@ type OrderMutation struct {
 	app_id           *uuid.UUID
 	user_id          *uuid.UUID
 	good_id          *uuid.UUID
+	app_good_id      *uuid.UUID
 	payment_id       *uuid.UUID
 	parent_order_id  *uuid.UUID
 	units_v1         *decimal.Decimal
@@ -1465,6 +1466,42 @@ func (m *OrderMutation) OldGoodID(ctx context.Context) (v uuid.UUID, err error) 
 // ResetGoodID resets all changes to the "good_id" field.
 func (m *OrderMutation) ResetGoodID() {
 	m.good_id = nil
+}
+
+// SetAppGoodID sets the "app_good_id" field.
+func (m *OrderMutation) SetAppGoodID(u uuid.UUID) {
+	m.app_good_id = &u
+}
+
+// AppGoodID returns the value of the "app_good_id" field in the mutation.
+func (m *OrderMutation) AppGoodID() (r uuid.UUID, exists bool) {
+	v := m.app_good_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldAppGoodID returns the old "app_good_id" field's value of the Order entity.
+// If the Order object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *OrderMutation) OldAppGoodID(ctx context.Context) (v uuid.UUID, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldAppGoodID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldAppGoodID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldAppGoodID: %w", err)
+	}
+	return oldValue.AppGoodID, nil
+}
+
+// ResetAppGoodID resets all changes to the "app_good_id" field.
+func (m *OrderMutation) ResetAppGoodID() {
+	m.app_good_id = nil
 }
 
 // SetPaymentID sets the "payment_id" field.
@@ -2095,7 +2132,7 @@ func (m *OrderMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *OrderMutation) Fields() []string {
-	fields := make([]string, 0, 18)
+	fields := make([]string, 0, 19)
 	if m.created_at != nil {
 		fields = append(fields, order.FieldCreatedAt)
 	}
@@ -2113,6 +2150,9 @@ func (m *OrderMutation) Fields() []string {
 	}
 	if m.good_id != nil {
 		fields = append(fields, order.FieldGoodID)
+	}
+	if m.app_good_id != nil {
+		fields = append(fields, order.FieldAppGoodID)
 	}
 	if m.payment_id != nil {
 		fields = append(fields, order.FieldPaymentID)
@@ -2170,6 +2210,8 @@ func (m *OrderMutation) Field(name string) (ent.Value, bool) {
 		return m.UserID()
 	case order.FieldGoodID:
 		return m.GoodID()
+	case order.FieldAppGoodID:
+		return m.AppGoodID()
 	case order.FieldPaymentID:
 		return m.PaymentID()
 	case order.FieldParentOrderID:
@@ -2215,6 +2257,8 @@ func (m *OrderMutation) OldField(ctx context.Context, name string) (ent.Value, e
 		return m.OldUserID(ctx)
 	case order.FieldGoodID:
 		return m.OldGoodID(ctx)
+	case order.FieldAppGoodID:
+		return m.OldAppGoodID(ctx)
 	case order.FieldPaymentID:
 		return m.OldPaymentID(ctx)
 	case order.FieldParentOrderID:
@@ -2289,6 +2333,13 @@ func (m *OrderMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetGoodID(v)
+		return nil
+	case order.FieldAppGoodID:
+		v, ok := value.(uuid.UUID)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetAppGoodID(v)
 		return nil
 	case order.FieldPaymentID:
 		v, ok := value.(uuid.UUID)
@@ -2566,6 +2617,9 @@ func (m *OrderMutation) ResetField(name string) error {
 		return nil
 	case order.FieldGoodID:
 		m.ResetGoodID()
+		return nil
+	case order.FieldAppGoodID:
+		m.ResetAppGoodID()
 		return nil
 	case order.FieldPaymentID:
 		m.ResetPaymentID()

@@ -84,6 +84,12 @@ func (oc *OrderCreate) SetGoodID(u uuid.UUID) *OrderCreate {
 	return oc
 }
 
+// SetAppGoodID sets the "app_good_id" field.
+func (oc *OrderCreate) SetAppGoodID(u uuid.UUID) *OrderCreate {
+	oc.mutation.SetAppGoodID(u)
+	return oc
+}
+
 // SetPaymentID sets the "payment_id" field.
 func (oc *OrderCreate) SetPaymentID(u uuid.UUID) *OrderCreate {
 	oc.mutation.SetPaymentID(u)
@@ -448,6 +454,9 @@ func (oc *OrderCreate) check() error {
 	if _, ok := oc.mutation.GoodID(); !ok {
 		return &ValidationError{Name: "good_id", err: errors.New(`ent: missing required field "Order.good_id"`)}
 	}
+	if _, ok := oc.mutation.AppGoodID(); !ok {
+		return &ValidationError{Name: "app_good_id", err: errors.New(`ent: missing required field "Order.app_good_id"`)}
+	}
 	return nil
 }
 
@@ -532,6 +541,14 @@ func (oc *OrderCreate) createSpec() (*Order, *sqlgraph.CreateSpec) {
 			Column: order.FieldGoodID,
 		})
 		_node.GoodID = value
+	}
+	if value, ok := oc.mutation.AppGoodID(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Value:  value,
+			Column: order.FieldAppGoodID,
+		})
+		_node.AppGoodID = value
 	}
 	if value, ok := oc.mutation.PaymentID(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -770,6 +787,18 @@ func (u *OrderUpsert) SetGoodID(v uuid.UUID) *OrderUpsert {
 // UpdateGoodID sets the "good_id" field to the value that was provided on create.
 func (u *OrderUpsert) UpdateGoodID() *OrderUpsert {
 	u.SetExcluded(order.FieldGoodID)
+	return u
+}
+
+// SetAppGoodID sets the "app_good_id" field.
+func (u *OrderUpsert) SetAppGoodID(v uuid.UUID) *OrderUpsert {
+	u.Set(order.FieldAppGoodID, v)
+	return u
+}
+
+// UpdateAppGoodID sets the "app_good_id" field to the value that was provided on create.
+func (u *OrderUpsert) UpdateAppGoodID() *OrderUpsert {
+	u.SetExcluded(order.FieldAppGoodID)
 	return u
 }
 
@@ -1147,6 +1176,20 @@ func (u *OrderUpsertOne) SetGoodID(v uuid.UUID) *OrderUpsertOne {
 func (u *OrderUpsertOne) UpdateGoodID() *OrderUpsertOne {
 	return u.Update(func(s *OrderUpsert) {
 		s.UpdateGoodID()
+	})
+}
+
+// SetAppGoodID sets the "app_good_id" field.
+func (u *OrderUpsertOne) SetAppGoodID(v uuid.UUID) *OrderUpsertOne {
+	return u.Update(func(s *OrderUpsert) {
+		s.SetAppGoodID(v)
+	})
+}
+
+// UpdateAppGoodID sets the "app_good_id" field to the value that was provided on create.
+func (u *OrderUpsertOne) UpdateAppGoodID() *OrderUpsertOne {
+	return u.Update(func(s *OrderUpsert) {
+		s.UpdateAppGoodID()
 	})
 }
 
@@ -1727,6 +1770,20 @@ func (u *OrderUpsertBulk) SetGoodID(v uuid.UUID) *OrderUpsertBulk {
 func (u *OrderUpsertBulk) UpdateGoodID() *OrderUpsertBulk {
 	return u.Update(func(s *OrderUpsert) {
 		s.UpdateGoodID()
+	})
+}
+
+// SetAppGoodID sets the "app_good_id" field.
+func (u *OrderUpsertBulk) SetAppGoodID(v uuid.UUID) *OrderUpsertBulk {
+	return u.Update(func(s *OrderUpsert) {
+		s.SetAppGoodID(v)
+	})
+}
+
+// UpdateAppGoodID sets the "app_good_id" field to the value that was provided on create.
+func (u *OrderUpsertBulk) UpdateAppGoodID() *OrderUpsertBulk {
+	return u.Update(func(s *OrderUpsert) {
+		s.UpdateAppGoodID()
 	})
 }
 

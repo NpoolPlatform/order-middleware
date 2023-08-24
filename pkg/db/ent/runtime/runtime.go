@@ -103,51 +103,51 @@ func init() {
 	// order.DefaultDeletedAt holds the default value on creation for the deleted_at field.
 	order.DefaultDeletedAt = orderDescDeletedAt.Default.(func() uint32)
 	// orderDescPaymentID is the schema descriptor for payment_id field.
-	orderDescPaymentID := orderFields[4].Descriptor()
+	orderDescPaymentID := orderFields[5].Descriptor()
 	// order.DefaultPaymentID holds the default value on creation for the payment_id field.
 	order.DefaultPaymentID = orderDescPaymentID.Default.(func() uuid.UUID)
 	// orderDescParentOrderID is the schema descriptor for parent_order_id field.
-	orderDescParentOrderID := orderFields[5].Descriptor()
+	orderDescParentOrderID := orderFields[6].Descriptor()
 	// order.DefaultParentOrderID holds the default value on creation for the parent_order_id field.
 	order.DefaultParentOrderID = orderDescParentOrderID.Default.(func() uuid.UUID)
 	// orderDescUnitsV1 is the schema descriptor for units_v1 field.
-	orderDescUnitsV1 := orderFields[6].Descriptor()
+	orderDescUnitsV1 := orderFields[7].Descriptor()
 	// order.DefaultUnitsV1 holds the default value on creation for the units_v1 field.
 	order.DefaultUnitsV1 = orderDescUnitsV1.Default.(decimal.Decimal)
 	// orderDescGoodValue is the schema descriptor for good_value field.
-	orderDescGoodValue := orderFields[7].Descriptor()
+	orderDescGoodValue := orderFields[8].Descriptor()
 	// order.DefaultGoodValue holds the default value on creation for the good_value field.
 	order.DefaultGoodValue = orderDescGoodValue.Default.(decimal.Decimal)
 	// orderDescPaymentAmount is the schema descriptor for payment_amount field.
-	orderDescPaymentAmount := orderFields[8].Descriptor()
+	orderDescPaymentAmount := orderFields[9].Descriptor()
 	// order.DefaultPaymentAmount holds the default value on creation for the payment_amount field.
 	order.DefaultPaymentAmount = orderDescPaymentAmount.Default.(decimal.Decimal)
 	// orderDescDiscountAmount is the schema descriptor for discount_amount field.
-	orderDescDiscountAmount := orderFields[9].Descriptor()
+	orderDescDiscountAmount := orderFields[10].Descriptor()
 	// order.DefaultDiscountAmount holds the default value on creation for the discount_amount field.
 	order.DefaultDiscountAmount = orderDescDiscountAmount.Default.(decimal.Decimal)
 	// orderDescPromotionID is the schema descriptor for promotion_id field.
-	orderDescPromotionID := orderFields[10].Descriptor()
+	orderDescPromotionID := orderFields[11].Descriptor()
 	// order.DefaultPromotionID holds the default value on creation for the promotion_id field.
 	order.DefaultPromotionID = orderDescPromotionID.Default.(func() uuid.UUID)
 	// orderDescDurationDays is the schema descriptor for duration_days field.
-	orderDescDurationDays := orderFields[11].Descriptor()
+	orderDescDurationDays := orderFields[12].Descriptor()
 	// order.DefaultDurationDays holds the default value on creation for the duration_days field.
 	order.DefaultDurationDays = orderDescDurationDays.Default.(uint32)
 	// orderDescOrderType is the schema descriptor for order_type field.
-	orderDescOrderType := orderFields[12].Descriptor()
+	orderDescOrderType := orderFields[13].Descriptor()
 	// order.DefaultOrderType holds the default value on creation for the order_type field.
 	order.DefaultOrderType = orderDescOrderType.Default.(string)
 	// orderDescInvestmentType is the schema descriptor for investment_type field.
-	orderDescInvestmentType := orderFields[13].Descriptor()
+	orderDescInvestmentType := orderFields[14].Descriptor()
 	// order.DefaultInvestmentType holds the default value on creation for the investment_type field.
 	order.DefaultInvestmentType = orderDescInvestmentType.Default.(string)
 	// orderDescCouponIds is the schema descriptor for coupon_ids field.
-	orderDescCouponIds := orderFields[14].Descriptor()
+	orderDescCouponIds := orderFields[15].Descriptor()
 	// order.DefaultCouponIds holds the default value on creation for the coupon_ids field.
 	order.DefaultCouponIds = orderDescCouponIds.Default.(func() []uuid.UUID)
 	// orderDescPaymentType is the schema descriptor for payment_type field.
-	orderDescPaymentType := orderFields[15].Descriptor()
+	orderDescPaymentType := orderFields[16].Descriptor()
 	// order.DefaultPaymentType holds the default value on creation for the payment_type field.
 	order.DefaultPaymentType = orderDescPaymentType.Default.(string)
 	// orderDescID is the schema descriptor for id field.
