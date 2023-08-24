@@ -43,8 +43,6 @@ var (
 		{Name: "payment_amount", Type: field.TypeOther, Nullable: true, SchemaType: map[string]string{"mysql": "decimal(37,18)"}},
 		{Name: "discount_amount", Type: field.TypeOther, Nullable: true, SchemaType: map[string]string{"mysql": "decimal(37,18)"}},
 		{Name: "promotion_id", Type: field.TypeUUID, Nullable: true},
-		{Name: "start_at", Type: field.TypeUint32, Nullable: true, Default: 0},
-		{Name: "start_mode", Type: field.TypeString, Nullable: true, Default: "OrderStartConfirmed"},
 		{Name: "duration_days", Type: field.TypeUint32, Nullable: true, Default: 0},
 		{Name: "order_type", Type: field.TypeString, Nullable: true, Default: "Normal"},
 		{Name: "investment_type", Type: field.TypeString, Nullable: true, Default: "FullPayment"},
@@ -65,6 +63,8 @@ var (
 		{Name: "deleted_at", Type: field.TypeUint32},
 		{Name: "order_id", Type: field.TypeUUID},
 		{Name: "order_state", Type: field.TypeString, Nullable: true, Default: "OrderStateWaitPayment"},
+		{Name: "start_mode", Type: field.TypeString, Nullable: true, Default: "OrderStartConfirmed"},
+		{Name: "start_at", Type: field.TypeUint32, Nullable: true, Default: 0},
 		{Name: "end_at", Type: field.TypeUint32, Nullable: true, Default: 0},
 		{Name: "last_benefit_at", Type: field.TypeUint32, Nullable: true, Default: 0},
 		{Name: "benefit_state", Type: field.TypeString, Nullable: true, Default: "BenefitWait"},
@@ -73,6 +73,8 @@ var (
 		{Name: "payment_transaction_id", Type: field.TypeString, Nullable: true, Default: ""},
 		{Name: "payment_finish_amount", Type: field.TypeOther, Nullable: true, SchemaType: map[string]string{"mysql": "decimal(37,18)"}},
 		{Name: "payment_state", Type: field.TypeString, Nullable: true, Default: "PaymentStateWait"},
+		{Name: "outofgas_hours", Type: field.TypeUint32, Nullable: true, Default: 0},
+		{Name: "compensate_hours", Type: field.TypeUint32, Nullable: true, Default: 0},
 	}
 	// OrderStatesTable holds the schema information for the "order_states" table.
 	OrderStatesTable = &schema.Table{

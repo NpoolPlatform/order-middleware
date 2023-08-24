@@ -81,14 +81,6 @@ func (Order) Fields() []ent.Field {
 				return uuid.UUID{}
 			}),
 		field.
-			Uint32("start_at").
-			Optional().
-			Default(0),
-		field.
-			String("start_mode").
-			Optional().
-			Default(types.OrderStartMode_OrderStartConfirmed.String()),
-		field.
 			Uint32("duration_days").
 			Optional().
 			Default(0),

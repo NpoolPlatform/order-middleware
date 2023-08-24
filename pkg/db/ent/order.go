@@ -44,10 +44,6 @@ type Order struct {
 	DiscountAmount decimal.Decimal `json:"discount_amount,omitempty"`
 	// PromotionID holds the value of the "promotion_id" field.
 	PromotionID uuid.UUID `json:"promotion_id,omitempty"`
-	// StartAt holds the value of the "start_at" field.
-	StartAt uint32 `json:"start_at,omitempty"`
-	// StartMode holds the value of the "start_mode" field.
-	StartMode string `json:"start_mode,omitempty"`
 	// DurationDays holds the value of the "duration_days" field.
 	DurationDays uint32 `json:"duration_days,omitempty"`
 	// OrderType holds the value of the "order_type" field.
@@ -69,9 +65,9 @@ func (*Order) scanValues(columns []string) ([]interface{}, error) {
 			values[i] = new([]byte)
 		case order.FieldUnitsV1, order.FieldGoodValue, order.FieldPaymentAmount, order.FieldDiscountAmount:
 			values[i] = new(decimal.Decimal)
-		case order.FieldCreatedAt, order.FieldUpdatedAt, order.FieldDeletedAt, order.FieldStartAt, order.FieldDurationDays:
+		case order.FieldCreatedAt, order.FieldUpdatedAt, order.FieldDeletedAt, order.FieldDurationDays:
 			values[i] = new(sql.NullInt64)
-		case order.FieldStartMode, order.FieldOrderType, order.FieldInvestmentType, order.FieldPaymentType:
+		case order.FieldOrderType, order.FieldInvestmentType, order.FieldPaymentType:
 			values[i] = new(sql.NullString)
 		case order.FieldID, order.FieldAppID, order.FieldUserID, order.FieldGoodID, order.FieldPaymentID, order.FieldParentOrderID, order.FieldPromotionID:
 			values[i] = new(uuid.UUID)
@@ -174,18 +170,6 @@ func (o *Order) assignValues(columns []string, values []interface{}) error {
 			} else if value != nil {
 				o.PromotionID = *value
 			}
-		case order.FieldStartAt:
-			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for field start_at", values[i])
-			} else if value.Valid {
-				o.StartAt = uint32(value.Int64)
-			}
-		case order.FieldStartMode:
-			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field start_mode", values[i])
-			} else if value.Valid {
-				o.StartMode = value.String
-			}
 		case order.FieldDurationDays:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field duration_days", values[i])
@@ -284,12 +268,6 @@ func (o *Order) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("promotion_id=")
 	builder.WriteString(fmt.Sprintf("%v", o.PromotionID))
-	builder.WriteString(", ")
-	builder.WriteString("start_at=")
-	builder.WriteString(fmt.Sprintf("%v", o.StartAt))
-	builder.WriteString(", ")
-	builder.WriteString("start_mode=")
-	builder.WriteString(o.StartMode)
 	builder.WriteString(", ")
 	builder.WriteString("duration_days=")
 	builder.WriteString(fmt.Sprintf("%v", o.DurationDays))

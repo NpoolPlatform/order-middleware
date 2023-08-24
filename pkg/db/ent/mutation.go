@@ -1075,9 +1075,6 @@ type OrderMutation struct {
 	payment_amount   *decimal.Decimal
 	discount_amount  *decimal.Decimal
 	promotion_id     *uuid.UUID
-	start_at         *uint32
-	addstart_at      *int32
-	start_mode       *string
 	duration_days    *uint32
 	addduration_days *int32
 	order_type       *string
@@ -1813,125 +1810,6 @@ func (m *OrderMutation) ResetPromotionID() {
 	delete(m.clearedFields, order.FieldPromotionID)
 }
 
-// SetStartAt sets the "start_at" field.
-func (m *OrderMutation) SetStartAt(u uint32) {
-	m.start_at = &u
-	m.addstart_at = nil
-}
-
-// StartAt returns the value of the "start_at" field in the mutation.
-func (m *OrderMutation) StartAt() (r uint32, exists bool) {
-	v := m.start_at
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldStartAt returns the old "start_at" field's value of the Order entity.
-// If the Order object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *OrderMutation) OldStartAt(ctx context.Context) (v uint32, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldStartAt is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldStartAt requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldStartAt: %w", err)
-	}
-	return oldValue.StartAt, nil
-}
-
-// AddStartAt adds u to the "start_at" field.
-func (m *OrderMutation) AddStartAt(u int32) {
-	if m.addstart_at != nil {
-		*m.addstart_at += u
-	} else {
-		m.addstart_at = &u
-	}
-}
-
-// AddedStartAt returns the value that was added to the "start_at" field in this mutation.
-func (m *OrderMutation) AddedStartAt() (r int32, exists bool) {
-	v := m.addstart_at
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// ClearStartAt clears the value of the "start_at" field.
-func (m *OrderMutation) ClearStartAt() {
-	m.start_at = nil
-	m.addstart_at = nil
-	m.clearedFields[order.FieldStartAt] = struct{}{}
-}
-
-// StartAtCleared returns if the "start_at" field was cleared in this mutation.
-func (m *OrderMutation) StartAtCleared() bool {
-	_, ok := m.clearedFields[order.FieldStartAt]
-	return ok
-}
-
-// ResetStartAt resets all changes to the "start_at" field.
-func (m *OrderMutation) ResetStartAt() {
-	m.start_at = nil
-	m.addstart_at = nil
-	delete(m.clearedFields, order.FieldStartAt)
-}
-
-// SetStartMode sets the "start_mode" field.
-func (m *OrderMutation) SetStartMode(s string) {
-	m.start_mode = &s
-}
-
-// StartMode returns the value of the "start_mode" field in the mutation.
-func (m *OrderMutation) StartMode() (r string, exists bool) {
-	v := m.start_mode
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldStartMode returns the old "start_mode" field's value of the Order entity.
-// If the Order object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *OrderMutation) OldStartMode(ctx context.Context) (v string, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldStartMode is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldStartMode requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldStartMode: %w", err)
-	}
-	return oldValue.StartMode, nil
-}
-
-// ClearStartMode clears the value of the "start_mode" field.
-func (m *OrderMutation) ClearStartMode() {
-	m.start_mode = nil
-	m.clearedFields[order.FieldStartMode] = struct{}{}
-}
-
-// StartModeCleared returns if the "start_mode" field was cleared in this mutation.
-func (m *OrderMutation) StartModeCleared() bool {
-	_, ok := m.clearedFields[order.FieldStartMode]
-	return ok
-}
-
-// ResetStartMode resets all changes to the "start_mode" field.
-func (m *OrderMutation) ResetStartMode() {
-	m.start_mode = nil
-	delete(m.clearedFields, order.FieldStartMode)
-}
-
 // SetDurationDays sets the "duration_days" field.
 func (m *OrderMutation) SetDurationDays(u uint32) {
 	m.duration_days = &u
@@ -2217,7 +2095,7 @@ func (m *OrderMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *OrderMutation) Fields() []string {
-	fields := make([]string, 0, 20)
+	fields := make([]string, 0, 18)
 	if m.created_at != nil {
 		fields = append(fields, order.FieldCreatedAt)
 	}
@@ -2256,12 +2134,6 @@ func (m *OrderMutation) Fields() []string {
 	}
 	if m.promotion_id != nil {
 		fields = append(fields, order.FieldPromotionID)
-	}
-	if m.start_at != nil {
-		fields = append(fields, order.FieldStartAt)
-	}
-	if m.start_mode != nil {
-		fields = append(fields, order.FieldStartMode)
 	}
 	if m.duration_days != nil {
 		fields = append(fields, order.FieldDurationDays)
@@ -2312,10 +2184,6 @@ func (m *OrderMutation) Field(name string) (ent.Value, bool) {
 		return m.DiscountAmount()
 	case order.FieldPromotionID:
 		return m.PromotionID()
-	case order.FieldStartAt:
-		return m.StartAt()
-	case order.FieldStartMode:
-		return m.StartMode()
 	case order.FieldDurationDays:
 		return m.DurationDays()
 	case order.FieldOrderType:
@@ -2361,10 +2229,6 @@ func (m *OrderMutation) OldField(ctx context.Context, name string) (ent.Value, e
 		return m.OldDiscountAmount(ctx)
 	case order.FieldPromotionID:
 		return m.OldPromotionID(ctx)
-	case order.FieldStartAt:
-		return m.OldStartAt(ctx)
-	case order.FieldStartMode:
-		return m.OldStartMode(ctx)
 	case order.FieldDurationDays:
 		return m.OldDurationDays(ctx)
 	case order.FieldOrderType:
@@ -2475,20 +2339,6 @@ func (m *OrderMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetPromotionID(v)
 		return nil
-	case order.FieldStartAt:
-		v, ok := value.(uint32)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetStartAt(v)
-		return nil
-	case order.FieldStartMode:
-		v, ok := value.(string)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetStartMode(v)
-		return nil
 	case order.FieldDurationDays:
 		v, ok := value.(uint32)
 		if !ok {
@@ -2541,9 +2391,6 @@ func (m *OrderMutation) AddedFields() []string {
 	if m.adddeleted_at != nil {
 		fields = append(fields, order.FieldDeletedAt)
 	}
-	if m.addstart_at != nil {
-		fields = append(fields, order.FieldStartAt)
-	}
 	if m.addduration_days != nil {
 		fields = append(fields, order.FieldDurationDays)
 	}
@@ -2561,8 +2408,6 @@ func (m *OrderMutation) AddedField(name string) (ent.Value, bool) {
 		return m.AddedUpdatedAt()
 	case order.FieldDeletedAt:
 		return m.AddedDeletedAt()
-	case order.FieldStartAt:
-		return m.AddedStartAt()
 	case order.FieldDurationDays:
 		return m.AddedDurationDays()
 	}
@@ -2594,13 +2439,6 @@ func (m *OrderMutation) AddField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.AddDeletedAt(v)
-		return nil
-	case order.FieldStartAt:
-		v, ok := value.(int32)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.AddStartAt(v)
 		return nil
 	case order.FieldDurationDays:
 		v, ok := value.(int32)
@@ -2637,12 +2475,6 @@ func (m *OrderMutation) ClearedFields() []string {
 	}
 	if m.FieldCleared(order.FieldPromotionID) {
 		fields = append(fields, order.FieldPromotionID)
-	}
-	if m.FieldCleared(order.FieldStartAt) {
-		fields = append(fields, order.FieldStartAt)
-	}
-	if m.FieldCleared(order.FieldStartMode) {
-		fields = append(fields, order.FieldStartMode)
 	}
 	if m.FieldCleared(order.FieldDurationDays) {
 		fields = append(fields, order.FieldDurationDays)
@@ -2693,12 +2525,6 @@ func (m *OrderMutation) ClearField(name string) error {
 		return nil
 	case order.FieldPromotionID:
 		m.ClearPromotionID()
-		return nil
-	case order.FieldStartAt:
-		m.ClearStartAt()
-		return nil
-	case order.FieldStartMode:
-		m.ClearStartMode()
 		return nil
 	case order.FieldDurationDays:
 		m.ClearDurationDays()
@@ -2761,12 +2587,6 @@ func (m *OrderMutation) ResetField(name string) error {
 		return nil
 	case order.FieldPromotionID:
 		m.ResetPromotionID()
-		return nil
-	case order.FieldStartAt:
-		m.ResetStartAt()
-		return nil
-	case order.FieldStartMode:
-		m.ResetStartMode()
 		return nil
 	case order.FieldDurationDays:
 		m.ResetDurationDays()
@@ -2849,6 +2669,9 @@ type OrderStateMutation struct {
 	adddeleted_at          *int32
 	order_id               *uuid.UUID
 	order_state            *string
+	start_mode             *string
+	start_at               *uint32
+	addstart_at            *int32
 	end_at                 *uint32
 	addend_at              *int32
 	last_benefit_at        *uint32
@@ -2859,6 +2682,10 @@ type OrderStateMutation struct {
 	payment_transaction_id *string
 	payment_finish_amount  *decimal.Decimal
 	payment_state          *string
+	outofgas_hours         *uint32
+	addoutofgas_hours      *int32
+	compensate_hours       *uint32
+	addcompensate_hours    *int32
 	clearedFields          map[string]struct{}
 	done                   bool
 	oldValue               func(context.Context) (*OrderState, error)
@@ -3220,6 +3047,125 @@ func (m *OrderStateMutation) OrderStateCleared() bool {
 func (m *OrderStateMutation) ResetOrderState() {
 	m.order_state = nil
 	delete(m.clearedFields, orderstate.FieldOrderState)
+}
+
+// SetStartMode sets the "start_mode" field.
+func (m *OrderStateMutation) SetStartMode(s string) {
+	m.start_mode = &s
+}
+
+// StartMode returns the value of the "start_mode" field in the mutation.
+func (m *OrderStateMutation) StartMode() (r string, exists bool) {
+	v := m.start_mode
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldStartMode returns the old "start_mode" field's value of the OrderState entity.
+// If the OrderState object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *OrderStateMutation) OldStartMode(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldStartMode is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldStartMode requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldStartMode: %w", err)
+	}
+	return oldValue.StartMode, nil
+}
+
+// ClearStartMode clears the value of the "start_mode" field.
+func (m *OrderStateMutation) ClearStartMode() {
+	m.start_mode = nil
+	m.clearedFields[orderstate.FieldStartMode] = struct{}{}
+}
+
+// StartModeCleared returns if the "start_mode" field was cleared in this mutation.
+func (m *OrderStateMutation) StartModeCleared() bool {
+	_, ok := m.clearedFields[orderstate.FieldStartMode]
+	return ok
+}
+
+// ResetStartMode resets all changes to the "start_mode" field.
+func (m *OrderStateMutation) ResetStartMode() {
+	m.start_mode = nil
+	delete(m.clearedFields, orderstate.FieldStartMode)
+}
+
+// SetStartAt sets the "start_at" field.
+func (m *OrderStateMutation) SetStartAt(u uint32) {
+	m.start_at = &u
+	m.addstart_at = nil
+}
+
+// StartAt returns the value of the "start_at" field in the mutation.
+func (m *OrderStateMutation) StartAt() (r uint32, exists bool) {
+	v := m.start_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldStartAt returns the old "start_at" field's value of the OrderState entity.
+// If the OrderState object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *OrderStateMutation) OldStartAt(ctx context.Context) (v uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldStartAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldStartAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldStartAt: %w", err)
+	}
+	return oldValue.StartAt, nil
+}
+
+// AddStartAt adds u to the "start_at" field.
+func (m *OrderStateMutation) AddStartAt(u int32) {
+	if m.addstart_at != nil {
+		*m.addstart_at += u
+	} else {
+		m.addstart_at = &u
+	}
+}
+
+// AddedStartAt returns the value that was added to the "start_at" field in this mutation.
+func (m *OrderStateMutation) AddedStartAt() (r int32, exists bool) {
+	v := m.addstart_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearStartAt clears the value of the "start_at" field.
+func (m *OrderStateMutation) ClearStartAt() {
+	m.start_at = nil
+	m.addstart_at = nil
+	m.clearedFields[orderstate.FieldStartAt] = struct{}{}
+}
+
+// StartAtCleared returns if the "start_at" field was cleared in this mutation.
+func (m *OrderStateMutation) StartAtCleared() bool {
+	_, ok := m.clearedFields[orderstate.FieldStartAt]
+	return ok
+}
+
+// ResetStartAt resets all changes to the "start_at" field.
+func (m *OrderStateMutation) ResetStartAt() {
+	m.start_at = nil
+	m.addstart_at = nil
+	delete(m.clearedFields, orderstate.FieldStartAt)
 }
 
 // SetEndAt sets the "end_at" field.
@@ -3656,6 +3602,146 @@ func (m *OrderStateMutation) ResetPaymentState() {
 	delete(m.clearedFields, orderstate.FieldPaymentState)
 }
 
+// SetOutofgasHours sets the "outofgas_hours" field.
+func (m *OrderStateMutation) SetOutofgasHours(u uint32) {
+	m.outofgas_hours = &u
+	m.addoutofgas_hours = nil
+}
+
+// OutofgasHours returns the value of the "outofgas_hours" field in the mutation.
+func (m *OrderStateMutation) OutofgasHours() (r uint32, exists bool) {
+	v := m.outofgas_hours
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldOutofgasHours returns the old "outofgas_hours" field's value of the OrderState entity.
+// If the OrderState object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *OrderStateMutation) OldOutofgasHours(ctx context.Context) (v uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldOutofgasHours is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldOutofgasHours requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldOutofgasHours: %w", err)
+	}
+	return oldValue.OutofgasHours, nil
+}
+
+// AddOutofgasHours adds u to the "outofgas_hours" field.
+func (m *OrderStateMutation) AddOutofgasHours(u int32) {
+	if m.addoutofgas_hours != nil {
+		*m.addoutofgas_hours += u
+	} else {
+		m.addoutofgas_hours = &u
+	}
+}
+
+// AddedOutofgasHours returns the value that was added to the "outofgas_hours" field in this mutation.
+func (m *OrderStateMutation) AddedOutofgasHours() (r int32, exists bool) {
+	v := m.addoutofgas_hours
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearOutofgasHours clears the value of the "outofgas_hours" field.
+func (m *OrderStateMutation) ClearOutofgasHours() {
+	m.outofgas_hours = nil
+	m.addoutofgas_hours = nil
+	m.clearedFields[orderstate.FieldOutofgasHours] = struct{}{}
+}
+
+// OutofgasHoursCleared returns if the "outofgas_hours" field was cleared in this mutation.
+func (m *OrderStateMutation) OutofgasHoursCleared() bool {
+	_, ok := m.clearedFields[orderstate.FieldOutofgasHours]
+	return ok
+}
+
+// ResetOutofgasHours resets all changes to the "outofgas_hours" field.
+func (m *OrderStateMutation) ResetOutofgasHours() {
+	m.outofgas_hours = nil
+	m.addoutofgas_hours = nil
+	delete(m.clearedFields, orderstate.FieldOutofgasHours)
+}
+
+// SetCompensateHours sets the "compensate_hours" field.
+func (m *OrderStateMutation) SetCompensateHours(u uint32) {
+	m.compensate_hours = &u
+	m.addcompensate_hours = nil
+}
+
+// CompensateHours returns the value of the "compensate_hours" field in the mutation.
+func (m *OrderStateMutation) CompensateHours() (r uint32, exists bool) {
+	v := m.compensate_hours
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCompensateHours returns the old "compensate_hours" field's value of the OrderState entity.
+// If the OrderState object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *OrderStateMutation) OldCompensateHours(ctx context.Context) (v uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCompensateHours is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCompensateHours requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCompensateHours: %w", err)
+	}
+	return oldValue.CompensateHours, nil
+}
+
+// AddCompensateHours adds u to the "compensate_hours" field.
+func (m *OrderStateMutation) AddCompensateHours(u int32) {
+	if m.addcompensate_hours != nil {
+		*m.addcompensate_hours += u
+	} else {
+		m.addcompensate_hours = &u
+	}
+}
+
+// AddedCompensateHours returns the value that was added to the "compensate_hours" field in this mutation.
+func (m *OrderStateMutation) AddedCompensateHours() (r int32, exists bool) {
+	v := m.addcompensate_hours
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearCompensateHours clears the value of the "compensate_hours" field.
+func (m *OrderStateMutation) ClearCompensateHours() {
+	m.compensate_hours = nil
+	m.addcompensate_hours = nil
+	m.clearedFields[orderstate.FieldCompensateHours] = struct{}{}
+}
+
+// CompensateHoursCleared returns if the "compensate_hours" field was cleared in this mutation.
+func (m *OrderStateMutation) CompensateHoursCleared() bool {
+	_, ok := m.clearedFields[orderstate.FieldCompensateHours]
+	return ok
+}
+
+// ResetCompensateHours resets all changes to the "compensate_hours" field.
+func (m *OrderStateMutation) ResetCompensateHours() {
+	m.compensate_hours = nil
+	m.addcompensate_hours = nil
+	delete(m.clearedFields, orderstate.FieldCompensateHours)
+}
+
 // Where appends a list predicates to the OrderStateMutation builder.
 func (m *OrderStateMutation) Where(ps ...predicate.OrderState) {
 	m.predicates = append(m.predicates, ps...)
@@ -3675,7 +3761,7 @@ func (m *OrderStateMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *OrderStateMutation) Fields() []string {
-	fields := make([]string, 0, 13)
+	fields := make([]string, 0, 17)
 	if m.created_at != nil {
 		fields = append(fields, orderstate.FieldCreatedAt)
 	}
@@ -3690,6 +3776,12 @@ func (m *OrderStateMutation) Fields() []string {
 	}
 	if m.order_state != nil {
 		fields = append(fields, orderstate.FieldOrderState)
+	}
+	if m.start_mode != nil {
+		fields = append(fields, orderstate.FieldStartMode)
+	}
+	if m.start_at != nil {
+		fields = append(fields, orderstate.FieldStartAt)
 	}
 	if m.end_at != nil {
 		fields = append(fields, orderstate.FieldEndAt)
@@ -3715,6 +3807,12 @@ func (m *OrderStateMutation) Fields() []string {
 	if m.payment_state != nil {
 		fields = append(fields, orderstate.FieldPaymentState)
 	}
+	if m.outofgas_hours != nil {
+		fields = append(fields, orderstate.FieldOutofgasHours)
+	}
+	if m.compensate_hours != nil {
+		fields = append(fields, orderstate.FieldCompensateHours)
+	}
 	return fields
 }
 
@@ -3733,6 +3831,10 @@ func (m *OrderStateMutation) Field(name string) (ent.Value, bool) {
 		return m.OrderID()
 	case orderstate.FieldOrderState:
 		return m.OrderState()
+	case orderstate.FieldStartMode:
+		return m.StartMode()
+	case orderstate.FieldStartAt:
+		return m.StartAt()
 	case orderstate.FieldEndAt:
 		return m.EndAt()
 	case orderstate.FieldLastBenefitAt:
@@ -3749,6 +3851,10 @@ func (m *OrderStateMutation) Field(name string) (ent.Value, bool) {
 		return m.PaymentFinishAmount()
 	case orderstate.FieldPaymentState:
 		return m.PaymentState()
+	case orderstate.FieldOutofgasHours:
+		return m.OutofgasHours()
+	case orderstate.FieldCompensateHours:
+		return m.CompensateHours()
 	}
 	return nil, false
 }
@@ -3768,6 +3874,10 @@ func (m *OrderStateMutation) OldField(ctx context.Context, name string) (ent.Val
 		return m.OldOrderID(ctx)
 	case orderstate.FieldOrderState:
 		return m.OldOrderState(ctx)
+	case orderstate.FieldStartMode:
+		return m.OldStartMode(ctx)
+	case orderstate.FieldStartAt:
+		return m.OldStartAt(ctx)
 	case orderstate.FieldEndAt:
 		return m.OldEndAt(ctx)
 	case orderstate.FieldLastBenefitAt:
@@ -3784,6 +3894,10 @@ func (m *OrderStateMutation) OldField(ctx context.Context, name string) (ent.Val
 		return m.OldPaymentFinishAmount(ctx)
 	case orderstate.FieldPaymentState:
 		return m.OldPaymentState(ctx)
+	case orderstate.FieldOutofgasHours:
+		return m.OldOutofgasHours(ctx)
+	case orderstate.FieldCompensateHours:
+		return m.OldCompensateHours(ctx)
 	}
 	return nil, fmt.Errorf("unknown OrderState field %s", name)
 }
@@ -3827,6 +3941,20 @@ func (m *OrderStateMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetOrderState(v)
+		return nil
+	case orderstate.FieldStartMode:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetStartMode(v)
+		return nil
+	case orderstate.FieldStartAt:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetStartAt(v)
 		return nil
 	case orderstate.FieldEndAt:
 		v, ok := value.(uint32)
@@ -3884,6 +4012,20 @@ func (m *OrderStateMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetPaymentState(v)
 		return nil
+	case orderstate.FieldOutofgasHours:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetOutofgasHours(v)
+		return nil
+	case orderstate.FieldCompensateHours:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCompensateHours(v)
+		return nil
 	}
 	return fmt.Errorf("unknown OrderState field %s", name)
 }
@@ -3901,11 +4043,20 @@ func (m *OrderStateMutation) AddedFields() []string {
 	if m.adddeleted_at != nil {
 		fields = append(fields, orderstate.FieldDeletedAt)
 	}
+	if m.addstart_at != nil {
+		fields = append(fields, orderstate.FieldStartAt)
+	}
 	if m.addend_at != nil {
 		fields = append(fields, orderstate.FieldEndAt)
 	}
 	if m.addlast_benefit_at != nil {
 		fields = append(fields, orderstate.FieldLastBenefitAt)
+	}
+	if m.addoutofgas_hours != nil {
+		fields = append(fields, orderstate.FieldOutofgasHours)
+	}
+	if m.addcompensate_hours != nil {
+		fields = append(fields, orderstate.FieldCompensateHours)
 	}
 	return fields
 }
@@ -3921,10 +4072,16 @@ func (m *OrderStateMutation) AddedField(name string) (ent.Value, bool) {
 		return m.AddedUpdatedAt()
 	case orderstate.FieldDeletedAt:
 		return m.AddedDeletedAt()
+	case orderstate.FieldStartAt:
+		return m.AddedStartAt()
 	case orderstate.FieldEndAt:
 		return m.AddedEndAt()
 	case orderstate.FieldLastBenefitAt:
 		return m.AddedLastBenefitAt()
+	case orderstate.FieldOutofgasHours:
+		return m.AddedOutofgasHours()
+	case orderstate.FieldCompensateHours:
+		return m.AddedCompensateHours()
 	}
 	return nil, false
 }
@@ -3955,6 +4112,13 @@ func (m *OrderStateMutation) AddField(name string, value ent.Value) error {
 		}
 		m.AddDeletedAt(v)
 		return nil
+	case orderstate.FieldStartAt:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddStartAt(v)
+		return nil
 	case orderstate.FieldEndAt:
 		v, ok := value.(int32)
 		if !ok {
@@ -3969,6 +4133,20 @@ func (m *OrderStateMutation) AddField(name string, value ent.Value) error {
 		}
 		m.AddLastBenefitAt(v)
 		return nil
+	case orderstate.FieldOutofgasHours:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddOutofgasHours(v)
+		return nil
+	case orderstate.FieldCompensateHours:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddCompensateHours(v)
+		return nil
 	}
 	return fmt.Errorf("unknown OrderState numeric field %s", name)
 }
@@ -3979,6 +4157,12 @@ func (m *OrderStateMutation) ClearedFields() []string {
 	var fields []string
 	if m.FieldCleared(orderstate.FieldOrderState) {
 		fields = append(fields, orderstate.FieldOrderState)
+	}
+	if m.FieldCleared(orderstate.FieldStartMode) {
+		fields = append(fields, orderstate.FieldStartMode)
+	}
+	if m.FieldCleared(orderstate.FieldStartAt) {
+		fields = append(fields, orderstate.FieldStartAt)
 	}
 	if m.FieldCleared(orderstate.FieldEndAt) {
 		fields = append(fields, orderstate.FieldEndAt)
@@ -4004,6 +4188,12 @@ func (m *OrderStateMutation) ClearedFields() []string {
 	if m.FieldCleared(orderstate.FieldPaymentState) {
 		fields = append(fields, orderstate.FieldPaymentState)
 	}
+	if m.FieldCleared(orderstate.FieldOutofgasHours) {
+		fields = append(fields, orderstate.FieldOutofgasHours)
+	}
+	if m.FieldCleared(orderstate.FieldCompensateHours) {
+		fields = append(fields, orderstate.FieldCompensateHours)
+	}
 	return fields
 }
 
@@ -4020,6 +4210,12 @@ func (m *OrderStateMutation) ClearField(name string) error {
 	switch name {
 	case orderstate.FieldOrderState:
 		m.ClearOrderState()
+		return nil
+	case orderstate.FieldStartMode:
+		m.ClearStartMode()
+		return nil
+	case orderstate.FieldStartAt:
+		m.ClearStartAt()
 		return nil
 	case orderstate.FieldEndAt:
 		m.ClearEndAt()
@@ -4045,6 +4241,12 @@ func (m *OrderStateMutation) ClearField(name string) error {
 	case orderstate.FieldPaymentState:
 		m.ClearPaymentState()
 		return nil
+	case orderstate.FieldOutofgasHours:
+		m.ClearOutofgasHours()
+		return nil
+	case orderstate.FieldCompensateHours:
+		m.ClearCompensateHours()
+		return nil
 	}
 	return fmt.Errorf("unknown OrderState nullable field %s", name)
 }
@@ -4067,6 +4269,12 @@ func (m *OrderStateMutation) ResetField(name string) error {
 		return nil
 	case orderstate.FieldOrderState:
 		m.ResetOrderState()
+		return nil
+	case orderstate.FieldStartMode:
+		m.ResetStartMode()
+		return nil
+	case orderstate.FieldStartAt:
+		m.ResetStartAt()
 		return nil
 	case orderstate.FieldEndAt:
 		m.ResetEndAt()
@@ -4091,6 +4299,12 @@ func (m *OrderStateMutation) ResetField(name string) error {
 		return nil
 	case orderstate.FieldPaymentState:
 		m.ResetPaymentState()
+		return nil
+	case orderstate.FieldOutofgasHours:
+		m.ResetOutofgasHours()
+		return nil
+	case orderstate.FieldCompensateHours:
+		m.ResetCompensateHours()
 		return nil
 	}
 	return fmt.Errorf("unknown OrderState field %s", name)

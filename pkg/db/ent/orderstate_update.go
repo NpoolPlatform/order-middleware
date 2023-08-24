@@ -111,6 +111,53 @@ func (osu *OrderStateUpdate) ClearOrderState() *OrderStateUpdate {
 	return osu
 }
 
+// SetStartMode sets the "start_mode" field.
+func (osu *OrderStateUpdate) SetStartMode(s string) *OrderStateUpdate {
+	osu.mutation.SetStartMode(s)
+	return osu
+}
+
+// SetNillableStartMode sets the "start_mode" field if the given value is not nil.
+func (osu *OrderStateUpdate) SetNillableStartMode(s *string) *OrderStateUpdate {
+	if s != nil {
+		osu.SetStartMode(*s)
+	}
+	return osu
+}
+
+// ClearStartMode clears the value of the "start_mode" field.
+func (osu *OrderStateUpdate) ClearStartMode() *OrderStateUpdate {
+	osu.mutation.ClearStartMode()
+	return osu
+}
+
+// SetStartAt sets the "start_at" field.
+func (osu *OrderStateUpdate) SetStartAt(u uint32) *OrderStateUpdate {
+	osu.mutation.ResetStartAt()
+	osu.mutation.SetStartAt(u)
+	return osu
+}
+
+// SetNillableStartAt sets the "start_at" field if the given value is not nil.
+func (osu *OrderStateUpdate) SetNillableStartAt(u *uint32) *OrderStateUpdate {
+	if u != nil {
+		osu.SetStartAt(*u)
+	}
+	return osu
+}
+
+// AddStartAt adds u to the "start_at" field.
+func (osu *OrderStateUpdate) AddStartAt(u int32) *OrderStateUpdate {
+	osu.mutation.AddStartAt(u)
+	return osu
+}
+
+// ClearStartAt clears the value of the "start_at" field.
+func (osu *OrderStateUpdate) ClearStartAt() *OrderStateUpdate {
+	osu.mutation.ClearStartAt()
+	return osu
+}
+
 // SetEndAt sets the "end_at" field.
 func (osu *OrderStateUpdate) SetEndAt(u uint32) *OrderStateUpdate {
 	osu.mutation.ResetEndAt()
@@ -285,6 +332,60 @@ func (osu *OrderStateUpdate) ClearPaymentState() *OrderStateUpdate {
 	return osu
 }
 
+// SetOutofgasHours sets the "outofgas_hours" field.
+func (osu *OrderStateUpdate) SetOutofgasHours(u uint32) *OrderStateUpdate {
+	osu.mutation.ResetOutofgasHours()
+	osu.mutation.SetOutofgasHours(u)
+	return osu
+}
+
+// SetNillableOutofgasHours sets the "outofgas_hours" field if the given value is not nil.
+func (osu *OrderStateUpdate) SetNillableOutofgasHours(u *uint32) *OrderStateUpdate {
+	if u != nil {
+		osu.SetOutofgasHours(*u)
+	}
+	return osu
+}
+
+// AddOutofgasHours adds u to the "outofgas_hours" field.
+func (osu *OrderStateUpdate) AddOutofgasHours(u int32) *OrderStateUpdate {
+	osu.mutation.AddOutofgasHours(u)
+	return osu
+}
+
+// ClearOutofgasHours clears the value of the "outofgas_hours" field.
+func (osu *OrderStateUpdate) ClearOutofgasHours() *OrderStateUpdate {
+	osu.mutation.ClearOutofgasHours()
+	return osu
+}
+
+// SetCompensateHours sets the "compensate_hours" field.
+func (osu *OrderStateUpdate) SetCompensateHours(u uint32) *OrderStateUpdate {
+	osu.mutation.ResetCompensateHours()
+	osu.mutation.SetCompensateHours(u)
+	return osu
+}
+
+// SetNillableCompensateHours sets the "compensate_hours" field if the given value is not nil.
+func (osu *OrderStateUpdate) SetNillableCompensateHours(u *uint32) *OrderStateUpdate {
+	if u != nil {
+		osu.SetCompensateHours(*u)
+	}
+	return osu
+}
+
+// AddCompensateHours adds u to the "compensate_hours" field.
+func (osu *OrderStateUpdate) AddCompensateHours(u int32) *OrderStateUpdate {
+	osu.mutation.AddCompensateHours(u)
+	return osu
+}
+
+// ClearCompensateHours clears the value of the "compensate_hours" field.
+func (osu *OrderStateUpdate) ClearCompensateHours() *OrderStateUpdate {
+	osu.mutation.ClearCompensateHours()
+	return osu
+}
+
 // Mutation returns the OrderStateMutation object of the builder.
 func (osu *OrderStateUpdate) Mutation() *OrderStateMutation {
 	return osu.mutation
@@ -445,6 +546,39 @@ func (osu *OrderStateUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: orderstate.FieldOrderState,
 		})
 	}
+	if value, ok := osu.mutation.StartMode(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: orderstate.FieldStartMode,
+		})
+	}
+	if osu.mutation.StartModeCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Column: orderstate.FieldStartMode,
+		})
+	}
+	if value, ok := osu.mutation.StartAt(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeUint32,
+			Value:  value,
+			Column: orderstate.FieldStartAt,
+		})
+	}
+	if value, ok := osu.mutation.AddedStartAt(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeUint32,
+			Value:  value,
+			Column: orderstate.FieldStartAt,
+		})
+	}
+	if osu.mutation.StartAtCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeUint32,
+			Column: orderstate.FieldStartAt,
+		})
+	}
 	if value, ok := osu.mutation.EndAt(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeUint32,
@@ -563,6 +697,46 @@ func (osu *OrderStateUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: orderstate.FieldPaymentState,
 		})
 	}
+	if value, ok := osu.mutation.OutofgasHours(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeUint32,
+			Value:  value,
+			Column: orderstate.FieldOutofgasHours,
+		})
+	}
+	if value, ok := osu.mutation.AddedOutofgasHours(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeUint32,
+			Value:  value,
+			Column: orderstate.FieldOutofgasHours,
+		})
+	}
+	if osu.mutation.OutofgasHoursCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeUint32,
+			Column: orderstate.FieldOutofgasHours,
+		})
+	}
+	if value, ok := osu.mutation.CompensateHours(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeUint32,
+			Value:  value,
+			Column: orderstate.FieldCompensateHours,
+		})
+	}
+	if value, ok := osu.mutation.AddedCompensateHours(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeUint32,
+			Value:  value,
+			Column: orderstate.FieldCompensateHours,
+		})
+	}
+	if osu.mutation.CompensateHoursCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeUint32,
+			Column: orderstate.FieldCompensateHours,
+		})
+	}
 	_spec.Modifiers = osu.modifiers
 	if n, err = sqlgraph.UpdateNodes(ctx, osu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
@@ -662,6 +836,53 @@ func (osuo *OrderStateUpdateOne) SetNillableOrderState(s *string) *OrderStateUpd
 // ClearOrderState clears the value of the "order_state" field.
 func (osuo *OrderStateUpdateOne) ClearOrderState() *OrderStateUpdateOne {
 	osuo.mutation.ClearOrderState()
+	return osuo
+}
+
+// SetStartMode sets the "start_mode" field.
+func (osuo *OrderStateUpdateOne) SetStartMode(s string) *OrderStateUpdateOne {
+	osuo.mutation.SetStartMode(s)
+	return osuo
+}
+
+// SetNillableStartMode sets the "start_mode" field if the given value is not nil.
+func (osuo *OrderStateUpdateOne) SetNillableStartMode(s *string) *OrderStateUpdateOne {
+	if s != nil {
+		osuo.SetStartMode(*s)
+	}
+	return osuo
+}
+
+// ClearStartMode clears the value of the "start_mode" field.
+func (osuo *OrderStateUpdateOne) ClearStartMode() *OrderStateUpdateOne {
+	osuo.mutation.ClearStartMode()
+	return osuo
+}
+
+// SetStartAt sets the "start_at" field.
+func (osuo *OrderStateUpdateOne) SetStartAt(u uint32) *OrderStateUpdateOne {
+	osuo.mutation.ResetStartAt()
+	osuo.mutation.SetStartAt(u)
+	return osuo
+}
+
+// SetNillableStartAt sets the "start_at" field if the given value is not nil.
+func (osuo *OrderStateUpdateOne) SetNillableStartAt(u *uint32) *OrderStateUpdateOne {
+	if u != nil {
+		osuo.SetStartAt(*u)
+	}
+	return osuo
+}
+
+// AddStartAt adds u to the "start_at" field.
+func (osuo *OrderStateUpdateOne) AddStartAt(u int32) *OrderStateUpdateOne {
+	osuo.mutation.AddStartAt(u)
+	return osuo
+}
+
+// ClearStartAt clears the value of the "start_at" field.
+func (osuo *OrderStateUpdateOne) ClearStartAt() *OrderStateUpdateOne {
+	osuo.mutation.ClearStartAt()
 	return osuo
 }
 
@@ -836,6 +1057,60 @@ func (osuo *OrderStateUpdateOne) SetNillablePaymentState(s *string) *OrderStateU
 // ClearPaymentState clears the value of the "payment_state" field.
 func (osuo *OrderStateUpdateOne) ClearPaymentState() *OrderStateUpdateOne {
 	osuo.mutation.ClearPaymentState()
+	return osuo
+}
+
+// SetOutofgasHours sets the "outofgas_hours" field.
+func (osuo *OrderStateUpdateOne) SetOutofgasHours(u uint32) *OrderStateUpdateOne {
+	osuo.mutation.ResetOutofgasHours()
+	osuo.mutation.SetOutofgasHours(u)
+	return osuo
+}
+
+// SetNillableOutofgasHours sets the "outofgas_hours" field if the given value is not nil.
+func (osuo *OrderStateUpdateOne) SetNillableOutofgasHours(u *uint32) *OrderStateUpdateOne {
+	if u != nil {
+		osuo.SetOutofgasHours(*u)
+	}
+	return osuo
+}
+
+// AddOutofgasHours adds u to the "outofgas_hours" field.
+func (osuo *OrderStateUpdateOne) AddOutofgasHours(u int32) *OrderStateUpdateOne {
+	osuo.mutation.AddOutofgasHours(u)
+	return osuo
+}
+
+// ClearOutofgasHours clears the value of the "outofgas_hours" field.
+func (osuo *OrderStateUpdateOne) ClearOutofgasHours() *OrderStateUpdateOne {
+	osuo.mutation.ClearOutofgasHours()
+	return osuo
+}
+
+// SetCompensateHours sets the "compensate_hours" field.
+func (osuo *OrderStateUpdateOne) SetCompensateHours(u uint32) *OrderStateUpdateOne {
+	osuo.mutation.ResetCompensateHours()
+	osuo.mutation.SetCompensateHours(u)
+	return osuo
+}
+
+// SetNillableCompensateHours sets the "compensate_hours" field if the given value is not nil.
+func (osuo *OrderStateUpdateOne) SetNillableCompensateHours(u *uint32) *OrderStateUpdateOne {
+	if u != nil {
+		osuo.SetCompensateHours(*u)
+	}
+	return osuo
+}
+
+// AddCompensateHours adds u to the "compensate_hours" field.
+func (osuo *OrderStateUpdateOne) AddCompensateHours(u int32) *OrderStateUpdateOne {
+	osuo.mutation.AddCompensateHours(u)
+	return osuo
+}
+
+// ClearCompensateHours clears the value of the "compensate_hours" field.
+func (osuo *OrderStateUpdateOne) ClearCompensateHours() *OrderStateUpdateOne {
+	osuo.mutation.ClearCompensateHours()
 	return osuo
 }
 
@@ -1029,6 +1304,39 @@ func (osuo *OrderStateUpdateOne) sqlSave(ctx context.Context) (_node *OrderState
 			Column: orderstate.FieldOrderState,
 		})
 	}
+	if value, ok := osuo.mutation.StartMode(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: orderstate.FieldStartMode,
+		})
+	}
+	if osuo.mutation.StartModeCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Column: orderstate.FieldStartMode,
+		})
+	}
+	if value, ok := osuo.mutation.StartAt(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeUint32,
+			Value:  value,
+			Column: orderstate.FieldStartAt,
+		})
+	}
+	if value, ok := osuo.mutation.AddedStartAt(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeUint32,
+			Value:  value,
+			Column: orderstate.FieldStartAt,
+		})
+	}
+	if osuo.mutation.StartAtCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeUint32,
+			Column: orderstate.FieldStartAt,
+		})
+	}
 	if value, ok := osuo.mutation.EndAt(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeUint32,
@@ -1145,6 +1453,46 @@ func (osuo *OrderStateUpdateOne) sqlSave(ctx context.Context) (_node *OrderState
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
 			Column: orderstate.FieldPaymentState,
+		})
+	}
+	if value, ok := osuo.mutation.OutofgasHours(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeUint32,
+			Value:  value,
+			Column: orderstate.FieldOutofgasHours,
+		})
+	}
+	if value, ok := osuo.mutation.AddedOutofgasHours(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeUint32,
+			Value:  value,
+			Column: orderstate.FieldOutofgasHours,
+		})
+	}
+	if osuo.mutation.OutofgasHoursCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeUint32,
+			Column: orderstate.FieldOutofgasHours,
+		})
+	}
+	if value, ok := osuo.mutation.CompensateHours(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeUint32,
+			Value:  value,
+			Column: orderstate.FieldCompensateHours,
+		})
+	}
+	if value, ok := osuo.mutation.AddedCompensateHours(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeUint32,
+			Value:  value,
+			Column: orderstate.FieldCompensateHours,
+		})
+	}
+	if osuo.mutation.CompensateHoursCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeUint32,
+			Column: orderstate.FieldCompensateHours,
 		})
 	}
 	_spec.Modifiers = osuo.modifiers

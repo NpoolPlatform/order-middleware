@@ -86,6 +86,34 @@ func (osc *OrderStateCreate) SetNillableOrderState(s *string) *OrderStateCreate 
 	return osc
 }
 
+// SetStartMode sets the "start_mode" field.
+func (osc *OrderStateCreate) SetStartMode(s string) *OrderStateCreate {
+	osc.mutation.SetStartMode(s)
+	return osc
+}
+
+// SetNillableStartMode sets the "start_mode" field if the given value is not nil.
+func (osc *OrderStateCreate) SetNillableStartMode(s *string) *OrderStateCreate {
+	if s != nil {
+		osc.SetStartMode(*s)
+	}
+	return osc
+}
+
+// SetStartAt sets the "start_at" field.
+func (osc *OrderStateCreate) SetStartAt(u uint32) *OrderStateCreate {
+	osc.mutation.SetStartAt(u)
+	return osc
+}
+
+// SetNillableStartAt sets the "start_at" field if the given value is not nil.
+func (osc *OrderStateCreate) SetNillableStartAt(u *uint32) *OrderStateCreate {
+	if u != nil {
+		osc.SetStartAt(*u)
+	}
+	return osc
+}
+
 // SetEndAt sets the "end_at" field.
 func (osc *OrderStateCreate) SetEndAt(u uint32) *OrderStateCreate {
 	osc.mutation.SetEndAt(u)
@@ -194,6 +222,34 @@ func (osc *OrderStateCreate) SetPaymentState(s string) *OrderStateCreate {
 func (osc *OrderStateCreate) SetNillablePaymentState(s *string) *OrderStateCreate {
 	if s != nil {
 		osc.SetPaymentState(*s)
+	}
+	return osc
+}
+
+// SetOutofgasHours sets the "outofgas_hours" field.
+func (osc *OrderStateCreate) SetOutofgasHours(u uint32) *OrderStateCreate {
+	osc.mutation.SetOutofgasHours(u)
+	return osc
+}
+
+// SetNillableOutofgasHours sets the "outofgas_hours" field if the given value is not nil.
+func (osc *OrderStateCreate) SetNillableOutofgasHours(u *uint32) *OrderStateCreate {
+	if u != nil {
+		osc.SetOutofgasHours(*u)
+	}
+	return osc
+}
+
+// SetCompensateHours sets the "compensate_hours" field.
+func (osc *OrderStateCreate) SetCompensateHours(u uint32) *OrderStateCreate {
+	osc.mutation.SetCompensateHours(u)
+	return osc
+}
+
+// SetNillableCompensateHours sets the "compensate_hours" field if the given value is not nil.
+func (osc *OrderStateCreate) SetNillableCompensateHours(u *uint32) *OrderStateCreate {
+	if u != nil {
+		osc.SetCompensateHours(*u)
 	}
 	return osc
 }
@@ -316,6 +372,14 @@ func (osc *OrderStateCreate) defaults() error {
 		v := orderstate.DefaultOrderState
 		osc.mutation.SetOrderState(v)
 	}
+	if _, ok := osc.mutation.StartMode(); !ok {
+		v := orderstate.DefaultStartMode
+		osc.mutation.SetStartMode(v)
+	}
+	if _, ok := osc.mutation.StartAt(); !ok {
+		v := orderstate.DefaultStartAt
+		osc.mutation.SetStartAt(v)
+	}
 	if _, ok := osc.mutation.EndAt(); !ok {
 		v := orderstate.DefaultEndAt
 		osc.mutation.SetEndAt(v)
@@ -347,6 +411,14 @@ func (osc *OrderStateCreate) defaults() error {
 	if _, ok := osc.mutation.PaymentState(); !ok {
 		v := orderstate.DefaultPaymentState
 		osc.mutation.SetPaymentState(v)
+	}
+	if _, ok := osc.mutation.OutofgasHours(); !ok {
+		v := orderstate.DefaultOutofgasHours
+		osc.mutation.SetOutofgasHours(v)
+	}
+	if _, ok := osc.mutation.CompensateHours(); !ok {
+		v := orderstate.DefaultCompensateHours
+		osc.mutation.SetCompensateHours(v)
 	}
 	if _, ok := osc.mutation.ID(); !ok {
 		if orderstate.DefaultID == nil {
@@ -449,6 +521,22 @@ func (osc *OrderStateCreate) createSpec() (*OrderState, *sqlgraph.CreateSpec) {
 		})
 		_node.OrderState = value
 	}
+	if value, ok := osc.mutation.StartMode(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: orderstate.FieldStartMode,
+		})
+		_node.StartMode = value
+	}
+	if value, ok := osc.mutation.StartAt(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeUint32,
+			Value:  value,
+			Column: orderstate.FieldStartAt,
+		})
+		_node.StartAt = value
+	}
 	if value, ok := osc.mutation.EndAt(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
 			Type:   field.TypeUint32,
@@ -512,6 +600,22 @@ func (osc *OrderStateCreate) createSpec() (*OrderState, *sqlgraph.CreateSpec) {
 			Column: orderstate.FieldPaymentState,
 		})
 		_node.PaymentState = value
+	}
+	if value, ok := osc.mutation.OutofgasHours(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeUint32,
+			Value:  value,
+			Column: orderstate.FieldOutofgasHours,
+		})
+		_node.OutofgasHours = value
+	}
+	if value, ok := osc.mutation.CompensateHours(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeUint32,
+			Value:  value,
+			Column: orderstate.FieldCompensateHours,
+		})
+		_node.CompensateHours = value
 	}
 	return _node, _spec
 }
@@ -648,6 +752,48 @@ func (u *OrderStateUpsert) UpdateOrderState() *OrderStateUpsert {
 // ClearOrderState clears the value of the "order_state" field.
 func (u *OrderStateUpsert) ClearOrderState() *OrderStateUpsert {
 	u.SetNull(orderstate.FieldOrderState)
+	return u
+}
+
+// SetStartMode sets the "start_mode" field.
+func (u *OrderStateUpsert) SetStartMode(v string) *OrderStateUpsert {
+	u.Set(orderstate.FieldStartMode, v)
+	return u
+}
+
+// UpdateStartMode sets the "start_mode" field to the value that was provided on create.
+func (u *OrderStateUpsert) UpdateStartMode() *OrderStateUpsert {
+	u.SetExcluded(orderstate.FieldStartMode)
+	return u
+}
+
+// ClearStartMode clears the value of the "start_mode" field.
+func (u *OrderStateUpsert) ClearStartMode() *OrderStateUpsert {
+	u.SetNull(orderstate.FieldStartMode)
+	return u
+}
+
+// SetStartAt sets the "start_at" field.
+func (u *OrderStateUpsert) SetStartAt(v uint32) *OrderStateUpsert {
+	u.Set(orderstate.FieldStartAt, v)
+	return u
+}
+
+// UpdateStartAt sets the "start_at" field to the value that was provided on create.
+func (u *OrderStateUpsert) UpdateStartAt() *OrderStateUpsert {
+	u.SetExcluded(orderstate.FieldStartAt)
+	return u
+}
+
+// AddStartAt adds v to the "start_at" field.
+func (u *OrderStateUpsert) AddStartAt(v uint32) *OrderStateUpsert {
+	u.Add(orderstate.FieldStartAt, v)
+	return u
+}
+
+// ClearStartAt clears the value of the "start_at" field.
+func (u *OrderStateUpsert) ClearStartAt() *OrderStateUpsert {
+	u.SetNull(orderstate.FieldStartAt)
 	return u
 }
 
@@ -807,6 +953,54 @@ func (u *OrderStateUpsert) ClearPaymentState() *OrderStateUpsert {
 	return u
 }
 
+// SetOutofgasHours sets the "outofgas_hours" field.
+func (u *OrderStateUpsert) SetOutofgasHours(v uint32) *OrderStateUpsert {
+	u.Set(orderstate.FieldOutofgasHours, v)
+	return u
+}
+
+// UpdateOutofgasHours sets the "outofgas_hours" field to the value that was provided on create.
+func (u *OrderStateUpsert) UpdateOutofgasHours() *OrderStateUpsert {
+	u.SetExcluded(orderstate.FieldOutofgasHours)
+	return u
+}
+
+// AddOutofgasHours adds v to the "outofgas_hours" field.
+func (u *OrderStateUpsert) AddOutofgasHours(v uint32) *OrderStateUpsert {
+	u.Add(orderstate.FieldOutofgasHours, v)
+	return u
+}
+
+// ClearOutofgasHours clears the value of the "outofgas_hours" field.
+func (u *OrderStateUpsert) ClearOutofgasHours() *OrderStateUpsert {
+	u.SetNull(orderstate.FieldOutofgasHours)
+	return u
+}
+
+// SetCompensateHours sets the "compensate_hours" field.
+func (u *OrderStateUpsert) SetCompensateHours(v uint32) *OrderStateUpsert {
+	u.Set(orderstate.FieldCompensateHours, v)
+	return u
+}
+
+// UpdateCompensateHours sets the "compensate_hours" field to the value that was provided on create.
+func (u *OrderStateUpsert) UpdateCompensateHours() *OrderStateUpsert {
+	u.SetExcluded(orderstate.FieldCompensateHours)
+	return u
+}
+
+// AddCompensateHours adds v to the "compensate_hours" field.
+func (u *OrderStateUpsert) AddCompensateHours(v uint32) *OrderStateUpsert {
+	u.Add(orderstate.FieldCompensateHours, v)
+	return u
+}
+
+// ClearCompensateHours clears the value of the "compensate_hours" field.
+func (u *OrderStateUpsert) ClearCompensateHours() *OrderStateUpsert {
+	u.SetNull(orderstate.FieldCompensateHours)
+	return u
+}
+
 // UpdateNewValues updates the mutable fields using the new values that were set on create except the ID field.
 // Using this option is equivalent to using:
 //
@@ -952,6 +1146,55 @@ func (u *OrderStateUpsertOne) UpdateOrderState() *OrderStateUpsertOne {
 func (u *OrderStateUpsertOne) ClearOrderState() *OrderStateUpsertOne {
 	return u.Update(func(s *OrderStateUpsert) {
 		s.ClearOrderState()
+	})
+}
+
+// SetStartMode sets the "start_mode" field.
+func (u *OrderStateUpsertOne) SetStartMode(v string) *OrderStateUpsertOne {
+	return u.Update(func(s *OrderStateUpsert) {
+		s.SetStartMode(v)
+	})
+}
+
+// UpdateStartMode sets the "start_mode" field to the value that was provided on create.
+func (u *OrderStateUpsertOne) UpdateStartMode() *OrderStateUpsertOne {
+	return u.Update(func(s *OrderStateUpsert) {
+		s.UpdateStartMode()
+	})
+}
+
+// ClearStartMode clears the value of the "start_mode" field.
+func (u *OrderStateUpsertOne) ClearStartMode() *OrderStateUpsertOne {
+	return u.Update(func(s *OrderStateUpsert) {
+		s.ClearStartMode()
+	})
+}
+
+// SetStartAt sets the "start_at" field.
+func (u *OrderStateUpsertOne) SetStartAt(v uint32) *OrderStateUpsertOne {
+	return u.Update(func(s *OrderStateUpsert) {
+		s.SetStartAt(v)
+	})
+}
+
+// AddStartAt adds v to the "start_at" field.
+func (u *OrderStateUpsertOne) AddStartAt(v uint32) *OrderStateUpsertOne {
+	return u.Update(func(s *OrderStateUpsert) {
+		s.AddStartAt(v)
+	})
+}
+
+// UpdateStartAt sets the "start_at" field to the value that was provided on create.
+func (u *OrderStateUpsertOne) UpdateStartAt() *OrderStateUpsertOne {
+	return u.Update(func(s *OrderStateUpsert) {
+		s.UpdateStartAt()
+	})
+}
+
+// ClearStartAt clears the value of the "start_at" field.
+func (u *OrderStateUpsertOne) ClearStartAt() *OrderStateUpsertOne {
+	return u.Update(func(s *OrderStateUpsert) {
+		s.ClearStartAt()
 	})
 }
 
@@ -1134,6 +1377,62 @@ func (u *OrderStateUpsertOne) UpdatePaymentState() *OrderStateUpsertOne {
 func (u *OrderStateUpsertOne) ClearPaymentState() *OrderStateUpsertOne {
 	return u.Update(func(s *OrderStateUpsert) {
 		s.ClearPaymentState()
+	})
+}
+
+// SetOutofgasHours sets the "outofgas_hours" field.
+func (u *OrderStateUpsertOne) SetOutofgasHours(v uint32) *OrderStateUpsertOne {
+	return u.Update(func(s *OrderStateUpsert) {
+		s.SetOutofgasHours(v)
+	})
+}
+
+// AddOutofgasHours adds v to the "outofgas_hours" field.
+func (u *OrderStateUpsertOne) AddOutofgasHours(v uint32) *OrderStateUpsertOne {
+	return u.Update(func(s *OrderStateUpsert) {
+		s.AddOutofgasHours(v)
+	})
+}
+
+// UpdateOutofgasHours sets the "outofgas_hours" field to the value that was provided on create.
+func (u *OrderStateUpsertOne) UpdateOutofgasHours() *OrderStateUpsertOne {
+	return u.Update(func(s *OrderStateUpsert) {
+		s.UpdateOutofgasHours()
+	})
+}
+
+// ClearOutofgasHours clears the value of the "outofgas_hours" field.
+func (u *OrderStateUpsertOne) ClearOutofgasHours() *OrderStateUpsertOne {
+	return u.Update(func(s *OrderStateUpsert) {
+		s.ClearOutofgasHours()
+	})
+}
+
+// SetCompensateHours sets the "compensate_hours" field.
+func (u *OrderStateUpsertOne) SetCompensateHours(v uint32) *OrderStateUpsertOne {
+	return u.Update(func(s *OrderStateUpsert) {
+		s.SetCompensateHours(v)
+	})
+}
+
+// AddCompensateHours adds v to the "compensate_hours" field.
+func (u *OrderStateUpsertOne) AddCompensateHours(v uint32) *OrderStateUpsertOne {
+	return u.Update(func(s *OrderStateUpsert) {
+		s.AddCompensateHours(v)
+	})
+}
+
+// UpdateCompensateHours sets the "compensate_hours" field to the value that was provided on create.
+func (u *OrderStateUpsertOne) UpdateCompensateHours() *OrderStateUpsertOne {
+	return u.Update(func(s *OrderStateUpsert) {
+		s.UpdateCompensateHours()
+	})
+}
+
+// ClearCompensateHours clears the value of the "compensate_hours" field.
+func (u *OrderStateUpsertOne) ClearCompensateHours() *OrderStateUpsertOne {
+	return u.Update(func(s *OrderStateUpsert) {
+		s.ClearCompensateHours()
 	})
 }
 
@@ -1451,6 +1750,55 @@ func (u *OrderStateUpsertBulk) ClearOrderState() *OrderStateUpsertBulk {
 	})
 }
 
+// SetStartMode sets the "start_mode" field.
+func (u *OrderStateUpsertBulk) SetStartMode(v string) *OrderStateUpsertBulk {
+	return u.Update(func(s *OrderStateUpsert) {
+		s.SetStartMode(v)
+	})
+}
+
+// UpdateStartMode sets the "start_mode" field to the value that was provided on create.
+func (u *OrderStateUpsertBulk) UpdateStartMode() *OrderStateUpsertBulk {
+	return u.Update(func(s *OrderStateUpsert) {
+		s.UpdateStartMode()
+	})
+}
+
+// ClearStartMode clears the value of the "start_mode" field.
+func (u *OrderStateUpsertBulk) ClearStartMode() *OrderStateUpsertBulk {
+	return u.Update(func(s *OrderStateUpsert) {
+		s.ClearStartMode()
+	})
+}
+
+// SetStartAt sets the "start_at" field.
+func (u *OrderStateUpsertBulk) SetStartAt(v uint32) *OrderStateUpsertBulk {
+	return u.Update(func(s *OrderStateUpsert) {
+		s.SetStartAt(v)
+	})
+}
+
+// AddStartAt adds v to the "start_at" field.
+func (u *OrderStateUpsertBulk) AddStartAt(v uint32) *OrderStateUpsertBulk {
+	return u.Update(func(s *OrderStateUpsert) {
+		s.AddStartAt(v)
+	})
+}
+
+// UpdateStartAt sets the "start_at" field to the value that was provided on create.
+func (u *OrderStateUpsertBulk) UpdateStartAt() *OrderStateUpsertBulk {
+	return u.Update(func(s *OrderStateUpsert) {
+		s.UpdateStartAt()
+	})
+}
+
+// ClearStartAt clears the value of the "start_at" field.
+func (u *OrderStateUpsertBulk) ClearStartAt() *OrderStateUpsertBulk {
+	return u.Update(func(s *OrderStateUpsert) {
+		s.ClearStartAt()
+	})
+}
+
 // SetEndAt sets the "end_at" field.
 func (u *OrderStateUpsertBulk) SetEndAt(v uint32) *OrderStateUpsertBulk {
 	return u.Update(func(s *OrderStateUpsert) {
@@ -1630,6 +1978,62 @@ func (u *OrderStateUpsertBulk) UpdatePaymentState() *OrderStateUpsertBulk {
 func (u *OrderStateUpsertBulk) ClearPaymentState() *OrderStateUpsertBulk {
 	return u.Update(func(s *OrderStateUpsert) {
 		s.ClearPaymentState()
+	})
+}
+
+// SetOutofgasHours sets the "outofgas_hours" field.
+func (u *OrderStateUpsertBulk) SetOutofgasHours(v uint32) *OrderStateUpsertBulk {
+	return u.Update(func(s *OrderStateUpsert) {
+		s.SetOutofgasHours(v)
+	})
+}
+
+// AddOutofgasHours adds v to the "outofgas_hours" field.
+func (u *OrderStateUpsertBulk) AddOutofgasHours(v uint32) *OrderStateUpsertBulk {
+	return u.Update(func(s *OrderStateUpsert) {
+		s.AddOutofgasHours(v)
+	})
+}
+
+// UpdateOutofgasHours sets the "outofgas_hours" field to the value that was provided on create.
+func (u *OrderStateUpsertBulk) UpdateOutofgasHours() *OrderStateUpsertBulk {
+	return u.Update(func(s *OrderStateUpsert) {
+		s.UpdateOutofgasHours()
+	})
+}
+
+// ClearOutofgasHours clears the value of the "outofgas_hours" field.
+func (u *OrderStateUpsertBulk) ClearOutofgasHours() *OrderStateUpsertBulk {
+	return u.Update(func(s *OrderStateUpsert) {
+		s.ClearOutofgasHours()
+	})
+}
+
+// SetCompensateHours sets the "compensate_hours" field.
+func (u *OrderStateUpsertBulk) SetCompensateHours(v uint32) *OrderStateUpsertBulk {
+	return u.Update(func(s *OrderStateUpsert) {
+		s.SetCompensateHours(v)
+	})
+}
+
+// AddCompensateHours adds v to the "compensate_hours" field.
+func (u *OrderStateUpsertBulk) AddCompensateHours(v uint32) *OrderStateUpsertBulk {
+	return u.Update(func(s *OrderStateUpsert) {
+		s.AddCompensateHours(v)
+	})
+}
+
+// UpdateCompensateHours sets the "compensate_hours" field to the value that was provided on create.
+func (u *OrderStateUpsertBulk) UpdateCompensateHours() *OrderStateUpsertBulk {
+	return u.Update(func(s *OrderStateUpsert) {
+		s.UpdateCompensateHours()
+	})
+}
+
+// ClearCompensateHours clears the value of the "compensate_hours" field.
+func (u *OrderStateUpsertBulk) ClearCompensateHours() *OrderStateUpsertBulk {
+	return u.Update(func(s *OrderStateUpsert) {
+		s.ClearCompensateHours()
 	})
 }
 

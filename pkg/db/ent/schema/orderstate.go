@@ -35,6 +35,14 @@ func (OrderState) Fields() []ent.Field {
 			Optional().
 			Default(types.OrderState_OrderStateWaitPayment.String()),
 		field.
+			String("start_mode").
+			Optional().
+			Default(types.OrderStartMode_OrderStartConfirmed.String()),
+		field.
+			Uint32("start_at").
+			Optional().
+			Default(0),
+		field.
 			Uint32("end_at").
 			Optional().
 			Default(0),
@@ -69,6 +77,14 @@ func (OrderState) Fields() []ent.Field {
 			String("payment_state").
 			Optional().
 			Default(types.PaymentState_PaymentStateWait.String()),
+		field.
+			Uint32("outofgas_hours").
+			Optional().
+			Default(0),
+		field.
+			Uint32("compensate_hours").
+			Optional().
+			Default(0),
 	}
 }
 

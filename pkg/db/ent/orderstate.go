@@ -27,6 +27,10 @@ type OrderState struct {
 	OrderID uuid.UUID `json:"order_id,omitempty"`
 	// OrderState holds the value of the "order_state" field.
 	OrderState string `json:"order_state,omitempty"`
+	// StartMode holds the value of the "start_mode" field.
+	StartMode string `json:"start_mode,omitempty"`
+	// StartAt holds the value of the "start_at" field.
+	StartAt uint32 `json:"start_at,omitempty"`
 	// EndAt holds the value of the "end_at" field.
 	EndAt uint32 `json:"end_at,omitempty"`
 	// LastBenefitAt holds the value of the "last_benefit_at" field.
@@ -43,6 +47,10 @@ type OrderState struct {
 	PaymentFinishAmount decimal.Decimal `json:"payment_finish_amount,omitempty"`
 	// PaymentState holds the value of the "payment_state" field.
 	PaymentState string `json:"payment_state,omitempty"`
+	// OutofgasHours holds the value of the "outofgas_hours" field.
+	OutofgasHours uint32 `json:"outofgas_hours,omitempty"`
+	// CompensateHours holds the value of the "compensate_hours" field.
+	CompensateHours uint32 `json:"compensate_hours,omitempty"`
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -54,9 +62,9 @@ func (*OrderState) scanValues(columns []string) ([]interface{}, error) {
 			values[i] = new(decimal.Decimal)
 		case orderstate.FieldUserSetPaid, orderstate.FieldUserSetCancelled:
 			values[i] = new(sql.NullBool)
-		case orderstate.FieldCreatedAt, orderstate.FieldUpdatedAt, orderstate.FieldDeletedAt, orderstate.FieldEndAt, orderstate.FieldLastBenefitAt:
+		case orderstate.FieldCreatedAt, orderstate.FieldUpdatedAt, orderstate.FieldDeletedAt, orderstate.FieldStartAt, orderstate.FieldEndAt, orderstate.FieldLastBenefitAt, orderstate.FieldOutofgasHours, orderstate.FieldCompensateHours:
 			values[i] = new(sql.NullInt64)
-		case orderstate.FieldOrderState, orderstate.FieldBenefitState, orderstate.FieldPaymentTransactionID, orderstate.FieldPaymentState:
+		case orderstate.FieldOrderState, orderstate.FieldStartMode, orderstate.FieldBenefitState, orderstate.FieldPaymentTransactionID, orderstate.FieldPaymentState:
 			values[i] = new(sql.NullString)
 		case orderstate.FieldID, orderstate.FieldOrderID:
 			values[i] = new(uuid.UUID)
@@ -111,6 +119,18 @@ func (os *OrderState) assignValues(columns []string, values []interface{}) error
 			} else if value.Valid {
 				os.OrderState = value.String
 			}
+		case orderstate.FieldStartMode:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field start_mode", values[i])
+			} else if value.Valid {
+				os.StartMode = value.String
+			}
+		case orderstate.FieldStartAt:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field start_at", values[i])
+			} else if value.Valid {
+				os.StartAt = uint32(value.Int64)
+			}
 		case orderstate.FieldEndAt:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field end_at", values[i])
@@ -159,6 +179,18 @@ func (os *OrderState) assignValues(columns []string, values []interface{}) error
 			} else if value.Valid {
 				os.PaymentState = value.String
 			}
+		case orderstate.FieldOutofgasHours:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field outofgas_hours", values[i])
+			} else if value.Valid {
+				os.OutofgasHours = uint32(value.Int64)
+			}
+		case orderstate.FieldCompensateHours:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field compensate_hours", values[i])
+			} else if value.Valid {
+				os.CompensateHours = uint32(value.Int64)
+			}
 		}
 	}
 	return nil
@@ -202,6 +234,12 @@ func (os *OrderState) String() string {
 	builder.WriteString("order_state=")
 	builder.WriteString(os.OrderState)
 	builder.WriteString(", ")
+	builder.WriteString("start_mode=")
+	builder.WriteString(os.StartMode)
+	builder.WriteString(", ")
+	builder.WriteString("start_at=")
+	builder.WriteString(fmt.Sprintf("%v", os.StartAt))
+	builder.WriteString(", ")
 	builder.WriteString("end_at=")
 	builder.WriteString(fmt.Sprintf("%v", os.EndAt))
 	builder.WriteString(", ")
@@ -225,6 +263,12 @@ func (os *OrderState) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("payment_state=")
 	builder.WriteString(os.PaymentState)
+	builder.WriteString(", ")
+	builder.WriteString("outofgas_hours=")
+	builder.WriteString(fmt.Sprintf("%v", os.OutofgasHours))
+	builder.WriteString(", ")
+	builder.WriteString("compensate_hours=")
+	builder.WriteString(fmt.Sprintf("%v", os.CompensateHours))
 	builder.WriteByte(')')
 	return builder.String()
 }

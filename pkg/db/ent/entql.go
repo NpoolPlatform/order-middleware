@@ -64,8 +64,6 @@ var schemaGraph = func() *sqlgraph.Schema {
 			order.FieldPaymentAmount:  {Type: field.TypeOther, Column: order.FieldPaymentAmount},
 			order.FieldDiscountAmount: {Type: field.TypeOther, Column: order.FieldDiscountAmount},
 			order.FieldPromotionID:    {Type: field.TypeUUID, Column: order.FieldPromotionID},
-			order.FieldStartAt:        {Type: field.TypeUint32, Column: order.FieldStartAt},
-			order.FieldStartMode:      {Type: field.TypeString, Column: order.FieldStartMode},
 			order.FieldDurationDays:   {Type: field.TypeUint32, Column: order.FieldDurationDays},
 			order.FieldOrderType:      {Type: field.TypeString, Column: order.FieldOrderType},
 			order.FieldInvestmentType: {Type: field.TypeString, Column: order.FieldInvestmentType},
@@ -89,6 +87,8 @@ var schemaGraph = func() *sqlgraph.Schema {
 			orderstate.FieldDeletedAt:            {Type: field.TypeUint32, Column: orderstate.FieldDeletedAt},
 			orderstate.FieldOrderID:              {Type: field.TypeUUID, Column: orderstate.FieldOrderID},
 			orderstate.FieldOrderState:           {Type: field.TypeString, Column: orderstate.FieldOrderState},
+			orderstate.FieldStartMode:            {Type: field.TypeString, Column: orderstate.FieldStartMode},
+			orderstate.FieldStartAt:              {Type: field.TypeUint32, Column: orderstate.FieldStartAt},
 			orderstate.FieldEndAt:                {Type: field.TypeUint32, Column: orderstate.FieldEndAt},
 			orderstate.FieldLastBenefitAt:        {Type: field.TypeUint32, Column: orderstate.FieldLastBenefitAt},
 			orderstate.FieldBenefitState:         {Type: field.TypeString, Column: orderstate.FieldBenefitState},
@@ -97,6 +97,8 @@ var schemaGraph = func() *sqlgraph.Schema {
 			orderstate.FieldPaymentTransactionID: {Type: field.TypeString, Column: orderstate.FieldPaymentTransactionID},
 			orderstate.FieldPaymentFinishAmount:  {Type: field.TypeOther, Column: orderstate.FieldPaymentFinishAmount},
 			orderstate.FieldPaymentState:         {Type: field.TypeString, Column: orderstate.FieldPaymentState},
+			orderstate.FieldOutofgasHours:        {Type: field.TypeUint32, Column: orderstate.FieldOutofgasHours},
+			orderstate.FieldCompensateHours:      {Type: field.TypeUint32, Column: orderstate.FieldCompensateHours},
 		},
 	}
 	graph.Nodes[3] = &sqlgraph.Node{
@@ -345,16 +347,6 @@ func (f *OrderFilter) WherePromotionID(p entql.ValueP) {
 	f.Where(p.Field(order.FieldPromotionID))
 }
 
-// WhereStartAt applies the entql uint32 predicate on the start_at field.
-func (f *OrderFilter) WhereStartAt(p entql.Uint32P) {
-	f.Where(p.Field(order.FieldStartAt))
-}
-
-// WhereStartMode applies the entql string predicate on the start_mode field.
-func (f *OrderFilter) WhereStartMode(p entql.StringP) {
-	f.Where(p.Field(order.FieldStartMode))
-}
-
 // WhereDurationDays applies the entql uint32 predicate on the duration_days field.
 func (f *OrderFilter) WhereDurationDays(p entql.Uint32P) {
 	f.Where(p.Field(order.FieldDurationDays))
@@ -445,6 +437,16 @@ func (f *OrderStateFilter) WhereOrderState(p entql.StringP) {
 	f.Where(p.Field(orderstate.FieldOrderState))
 }
 
+// WhereStartMode applies the entql string predicate on the start_mode field.
+func (f *OrderStateFilter) WhereStartMode(p entql.StringP) {
+	f.Where(p.Field(orderstate.FieldStartMode))
+}
+
+// WhereStartAt applies the entql uint32 predicate on the start_at field.
+func (f *OrderStateFilter) WhereStartAt(p entql.Uint32P) {
+	f.Where(p.Field(orderstate.FieldStartAt))
+}
+
 // WhereEndAt applies the entql uint32 predicate on the end_at field.
 func (f *OrderStateFilter) WhereEndAt(p entql.Uint32P) {
 	f.Where(p.Field(orderstate.FieldEndAt))
@@ -483,6 +485,16 @@ func (f *OrderStateFilter) WherePaymentFinishAmount(p entql.OtherP) {
 // WherePaymentState applies the entql string predicate on the payment_state field.
 func (f *OrderStateFilter) WherePaymentState(p entql.StringP) {
 	f.Where(p.Field(orderstate.FieldPaymentState))
+}
+
+// WhereOutofgasHours applies the entql uint32 predicate on the outofgas_hours field.
+func (f *OrderStateFilter) WhereOutofgasHours(p entql.Uint32P) {
+	f.Where(p.Field(orderstate.FieldOutofgasHours))
+}
+
+// WhereCompensateHours applies the entql uint32 predicate on the compensate_hours field.
+func (f *OrderStateFilter) WhereCompensateHours(p entql.Uint32P) {
+	f.Where(p.Field(orderstate.FieldCompensateHours))
 }
 
 // addPredicate implements the predicateAdder interface.

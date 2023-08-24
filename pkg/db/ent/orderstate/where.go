@@ -115,6 +115,20 @@ func OrderState(v string) predicate.OrderState {
 	})
 }
 
+// StartMode applies equality check predicate on the "start_mode" field. It's identical to StartModeEQ.
+func StartMode(v string) predicate.OrderState {
+	return predicate.OrderState(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldStartMode), v))
+	})
+}
+
+// StartAt applies equality check predicate on the "start_at" field. It's identical to StartAtEQ.
+func StartAt(v uint32) predicate.OrderState {
+	return predicate.OrderState(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldStartAt), v))
+	})
+}
+
 // EndAt applies equality check predicate on the "end_at" field. It's identical to EndAtEQ.
 func EndAt(v uint32) predicate.OrderState {
 	return predicate.OrderState(func(s *sql.Selector) {
@@ -168,6 +182,20 @@ func PaymentFinishAmount(v decimal.Decimal) predicate.OrderState {
 func PaymentState(v string) predicate.OrderState {
 	return predicate.OrderState(func(s *sql.Selector) {
 		s.Where(sql.EQ(s.C(FieldPaymentState), v))
+	})
+}
+
+// OutofgasHours applies equality check predicate on the "outofgas_hours" field. It's identical to OutofgasHoursEQ.
+func OutofgasHours(v uint32) predicate.OrderState {
+	return predicate.OrderState(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldOutofgasHours), v))
+	})
+}
+
+// CompensateHours applies equality check predicate on the "compensate_hours" field. It's identical to CompensateHoursEQ.
+func CompensateHours(v uint32) predicate.OrderState {
+	return predicate.OrderState(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldCompensateHours), v))
 	})
 }
 
@@ -537,6 +565,197 @@ func OrderStateEqualFold(v string) predicate.OrderState {
 func OrderStateContainsFold(v string) predicate.OrderState {
 	return predicate.OrderState(func(s *sql.Selector) {
 		s.Where(sql.ContainsFold(s.C(FieldOrderState), v))
+	})
+}
+
+// StartModeEQ applies the EQ predicate on the "start_mode" field.
+func StartModeEQ(v string) predicate.OrderState {
+	return predicate.OrderState(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldStartMode), v))
+	})
+}
+
+// StartModeNEQ applies the NEQ predicate on the "start_mode" field.
+func StartModeNEQ(v string) predicate.OrderState {
+	return predicate.OrderState(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldStartMode), v))
+	})
+}
+
+// StartModeIn applies the In predicate on the "start_mode" field.
+func StartModeIn(vs ...string) predicate.OrderState {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.OrderState(func(s *sql.Selector) {
+		s.Where(sql.In(s.C(FieldStartMode), v...))
+	})
+}
+
+// StartModeNotIn applies the NotIn predicate on the "start_mode" field.
+func StartModeNotIn(vs ...string) predicate.OrderState {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.OrderState(func(s *sql.Selector) {
+		s.Where(sql.NotIn(s.C(FieldStartMode), v...))
+	})
+}
+
+// StartModeGT applies the GT predicate on the "start_mode" field.
+func StartModeGT(v string) predicate.OrderState {
+	return predicate.OrderState(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldStartMode), v))
+	})
+}
+
+// StartModeGTE applies the GTE predicate on the "start_mode" field.
+func StartModeGTE(v string) predicate.OrderState {
+	return predicate.OrderState(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldStartMode), v))
+	})
+}
+
+// StartModeLT applies the LT predicate on the "start_mode" field.
+func StartModeLT(v string) predicate.OrderState {
+	return predicate.OrderState(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldStartMode), v))
+	})
+}
+
+// StartModeLTE applies the LTE predicate on the "start_mode" field.
+func StartModeLTE(v string) predicate.OrderState {
+	return predicate.OrderState(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldStartMode), v))
+	})
+}
+
+// StartModeContains applies the Contains predicate on the "start_mode" field.
+func StartModeContains(v string) predicate.OrderState {
+	return predicate.OrderState(func(s *sql.Selector) {
+		s.Where(sql.Contains(s.C(FieldStartMode), v))
+	})
+}
+
+// StartModeHasPrefix applies the HasPrefix predicate on the "start_mode" field.
+func StartModeHasPrefix(v string) predicate.OrderState {
+	return predicate.OrderState(func(s *sql.Selector) {
+		s.Where(sql.HasPrefix(s.C(FieldStartMode), v))
+	})
+}
+
+// StartModeHasSuffix applies the HasSuffix predicate on the "start_mode" field.
+func StartModeHasSuffix(v string) predicate.OrderState {
+	return predicate.OrderState(func(s *sql.Selector) {
+		s.Where(sql.HasSuffix(s.C(FieldStartMode), v))
+	})
+}
+
+// StartModeIsNil applies the IsNil predicate on the "start_mode" field.
+func StartModeIsNil() predicate.OrderState {
+	return predicate.OrderState(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldStartMode)))
+	})
+}
+
+// StartModeNotNil applies the NotNil predicate on the "start_mode" field.
+func StartModeNotNil() predicate.OrderState {
+	return predicate.OrderState(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldStartMode)))
+	})
+}
+
+// StartModeEqualFold applies the EqualFold predicate on the "start_mode" field.
+func StartModeEqualFold(v string) predicate.OrderState {
+	return predicate.OrderState(func(s *sql.Selector) {
+		s.Where(sql.EqualFold(s.C(FieldStartMode), v))
+	})
+}
+
+// StartModeContainsFold applies the ContainsFold predicate on the "start_mode" field.
+func StartModeContainsFold(v string) predicate.OrderState {
+	return predicate.OrderState(func(s *sql.Selector) {
+		s.Where(sql.ContainsFold(s.C(FieldStartMode), v))
+	})
+}
+
+// StartAtEQ applies the EQ predicate on the "start_at" field.
+func StartAtEQ(v uint32) predicate.OrderState {
+	return predicate.OrderState(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldStartAt), v))
+	})
+}
+
+// StartAtNEQ applies the NEQ predicate on the "start_at" field.
+func StartAtNEQ(v uint32) predicate.OrderState {
+	return predicate.OrderState(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldStartAt), v))
+	})
+}
+
+// StartAtIn applies the In predicate on the "start_at" field.
+func StartAtIn(vs ...uint32) predicate.OrderState {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.OrderState(func(s *sql.Selector) {
+		s.Where(sql.In(s.C(FieldStartAt), v...))
+	})
+}
+
+// StartAtNotIn applies the NotIn predicate on the "start_at" field.
+func StartAtNotIn(vs ...uint32) predicate.OrderState {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.OrderState(func(s *sql.Selector) {
+		s.Where(sql.NotIn(s.C(FieldStartAt), v...))
+	})
+}
+
+// StartAtGT applies the GT predicate on the "start_at" field.
+func StartAtGT(v uint32) predicate.OrderState {
+	return predicate.OrderState(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldStartAt), v))
+	})
+}
+
+// StartAtGTE applies the GTE predicate on the "start_at" field.
+func StartAtGTE(v uint32) predicate.OrderState {
+	return predicate.OrderState(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldStartAt), v))
+	})
+}
+
+// StartAtLT applies the LT predicate on the "start_at" field.
+func StartAtLT(v uint32) predicate.OrderState {
+	return predicate.OrderState(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldStartAt), v))
+	})
+}
+
+// StartAtLTE applies the LTE predicate on the "start_at" field.
+func StartAtLTE(v uint32) predicate.OrderState {
+	return predicate.OrderState(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldStartAt), v))
+	})
+}
+
+// StartAtIsNil applies the IsNil predicate on the "start_at" field.
+func StartAtIsNil() predicate.OrderState {
+	return predicate.OrderState(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldStartAt)))
+	})
+}
+
+// StartAtNotNil applies the NotNil predicate on the "start_at" field.
+func StartAtNotNil() predicate.OrderState {
+	return predicate.OrderState(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldStartAt)))
 	})
 }
 
@@ -1166,6 +1385,162 @@ func PaymentStateEqualFold(v string) predicate.OrderState {
 func PaymentStateContainsFold(v string) predicate.OrderState {
 	return predicate.OrderState(func(s *sql.Selector) {
 		s.Where(sql.ContainsFold(s.C(FieldPaymentState), v))
+	})
+}
+
+// OutofgasHoursEQ applies the EQ predicate on the "outofgas_hours" field.
+func OutofgasHoursEQ(v uint32) predicate.OrderState {
+	return predicate.OrderState(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldOutofgasHours), v))
+	})
+}
+
+// OutofgasHoursNEQ applies the NEQ predicate on the "outofgas_hours" field.
+func OutofgasHoursNEQ(v uint32) predicate.OrderState {
+	return predicate.OrderState(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldOutofgasHours), v))
+	})
+}
+
+// OutofgasHoursIn applies the In predicate on the "outofgas_hours" field.
+func OutofgasHoursIn(vs ...uint32) predicate.OrderState {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.OrderState(func(s *sql.Selector) {
+		s.Where(sql.In(s.C(FieldOutofgasHours), v...))
+	})
+}
+
+// OutofgasHoursNotIn applies the NotIn predicate on the "outofgas_hours" field.
+func OutofgasHoursNotIn(vs ...uint32) predicate.OrderState {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.OrderState(func(s *sql.Selector) {
+		s.Where(sql.NotIn(s.C(FieldOutofgasHours), v...))
+	})
+}
+
+// OutofgasHoursGT applies the GT predicate on the "outofgas_hours" field.
+func OutofgasHoursGT(v uint32) predicate.OrderState {
+	return predicate.OrderState(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldOutofgasHours), v))
+	})
+}
+
+// OutofgasHoursGTE applies the GTE predicate on the "outofgas_hours" field.
+func OutofgasHoursGTE(v uint32) predicate.OrderState {
+	return predicate.OrderState(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldOutofgasHours), v))
+	})
+}
+
+// OutofgasHoursLT applies the LT predicate on the "outofgas_hours" field.
+func OutofgasHoursLT(v uint32) predicate.OrderState {
+	return predicate.OrderState(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldOutofgasHours), v))
+	})
+}
+
+// OutofgasHoursLTE applies the LTE predicate on the "outofgas_hours" field.
+func OutofgasHoursLTE(v uint32) predicate.OrderState {
+	return predicate.OrderState(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldOutofgasHours), v))
+	})
+}
+
+// OutofgasHoursIsNil applies the IsNil predicate on the "outofgas_hours" field.
+func OutofgasHoursIsNil() predicate.OrderState {
+	return predicate.OrderState(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldOutofgasHours)))
+	})
+}
+
+// OutofgasHoursNotNil applies the NotNil predicate on the "outofgas_hours" field.
+func OutofgasHoursNotNil() predicate.OrderState {
+	return predicate.OrderState(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldOutofgasHours)))
+	})
+}
+
+// CompensateHoursEQ applies the EQ predicate on the "compensate_hours" field.
+func CompensateHoursEQ(v uint32) predicate.OrderState {
+	return predicate.OrderState(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldCompensateHours), v))
+	})
+}
+
+// CompensateHoursNEQ applies the NEQ predicate on the "compensate_hours" field.
+func CompensateHoursNEQ(v uint32) predicate.OrderState {
+	return predicate.OrderState(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldCompensateHours), v))
+	})
+}
+
+// CompensateHoursIn applies the In predicate on the "compensate_hours" field.
+func CompensateHoursIn(vs ...uint32) predicate.OrderState {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.OrderState(func(s *sql.Selector) {
+		s.Where(sql.In(s.C(FieldCompensateHours), v...))
+	})
+}
+
+// CompensateHoursNotIn applies the NotIn predicate on the "compensate_hours" field.
+func CompensateHoursNotIn(vs ...uint32) predicate.OrderState {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.OrderState(func(s *sql.Selector) {
+		s.Where(sql.NotIn(s.C(FieldCompensateHours), v...))
+	})
+}
+
+// CompensateHoursGT applies the GT predicate on the "compensate_hours" field.
+func CompensateHoursGT(v uint32) predicate.OrderState {
+	return predicate.OrderState(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldCompensateHours), v))
+	})
+}
+
+// CompensateHoursGTE applies the GTE predicate on the "compensate_hours" field.
+func CompensateHoursGTE(v uint32) predicate.OrderState {
+	return predicate.OrderState(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldCompensateHours), v))
+	})
+}
+
+// CompensateHoursLT applies the LT predicate on the "compensate_hours" field.
+func CompensateHoursLT(v uint32) predicate.OrderState {
+	return predicate.OrderState(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldCompensateHours), v))
+	})
+}
+
+// CompensateHoursLTE applies the LTE predicate on the "compensate_hours" field.
+func CompensateHoursLTE(v uint32) predicate.OrderState {
+	return predicate.OrderState(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldCompensateHours), v))
+	})
+}
+
+// CompensateHoursIsNil applies the IsNil predicate on the "compensate_hours" field.
+func CompensateHoursIsNil() predicate.OrderState {
+	return predicate.OrderState(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldCompensateHours)))
+	})
+}
+
+// CompensateHoursNotNil applies the NotNil predicate on the "compensate_hours" field.
+func CompensateHoursNotNil() predicate.OrderState {
+	return predicate.OrderState(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldCompensateHours)))
 	})
 }
 

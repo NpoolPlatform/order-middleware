@@ -243,53 +243,6 @@ func (ou *OrderUpdate) ClearPromotionID() *OrderUpdate {
 	return ou
 }
 
-// SetStartAt sets the "start_at" field.
-func (ou *OrderUpdate) SetStartAt(u uint32) *OrderUpdate {
-	ou.mutation.ResetStartAt()
-	ou.mutation.SetStartAt(u)
-	return ou
-}
-
-// SetNillableStartAt sets the "start_at" field if the given value is not nil.
-func (ou *OrderUpdate) SetNillableStartAt(u *uint32) *OrderUpdate {
-	if u != nil {
-		ou.SetStartAt(*u)
-	}
-	return ou
-}
-
-// AddStartAt adds u to the "start_at" field.
-func (ou *OrderUpdate) AddStartAt(u int32) *OrderUpdate {
-	ou.mutation.AddStartAt(u)
-	return ou
-}
-
-// ClearStartAt clears the value of the "start_at" field.
-func (ou *OrderUpdate) ClearStartAt() *OrderUpdate {
-	ou.mutation.ClearStartAt()
-	return ou
-}
-
-// SetStartMode sets the "start_mode" field.
-func (ou *OrderUpdate) SetStartMode(s string) *OrderUpdate {
-	ou.mutation.SetStartMode(s)
-	return ou
-}
-
-// SetNillableStartMode sets the "start_mode" field if the given value is not nil.
-func (ou *OrderUpdate) SetNillableStartMode(s *string) *OrderUpdate {
-	if s != nil {
-		ou.SetStartMode(*s)
-	}
-	return ou
-}
-
-// ClearStartMode clears the value of the "start_mode" field.
-func (ou *OrderUpdate) ClearStartMode() *OrderUpdate {
-	ou.mutation.ClearStartMode()
-	return ou
-}
-
 // SetDurationDays sets the "duration_days" field.
 func (ou *OrderUpdate) SetDurationDays(u uint32) *OrderUpdate {
 	ou.mutation.ResetDurationDays()
@@ -641,39 +594,6 @@ func (ou *OrderUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: order.FieldPromotionID,
 		})
 	}
-	if value, ok := ou.mutation.StartAt(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeUint32,
-			Value:  value,
-			Column: order.FieldStartAt,
-		})
-	}
-	if value, ok := ou.mutation.AddedStartAt(); ok {
-		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
-			Type:   field.TypeUint32,
-			Value:  value,
-			Column: order.FieldStartAt,
-		})
-	}
-	if ou.mutation.StartAtCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeUint32,
-			Column: order.FieldStartAt,
-		})
-	}
-	if value, ok := ou.mutation.StartMode(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Value:  value,
-			Column: order.FieldStartMode,
-		})
-	}
-	if ou.mutation.StartModeCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Column: order.FieldStartMode,
-		})
-	}
 	if value, ok := ou.mutation.DurationDays(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeUint32,
@@ -977,53 +897,6 @@ func (ouo *OrderUpdateOne) SetNillablePromotionID(u *uuid.UUID) *OrderUpdateOne 
 // ClearPromotionID clears the value of the "promotion_id" field.
 func (ouo *OrderUpdateOne) ClearPromotionID() *OrderUpdateOne {
 	ouo.mutation.ClearPromotionID()
-	return ouo
-}
-
-// SetStartAt sets the "start_at" field.
-func (ouo *OrderUpdateOne) SetStartAt(u uint32) *OrderUpdateOne {
-	ouo.mutation.ResetStartAt()
-	ouo.mutation.SetStartAt(u)
-	return ouo
-}
-
-// SetNillableStartAt sets the "start_at" field if the given value is not nil.
-func (ouo *OrderUpdateOne) SetNillableStartAt(u *uint32) *OrderUpdateOne {
-	if u != nil {
-		ouo.SetStartAt(*u)
-	}
-	return ouo
-}
-
-// AddStartAt adds u to the "start_at" field.
-func (ouo *OrderUpdateOne) AddStartAt(u int32) *OrderUpdateOne {
-	ouo.mutation.AddStartAt(u)
-	return ouo
-}
-
-// ClearStartAt clears the value of the "start_at" field.
-func (ouo *OrderUpdateOne) ClearStartAt() *OrderUpdateOne {
-	ouo.mutation.ClearStartAt()
-	return ouo
-}
-
-// SetStartMode sets the "start_mode" field.
-func (ouo *OrderUpdateOne) SetStartMode(s string) *OrderUpdateOne {
-	ouo.mutation.SetStartMode(s)
-	return ouo
-}
-
-// SetNillableStartMode sets the "start_mode" field if the given value is not nil.
-func (ouo *OrderUpdateOne) SetNillableStartMode(s *string) *OrderUpdateOne {
-	if s != nil {
-		ouo.SetStartMode(*s)
-	}
-	return ouo
-}
-
-// ClearStartMode clears the value of the "start_mode" field.
-func (ouo *OrderUpdateOne) ClearStartMode() *OrderUpdateOne {
-	ouo.mutation.ClearStartMode()
 	return ouo
 }
 
@@ -1406,39 +1279,6 @@ func (ouo *OrderUpdateOne) sqlSave(ctx context.Context) (_node *Order, err error
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeUUID,
 			Column: order.FieldPromotionID,
-		})
-	}
-	if value, ok := ouo.mutation.StartAt(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeUint32,
-			Value:  value,
-			Column: order.FieldStartAt,
-		})
-	}
-	if value, ok := ouo.mutation.AddedStartAt(); ok {
-		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
-			Type:   field.TypeUint32,
-			Value:  value,
-			Column: order.FieldStartAt,
-		})
-	}
-	if ouo.mutation.StartAtCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeUint32,
-			Column: order.FieldStartAt,
-		})
-	}
-	if value, ok := ouo.mutation.StartMode(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Value:  value,
-			Column: order.FieldStartMode,
-		})
-	}
-	if ouo.mutation.StartModeCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Column: order.FieldStartMode,
 		})
 	}
 	if value, ok := ouo.mutation.DurationDays(); ok {

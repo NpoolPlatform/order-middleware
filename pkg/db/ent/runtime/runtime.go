@@ -130,32 +130,24 @@ func init() {
 	orderDescPromotionID := orderFields[10].Descriptor()
 	// order.DefaultPromotionID holds the default value on creation for the promotion_id field.
 	order.DefaultPromotionID = orderDescPromotionID.Default.(func() uuid.UUID)
-	// orderDescStartAt is the schema descriptor for start_at field.
-	orderDescStartAt := orderFields[11].Descriptor()
-	// order.DefaultStartAt holds the default value on creation for the start_at field.
-	order.DefaultStartAt = orderDescStartAt.Default.(uint32)
-	// orderDescStartMode is the schema descriptor for start_mode field.
-	orderDescStartMode := orderFields[12].Descriptor()
-	// order.DefaultStartMode holds the default value on creation for the start_mode field.
-	order.DefaultStartMode = orderDescStartMode.Default.(string)
 	// orderDescDurationDays is the schema descriptor for duration_days field.
-	orderDescDurationDays := orderFields[13].Descriptor()
+	orderDescDurationDays := orderFields[11].Descriptor()
 	// order.DefaultDurationDays holds the default value on creation for the duration_days field.
 	order.DefaultDurationDays = orderDescDurationDays.Default.(uint32)
 	// orderDescOrderType is the schema descriptor for order_type field.
-	orderDescOrderType := orderFields[14].Descriptor()
+	orderDescOrderType := orderFields[12].Descriptor()
 	// order.DefaultOrderType holds the default value on creation for the order_type field.
 	order.DefaultOrderType = orderDescOrderType.Default.(string)
 	// orderDescInvestmentType is the schema descriptor for investment_type field.
-	orderDescInvestmentType := orderFields[15].Descriptor()
+	orderDescInvestmentType := orderFields[13].Descriptor()
 	// order.DefaultInvestmentType holds the default value on creation for the investment_type field.
 	order.DefaultInvestmentType = orderDescInvestmentType.Default.(string)
 	// orderDescCouponIds is the schema descriptor for coupon_ids field.
-	orderDescCouponIds := orderFields[16].Descriptor()
+	orderDescCouponIds := orderFields[14].Descriptor()
 	// order.DefaultCouponIds holds the default value on creation for the coupon_ids field.
 	order.DefaultCouponIds = orderDescCouponIds.Default.(func() []uuid.UUID)
 	// orderDescPaymentType is the schema descriptor for payment_type field.
-	orderDescPaymentType := orderFields[17].Descriptor()
+	orderDescPaymentType := orderFields[15].Descriptor()
 	// order.DefaultPaymentType holds the default value on creation for the payment_type field.
 	order.DefaultPaymentType = orderDescPaymentType.Default.(string)
 	// orderDescID is the schema descriptor for id field.
@@ -194,38 +186,54 @@ func init() {
 	orderstateDescOrderState := orderstateFields[2].Descriptor()
 	// orderstate.DefaultOrderState holds the default value on creation for the order_state field.
 	orderstate.DefaultOrderState = orderstateDescOrderState.Default.(string)
+	// orderstateDescStartMode is the schema descriptor for start_mode field.
+	orderstateDescStartMode := orderstateFields[3].Descriptor()
+	// orderstate.DefaultStartMode holds the default value on creation for the start_mode field.
+	orderstate.DefaultStartMode = orderstateDescStartMode.Default.(string)
+	// orderstateDescStartAt is the schema descriptor for start_at field.
+	orderstateDescStartAt := orderstateFields[4].Descriptor()
+	// orderstate.DefaultStartAt holds the default value on creation for the start_at field.
+	orderstate.DefaultStartAt = orderstateDescStartAt.Default.(uint32)
 	// orderstateDescEndAt is the schema descriptor for end_at field.
-	orderstateDescEndAt := orderstateFields[3].Descriptor()
+	orderstateDescEndAt := orderstateFields[5].Descriptor()
 	// orderstate.DefaultEndAt holds the default value on creation for the end_at field.
 	orderstate.DefaultEndAt = orderstateDescEndAt.Default.(uint32)
 	// orderstateDescLastBenefitAt is the schema descriptor for last_benefit_at field.
-	orderstateDescLastBenefitAt := orderstateFields[4].Descriptor()
+	orderstateDescLastBenefitAt := orderstateFields[6].Descriptor()
 	// orderstate.DefaultLastBenefitAt holds the default value on creation for the last_benefit_at field.
 	orderstate.DefaultLastBenefitAt = orderstateDescLastBenefitAt.Default.(uint32)
 	// orderstateDescBenefitState is the schema descriptor for benefit_state field.
-	orderstateDescBenefitState := orderstateFields[5].Descriptor()
+	orderstateDescBenefitState := orderstateFields[7].Descriptor()
 	// orderstate.DefaultBenefitState holds the default value on creation for the benefit_state field.
 	orderstate.DefaultBenefitState = orderstateDescBenefitState.Default.(string)
 	// orderstateDescUserSetPaid is the schema descriptor for user_set_paid field.
-	orderstateDescUserSetPaid := orderstateFields[6].Descriptor()
+	orderstateDescUserSetPaid := orderstateFields[8].Descriptor()
 	// orderstate.DefaultUserSetPaid holds the default value on creation for the user_set_paid field.
 	orderstate.DefaultUserSetPaid = orderstateDescUserSetPaid.Default.(bool)
 	// orderstateDescUserSetCancelled is the schema descriptor for user_set_cancelled field.
-	orderstateDescUserSetCancelled := orderstateFields[7].Descriptor()
+	orderstateDescUserSetCancelled := orderstateFields[9].Descriptor()
 	// orderstate.DefaultUserSetCancelled holds the default value on creation for the user_set_cancelled field.
 	orderstate.DefaultUserSetCancelled = orderstateDescUserSetCancelled.Default.(bool)
 	// orderstateDescPaymentTransactionID is the schema descriptor for payment_transaction_id field.
-	orderstateDescPaymentTransactionID := orderstateFields[8].Descriptor()
+	orderstateDescPaymentTransactionID := orderstateFields[10].Descriptor()
 	// orderstate.DefaultPaymentTransactionID holds the default value on creation for the payment_transaction_id field.
 	orderstate.DefaultPaymentTransactionID = orderstateDescPaymentTransactionID.Default.(string)
 	// orderstateDescPaymentFinishAmount is the schema descriptor for payment_finish_amount field.
-	orderstateDescPaymentFinishAmount := orderstateFields[9].Descriptor()
+	orderstateDescPaymentFinishAmount := orderstateFields[11].Descriptor()
 	// orderstate.DefaultPaymentFinishAmount holds the default value on creation for the payment_finish_amount field.
 	orderstate.DefaultPaymentFinishAmount = orderstateDescPaymentFinishAmount.Default.(decimal.Decimal)
 	// orderstateDescPaymentState is the schema descriptor for payment_state field.
-	orderstateDescPaymentState := orderstateFields[10].Descriptor()
+	orderstateDescPaymentState := orderstateFields[12].Descriptor()
 	// orderstate.DefaultPaymentState holds the default value on creation for the payment_state field.
 	orderstate.DefaultPaymentState = orderstateDescPaymentState.Default.(string)
+	// orderstateDescOutofgasHours is the schema descriptor for outofgas_hours field.
+	orderstateDescOutofgasHours := orderstateFields[13].Descriptor()
+	// orderstate.DefaultOutofgasHours holds the default value on creation for the outofgas_hours field.
+	orderstate.DefaultOutofgasHours = orderstateDescOutofgasHours.Default.(uint32)
+	// orderstateDescCompensateHours is the schema descriptor for compensate_hours field.
+	orderstateDescCompensateHours := orderstateFields[14].Descriptor()
+	// orderstate.DefaultCompensateHours holds the default value on creation for the compensate_hours field.
+	orderstate.DefaultCompensateHours = orderstateDescCompensateHours.Default.(uint32)
 	// orderstateDescID is the schema descriptor for id field.
 	orderstateDescID := orderstateFields[0].Descriptor()
 	// orderstate.DefaultID holds the default value on creation for the id field.

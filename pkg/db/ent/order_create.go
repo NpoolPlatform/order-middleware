@@ -182,34 +182,6 @@ func (oc *OrderCreate) SetNillablePromotionID(u *uuid.UUID) *OrderCreate {
 	return oc
 }
 
-// SetStartAt sets the "start_at" field.
-func (oc *OrderCreate) SetStartAt(u uint32) *OrderCreate {
-	oc.mutation.SetStartAt(u)
-	return oc
-}
-
-// SetNillableStartAt sets the "start_at" field if the given value is not nil.
-func (oc *OrderCreate) SetNillableStartAt(u *uint32) *OrderCreate {
-	if u != nil {
-		oc.SetStartAt(*u)
-	}
-	return oc
-}
-
-// SetStartMode sets the "start_mode" field.
-func (oc *OrderCreate) SetStartMode(s string) *OrderCreate {
-	oc.mutation.SetStartMode(s)
-	return oc
-}
-
-// SetNillableStartMode sets the "start_mode" field if the given value is not nil.
-func (oc *OrderCreate) SetNillableStartMode(s *string) *OrderCreate {
-	if s != nil {
-		oc.SetStartMode(*s)
-	}
-	return oc
-}
-
 // SetDurationDays sets the "duration_days" field.
 func (oc *OrderCreate) SetDurationDays(u uint32) *OrderCreate {
 	oc.mutation.SetDurationDays(u)
@@ -423,14 +395,6 @@ func (oc *OrderCreate) defaults() error {
 		v := order.DefaultPromotionID()
 		oc.mutation.SetPromotionID(v)
 	}
-	if _, ok := oc.mutation.StartAt(); !ok {
-		v := order.DefaultStartAt
-		oc.mutation.SetStartAt(v)
-	}
-	if _, ok := oc.mutation.StartMode(); !ok {
-		v := order.DefaultStartMode
-		oc.mutation.SetStartMode(v)
-	}
 	if _, ok := oc.mutation.DurationDays(); !ok {
 		v := order.DefaultDurationDays
 		oc.mutation.SetDurationDays(v)
@@ -624,22 +588,6 @@ func (oc *OrderCreate) createSpec() (*Order, *sqlgraph.CreateSpec) {
 			Column: order.FieldPromotionID,
 		})
 		_node.PromotionID = value
-	}
-	if value, ok := oc.mutation.StartAt(); ok {
-		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
-			Type:   field.TypeUint32,
-			Value:  value,
-			Column: order.FieldStartAt,
-		})
-		_node.StartAt = value
-	}
-	if value, ok := oc.mutation.StartMode(); ok {
-		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Value:  value,
-			Column: order.FieldStartMode,
-		})
-		_node.StartMode = value
 	}
 	if value, ok := oc.mutation.DurationDays(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -948,48 +896,6 @@ func (u *OrderUpsert) UpdatePromotionID() *OrderUpsert {
 // ClearPromotionID clears the value of the "promotion_id" field.
 func (u *OrderUpsert) ClearPromotionID() *OrderUpsert {
 	u.SetNull(order.FieldPromotionID)
-	return u
-}
-
-// SetStartAt sets the "start_at" field.
-func (u *OrderUpsert) SetStartAt(v uint32) *OrderUpsert {
-	u.Set(order.FieldStartAt, v)
-	return u
-}
-
-// UpdateStartAt sets the "start_at" field to the value that was provided on create.
-func (u *OrderUpsert) UpdateStartAt() *OrderUpsert {
-	u.SetExcluded(order.FieldStartAt)
-	return u
-}
-
-// AddStartAt adds v to the "start_at" field.
-func (u *OrderUpsert) AddStartAt(v uint32) *OrderUpsert {
-	u.Add(order.FieldStartAt, v)
-	return u
-}
-
-// ClearStartAt clears the value of the "start_at" field.
-func (u *OrderUpsert) ClearStartAt() *OrderUpsert {
-	u.SetNull(order.FieldStartAt)
-	return u
-}
-
-// SetStartMode sets the "start_mode" field.
-func (u *OrderUpsert) SetStartMode(v string) *OrderUpsert {
-	u.Set(order.FieldStartMode, v)
-	return u
-}
-
-// UpdateStartMode sets the "start_mode" field to the value that was provided on create.
-func (u *OrderUpsert) UpdateStartMode() *OrderUpsert {
-	u.SetExcluded(order.FieldStartMode)
-	return u
-}
-
-// ClearStartMode clears the value of the "start_mode" field.
-func (u *OrderUpsert) ClearStartMode() *OrderUpsert {
-	u.SetNull(order.FieldStartMode)
 	return u
 }
 
@@ -1388,55 +1294,6 @@ func (u *OrderUpsertOne) UpdatePromotionID() *OrderUpsertOne {
 func (u *OrderUpsertOne) ClearPromotionID() *OrderUpsertOne {
 	return u.Update(func(s *OrderUpsert) {
 		s.ClearPromotionID()
-	})
-}
-
-// SetStartAt sets the "start_at" field.
-func (u *OrderUpsertOne) SetStartAt(v uint32) *OrderUpsertOne {
-	return u.Update(func(s *OrderUpsert) {
-		s.SetStartAt(v)
-	})
-}
-
-// AddStartAt adds v to the "start_at" field.
-func (u *OrderUpsertOne) AddStartAt(v uint32) *OrderUpsertOne {
-	return u.Update(func(s *OrderUpsert) {
-		s.AddStartAt(v)
-	})
-}
-
-// UpdateStartAt sets the "start_at" field to the value that was provided on create.
-func (u *OrderUpsertOne) UpdateStartAt() *OrderUpsertOne {
-	return u.Update(func(s *OrderUpsert) {
-		s.UpdateStartAt()
-	})
-}
-
-// ClearStartAt clears the value of the "start_at" field.
-func (u *OrderUpsertOne) ClearStartAt() *OrderUpsertOne {
-	return u.Update(func(s *OrderUpsert) {
-		s.ClearStartAt()
-	})
-}
-
-// SetStartMode sets the "start_mode" field.
-func (u *OrderUpsertOne) SetStartMode(v string) *OrderUpsertOne {
-	return u.Update(func(s *OrderUpsert) {
-		s.SetStartMode(v)
-	})
-}
-
-// UpdateStartMode sets the "start_mode" field to the value that was provided on create.
-func (u *OrderUpsertOne) UpdateStartMode() *OrderUpsertOne {
-	return u.Update(func(s *OrderUpsert) {
-		s.UpdateStartMode()
-	})
-}
-
-// ClearStartMode clears the value of the "start_mode" field.
-func (u *OrderUpsertOne) ClearStartMode() *OrderUpsertOne {
-	return u.Update(func(s *OrderUpsert) {
-		s.ClearStartMode()
 	})
 }
 
@@ -2017,55 +1874,6 @@ func (u *OrderUpsertBulk) UpdatePromotionID() *OrderUpsertBulk {
 func (u *OrderUpsertBulk) ClearPromotionID() *OrderUpsertBulk {
 	return u.Update(func(s *OrderUpsert) {
 		s.ClearPromotionID()
-	})
-}
-
-// SetStartAt sets the "start_at" field.
-func (u *OrderUpsertBulk) SetStartAt(v uint32) *OrderUpsertBulk {
-	return u.Update(func(s *OrderUpsert) {
-		s.SetStartAt(v)
-	})
-}
-
-// AddStartAt adds v to the "start_at" field.
-func (u *OrderUpsertBulk) AddStartAt(v uint32) *OrderUpsertBulk {
-	return u.Update(func(s *OrderUpsert) {
-		s.AddStartAt(v)
-	})
-}
-
-// UpdateStartAt sets the "start_at" field to the value that was provided on create.
-func (u *OrderUpsertBulk) UpdateStartAt() *OrderUpsertBulk {
-	return u.Update(func(s *OrderUpsert) {
-		s.UpdateStartAt()
-	})
-}
-
-// ClearStartAt clears the value of the "start_at" field.
-func (u *OrderUpsertBulk) ClearStartAt() *OrderUpsertBulk {
-	return u.Update(func(s *OrderUpsert) {
-		s.ClearStartAt()
-	})
-}
-
-// SetStartMode sets the "start_mode" field.
-func (u *OrderUpsertBulk) SetStartMode(v string) *OrderUpsertBulk {
-	return u.Update(func(s *OrderUpsert) {
-		s.SetStartMode(v)
-	})
-}
-
-// UpdateStartMode sets the "start_mode" field to the value that was provided on create.
-func (u *OrderUpsertBulk) UpdateStartMode() *OrderUpsertBulk {
-	return u.Update(func(s *OrderUpsert) {
-		s.UpdateStartMode()
-	})
-}
-
-// ClearStartMode clears the value of the "start_mode" field.
-func (u *OrderUpsertBulk) ClearStartMode() *OrderUpsertBulk {
-	return u.Update(func(s *OrderUpsert) {
-		s.ClearStartMode()
 	})
 }
 

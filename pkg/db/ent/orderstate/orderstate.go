@@ -23,6 +23,10 @@ const (
 	FieldOrderID = "order_id"
 	// FieldOrderState holds the string denoting the order_state field in the database.
 	FieldOrderState = "order_state"
+	// FieldStartMode holds the string denoting the start_mode field in the database.
+	FieldStartMode = "start_mode"
+	// FieldStartAt holds the string denoting the start_at field in the database.
+	FieldStartAt = "start_at"
 	// FieldEndAt holds the string denoting the end_at field in the database.
 	FieldEndAt = "end_at"
 	// FieldLastBenefitAt holds the string denoting the last_benefit_at field in the database.
@@ -39,6 +43,10 @@ const (
 	FieldPaymentFinishAmount = "payment_finish_amount"
 	// FieldPaymentState holds the string denoting the payment_state field in the database.
 	FieldPaymentState = "payment_state"
+	// FieldOutofgasHours holds the string denoting the outofgas_hours field in the database.
+	FieldOutofgasHours = "outofgas_hours"
+	// FieldCompensateHours holds the string denoting the compensate_hours field in the database.
+	FieldCompensateHours = "compensate_hours"
 	// Table holds the table name of the orderstate in the database.
 	Table = "order_states"
 )
@@ -51,6 +59,8 @@ var Columns = []string{
 	FieldDeletedAt,
 	FieldOrderID,
 	FieldOrderState,
+	FieldStartMode,
+	FieldStartAt,
 	FieldEndAt,
 	FieldLastBenefitAt,
 	FieldBenefitState,
@@ -59,6 +69,8 @@ var Columns = []string{
 	FieldPaymentTransactionID,
 	FieldPaymentFinishAmount,
 	FieldPaymentState,
+	FieldOutofgasHours,
+	FieldCompensateHours,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -90,6 +102,10 @@ var (
 	DefaultDeletedAt func() uint32
 	// DefaultOrderState holds the default value on creation for the "order_state" field.
 	DefaultOrderState string
+	// DefaultStartMode holds the default value on creation for the "start_mode" field.
+	DefaultStartMode string
+	// DefaultStartAt holds the default value on creation for the "start_at" field.
+	DefaultStartAt uint32
 	// DefaultEndAt holds the default value on creation for the "end_at" field.
 	DefaultEndAt uint32
 	// DefaultLastBenefitAt holds the default value on creation for the "last_benefit_at" field.
@@ -106,6 +122,10 @@ var (
 	DefaultPaymentFinishAmount decimal.Decimal
 	// DefaultPaymentState holds the default value on creation for the "payment_state" field.
 	DefaultPaymentState string
+	// DefaultOutofgasHours holds the default value on creation for the "outofgas_hours" field.
+	DefaultOutofgasHours uint32
+	// DefaultCompensateHours holds the default value on creation for the "compensate_hours" field.
+	DefaultCompensateHours uint32
 	// DefaultID holds the default value on creation for the "id" field.
 	DefaultID func() uuid.UUID
 )
