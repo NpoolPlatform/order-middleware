@@ -35,8 +35,8 @@ const (
 	FieldBenefitState = "benefit_state"
 	// FieldUserSetPaid holds the string denoting the user_set_paid field in the database.
 	FieldUserSetPaid = "user_set_paid"
-	// FieldUserSetCancelled holds the string denoting the user_set_cancelled field in the database.
-	FieldUserSetCancelled = "user_set_cancelled"
+	// FieldUserSetCanceled holds the string denoting the user_set_canceled field in the database.
+	FieldUserSetCanceled = "user_set_canceled"
 	// FieldPaymentTransactionID holds the string denoting the payment_transaction_id field in the database.
 	FieldPaymentTransactionID = "payment_transaction_id"
 	// FieldPaymentFinishAmount holds the string denoting the payment_finish_amount field in the database.
@@ -65,7 +65,7 @@ var Columns = []string{
 	FieldLastBenefitAt,
 	FieldBenefitState,
 	FieldUserSetPaid,
-	FieldUserSetCancelled,
+	FieldUserSetCanceled,
 	FieldPaymentTransactionID,
 	FieldPaymentFinishAmount,
 	FieldPaymentState,
@@ -114,8 +114,8 @@ var (
 	DefaultBenefitState string
 	// DefaultUserSetPaid holds the default value on creation for the "user_set_paid" field.
 	DefaultUserSetPaid bool
-	// DefaultUserSetCancelled holds the default value on creation for the "user_set_cancelled" field.
-	DefaultUserSetCancelled bool
+	// DefaultUserSetCanceled holds the default value on creation for the "user_set_canceled" field.
+	DefaultUserSetCanceled bool
 	// DefaultPaymentTransactionID holds the default value on creation for the "payment_transaction_id" field.
 	DefaultPaymentTransactionID string
 	// DefaultPaymentFinishAmount holds the default value on creation for the "payment_finish_amount" field.

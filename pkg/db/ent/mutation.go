@@ -2732,7 +2732,7 @@ type OrderStateMutation struct {
 	addlast_benefit_at     *int32
 	benefit_state          *string
 	user_set_paid          *bool
-	user_set_cancelled     *bool
+	user_set_canceled      *bool
 	payment_transaction_id *string
 	payment_finish_amount  *decimal.Decimal
 	payment_state          *string
@@ -3460,53 +3460,53 @@ func (m *OrderStateMutation) ResetUserSetPaid() {
 	delete(m.clearedFields, orderstate.FieldUserSetPaid)
 }
 
-// SetUserSetCancelled sets the "user_set_cancelled" field.
-func (m *OrderStateMutation) SetUserSetCancelled(b bool) {
-	m.user_set_cancelled = &b
+// SetUserSetCanceled sets the "user_set_canceled" field.
+func (m *OrderStateMutation) SetUserSetCanceled(b bool) {
+	m.user_set_canceled = &b
 }
 
-// UserSetCancelled returns the value of the "user_set_cancelled" field in the mutation.
-func (m *OrderStateMutation) UserSetCancelled() (r bool, exists bool) {
-	v := m.user_set_cancelled
+// UserSetCanceled returns the value of the "user_set_canceled" field in the mutation.
+func (m *OrderStateMutation) UserSetCanceled() (r bool, exists bool) {
+	v := m.user_set_canceled
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// OldUserSetCancelled returns the old "user_set_cancelled" field's value of the OrderState entity.
+// OldUserSetCanceled returns the old "user_set_canceled" field's value of the OrderState entity.
 // If the OrderState object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *OrderStateMutation) OldUserSetCancelled(ctx context.Context) (v bool, err error) {
+func (m *OrderStateMutation) OldUserSetCanceled(ctx context.Context) (v bool, err error) {
 	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldUserSetCancelled is only allowed on UpdateOne operations")
+		return v, errors.New("OldUserSetCanceled is only allowed on UpdateOne operations")
 	}
 	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldUserSetCancelled requires an ID field in the mutation")
+		return v, errors.New("OldUserSetCanceled requires an ID field in the mutation")
 	}
 	oldValue, err := m.oldValue(ctx)
 	if err != nil {
-		return v, fmt.Errorf("querying old value for OldUserSetCancelled: %w", err)
+		return v, fmt.Errorf("querying old value for OldUserSetCanceled: %w", err)
 	}
-	return oldValue.UserSetCancelled, nil
+	return oldValue.UserSetCanceled, nil
 }
 
-// ClearUserSetCancelled clears the value of the "user_set_cancelled" field.
-func (m *OrderStateMutation) ClearUserSetCancelled() {
-	m.user_set_cancelled = nil
-	m.clearedFields[orderstate.FieldUserSetCancelled] = struct{}{}
+// ClearUserSetCanceled clears the value of the "user_set_canceled" field.
+func (m *OrderStateMutation) ClearUserSetCanceled() {
+	m.user_set_canceled = nil
+	m.clearedFields[orderstate.FieldUserSetCanceled] = struct{}{}
 }
 
-// UserSetCancelledCleared returns if the "user_set_cancelled" field was cleared in this mutation.
-func (m *OrderStateMutation) UserSetCancelledCleared() bool {
-	_, ok := m.clearedFields[orderstate.FieldUserSetCancelled]
+// UserSetCanceledCleared returns if the "user_set_canceled" field was cleared in this mutation.
+func (m *OrderStateMutation) UserSetCanceledCleared() bool {
+	_, ok := m.clearedFields[orderstate.FieldUserSetCanceled]
 	return ok
 }
 
-// ResetUserSetCancelled resets all changes to the "user_set_cancelled" field.
-func (m *OrderStateMutation) ResetUserSetCancelled() {
-	m.user_set_cancelled = nil
-	delete(m.clearedFields, orderstate.FieldUserSetCancelled)
+// ResetUserSetCanceled resets all changes to the "user_set_canceled" field.
+func (m *OrderStateMutation) ResetUserSetCanceled() {
+	m.user_set_canceled = nil
+	delete(m.clearedFields, orderstate.FieldUserSetCanceled)
 }
 
 // SetPaymentTransactionID sets the "payment_transaction_id" field.
@@ -3849,8 +3849,8 @@ func (m *OrderStateMutation) Fields() []string {
 	if m.user_set_paid != nil {
 		fields = append(fields, orderstate.FieldUserSetPaid)
 	}
-	if m.user_set_cancelled != nil {
-		fields = append(fields, orderstate.FieldUserSetCancelled)
+	if m.user_set_canceled != nil {
+		fields = append(fields, orderstate.FieldUserSetCanceled)
 	}
 	if m.payment_transaction_id != nil {
 		fields = append(fields, orderstate.FieldPaymentTransactionID)
@@ -3897,8 +3897,8 @@ func (m *OrderStateMutation) Field(name string) (ent.Value, bool) {
 		return m.BenefitState()
 	case orderstate.FieldUserSetPaid:
 		return m.UserSetPaid()
-	case orderstate.FieldUserSetCancelled:
-		return m.UserSetCancelled()
+	case orderstate.FieldUserSetCanceled:
+		return m.UserSetCanceled()
 	case orderstate.FieldPaymentTransactionID:
 		return m.PaymentTransactionID()
 	case orderstate.FieldPaymentFinishAmount:
@@ -3940,8 +3940,8 @@ func (m *OrderStateMutation) OldField(ctx context.Context, name string) (ent.Val
 		return m.OldBenefitState(ctx)
 	case orderstate.FieldUserSetPaid:
 		return m.OldUserSetPaid(ctx)
-	case orderstate.FieldUserSetCancelled:
-		return m.OldUserSetCancelled(ctx)
+	case orderstate.FieldUserSetCanceled:
+		return m.OldUserSetCanceled(ctx)
 	case orderstate.FieldPaymentTransactionID:
 		return m.OldPaymentTransactionID(ctx)
 	case orderstate.FieldPaymentFinishAmount:
@@ -4038,12 +4038,12 @@ func (m *OrderStateMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetUserSetPaid(v)
 		return nil
-	case orderstate.FieldUserSetCancelled:
+	case orderstate.FieldUserSetCanceled:
 		v, ok := value.(bool)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.SetUserSetCancelled(v)
+		m.SetUserSetCanceled(v)
 		return nil
 	case orderstate.FieldPaymentTransactionID:
 		v, ok := value.(string)
@@ -4230,8 +4230,8 @@ func (m *OrderStateMutation) ClearedFields() []string {
 	if m.FieldCleared(orderstate.FieldUserSetPaid) {
 		fields = append(fields, orderstate.FieldUserSetPaid)
 	}
-	if m.FieldCleared(orderstate.FieldUserSetCancelled) {
-		fields = append(fields, orderstate.FieldUserSetCancelled)
+	if m.FieldCleared(orderstate.FieldUserSetCanceled) {
+		fields = append(fields, orderstate.FieldUserSetCanceled)
 	}
 	if m.FieldCleared(orderstate.FieldPaymentTransactionID) {
 		fields = append(fields, orderstate.FieldPaymentTransactionID)
@@ -4283,8 +4283,8 @@ func (m *OrderStateMutation) ClearField(name string) error {
 	case orderstate.FieldUserSetPaid:
 		m.ClearUserSetPaid()
 		return nil
-	case orderstate.FieldUserSetCancelled:
-		m.ClearUserSetCancelled()
+	case orderstate.FieldUserSetCanceled:
+		m.ClearUserSetCanceled()
 		return nil
 	case orderstate.FieldPaymentTransactionID:
 		m.ClearPaymentTransactionID()
@@ -4342,8 +4342,8 @@ func (m *OrderStateMutation) ResetField(name string) error {
 	case orderstate.FieldUserSetPaid:
 		m.ResetUserSetPaid()
 		return nil
-	case orderstate.FieldUserSetCancelled:
-		m.ResetUserSetCancelled()
+	case orderstate.FieldUserSetCanceled:
+		m.ResetUserSetCanceled()
 		return nil
 	case orderstate.FieldPaymentTransactionID:
 		m.ResetPaymentTransactionID()

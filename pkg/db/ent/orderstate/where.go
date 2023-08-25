@@ -157,10 +157,10 @@ func UserSetPaid(v bool) predicate.OrderState {
 	})
 }
 
-// UserSetCancelled applies equality check predicate on the "user_set_cancelled" field. It's identical to UserSetCancelledEQ.
-func UserSetCancelled(v bool) predicate.OrderState {
+// UserSetCanceled applies equality check predicate on the "user_set_canceled" field. It's identical to UserSetCanceledEQ.
+func UserSetCanceled(v bool) predicate.OrderState {
 	return predicate.OrderState(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldUserSetCancelled), v))
+		s.Where(sql.EQ(s.C(FieldUserSetCanceled), v))
 	})
 }
 
@@ -1056,31 +1056,31 @@ func UserSetPaidNotNil() predicate.OrderState {
 	})
 }
 
-// UserSetCancelledEQ applies the EQ predicate on the "user_set_cancelled" field.
-func UserSetCancelledEQ(v bool) predicate.OrderState {
+// UserSetCanceledEQ applies the EQ predicate on the "user_set_canceled" field.
+func UserSetCanceledEQ(v bool) predicate.OrderState {
 	return predicate.OrderState(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldUserSetCancelled), v))
+		s.Where(sql.EQ(s.C(FieldUserSetCanceled), v))
 	})
 }
 
-// UserSetCancelledNEQ applies the NEQ predicate on the "user_set_cancelled" field.
-func UserSetCancelledNEQ(v bool) predicate.OrderState {
+// UserSetCanceledNEQ applies the NEQ predicate on the "user_set_canceled" field.
+func UserSetCanceledNEQ(v bool) predicate.OrderState {
 	return predicate.OrderState(func(s *sql.Selector) {
-		s.Where(sql.NEQ(s.C(FieldUserSetCancelled), v))
+		s.Where(sql.NEQ(s.C(FieldUserSetCanceled), v))
 	})
 }
 
-// UserSetCancelledIsNil applies the IsNil predicate on the "user_set_cancelled" field.
-func UserSetCancelledIsNil() predicate.OrderState {
+// UserSetCanceledIsNil applies the IsNil predicate on the "user_set_canceled" field.
+func UserSetCanceledIsNil() predicate.OrderState {
 	return predicate.OrderState(func(s *sql.Selector) {
-		s.Where(sql.IsNull(s.C(FieldUserSetCancelled)))
+		s.Where(sql.IsNull(s.C(FieldUserSetCanceled)))
 	})
 }
 
-// UserSetCancelledNotNil applies the NotNil predicate on the "user_set_cancelled" field.
-func UserSetCancelledNotNil() predicate.OrderState {
+// UserSetCanceledNotNil applies the NotNil predicate on the "user_set_canceled" field.
+func UserSetCanceledNotNil() predicate.OrderState {
 	return predicate.OrderState(func(s *sql.Selector) {
-		s.Where(sql.NotNull(s.C(FieldUserSetCancelled)))
+		s.Where(sql.NotNull(s.C(FieldUserSetCanceled)))
 	})
 }
 

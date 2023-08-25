@@ -94,7 +94,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			orderstate.FieldLastBenefitAt:        {Type: field.TypeUint32, Column: orderstate.FieldLastBenefitAt},
 			orderstate.FieldBenefitState:         {Type: field.TypeString, Column: orderstate.FieldBenefitState},
 			orderstate.FieldUserSetPaid:          {Type: field.TypeBool, Column: orderstate.FieldUserSetPaid},
-			orderstate.FieldUserSetCancelled:     {Type: field.TypeBool, Column: orderstate.FieldUserSetCancelled},
+			orderstate.FieldUserSetCanceled:      {Type: field.TypeBool, Column: orderstate.FieldUserSetCanceled},
 			orderstate.FieldPaymentTransactionID: {Type: field.TypeString, Column: orderstate.FieldPaymentTransactionID},
 			orderstate.FieldPaymentFinishAmount:  {Type: field.TypeOther, Column: orderstate.FieldPaymentFinishAmount},
 			orderstate.FieldPaymentState:         {Type: field.TypeString, Column: orderstate.FieldPaymentState},
@@ -473,9 +473,9 @@ func (f *OrderStateFilter) WhereUserSetPaid(p entql.BoolP) {
 	f.Where(p.Field(orderstate.FieldUserSetPaid))
 }
 
-// WhereUserSetCancelled applies the entql bool predicate on the user_set_cancelled field.
-func (f *OrderStateFilter) WhereUserSetCancelled(p entql.BoolP) {
-	f.Where(p.Field(orderstate.FieldUserSetCancelled))
+// WhereUserSetCanceled applies the entql bool predicate on the user_set_canceled field.
+func (f *OrderStateFilter) WhereUserSetCanceled(p entql.BoolP) {
+	f.Where(p.Field(orderstate.FieldUserSetCanceled))
 }
 
 // WherePaymentTransactionID applies the entql string predicate on the payment_transaction_id field.

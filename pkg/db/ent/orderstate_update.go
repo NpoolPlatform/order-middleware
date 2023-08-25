@@ -252,23 +252,23 @@ func (osu *OrderStateUpdate) ClearUserSetPaid() *OrderStateUpdate {
 	return osu
 }
 
-// SetUserSetCancelled sets the "user_set_cancelled" field.
-func (osu *OrderStateUpdate) SetUserSetCancelled(b bool) *OrderStateUpdate {
-	osu.mutation.SetUserSetCancelled(b)
+// SetUserSetCanceled sets the "user_set_canceled" field.
+func (osu *OrderStateUpdate) SetUserSetCanceled(b bool) *OrderStateUpdate {
+	osu.mutation.SetUserSetCanceled(b)
 	return osu
 }
 
-// SetNillableUserSetCancelled sets the "user_set_cancelled" field if the given value is not nil.
-func (osu *OrderStateUpdate) SetNillableUserSetCancelled(b *bool) *OrderStateUpdate {
+// SetNillableUserSetCanceled sets the "user_set_canceled" field if the given value is not nil.
+func (osu *OrderStateUpdate) SetNillableUserSetCanceled(b *bool) *OrderStateUpdate {
 	if b != nil {
-		osu.SetUserSetCancelled(*b)
+		osu.SetUserSetCanceled(*b)
 	}
 	return osu
 }
 
-// ClearUserSetCancelled clears the value of the "user_set_cancelled" field.
-func (osu *OrderStateUpdate) ClearUserSetCancelled() *OrderStateUpdate {
-	osu.mutation.ClearUserSetCancelled()
+// ClearUserSetCanceled clears the value of the "user_set_canceled" field.
+func (osu *OrderStateUpdate) ClearUserSetCanceled() *OrderStateUpdate {
+	osu.mutation.ClearUserSetCanceled()
 	return osu
 }
 
@@ -645,17 +645,17 @@ func (osu *OrderStateUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: orderstate.FieldUserSetPaid,
 		})
 	}
-	if value, ok := osu.mutation.UserSetCancelled(); ok {
+	if value, ok := osu.mutation.UserSetCanceled(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeBool,
 			Value:  value,
-			Column: orderstate.FieldUserSetCancelled,
+			Column: orderstate.FieldUserSetCanceled,
 		})
 	}
-	if osu.mutation.UserSetCancelledCleared() {
+	if osu.mutation.UserSetCanceledCleared() {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeBool,
-			Column: orderstate.FieldUserSetCancelled,
+			Column: orderstate.FieldUserSetCanceled,
 		})
 	}
 	if value, ok := osu.mutation.PaymentTransactionID(); ok {
@@ -980,23 +980,23 @@ func (osuo *OrderStateUpdateOne) ClearUserSetPaid() *OrderStateUpdateOne {
 	return osuo
 }
 
-// SetUserSetCancelled sets the "user_set_cancelled" field.
-func (osuo *OrderStateUpdateOne) SetUserSetCancelled(b bool) *OrderStateUpdateOne {
-	osuo.mutation.SetUserSetCancelled(b)
+// SetUserSetCanceled sets the "user_set_canceled" field.
+func (osuo *OrderStateUpdateOne) SetUserSetCanceled(b bool) *OrderStateUpdateOne {
+	osuo.mutation.SetUserSetCanceled(b)
 	return osuo
 }
 
-// SetNillableUserSetCancelled sets the "user_set_cancelled" field if the given value is not nil.
-func (osuo *OrderStateUpdateOne) SetNillableUserSetCancelled(b *bool) *OrderStateUpdateOne {
+// SetNillableUserSetCanceled sets the "user_set_canceled" field if the given value is not nil.
+func (osuo *OrderStateUpdateOne) SetNillableUserSetCanceled(b *bool) *OrderStateUpdateOne {
 	if b != nil {
-		osuo.SetUserSetCancelled(*b)
+		osuo.SetUserSetCanceled(*b)
 	}
 	return osuo
 }
 
-// ClearUserSetCancelled clears the value of the "user_set_cancelled" field.
-func (osuo *OrderStateUpdateOne) ClearUserSetCancelled() *OrderStateUpdateOne {
-	osuo.mutation.ClearUserSetCancelled()
+// ClearUserSetCanceled clears the value of the "user_set_canceled" field.
+func (osuo *OrderStateUpdateOne) ClearUserSetCanceled() *OrderStateUpdateOne {
+	osuo.mutation.ClearUserSetCanceled()
 	return osuo
 }
 
@@ -1403,17 +1403,17 @@ func (osuo *OrderStateUpdateOne) sqlSave(ctx context.Context) (_node *OrderState
 			Column: orderstate.FieldUserSetPaid,
 		})
 	}
-	if value, ok := osuo.mutation.UserSetCancelled(); ok {
+	if value, ok := osuo.mutation.UserSetCanceled(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeBool,
 			Value:  value,
-			Column: orderstate.FieldUserSetCancelled,
+			Column: orderstate.FieldUserSetCanceled,
 		})
 	}
-	if osuo.mutation.UserSetCancelledCleared() {
+	if osuo.mutation.UserSetCanceledCleared() {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeBool,
-			Column: orderstate.FieldUserSetCancelled,
+			Column: orderstate.FieldUserSetCanceled,
 		})
 	}
 	if value, ok := osuo.mutation.PaymentTransactionID(); ok {

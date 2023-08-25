@@ -59,7 +59,7 @@ func (OrderState) Fields() []ent.Field {
 			Optional().
 			Default(false),
 		field.
-			Bool("user_set_cancelled").
+			Bool("user_set_canceled").
 			Optional().
 			Default(false),
 		field.

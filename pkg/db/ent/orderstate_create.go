@@ -170,16 +170,16 @@ func (osc *OrderStateCreate) SetNillableUserSetPaid(b *bool) *OrderStateCreate {
 	return osc
 }
 
-// SetUserSetCancelled sets the "user_set_cancelled" field.
-func (osc *OrderStateCreate) SetUserSetCancelled(b bool) *OrderStateCreate {
-	osc.mutation.SetUserSetCancelled(b)
+// SetUserSetCanceled sets the "user_set_canceled" field.
+func (osc *OrderStateCreate) SetUserSetCanceled(b bool) *OrderStateCreate {
+	osc.mutation.SetUserSetCanceled(b)
 	return osc
 }
 
-// SetNillableUserSetCancelled sets the "user_set_cancelled" field if the given value is not nil.
-func (osc *OrderStateCreate) SetNillableUserSetCancelled(b *bool) *OrderStateCreate {
+// SetNillableUserSetCanceled sets the "user_set_canceled" field if the given value is not nil.
+func (osc *OrderStateCreate) SetNillableUserSetCanceled(b *bool) *OrderStateCreate {
 	if b != nil {
-		osc.SetUserSetCancelled(*b)
+		osc.SetUserSetCanceled(*b)
 	}
 	return osc
 }
@@ -396,9 +396,9 @@ func (osc *OrderStateCreate) defaults() error {
 		v := orderstate.DefaultUserSetPaid
 		osc.mutation.SetUserSetPaid(v)
 	}
-	if _, ok := osc.mutation.UserSetCancelled(); !ok {
-		v := orderstate.DefaultUserSetCancelled
-		osc.mutation.SetUserSetCancelled(v)
+	if _, ok := osc.mutation.UserSetCanceled(); !ok {
+		v := orderstate.DefaultUserSetCanceled
+		osc.mutation.SetUserSetCanceled(v)
 	}
 	if _, ok := osc.mutation.PaymentTransactionID(); !ok {
 		v := orderstate.DefaultPaymentTransactionID
@@ -569,13 +569,13 @@ func (osc *OrderStateCreate) createSpec() (*OrderState, *sqlgraph.CreateSpec) {
 		})
 		_node.UserSetPaid = value
 	}
-	if value, ok := osc.mutation.UserSetCancelled(); ok {
+	if value, ok := osc.mutation.UserSetCanceled(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
 			Type:   field.TypeBool,
 			Value:  value,
-			Column: orderstate.FieldUserSetCancelled,
+			Column: orderstate.FieldUserSetCanceled,
 		})
-		_node.UserSetCancelled = value
+		_node.UserSetCanceled = value
 	}
 	if value, ok := osc.mutation.PaymentTransactionID(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -881,21 +881,21 @@ func (u *OrderStateUpsert) ClearUserSetPaid() *OrderStateUpsert {
 	return u
 }
 
-// SetUserSetCancelled sets the "user_set_cancelled" field.
-func (u *OrderStateUpsert) SetUserSetCancelled(v bool) *OrderStateUpsert {
-	u.Set(orderstate.FieldUserSetCancelled, v)
+// SetUserSetCanceled sets the "user_set_canceled" field.
+func (u *OrderStateUpsert) SetUserSetCanceled(v bool) *OrderStateUpsert {
+	u.Set(orderstate.FieldUserSetCanceled, v)
 	return u
 }
 
-// UpdateUserSetCancelled sets the "user_set_cancelled" field to the value that was provided on create.
-func (u *OrderStateUpsert) UpdateUserSetCancelled() *OrderStateUpsert {
-	u.SetExcluded(orderstate.FieldUserSetCancelled)
+// UpdateUserSetCanceled sets the "user_set_canceled" field to the value that was provided on create.
+func (u *OrderStateUpsert) UpdateUserSetCanceled() *OrderStateUpsert {
+	u.SetExcluded(orderstate.FieldUserSetCanceled)
 	return u
 }
 
-// ClearUserSetCancelled clears the value of the "user_set_cancelled" field.
-func (u *OrderStateUpsert) ClearUserSetCancelled() *OrderStateUpsert {
-	u.SetNull(orderstate.FieldUserSetCancelled)
+// ClearUserSetCanceled clears the value of the "user_set_canceled" field.
+func (u *OrderStateUpsert) ClearUserSetCanceled() *OrderStateUpsert {
+	u.SetNull(orderstate.FieldUserSetCanceled)
 	return u
 }
 
@@ -1296,24 +1296,24 @@ func (u *OrderStateUpsertOne) ClearUserSetPaid() *OrderStateUpsertOne {
 	})
 }
 
-// SetUserSetCancelled sets the "user_set_cancelled" field.
-func (u *OrderStateUpsertOne) SetUserSetCancelled(v bool) *OrderStateUpsertOne {
+// SetUserSetCanceled sets the "user_set_canceled" field.
+func (u *OrderStateUpsertOne) SetUserSetCanceled(v bool) *OrderStateUpsertOne {
 	return u.Update(func(s *OrderStateUpsert) {
-		s.SetUserSetCancelled(v)
+		s.SetUserSetCanceled(v)
 	})
 }
 
-// UpdateUserSetCancelled sets the "user_set_cancelled" field to the value that was provided on create.
-func (u *OrderStateUpsertOne) UpdateUserSetCancelled() *OrderStateUpsertOne {
+// UpdateUserSetCanceled sets the "user_set_canceled" field to the value that was provided on create.
+func (u *OrderStateUpsertOne) UpdateUserSetCanceled() *OrderStateUpsertOne {
 	return u.Update(func(s *OrderStateUpsert) {
-		s.UpdateUserSetCancelled()
+		s.UpdateUserSetCanceled()
 	})
 }
 
-// ClearUserSetCancelled clears the value of the "user_set_cancelled" field.
-func (u *OrderStateUpsertOne) ClearUserSetCancelled() *OrderStateUpsertOne {
+// ClearUserSetCanceled clears the value of the "user_set_canceled" field.
+func (u *OrderStateUpsertOne) ClearUserSetCanceled() *OrderStateUpsertOne {
 	return u.Update(func(s *OrderStateUpsert) {
-		s.ClearUserSetCancelled()
+		s.ClearUserSetCanceled()
 	})
 }
 
@@ -1897,24 +1897,24 @@ func (u *OrderStateUpsertBulk) ClearUserSetPaid() *OrderStateUpsertBulk {
 	})
 }
 
-// SetUserSetCancelled sets the "user_set_cancelled" field.
-func (u *OrderStateUpsertBulk) SetUserSetCancelled(v bool) *OrderStateUpsertBulk {
+// SetUserSetCanceled sets the "user_set_canceled" field.
+func (u *OrderStateUpsertBulk) SetUserSetCanceled(v bool) *OrderStateUpsertBulk {
 	return u.Update(func(s *OrderStateUpsert) {
-		s.SetUserSetCancelled(v)
+		s.SetUserSetCanceled(v)
 	})
 }
 
-// UpdateUserSetCancelled sets the "user_set_cancelled" field to the value that was provided on create.
-func (u *OrderStateUpsertBulk) UpdateUserSetCancelled() *OrderStateUpsertBulk {
+// UpdateUserSetCanceled sets the "user_set_canceled" field to the value that was provided on create.
+func (u *OrderStateUpsertBulk) UpdateUserSetCanceled() *OrderStateUpsertBulk {
 	return u.Update(func(s *OrderStateUpsert) {
-		s.UpdateUserSetCancelled()
+		s.UpdateUserSetCanceled()
 	})
 }
 
-// ClearUserSetCancelled clears the value of the "user_set_cancelled" field.
-func (u *OrderStateUpsertBulk) ClearUserSetCancelled() *OrderStateUpsertBulk {
+// ClearUserSetCanceled clears the value of the "user_set_canceled" field.
+func (u *OrderStateUpsertBulk) ClearUserSetCanceled() *OrderStateUpsertBulk {
 	return u.Update(func(s *OrderStateUpsert) {
-		s.ClearUserSetCancelled()
+		s.ClearUserSetCanceled()
 	})
 }
 

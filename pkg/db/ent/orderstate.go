@@ -39,8 +39,8 @@ type OrderState struct {
 	BenefitState string `json:"benefit_state,omitempty"`
 	// UserSetPaid holds the value of the "user_set_paid" field.
 	UserSetPaid bool `json:"user_set_paid,omitempty"`
-	// UserSetCancelled holds the value of the "user_set_cancelled" field.
-	UserSetCancelled bool `json:"user_set_cancelled,omitempty"`
+	// UserSetCanceled holds the value of the "user_set_canceled" field.
+	UserSetCanceled bool `json:"user_set_canceled,omitempty"`
 	// PaymentTransactionID holds the value of the "payment_transaction_id" field.
 	PaymentTransactionID string `json:"payment_transaction_id,omitempty"`
 	// PaymentFinishAmount holds the value of the "payment_finish_amount" field.
@@ -60,7 +60,7 @@ func (*OrderState) scanValues(columns []string) ([]interface{}, error) {
 		switch columns[i] {
 		case orderstate.FieldPaymentFinishAmount:
 			values[i] = new(decimal.Decimal)
-		case orderstate.FieldUserSetPaid, orderstate.FieldUserSetCancelled:
+		case orderstate.FieldUserSetPaid, orderstate.FieldUserSetCanceled:
 			values[i] = new(sql.NullBool)
 		case orderstate.FieldCreatedAt, orderstate.FieldUpdatedAt, orderstate.FieldDeletedAt, orderstate.FieldStartAt, orderstate.FieldEndAt, orderstate.FieldLastBenefitAt, orderstate.FieldOutofgasHours, orderstate.FieldCompensateHours:
 			values[i] = new(sql.NullInt64)
@@ -155,11 +155,11 @@ func (os *OrderState) assignValues(columns []string, values []interface{}) error
 			} else if value.Valid {
 				os.UserSetPaid = value.Bool
 			}
-		case orderstate.FieldUserSetCancelled:
+		case orderstate.FieldUserSetCanceled:
 			if value, ok := values[i].(*sql.NullBool); !ok {
-				return fmt.Errorf("unexpected type %T for field user_set_cancelled", values[i])
+				return fmt.Errorf("unexpected type %T for field user_set_canceled", values[i])
 			} else if value.Valid {
-				os.UserSetCancelled = value.Bool
+				os.UserSetCanceled = value.Bool
 			}
 		case orderstate.FieldPaymentTransactionID:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -252,8 +252,8 @@ func (os *OrderState) String() string {
 	builder.WriteString("user_set_paid=")
 	builder.WriteString(fmt.Sprintf("%v", os.UserSetPaid))
 	builder.WriteString(", ")
-	builder.WriteString("user_set_cancelled=")
-	builder.WriteString(fmt.Sprintf("%v", os.UserSetCancelled))
+	builder.WriteString("user_set_canceled=")
+	builder.WriteString(fmt.Sprintf("%v", os.UserSetCanceled))
 	builder.WriteString(", ")
 	builder.WriteString("payment_transaction_id=")
 	builder.WriteString(os.PaymentTransactionID)

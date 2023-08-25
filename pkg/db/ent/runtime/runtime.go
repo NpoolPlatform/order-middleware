@@ -210,10 +210,10 @@ func init() {
 	orderstateDescUserSetPaid := orderstateFields[8].Descriptor()
 	// orderstate.DefaultUserSetPaid holds the default value on creation for the user_set_paid field.
 	orderstate.DefaultUserSetPaid = orderstateDescUserSetPaid.Default.(bool)
-	// orderstateDescUserSetCancelled is the schema descriptor for user_set_cancelled field.
-	orderstateDescUserSetCancelled := orderstateFields[9].Descriptor()
-	// orderstate.DefaultUserSetCancelled holds the default value on creation for the user_set_cancelled field.
-	orderstate.DefaultUserSetCancelled = orderstateDescUserSetCancelled.Default.(bool)
+	// orderstateDescUserSetCanceled is the schema descriptor for user_set_canceled field.
+	orderstateDescUserSetCanceled := orderstateFields[9].Descriptor()
+	// orderstate.DefaultUserSetCanceled holds the default value on creation for the user_set_canceled field.
+	orderstate.DefaultUserSetCanceled = orderstateDescUserSetCanceled.Default.(bool)
 	// orderstateDescPaymentTransactionID is the schema descriptor for payment_transaction_id field.
 	orderstateDescPaymentTransactionID := orderstateFields[10].Descriptor()
 	// orderstate.DefaultPaymentTransactionID holds the default value on creation for the payment_transaction_id field.

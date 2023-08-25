@@ -70,7 +70,7 @@ var (
 		{Name: "last_benefit_at", Type: field.TypeUint32, Nullable: true, Default: 0},
 		{Name: "benefit_state", Type: field.TypeString, Nullable: true, Default: "BenefitWait"},
 		{Name: "user_set_paid", Type: field.TypeBool, Nullable: true, Default: false},
-		{Name: "user_set_cancelled", Type: field.TypeBool, Nullable: true, Default: false},
+		{Name: "user_set_canceled", Type: field.TypeBool, Nullable: true, Default: false},
 		{Name: "payment_transaction_id", Type: field.TypeString, Nullable: true, Default: ""},
 		{Name: "payment_finish_amount", Type: field.TypeOther, Nullable: true, SchemaType: map[string]string{"mysql": "decimal(37,18)"}},
 		{Name: "payment_state", Type: field.TypeString, Nullable: true, Default: "PaymentStateWait"},
