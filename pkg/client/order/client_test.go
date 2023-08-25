@@ -130,8 +130,10 @@ func create(t *testing.T) {
 	info, err = CreateOrder(context.Background(), &req)
 	if assert.Nil(t, err) {
 		ret.CreatedAt = info.CreatedAt
+		ret.UpdatedAt = info.UpdatedAt
 		ret.CouponIDs = info.CouponIDs
 		ret.CouponIDsStr = info.CouponIDsStr
+		ret.PaymentID = info.PaymentID
 		assert.Equal(t, info, &ret)
 	}
 }
