@@ -15,46 +15,25 @@ import (
 )
 
 type Req struct {
-	ID                          *uuid.UUID
-	AppID                       *uuid.UUID
-	UserID                      *uuid.UUID
-	GoodID                      *uuid.UUID
-	AppGoodID                   *uuid.UUID
-	PaymentID                   *uuid.UUID
-	ParentOrderID               *uuid.UUID
-	Units                       *decimal.Decimal
-	GoodValue                   *decimal.Decimal
-	PaymentAmount               *decimal.Decimal
-	DiscountAmount              *decimal.Decimal
-	PromotionID                 *uuid.UUID
-	DurationDays                *uint32
-	OrderType                   *basetypes.OrderType
-	InvestmentType              *basetypes.InvestmentType
-	CouponIDs                   *[]uuid.UUID
-	PaymentType                 *basetypes.PaymentType
-	CreatedAt                   *uint32
-	DeletedAt                   *uint32
-	PaymentAccountID            *uuid.UUID
-	PaymentCoinTypeID           *uuid.UUID
-	PaymentStartAmount          *decimal.Decimal
-	PaymentTransferAmount       *decimal.Decimal
-	PaymentBalanceAmount        *decimal.Decimal
-	PaymentCoinUSDCurrency      *decimal.Decimal
-	PaymentLocalCoinUSDCurrency *decimal.Decimal
-	PaymentLiveCoinUSDCurrency  *decimal.Decimal
-	OrderState                  *basetypes.OrderState
-	StartMode                   *basetypes.OrderStartMode
-	StartAt                     *uint32
-	EndAt                       *uint32
-	LastBenefitAt               *uint32
-	BenefitState                *basetypes.BenefitState
-	UserSetPaid                 *bool
-	UserSetCanceled             *bool
-	PaymentTransactionID        *string
-	PaymentFinishAmount         *decimal.Decimal
-	PaymentState                *basetypes.PaymentState
-	OutOfGasHours               *uint32
-	CompensateHours             *uint32
+	ID             *uuid.UUID
+	AppID          *uuid.UUID
+	UserID         *uuid.UUID
+	GoodID         *uuid.UUID
+	AppGoodID      *uuid.UUID
+	PaymentID      *uuid.UUID
+	ParentOrderID  *uuid.UUID
+	Units          *decimal.Decimal
+	GoodValue      *decimal.Decimal
+	PaymentAmount  *decimal.Decimal
+	DiscountAmount *decimal.Decimal
+	PromotionID    *uuid.UUID
+	DurationDays   *uint32
+	OrderType      *basetypes.OrderType
+	InvestmentType *basetypes.InvestmentType
+	CouponIDs      *[]uuid.UUID
+	PaymentType    *basetypes.PaymentType
+	CreatedAt      *uint32
+	DeletedAt      *uint32
 }
 
 //nolint:gocyclo

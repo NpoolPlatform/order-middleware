@@ -18,6 +18,92 @@ import (
 	npool "github.com/NpoolPlatform/message/npool/order/mw/v1/order"
 )
 
+type deleteHandler struct {
+	*Handler
+	deleteAt *uint32
+}
+
+//nolint:dupl
+func (h *deleteHandler) deleteOrder(ctx context.Context, tx *ent.Tx, req *ordercrud.Req) error {
+	order, err := tx.Order.
+		Query().
+		Where(
+			entorder.ID(*req.ID),
+		).
+		ForUpdate().
+		Only(ctx)
+	if err != nil {
+		return err
+	}
+	if order == nil {
+		return fmt.Errorf("invalid order")
+	}
+
+	if _, err := ordercrud.UpdateSet(
+		order.Update(),
+		&ordercrud.Req{
+			DeletedAt: h.deleteAt,
+		},
+	).Save(ctx); err != nil {
+		return err
+	}
+	return nil
+}
+
+//nolint:dupl
+func (h *deleteHandler) deleteOrderState(ctx context.Context, tx *ent.Tx, req *orderstatecrud.Req) error {
+	orderstate, err := tx.OrderState.
+		Query().
+		Where(
+			entorderstate.OrderID(*req.OrderID),
+		).
+		ForUpdate().
+		Only(ctx)
+	if err != nil {
+		return err
+	}
+	if orderstate == nil {
+		return fmt.Errorf("invalid orderstate")
+	}
+
+	if _, err := orderstatecrud.UpdateSet(
+		orderstate.Update(),
+		&orderstatecrud.Req{
+			DeletedAt: h.deleteAt,
+		},
+	).Save(ctx); err != nil {
+		return err
+	}
+	return nil
+}
+
+//nolint:dupl
+func (h *deleteHandler) deletePayment(ctx context.Context, tx *ent.Tx, req *paymentcrud.Req) error {
+	payment, err := tx.Payment.
+		Query().
+		Where(
+			entpayment.OrderID(*req.OrderID),
+		).
+		ForUpdate().
+		Only(ctx)
+	if err != nil {
+		return err
+	}
+	if payment == nil {
+		return fmt.Errorf("invalid payment")
+	}
+
+	if _, err := paymentcrud.UpdateSet(
+		payment.Update(),
+		&paymentcrud.Req{
+			DeletedAt: h.deleteAt,
+		},
+	).Save(ctx); err != nil {
+		return err
+	}
+	return nil
+}
+
 func (h *Handler) DeleteOrder(ctx context.Context) (*npool.Order, error) {
 	if h.ID == nil {
 		return nil, fmt.Errorf("invalid id")
@@ -29,82 +115,35 @@ func (h *Handler) DeleteOrder(ctx context.Context) (*npool.Order, error) {
 	if info == nil {
 		return nil, nil
 	}
+	handler := &deleteHandler{
+		Handler: h,
+	}
+
+	orderReq := &ordercrud.Req{
+		ID: h.ID,
+	}
+	orderstateReq := &orderstatecrud.Req{
+		OrderID: h.ID,
+	}
+	paymentReq := &paymentcrud.Req{
+		OrderID: h.ID,
+	}
 
 	now := uint32(time.Now().Unix())
-
+	handler.deleteAt = &now
 	err = db.WithTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {
-		order, err := tx.Order.
-			Query().
-			Where(
-				entorder.ID(*h.ID),
-			).
-			ForUpdate().
-			Only(_ctx)
-		if err != nil {
+		if err := handler.deleteOrder(ctx, tx, orderReq); err != nil {
 			return err
 		}
-		if order == nil {
-			return fmt.Errorf("invalid order")
+		if err := handler.deleteOrderState(ctx, tx, orderstateReq); err != nil {
+			return err
 		}
-
-		if order.PaymentID != uuid.Nil {
-			payment, err := tx.Payment.
-				Query().
-				Where(
-					entpayment.ID(order.PaymentID),
-					entpayment.UserID(order.UserID),
-					entpayment.OrderID(order.ID),
-				).
-				ForUpdate().
-				Only(_ctx)
-			if err != nil {
-				return err
-			}
-			if payment == nil {
-				return fmt.Errorf("invalid payment")
-			}
-
-			if _, err := paymentcrud.UpdateSet(
-				payment.Update(),
-				&paymentcrud.Req{
-					DeletedAt: &now,
-				},
-			).Save(_ctx); err != nil {
+		if info.PaymentID != uuid.Nil.String() {
+			if err := handler.deletePayment(ctx, tx, paymentReq); err != nil {
 				return err
 			}
 		}
 
-		orderstate, err := tx.OrderState.
-			Query().
-			Where(
-				entorderstate.OrderID(order.ID),
-			).
-			ForUpdate().
-			Only(_ctx)
-		if err != nil {
-			return err
-		}
-		if orderstate == nil {
-			return fmt.Errorf("invalid orderstate")
-		}
-
-		if _, err := ordercrud.UpdateSet(
-			order.Update(),
-			&ordercrud.Req{
-				DeletedAt: &now,
-			},
-		).Save(_ctx); err != nil {
-			return err
-		}
-
-		if _, err := orderstatecrud.UpdateSet(
-			orderstate.Update(),
-			&orderstatecrud.Req{
-				DeletedAt: &now,
-			},
-		).Save(_ctx); err != nil {
-			return err
-		}
 		return nil
 	})
 	if err != nil {

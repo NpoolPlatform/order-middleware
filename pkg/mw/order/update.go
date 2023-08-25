@@ -20,18 +20,17 @@ type updateHandler struct {
 	*Handler
 }
 
-func (h *updateHandler) updateOrder(ctx context.Context, tx *ent.Tx, req *ordercrud.Req) error {
+func (h *updateHandler) updateOrderState(ctx context.Context, tx *ent.Tx, req *orderstatecrud.Req) error {
 	orderstate, err := tx.OrderState.
 		Query().
 		Where(
-			entorderstate.OrderID(*req.ID),
+			entorderstate.OrderID(*req.OrderID),
 		).
 		ForUpdate().
 		Only(ctx)
 	if err != nil {
 		return err
 	}
-
 	if orderstate == nil {
 		return fmt.Errorf("invalid order")
 	}
@@ -39,7 +38,7 @@ func (h *updateHandler) updateOrder(ctx context.Context, tx *ent.Tx, req *orderc
 	order, err := tx.Order.
 		Query().
 		Where(
-			entorder.ID(*req.ID),
+			entorder.ID(*req.OrderID),
 		).
 		Only(ctx)
 	if err != nil {
@@ -93,9 +92,8 @@ func (h *Handler) UpdateOrder(ctx context.Context) (*npool.Order, error) {
 	handler := &updateHandler{
 		Handler: h,
 	}
-	req := &ordercrud.Req{
-		ID:                   h.ID,
-		AppID:                h.AppID,
+	orderstateReq := &orderstatecrud.Req{
+		OrderID:              h.ID,
 		OrderState:           h.OrderState,
 		StartMode:            h.StartMode,
 		StartAt:              h.StartAt,
@@ -111,7 +109,7 @@ func (h *Handler) UpdateOrder(ctx context.Context) (*npool.Order, error) {
 	}
 
 	err := db.WithTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {
-		if err := handler.updateOrder(_ctx, tx, req); err != nil {
+		if err := handler.updateOrderState(_ctx, tx, orderstateReq); err != nil {
 			return err
 		}
 		return nil
@@ -131,10 +129,10 @@ func (h *Handler) UpdateOrders(ctx context.Context) ([]*npool.Order, error) {
 	ids := []uuid.UUID{}
 	err := db.WithTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {
 		for _, req := range h.Reqs {
-			if req.ID == nil {
+			if req.OrderStateReq.OrderID == nil {
 				return fmt.Errorf("invalid id")
 			}
-			if err := handler.updateOrder(ctx, tx, req); err != nil {
+			if err := handler.updateOrderState(ctx, tx, req.OrderStateReq); err != nil {
 				return err
 			}
 			ids = append(ids, *h.ID)
