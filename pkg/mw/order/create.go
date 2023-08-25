@@ -9,10 +9,11 @@ import (
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent"
 	"github.com/shopspring/decimal"
 
-	orderbasetypes "github.com/NpoolPlatform/message/npool/basetypes/order/v1"
+	ordertypes "github.com/NpoolPlatform/message/npool/basetypes/order/v1"
 	basetypes "github.com/NpoolPlatform/message/npool/basetypes/v1"
 	npool "github.com/NpoolPlatform/message/npool/order/mw/v1/order"
 	ordercrud "github.com/NpoolPlatform/order-middleware/pkg/crud/order"
+	orderstatecrud "github.com/NpoolPlatform/order-middleware/pkg/crud/orderstate"
 	paymentcrud "github.com/NpoolPlatform/order-middleware/pkg/crud/payment"
 
 	redis2 "github.com/NpoolPlatform/go-service-framework/pkg/redis"
@@ -22,38 +23,136 @@ import (
 
 type createHandler struct {
 	*Handler
+	PaymentID *uuid.UUID
 }
 
-func (h *createHandler) validate() error {
-	if h.PaymentAmount.Cmp(decimal.NewFromInt(0)) <= 0 {
+func (h *createHandler) validate(req *ordercrud.Req) error {
+	if req.PaymentAmount == nil {
+		return fmt.Errorf("invalid paymentamount")
+	}
+	if req.PaymentAmount.Cmp(decimal.NewFromInt(0)) <= 0 {
 		return fmt.Errorf("startamount is less than or equal to 0")
 	}
-	if h.PayWithBalanceAmount != nil && h.PayWithBalanceAmount.Cmp(decimal.NewFromInt(0)) <= 0 {
+	if req.PaymentBalanceAmount != nil && req.PaymentBalanceAmount.Cmp(decimal.NewFromInt(0)) <= 0 {
 		return fmt.Errorf("amount is less than or equal to 0")
 	}
-	if h.PaymentAccountStartAmount.Cmp(decimal.NewFromInt(0)) <= 0 {
+	if req.PaymentStartAmount == nil {
+		return fmt.Errorf("invalid paymentstartamount")
+	}
+	if req.PaymentStartAmount.Cmp(decimal.NewFromInt(0)) <= 0 {
 		return fmt.Errorf("coinusdcurrency is less than or equal to 0")
 	}
-	if h.PaymentCoinUSDCurrency.Cmp(decimal.NewFromInt(0)) <= 0 {
+	if req.PaymentCoinUSDCurrency == nil {
+		return fmt.Errorf("invalid paymentcoinusdcurrency")
+	}
+	if req.PaymentCoinUSDCurrency.Cmp(decimal.NewFromInt(0)) <= 0 {
 		return fmt.Errorf("localcoinusdcurrency is less than or equal to 0")
 	}
-	if h.PaymentLiveUSDCurrency.Cmp(decimal.NewFromInt(0)) <= 0 {
+	if req.PaymentLiveCoinUSDCurrency == nil {
+		return fmt.Errorf("invalid paymentlivecoinusdcurrency")
+	}
+	if req.PaymentLiveCoinUSDCurrency.Cmp(decimal.NewFromInt(0)) <= 0 {
 		return fmt.Errorf("livecoinusdcurrency is less than or equal to 0")
 	}
-	if h.PaymentLocalUSDCurrency.Cmp(decimal.NewFromInt(0)) <= 0 {
+	if req.PaymentLocalCoinUSDCurrency == nil {
+		return fmt.Errorf("invalid paymentlocalcoinusdcurrency")
+	}
+	if req.PaymentLocalCoinUSDCurrency.Cmp(decimal.NewFromInt(0)) <= 0 {
 		return fmt.Errorf("livecoinusdcurrency is less than or equal to 0")
 	}
 
 	return nil
 }
 
+func (h *createHandler) createOrder(ctx context.Context, tx *ent.Tx, req *ordercrud.Req) error {
+	id := uuid.New()
+	if req.ID == nil {
+		req.ID = &id
+	}
+	orderState := ordertypes.OrderState_OrderStateWaitPayment
+	paymentState := ordertypes.PaymentState_PaymentStateNoPayment
+	if h.PaymentTransferAmount != nil && h.PaymentTransferAmount.Cmp(decimal.NewFromInt(0)) > 0 {
+		if err := h.validate(req); err != nil {
+			return err
+		}
+		id := uuid.New()
+		h.PaymentID = &id
+		paymentState = ordertypes.PaymentState_PaymentStateWait
+		if _, err := paymentcrud.CreateSet(
+			tx.Payment.Create(),
+			&paymentcrud.Req{
+				ID:                   req.PaymentID,
+				AppID:                req.AppID,
+				UserID:               req.UserID,
+				GoodID:               req.GoodID,
+				OrderID:              req.ID,
+				AccountID:            req.PaymentAccountID,
+				CoinTypeID:           req.PaymentCoinTypeID,
+				StartAmount:          req.PaymentStartAmount,
+				TransferAmount:       req.PaymentTransferAmount,
+				BalanceAmount:        req.PaymentBalanceAmount,
+				CoinUSDCurrency:      req.PaymentCoinUSDCurrency,
+				LocalCoinUSDCurrency: req.PaymentLocalCoinUSDCurrency,
+				LiveCoinUSDCurrency:  req.PaymentLiveCoinUSDCurrency,
+			},
+		).Save(ctx); err != nil {
+			return err
+		}
+	}
+	if _, err := ordercrud.CreateSet(
+		tx.Order.Create(),
+		&ordercrud.Req{
+			ID:             req.ID,
+			AppID:          req.AppID,
+			UserID:         req.UserID,
+			GoodID:         req.GoodID,
+			AppGoodID:      req.AppGoodID,
+			PaymentID:      req.PaymentID,
+			ParentOrderID:  req.ParentOrderID,
+			Units:          req.Units,
+			GoodValue:      req.GoodValue,
+			PaymentAmount:  req.PaymentAmount,
+			DiscountAmount: req.DiscountAmount,
+			PromotionID:    req.PromotionID,
+			DurationDays:   req.DurationDays,
+			OrderType:      req.OrderType,
+			InvestmentType: req.InvestmentType,
+			CouponIDs:      req.CouponIDs,
+			PaymentType:    req.PaymentType,
+		},
+	).Save(ctx); err != nil {
+		return err
+	}
+
+	id = uuid.New()
+	if _, err := orderstatecrud.CreateSet(
+		tx.OrderState.Create(),
+		&orderstatecrud.Req{
+			ID:                   &id,
+			OrderID:              req.ID,
+			OrderState:           &orderState,
+			StartMode:            req.StartMode,
+			StartAt:              req.StartAt,
+			EndAt:                req.EndAt,
+			LastBenefitAt:        req.LastBenefitAt,
+			BenefitState:         req.BenefitState,
+			UserSetPaid:          req.UserSetPaid,
+			UserSetCanceled:      req.UserSetCanceled,
+			PaymentTransactionID: req.PaymentTransactionID,
+			PaymentFinishAmount:  req.PaymentFinishAmount,
+			PaymentState:         &paymentState,
+			OutOfGasHours:        req.OutOfGasHours,
+			CompensateHours:      req.CompensateHours,
+		},
+	).Save(ctx); err != nil {
+		return err
+	}
+	return nil
+}
+
 func (h *Handler) CreateOrder(ctx context.Context) (*npool.Order, error) {
 	handler := &createHandler{
 		Handler: h,
-	}
-
-	if err := handler.validate(); err != nil {
-		return nil, err
 	}
 
 	key := fmt.Sprintf("%v:%v:%v:%v", basetypes.Prefix_PrefixCreateUserTransfer, *h.AppID, *h.GoodID, *h.UserID)
@@ -64,66 +163,48 @@ func (h *Handler) CreateOrder(ctx context.Context) (*npool.Order, error) {
 		_ = redis2.Unlock(key)
 	}()
 
-	id := uuid.New()
-	if h.ID == nil {
-		h.ID = &id
+	req := &ordercrud.Req{
+		ID:                          h.ID,
+		AppID:                       h.AppID,
+		UserID:                      h.UserID,
+		GoodID:                      h.GoodID,
+		AppGoodID:                   h.AppGoodID,
+		ParentOrderID:               h.ParentOrderID,
+		Units:                       h.Units,
+		GoodValue:                   h.GoodValue,
+		PaymentAmount:               h.PaymentAmount,
+		DiscountAmount:              h.DiscountAmount,
+		PromotionID:                 h.PromotionID,
+		DurationDays:                h.DurationDays,
+		OrderType:                   h.OrderType,
+		InvestmentType:              h.InvestmentType,
+		CouponIDs:                   &h.CouponIDs,
+		PaymentType:                 h.PaymentType,
+		PaymentAccountID:            h.PaymentAccountID,
+		PaymentCoinTypeID:           h.PaymentCoinTypeID,
+		PaymentStartAmount:          h.PaymentStartAmount,
+		PaymentTransferAmount:       h.PaymentTransferAmount,
+		PaymentBalanceAmount:        h.PaymentBalanceAmount,
+		PaymentCoinUSDCurrency:      h.PaymentCoinUSDCurrency,
+		PaymentLocalCoinUSDCurrency: h.PaymentLocalCoinUSDCurrency,
+		PaymentLiveCoinUSDCurrency:  h.PaymentLiveCoinUSDCurrency,
+		StartMode:                   h.StartMode,
+		StartAt:                     h.StartAt,
+		EndAt:                       h.EndAt,
+		LastBenefitAt:               h.LastBenefitAt,
+		BenefitState:                h.BenefitState,
+		UserSetPaid:                 h.UserSetPaid,
+		UserSetCanceled:             h.UserSetCanceled,
+		PaymentTransactionID:        h.PaymentTransactionID,
+		PaymentFinishAmount:         h.PaymentFinishAmount,
+		OutOfGasHours:               h.OutOfGasHours,
+		CompensateHours:             h.CompensateHours,
 	}
 
 	err := db.WithTx(ctx, func(ctx context.Context, tx *ent.Tx) error {
-		orderState := orderbasetypes.OrderState_OrderStateWaitPayment
-
-		if _, err := ordercrud.CreateSet(
-			tx.Order.Create(),
-			&ordercrud.Req{
-				ID:                     h.ID,
-				GoodID:                 h.GoodID,
-				AppID:                  h.AppID,
-				UserID:                 h.UserID,
-				ParentOrderID:          h.ParentOrderID,
-				PayWithParent:          h.PayWithParent,
-				Units:                  h.Units,
-				PromotionID:            h.PromotionID,
-				UserSpecialReductionID: h.UserSpecialReductionID,
-				StartAt:                h.StartAt,
-				EndAt:                  h.EndAt,
-				Type:                   h.Type,
-				State:                  &orderState,
-				CouponIDs:              &h.CouponIDs,
-				InvestmentType:         h.InvestmentType,
-			},
-		).Save(ctx); err != nil {
+		if err := handler.createOrder(ctx, tx, req); err != nil {
 			return err
 		}
-
-		id := uuid.New()
-		if h.PaymentID == nil {
-			h.PaymentID = &id
-		}
-
-		paymentState := orderbasetypes.PaymentState_PaymentStateWait
-
-		if _, err := paymentcrud.CreateSet(
-			tx.Payment.Create(),
-			&paymentcrud.Req{
-				ID:                   h.PaymentID,
-				AppID:                h.AppID,
-				UserID:               h.UserID,
-				GoodID:               h.GoodID,
-				OrderID:              h.ID,
-				AccountID:            h.PaymentAccountID,
-				StartAmount:          h.PaymentAccountStartAmount,
-				Amount:               h.PaymentAmount,
-				PayWithBalanceAmount: h.PayWithBalanceAmount,
-				CoinUsdCurrency:      h.PaymentCoinUSDCurrency,
-				LocalCoinUsdCurrency: h.PaymentLocalUSDCurrency,
-				LiveCoinUsdCurrency:  h.PaymentLiveUSDCurrency,
-				CoinInfoID:           h.PaymentCoinID,
-				State:                &paymentState,
-			},
-		).Save(ctx); err != nil {
-			return err
-		}
-
 		return nil
 	})
 	if err != nil {
@@ -134,74 +215,13 @@ func (h *Handler) CreateOrder(ctx context.Context) (*npool.Order, error) {
 }
 
 func (h *Handler) CreateOrders(ctx context.Context) ([]*npool.Order, uint32, error) {
-	for _, req := range h.Reqs {
-		if req.IsMainGood != nil && *req.IsMainGood {
-			id := uuid.New()
-			h.ParentOrderID = req.ID
-			if req.ID == nil {
-				h.ParentOrderID = &id
-				req.ID = &id
-			}
-		}
+	handler := &createHandler{
+		Handler: h,
 	}
-
 	ids := []uuid.UUID{}
 	err := db.WithTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {
 		for _, req := range h.Reqs {
-			if req.IsMainGood != nil && !*req.IsMainGood {
-				req.ParentOrderID = h.ParentOrderID
-			}
-			orderState := orderbasetypes.OrderState_OrderStateWaitPayment
-
-			if _, err := ordercrud.CreateSet(
-				tx.Order.Create(),
-				&ordercrud.Req{
-					ID:                     req.ID,
-					GoodID:                 req.GoodID,
-					AppID:                  req.AppID,
-					UserID:                 req.UserID,
-					ParentOrderID:          req.ParentOrderID,
-					PayWithParent:          req.PayWithParent,
-					Units:                  req.Units,
-					PromotionID:            req.PromotionID,
-					UserSpecialReductionID: req.UserSpecialReductionID,
-					StartAt:                req.StartAt,
-					EndAt:                  req.EndAt,
-					Type:                   req.Type,
-					State:                  &orderState,
-					CouponIDs:              req.CouponIDs,
-					InvestmentType:         req.InvestmentType,
-				},
-			).Save(ctx); err != nil {
-				return err
-			}
-
-			id := uuid.New()
-			if h.PaymentID == nil {
-				h.PaymentID = &id
-			}
-
-			paymentState := orderbasetypes.PaymentState_PaymentStateWait
-
-			if _, err := paymentcrud.CreateSet(
-				tx.Payment.Create(),
-				&paymentcrud.Req{
-					ID:                   req.PaymentID,
-					AppID:                req.AppID,
-					UserID:               req.UserID,
-					GoodID:               req.GoodID,
-					OrderID:              req.ID,
-					AccountID:            req.PaymentAccountID,
-					StartAmount:          req.PaymentAccountStartAmount,
-					Amount:               req.PaymentAmount,
-					PayWithBalanceAmount: req.PayWithBalanceAmount,
-					CoinUsdCurrency:      req.PaymentCoinUSDCurrency,
-					LocalCoinUsdCurrency: req.PaymentLocalUSDCurrency,
-					LiveCoinUsdCurrency:  req.PaymentLiveUSDCurrency,
-					CoinInfoID:           req.PaymentCoinID,
-					State:                &paymentState,
-				},
-			).Save(ctx); err != nil {
+			if err := handler.createOrder(ctx, tx, req); err != nil {
 				return err
 			}
 		}

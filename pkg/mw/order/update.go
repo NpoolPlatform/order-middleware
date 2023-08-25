@@ -8,11 +8,11 @@ import (
 	basetypes "github.com/NpoolPlatform/message/npool/basetypes/order/v1"
 	npool "github.com/NpoolPlatform/message/npool/order/mw/v1/order"
 	ordercrud "github.com/NpoolPlatform/order-middleware/pkg/crud/order"
-	paymentcrud "github.com/NpoolPlatform/order-middleware/pkg/crud/payment"
+	orderstatecrud "github.com/NpoolPlatform/order-middleware/pkg/crud/orderstate"
 	"github.com/NpoolPlatform/order-middleware/pkg/db"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent"
 	entorder "github.com/NpoolPlatform/order-middleware/pkg/db/ent/order"
-	entpayment "github.com/NpoolPlatform/order-middleware/pkg/db/ent/payment"
+	entorderstate "github.com/NpoolPlatform/order-middleware/pkg/db/ent/orderstate"
 	"github.com/google/uuid"
 )
 
@@ -21,10 +21,10 @@ type updateHandler struct {
 }
 
 func (h *updateHandler) updateOrder(ctx context.Context, tx *ent.Tx, req *ordercrud.Req) error {
-	payment, err := tx.Payment.
+	orderstate, err := tx.OrderState.
 		Query().
 		Where(
-			entpayment.ID(*req.PaymentID),
+			entorderstate.OrderID(*req.ID),
 		).
 		ForUpdate().
 		Only(ctx)
@@ -32,7 +32,7 @@ func (h *updateHandler) updateOrder(ctx context.Context, tx *ent.Tx, req *orderc
 		return err
 	}
 
-	if payment.OrderID != *req.ID {
+	if orderstate == nil {
 		return fmt.Errorf("invalid order")
 	}
 
@@ -41,7 +41,6 @@ func (h *updateHandler) updateOrder(ctx context.Context, tx *ent.Tx, req *orderc
 		Where(
 			entorder.ID(*req.ID),
 		).
-		ForUpdate().
 		Only(ctx)
 	if err != nil {
 		return err
@@ -50,42 +49,40 @@ func (h *updateHandler) updateOrder(ctx context.Context, tx *ent.Tx, req *orderc
 		return fmt.Errorf("invalid order")
 	}
 
-	duration := order.EndAt - order.StartAt
-	startAt := order.StartAt
+	duration := orderstate.EndAt - orderstate.StartAt
+	startAt := orderstate.StartAt
 	if req.StartAt != nil && *req.StartAt > startAt {
 		startAt = *req.StartAt
 	}
 	endAt := startAt + duration
 
-	if payment.StateV1 != basetypes.PaymentState_PaymentStateWait.String() && order.Type == basetypes.OrderType_Normal.String() {
-		if req.PaymentUserSetCanceled != nil && *req.PaymentUserSetCanceled {
+	if orderstate.PaymentState != basetypes.PaymentState_PaymentStateWait.String() && order.OrderType == basetypes.OrderType_Normal.String() {
+		if req.UserSetCanceled != nil && *req.UserSetCanceled {
 			return fmt.Errorf("not wait payment")
 		}
 	}
 
-	if _, err := ordercrud.UpdateSet(
-		order.Update(),
-		&ordercrud.Req{
-			State:         req.State,
-			StartAt:       &startAt,
-			EndAt:         &endAt,
-			LastBenefitAt: req.LastBenefitAt,
+	if _, err := orderstatecrud.UpdateSet(
+		orderstate.Update(),
+		&orderstatecrud.Req{
+			OrderState:           req.OrderState,
+			StartMode:            req.StartMode,
+			StartAt:              &startAt,
+			EndAt:                &endAt,
+			LastBenefitAt:        req.LastBenefitAt,
+			BenefitState:         req.BenefitState,
+			UserSetPaid:          req.UserSetPaid,
+			UserSetCanceled:      req.UserSetCanceled,
+			PaymentTransactionID: req.PaymentTransactionID,
+			PaymentFinishAmount:  req.PaymentFinishAmount,
+			PaymentState:         req.PaymentState,
+			OutOfGasHours:        req.OutOfGasHours,
+			CompensateHours:      req.CompensateHours,
 		},
 	).Save(ctx); err != nil {
 		return err
 	}
 
-	if _, err := paymentcrud.UpdateSet(
-		payment.Update(),
-		&paymentcrud.Req{
-			UserSetCanceled: req.PaymentUserSetCanceled,
-			State:           req.PaymentState,
-			FinishAmount:    req.PaymentFinishAmount,
-			FakePayment:     req.PaymentFakePayment,
-		},
-	).Save(ctx); err != nil {
-		return err
-	}
 	return nil
 }
 
@@ -93,23 +90,24 @@ func (h *Handler) UpdateOrder(ctx context.Context) (*npool.Order, error) {
 	if h.ID == nil {
 		return nil, fmt.Errorf("invalid id")
 	}
-	if h.PaymentID == nil {
-		return nil, fmt.Errorf("invalid payment")
-	}
 	handler := &updateHandler{
 		Handler: h,
 	}
 	req := &ordercrud.Req{
-		ID:                     handler.ID,
-		AppID:                  handler.AppID,
-		PaymentID:              handler.PaymentID,
-		StartAt:                handler.StartAt,
-		State:                  handler.State,
-		LastBenefitAt:          handler.LastBenefitAt,
-		PaymentUserSetCanceled: handler.PaymentUserSetCanceled,
-		PaymentState:           handler.PaymentState,
-		PaymentFinishAmount:    handler.PaymentFinishAmount,
-		PaymentFakePayment:     handler.PaymentFakePayment,
+		ID:                   h.ID,
+		AppID:                h.AppID,
+		OrderState:           h.OrderState,
+		StartMode:            h.StartMode,
+		StartAt:              h.StartAt,
+		LastBenefitAt:        h.LastBenefitAt,
+		BenefitState:         h.BenefitState,
+		UserSetPaid:          h.UserSetPaid,
+		UserSetCanceled:      h.UserSetCanceled,
+		PaymentTransactionID: h.PaymentTransactionID,
+		PaymentFinishAmount:  h.PaymentFinishAmount,
+		PaymentState:         h.PaymentState,
+		OutOfGasHours:        h.OutOfGasHours,
+		CompensateHours:      h.CompensateHours,
 	}
 
 	err := db.WithTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {
@@ -135,9 +133,6 @@ func (h *Handler) UpdateOrders(ctx context.Context) ([]*npool.Order, error) {
 		for _, req := range h.Reqs {
 			if req.ID == nil {
 				return fmt.Errorf("invalid id")
-			}
-			if req.PaymentID == nil {
-				return fmt.Errorf("invalid payment")
 			}
 			if err := handler.updateOrder(ctx, tx, req); err != nil {
 				return err

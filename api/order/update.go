@@ -17,15 +17,20 @@ func (s *Server) UpdateOrder(ctx context.Context, in *npool.UpdateOrderRequest) 
 	req := in.GetInfo()
 	handler, err := order1.NewHandler(
 		ctx,
-		order1.WithID(req.ID, true),
+		order1.WithID(req.ID, false),
 		order1.WithAppID(req.AppID, true),
-		order1.WithPaymentID(req.PaymentID, true),
-		order1.WithStartAt(req.Start, false),
+		order1.WithParentOrderID(req.ParentOrderID, false),
+		order1.WithStartMode(req.StartMode, false),
+		order1.WithStartAt(req.StartAt, false),
+		order1.WithEndAt(req.EndAt, false),
 		order1.WithLastBenefitAt(req.LastBenefitAt, false),
-		order1.WithPaymentUserSetCanceled(req.Canceled, false),
+		order1.WithBenefitState(req.BenefitState, false),
+		order1.WithUserSetPaid(req.UserSetPaid, false),
+		order1.WithUserSetCanceled(req.UserSetCanceled, false),
+		order1.WithPaymentTransactionID(req.PaymentTransactionID, false),
 		order1.WithPaymentFinishAmount(req.PaymentFinishAmount, false),
-		order1.WithPaymentFakePayment(req.FakePayment, false),
-		order1.WithPaymentState(req.PaymentState, false),
+		order1.WithOutOfGasHours(req.OutOfGasHours, false),
+		order1.WithCompensateHours(req.CompensateHours, false),
 	)
 	if err != nil {
 		logger.Sugar().Errorw(

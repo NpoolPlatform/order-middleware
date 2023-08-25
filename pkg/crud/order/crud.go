@@ -7,6 +7,7 @@ import (
 	"entgo.io/ent/dialect/sql/sqljson"
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
 	basetypes "github.com/NpoolPlatform/message/npool/basetypes/order/v1"
+	orderstatecrud "github.com/NpoolPlatform/order-middleware/pkg/crud/orderstate"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent"
 	entorder "github.com/NpoolPlatform/order-middleware/pkg/db/ent/order"
 	"github.com/google/uuid"
@@ -14,40 +15,46 @@ import (
 )
 
 type Req struct {
-	ID                        *uuid.UUID
-	AppID                     *uuid.UUID
-	GoodID                    *uuid.UUID
-	UserID                    *uuid.UUID
-	ParentOrderID             *uuid.UUID
-	PayWithParent             *bool
-	Units                     *decimal.Decimal
-	PromotionID               *uuid.UUID
-	DiscountCouponID          *uuid.UUID
-	UserSpecialReductionID    *uuid.UUID
-	StartAt                   *uint32
-	EndAt                     *uint32
-	FixAmountCouponID         *uuid.UUID
-	Type                      *basetypes.OrderType
-	State                     *basetypes.OrderState
-	CouponIDs                 *[]uuid.UUID
-	LastBenefitAt             *uint32
-	CreatedAt                 *uint32
-	DeletedAt                 *uint32
-	PaymentState              *basetypes.PaymentState
-	PaymentID                 *uuid.UUID
-	PaymentAccountID          *uuid.UUID
-	PaymentAccountStartAmount *decimal.Decimal
-	PaymentAmount             *decimal.Decimal
-	PayWithBalanceAmount      *decimal.Decimal
-	PaymentCoinUSDCurrency    *decimal.Decimal
-	PaymentLocalUSDCurrency   *decimal.Decimal
-	PaymentLiveUSDCurrency    *decimal.Decimal
-	PaymentCoinID             *uuid.UUID
-	PaymentFinishAmount       *decimal.Decimal
-	PaymentUserSetCanceled    *bool
-	PaymentFakePayment        *bool
-	InvestmentType            *basetypes.InvestmentType
-	IsMainGood                *bool
+	ID                          *uuid.UUID
+	AppID                       *uuid.UUID
+	UserID                      *uuid.UUID
+	GoodID                      *uuid.UUID
+	AppGoodID                   *uuid.UUID
+	PaymentID                   *uuid.UUID
+	ParentOrderID               *uuid.UUID
+	Units                       *decimal.Decimal
+	GoodValue                   *decimal.Decimal
+	PaymentAmount               *decimal.Decimal
+	DiscountAmount              *decimal.Decimal
+	PromotionID                 *uuid.UUID
+	DurationDays                *uint32
+	OrderType                   *basetypes.OrderType
+	InvestmentType              *basetypes.InvestmentType
+	CouponIDs                   *[]uuid.UUID
+	PaymentType                 *basetypes.PaymentType
+	CreatedAt                   *uint32
+	DeletedAt                   *uint32
+	PaymentAccountID            *uuid.UUID
+	PaymentCoinTypeID           *uuid.UUID
+	PaymentStartAmount          *decimal.Decimal
+	PaymentTransferAmount       *decimal.Decimal
+	PaymentBalanceAmount        *decimal.Decimal
+	PaymentCoinUSDCurrency      *decimal.Decimal
+	PaymentLocalCoinUSDCurrency *decimal.Decimal
+	PaymentLiveCoinUSDCurrency  *decimal.Decimal
+	OrderState                  *basetypes.OrderState
+	StartMode                   *basetypes.OrderStartMode
+	StartAt                     *uint32
+	EndAt                       *uint32
+	LastBenefitAt               *uint32
+	BenefitState                *basetypes.BenefitState
+	UserSetPaid                 *bool
+	UserSetCanceled             *bool
+	PaymentTransactionID        *string
+	PaymentFinishAmount         *decimal.Decimal
+	PaymentState                *basetypes.PaymentState
+	OutOfGasHours               *uint32
+	CompensateHours             *uint32
 }
 
 //nolint:gocyclo
@@ -58,44 +65,41 @@ func CreateSet(c *ent.OrderCreate, req *Req) *ent.OrderCreate {
 	if req.AppID != nil {
 		c.SetAppID(*req.AppID)
 	}
+	if req.UserID != nil {
+		c.SetUserID(*req.UserID)
+	}
 	if req.GoodID != nil {
 		c.SetGoodID(*req.GoodID)
 	}
-	if req.UserID != nil {
-		c.SetUserID(*req.UserID)
+	if req.AppGoodID != nil {
+		c.SetAppGoodID(*req.AppGoodID)
+	}
+	if req.PaymentID != nil {
+		c.SetPaymentID(*req.PaymentID)
 	}
 	if req.ParentOrderID != nil {
 		c.SetParentOrderID(*req.ParentOrderID)
 	}
-	if req.PayWithParent != nil {
-		c.SetPayWithParent(*req.PayWithParent)
-	}
 	if req.Units != nil {
 		c.SetUnitsV1(*req.Units)
+	}
+	if req.GoodValue != nil {
+		c.SetGoodValue(*req.GoodValue)
+	}
+	if req.PaymentAmount != nil {
+		c.SetPaymentAmount(*req.PaymentAmount)
+	}
+	if req.DiscountAmount != nil {
+		c.SetDiscountAmount(*req.DiscountAmount)
 	}
 	if req.PromotionID != nil {
 		c.SetPromotionID(*req.PromotionID)
 	}
-	if req.DiscountCouponID != nil {
-		c.SetDiscountCouponID(*req.DiscountCouponID)
+	if req.DurationDays != nil {
+		c.SetDurationDays(*req.DurationDays)
 	}
-	if req.UserSpecialReductionID != nil {
-		c.SetUserSpecialReductionID(*req.UserSpecialReductionID)
-	}
-	if req.StartAt != nil {
-		c.SetStartAt(*req.StartAt)
-	}
-	if req.EndAt != nil {
-		c.SetEndAt(*req.EndAt)
-	}
-	if req.FixAmountCouponID != nil {
-		c.SetFixAmountCouponID(*req.FixAmountCouponID)
-	}
-	if req.Type != nil {
-		c.SetType(req.Type.String())
-	}
-	if req.State != nil {
-		c.SetStateV1(req.State.String())
+	if req.OrderType != nil {
+		c.SetOrderType(req.OrderType.String())
 	}
 	if req.InvestmentType != nil {
 		c.SetInvestmentType(req.InvestmentType.String())
@@ -103,28 +107,17 @@ func CreateSet(c *ent.OrderCreate, req *Req) *ent.OrderCreate {
 	if req.CouponIDs != nil {
 		c.SetCouponIds(*req.CouponIDs)
 	}
-	if req.LastBenefitAt != nil {
-		c.SetLastBenefitAt(*req.LastBenefitAt)
+	if req.PaymentType != nil {
+		c.SetPaymentType(req.PaymentType.String())
 	}
 	if req.CreatedAt != nil {
 		c.SetCreatedAt(*req.CreatedAt)
 	}
+
 	return c
 }
 
 func UpdateSet(u *ent.OrderUpdateOne, req *Req) *ent.OrderUpdateOne {
-	if req.State != nil {
-		u.SetStateV1(req.State.String())
-	}
-	if req.StartAt != nil {
-		u.SetStartAt(*req.StartAt)
-	}
-	if req.EndAt != nil {
-		u.SetEndAt(*req.EndAt)
-	}
-	if req.LastBenefitAt != nil {
-		u.SetLastBenefitAt(*req.LastBenefitAt)
-	}
 	if req.DeletedAt != nil {
 		u.SetDeletedAt(*req.DeletedAt)
 	}
@@ -132,21 +125,21 @@ func UpdateSet(u *ent.OrderUpdateOne, req *Req) *ent.OrderUpdateOne {
 }
 
 type Conds struct {
-	ID                     *cruder.Cond
-	IDs                    *cruder.Cond
-	AppID                  *cruder.Cond
-	UserID                 *cruder.Cond
-	GoodID                 *cruder.Cond
-	Type                   *cruder.Cond
-	State                  *cruder.Cond
-	States                 *cruder.Cond
-	FixAmountCouponID      *cruder.Cond
-	DiscountCouponID       *cruder.Cond
-	UserSpecialReductionID *cruder.Cond
-	LastBenefitAt          *cruder.Cond
-	CouponID               *cruder.Cond
-	CouponIDs              *cruder.Cond
-	InvestmentType         *cruder.Cond
+	orderstatecrud.Conds
+	ID                *cruder.Cond
+	IDs               *cruder.Cond
+	AppID             *cruder.Cond
+	UserID            *cruder.Cond
+	GoodID            *cruder.Cond
+	AppGoodID         *cruder.Cond
+	ParentOrderID     *cruder.Cond
+	PaymentAmount     *cruder.Cond
+	OrderType         *cruder.Cond
+	InvestmentType    *cruder.Cond
+	PaymentType       *cruder.Cond
+	CouponID          *cruder.Cond
+	CouponIDs         *cruder.Cond
+	PaymentCoinTypeID *cruder.Cond
 }
 
 //nolint
@@ -216,50 +209,39 @@ func SetQueryConds(q *ent.OrderQuery, conds *Conds) (*ent.OrderQuery, error) {
 			return nil, fmt.Errorf("invalid order field")
 		}
 	}
-	if conds.FixAmountCouponID != nil {
-		id, ok := conds.FixAmountCouponID.Val.(uuid.UUID)
+	if conds.AppGoodID != nil {
+		id, ok := conds.AppGoodID.Val.(uuid.UUID)
 		if !ok {
-			return nil, fmt.Errorf("invalid fixamountcouponid")
+			return nil, fmt.Errorf("invalid appgoodid")
 		}
-		switch conds.FixAmountCouponID.Op {
+		switch conds.AppGoodID.Op {
 		case cruder.EQ:
-			q.Where(entorder.FixAmountCouponID(id))
+			q.Where(entorder.AppGoodID(id))
 		default:
 			return nil, fmt.Errorf("invalid order field")
 		}
 	}
-	if conds.DiscountCouponID != nil {
-		id, ok := conds.DiscountCouponID.Val.(uuid.UUID)
+	if conds.ParentOrderID != nil {
+		id, ok := conds.ParentOrderID.Val.(uuid.UUID)
 		if !ok {
-			return nil, fmt.Errorf("invalid discountcouponid")
+			return nil, fmt.Errorf("invalid parentorderid")
 		}
-		switch conds.DiscountCouponID.Op {
+		switch conds.ParentOrderID.Op {
 		case cruder.EQ:
-			q.Where(entorder.DiscountCouponID(id))
+			q.Where(entorder.ParentOrderID(id))
 		default:
 			return nil, fmt.Errorf("invalid order field")
 		}
 	}
-	if conds.UserSpecialReductionID != nil {
-		id, ok := conds.UserSpecialReductionID.Val.(uuid.UUID)
+
+	if conds.OrderType != nil {
+		ordertype, ok := conds.OrderType.Val.(basetypes.OrderType)
 		if !ok {
-			return nil, fmt.Errorf("invalid userspecialreductionid")
+			return nil, fmt.Errorf("invalid ordertype")
 		}
-		switch conds.UserSpecialReductionID.Op {
+		switch conds.OrderType.Op {
 		case cruder.EQ:
-			q.Where(entorder.UserSpecialReductionID(id))
-		default:
-			return nil, fmt.Errorf("invalid order field")
-		}
-	}
-	if conds.State != nil {
-		state, ok := conds.State.Val.(basetypes.PaymentState)
-		if !ok {
-			return nil, fmt.Errorf("invalid state")
-		}
-		switch conds.State.Op {
-		case cruder.EQ:
-			q.Where(entorder.StateV1(state.String()))
+			q.Where(entorder.OrderType(ordertype.String()))
 		default:
 			return nil, fmt.Errorf("invalid order field")
 		}
@@ -276,28 +258,14 @@ func SetQueryConds(q *ent.OrderQuery, conds *Conds) (*ent.OrderQuery, error) {
 			return nil, fmt.Errorf("invalid order field")
 		}
 	}
-	if conds.States != nil {
-		states, ok := conds.States.Val.([]string)
+	if conds.PaymentType != nil {
+		paymenttype, ok := conds.PaymentType.Val.(basetypes.PaymentType)
 		if !ok {
-			return nil, fmt.Errorf("invalid states")
+			return nil, fmt.Errorf("invalid paymenttype")
 		}
-		if len(states) > 0 {
-			switch conds.States.Op {
-			case cruder.IN:
-				q.Where(entorder.StateV1In(states...))
-			default:
-				return nil, fmt.Errorf("invalid order field")
-			}
-		}
-	}
-	if conds.LastBenefitAt != nil {
-		lastBenefitAt, ok := conds.LastBenefitAt.Val.(uint32)
-		if !ok {
-			return nil, fmt.Errorf("invalid lastbenefitat")
-		}
-		switch conds.LastBenefitAt.Op {
+		switch conds.PaymentType.Op {
 		case cruder.EQ:
-			q.Where(entorder.LastBenefitAt(lastBenefitAt))
+			q.Where(entorder.PaymentType(paymenttype.String()))
 		default:
 			return nil, fmt.Errorf("invalid order field")
 		}

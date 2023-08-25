@@ -10,6 +10,7 @@ import (
 	"github.com/NpoolPlatform/order-middleware/pkg/db"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent"
 	entorder "github.com/NpoolPlatform/order-middleware/pkg/db/ent/order"
+	entorderstate "github.com/NpoolPlatform/order-middleware/pkg/db/ent/orderstate"
 	entpayment "github.com/NpoolPlatform/order-middleware/pkg/db/ent/payment"
 	"github.com/shopspring/decimal"
 
@@ -55,16 +56,19 @@ func (h *queryHandler) queryJoinMyself(s *sql.Selector) {
 		t.C(entorder.FieldAppID),
 		t.C(entorder.FieldUserID),
 		t.C(entorder.FieldGoodID),
-		t.C(entorder.FieldType),
-		sql.As(t.C(entorder.FieldStateV1), "state"),
+		t.C(entorder.FieldAppGoodID),
+		t.C(entorder.FieldPaymentID),
 		t.C(entorder.FieldParentOrderID),
-		t.C(entorder.FieldStartAt),
-		t.C(entorder.FieldEndAt),
-		t.C(entorder.FieldPayWithParent),
-		t.C(entorder.FieldUserSpecialReductionID),
-		t.C(entorder.FieldCreatedAt),
-		t.C(entorder.FieldCouponIds),
+		t.C(entorder.FieldUnitsV1),
+		t.C(entorder.FieldGoodValue),
+		t.C(entorder.FieldPaymentAmount),
+		t.C(entorder.FieldDiscountAmount),
+		t.C(entorder.FieldPromotionID),
+		t.C(entorder.FieldDurationDays),
+		t.C(entorder.FieldOrderType),
 		t.C(entorder.FieldInvestmentType),
+		t.C(entorder.FieldCouponIds),
+		t.C(entorder.FieldPaymentType),
 	)
 }
 
@@ -80,20 +84,43 @@ func (h *queryHandler) queryJoinPayment(s *sql.Selector) error { //nolint
 		)
 
 	s.AppendSelect(
-		sql.As(s.C(entorder.FieldUnitsV1), "units"),
-		sql.As(t.C(entpayment.FieldCoinInfoID), "payment_coin_type_id"),
-		sql.As(t.C(entpayment.FieldCoinUsdCurrency), "payment_coin_usd_currency"),
-		sql.As(t.C(entpayment.FieldLiveCoinUsdCurrency), "payment_live_coin_usd_currency"),
-		sql.As(t.C(entpayment.FieldLocalCoinUsdCurrency), "payment_local_coin_usd_currency"),
-		sql.As(t.C(entpayment.FieldID), "payment_id"),
 		sql.As(t.C(entpayment.FieldAccountID), "payment_account_id"),
-		sql.As(t.C(entpayment.FieldAmount), "payment_amount"),
-		sql.As(t.C(entpayment.FieldStateV1), "payment_state"),
-		sql.As(t.C(entpayment.FieldPayWithBalanceAmount), "pay_with_balance_amount"),
-		sql.As(t.C(entpayment.FieldUpdatedAt), "paid_at"),
+		sql.As(t.C(entpayment.FieldCoinTypeID), "payment_coin_type_id"),
 		sql.As(t.C(entpayment.FieldStartAmount), "payment_start_amount"),
-		sql.As(t.C(entpayment.FieldFinishAmount), "payment_finish_amount"),
-		sql.As(t.C(entpayment.FieldUserSetCanceled), "user_canceled"),
+		sql.As(t.C(entpayment.FieldTransferAmount), "payment_transfer_amount"),
+		sql.As(t.C(entpayment.FieldBalanceAmount), "payment_balance_amount"),
+		sql.As(t.C(entpayment.FieldCoinUsdCurrency), "payment_coin_usd_currency"),
+		sql.As(t.C(entpayment.FieldLocalCoinUsdCurrency), "payment_local_coin_usd_currency"),
+		sql.As(t.C(entpayment.FieldLiveCoinUsdCurrency), "payment_live_coin_usd_currency"),
+	)
+	return nil
+}
+
+func (h *queryHandler) queryJoinOrderState(s *sql.Selector) error { //nolint
+	t := sql.Table(entorderstate.Table)
+	s.LeftJoin(t).
+		On(
+			s.C(entorder.FieldID),
+			t.C(entorderstate.FieldOrderID),
+		).
+		OnP(
+			sql.EQ(t.C(entorderstate.FieldDeletedAt), 0),
+		)
+
+	s.AppendSelect(
+		sql.As(t.C(entorderstate.FieldOrderState), "order_state"),
+		sql.As(t.C(entorderstate.FieldStartMode), "start_mode"),
+		sql.As(t.C(entorderstate.FieldStartAt), "start_at"),
+		sql.As(t.C(entorderstate.FieldEndAt), "end_at"),
+		sql.As(t.C(entorderstate.FieldLastBenefitAt), "last_benefit_at"),
+		sql.As(t.C(entorderstate.FieldBenefitState), "benefit_state"),
+		sql.As(t.C(entorderstate.FieldUserSetPaid), "user_set_paid"),
+		sql.As(t.C(entorderstate.FieldUserSetCanceled), "user_set_canceled"),
+		sql.As(t.C(entorderstate.FieldPaymentTransactionID), "payment_transaction_id"),
+		sql.As(t.C(entorderstate.FieldPaymentFinishAmount), "payment_finish_amount"),
+		sql.As(t.C(entorderstate.FieldPaymentState), "payment_state"),
+		sql.As(t.C(entorderstate.FieldOutofgasHours), "outofgas_hours"),
+		sql.As(t.C(entorderstate.FieldCompensateHours), "compensate_hours"),
 	)
 	return nil
 }
@@ -103,6 +130,7 @@ func (h *queryHandler) queryJoin() error {
 	h.stmSelect.Modify(func(s *sql.Selector) {
 		h.queryJoinMyself(s)
 		err = h.queryJoinPayment(s)
+		err = h.queryJoinOrderState(s)
 	})
 	if err != nil {
 		return err
@@ -125,7 +153,10 @@ func (h *queryHandler) formalize() {
 		info.OrderType = basetypes.OrderType(basetypes.OrderType_value[info.OrderTypeStr])
 		info.OrderState = basetypes.OrderState(basetypes.OrderState_value[info.OrderStateStr])
 		info.PaymentState = basetypes.PaymentState(basetypes.PaymentState_value[info.PaymentStateStr])
+		info.PaymentType = basetypes.PaymentType(basetypes.PaymentType_value[info.PaymentTypeStr])
 		info.InvestmentType = basetypes.InvestmentType(basetypes.InvestmentType_value[info.InvestmentTypeStr])
+		info.StartMode = basetypes.OrderStartMode(basetypes.OrderStartMode_value[info.StartModeStr])
+		info.BenefitState = basetypes.BenefitState(basetypes.BenefitState_value[info.BenefitStateStr])
 		_ = json.Unmarshal([]byte(info.CouponIDsStr), &info.CouponIDs)
 	}
 }
