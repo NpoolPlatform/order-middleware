@@ -659,6 +659,7 @@ func WithPaymentState(state *basetypes.PaymentState, must bool) func(context.Con
 		case basetypes.PaymentState_PaymentStateCanceled:
 		case basetypes.PaymentState_PaymentStateTimeout:
 		case basetypes.PaymentState_PaymentStateDone:
+		case basetypes.PaymentState_PaymentStateNoPayment:
 		default:
 			return fmt.Errorf("invalid paymentstate")
 		}
@@ -826,7 +827,7 @@ func WithConds(conds *npool.Conds) func(context.Context, *Handler) error {
 		}
 
 		if conds.BenefitState != nil {
-			switch conds.GetOrderState().GetValue() {
+			switch conds.GetBenefitState().GetValue() {
 			case uint32(basetypes.BenefitState_BenefitWait):
 			case uint32(basetypes.BenefitState_BenefitCalculated):
 			case uint32(basetypes.BenefitState_BenefitDone):
@@ -841,11 +842,12 @@ func WithConds(conds *npool.Conds) func(context.Context, *Handler) error {
 		}
 
 		if conds.PaymentState != nil {
-			switch conds.GetOrderState().GetValue() {
+			switch conds.GetPaymentState().GetValue() {
 			case uint32(basetypes.PaymentState_PaymentStateWait):
 			case uint32(basetypes.PaymentState_PaymentStateCanceled):
 			case uint32(basetypes.PaymentState_PaymentStateTimeout):
 			case uint32(basetypes.PaymentState_PaymentStateDone):
+			case uint32(basetypes.PaymentState_PaymentStateNoPayment):
 			default:
 				return fmt.Errorf("invalid paymentstate")
 			}
