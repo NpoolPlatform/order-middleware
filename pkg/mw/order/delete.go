@@ -6,11 +6,14 @@ import (
 	"time"
 
 	ordercrud "github.com/NpoolPlatform/order-middleware/pkg/crud/order"
+	orderstatecrud "github.com/NpoolPlatform/order-middleware/pkg/crud/orderstate"
 	paymentcrud "github.com/NpoolPlatform/order-middleware/pkg/crud/payment"
 	"github.com/NpoolPlatform/order-middleware/pkg/db"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent"
 	entorder "github.com/NpoolPlatform/order-middleware/pkg/db/ent/order"
+	entorderstate "github.com/NpoolPlatform/order-middleware/pkg/db/ent/orderstate"
 	entpayment "github.com/NpoolPlatform/order-middleware/pkg/db/ent/payment"
+	"github.com/google/uuid"
 
 	npool "github.com/NpoolPlatform/message/npool/order/mw/v1/order"
 )
@@ -44,21 +47,45 @@ func (h *Handler) DeleteOrder(ctx context.Context) (*npool.Order, error) {
 			return fmt.Errorf("invalid order")
 		}
 
-		payment, err := tx.Payment.
+		if order.PaymentID != uuid.Nil {
+			payment, err := tx.Payment.
+				Query().
+				Where(
+					entpayment.ID(order.PaymentID),
+					entpayment.UserID(order.UserID),
+					entpayment.OrderID(order.ID),
+				).
+				ForUpdate().
+				Only(_ctx)
+			if err != nil {
+				return err
+			}
+			if payment == nil {
+				return fmt.Errorf("invalid payment")
+			}
+
+			if _, err := paymentcrud.UpdateSet(
+				payment.Update(),
+				&paymentcrud.Req{
+					DeletedAt: &now,
+				},
+			).Save(_ctx); err != nil {
+				return err
+			}
+		}
+
+		orderstate, err := tx.OrderState.
 			Query().
 			Where(
-				entpayment.AppID(order.AppID),
-				entpayment.UserID(order.UserID),
-				entpayment.GoodID(order.GoodID),
-				entpayment.OrderID(order.ID),
+				entorderstate.OrderID(order.ID),
 			).
 			ForUpdate().
 			Only(_ctx)
 		if err != nil {
 			return err
 		}
-		if payment == nil {
-			return fmt.Errorf("invalid payment")
+		if orderstate == nil {
+			return fmt.Errorf("invalid orderstate")
 		}
 
 		if _, err := ordercrud.UpdateSet(
@@ -70,9 +97,9 @@ func (h *Handler) DeleteOrder(ctx context.Context) (*npool.Order, error) {
 			return err
 		}
 
-		if _, err := paymentcrud.UpdateSet(
-			payment.Update(),
-			&paymentcrud.Req{
+		if _, err := orderstatecrud.UpdateSet(
+			orderstate.Update(),
+			&orderstatecrud.Req{
 				DeletedAt: &now,
 			},
 		).Save(_ctx); err != nil {

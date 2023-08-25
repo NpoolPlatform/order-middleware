@@ -342,6 +342,8 @@ func WithPaymentType(paymentType *basetypes.PaymentType, must bool) func(context
 		case basetypes.PaymentType_PayWithTransferOnly:
 		case basetypes.PaymentType_PayWithTransferAndBalance:
 		case basetypes.PaymentType_PayWithParentOrder:
+		case basetypes.PaymentType_PayWithOffline:
+		case basetypes.PaymentType_PayWithNoPayment:
 		default:
 			return fmt.Errorf("invalid paymentType")
 		}
@@ -774,10 +776,12 @@ func WithConds(conds *npool.Conds) func(context.Context, *Handler) error {
 		}
 		if conds.PaymentType != nil {
 			switch conds.GetPaymentType().GetValue() {
-			case uint32(basetypes.PaymentState_PaymentStateWait):
-			case uint32(basetypes.PaymentState_PaymentStateCanceled):
-			case uint32(basetypes.PaymentState_PaymentStateTimeout):
-			case uint32(basetypes.PaymentState_PaymentStateDone):
+			case uint32(basetypes.PaymentType_PayWithBalanceOnly):
+			case uint32(basetypes.PaymentType_PayWithTransferOnly):
+			case uint32(basetypes.PaymentType_PayWithTransferAndBalance):
+			case uint32(basetypes.PaymentType_PayWithParentOrder):
+			case uint32(basetypes.PaymentType_PayWithOffline):
+			case uint32(basetypes.PaymentType_PayWithNoPayment):
 			default:
 				return fmt.Errorf("invalid paymenttype")
 			}
@@ -986,13 +990,15 @@ func WithReqs(reqs []*npool.OrderReq) func(context.Context, *Handler) error {
 				_req.CouponIDs = &_ids
 			}
 			if req.PaymentType != nil {
-				switch req.GetPaymentState() {
-				case basetypes.PaymentState_PaymentStateWait:
-				case basetypes.PaymentState_PaymentStateCanceled:
-				case basetypes.PaymentState_PaymentStateTimeout:
-				case basetypes.PaymentState_PaymentStateDone:
+				switch req.GetPaymentType() {
+				case basetypes.PaymentType_PayWithBalanceOnly:
+				case basetypes.PaymentType_PayWithTransferOnly:
+				case basetypes.PaymentType_PayWithTransferAndBalance:
+				case basetypes.PaymentType_PayWithParentOrder:
+				case basetypes.PaymentType_PayWithOffline:
+				case basetypes.PaymentType_PayWithNoPayment:
 				default:
-					return fmt.Errorf("invalid State")
+					return fmt.Errorf("invalid paymenttype")
 				}
 				_req.PaymentType = req.PaymentType
 			}
@@ -1116,6 +1122,7 @@ func WithReqs(reqs []*npool.OrderReq) func(context.Context, *Handler) error {
 				case basetypes.PaymentState_PaymentStateDone:
 				case basetypes.PaymentState_PaymentStateCanceled:
 				case basetypes.PaymentState_PaymentStateTimeout:
+				case basetypes.PaymentState_PaymentStateNoPayment:
 				default:
 					return fmt.Errorf("invalid paymentstate")
 				}

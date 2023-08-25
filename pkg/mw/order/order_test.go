@@ -75,6 +75,97 @@ var (
 		OutOfGasHours:        0,
 		CompensateHours:      0,
 	}
+
+	appID         = uuid.NewString()
+	userID        = uuid.NewString()
+	parentOrderID = uuid.NewString()
+	rets          = []npool.Order{
+		{
+			ID:                parentOrderID,
+			AppID:             appID,
+			UserID:            userID,
+			GoodID:            uuid.NewString(),
+			AppGoodID:         uuid.NewString(),
+			Units:             "1001.000000000000000000",
+			GoodValue:         "1002.000000000000000000",
+			PaymentAmount:     "1003.000000000000000000",
+			DiscountAmount:    "101.000000000000000000",
+			PromotionID:       uuid.NewString(),
+			DurationDays:      10006,
+			OrderTypeStr:      ordertypes.OrderType_Normal.String(),
+			OrderType:         ordertypes.OrderType_Normal,
+			InvestmentType:    ordertypes.InvestmentType_FullPayment,
+			InvestmentTypeStr: ordertypes.InvestmentType_FullPayment.String(),
+			PaymentTypeStr:    ordertypes.PaymentType_PayWithTransferAndBalance.String(),
+			PaymentType:       ordertypes.PaymentType_PayWithTransferAndBalance,
+
+			PaymentAccountID:            uuid.NewString(),
+			PaymentCoinTypeID:           uuid.NewString(),
+			PaymentStartAmount:          "1011.000000000000000000",
+			PaymentTransferAmount:       "1012.000000000000000000",
+			PaymentBalanceAmount:        "111.000000000000000000",
+			PaymentCoinUSDCurrency:      "1003.000000000000000000",
+			PaymentLocalCoinUSDCurrency: "1004.000000000000000000",
+			PaymentLiveCoinUSDCurrency:  "1005.000000000000000000",
+
+			OrderStateStr:        ordertypes.OrderState_OrderStateWaitPayment.String(),
+			OrderState:           ordertypes.OrderState_OrderStateWaitPayment,
+			StartModeStr:         ordertypes.OrderStartMode_OrderStartConfirmed.String(),
+			StartMode:            ordertypes.OrderStartMode_OrderStartConfirmed,
+			StartAt:              10001,
+			EndAt:                10002,
+			LastBenefitAt:        10003,
+			BenefitStateStr:      ordertypes.BenefitState_BenefitWait.String(),
+			BenefitState:         ordertypes.BenefitState_BenefitWait,
+			UserSetPaid:          false,
+			UserSetCanceled:      false,
+			PaymentTransactionID: "PaymentTransactionID1 " + uuid.NewString(),
+			PaymentFinishAmount:  "0.000000000000000000",
+			PaymentStateStr:      ordertypes.PaymentState_PaymentStateWait.String(),
+			PaymentState:         ordertypes.PaymentState_PaymentStateWait,
+			OutOfGasHours:        0,
+			CompensateHours:      0,
+			CouponIDs:            []string{uuid.NewString(), uuid.NewString()},
+		},
+		{
+			ID:                uuid.NewString(),
+			AppID:             appID,
+			UserID:            userID,
+			GoodID:            uuid.NewString(),
+			AppGoodID:         uuid.NewString(),
+			ParentOrderID:     parentOrderID,
+			Units:             "1011.000000000000000000",
+			GoodValue:         "1012.000000000000000000",
+			PaymentAmount:     "1013.000000000000000000",
+			DiscountAmount:    "102.000000000000000000",
+			PromotionID:       uuid.NewString(),
+			DurationDays:      10008,
+			OrderTypeStr:      ordertypes.OrderType_Normal.String(),
+			OrderType:         ordertypes.OrderType_Normal,
+			InvestmentType:    ordertypes.InvestmentType_FullPayment,
+			InvestmentTypeStr: ordertypes.InvestmentType_FullPayment.String(),
+			PaymentTypeStr:    ordertypes.PaymentType_PayWithTransferAndBalance.String(),
+			PaymentType:       ordertypes.PaymentType_PayWithTransferAndBalance,
+
+			OrderStateStr:        ordertypes.OrderState_OrderStateWaitPayment.String(),
+			OrderState:           ordertypes.OrderState_OrderStateWaitPayment,
+			StartModeStr:         ordertypes.OrderStartMode_OrderStartConfirmed.String(),
+			StartMode:            ordertypes.OrderStartMode_OrderStartConfirmed,
+			StartAt:              10011,
+			EndAt:                10012,
+			LastBenefitAt:        10013,
+			BenefitStateStr:      ordertypes.BenefitState_BenefitWait.String(),
+			BenefitState:         ordertypes.BenefitState_BenefitWait,
+			UserSetPaid:          false,
+			UserSetCanceled:      false,
+			PaymentTransactionID: "PaymentTransactionID2 " + uuid.NewString(),
+			PaymentFinishAmount:  "0.000000000000000000",
+			PaymentStateStr:      ordertypes.PaymentState_PaymentStateNoPayment.String(),
+			PaymentState:         ordertypes.PaymentState_PaymentStateNoPayment,
+			OutOfGasHours:        0,
+			CompensateHours:      0,
+		},
+	}
 )
 
 func createOrder(t *testing.T) {
@@ -125,6 +216,65 @@ func createOrder(t *testing.T) {
 			ret.CreatedAt = info.CreatedAt
 			ret.UpdatedAt = info.UpdatedAt
 			assert.Equal(t, &ret, info)
+		}
+	}
+}
+
+func createOrders(t *testing.T) {
+	retsReq := []*npool.OrderReq{}
+	for key := range rets {
+		retReq := npool.OrderReq{
+			ID:                   &rets[key].ID,
+			AppID:                &rets[key].AppID,
+			UserID:               &rets[key].UserID,
+			GoodID:               &rets[key].GoodID,
+			AppGoodID:            &rets[key].AppGoodID,
+			Units:                &rets[key].Units,
+			GoodValue:            &rets[key].GoodValue,
+			PaymentAmount:        &rets[key].PaymentAmount,
+			DiscountAmount:       &rets[key].DiscountAmount,
+			PromotionID:          &rets[key].PromotionID,
+			DurationDays:         &rets[key].DurationDays,
+			OrderType:            &rets[key].OrderType,
+			InvestmentType:       &rets[key].InvestmentType,
+			PaymentType:          &rets[key].PaymentType,
+			OrderState:           &rets[key].OrderState,
+			StartMode:            &rets[key].StartMode,
+			StartAt:              &rets[key].StartAt,
+			EndAt:                &rets[key].EndAt,
+			LastBenefitAt:        &rets[key].LastBenefitAt,
+			BenefitState:         &rets[key].BenefitState,
+			UserSetPaid:          &rets[key].UserSetPaid,
+			UserSetCanceled:      &rets[key].UserSetCanceled,
+			PaymentTransactionID: &rets[key].PaymentTransactionID,
+			PaymentFinishAmount:  &rets[key].PaymentFinishAmount,
+			PaymentState:         &rets[key].PaymentState,
+			OutOfGasHours:        &rets[key].OutOfGasHours,
+			CompensateHours:      &rets[key].CompensateHours,
+			CouponIDs:            rets[key].CouponIDs,
+		}
+		if rets[key].PaymentTransferAmount != "" {
+			retReq.PaymentAccountID = &rets[key].PaymentAccountID
+			retReq.PaymentCoinTypeID = &rets[key].PaymentCoinTypeID
+			retReq.PaymentStartAmount = &rets[key].PaymentStartAmount
+			retReq.PaymentTransferAmount = &rets[key].PaymentTransferAmount
+			retReq.PaymentBalanceAmount = &rets[key].PaymentBalanceAmount
+			retReq.PaymentCoinUSDCurrency = &rets[key].PaymentCoinUSDCurrency
+			retReq.PaymentLocalCoinUSDCurrency = &rets[key].PaymentLocalCoinUSDCurrency
+			retReq.PaymentLiveCoinUSDCurrency = &rets[key].PaymentLiveCoinUSDCurrency
+		} else {
+			retReq.ParentOrderID = &rets[key].ParentOrderID
+		}
+		retsReq = append(retsReq, &retReq)
+	}
+	handler, err := NewHandler(
+		context.Background(),
+		WithReqs(retsReq),
+	)
+	if assert.Nil(t, err) {
+		infos, _, err := handler.CreateOrders(context.Background())
+		if assert.Nil(t, err) {
+			assert.Equal(t, len(rets), len(infos))
 		}
 	}
 }
@@ -192,6 +342,17 @@ func deleteOrder(t *testing.T) {
 		assert.Nil(t, err)
 		assert.Nil(t, info)
 	}
+	for key := range rets {
+		handler, err := NewHandler(
+			context.Background(),
+			WithID(&rets[key].ID, true),
+		)
+		assert.Nil(t, err)
+		info, err := handler.DeleteOrder(context.Background())
+		if assert.Nil(t, err) {
+			assert.NotEqual(t, info, nil)
+		}
+	}
 }
 
 func TestOrder(t *testing.T) {
@@ -200,6 +361,7 @@ func TestOrder(t *testing.T) {
 	}
 
 	t.Run("createOrder", createOrder)
+	t.Run("createOrders", createOrders)
 	t.Run("updateOrder", updateOrder)
 	t.Run("getOrder", getOrder)
 	t.Run("getOrders", getOrders)
