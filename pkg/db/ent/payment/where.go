@@ -143,6 +143,13 @@ func CoinTypeID(v uuid.UUID) predicate.Payment {
 	})
 }
 
+// CoinInfoID applies equality check predicate on the "coin_info_id" field. It's identical to CoinInfoIDEQ.
+func CoinInfoID(v uuid.UUID) predicate.Payment {
+	return predicate.Payment(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldCoinInfoID), v))
+	})
+}
+
 // StartAmount applies equality check predicate on the "start_amount" field. It's identical to StartAmountEQ.
 func StartAmount(v decimal.Decimal) predicate.Payment {
 	return predicate.Payment(func(s *sql.Selector) {
@@ -758,6 +765,84 @@ func CoinTypeIDLT(v uuid.UUID) predicate.Payment {
 func CoinTypeIDLTE(v uuid.UUID) predicate.Payment {
 	return predicate.Payment(func(s *sql.Selector) {
 		s.Where(sql.LTE(s.C(FieldCoinTypeID), v))
+	})
+}
+
+// CoinInfoIDEQ applies the EQ predicate on the "coin_info_id" field.
+func CoinInfoIDEQ(v uuid.UUID) predicate.Payment {
+	return predicate.Payment(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldCoinInfoID), v))
+	})
+}
+
+// CoinInfoIDNEQ applies the NEQ predicate on the "coin_info_id" field.
+func CoinInfoIDNEQ(v uuid.UUID) predicate.Payment {
+	return predicate.Payment(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldCoinInfoID), v))
+	})
+}
+
+// CoinInfoIDIn applies the In predicate on the "coin_info_id" field.
+func CoinInfoIDIn(vs ...uuid.UUID) predicate.Payment {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Payment(func(s *sql.Selector) {
+		s.Where(sql.In(s.C(FieldCoinInfoID), v...))
+	})
+}
+
+// CoinInfoIDNotIn applies the NotIn predicate on the "coin_info_id" field.
+func CoinInfoIDNotIn(vs ...uuid.UUID) predicate.Payment {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Payment(func(s *sql.Selector) {
+		s.Where(sql.NotIn(s.C(FieldCoinInfoID), v...))
+	})
+}
+
+// CoinInfoIDGT applies the GT predicate on the "coin_info_id" field.
+func CoinInfoIDGT(v uuid.UUID) predicate.Payment {
+	return predicate.Payment(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldCoinInfoID), v))
+	})
+}
+
+// CoinInfoIDGTE applies the GTE predicate on the "coin_info_id" field.
+func CoinInfoIDGTE(v uuid.UUID) predicate.Payment {
+	return predicate.Payment(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldCoinInfoID), v))
+	})
+}
+
+// CoinInfoIDLT applies the LT predicate on the "coin_info_id" field.
+func CoinInfoIDLT(v uuid.UUID) predicate.Payment {
+	return predicate.Payment(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldCoinInfoID), v))
+	})
+}
+
+// CoinInfoIDLTE applies the LTE predicate on the "coin_info_id" field.
+func CoinInfoIDLTE(v uuid.UUID) predicate.Payment {
+	return predicate.Payment(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldCoinInfoID), v))
+	})
+}
+
+// CoinInfoIDIsNil applies the IsNil predicate on the "coin_info_id" field.
+func CoinInfoIDIsNil() predicate.Payment {
+	return predicate.Payment(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldCoinInfoID)))
+	})
+}
+
+// CoinInfoIDNotNil applies the NotNil predicate on the "coin_info_id" field.
+func CoinInfoIDNotNil() predicate.Payment {
+	return predicate.Payment(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldCoinInfoID)))
 	})
 }
 

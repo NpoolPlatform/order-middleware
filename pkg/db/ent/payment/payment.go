@@ -31,6 +31,8 @@ const (
 	FieldAccountID = "account_id"
 	// FieldCoinTypeID holds the string denoting the coin_type_id field in the database.
 	FieldCoinTypeID = "coin_type_id"
+	// FieldCoinInfoID holds the string denoting the coin_info_id field in the database.
+	FieldCoinInfoID = "coin_info_id"
 	// FieldStartAmount holds the string denoting the start_amount field in the database.
 	FieldStartAmount = "start_amount"
 	// FieldTransferAmount holds the string denoting the transfer_amount field in the database.
@@ -59,6 +61,7 @@ var Columns = []string{
 	FieldOrderID,
 	FieldAccountID,
 	FieldCoinTypeID,
+	FieldCoinInfoID,
 	FieldStartAmount,
 	FieldTransferAmount,
 	FieldBalanceAmount,
