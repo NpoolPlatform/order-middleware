@@ -21,11 +21,11 @@ type createHandler struct {
 	*Handler
 }
 
-func (h *createHandler) paymentState() ordertypes.PaymentState {
+func (h *createHandler) paymentState() *ordertypes.PaymentState {
 	if h.PaymentTransferAmount != nil && h.PaymentTransferAmount.Cmp(decimal.NewFromInt(0)) > 0 {
-		return ordertypes.PaymentState_PaymentStateWait
+		return ordertypes.PaymentState_PaymentStateWait.Enum()
 	}
-	return ordertypes.PaymentState_PaymentStateNoPayment
+	return ordertypes.PaymentState_PaymentStateNoPayment.Enum()
 }
 
 func (h *createHandler) createOrderState(ctx context.Context, tx *ent.Tx, req *orderstatecrud.Req) error {
@@ -70,21 +70,24 @@ func (h *Handler) CreateOrder(ctx context.Context) (*npool.Order, error) {
 	handler := &createHandler{
 		Handler: h,
 	}
+
 	h.PaymentState = handler.paymentState()
 	req := h.ToOrderReq()
 
 	err := db.WithTx(ctx, func(ctx context.Context, tx *ent.Tx) error {
-		if err := handler.createOrder(ctx, tx, _req.Req); err != nil {
+		if err := handler.createOrder(ctx, tx, req.Req); err != nil {
 			return err
 		}
-		if err := handler.createOrderState(ctx, tx, _req.OrderStateReq); err != nil {
+		id := uuid.New()
+		req.OrderStateReq.ID = &id
+		if err := handler.createOrderState(ctx, tx, req.OrderStateReq); err != nil {
 			return err
 		}
-		if _req.PaymentReq == nil {
+		if req.PaymentReq == nil {
 			return nil
 		}
-		_req.PaymentReq.OrderID = _req.Req.ID
-		if err := handler.createPayment(ctx, tx, _req.PaymentReq); err != nil {
+		req.PaymentReq.OrderID = req.Req.ID
+		if err := handler.createPayment(ctx, tx, req.PaymentReq); err != nil {
 			return err
 		}
 		return nil
@@ -97,28 +100,33 @@ func (h *Handler) CreateOrder(ctx context.Context) (*npool.Order, error) {
 }
 
 func (h *Handler) CreateOrders(ctx context.Context) ([]*npool.Order, uint32, error) {
-	reqs := h.ToOrderReqs()
 	handler := &createHandler{
 		Handler: h,
 	}
 	ids := []uuid.UUID{}
 	err := db.WithTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {
-		for _, req := range reqs {
-			_req := handler.initCreateReq(*req)
-
-			if err := handler.createOrder(ctx, tx, _req.Req); err != nil {
+		for _, req := range h.Reqs {
+			id := uuid.New()
+			if req.Req.ID == nil {
+				req.Req.ID = &id
+				req.OrderStateReq.OrderID = &id
+			}
+			if err := handler.createOrder(ctx, tx, req.Req); err != nil {
 				return err
 			}
-			if err := handler.createOrderState(ctx, tx, _req.OrderStateReq); err != nil {
+
+			id = uuid.New()
+			req.OrderStateReq.ID = &id
+			if err := handler.createOrderState(ctx, tx, req.OrderStateReq); err != nil {
 				return err
 			}
-			ids = append(ids, *_req.Req.ID)
+			ids = append(ids, *req.Req.ID)
 
-			if _req.PaymentReq == nil {
+			if req.PaymentReq == nil {
 				continue
 			}
-			_req.PaymentReq.OrderID = _req.Req.ID
-			if err := handler.createPayment(ctx, tx, _req.PaymentReq); err != nil {
+			req.PaymentReq.OrderID = req.Req.ID
+			if err := handler.createPayment(ctx, tx, req.PaymentReq); err != nil {
 				return err
 			}
 		}

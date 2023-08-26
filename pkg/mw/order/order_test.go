@@ -144,8 +144,8 @@ var (
 			OrderType:         ordertypes.OrderType_Normal,
 			InvestmentType:    ordertypes.InvestmentType_FullPayment,
 			InvestmentTypeStr: ordertypes.InvestmentType_FullPayment.String(),
-			PaymentTypeStr:    ordertypes.PaymentType_PayWithTransferAndBalance.String(),
-			PaymentType:       ordertypes.PaymentType_PayWithTransferAndBalance,
+			PaymentTypeStr:    ordertypes.PaymentType_PayWithParentOrder.String(),
+			PaymentType:       ordertypes.PaymentType_PayWithParentOrder,
 
 			OrderStateStr:        ordertypes.OrderState_OrderStateWaitPayment.String(),
 			OrderState:           ordertypes.OrderState_OrderStateWaitPayment,

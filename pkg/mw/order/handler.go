@@ -907,7 +907,7 @@ func WithReqs(reqs []*npool.OrderReq) func(context.Context, *Handler) error {
 				OrderStateReq: &orderstatecrud.Req{},
 			}
 			if req.ID != nil {
-				id, err := uuid.Parse(req.GetID())
+				id, err := uuid.Parse(*req.ID)
 				if err != nil {
 					return err
 				}
@@ -915,35 +915,35 @@ func WithReqs(reqs []*npool.OrderReq) func(context.Context, *Handler) error {
 				_req.OrderStateReq.OrderID = &id
 			}
 			if req.AppID != nil {
-				id, err := uuid.Parse(req.GetAppID())
+				id, err := uuid.Parse(*req.AppID)
 				if err != nil {
 					return err
 				}
 				_req.AppID = &id
 			}
 			if req.UserID != nil {
-				id, err := uuid.Parse(req.GetUserID())
+				id, err := uuid.Parse(*req.UserID)
 				if err != nil {
 					return err
 				}
 				_req.UserID = &id
 			}
 			if req.GoodID != nil {
-				id, err := uuid.Parse(req.GetGoodID())
+				id, err := uuid.Parse(*req.GoodID)
 				if err != nil {
 					return err
 				}
 				_req.GoodID = &id
 			}
 			if req.AppGoodID != nil {
-				id, err := uuid.Parse(req.GetAppGoodID())
+				id, err := uuid.Parse(*req.AppGoodID)
 				if err != nil {
 					return err
 				}
 				_req.AppGoodID = &id
 			}
 			if req.ParentOrderID != nil {
-				id, err := uuid.Parse(req.GetParentOrderID())
+				id, err := uuid.Parse(*req.ParentOrderID)
 				if err != nil {
 					return err
 				}
@@ -978,17 +978,17 @@ func WithReqs(reqs []*npool.OrderReq) func(context.Context, *Handler) error {
 				_req.DiscountAmount = &amount
 			}
 			if req.PromotionID != nil {
-				id, err := uuid.Parse(req.GetPromotionID())
+				id, err := uuid.Parse(*req.PromotionID)
 				if err != nil {
 					return err
 				}
 				_req.PromotionID = &id
 			}
 			if req.DurationDays != nil {
-				_req.DurationDays = req.GetDurationDays()
+				_req.DurationDays = req.DurationDays
 			}
 			if req.OrderType != nil {
-				switch req.GetOrderType() {
+				switch *req.OrderType {
 				case basetypes.OrderType_Airdrop:
 				case basetypes.OrderType_Offline:
 				case basetypes.OrderType_Normal:
@@ -998,7 +998,7 @@ func WithReqs(reqs []*npool.OrderReq) func(context.Context, *Handler) error {
 				_req.OrderType = req.OrderType
 			}
 			if req.InvestmentType != nil {
-				switch req.GetInvestmentType() {
+				switch *req.InvestmentType {
 				case basetypes.InvestmentType_FullPayment:
 				case basetypes.InvestmentType_UnionMining:
 				default:
@@ -1008,7 +1008,7 @@ func WithReqs(reqs []*npool.OrderReq) func(context.Context, *Handler) error {
 			}
 			if req.CouponIDs != nil {
 				_ids := []uuid.UUID{}
-				for _, id := range req.GetCouponIDs() {
+				for _, id := range req.CouponIDs {
 					_id, err := uuid.Parse(id)
 					if err != nil {
 						return err
@@ -1017,15 +1017,92 @@ func WithReqs(reqs []*npool.OrderReq) func(context.Context, *Handler) error {
 				}
 				_req.CouponIDs = &_ids
 			}
+			if req.OrderState != nil {
+				switch *req.OrderState {
+				case basetypes.OrderState_OrderStateWaitPayment:
+				case basetypes.OrderState_OrderStateCheckPayment:
+				case basetypes.OrderState_OrderStatePaid:
+				case basetypes.OrderState_OrderStatePaymentTimeout:
+				case basetypes.OrderState_OrderStateCanceled:
+				case basetypes.OrderState_OrderStateInService:
+				case basetypes.OrderState_OrderStateExpired:
+				default:
+					return fmt.Errorf("invalid orderstate")
+				}
+				_req.OrderStateReq.OrderState = req.OrderState
+			}
+			if req.StartMode != nil {
+				switch *req.StartMode {
+				case basetypes.OrderStartMode_OrderStartConfirmed:
+				case basetypes.OrderStartMode_OrderStartTBD:
+				default:
+					return fmt.Errorf("invalid startmode")
+				}
+				_req.OrderStateReq.StartMode = req.StartMode
+			}
+			if req.StartAt != nil {
+				_req.OrderStateReq.StartAt = req.StartAt
+			}
+			if req.EndAt != nil {
+				_req.OrderStateReq.EndAt = req.EndAt
+			}
+			if req.LastBenefitAt != nil {
+				_req.OrderStateReq.LastBenefitAt = req.LastBenefitAt
+			}
+			if req.BenefitState != nil {
+				switch *req.BenefitState {
+				case basetypes.BenefitState_BenefitWait:
+				case basetypes.BenefitState_BenefitCalculated:
+				case basetypes.BenefitState_BenefitDone:
+				default:
+					return fmt.Errorf("invalid benefitstate")
+				}
+				_req.OrderStateReq.BenefitState = req.BenefitState
+			}
+			if req.UserSetPaid != nil {
+				_req.OrderStateReq.UserSetPaid = req.UserSetPaid
+			}
+			if req.UserSetCanceled != nil {
+				_req.OrderStateReq.UserSetCanceled = req.UserSetCanceled
+			}
+			if req.PaymentTransactionID != nil {
+				_req.OrderStateReq.PaymentTransactionID = req.PaymentTransactionID
+			}
+			if req.PaymentFinishAmount != nil {
+				amount, err := decimal.NewFromString(*req.PaymentFinishAmount)
+				if err != nil {
+					return err
+				}
+				_req.OrderStateReq.PaymentFinishAmount = &amount
+			}
+			if req.PaymentState != nil {
+				switch *req.PaymentState {
+				case basetypes.PaymentState_PaymentStateWait:
+				case basetypes.PaymentState_PaymentStateDone:
+				case basetypes.PaymentState_PaymentStateCanceled:
+				case basetypes.PaymentState_PaymentStateTimeout:
+				case basetypes.PaymentState_PaymentStateNoPayment:
+				default:
+					return fmt.Errorf("invalid paymentstate")
+				}
+				_req.OrderStateReq.PaymentState = req.PaymentState
+			}
+			if req.OutOfGasHours != nil {
+				_req.OrderStateReq.OutOfGasHours = req.OutOfGasHours
+			}
+			if req.CompensateHours != nil {
+				_req.OrderStateReq.CompensateHours = req.CompensateHours
+			}
+
 			if req.PaymentType != nil {
 				_req.PaymentType = req.PaymentType
-				switch req.GetPaymentType() {
+				switch *req.PaymentType {
 				case basetypes.PaymentType_PayWithBalanceOnly:
 					fallthrough //nolint
 				case basetypes.PaymentType_PayWithTransferOnly:
 					fallthrough //nolint
 				case basetypes.PaymentType_PayWithTransferAndBalance:
-					amount, err := decimal.NewFromString(req.GetPaymentAmount())
+					amount, err := decimal.NewFromString(*req.PaymentAmount)
 					if err != nil {
 						return err
 					}
@@ -1038,6 +1115,7 @@ func WithReqs(reqs []*npool.OrderReq) func(context.Context, *Handler) error {
 				case basetypes.PaymentType_PayWithOffline:
 					fallthrough //nolint
 				case basetypes.PaymentType_PayWithNoPayment:
+					_reqs = append(_reqs, _req)
 					continue
 				default:
 					return fmt.Errorf("invalid paymenttype")
@@ -1045,21 +1123,20 @@ func WithReqs(reqs []*npool.OrderReq) func(context.Context, *Handler) error {
 			}
 
 			_req.PaymentReq = &paymentcrud.Req{
-				OrderID:     _req.ID,
-				AppID:       _req.AppID,
-				GoodID:      _req.GoodID,
-				UserID:      _req.UserID,
-				PaymentType: _req.PaymentType,
+				OrderID: _req.ID,
+				AppID:   _req.AppID,
+				GoodID:  _req.GoodID,
+				UserID:  _req.UserID,
 			}
 			if req.PaymentAccountID != nil {
-				id, err := uuid.Parse(req.GetPaymentAccountID())
+				id, err := uuid.Parse(*req.PaymentAccountID)
 				if err != nil {
 					return err
 				}
 				_req.PaymentReq.AccountID = &id
 			}
 			if req.PaymentCoinTypeID != nil {
-				id, err := uuid.Parse(req.GetPaymentCoinTypeID())
+				id, err := uuid.Parse(*req.PaymentCoinTypeID)
 				if err != nil {
 					return err
 				}
@@ -1122,82 +1199,7 @@ func WithReqs(reqs []*npool.OrderReq) func(context.Context, *Handler) error {
 				}
 				_req.PaymentReq.LiveCoinUSDCurrency = &amount
 			}
-			if req.OrderState != nil {
-				switch req.GetOrderState() {
-				case basetypes.OrderState_OrderStateWaitPayment:
-				case basetypes.OrderState_OrderStateCheckPayment:
-				case basetypes.OrderState_OrderStatePaid:
-				case basetypes.OrderState_OrderStatePaymentTimeout:
-				case basetypes.OrderState_OrderStateCanceled:
-				case basetypes.OrderState_OrderStateInService:
-				case basetypes.OrderState_OrderStateExpired:
-				default:
-					return fmt.Errorf("invalid orderstate")
-				}
-				_orderstateReq.OrderState = req.OrderState
-			}
-			if req.StartMode != nil {
-				switch req.GetStartMode() {
-				case basetypes.OrderStartMode_OrderStartConfirmed:
-				case basetypes.OrderStartMode_OrderStartTBD:
-				default:
-					return fmt.Errorf("invalid startmode")
-				}
-				_orderstateReq.StartMode = req.StartMode
-			}
-			if req.StartAt != nil {
-				_orderstateReq.StartAt = req.StartAt
-			}
-			if req.EndAt != nil {
-				_orderstateReq.EndAt = req.EndAt
-			}
-			if req.LastBenefitAt != nil {
-				_orderstateReq.LastBenefitAt = req.LastBenefitAt
-			}
-			if req.BenefitState != nil {
-				switch req.GetBenefitState() {
-				case basetypes.BenefitState_BenefitWait:
-				case basetypes.BenefitState_BenefitCalculated:
-				case basetypes.BenefitState_BenefitDone:
-				default:
-					return fmt.Errorf("invalid benefitstate")
-				}
-				_orderstateReq.BenefitState = req.BenefitState
-			}
-			if req.UserSetPaid != nil {
-				_orderstateReq.UserSetPaid = req.UserSetPaid
-			}
-			if req.UserSetCanceled != nil {
-				_orderstateReq.UserSetCanceled = req.UserSetCanceled
-			}
-			if req.PaymentTransactionID != nil {
-				_orderstateReq.PaymentTransactionID = req.PaymentTransactionID
-			}
-			if req.PaymentFinishAmount != nil {
-				amount, err := decimal.NewFromString(*req.PaymentFinishAmount)
-				if err != nil {
-					return err
-				}
-				_orderstateReq.PaymentFinishAmount = &amount
-			}
-			if req.PaymentState != nil {
-				switch req.GetPaymentState() {
-				case basetypes.PaymentState_PaymentStateWait:
-				case basetypes.PaymentState_PaymentStateDone:
-				case basetypes.PaymentState_PaymentStateCanceled:
-				case basetypes.PaymentState_PaymentStateTimeout:
-				case basetypes.PaymentState_PaymentStateNoPayment:
-				default:
-					return fmt.Errorf("invalid paymentstate")
-				}
-				_orderstateReq.PaymentState = req.PaymentState
-			}
-			if req.OutOfGasHours != nil {
-				_orderstateReq.OutOfGasHours = req.OutOfGasHours
-			}
-			if req.CompensateHours != nil {
-				_orderstateReq.CompensateHours = req.CompensateHours
-			}
+
 			_reqs = append(_reqs, _req)
 		}
 		h.Reqs = _reqs
