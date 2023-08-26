@@ -70,12 +70,6 @@ func (h *createHandler) createOrderState(ctx context.Context, tx *ent.Tx, req *o
 }
 
 func (h *createHandler) createPayment(ctx context.Context, tx *ent.Tx, req *paymentcrud.Req) error {
-	if req.TransferAmount == nil || req.TransferAmount.Cmp(decimal.NewFromInt(0)) <= 0 {
-		return nil
-	}
-	if err := h.validate(req); err != nil {
-		return err
-	}
 	if _, err := paymentcrud.CreateSet(
 		tx.Payment.Create(),
 		req,
@@ -98,85 +92,23 @@ func (h *createHandler) createOrder(ctx context.Context, tx *ent.Tx, req *orderc
 }
 
 func (h *Handler) CreateOrder(ctx context.Context) (*npool.Order, error) {
+	req := h.ToOrderReq()
+
 	handler := &createHandler{
 		Handler: h,
 	}
 
-	orderReq := &ordercrud.Req{
-		ID:             h.ID,
-		AppID:          h.AppID,
-		UserID:         h.UserID,
-		GoodID:         h.GoodID,
-		AppGoodID:      h.AppGoodID,
-		ParentOrderID:  h.ParentOrderID,
-		Units:          h.Units,
-		GoodValue:      h.GoodValue,
-		PaymentAmount:  h.PaymentAmount,
-		DiscountAmount: h.DiscountAmount,
-		PromotionID:    h.PromotionID,
-		DurationDays:   h.DurationDays,
-		OrderType:      h.OrderType,
-		InvestmentType: h.InvestmentType,
-		CouponIDs:      &h.CouponIDs,
-		PaymentType:    h.PaymentType,
-	}
-
-	paymentReq := &paymentcrud.Req{
-		OrderID:              h.ID,
-		AppID:                h.AppID,
-		UserID:               h.UserID,
-		GoodID:               h.GoodID,
-		AccountID:            h.PaymentAccountID,
-		CoinTypeID:           h.PaymentCoinTypeID,
-		StartAmount:          h.PaymentStartAmount,
-		TransferAmount:       h.PaymentTransferAmount,
-		BalanceAmount:        h.PaymentBalanceAmount,
-		CoinUSDCurrency:      h.PaymentCoinUSDCurrency,
-		LocalCoinUSDCurrency: h.PaymentLocalCoinUSDCurrency,
-		LiveCoinUSDCurrency:  h.PaymentLiveCoinUSDCurrency,
-	}
-
-	orderStateReq := &orderstatecrud.Req{
-		OrderID:              h.ID,
-		StartMode:            h.StartMode,
-		StartAt:              h.StartAt,
-		EndAt:                h.EndAt,
-		LastBenefitAt:        h.LastBenefitAt,
-		BenefitState:         h.BenefitState,
-		UserSetPaid:          h.UserSetPaid,
-		UserSetCanceled:      h.UserSetCanceled,
-		PaymentTransactionID: h.PaymentTransactionID,
-		PaymentFinishAmount:  h.PaymentFinishAmount,
-		OutOfGasHours:        h.OutOfGasHours,
-		CompensateHours:      h.CompensateHours,
-	}
-
 	err := db.WithTx(ctx, func(ctx context.Context, tx *ent.Tx) error {
-		id := uuid.New()
-		if orderReq.ID == nil {
-			orderReq.ID = &id
-			paymentReq.OrderID = &id
-			orderStateReq.OrderID = &id
-		}
-
-		paymentState := ordertypes.PaymentState_PaymentStateNoPayment
-		if paymentReq.TransferAmount != nil && paymentReq.TransferAmount.Cmp(decimal.NewFromInt(0)) > 0 {
-			paymentState = ordertypes.PaymentState_PaymentStateWait
-			id = uuid.New()
-			paymentReq.ID = &id
-			orderReq.PaymentID = &id
-		}
-		orderStateReq.PaymentState = &paymentState
-
-		if err := handler.createOrder(ctx, tx, orderReq); err != nil {
+		if err := handler.createOrder(ctx, tx, req.Req); err != nil {
 			return err
 		}
-
-		if err := handler.createPayment(ctx, tx, paymentReq); err != nil {
+		if err := handler.createOrderState(ctx, tx, req.OrderStateReq); err != nil {
 			return err
 		}
-
-		if err := handler.createOrderState(ctx, tx, orderStateReq); err != nil {
+		if req.PaymentReq == nil {
+			return nil
+		}
+		if err := handler.createPayment(ctx, tx, req.PaymentReq); err != nil {
 			return err
 		}
 		return nil

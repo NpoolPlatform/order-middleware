@@ -123,6 +123,7 @@ type Conds struct {
 
 //nolint
 func SetQueryConds(q *ent.OrderQuery, conds *Conds) (*ent.OrderQuery, error) {
+	q.Where(entorder.DeletedAt(0))
 	if conds == nil {
 		return q, nil
 	}
@@ -285,6 +286,5 @@ func SetQueryConds(q *ent.OrderQuery, conds *Conds) (*ent.OrderQuery, error) {
 			return nil, fmt.Errorf("invalid order field")
 		}
 	}
-	q.Where(entorder.DeletedAt(0))
 	return q, nil
 }
