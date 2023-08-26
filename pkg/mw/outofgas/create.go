@@ -18,31 +18,6 @@ import (
 )
 
 func (h *Handler) CreateOutOfGas(ctx context.Context) (*npool.OutOfGas, error) {
-	key := fmt.Sprintf("%v:%v", basetypes.Prefix_PrefixCreateUserTransfer, *h.OrderID)
-	if err := redis2.TryLock(key, 0); err != nil {
-		return nil, err
-	}
-	defer func() {
-		_ = redis2.Unlock(key)
-	}()
-
-	handler, err := NewHandler(
-		ctx,
-		WithConds(&npool.Conds{
-			OrderID: &basetypes.StringVal{Op: cruder.EQ, Value: h.OrderID.String()},
-		}),
-	)
-	if err != nil {
-		return nil, err
-	}
-	exist, err := handler.ExistOutOfGasConds(ctx)
-	if err != nil {
-		return nil, err
-	}
-	if exist {
-		return nil, fmt.Errorf("outofgas exist")
-	}
-
 	id := uuid.New()
 	if h.ID == nil {
 		h.ID = &id
