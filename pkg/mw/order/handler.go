@@ -1096,29 +1096,13 @@ func WithReqs(reqs []*npool.OrderReq) func(context.Context, *Handler) error {
 
 			if req.PaymentType != nil {
 				_req.PaymentType = req.PaymentType
-				switch *req.PaymentType {
-				case basetypes.PaymentType_PayWithBalanceOnly:
-					fallthrough //nolint
-				case basetypes.PaymentType_PayWithTransferOnly:
-					fallthrough //nolint
-				case basetypes.PaymentType_PayWithTransferAndBalance:
-					amount, err := decimal.NewFromString(*req.PaymentAmount)
-					if err != nil {
-						return err
-					}
-					if amount.Cmp(decimal.NewFromInt(0)) <= 0 {
-						_reqs = append(_reqs, _req)
-						continue
-					}
-				case basetypes.PaymentType_PayWithParentOrder:
-					fallthrough //nolint
-				case basetypes.PaymentType_PayWithOffline:
-					fallthrough //nolint
-				case basetypes.PaymentType_PayWithNoPayment:
+				has, err := _req.HasPayment()
+				if err != nil {
+					return err
+				}
+				if !has {
 					_reqs = append(_reqs, _req)
 					continue
-				default:
-					return fmt.Errorf("invalid paymenttype")
 				}
 			}
 

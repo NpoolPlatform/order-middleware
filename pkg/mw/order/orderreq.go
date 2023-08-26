@@ -14,7 +14,7 @@ type OrderReq struct {
 	PaymentReq    *paymentcrud.Req
 }
 
-func (h *Handler) ToOrderReq() *OrderReq {
+func (h *Handler) ToOrderReq() (*OrderReq, error) {
 	req := &OrderReq{
 		Req: &ordercrud.Req{
 			ID:             h.ID,
@@ -51,8 +51,8 @@ func (h *Handler) ToOrderReq() *OrderReq {
 		},
 	}
 
-	if h.PaymentTransferAmount == nil || h.PaymentTransferAmount.Cmp(decimal.NewFromInt(0)) <= 0 {
-		return req
+	if has, err := req.HasPayment(); err != nil || !has {
+		return req, err
 	}
 
 	paymentID := uuid.New()
@@ -73,4 +73,30 @@ func (h *Handler) ToOrderReq() *OrderReq {
 		LiveCoinUSDCurrency:  h.PaymentLiveCoinUSDCurrency,
 	}
 	return req
+}
+
+func (r *OrderReq) HasPayment() (bool, error) {
+	switch *r.PaymentType {
+	case basetypes.PaymentType_PayWithBalanceOnly:
+		fallthrough //nolint
+	case basetypes.PaymentType_PayWithTransferOnly:
+		fallthrough //nolint
+	case basetypes.PaymentType_PayWithTransferAndBalance:
+		amount, err := decimal.NewFromString(*req.PaymentAmount)
+		if err != nil {
+			return false, err
+		}
+		if amount.Cmp(decimal.NewFromInt(0)) <= 0 {
+			return false, nil
+		}
+	case basetypes.PaymentType_PayWithParentOrder:
+		fallthrough //nolint
+	case basetypes.PaymentType_PayWithOffline:
+		fallthrough //nolint
+	case basetypes.PaymentType_PayWithNoPayment:
+		return false, nil
+	default:
+		return false, fmt.Errorf("invalid paymenttype")
+	}
+	return true, nil
 }
