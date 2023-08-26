@@ -87,12 +87,15 @@ func (h *updateHandler) updateOrderState(ctx context.Context, tx *ent.Tx, req *o
 }
 
 func (h *Handler) UpdateOrder(ctx context.Context) (*npool.Order, error) {
-	req := h.ToOrderReq()
+	req, err := h.ToOrderReq()
+	if err != nil {
+		return nil, err
+	}
 	handler := &updateHandler{
 		Handler: h,
 	}
 
-	err := db.WithTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {
+	err = db.WithTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {
 		if err := handler.updateOrderState(_ctx, tx, req.OrderStateReq); err != nil {
 			return err
 		}

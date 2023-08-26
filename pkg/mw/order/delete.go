@@ -51,7 +51,7 @@ func (h *deleteHandler) deleteOrder(ctx context.Context, tx *ent.Tx) error {
 }
 
 //nolint:dupl
-func (h *deleteHandler) deleteOrderState(ctx context.Context, tx *ent.Tx, req *orderstatecrud.Req) error {
+func (h *deleteHandler) deleteOrderState(ctx context.Context, tx *ent.Tx) error {
 	orderstate, err := tx.OrderState.
 		Query().
 		Where(
@@ -78,7 +78,7 @@ func (h *deleteHandler) deleteOrderState(ctx context.Context, tx *ent.Tx, req *o
 }
 
 //nolint:dupl
-func (h *deleteHandler) deletePayment(ctx context.Context, tx *ent.Tx, req *paymentcrud.Req) error {
+func (h *deleteHandler) deletePayment(ctx context.Context, tx *ent.Tx) error {
 	payment, err := tx.Payment.
 		Query().
 		Where(

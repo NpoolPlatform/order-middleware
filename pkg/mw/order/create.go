@@ -72,9 +72,12 @@ func (h *Handler) CreateOrder(ctx context.Context) (*npool.Order, error) {
 	}
 
 	h.PaymentState = handler.paymentState()
-	req := h.ToOrderReq()
+	req, err := h.ToOrderReq()
+	if err != nil {
+		return nil, err
+	}
 
-	err := db.WithTx(ctx, func(ctx context.Context, tx *ent.Tx) error {
+	err = db.WithTx(ctx, func(ctx context.Context, tx *ent.Tx) error {
 		if err := handler.createOrder(ctx, tx, req.Req); err != nil {
 			return err
 		}

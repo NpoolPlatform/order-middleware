@@ -1,6 +1,9 @@
 package order
 
 import (
+	"fmt"
+
+	basetypes "github.com/NpoolPlatform/message/npool/basetypes/order/v1"
 	ordercrud "github.com/NpoolPlatform/order-middleware/pkg/crud/order"
 	orderstatecrud "github.com/NpoolPlatform/order-middleware/pkg/crud/orderstate"
 	paymentcrud "github.com/NpoolPlatform/order-middleware/pkg/crud/payment"
@@ -51,8 +54,14 @@ func (h *Handler) ToOrderReq() (*OrderReq, error) {
 		},
 	}
 
-	if has, err := req.HasPayment(); err != nil || !has {
-		return req, err
+	if req.PaymentType != nil {
+		has, err := req.HasPayment()
+		if err != nil {
+			return req, err
+		}
+		if !has {
+			return req, err
+		}
 	}
 
 	paymentID := uuid.New()
@@ -72,7 +81,7 @@ func (h *Handler) ToOrderReq() (*OrderReq, error) {
 		LocalCoinUSDCurrency: h.PaymentLocalCoinUSDCurrency,
 		LiveCoinUSDCurrency:  h.PaymentLiveCoinUSDCurrency,
 	}
-	return req
+	return req, nil
 }
 
 func (r *OrderReq) HasPayment() (bool, error) {
@@ -82,13 +91,13 @@ func (r *OrderReq) HasPayment() (bool, error) {
 	case basetypes.PaymentType_PayWithTransferOnly:
 		fallthrough //nolint
 	case basetypes.PaymentType_PayWithTransferAndBalance:
-		amount, err := decimal.NewFromString(*req.PaymentAmount)
-		if err != nil {
-			return false, err
+		if r.PaymentAmount == nil {
+			return false, fmt.Errorf("invalid paymentamount")
 		}
-		if amount.Cmp(decimal.NewFromInt(0)) <= 0 {
+		if r.PaymentAmount.Cmp(decimal.NewFromInt(0)) <= 0 {
 			return false, nil
 		}
+
 	case basetypes.PaymentType_PayWithParentOrder:
 		fallthrough //nolint
 	case basetypes.PaymentType_PayWithOffline:

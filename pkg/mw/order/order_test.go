@@ -272,7 +272,7 @@ func createOrders(t *testing.T) {
 		WithReqs(retsReq),
 	)
 	if assert.Nil(t, err) {
-		infos, _, err := handler.CreateOrders(context.Background())
+		infos, err := handler.CreateOrders(context.Background())
 		if assert.Nil(t, err) {
 			assert.Equal(t, len(rets), len(infos))
 		}

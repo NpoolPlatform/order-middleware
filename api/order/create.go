@@ -89,7 +89,7 @@ func (s *Server) CreateOrders(ctx context.Context, in *npool.CreateOrdersRequest
 		)
 		return &npool.CreateOrdersResponse{}, status.Error(codes.Aborted, err.Error())
 	}
-	infos, _, err := handler.CreateOrders(ctx)
+	infos, err := handler.CreateOrders(ctx)
 	if err != nil {
 		logger.Sugar().Errorw(
 			"CreateOrders",
