@@ -34,6 +34,7 @@ func (h *updateHandler) updateOrderState(ctx context.Context, tx *ent.Tx, req *o
 	if orderstate == nil {
 		return fmt.Errorf("invalid order")
 	}
+	fmt.Println("orderstate: ", orderstate)
 
 	order, err := tx.Order.
 		Query().
@@ -86,30 +87,14 @@ func (h *updateHandler) updateOrderState(ctx context.Context, tx *ent.Tx, req *o
 }
 
 func (h *Handler) UpdateOrder(ctx context.Context) (*npool.Order, error) {
-	if h.ID == nil {
-		return nil, fmt.Errorf("invalid id")
-	}
+	req := h.ToOrderReq()
 	handler := &updateHandler{
 		Handler: h,
 	}
-	orderstateReq := &orderstatecrud.Req{
-		OrderID:              h.ID,
-		OrderState:           h.OrderState,
-		StartMode:            h.StartMode,
-		StartAt:              h.StartAt,
-		LastBenefitAt:        h.LastBenefitAt,
-		BenefitState:         h.BenefitState,
-		UserSetPaid:          h.UserSetPaid,
-		UserSetCanceled:      h.UserSetCanceled,
-		PaymentTransactionID: h.PaymentTransactionID,
-		PaymentFinishAmount:  h.PaymentFinishAmount,
-		PaymentState:         h.PaymentState,
-		OutOfGasHours:        h.OutOfGasHours,
-		CompensateHours:      h.CompensateHours,
-	}
+	fmt.Println("req: ", req)
 
 	err := db.WithTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {
-		if err := handler.updateOrderState(_ctx, tx, orderstateReq); err != nil {
+		if err := handler.updateOrderState(_ctx, tx, req.OrderStateReq); err != nil {
 			return err
 		}
 		return nil

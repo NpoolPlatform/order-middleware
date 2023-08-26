@@ -388,6 +388,7 @@ func WithPaymentCoinTypeID(id *string, must bool) func(context.Context, *Handler
 	}
 }
 
+//nolint:dupl
 func WithPaymentStartAmount(value *string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if value == nil {
@@ -399,6 +400,9 @@ func WithPaymentStartAmount(value *string, must bool) func(context.Context, *Han
 		amount, err := decimal.NewFromString(*value)
 		if err != nil {
 			return err
+		}
+		if amount.Cmp(decimal.NewFromInt(0)) <= 0 {
+			return fmt.Errorf("paymentstartamount is less than or equal to 0")
 		}
 		h.PaymentStartAmount = &amount
 		return nil
@@ -422,6 +426,7 @@ func WithPaymentTransferAmount(value *string, must bool) func(context.Context, *
 	}
 }
 
+//nolint:dupl
 func WithPaymentBalanceAmount(value *string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if value == nil {
@@ -434,11 +439,15 @@ func WithPaymentBalanceAmount(value *string, must bool) func(context.Context, *H
 		if err != nil {
 			return err
 		}
+		if amount.Cmp(decimal.NewFromInt(0)) <= 0 {
+			return fmt.Errorf("paymentbalanceamount is less than or equal to 0")
+		}
 		h.PaymentBalanceAmount = &amount
 		return nil
 	}
 }
 
+//nolint:dupl
 func WithPaymentCoinUSDCurrency(value *string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if value == nil {
@@ -451,11 +460,15 @@ func WithPaymentCoinUSDCurrency(value *string, must bool) func(context.Context, 
 		if err != nil {
 			return err
 		}
+		if amount.Cmp(decimal.NewFromInt(0)) <= 0 {
+			return fmt.Errorf("paymentcoinusdcurrency is less than or equal to 0")
+		}
 		h.PaymentCoinUSDCurrency = &amount
 		return nil
 	}
 }
 
+//nolint:dupl
 func WithPaymentLocalCoinUSDCurrency(value *string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if value == nil {
@@ -468,11 +481,15 @@ func WithPaymentLocalCoinUSDCurrency(value *string, must bool) func(context.Cont
 		if err != nil {
 			return err
 		}
+		if amount.Cmp(decimal.NewFromInt(0)) <= 0 {
+			return fmt.Errorf("paymentlocalcoinusdcurrency is less than or equal to 0")
+		}
 		h.PaymentLocalCoinUSDCurrency = &amount
 		return nil
 	}
 }
 
+//nolint:dupl
 func WithPaymentLiveCoinUSDCurrency(value *string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if value == nil {
@@ -484,6 +501,9 @@ func WithPaymentLiveCoinUSDCurrency(value *string, must bool) func(context.Conte
 		amount, err := decimal.NewFromString(*value)
 		if err != nil {
 			return err
+		}
+		if amount.Cmp(decimal.NewFromInt(0)) <= 0 {
+			return fmt.Errorf("paymentlivecoinusdcurrency is less than or equal to 0")
 		}
 		h.PaymentLiveCoinUSDCurrency = &amount
 		return nil
@@ -1032,6 +1052,9 @@ func WithReqs(reqs []*npool.OrderReq) func(context.Context, *Handler) error {
 				if err != nil {
 					return err
 				}
+				if amount.Cmp(decimal.NewFromInt(0)) <= 0 {
+					return fmt.Errorf("startamount is less than or equal to 0")
+				}
 				_paymentReq.StartAmount = &amount
 			}
 			if req.PaymentTransferAmount != nil {
@@ -1046,12 +1069,18 @@ func WithReqs(reqs []*npool.OrderReq) func(context.Context, *Handler) error {
 				if err != nil {
 					return err
 				}
+				if amount.Cmp(decimal.NewFromInt(0)) <= 0 {
+					return fmt.Errorf("balanceamount is less than or equal to 0")
+				}
 				_paymentReq.BalanceAmount = &amount
 			}
 			if req.PaymentCoinUSDCurrency != nil {
 				amount, err := decimal.NewFromString(*req.PaymentCoinUSDCurrency)
 				if err != nil {
 					return err
+				}
+				if amount.Cmp(decimal.NewFromInt(0)) <= 0 {
+					return fmt.Errorf("coinusdcurrency is less than or equal to 0")
 				}
 				_paymentReq.CoinUSDCurrency = &amount
 			}
@@ -1060,12 +1089,18 @@ func WithReqs(reqs []*npool.OrderReq) func(context.Context, *Handler) error {
 				if err != nil {
 					return err
 				}
+				if amount.Cmp(decimal.NewFromInt(0)) <= 0 {
+					return fmt.Errorf("localcoinusdcurrency is less than or equal to 0")
+				}
 				_paymentReq.LocalCoinUSDCurrency = &amount
 			}
 			if req.PaymentLiveCoinUSDCurrency != nil {
 				amount, err := decimal.NewFromString(*req.PaymentLiveCoinUSDCurrency)
 				if err != nil {
 					return err
+				}
+				if amount.Cmp(decimal.NewFromInt(0)) <= 0 {
+					return fmt.Errorf("livecoinusdcurrency is less than or equal to 0")
 				}
 				_paymentReq.LiveCoinUSDCurrency = &amount
 			}
@@ -1146,7 +1181,7 @@ func WithReqs(reqs []*npool.OrderReq) func(context.Context, *Handler) error {
 				_orderstateReq.CompensateHours = req.CompensateHours
 			}
 			_req := &OrderReq{
-				OrderReq:      _orderReq,
+				Req:           _orderReq,
 				PaymentReq:    _paymentReq,
 				OrderStateReq: _orderstateReq,
 			}

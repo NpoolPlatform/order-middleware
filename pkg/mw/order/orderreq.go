@@ -4,6 +4,8 @@ import (
 	ordercrud "github.com/NpoolPlatform/order-middleware/pkg/crud/order"
 	orderstatecrud "github.com/NpoolPlatform/order-middleware/pkg/crud/orderstate"
 	paymentcrud "github.com/NpoolPlatform/order-middleware/pkg/crud/payment"
+	"github.com/google/uuid"
+	"github.com/shopspring/decimal"
 )
 
 type OrderReq struct {
@@ -12,20 +14,8 @@ type OrderReq struct {
 	PaymentReq    *paymentcrud.Req
 }
 
-func (h *Handler) paymentState() ordertypes.PaymentState {
-	if h.PaymentTransferAmount != nil && h.PaymentTransferAmount.Cmp(decimal.NewFromInt(0)) > 0 {
-		return ordertypes.PaymentState_PaymentStateWait
-	}
-	return ordertypes.PaymentState_PaymentStateNoPayment
-}
-
 func (h *Handler) ToOrderReq() *OrderReq {
-	id := uuid.New()
-	if h.ID == nil {
-		h.ID = &id
-	}
 	paymentID := uuid.New()
-	paymentState := h.paymentState()
 
 	req := &OrderReq{
 		Req: &ordercrud.Req{
@@ -45,11 +35,10 @@ func (h *Handler) ToOrderReq() *OrderReq {
 			InvestmentType: h.InvestmentType,
 			CouponIDs:      &h.CouponIDs,
 			PaymentType:    h.PaymentType,
-			PaymentID:      &paymentID,
 		},
 		OrderStateReq: &orderstatecrud.Req{
-			ID:                   &paymentID,
 			OrderID:              h.ID,
+			OrderState:           h.OrderState,
 			StartMode:            h.StartMode,
 			StartAt:              h.StartAt,
 			EndAt:                h.EndAt,
@@ -61,28 +50,90 @@ func (h *Handler) ToOrderReq() *OrderReq {
 			PaymentFinishAmount:  h.PaymentFinishAmount,
 			OutOfGasHours:        h.OutOfGasHours,
 			CompensateHours:      h.CompensateHours,
-			PaymentState:         &paymentState,
 		},
 	}
 
-	req.PaymentReq = &paymentcrud.Req{
-		OrderID:              h.ID,
-		AppID:                h.AppID,
-		UserID:               h.UserID,
-		GoodID:               h.GoodID,
-		AccountID:            h.PaymentAccountID,
-		CoinTypeID:           h.PaymentCoinTypeID,
-		StartAmount:          h.PaymentStartAmount,
-		TransferAmount:       h.PaymentTransferAmount,
-		BalanceAmount:        h.PaymentBalanceAmount,
-		CoinUSDCurrency:      h.PaymentCoinUSDCurrency,
-		LocalCoinUSDCurrency: h.PaymentLocalCoinUSDCurrency,
-		LiveCoinUSDCurrency:  h.PaymentLiveCoinUSDCurrency,
+	if h.PaymentTransferAmount != nil && h.PaymentTransferAmount.Cmp(decimal.NewFromInt(0)) > 0 {
+		req.Req.PaymentID = &paymentID
+		req.PaymentReq = &paymentcrud.Req{
+			ID:                   &paymentID,
+			OrderID:              h.ID,
+			AppID:                h.AppID,
+			UserID:               h.UserID,
+			GoodID:               h.GoodID,
+			AccountID:            h.PaymentAccountID,
+			CoinTypeID:           h.PaymentCoinTypeID,
+			StartAmount:          h.PaymentStartAmount,
+			TransferAmount:       h.PaymentTransferAmount,
+			BalanceAmount:        h.PaymentBalanceAmount,
+			CoinUSDCurrency:      h.PaymentCoinUSDCurrency,
+			LocalCoinUSDCurrency: h.PaymentLocalCoinUSDCurrency,
+			LiveCoinUSDCurrency:  h.PaymentLiveCoinUSDCurrency,
+		}
 	}
-
 	return req
 }
 
 func (h *Handler) ToOrderReqs() []*OrderReq {
-	return nil
+	reqs := []*OrderReq{}
+	for _, req := range h.Reqs {
+		paymentID := uuid.New()
+
+		_req := &OrderReq{
+			Req: &ordercrud.Req{
+				ID:             req.ID,
+				AppID:          req.AppID,
+				UserID:         req.UserID,
+				GoodID:         req.GoodID,
+				AppGoodID:      req.AppGoodID,
+				ParentOrderID:  req.ParentOrderID,
+				Units:          req.Units,
+				GoodValue:      req.GoodValue,
+				PaymentAmount:  req.PaymentAmount,
+				DiscountAmount: req.DiscountAmount,
+				PromotionID:    req.PromotionID,
+				DurationDays:   req.DurationDays,
+				OrderType:      req.OrderType,
+				InvestmentType: req.InvestmentType,
+				CouponIDs:      req.CouponIDs,
+				PaymentType:    req.PaymentType,
+			},
+			OrderStateReq: &orderstatecrud.Req{
+				OrderID:              req.ID,
+				OrderState:           req.OrderStateReq.OrderState,
+				StartMode:            req.OrderStateReq.StartMode,
+				StartAt:              req.OrderStateReq.StartAt,
+				EndAt:                req.OrderStateReq.EndAt,
+				LastBenefitAt:        req.OrderStateReq.LastBenefitAt,
+				BenefitState:         req.OrderStateReq.BenefitState,
+				UserSetPaid:          req.OrderStateReq.UserSetPaid,
+				UserSetCanceled:      req.OrderStateReq.UserSetCanceled,
+				PaymentTransactionID: req.OrderStateReq.PaymentTransactionID,
+				PaymentFinishAmount:  req.OrderStateReq.PaymentFinishAmount,
+				OutOfGasHours:        req.OrderStateReq.OutOfGasHours,
+				CompensateHours:      req.OrderStateReq.CompensateHours,
+			},
+		}
+
+		if h.PaymentTransferAmount != nil && h.PaymentTransferAmount.Cmp(decimal.NewFromInt(0)) > 0 {
+			_req.Req.PaymentID = &paymentID
+			_req.PaymentReq = &paymentcrud.Req{
+				ID:                   &paymentID,
+				OrderID:              req.ID,
+				AppID:                req.PaymentReq.AppID,
+				UserID:               req.PaymentReq.UserID,
+				GoodID:               req.PaymentReq.GoodID,
+				AccountID:            req.PaymentReq.AccountID,
+				CoinTypeID:           req.PaymentReq.CoinTypeID,
+				StartAmount:          req.PaymentReq.StartAmount,
+				TransferAmount:       req.PaymentReq.TransferAmount,
+				BalanceAmount:        req.PaymentReq.BalanceAmount,
+				CoinUSDCurrency:      req.PaymentReq.CoinUSDCurrency,
+				LocalCoinUSDCurrency: req.PaymentReq.LocalCoinUSDCurrency,
+				LiveCoinUSDCurrency:  req.PaymentReq.LiveCoinUSDCurrency,
+			}
+		}
+		reqs = append(reqs, _req)
+	}
+	return reqs
 }

@@ -105,9 +105,6 @@ func (h *deleteHandler) deletePayment(ctx context.Context, tx *ent.Tx, req *paym
 }
 
 func (h *Handler) DeleteOrder(ctx context.Context) (*npool.Order, error) {
-	if h.ID == nil {
-		return nil, fmt.Errorf("invalid id")
-	}
 	info, err := h.GetOrder(ctx)
 	if err != nil {
 		return nil, err
@@ -115,30 +112,25 @@ func (h *Handler) DeleteOrder(ctx context.Context) (*npool.Order, error) {
 	if info == nil {
 		return nil, nil
 	}
+
 	handler := &deleteHandler{
 		Handler: h,
 	}
-
-	orderReq := &ordercrud.Req{
-		ID: h.ID,
-	}
-	orderstateReq := &orderstatecrud.Req{
-		OrderID: h.ID,
-	}
-	paymentReq := &paymentcrud.Req{
-		OrderID: h.ID,
-	}
-
+	req := h.ToOrderReq()
 	now := uint32(time.Now().Unix())
 	handler.deleteAt = &now
+
 	err = db.WithTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {
-		if err := handler.deleteOrder(ctx, tx, orderReq); err != nil {
+		if err := handler.deleteOrder(ctx, tx, req.Req); err != nil {
 			return err
 		}
-		if err := handler.deleteOrderState(ctx, tx, orderstateReq); err != nil {
+		if err := handler.deleteOrderState(ctx, tx, req.OrderStateReq); err != nil {
 			return err
 		}
 		if info.PaymentID != uuid.Nil.String() {
+			paymentReq := &paymentcrud.Req{
+				OrderID: h.ID,
+			}
 			if err := handler.deletePayment(ctx, tx, paymentReq); err != nil {
 				return err
 			}

@@ -2,7 +2,6 @@ package order
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
 	"github.com/NpoolPlatform/order-middleware/pkg/db"
@@ -22,36 +21,26 @@ type createHandler struct {
 	*Handler
 }
 
-func (h *createHandler) validate(req *paymentcrud.Req) error {
-	if req.BalanceAmount != nil && req.BalanceAmount.Cmp(decimal.NewFromInt(0)) <= 0 {
-		return fmt.Errorf("balanceamount is less than or equal to 0")
+func (h *createHandler) paymentState() ordertypes.PaymentState {
+	if h.PaymentTransferAmount != nil && h.PaymentTransferAmount.Cmp(decimal.NewFromInt(0)) > 0 {
+		return ordertypes.PaymentState_PaymentStateWait
 	}
-	if req.StartAmount == nil {
-		return fmt.Errorf("invalid startamount")
-	}
-	if req.StartAmount.Cmp(decimal.NewFromInt(0)) <= 0 {
-		return fmt.Errorf("startamount is less than or equal to 0")
-	}
-	if req.CoinUSDCurrency == nil {
-		return fmt.Errorf("invalid coinusdcurrency")
-	}
-	if req.CoinUSDCurrency.Cmp(decimal.NewFromInt(0)) <= 0 {
-		return fmt.Errorf("coinusdcurrency is less than or equal to 0")
-	}
-	if req.LiveCoinUSDCurrency == nil {
-		return fmt.Errorf("invalid livecoinusdcurrency")
-	}
-	if req.LiveCoinUSDCurrency.Cmp(decimal.NewFromInt(0)) <= 0 {
-		return fmt.Errorf("livecoinusdcurrency is less than or equal to 0")
-	}
-	if req.LocalCoinUSDCurrency == nil {
-		return fmt.Errorf("invalid localcoinusdcurrency")
-	}
-	if req.LocalCoinUSDCurrency.Cmp(decimal.NewFromInt(0)) <= 0 {
-		return fmt.Errorf("livecoinusdcurrency is less than or equal to 0")
+	return ordertypes.PaymentState_PaymentStateNoPayment
+}
+
+func (h *createHandler) initCreateReq(req OrderReq) *OrderReq {
+	id := uuid.New()
+	if req.Req.ID == nil {
+		req.Req.ID = &id
+		req.OrderStateReq.OrderID = &id
 	}
 
-	return nil
+	paymentState := h.paymentState()
+	if req.OrderStateReq.PaymentState != nil {
+		paymentState = *h.PaymentState
+	}
+	req.OrderStateReq.PaymentState = &paymentState
+	return &req
 }
 
 func (h *createHandler) createOrderState(ctx context.Context, tx *ent.Tx, req *orderstatecrud.Req) error {
@@ -99,16 +88,20 @@ func (h *Handler) CreateOrder(ctx context.Context) (*npool.Order, error) {
 	}
 
 	err := db.WithTx(ctx, func(ctx context.Context, tx *ent.Tx) error {
-		if err := handler.createOrder(ctx, tx, req.Req); err != nil {
+		_req := handler.initCreateReq(*req)
+		h.ID = _req.Req.ID
+
+		if err := handler.createOrder(ctx, tx, _req.Req); err != nil {
 			return err
 		}
-		if err := handler.createOrderState(ctx, tx, req.OrderStateReq); err != nil {
+		if err := handler.createOrderState(ctx, tx, _req.OrderStateReq); err != nil {
 			return err
 		}
-		if req.PaymentReq == nil {
+		if _req.PaymentReq == nil {
 			return nil
 		}
-		if err := handler.createPayment(ctx, tx, req.PaymentReq); err != nil {
+		_req.PaymentReq.OrderID = _req.Req.ID
+		if err := handler.createPayment(ctx, tx, _req.PaymentReq); err != nil {
 			return err
 		}
 		return nil
@@ -121,40 +114,30 @@ func (h *Handler) CreateOrder(ctx context.Context) (*npool.Order, error) {
 }
 
 func (h *Handler) CreateOrders(ctx context.Context) ([]*npool.Order, uint32, error) {
+	reqs := h.ToOrderReqs()
 	handler := &createHandler{
 		Handler: h,
 	}
 	ids := []uuid.UUID{}
 	err := db.WithTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {
-		for _, req := range h.Reqs {
-			id := uuid.New()
-			if req.OrderReq.ID == nil {
-				req.OrderReq.ID = &id
-				req.PaymentReq.OrderID = &id
-				req.OrderStateReq.OrderID = &id
-			}
+		for _, req := range reqs {
+			_req := handler.initCreateReq(*req)
 
-			paymentState := ordertypes.PaymentState_PaymentStateNoPayment
-			if req.PaymentReq.TransferAmount != nil && req.PaymentReq.TransferAmount.Cmp(decimal.NewFromInt(0)) > 0 {
-				paymentState = ordertypes.PaymentState_PaymentStateWait
-				id = uuid.New()
-				req.PaymentReq.ID = &id
-				req.OrderReq.PaymentID = &id
-			}
-			req.OrderStateReq.PaymentState = &paymentState
-
-			if err := handler.createOrder(ctx, tx, req.OrderReq); err != nil {
+			if err := handler.createOrder(ctx, tx, _req.Req); err != nil {
 				return err
 			}
-
-			if err := handler.createPayment(ctx, tx, req.PaymentReq); err != nil {
+			if err := handler.createOrderState(ctx, tx, _req.OrderStateReq); err != nil {
 				return err
 			}
+			ids = append(ids, *_req.Req.ID)
 
-			if err := handler.createOrderState(ctx, tx, req.OrderStateReq); err != nil {
+			if _req.PaymentReq == nil {
+				continue
+			}
+			_req.PaymentReq.OrderID = _req.Req.ID
+			if err := handler.createPayment(ctx, tx, _req.PaymentReq); err != nil {
 				return err
 			}
-			ids = append(ids, *req.OrderReq.ID)
 		}
 		return nil
 	})
