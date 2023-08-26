@@ -34,7 +34,6 @@ func (h *updateHandler) updateOrderState(ctx context.Context, tx *ent.Tx, req *o
 	if orderstate == nil {
 		return fmt.Errorf("invalid order")
 	}
-	fmt.Println("orderstate: ", orderstate)
 
 	order, err := tx.Order.
 		Query().
@@ -91,7 +90,6 @@ func (h *Handler) UpdateOrder(ctx context.Context) (*npool.Order, error) {
 	handler := &updateHandler{
 		Handler: h,
 	}
-	fmt.Println("req: ", req)
 
 	err := db.WithTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {
 		if err := handler.updateOrderState(_ctx, tx, req.OrderStateReq); err != nil {
