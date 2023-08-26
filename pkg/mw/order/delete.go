@@ -24,11 +24,11 @@ type deleteHandler struct {
 }
 
 //nolint:dupl
-func (h *deleteHandler) deleteOrder(ctx context.Context, tx *ent.Tx, req *ordercrud.Req) error {
+func (h *deleteHandler) deleteOrder(ctx context.Context, tx *ent.Tx) error {
 	order, err := tx.Order.
 		Query().
 		Where(
-			entorder.ID(*req.ID),
+			entorder.ID(*h.ID),
 		).
 		ForUpdate().
 		Only(ctx)
@@ -55,7 +55,7 @@ func (h *deleteHandler) deleteOrderState(ctx context.Context, tx *ent.Tx, req *o
 	orderstate, err := tx.OrderState.
 		Query().
 		Where(
-			entorderstate.OrderID(*req.OrderID),
+			entorderstate.OrderID(*h.ID),
 		).
 		ForUpdate().
 		Only(ctx)
@@ -82,7 +82,7 @@ func (h *deleteHandler) deletePayment(ctx context.Context, tx *ent.Tx, req *paym
 	payment, err := tx.Payment.
 		Query().
 		Where(
-			entpayment.OrderID(*req.OrderID),
+			entpayment.OrderID(*h.ID),
 		).
 		ForUpdate().
 		Only(ctx)
@@ -116,26 +116,21 @@ func (h *Handler) DeleteOrder(ctx context.Context) (*npool.Order, error) {
 	handler := &deleteHandler{
 		Handler: h,
 	}
-	req := h.ToOrderReq()
 	now := uint32(time.Now().Unix())
 	handler.deleteAt = &now
 
 	err = db.WithTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {
-		if err := handler.deleteOrder(ctx, tx, req.Req); err != nil {
+		if err := handler.deleteOrder(ctx, tx); err != nil {
 			return err
 		}
-		if err := handler.deleteOrderState(ctx, tx, req.OrderStateReq); err != nil {
+		if err := handler.deleteOrderState(ctx, tx); err != nil {
 			return err
 		}
 		if info.PaymentID != uuid.Nil.String() {
-			paymentReq := &paymentcrud.Req{
-				OrderID: h.ID,
-			}
-			if err := handler.deletePayment(ctx, tx, paymentReq); err != nil {
+			if err := handler.deletePayment(ctx, tx); err != nil {
 				return err
 			}
 		}
-
 		return nil
 	})
 	if err != nil {

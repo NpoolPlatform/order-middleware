@@ -78,15 +78,12 @@ func (h *Handler) CreateOrder(ctx context.Context) (*npool.Order, error) {
 		if err := handler.createOrder(ctx, tx, req.Req); err != nil {
 			return err
 		}
-		id := uuid.New()
-		req.OrderStateReq.ID = &id
 		if err := handler.createOrderState(ctx, tx, req.OrderStateReq); err != nil {
 			return err
 		}
 		if req.PaymentReq == nil {
 			return nil
 		}
-		req.PaymentReq.OrderID = req.Req.ID
 		if err := handler.createPayment(ctx, tx, req.PaymentReq); err != nil {
 			return err
 		}
@@ -99,7 +96,7 @@ func (h *Handler) CreateOrder(ctx context.Context) (*npool.Order, error) {
 	return h.GetOrder(ctx)
 }
 
-func (h *Handler) CreateOrders(ctx context.Context) ([]*npool.Order, uint32, error) {
+func (h *Handler) CreateOrders(ctx context.Context) ([]*npool.Order, error) {
 	handler := &createHandler{
 		Handler: h,
 	}
@@ -114,9 +111,6 @@ func (h *Handler) CreateOrders(ctx context.Context) ([]*npool.Order, uint32, err
 			if err := handler.createOrder(ctx, tx, req.Req); err != nil {
 				return err
 			}
-
-			id = uuid.New()
-			req.OrderStateReq.ID = &id
 			if err := handler.createOrderState(ctx, tx, req.OrderStateReq); err != nil {
 				return err
 			}
@@ -125,7 +119,6 @@ func (h *Handler) CreateOrders(ctx context.Context) ([]*npool.Order, uint32, err
 			if req.PaymentReq == nil {
 				continue
 			}
-			req.PaymentReq.OrderID = req.Req.ID
 			if err := handler.createPayment(ctx, tx, req.PaymentReq); err != nil {
 				return err
 			}
@@ -133,7 +126,7 @@ func (h *Handler) CreateOrders(ctx context.Context) ([]*npool.Order, uint32, err
 		return nil
 	})
 	if err != nil {
-		return nil, 0, err
+		return nil, err
 	}
 
 	h.Conds = &ordercrud.Conds{
@@ -142,5 +135,9 @@ func (h *Handler) CreateOrders(ctx context.Context) ([]*npool.Order, uint32, err
 	h.Offset = 0
 	h.Limit = int32(len(ids))
 
-	return h.GetOrders(ctx)
+	infos, _, err := h.GetOrders(ctx)
+	if err != nil {
+		return nil, err
+	}
+	return infos, nil
 }

@@ -25,6 +25,7 @@ func (h *updateHandler) updateOrderState(ctx context.Context, tx *ent.Tx, req *o
 		Query().
 		Where(
 			entorderstate.OrderID(*req.OrderID),
+			entorderstate.DeletedAt(0),
 		).
 		ForUpdate().
 		Only(ctx)
@@ -118,7 +119,7 @@ func (h *Handler) UpdateOrders(ctx context.Context) ([]*npool.Order, error) {
 			if err := handler.updateOrderState(ctx, tx, req.OrderStateReq); err != nil {
 				return err
 			}
-			ids = append(ids, *h.ID)
+			ids = append(ids, *req.ID)
 		}
 		return nil
 	})
