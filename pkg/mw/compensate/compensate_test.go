@@ -8,8 +8,11 @@ import (
 	"testing"
 
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
+	ordertypes "github.com/NpoolPlatform/message/npool/basetypes/order/v1"
 	basetypes "github.com/NpoolPlatform/message/npool/basetypes/v1"
 	npool "github.com/NpoolPlatform/message/npool/order/mw/v1/compensate"
+	ordermwpb "github.com/NpoolPlatform/message/npool/order/mw/v1/order"
+	order1 "github.com/NpoolPlatform/order-middleware/pkg/mw/order"
 
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
@@ -26,12 +29,117 @@ func init() {
 	}
 }
 
-var ret = npool.Compensate{
-	ID:      uuid.NewString(),
-	OrderID: uuid.NewString(),
-	StartAt: 10002,
-	EndAt:   10003,
-	Message: "message " + uuid.NewString(),
+var (
+	order = ordermwpb.Order{
+		ID:                uuid.NewString(),
+		AppID:             uuid.NewString(),
+		UserID:            uuid.NewString(),
+		GoodID:            uuid.NewString(),
+		AppGoodID:         uuid.NewString(),
+		ParentOrderID:     uuid.NewString(),
+		Units:             "10001.000000000000000000",
+		GoodValue:         "1007.000000000000000000",
+		PaymentAmount:     "1007.000000000000000000",
+		DiscountAmount:    "10.000000000000000000",
+		PromotionID:       uuid.NewString(),
+		DurationDays:      10006,
+		OrderTypeStr:      ordertypes.OrderType_Normal.String(),
+		OrderType:         ordertypes.OrderType_Normal,
+		InvestmentType:    ordertypes.InvestmentType_FullPayment,
+		InvestmentTypeStr: ordertypes.InvestmentType_FullPayment.String(),
+		PaymentTypeStr:    ordertypes.PaymentType_PayWithTransferAndBalance.String(),
+		PaymentType:       ordertypes.PaymentType_PayWithTransferAndBalance,
+
+		PaymentAccountID:            uuid.NewString(),
+		PaymentCoinTypeID:           uuid.NewString(),
+		PaymentStartAmount:          "1010.000000000000000000",
+		PaymentTransferAmount:       "1011.000000000000000000",
+		PaymentBalanceAmount:        "110.000000000000000000",
+		PaymentCoinUSDCurrency:      "1004.000000000000000000",
+		PaymentLocalCoinUSDCurrency: "1005.000000000000000000",
+		PaymentLiveCoinUSDCurrency:  "1006.000000000000000000",
+
+		OrderStateStr:        ordertypes.OrderState_OrderStateWaitPayment.String(),
+		OrderState:           ordertypes.OrderState_OrderStateWaitPayment,
+		StartModeStr:         ordertypes.OrderStartMode_OrderStartConfirmed.String(),
+		StartMode:            ordertypes.OrderStartMode_OrderStartConfirmed,
+		StartAt:              10020,
+		EndAt:                10060,
+		LastBenefitAt:        10005,
+		BenefitStateStr:      ordertypes.BenefitState_BenefitWait.String(),
+		BenefitState:         ordertypes.BenefitState_BenefitWait,
+		UserSetPaid:          false,
+		UserSetCanceled:      false,
+		PaymentTransactionID: "PaymentTransactionID" + uuid.NewString(),
+		PaymentFinishAmount:  "0.000000000000000000",
+		PaymentStateStr:      ordertypes.PaymentState_PaymentStateWait.String(),
+		PaymentState:         ordertypes.PaymentState_PaymentStateWait,
+		OutOfGasHours:        0,
+		CompensateHours:      0,
+	}
+	ret = npool.Compensate{
+		ID:           uuid.NewString(),
+		OrderID:      order.ID,
+		AppID:        order.AppID,
+		UserID:       order.UserID,
+		GoodID:       order.GoodID,
+		AppGoodID:    order.AppGoodID,
+		Units:        order.Units,
+		OrderStartAt: order.StartAt,
+		OrderEndAt:   order.EndAt,
+		StartAt:      10030,
+		EndAt:        10045,
+		Message:      "message " + uuid.NewString(),
+	}
+)
+
+func setup(t *testing.T) func(*testing.T) {
+	h1, err := order1.NewHandler(
+		context.Background(),
+		order1.WithID(&order.ID, false),
+		order1.WithAppID(&order.AppID, true),
+		order1.WithUserID(&order.UserID, true),
+		order1.WithGoodID(&order.GoodID, true),
+		order1.WithAppGoodID(&order.AppGoodID, true),
+		order1.WithParentOrderID(&order.ParentOrderID, false),
+		order1.WithUnits(&order.Units, true),
+		order1.WithGoodValue(&order.GoodValue, true),
+		order1.WithPaymentAmount(&order.PaymentAmount, true),
+		order1.WithDiscountAmount(&order.DiscountAmount, false),
+		order1.WithPromotionID(&order.PromotionID, false),
+		order1.WithDurationDays(&order.DurationDays, true),
+		order1.WithOrderType(&order.OrderType, true),
+		order1.WithInvestmentType(&order.InvestmentType, true),
+		order1.WithCouponIDs(order.CouponIDs, false),
+		order1.WithPaymentType(&order.PaymentType, true),
+		order1.WithPaymentAccountID(&order.PaymentAccountID, false),
+		order1.WithPaymentCoinTypeID(&order.PaymentCoinTypeID, false),
+		order1.WithPaymentStartAmount(&order.PaymentStartAmount, false),
+		order1.WithPaymentTransferAmount(&order.PaymentTransferAmount, false),
+		order1.WithPaymentBalanceAmount(&order.PaymentBalanceAmount, false),
+		order1.WithPaymentCoinUSDCurrency(&order.PaymentCoinUSDCurrency, false),
+		order1.WithPaymentLocalCoinUSDCurrency(&order.PaymentLocalCoinUSDCurrency, false),
+		order1.WithPaymentLiveCoinUSDCurrency(&order.PaymentLiveCoinUSDCurrency, false),
+		order1.WithStartMode(&order.StartMode, true),
+		order1.WithStartAt(&order.StartAt, true),
+		order1.WithEndAt(&order.EndAt, true),
+		order1.WithLastBenefitAt(&order.LastBenefitAt, false),
+		order1.WithBenefitState(&order.BenefitState, false),
+		order1.WithUserSetPaid(&order.UserSetPaid, false),
+		order1.WithUserSetCanceled(&order.UserSetCanceled, false),
+		order1.WithPaymentTransactionID(&order.PaymentTransactionID, false),
+		order1.WithPaymentFinishAmount(&order.PaymentFinishAmount, false),
+		order1.WithOutOfGasHours(&order.OutOfGasHours, false),
+		order1.WithCompensateHours(&order.CompensateHours, false),
+	)
+	assert.Nil(t, err)
+
+	_, err = h1.CreateOrder(context.Background())
+	assert.Nil(t, err)
+
+	return func(*testing.T) {
+		_, _ = h1.DeleteOrder(context.Background())
+	}
 }
 
 func createCompensate(t *testing.T) {
@@ -46,6 +154,7 @@ func createCompensate(t *testing.T) {
 	if assert.Nil(t, err) {
 		info, err := handler.CreateCompensate(context.Background())
 		if assert.Nil(t, err) {
+			ret.OrderEndAt = info.OrderEndAt
 			ret.CreatedAt = info.CreatedAt
 			ret.UpdatedAt = info.UpdatedAt
 			assert.Equal(t, &ret, info)
@@ -55,8 +164,8 @@ func createCompensate(t *testing.T) {
 
 func updateCompensate(t *testing.T) {
 	ret.Message = "change message " + uuid.NewString()
-	ret.StartAt = uint32(10007)
-	ret.EndAt = uint32(10008)
+	ret.StartAt = uint32(10035)
+	ret.EndAt = uint32(10040)
 	handler, err := NewHandler(
 		context.Background(),
 		WithID(&ret.ID, true),
@@ -68,6 +177,7 @@ func updateCompensate(t *testing.T) {
 	if assert.Nil(t, err) {
 		info, err := handler.UpdateCompensate(context.Background())
 		if assert.Nil(t, err) {
+			ret.OrderEndAt = info.OrderEndAt
 			ret.UpdatedAt = info.UpdatedAt
 			assert.Equal(t, &ret, info)
 		}
@@ -114,6 +224,7 @@ func deleteCompensate(t *testing.T) {
 	if assert.Nil(t, err) {
 		info, err := handler.DeleteCompensate(context.Background())
 		if assert.Nil(t, err) {
+			ret.OrderEndAt = info.OrderEndAt
 			assert.Equal(t, &ret, info)
 		}
 
@@ -127,6 +238,9 @@ func TestCompensate(t *testing.T) {
 	if runByGithubAction, err := strconv.ParseBool(os.Getenv("RUN_BY_GITHUB_ACTION")); err == nil && runByGithubAction {
 		return
 	}
+
+	teardown := setup(t)
+	defer teardown(t)
 
 	t.Run("createCompensate", createCompensate)
 	t.Run("updateCompensate", updateCompensate)
