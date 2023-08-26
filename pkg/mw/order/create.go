@@ -28,26 +28,7 @@ func (h *createHandler) paymentState() ordertypes.PaymentState {
 	return ordertypes.PaymentState_PaymentStateNoPayment
 }
 
-func (h *createHandler) initCreateReq(req OrderReq) *OrderReq {
-	id := uuid.New()
-	if req.Req.ID == nil {
-		req.Req.ID = &id
-		req.OrderStateReq.OrderID = &id
-	}
-
-	paymentState := h.paymentState()
-	if req.OrderStateReq.PaymentState != nil {
-		paymentState = *h.PaymentState
-	}
-	req.OrderStateReq.PaymentState = &paymentState
-	return &req
-}
-
 func (h *createHandler) createOrderState(ctx context.Context, tx *ent.Tx, req *orderstatecrud.Req) error {
-	orderState := ordertypes.OrderState_OrderStateWaitPayment
-	id := uuid.New()
-	req.ID = &id
-	req.OrderState = &orderState
 	if _, err := orderstatecrud.CreateSet(
 		tx.OrderState.Create(),
 		req,
@@ -81,16 +62,18 @@ func (h *createHandler) createOrder(ctx context.Context, tx *ent.Tx, req *orderc
 }
 
 func (h *Handler) CreateOrder(ctx context.Context) (*npool.Order, error) {
-	req := h.ToOrderReq()
+	id := uuid.New()
+	if h.ID == nil {
+		h.ID = &id
+	}
 
 	handler := &createHandler{
 		Handler: h,
 	}
+	h.PaymentState = handler.paymentState()
+	req := h.ToOrderReq()
 
 	err := db.WithTx(ctx, func(ctx context.Context, tx *ent.Tx) error {
-		_req := handler.initCreateReq(*req)
-		h.ID = _req.Req.ID
-
 		if err := handler.createOrder(ctx, tx, _req.Req); err != nil {
 			return err
 		}

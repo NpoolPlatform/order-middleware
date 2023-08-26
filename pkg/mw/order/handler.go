@@ -902,93 +902,90 @@ func WithReqs(reqs []*npool.OrderReq) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		_reqs := []*OrderReq{}
 		for _, req := range reqs {
-			_orderReq := &ordercrud.Req{}
-			_orderstateReq := &orderstatecrud.Req{}
-			_paymentReq := &paymentcrud.Req{}
+			_req := &OrderReq{
+				Req:           &ordercrud.Req{},
+				OrderStateReq: &orderstatecrud.Req{},
+			}
 			if req.ID != nil {
 				id, err := uuid.Parse(req.GetID())
 				if err != nil {
 					return err
 				}
-				_orderReq.ID = &id
-				_orderstateReq.OrderID = &id
-				_paymentReq.OrderID = &id
+				_req.ID = &id
+				_req.OrderStateReq.OrderID = &id
 			}
 			if req.AppID != nil {
 				id, err := uuid.Parse(req.GetAppID())
 				if err != nil {
 					return err
 				}
-				_orderReq.AppID = &id
-				_paymentReq.AppID = &id
+				_req.AppID = &id
 			}
 			if req.UserID != nil {
 				id, err := uuid.Parse(req.GetUserID())
 				if err != nil {
 					return err
 				}
-				_orderReq.UserID = &id
-				_paymentReq.UserID = &id
+				_req.UserID = &id
 			}
 			if req.GoodID != nil {
 				id, err := uuid.Parse(req.GetGoodID())
 				if err != nil {
 					return err
 				}
-				_orderReq.GoodID = &id
-				_paymentReq.GoodID = &id
+				_req.GoodID = &id
 			}
 			if req.AppGoodID != nil {
 				id, err := uuid.Parse(req.GetAppGoodID())
 				if err != nil {
 					return err
 				}
-				_orderReq.AppGoodID = &id
+				_req.AppGoodID = &id
 			}
 			if req.ParentOrderID != nil {
 				id, err := uuid.Parse(req.GetParentOrderID())
 				if err != nil {
 					return err
 				}
-				_orderReq.ParentOrderID = &id
+				_req.ParentOrderID = &id
 			}
 			if req.Units != nil {
 				amount, err := decimal.NewFromString(*req.Units)
 				if err != nil {
 					return err
 				}
-				_orderReq.Units = &amount
+				_req.Units = &amount
 			}
 			if req.GoodValue != nil {
 				amount, err := decimal.NewFromString(*req.GoodValue)
 				if err != nil {
 					return err
 				}
-				_orderReq.GoodValue = &amount
+				_req.GoodValue = &amount
 			}
 			if req.PaymentAmount != nil {
 				amount, err := decimal.NewFromString(*req.PaymentAmount)
 				if err != nil {
 					return err
 				}
-				_orderReq.PaymentAmount = &amount
+				_req.PaymentAmount = &amount
 			}
 			if req.DiscountAmount != nil {
 				amount, err := decimal.NewFromString(*req.DiscountAmount)
 				if err != nil {
 					return err
 				}
-				_orderReq.DiscountAmount = &amount
+				_req.DiscountAmount = &amount
 			}
 			if req.PromotionID != nil {
 				id, err := uuid.Parse(req.GetPromotionID())
 				if err != nil {
 					return err
 				}
-				_orderReq.PromotionID = &id
+				_req.PromotionID = &id
 			}
 			if req.DurationDays != nil {
-				_orderReq.DurationDays = req.DurationDays
+				_req.DurationDays = req.GetDurationDays()
 			}
 			if req.OrderType != nil {
 				switch req.GetOrderType() {
@@ -998,7 +995,7 @@ func WithReqs(reqs []*npool.OrderReq) func(context.Context, *Handler) error {
 				default:
 					return fmt.Errorf("invalid ordertype")
 				}
-				_orderReq.OrderType = req.OrderType
+				_req.OrderType = req.OrderType
 			}
 			if req.InvestmentType != nil {
 				switch req.GetInvestmentType() {
@@ -1007,7 +1004,7 @@ func WithReqs(reqs []*npool.OrderReq) func(context.Context, *Handler) error {
 				default:
 					return fmt.Errorf("invalid investmenttype")
 				}
-				_orderReq.InvestmentType = req.InvestmentType
+				_req.InvestmentType = req.InvestmentType
 			}
 			if req.CouponIDs != nil {
 				_ids := []uuid.UUID{}
@@ -1018,34 +1015,55 @@ func WithReqs(reqs []*npool.OrderReq) func(context.Context, *Handler) error {
 					}
 					_ids = append(_ids, _id)
 				}
-				_orderReq.CouponIDs = &_ids
+				_req.CouponIDs = &_ids
 			}
 			if req.PaymentType != nil {
+				_req.PaymentType = req.PaymentType
 				switch req.GetPaymentType() {
 				case basetypes.PaymentType_PayWithBalanceOnly:
+					fallthrough //nolint
 				case basetypes.PaymentType_PayWithTransferOnly:
+					fallthrough //nolint
 				case basetypes.PaymentType_PayWithTransferAndBalance:
+					amount, err := decimal.NewFromString(req.GetPaymentAmount())
+					if err != nil {
+						return err
+					}
+					if amount.Cmp(decimal.NewFromInt(0)) <= 0 {
+						_reqs = append(_reqs, _req)
+						continue
+					}
 				case basetypes.PaymentType_PayWithParentOrder:
+					fallthrough //nolint
 				case basetypes.PaymentType_PayWithOffline:
+					fallthrough //nolint
 				case basetypes.PaymentType_PayWithNoPayment:
+					continue
 				default:
 					return fmt.Errorf("invalid paymenttype")
 				}
-				_orderReq.PaymentType = req.PaymentType
+			}
+
+			_req.PaymentReq = &paymentcrud.Req{
+				OrderID:     _req.ID,
+				AppID:       _req.AppID,
+				GoodID:      _req.GoodID,
+				UserID:      _req.UserID,
+				PaymentType: _req.PaymentType,
 			}
 			if req.PaymentAccountID != nil {
 				id, err := uuid.Parse(req.GetPaymentAccountID())
 				if err != nil {
 					return err
 				}
-				_paymentReq.AccountID = &id
+				_req.PaymentReq.AccountID = &id
 			}
 			if req.PaymentCoinTypeID != nil {
 				id, err := uuid.Parse(req.GetPaymentCoinTypeID())
 				if err != nil {
 					return err
 				}
-				_paymentReq.CoinTypeID = &id
+				_req.PaymentReq.CoinTypeID = &id
 			}
 			if req.PaymentStartAmount != nil {
 				amount, err := decimal.NewFromString(*req.PaymentStartAmount)
@@ -1055,14 +1073,14 @@ func WithReqs(reqs []*npool.OrderReq) func(context.Context, *Handler) error {
 				if amount.Cmp(decimal.NewFromInt(0)) <= 0 {
 					return fmt.Errorf("startamount is less than or equal to 0")
 				}
-				_paymentReq.StartAmount = &amount
+				_req.PaymentReq.StartAmount = &amount
 			}
 			if req.PaymentTransferAmount != nil {
 				amount, err := decimal.NewFromString(*req.PaymentTransferAmount)
 				if err != nil {
 					return err
 				}
-				_paymentReq.TransferAmount = &amount
+				_req.PaymentReq.TransferAmount = &amount
 			}
 			if req.PaymentBalanceAmount != nil {
 				amount, err := decimal.NewFromString(*req.PaymentBalanceAmount)
@@ -1072,7 +1090,7 @@ func WithReqs(reqs []*npool.OrderReq) func(context.Context, *Handler) error {
 				if amount.Cmp(decimal.NewFromInt(0)) <= 0 {
 					return fmt.Errorf("balanceamount is less than or equal to 0")
 				}
-				_paymentReq.BalanceAmount = &amount
+				_req.PaymentReq.BalanceAmount = &amount
 			}
 			if req.PaymentCoinUSDCurrency != nil {
 				amount, err := decimal.NewFromString(*req.PaymentCoinUSDCurrency)
@@ -1082,7 +1100,7 @@ func WithReqs(reqs []*npool.OrderReq) func(context.Context, *Handler) error {
 				if amount.Cmp(decimal.NewFromInt(0)) <= 0 {
 					return fmt.Errorf("coinusdcurrency is less than or equal to 0")
 				}
-				_paymentReq.CoinUSDCurrency = &amount
+				_req.PaymentReq.CoinUSDCurrency = &amount
 			}
 			if req.PaymentLocalCoinUSDCurrency != nil {
 				amount, err := decimal.NewFromString(*req.PaymentLocalCoinUSDCurrency)
@@ -1092,7 +1110,7 @@ func WithReqs(reqs []*npool.OrderReq) func(context.Context, *Handler) error {
 				if amount.Cmp(decimal.NewFromInt(0)) <= 0 {
 					return fmt.Errorf("localcoinusdcurrency is less than or equal to 0")
 				}
-				_paymentReq.LocalCoinUSDCurrency = &amount
+				_req.PaymentReq.LocalCoinUSDCurrency = &amount
 			}
 			if req.PaymentLiveCoinUSDCurrency != nil {
 				amount, err := decimal.NewFromString(*req.PaymentLiveCoinUSDCurrency)
@@ -1102,7 +1120,7 @@ func WithReqs(reqs []*npool.OrderReq) func(context.Context, *Handler) error {
 				if amount.Cmp(decimal.NewFromInt(0)) <= 0 {
 					return fmt.Errorf("livecoinusdcurrency is less than or equal to 0")
 				}
-				_paymentReq.LiveCoinUSDCurrency = &amount
+				_req.PaymentReq.LiveCoinUSDCurrency = &amount
 			}
 			if req.OrderState != nil {
 				switch req.GetOrderState() {
@@ -1179,11 +1197,6 @@ func WithReqs(reqs []*npool.OrderReq) func(context.Context, *Handler) error {
 			}
 			if req.CompensateHours != nil {
 				_orderstateReq.CompensateHours = req.CompensateHours
-			}
-			_req := &OrderReq{
-				Req:           _orderReq,
-				PaymentReq:    _paymentReq,
-				OrderStateReq: _orderstateReq,
 			}
 			_reqs = append(_reqs, _req)
 		}
