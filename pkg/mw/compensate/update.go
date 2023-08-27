@@ -75,18 +75,18 @@ func (h *updateHandler) updateOrder(ctx context.Context, tx *ent.Tx) error {
 	compStartAt := *h.OldStartAt
 	compEndAt := *h.OldEndAt
 	if h.StartAt != nil {
-		if *h.StartAt < orderStartAt || *h.StartAt > orderEndAt {
+		if *h.StartAt < orderStartAt || orderEndAt < *h.StartAt {
 			return fmt.Errorf("invalid startat")
 		}
 		compStartAt = *h.StartAt
 	}
 	if h.EndAt != nil {
-		if *h.EndAt > orderEndAt || *h.EndAt < orderStartAt {
+		if *h.EndAt < orderStartAt || orderEndAt < *h.EndAt {
 			return fmt.Errorf("invalid endat")
 		}
 		compEndAt = *h.EndAt
 	}
-	if compStartAt > compEndAt {
+	if compEndAt < compStartAt {
 		return fmt.Errorf("invalid startat")
 	}
 

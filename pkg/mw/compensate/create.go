@@ -53,7 +53,7 @@ func (h *createHandler) updateOrder(ctx context.Context, tx *ent.Tx) error {
 
 	orderStartAt := orderstate.StartAt
 	orderEndAt := orderstate.EndAt
-	if *h.StartAt > *h.EndAt || *h.StartAt < orderStartAt || *h.StartAt > orderEndAt || *h.EndAt > orderEndAt {
+	if *h.StartAt > *h.EndAt || *h.StartAt < orderStartAt || orderEndAt < *h.EndAt {
 		return fmt.Errorf("invalid startat")
 	}
 	duration := *h.EndAt - *h.StartAt

@@ -69,16 +69,16 @@ func (h *deleteHandler) updateOrder(ctx context.Context, tx *ent.Tx) error {
 	}
 
 	oldDuration := *h.OldEndAt - *h.OldStartAt
-	startAt := orderstate.StartAt
-	endAt := orderstate.EndAt - oldDuration
-	if endAt < startAt {
+	orderStartAt := orderstate.StartAt
+	orderEndAt := orderstate.EndAt - oldDuration
+	if orderEndAt < orderStartAt {
 		return fmt.Errorf("invalid endat")
 	}
 
 	if _, err := orderstatecrud.UpdateSet(
 		orderstate.Update(),
 		&orderstatecrud.Req{
-			EndAt: &endAt,
+			EndAt: &orderEndAt,
 		},
 	).Save(ctx); err != nil {
 		return err
