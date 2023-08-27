@@ -50,7 +50,7 @@ func (h *updateHandler) updateOrder(ctx context.Context, tx *ent.Tx) error {
 	if compensateHours < h.compensateSeconds/timedef.SecondsPerHour {
 		return fmt.Errorf("invalid compensate")
 	}
-	compensateHours = compensateHours - h.compensateSeconds/timedef.SecondsPerHour
+	compensateHours -= h.compensateSeconds / timedef.SecondsPerHour
 
 	if _, err := orderstatecrud.UpdateSet(
 		orderstate.Update(),

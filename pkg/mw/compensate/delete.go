@@ -31,7 +31,6 @@ func (h *deleteHandler) deleteCompensate(ctx context.Context, tx *ent.Tx) error 
 	return nil
 }
 
-//nolint:dupl
 func (h *deleteHandler) updateOrder(ctx context.Context, tx *ent.Tx) error {
 	orderstate, err := tx.OrderState.
 		Query().
@@ -46,7 +45,7 @@ func (h *deleteHandler) updateOrder(ctx context.Context, tx *ent.Tx) error {
 	}
 
 	endAt := orderstate.EndAt - (*h.EndAt - *h.StartAt)
-	if endAt <= orderstate.EndAt || endAt < uint32(time.Now().Unix()) {
+	if endAt <= orderstate.StartAt || endAt < uint32(time.Now().Unix()) {
 		return fmt.Errorf("invalid compensate")
 	}
 	if orderstate.CompensateHours < (*h.EndAt-*h.StartAt)/timedef.SecondsPerHour {

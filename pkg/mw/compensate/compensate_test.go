@@ -6,6 +6,7 @@ import (
 	"os"
 	"strconv"
 	"testing"
+	"time"
 
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
 	ordertypes "github.com/NpoolPlatform/message/npool/basetypes/order/v1"
@@ -29,7 +30,11 @@ func init() {
 	}
 }
 
+const secondsPerDay = 24 * 60 * 60
+const secondsPerHours = 60 * 60
+
 var (
+	now   = uint32(time.Now().Unix())
 	order = ordermwpb.Order{
 		ID:                uuid.NewString(),
 		AppID:             uuid.NewString(),
@@ -42,7 +47,7 @@ var (
 		PaymentAmount:     "1007.000000000000000000",
 		DiscountAmount:    "10.000000000000000000",
 		PromotionID:       uuid.NewString(),
-		DurationDays:      10006,
+		DurationDays:      now + 5*secondsPerDay,
 		OrderTypeStr:      ordertypes.OrderType_Normal.String(),
 		OrderType:         ordertypes.OrderType_Normal,
 		InvestmentType:    ordertypes.InvestmentType_FullPayment,
@@ -63,9 +68,9 @@ var (
 		OrderState:           ordertypes.OrderState_OrderStateWaitPayment,
 		StartModeStr:         ordertypes.OrderStartMode_OrderStartConfirmed.String(),
 		StartMode:            ordertypes.OrderStartMode_OrderStartConfirmed,
-		StartAt:              10020,
-		EndAt:                10060,
-		LastBenefitAt:        10005,
+		StartAt:              now - 5*secondsPerDay,
+		EndAt:                now + 5*secondsPerDay,
+		LastBenefitAt:        now + 3*secondsPerDay,
 		BenefitStateStr:      ordertypes.BenefitState_BenefitWait.String(),
 		BenefitState:         ordertypes.BenefitState_BenefitWait,
 		UserSetPaid:          false,
@@ -87,8 +92,8 @@ var (
 		Units:        order.Units,
 		OrderStartAt: order.StartAt,
 		OrderEndAt:   order.EndAt,
-		StartAt:      10030,
-		EndAt:        10045,
+		StartAt:      now + secondsPerDay,
+		EndAt:        now + secondsPerDay + 2*secondsPerHours,
 		Message:      "message " + uuid.NewString(),
 	}
 )
@@ -164,8 +169,8 @@ func createCompensate(t *testing.T) {
 
 func updateCompensate(t *testing.T) {
 	ret.Message = "change message " + uuid.NewString()
-	ret.StartAt = uint32(10035)
-	ret.EndAt = uint32(10040)
+	ret.StartAt = now + secondsPerDay + 2*secondsPerHours
+	ret.EndAt = now + secondsPerDay + 6*secondsPerHours
 	handler, err := NewHandler(
 		context.Background(),
 		WithID(&ret.ID, true),
@@ -225,6 +230,8 @@ func deleteCompensate(t *testing.T) {
 		info, err := handler.DeleteCompensate(context.Background())
 		if assert.Nil(t, err) {
 			ret.OrderEndAt = info.OrderEndAt
+			fmt.Println("info: ", info)
+			fmt.Println("ret: ", &ret)
 			assert.Equal(t, &ret, info)
 		}
 

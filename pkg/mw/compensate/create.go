@@ -35,7 +35,6 @@ func (h *createHandler) createCompensate(ctx context.Context, tx *ent.Tx) error 
 	return nil
 }
 
-//nolint:dupl
 func (h *createHandler) updateOrder(ctx context.Context, tx *ent.Tx) error {
 	orderstate, err := tx.OrderState.
 		Query().
