@@ -45,6 +45,9 @@ func (h *updateHandler) updateOrder(ctx context.Context, tx *ent.Tx) error {
 		return err
 	}
 
+	if *h.StartAt < orderstate.StartAt || orderstate.EndAt < *h.EndAt {
+		return fmt.Errorf("invalid compensate")
+	}
 	endAt := orderstate.EndAt + *h.EndAt - *h.StartAt - h.compensateSeconds
 	compensateHours := orderstate.CompensateHours + (*h.EndAt-*h.StartAt)/timedef.SecondsPerHour
 	if compensateHours < h.compensateSeconds/timedef.SecondsPerHour {

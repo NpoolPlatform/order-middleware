@@ -2,6 +2,7 @@ package compensate
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/NpoolPlatform/order-middleware/pkg/db"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent"
@@ -48,6 +49,9 @@ func (h *createHandler) updateOrder(ctx context.Context, tx *ent.Tx) error {
 		return err
 	}
 
+	if *h.StartAt < orderstate.StartAt || orderstate.EndAt < *h.EndAt {
+		return fmt.Errorf("invalid compensate")
+	}
 	endAt := orderstate.EndAt + *h.EndAt - *h.StartAt
 	compensateHours := orderstate.CompensateHours + (*h.EndAt-*h.StartAt)/timedef.SecondsPerHour
 

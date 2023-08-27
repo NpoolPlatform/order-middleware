@@ -230,8 +230,6 @@ func deleteCompensate(t *testing.T) {
 		info, err := handler.DeleteCompensate(context.Background())
 		if assert.Nil(t, err) {
 			ret.OrderEndAt = info.OrderEndAt
-			fmt.Println("info: ", info)
-			fmt.Println("ret: ", &ret)
 			assert.Equal(t, &ret, info)
 		}
 

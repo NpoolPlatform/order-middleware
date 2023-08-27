@@ -51,15 +51,17 @@ func UpdateSet(u *ent.OutOfGasUpdateOne, req *Req) *ent.OutOfGasUpdateOne {
 }
 
 type Conds struct {
-	ID      *cruder.Cond
-	IDs     *cruder.Cond
-	OrderID *cruder.Cond
-	StartAt *cruder.Cond
-	EndAt   *cruder.Cond
+	ID       *cruder.Cond
+	IDs      *cruder.Cond
+	OrderID  *cruder.Cond
+	StartAt  *cruder.Cond
+	EndAt    *cruder.Cond
+	StartEnd *cruder.Cond
 }
 
 //nolint
 func SetQueryConds(q *ent.OutOfGasQuery, conds *Conds) (*ent.OutOfGasQuery, error) {
+	q.Where(entoutofgas.DeletedAt(0))
 	if conds == nil {
 		return q, nil
 	}
@@ -71,8 +73,10 @@ func SetQueryConds(q *ent.OutOfGasQuery, conds *Conds) (*ent.OutOfGasQuery, erro
 		switch conds.ID.Op {
 		case cruder.EQ:
 			q.Where(entoutofgas.ID(id))
+		case cruder.NEQ:
+			q.Where(entoutofgas.IDNEQ(id))
 		default:
-			return nil, fmt.Errorf("invalid compensate field")
+			return nil, fmt.Errorf("invalid outofgas field")
 		}
 	}
 	if conds.IDs != nil {
@@ -85,7 +89,7 @@ func SetQueryConds(q *ent.OutOfGasQuery, conds *Conds) (*ent.OutOfGasQuery, erro
 			case cruder.IN:
 				q.Where(entoutofgas.IDIn(ids...))
 			default:
-				return nil, fmt.Errorf("invalid compensate field")
+				return nil, fmt.Errorf("invalid outofgas field")
 			}
 		}
 	}
@@ -98,7 +102,7 @@ func SetQueryConds(q *ent.OutOfGasQuery, conds *Conds) (*ent.OutOfGasQuery, erro
 		case cruder.EQ:
 			q.Where(entoutofgas.OrderID(id))
 		default:
-			return nil, fmt.Errorf("invalid compensate field")
+			return nil, fmt.Errorf("invalid outofgas field")
 		}
 	}
 	if conds.StartAt != nil {
@@ -112,7 +116,7 @@ func SetQueryConds(q *ent.OutOfGasQuery, conds *Conds) (*ent.OutOfGasQuery, erro
 		case cruder.GTE:
 			q.Where(entoutofgas.StartAtGTE(start))
 		default:
-			return nil, fmt.Errorf("invalid compensate field")
+			return nil, fmt.Errorf("invalid outofgas field")
 		}
 	}
 	if conds.EndAt != nil {
@@ -126,9 +130,35 @@ func SetQueryConds(q *ent.OutOfGasQuery, conds *Conds) (*ent.OutOfGasQuery, erro
 		case cruder.GTE:
 			q.Where(entoutofgas.EndAtGTE(end))
 		default:
-			return nil, fmt.Errorf("invalid compensate field")
+			return nil, fmt.Errorf("invalid outofgas field")
 		}
 	}
-	q.Where(entoutofgas.DeletedAt(0))
+	if conds.StartEnd != nil {
+		ats, ok := conds.StartEnd.Val.([]uint32)
+		if !ok || len(ats) != 2 {
+			return nil, fmt.Errorf("invalid startend")
+		}
+		switch conds.StartEnd.Op {
+		case cruder.OVERLAP:
+			q.Where(
+				entoutofgas.Or(
+					entoutofgas.And(
+						entoutofgas.StartAtLTE(ats[0]),
+						entoutofgas.EndAtGTE(ats[0]),
+					),
+					entoutofgas.And(
+						entoutofgas.StartAtLTE(ats[1]),
+						entoutofgas.EndAtGTE(ats[1]),
+					),
+					entoutofgas.And(
+						entoutofgas.StartAtGTE(ats[0]),
+						entoutofgas.EndAtLTE(ats[1]),
+					),
+				),
+			)
+		default:
+			return nil, fmt.Errorf("invalid outofgas field")
+		}
+	}
 	return q, nil
 }

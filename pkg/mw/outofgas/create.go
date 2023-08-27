@@ -2,35 +2,87 @@ package outofgas
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/NpoolPlatform/order-middleware/pkg/db"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent"
 
+	timedef "github.com/NpoolPlatform/go-service-framework/pkg/const/time"
 	npool "github.com/NpoolPlatform/message/npool/order/mw/v1/outofgas"
+	orderstatecrud "github.com/NpoolPlatform/order-middleware/pkg/crud/orderstate"
 	outofgascrud "github.com/NpoolPlatform/order-middleware/pkg/crud/outofgas"
+	entorderstate "github.com/NpoolPlatform/order-middleware/pkg/db/ent/orderstate"
 
 	"github.com/google/uuid"
 )
 
+type createHandler struct {
+	*Handler
+}
+
+func (h *createHandler) createOutOfGas(ctx context.Context, tx *ent.Tx) error {
+	if _, err := outofgascrud.CreateSet(
+		tx.OutOfGas.Create(),
+		&outofgascrud.Req{
+			ID:      h.ID,
+			OrderID: h.OrderID,
+			StartAt: h.StartAt,
+			EndAt:   h.EndAt,
+		},
+	).Save(ctx); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (h *createHandler) updateOrder(ctx context.Context, tx *ent.Tx) error {
+	orderstate, err := tx.OrderState.
+		Query().
+		Where(
+			entorderstate.OrderID(*h.OrderID),
+			entorderstate.DeletedAt(0),
+		).
+		ForUpdate().
+		Only(ctx)
+	if err != nil {
+		return err
+	}
+	if *h.StartAt < orderstate.StartAt || orderstate.EndAt < *h.EndAt {
+		return fmt.Errorf("invalid outofgas")
+	}
+	outOfGasHours := orderstate.OutofgasHours + (*h.EndAt-*h.StartAt)/timedef.SecondsPerHour
+
+	if _, err := orderstatecrud.UpdateSet(
+		orderstate.Update(),
+		&orderstatecrud.Req{
+			OutOfGasHours: &outOfGasHours,
+		},
+	).Save(ctx); err != nil {
+		return err
+	}
+	return nil
+}
+
 func (h *Handler) CreateOutOfGas(ctx context.Context) (*npool.OutOfGas, error) {
+	if _, err := h.checkOutOfGas(ctx, true); err != nil {
+		return nil, err
+	}
+
 	id := uuid.New()
 	if h.ID == nil {
 		h.ID = &id
 	}
 
+	handler := &createHandler{
+		Handler: h,
+	}
 	err := db.WithTx(ctx, func(ctx context.Context, tx *ent.Tx) error {
-		if _, err := outofgascrud.CreateSet(
-			tx.OutOfGas.Create(),
-			&outofgascrud.Req{
-				ID:      h.ID,
-				OrderID: h.OrderID,
-				StartAt: h.StartAt,
-				EndAt:   h.EndAt,
-			},
-		).Save(ctx); err != nil {
+		if err := handler.createOutOfGas(ctx, tx); err != nil {
 			return err
 		}
-
+		if err := handler.updateOrder(ctx, tx); err != nil {
+			return err
+		}
 		return nil
 	})
 	if err != nil {
