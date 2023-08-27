@@ -58,15 +58,17 @@ func UpdateSet(u *ent.CompensateUpdateOne, req *Req) *ent.CompensateUpdateOne {
 }
 
 type Conds struct {
-	ID      *cruder.Cond
-	IDs     *cruder.Cond
-	OrderID *cruder.Cond
-	StartAt *cruder.Cond
-	EndAt   *cruder.Cond
+	ID       *cruder.Cond
+	IDs      *cruder.Cond
+	OrderID  *cruder.Cond
+	StartAt  *cruder.Cond
+	EndAt    *cruder.Cond
+	StartEnd *cruder.Cond
 }
 
 //nolint
 func SetQueryConds(q *ent.CompensateQuery, conds *Conds) (*ent.CompensateQuery, error) {
+	q.Where(entcompensate.DeletedAt(0))
 	if conds == nil {
 		return q, nil
 	}
@@ -78,6 +80,8 @@ func SetQueryConds(q *ent.CompensateQuery, conds *Conds) (*ent.CompensateQuery, 
 		switch conds.ID.Op {
 		case cruder.EQ:
 			q.Where(entcompensate.ID(id))
+		case cruder.NEQ:
+			q.Where(entcompensate.IDNEQ(id))
 		default:
 			return nil, fmt.Errorf("invalid compensate field")
 		}
@@ -136,6 +140,32 @@ func SetQueryConds(q *ent.CompensateQuery, conds *Conds) (*ent.CompensateQuery, 
 			return nil, fmt.Errorf("invalid compensate field")
 		}
 	}
-	q.Where(entcompensate.DeletedAt(0))
+	if conds.StartEnd != nil {
+		ats, ok := conds.StartEnd.Val.([]uint32)
+		if !ok || len(ats) != 2 {
+			return nil, fmt.Errorf("invalid startend")
+		}
+		switch conds.StartEnd.Op {
+		case cruder.OVERLAP:
+			q.Where(
+				entcompensate.Or(
+					entcompensate.And(
+						entcompensate.StartAtLTE(ats[0]),
+						entcompensate.EndAtGTE(ats[0]),
+					),
+					entcompensate.And(
+						entcompensate.StartAtLTE(ats[1]),
+						entcompensate.EndAtGTE(ats[1]),
+					),
+					entcompensate.And(
+						entcompensate.StartAtGTE(ats[0]),
+						entcompensate.EndAtLTE(ats[1]),
+					),
+				),
+			)
+		default:
+			return nil, fmt.Errorf("invalid compensate field")
+		}
+	}
 	return q, nil
 }
