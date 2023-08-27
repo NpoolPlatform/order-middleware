@@ -12,19 +12,23 @@ import (
 	"github.com/google/uuid"
 )
 
-func (h *Handler) checkCompensate(ctx context.Context, newCompensate bool) error {
+func (h *Handler) checkCompensate(ctx context.Context, newCompensate bool) (uint32, error) {
+	compensateSeconds := uint32(0)
+
 	if !newCompensate {
 		info, err := h.GetCompensate(ctx)
 		if err != nil {
-			return err
+			return 0, err
 		}
 		if info == nil {
-			return fmt.Errorf("invalid compensate")
+			return 0, fmt.Errorf("invalid compensate")
 		}
+
+		compensateSeconds = info.EndAt - info.StartAt
 
 		orderID, err := uuid.Parse(info.OrderID)
 		if err != nil {
-			return err
+			return 0, err
 		}
 		h.OrderID = &orderID
 
@@ -37,14 +41,14 @@ func (h *Handler) checkCompensate(ctx context.Context, newCompensate bool) error
 	}
 
 	if h.StartAt == nil || h.EndAt == nil {
-		return fmt.Errorf("invalid duration")
+		return 0, fmt.Errorf("invalid duration")
 	}
 
 	if *h.EndAt < *h.StartAt {
-		return fmt.Errorf("invalid compensate")
+		return 0, fmt.Errorf("invalid compensate")
 	}
 
-	return db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
+	if err := db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
 		conds := &compensatecrud.Conds{
 			OrderID:  &cruder.Cond{Op: cruder.EQ, Val: *h.OrderID},
 			StartEnd: &cruder.Cond{Op: cruder.OVERLAP, Val: []uint32{*h.StartAt, *h.EndAt}},
@@ -64,5 +68,8 @@ func (h *Handler) checkCompensate(ctx context.Context, newCompensate bool) error
 			return fmt.Errorf("time overlap")
 		}
 		return nil
-	})
+	}); err != nil {
+		return 0, err
+	}
+	return compensateSeconds, nil
 }

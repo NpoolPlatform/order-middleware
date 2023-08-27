@@ -2,6 +2,7 @@ package compensate
 
 import (
 	"context"
+	"fmt"
 
 	timedef "github.com/NpoolPlatform/go-service-framework/pkg/const/time"
 	npool "github.com/NpoolPlatform/message/npool/order/mw/v1/compensate"
@@ -14,6 +15,7 @@ import (
 
 type updateHandler struct {
 	*Handler
+	compensateSeconds uint32
 }
 
 func (h *updateHandler) updateCompensate(ctx context.Context, tx *ent.Tx) error {
@@ -43,8 +45,12 @@ func (h *updateHandler) updateOrder(ctx context.Context, tx *ent.Tx) error {
 		return err
 	}
 
-	endAt := orderstate.EndAt + *h.EndAt - *h.StartAt
+	endAt := orderstate.EndAt + *h.EndAt - *h.StartAt - h.compensateSeconds
 	compensateHours := orderstate.CompensateHours + (*h.EndAt-*h.StartAt)/timedef.SecondsPerHour
+	if compensateHours < h.compensateSeconds/timedef.SecondsPerHour {
+		return fmt.Errorf("invalid compensate")
+	}
+	compensateHours = compensateHours - h.compensateSeconds/timedef.SecondsPerHour
 
 	if _, err := orderstatecrud.UpdateSet(
 		orderstate.Update(),
@@ -59,14 +65,16 @@ func (h *updateHandler) updateOrder(ctx context.Context, tx *ent.Tx) error {
 }
 
 func (h *Handler) UpdateCompensate(ctx context.Context) (*npool.Compensate, error) {
-	if err := h.checkCompensate(ctx, false); err != nil {
+	seconds, err := h.checkCompensate(ctx, false)
+	if err != nil {
 		return nil, err
 	}
 
 	handler := &updateHandler{
-		Handler: h,
+		Handler:           h,
+		compensateSeconds: seconds,
 	}
-	err := db.WithTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {
+	err = db.WithTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {
 		if err := handler.updateCompensate(ctx, tx); err != nil {
 			return err
 		}
