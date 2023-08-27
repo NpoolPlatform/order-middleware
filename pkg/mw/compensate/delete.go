@@ -11,14 +11,44 @@ import (
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent"
 	entcompensate "github.com/NpoolPlatform/order-middleware/pkg/db/ent/compensate"
 	entorderstate "github.com/NpoolPlatform/order-middleware/pkg/db/ent/orderstate"
+	order1 "github.com/NpoolPlatform/order-middleware/pkg/mw/order"
+	"github.com/google/uuid"
 
 	npool "github.com/NpoolPlatform/message/npool/order/mw/v1/compensate"
 )
 
 type deleteHandler struct {
 	*Handler
-	OldStartAt *uint32
-	OldEndAt   *uint32
+	OldStartAt           *uint32
+	OldEndAt             *uint32
+	finalEndAt           uint32
+	finalCompensateHours uint32
+}
+
+func (h *deleteHandler) validateCompensate(ctx context.Context) error {
+	orderID := h.OrderID.String()
+	orderHandler, err := order1.NewHandler(
+		ctx,
+		order1.WithID(&orderID, true),
+	)
+	if err != nil {
+		return err
+	}
+	order, err := orderHandler.GetOrder(ctx)
+	if err != nil {
+		return err
+	}
+	if order == nil {
+		return fmt.Errorf("invalid order")
+	}
+
+	oldDuration := *h.OldEndAt - *h.OldStartAt
+	h.finalEndAt = order.EndAt - oldDuration
+	h.finalCompensateHours = order.CompensateHours - oldDuration
+	if h.finalEndAt < order.StartAt {
+		return fmt.Errorf("invalid endat")
+	}
+	return nil
 }
 
 func (h *deleteHandler) deleteCompensate(ctx context.Context, tx *ent.Tx) error {
@@ -37,10 +67,6 @@ func (h *deleteHandler) deleteCompensate(ctx context.Context, tx *ent.Tx) error 
 		return fmt.Errorf("invalid compensate")
 	}
 
-	h.OrderID = &compensate.OrderID
-	h.OldStartAt = &compensate.StartAt
-	h.OldEndAt = &compensate.EndAt
-
 	if _, err := compensatecrud.UpdateSet(
 		compensate.Update(),
 		&compensatecrud.Req{
@@ -52,6 +78,7 @@ func (h *deleteHandler) deleteCompensate(ctx context.Context, tx *ent.Tx) error 
 	return nil
 }
 
+//nolint:dupl
 func (h *deleteHandler) updateOrder(ctx context.Context, tx *ent.Tx) error {
 	orderstate, err := tx.OrderState.
 		Query().
@@ -68,17 +95,11 @@ func (h *deleteHandler) updateOrder(ctx context.Context, tx *ent.Tx) error {
 		return fmt.Errorf("invalid order")
 	}
 
-	oldDuration := *h.OldEndAt - *h.OldStartAt
-	orderStartAt := orderstate.StartAt
-	orderEndAt := orderstate.EndAt - oldDuration
-	if orderEndAt < orderStartAt {
-		return fmt.Errorf("invalid endat")
-	}
-
 	if _, err := orderstatecrud.UpdateSet(
 		orderstate.Update(),
 		&orderstatecrud.Req{
-			EndAt: &orderEndAt,
+			EndAt:           &h.finalEndAt,
+			CompensateHours: &h.finalCompensateHours,
 		},
 	).Save(ctx); err != nil {
 		return err
@@ -96,9 +117,19 @@ func (h *Handler) DeleteCompensate(ctx context.Context) (*npool.Compensate, erro
 	}
 
 	handler := &deleteHandler{
-		Handler: h,
+		Handler:    h,
+		OldStartAt: &info.StartAt,
+		OldEndAt:   &info.EndAt,
 	}
+	_id, err := uuid.Parse(info.OrderID)
+	if err != nil {
+		return nil, err
+	}
+	h.OrderID = &_id
 	err = db.WithTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {
+		if err := handler.validateCompensate(ctx); err != nil {
+			return err
+		}
 		if err := handler.deleteCompensate(ctx, tx); err != nil {
 			return err
 		}
