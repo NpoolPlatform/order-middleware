@@ -12,26 +12,32 @@ import (
 	"github.com/google/uuid"
 )
 
-func (h *Handler) checkCompensate(ctx context.Context) error {
-	info, err := h.GetCompensate(ctx)
-	if err != nil {
-		return err
-	}
-	if info == nil {
-		return fmt.Errorf("invalid compensate")
+func (h *Handler) checkCompensate(ctx context.Context, newCompensate bool) error {
+	if !newCompensate {
+		info, err := h.GetCompensate(ctx)
+		if err != nil {
+			return err
+		}
+		if info == nil {
+			return fmt.Errorf("invalid compensate")
+		}
+
+		orderID, err := uuid.Parse(info.OrderID)
+		if err != nil {
+			return err
+		}
+		h.OrderID = &orderID
+
+		if h.StartAt == nil {
+			h.StartAt = &info.StartAt
+		}
+		if h.EndAt == nil {
+			h.EndAt = &info.EndAt
+		}
 	}
 
-	orderID, err := uuid.Parse(info.OrderID)
-	if err != nil {
-		return err
-	}
-	h.OrderID = &orderID
-
-	if h.StartAt == nil {
-		h.StartAt = &info.StartAt
-	}
-	if h.EndAt == nil {
-		h.EndAt = &info.EndAt
+	if h.StartAt == nil || h.EndAt == nil {
+		return fmt.Errorf("invalid duration")
 	}
 
 	if *h.EndAt < *h.StartAt {

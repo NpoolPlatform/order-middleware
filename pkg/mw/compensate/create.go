@@ -65,7 +65,7 @@ func (h *createHandler) updateOrder(ctx context.Context, tx *ent.Tx) error {
 }
 
 func (h *Handler) CreateCompensate(ctx context.Context) (*npool.Compensate, error) {
-	if err := h.checkCompensate(ctx); err != nil {
+	if err := h.checkCompensate(ctx, true); err != nil {
 		return nil, err
 	}
 

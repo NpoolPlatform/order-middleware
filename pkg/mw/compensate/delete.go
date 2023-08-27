@@ -75,7 +75,7 @@ func (h *Handler) DeleteCompensate(ctx context.Context) (*npool.Compensate, erro
 		return nil, nil
 	}
 
-	if err := h.checkCompensate(ctx); err != nil {
+	if err := h.checkCompensate(ctx, false); err != nil {
 		return nil, err
 	}
 
