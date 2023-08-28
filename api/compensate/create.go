@@ -17,7 +17,7 @@ func (s *Server) CreateCompensate(ctx context.Context, in *npool.CreateCompensat
 	req := in.GetInfo()
 	handler, err := compensate1.NewHandler(
 		ctx,
-		compensate1.WithID(req.ID, true),
+		compensate1.WithID(req.ID, false),
 		compensate1.WithOrderID(req.OrderID, true),
 		compensate1.WithStartAt(req.StartAt, true),
 		compensate1.WithEndAt(req.EndAt, true),

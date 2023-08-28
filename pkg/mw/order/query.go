@@ -230,34 +230,6 @@ func (h *Handler) GetOrders(ctx context.Context) ([]*npool.Order, uint32, error)
 	return handler.infos, handler.total, nil
 }
 
-func (h *Handler) CountOrders(ctx context.Context) (uint32, error) {
-	count := uint32(0)
-	handler := &queryHandler{
-		Handler: h,
-	}
-
-	var err error
-	err = db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
-		handler.stmCount, err = handler.queryOrders(cli)
-		if err != nil {
-			return err
-		}
-
-		_total, err := handler.stmCount.Count(_ctx)
-		if err != nil {
-			return err
-		}
-		count = uint32(_total)
-
-		return handler.scan(_ctx)
-	})
-	if err != nil {
-		return 0, err
-	}
-
-	return count, err
-}
-
 func (h *Handler) SumOrderUnits(ctx context.Context) (string, error) {
 	sum := decimal.NewFromInt(0).String()
 	err := db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
