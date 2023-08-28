@@ -40,6 +40,8 @@ type Order struct {
 	UnitsV1 decimal.Decimal `json:"units_v1,omitempty"`
 	// GoodValue holds the value of the "good_value" field.
 	GoodValue decimal.Decimal `json:"good_value,omitempty"`
+	// GoodValueUsd holds the value of the "good_value_usd" field.
+	GoodValueUsd decimal.Decimal `json:"good_value_usd,omitempty"`
 	// PaymentAmount holds the value of the "payment_amount" field.
 	PaymentAmount decimal.Decimal `json:"payment_amount,omitempty"`
 	// DiscountAmount holds the value of the "discount_amount" field.
@@ -56,6 +58,20 @@ type Order struct {
 	CouponIds []uuid.UUID `json:"coupon_ids,omitempty"`
 	// PaymentType holds the value of the "payment_type" field.
 	PaymentType string `json:"payment_type,omitempty"`
+	// CoinTypeID holds the value of the "coin_type_id" field.
+	CoinTypeID uuid.UUID `json:"coin_type_id,omitempty"`
+	// PaymentCoinTypeID holds the value of the "payment_coin_type_id" field.
+	PaymentCoinTypeID uuid.UUID `json:"payment_coin_type_id,omitempty"`
+	// TransferAmount holds the value of the "transfer_amount" field.
+	TransferAmount decimal.Decimal `json:"transfer_amount,omitempty"`
+	// BalanceAmount holds the value of the "balance_amount" field.
+	BalanceAmount decimal.Decimal `json:"balance_amount,omitempty"`
+	// CoinUsdCurrency holds the value of the "coin_usd_currency" field.
+	CoinUsdCurrency decimal.Decimal `json:"coin_usd_currency,omitempty"`
+	// LocalCoinUsdCurrency holds the value of the "local_coin_usd_currency" field.
+	LocalCoinUsdCurrency decimal.Decimal `json:"local_coin_usd_currency,omitempty"`
+	// LiveCoinUsdCurrency holds the value of the "live_coin_usd_currency" field.
+	LiveCoinUsdCurrency decimal.Decimal `json:"live_coin_usd_currency,omitempty"`
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -65,13 +81,13 @@ func (*Order) scanValues(columns []string) ([]interface{}, error) {
 		switch columns[i] {
 		case order.FieldCouponIds:
 			values[i] = new([]byte)
-		case order.FieldUnitsV1, order.FieldGoodValue, order.FieldPaymentAmount, order.FieldDiscountAmount:
+		case order.FieldUnitsV1, order.FieldGoodValue, order.FieldGoodValueUsd, order.FieldPaymentAmount, order.FieldDiscountAmount, order.FieldTransferAmount, order.FieldBalanceAmount, order.FieldCoinUsdCurrency, order.FieldLocalCoinUsdCurrency, order.FieldLiveCoinUsdCurrency:
 			values[i] = new(decimal.Decimal)
 		case order.FieldCreatedAt, order.FieldUpdatedAt, order.FieldDeletedAt, order.FieldDurationDays:
 			values[i] = new(sql.NullInt64)
 		case order.FieldOrderType, order.FieldInvestmentType, order.FieldPaymentType:
 			values[i] = new(sql.NullString)
-		case order.FieldID, order.FieldAppID, order.FieldUserID, order.FieldGoodID, order.FieldAppGoodID, order.FieldPaymentID, order.FieldParentOrderID, order.FieldPromotionID:
+		case order.FieldID, order.FieldAppID, order.FieldUserID, order.FieldGoodID, order.FieldAppGoodID, order.FieldPaymentID, order.FieldParentOrderID, order.FieldPromotionID, order.FieldCoinTypeID, order.FieldPaymentCoinTypeID:
 			values[i] = new(uuid.UUID)
 		default:
 			return nil, fmt.Errorf("unexpected column %q for type Order", columns[i])
@@ -160,6 +176,12 @@ func (o *Order) assignValues(columns []string, values []interface{}) error {
 			} else if value != nil {
 				o.GoodValue = *value
 			}
+		case order.FieldGoodValueUsd:
+			if value, ok := values[i].(*decimal.Decimal); !ok {
+				return fmt.Errorf("unexpected type %T for field good_value_usd", values[i])
+			} else if value != nil {
+				o.GoodValueUsd = *value
+			}
 		case order.FieldPaymentAmount:
 			if value, ok := values[i].(*decimal.Decimal); !ok {
 				return fmt.Errorf("unexpected type %T for field payment_amount", values[i])
@@ -209,6 +231,48 @@ func (o *Order) assignValues(columns []string, values []interface{}) error {
 				return fmt.Errorf("unexpected type %T for field payment_type", values[i])
 			} else if value.Valid {
 				o.PaymentType = value.String
+			}
+		case order.FieldCoinTypeID:
+			if value, ok := values[i].(*uuid.UUID); !ok {
+				return fmt.Errorf("unexpected type %T for field coin_type_id", values[i])
+			} else if value != nil {
+				o.CoinTypeID = *value
+			}
+		case order.FieldPaymentCoinTypeID:
+			if value, ok := values[i].(*uuid.UUID); !ok {
+				return fmt.Errorf("unexpected type %T for field payment_coin_type_id", values[i])
+			} else if value != nil {
+				o.PaymentCoinTypeID = *value
+			}
+		case order.FieldTransferAmount:
+			if value, ok := values[i].(*decimal.Decimal); !ok {
+				return fmt.Errorf("unexpected type %T for field transfer_amount", values[i])
+			} else if value != nil {
+				o.TransferAmount = *value
+			}
+		case order.FieldBalanceAmount:
+			if value, ok := values[i].(*decimal.Decimal); !ok {
+				return fmt.Errorf("unexpected type %T for field balance_amount", values[i])
+			} else if value != nil {
+				o.BalanceAmount = *value
+			}
+		case order.FieldCoinUsdCurrency:
+			if value, ok := values[i].(*decimal.Decimal); !ok {
+				return fmt.Errorf("unexpected type %T for field coin_usd_currency", values[i])
+			} else if value != nil {
+				o.CoinUsdCurrency = *value
+			}
+		case order.FieldLocalCoinUsdCurrency:
+			if value, ok := values[i].(*decimal.Decimal); !ok {
+				return fmt.Errorf("unexpected type %T for field local_coin_usd_currency", values[i])
+			} else if value != nil {
+				o.LocalCoinUsdCurrency = *value
+			}
+		case order.FieldLiveCoinUsdCurrency:
+			if value, ok := values[i].(*decimal.Decimal); !ok {
+				return fmt.Errorf("unexpected type %T for field live_coin_usd_currency", values[i])
+			} else if value != nil {
+				o.LiveCoinUsdCurrency = *value
 			}
 		}
 	}
@@ -271,6 +335,9 @@ func (o *Order) String() string {
 	builder.WriteString("good_value=")
 	builder.WriteString(fmt.Sprintf("%v", o.GoodValue))
 	builder.WriteString(", ")
+	builder.WriteString("good_value_usd=")
+	builder.WriteString(fmt.Sprintf("%v", o.GoodValueUsd))
+	builder.WriteString(", ")
 	builder.WriteString("payment_amount=")
 	builder.WriteString(fmt.Sprintf("%v", o.PaymentAmount))
 	builder.WriteString(", ")
@@ -294,6 +361,27 @@ func (o *Order) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("payment_type=")
 	builder.WriteString(o.PaymentType)
+	builder.WriteString(", ")
+	builder.WriteString("coin_type_id=")
+	builder.WriteString(fmt.Sprintf("%v", o.CoinTypeID))
+	builder.WriteString(", ")
+	builder.WriteString("payment_coin_type_id=")
+	builder.WriteString(fmt.Sprintf("%v", o.PaymentCoinTypeID))
+	builder.WriteString(", ")
+	builder.WriteString("transfer_amount=")
+	builder.WriteString(fmt.Sprintf("%v", o.TransferAmount))
+	builder.WriteString(", ")
+	builder.WriteString("balance_amount=")
+	builder.WriteString(fmt.Sprintf("%v", o.BalanceAmount))
+	builder.WriteString(", ")
+	builder.WriteString("coin_usd_currency=")
+	builder.WriteString(fmt.Sprintf("%v", o.CoinUsdCurrency))
+	builder.WriteString(", ")
+	builder.WriteString("local_coin_usd_currency=")
+	builder.WriteString(fmt.Sprintf("%v", o.LocalCoinUsdCurrency))
+	builder.WriteString(", ")
+	builder.WriteString("live_coin_usd_currency=")
+	builder.WriteString(fmt.Sprintf("%v", o.LiveCoinUsdCurrency))
 	builder.WriteByte(')')
 	return builder.String()
 }

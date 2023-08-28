@@ -51,25 +51,33 @@ var schemaGraph = func() *sqlgraph.Schema {
 		},
 		Type: "Order",
 		Fields: map[string]*sqlgraph.FieldSpec{
-			order.FieldCreatedAt:      {Type: field.TypeUint32, Column: order.FieldCreatedAt},
-			order.FieldUpdatedAt:      {Type: field.TypeUint32, Column: order.FieldUpdatedAt},
-			order.FieldDeletedAt:      {Type: field.TypeUint32, Column: order.FieldDeletedAt},
-			order.FieldAppID:          {Type: field.TypeUUID, Column: order.FieldAppID},
-			order.FieldUserID:         {Type: field.TypeUUID, Column: order.FieldUserID},
-			order.FieldGoodID:         {Type: field.TypeUUID, Column: order.FieldGoodID},
-			order.FieldAppGoodID:      {Type: field.TypeUUID, Column: order.FieldAppGoodID},
-			order.FieldPaymentID:      {Type: field.TypeUUID, Column: order.FieldPaymentID},
-			order.FieldParentOrderID:  {Type: field.TypeUUID, Column: order.FieldParentOrderID},
-			order.FieldUnitsV1:        {Type: field.TypeOther, Column: order.FieldUnitsV1},
-			order.FieldGoodValue:      {Type: field.TypeOther, Column: order.FieldGoodValue},
-			order.FieldPaymentAmount:  {Type: field.TypeOther, Column: order.FieldPaymentAmount},
-			order.FieldDiscountAmount: {Type: field.TypeOther, Column: order.FieldDiscountAmount},
-			order.FieldPromotionID:    {Type: field.TypeUUID, Column: order.FieldPromotionID},
-			order.FieldDurationDays:   {Type: field.TypeUint32, Column: order.FieldDurationDays},
-			order.FieldOrderType:      {Type: field.TypeString, Column: order.FieldOrderType},
-			order.FieldInvestmentType: {Type: field.TypeString, Column: order.FieldInvestmentType},
-			order.FieldCouponIds:      {Type: field.TypeJSON, Column: order.FieldCouponIds},
-			order.FieldPaymentType:    {Type: field.TypeString, Column: order.FieldPaymentType},
+			order.FieldCreatedAt:            {Type: field.TypeUint32, Column: order.FieldCreatedAt},
+			order.FieldUpdatedAt:            {Type: field.TypeUint32, Column: order.FieldUpdatedAt},
+			order.FieldDeletedAt:            {Type: field.TypeUint32, Column: order.FieldDeletedAt},
+			order.FieldAppID:                {Type: field.TypeUUID, Column: order.FieldAppID},
+			order.FieldUserID:               {Type: field.TypeUUID, Column: order.FieldUserID},
+			order.FieldGoodID:               {Type: field.TypeUUID, Column: order.FieldGoodID},
+			order.FieldAppGoodID:            {Type: field.TypeUUID, Column: order.FieldAppGoodID},
+			order.FieldPaymentID:            {Type: field.TypeUUID, Column: order.FieldPaymentID},
+			order.FieldParentOrderID:        {Type: field.TypeUUID, Column: order.FieldParentOrderID},
+			order.FieldUnitsV1:              {Type: field.TypeOther, Column: order.FieldUnitsV1},
+			order.FieldGoodValue:            {Type: field.TypeOther, Column: order.FieldGoodValue},
+			order.FieldGoodValueUsd:         {Type: field.TypeOther, Column: order.FieldGoodValueUsd},
+			order.FieldPaymentAmount:        {Type: field.TypeOther, Column: order.FieldPaymentAmount},
+			order.FieldDiscountAmount:       {Type: field.TypeOther, Column: order.FieldDiscountAmount},
+			order.FieldPromotionID:          {Type: field.TypeUUID, Column: order.FieldPromotionID},
+			order.FieldDurationDays:         {Type: field.TypeUint32, Column: order.FieldDurationDays},
+			order.FieldOrderType:            {Type: field.TypeString, Column: order.FieldOrderType},
+			order.FieldInvestmentType:       {Type: field.TypeString, Column: order.FieldInvestmentType},
+			order.FieldCouponIds:            {Type: field.TypeJSON, Column: order.FieldCouponIds},
+			order.FieldPaymentType:          {Type: field.TypeString, Column: order.FieldPaymentType},
+			order.FieldCoinTypeID:           {Type: field.TypeUUID, Column: order.FieldCoinTypeID},
+			order.FieldPaymentCoinTypeID:    {Type: field.TypeUUID, Column: order.FieldPaymentCoinTypeID},
+			order.FieldTransferAmount:       {Type: field.TypeOther, Column: order.FieldTransferAmount},
+			order.FieldBalanceAmount:        {Type: field.TypeOther, Column: order.FieldBalanceAmount},
+			order.FieldCoinUsdCurrency:      {Type: field.TypeOther, Column: order.FieldCoinUsdCurrency},
+			order.FieldLocalCoinUsdCurrency: {Type: field.TypeOther, Column: order.FieldLocalCoinUsdCurrency},
+			order.FieldLiveCoinUsdCurrency:  {Type: field.TypeOther, Column: order.FieldLiveCoinUsdCurrency},
 		},
 	}
 	graph.Nodes[2] = &sqlgraph.Node{
@@ -95,6 +103,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			orderstate.FieldBenefitState:         {Type: field.TypeString, Column: orderstate.FieldBenefitState},
 			orderstate.FieldUserSetPaid:          {Type: field.TypeBool, Column: orderstate.FieldUserSetPaid},
 			orderstate.FieldUserSetCanceled:      {Type: field.TypeBool, Column: orderstate.FieldUserSetCanceled},
+			orderstate.FieldAdminSetCanceled:     {Type: field.TypeBool, Column: orderstate.FieldAdminSetCanceled},
 			orderstate.FieldPaymentTransactionID: {Type: field.TypeString, Column: orderstate.FieldPaymentTransactionID},
 			orderstate.FieldPaymentFinishAmount:  {Type: field.TypeOther, Column: orderstate.FieldPaymentFinishAmount},
 			orderstate.FieldPaymentState:         {Type: field.TypeString, Column: orderstate.FieldPaymentState},
@@ -132,22 +141,16 @@ var schemaGraph = func() *sqlgraph.Schema {
 		},
 		Type: "Payment",
 		Fields: map[string]*sqlgraph.FieldSpec{
-			payment.FieldCreatedAt:            {Type: field.TypeUint32, Column: payment.FieldCreatedAt},
-			payment.FieldUpdatedAt:            {Type: field.TypeUint32, Column: payment.FieldUpdatedAt},
-			payment.FieldDeletedAt:            {Type: field.TypeUint32, Column: payment.FieldDeletedAt},
-			payment.FieldAppID:                {Type: field.TypeUUID, Column: payment.FieldAppID},
-			payment.FieldUserID:               {Type: field.TypeUUID, Column: payment.FieldUserID},
-			payment.FieldGoodID:               {Type: field.TypeUUID, Column: payment.FieldGoodID},
-			payment.FieldOrderID:              {Type: field.TypeUUID, Column: payment.FieldOrderID},
-			payment.FieldAccountID:            {Type: field.TypeUUID, Column: payment.FieldAccountID},
-			payment.FieldCoinTypeID:           {Type: field.TypeUUID, Column: payment.FieldCoinTypeID},
-			payment.FieldCoinInfoID:           {Type: field.TypeUUID, Column: payment.FieldCoinInfoID},
-			payment.FieldStartAmount:          {Type: field.TypeOther, Column: payment.FieldStartAmount},
-			payment.FieldTransferAmount:       {Type: field.TypeOther, Column: payment.FieldTransferAmount},
-			payment.FieldBalanceAmount:        {Type: field.TypeOther, Column: payment.FieldBalanceAmount},
-			payment.FieldCoinUsdCurrency:      {Type: field.TypeOther, Column: payment.FieldCoinUsdCurrency},
-			payment.FieldLocalCoinUsdCurrency: {Type: field.TypeOther, Column: payment.FieldLocalCoinUsdCurrency},
-			payment.FieldLiveCoinUsdCurrency:  {Type: field.TypeOther, Column: payment.FieldLiveCoinUsdCurrency},
+			payment.FieldCreatedAt:   {Type: field.TypeUint32, Column: payment.FieldCreatedAt},
+			payment.FieldUpdatedAt:   {Type: field.TypeUint32, Column: payment.FieldUpdatedAt},
+			payment.FieldDeletedAt:   {Type: field.TypeUint32, Column: payment.FieldDeletedAt},
+			payment.FieldAppID:       {Type: field.TypeUUID, Column: payment.FieldAppID},
+			payment.FieldUserID:      {Type: field.TypeUUID, Column: payment.FieldUserID},
+			payment.FieldGoodID:      {Type: field.TypeUUID, Column: payment.FieldGoodID},
+			payment.FieldOrderID:     {Type: field.TypeUUID, Column: payment.FieldOrderID},
+			payment.FieldAccountID:   {Type: field.TypeUUID, Column: payment.FieldAccountID},
+			payment.FieldCoinInfoID:  {Type: field.TypeUUID, Column: payment.FieldCoinInfoID},
+			payment.FieldStartAmount: {Type: field.TypeOther, Column: payment.FieldStartAmount},
 		},
 	}
 	return graph
@@ -339,6 +342,11 @@ func (f *OrderFilter) WhereGoodValue(p entql.OtherP) {
 	f.Where(p.Field(order.FieldGoodValue))
 }
 
+// WhereGoodValueUsd applies the entql other predicate on the good_value_usd field.
+func (f *OrderFilter) WhereGoodValueUsd(p entql.OtherP) {
+	f.Where(p.Field(order.FieldGoodValueUsd))
+}
+
 // WherePaymentAmount applies the entql other predicate on the payment_amount field.
 func (f *OrderFilter) WherePaymentAmount(p entql.OtherP) {
 	f.Where(p.Field(order.FieldPaymentAmount))
@@ -377,6 +385,41 @@ func (f *OrderFilter) WhereCouponIds(p entql.BytesP) {
 // WherePaymentType applies the entql string predicate on the payment_type field.
 func (f *OrderFilter) WherePaymentType(p entql.StringP) {
 	f.Where(p.Field(order.FieldPaymentType))
+}
+
+// WhereCoinTypeID applies the entql [16]byte predicate on the coin_type_id field.
+func (f *OrderFilter) WhereCoinTypeID(p entql.ValueP) {
+	f.Where(p.Field(order.FieldCoinTypeID))
+}
+
+// WherePaymentCoinTypeID applies the entql [16]byte predicate on the payment_coin_type_id field.
+func (f *OrderFilter) WherePaymentCoinTypeID(p entql.ValueP) {
+	f.Where(p.Field(order.FieldPaymentCoinTypeID))
+}
+
+// WhereTransferAmount applies the entql other predicate on the transfer_amount field.
+func (f *OrderFilter) WhereTransferAmount(p entql.OtherP) {
+	f.Where(p.Field(order.FieldTransferAmount))
+}
+
+// WhereBalanceAmount applies the entql other predicate on the balance_amount field.
+func (f *OrderFilter) WhereBalanceAmount(p entql.OtherP) {
+	f.Where(p.Field(order.FieldBalanceAmount))
+}
+
+// WhereCoinUsdCurrency applies the entql other predicate on the coin_usd_currency field.
+func (f *OrderFilter) WhereCoinUsdCurrency(p entql.OtherP) {
+	f.Where(p.Field(order.FieldCoinUsdCurrency))
+}
+
+// WhereLocalCoinUsdCurrency applies the entql other predicate on the local_coin_usd_currency field.
+func (f *OrderFilter) WhereLocalCoinUsdCurrency(p entql.OtherP) {
+	f.Where(p.Field(order.FieldLocalCoinUsdCurrency))
+}
+
+// WhereLiveCoinUsdCurrency applies the entql other predicate on the live_coin_usd_currency field.
+func (f *OrderFilter) WhereLiveCoinUsdCurrency(p entql.OtherP) {
+	f.Where(p.Field(order.FieldLiveCoinUsdCurrency))
 }
 
 // addPredicate implements the predicateAdder interface.
@@ -477,6 +520,11 @@ func (f *OrderStateFilter) WhereUserSetPaid(p entql.BoolP) {
 // WhereUserSetCanceled applies the entql bool predicate on the user_set_canceled field.
 func (f *OrderStateFilter) WhereUserSetCanceled(p entql.BoolP) {
 	f.Where(p.Field(orderstate.FieldUserSetCanceled))
+}
+
+// WhereAdminSetCanceled applies the entql bool predicate on the admin_set_canceled field.
+func (f *OrderStateFilter) WhereAdminSetCanceled(p entql.BoolP) {
+	f.Where(p.Field(orderstate.FieldAdminSetCanceled))
 }
 
 // WherePaymentTransactionID applies the entql string predicate on the payment_transaction_id field.
@@ -654,11 +702,6 @@ func (f *PaymentFilter) WhereAccountID(p entql.ValueP) {
 	f.Where(p.Field(payment.FieldAccountID))
 }
 
-// WhereCoinTypeID applies the entql [16]byte predicate on the coin_type_id field.
-func (f *PaymentFilter) WhereCoinTypeID(p entql.ValueP) {
-	f.Where(p.Field(payment.FieldCoinTypeID))
-}
-
 // WhereCoinInfoID applies the entql [16]byte predicate on the coin_info_id field.
 func (f *PaymentFilter) WhereCoinInfoID(p entql.ValueP) {
 	f.Where(p.Field(payment.FieldCoinInfoID))
@@ -667,29 +710,4 @@ func (f *PaymentFilter) WhereCoinInfoID(p entql.ValueP) {
 // WhereStartAmount applies the entql other predicate on the start_amount field.
 func (f *PaymentFilter) WhereStartAmount(p entql.OtherP) {
 	f.Where(p.Field(payment.FieldStartAmount))
-}
-
-// WhereTransferAmount applies the entql other predicate on the transfer_amount field.
-func (f *PaymentFilter) WhereTransferAmount(p entql.OtherP) {
-	f.Where(p.Field(payment.FieldTransferAmount))
-}
-
-// WhereBalanceAmount applies the entql other predicate on the balance_amount field.
-func (f *PaymentFilter) WhereBalanceAmount(p entql.OtherP) {
-	f.Where(p.Field(payment.FieldBalanceAmount))
-}
-
-// WhereCoinUsdCurrency applies the entql other predicate on the coin_usd_currency field.
-func (f *PaymentFilter) WhereCoinUsdCurrency(p entql.OtherP) {
-	f.Where(p.Field(payment.FieldCoinUsdCurrency))
-}
-
-// WhereLocalCoinUsdCurrency applies the entql other predicate on the local_coin_usd_currency field.
-func (f *PaymentFilter) WhereLocalCoinUsdCurrency(p entql.OtherP) {
-	f.Where(p.Field(payment.FieldLocalCoinUsdCurrency))
-}
-
-// WhereLiveCoinUsdCurrency applies the entql other predicate on the live_coin_usd_currency field.
-func (f *PaymentFilter) WhereLiveCoinUsdCurrency(p entql.OtherP) {
-	f.Where(p.Field(payment.FieldLiveCoinUsdCurrency))
 }

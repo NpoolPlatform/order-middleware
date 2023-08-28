@@ -41,6 +41,8 @@ type OrderState struct {
 	UserSetPaid bool `json:"user_set_paid,omitempty"`
 	// UserSetCanceled holds the value of the "user_set_canceled" field.
 	UserSetCanceled bool `json:"user_set_canceled,omitempty"`
+	// AdminSetCanceled holds the value of the "admin_set_canceled" field.
+	AdminSetCanceled bool `json:"admin_set_canceled,omitempty"`
 	// PaymentTransactionID holds the value of the "payment_transaction_id" field.
 	PaymentTransactionID string `json:"payment_transaction_id,omitempty"`
 	// PaymentFinishAmount holds the value of the "payment_finish_amount" field.
@@ -60,7 +62,7 @@ func (*OrderState) scanValues(columns []string) ([]interface{}, error) {
 		switch columns[i] {
 		case orderstate.FieldPaymentFinishAmount:
 			values[i] = new(decimal.Decimal)
-		case orderstate.FieldUserSetPaid, orderstate.FieldUserSetCanceled:
+		case orderstate.FieldUserSetPaid, orderstate.FieldUserSetCanceled, orderstate.FieldAdminSetCanceled:
 			values[i] = new(sql.NullBool)
 		case orderstate.FieldCreatedAt, orderstate.FieldUpdatedAt, orderstate.FieldDeletedAt, orderstate.FieldStartAt, orderstate.FieldEndAt, orderstate.FieldLastBenefitAt, orderstate.FieldOutofgasHours, orderstate.FieldCompensateHours:
 			values[i] = new(sql.NullInt64)
@@ -161,6 +163,12 @@ func (os *OrderState) assignValues(columns []string, values []interface{}) error
 			} else if value.Valid {
 				os.UserSetCanceled = value.Bool
 			}
+		case orderstate.FieldAdminSetCanceled:
+			if value, ok := values[i].(*sql.NullBool); !ok {
+				return fmt.Errorf("unexpected type %T for field admin_set_canceled", values[i])
+			} else if value.Valid {
+				os.AdminSetCanceled = value.Bool
+			}
 		case orderstate.FieldPaymentTransactionID:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field payment_transaction_id", values[i])
@@ -254,6 +262,9 @@ func (os *OrderState) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("user_set_canceled=")
 	builder.WriteString(fmt.Sprintf("%v", os.UserSetCanceled))
+	builder.WriteString(", ")
+	builder.WriteString("admin_set_canceled=")
+	builder.WriteString(fmt.Sprintf("%v", os.AdminSetCanceled))
 	builder.WriteString(", ")
 	builder.WriteString("payment_transaction_id=")
 	builder.WriteString(os.PaymentTransactionID)

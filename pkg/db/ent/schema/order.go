@@ -63,6 +63,13 @@ func (Order) Fields() []ent.Field {
 			Optional().
 			Default(decimal.Decimal{}),
 		field.
+			Other("good_value_usd", decimal.Decimal{}).
+			SchemaType(map[string]string{
+				dialect.MySQL: "decimal(37,18)",
+			}).
+			Optional().
+			Default(decimal.Decimal{}),
+		field.
 			Other("payment_amount", decimal.Decimal{}).
 			SchemaType(map[string]string{
 				dialect.MySQL: "decimal(37,18)",
@@ -104,6 +111,45 @@ func (Order) Fields() []ent.Field {
 			String("payment_type").
 			Optional().
 			Default(types.PaymentType_PayWithBalanceOnly.String()),
+		field.
+			UUID("coin_type_id", uuid.UUID{}),
+		field.
+			UUID("payment_coin_type_id", uuid.UUID{}),
+		field.
+			Other("transfer_amount", decimal.Decimal{}).
+			SchemaType(map[string]string{
+				dialect.MySQL: "decimal(37,18)",
+			}).
+			Optional().
+			Default(decimal.Decimal{}),
+		field.
+			Other("balance_amount", decimal.Decimal{}).
+			SchemaType(map[string]string{
+				dialect.MySQL: "decimal(37, 18)",
+			}).
+			Optional().
+			Default(decimal.Decimal{}),
+		field.
+			Other("coin_usd_currency", decimal.Decimal{}).
+			SchemaType(map[string]string{
+				dialect.MySQL: "decimal(37, 18)",
+			}).
+			Optional().
+			Default(decimal.Decimal{}),
+		field.
+			Other("local_coin_usd_currency", decimal.Decimal{}).
+			SchemaType(map[string]string{
+				dialect.MySQL: "decimal(37, 18)",
+			}).
+			Optional().
+			Default(decimal.Decimal{}),
+		field.
+			Other("live_coin_usd_currency", decimal.Decimal{}).
+			SchemaType(map[string]string{
+				dialect.MySQL: "decimal(37, 18)",
+			}).
+			Optional().
+			Default(decimal.Decimal{}),
 	}
 }
 

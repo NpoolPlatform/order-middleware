@@ -157,6 +157,13 @@ func GoodValue(v decimal.Decimal) predicate.Order {
 	})
 }
 
+// GoodValueUsd applies equality check predicate on the "good_value_usd" field. It's identical to GoodValueUsdEQ.
+func GoodValueUsd(v decimal.Decimal) predicate.Order {
+	return predicate.Order(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldGoodValueUsd), v))
+	})
+}
+
 // PaymentAmount applies equality check predicate on the "payment_amount" field. It's identical to PaymentAmountEQ.
 func PaymentAmount(v decimal.Decimal) predicate.Order {
 	return predicate.Order(func(s *sql.Selector) {
@@ -203,6 +210,55 @@ func InvestmentType(v string) predicate.Order {
 func PaymentType(v string) predicate.Order {
 	return predicate.Order(func(s *sql.Selector) {
 		s.Where(sql.EQ(s.C(FieldPaymentType), v))
+	})
+}
+
+// CoinTypeID applies equality check predicate on the "coin_type_id" field. It's identical to CoinTypeIDEQ.
+func CoinTypeID(v uuid.UUID) predicate.Order {
+	return predicate.Order(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldCoinTypeID), v))
+	})
+}
+
+// PaymentCoinTypeID applies equality check predicate on the "payment_coin_type_id" field. It's identical to PaymentCoinTypeIDEQ.
+func PaymentCoinTypeID(v uuid.UUID) predicate.Order {
+	return predicate.Order(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldPaymentCoinTypeID), v))
+	})
+}
+
+// TransferAmount applies equality check predicate on the "transfer_amount" field. It's identical to TransferAmountEQ.
+func TransferAmount(v decimal.Decimal) predicate.Order {
+	return predicate.Order(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldTransferAmount), v))
+	})
+}
+
+// BalanceAmount applies equality check predicate on the "balance_amount" field. It's identical to BalanceAmountEQ.
+func BalanceAmount(v decimal.Decimal) predicate.Order {
+	return predicate.Order(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldBalanceAmount), v))
+	})
+}
+
+// CoinUsdCurrency applies equality check predicate on the "coin_usd_currency" field. It's identical to CoinUsdCurrencyEQ.
+func CoinUsdCurrency(v decimal.Decimal) predicate.Order {
+	return predicate.Order(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldCoinUsdCurrency), v))
+	})
+}
+
+// LocalCoinUsdCurrency applies equality check predicate on the "local_coin_usd_currency" field. It's identical to LocalCoinUsdCurrencyEQ.
+func LocalCoinUsdCurrency(v decimal.Decimal) predicate.Order {
+	return predicate.Order(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldLocalCoinUsdCurrency), v))
+	})
+}
+
+// LiveCoinUsdCurrency applies equality check predicate on the "live_coin_usd_currency" field. It's identical to LiveCoinUsdCurrencyEQ.
+func LiveCoinUsdCurrency(v decimal.Decimal) predicate.Order {
+	return predicate.Order(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldLiveCoinUsdCurrency), v))
 	})
 }
 
@@ -966,6 +1022,84 @@ func GoodValueNotNil() predicate.Order {
 	})
 }
 
+// GoodValueUsdEQ applies the EQ predicate on the "good_value_usd" field.
+func GoodValueUsdEQ(v decimal.Decimal) predicate.Order {
+	return predicate.Order(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldGoodValueUsd), v))
+	})
+}
+
+// GoodValueUsdNEQ applies the NEQ predicate on the "good_value_usd" field.
+func GoodValueUsdNEQ(v decimal.Decimal) predicate.Order {
+	return predicate.Order(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldGoodValueUsd), v))
+	})
+}
+
+// GoodValueUsdIn applies the In predicate on the "good_value_usd" field.
+func GoodValueUsdIn(vs ...decimal.Decimal) predicate.Order {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Order(func(s *sql.Selector) {
+		s.Where(sql.In(s.C(FieldGoodValueUsd), v...))
+	})
+}
+
+// GoodValueUsdNotIn applies the NotIn predicate on the "good_value_usd" field.
+func GoodValueUsdNotIn(vs ...decimal.Decimal) predicate.Order {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Order(func(s *sql.Selector) {
+		s.Where(sql.NotIn(s.C(FieldGoodValueUsd), v...))
+	})
+}
+
+// GoodValueUsdGT applies the GT predicate on the "good_value_usd" field.
+func GoodValueUsdGT(v decimal.Decimal) predicate.Order {
+	return predicate.Order(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldGoodValueUsd), v))
+	})
+}
+
+// GoodValueUsdGTE applies the GTE predicate on the "good_value_usd" field.
+func GoodValueUsdGTE(v decimal.Decimal) predicate.Order {
+	return predicate.Order(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldGoodValueUsd), v))
+	})
+}
+
+// GoodValueUsdLT applies the LT predicate on the "good_value_usd" field.
+func GoodValueUsdLT(v decimal.Decimal) predicate.Order {
+	return predicate.Order(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldGoodValueUsd), v))
+	})
+}
+
+// GoodValueUsdLTE applies the LTE predicate on the "good_value_usd" field.
+func GoodValueUsdLTE(v decimal.Decimal) predicate.Order {
+	return predicate.Order(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldGoodValueUsd), v))
+	})
+}
+
+// GoodValueUsdIsNil applies the IsNil predicate on the "good_value_usd" field.
+func GoodValueUsdIsNil() predicate.Order {
+	return predicate.Order(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldGoodValueUsd)))
+	})
+}
+
+// GoodValueUsdNotNil applies the NotNil predicate on the "good_value_usd" field.
+func GoodValueUsdNotNil() predicate.Order {
+	return predicate.Order(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldGoodValueUsd)))
+	})
+}
+
 // PaymentAmountEQ applies the EQ predicate on the "payment_amount" field.
 func PaymentAmountEQ(v decimal.Decimal) predicate.Order {
 	return predicate.Order(func(s *sql.Selector) {
@@ -1628,6 +1762,524 @@ func PaymentTypeEqualFold(v string) predicate.Order {
 func PaymentTypeContainsFold(v string) predicate.Order {
 	return predicate.Order(func(s *sql.Selector) {
 		s.Where(sql.ContainsFold(s.C(FieldPaymentType), v))
+	})
+}
+
+// CoinTypeIDEQ applies the EQ predicate on the "coin_type_id" field.
+func CoinTypeIDEQ(v uuid.UUID) predicate.Order {
+	return predicate.Order(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldCoinTypeID), v))
+	})
+}
+
+// CoinTypeIDNEQ applies the NEQ predicate on the "coin_type_id" field.
+func CoinTypeIDNEQ(v uuid.UUID) predicate.Order {
+	return predicate.Order(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldCoinTypeID), v))
+	})
+}
+
+// CoinTypeIDIn applies the In predicate on the "coin_type_id" field.
+func CoinTypeIDIn(vs ...uuid.UUID) predicate.Order {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Order(func(s *sql.Selector) {
+		s.Where(sql.In(s.C(FieldCoinTypeID), v...))
+	})
+}
+
+// CoinTypeIDNotIn applies the NotIn predicate on the "coin_type_id" field.
+func CoinTypeIDNotIn(vs ...uuid.UUID) predicate.Order {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Order(func(s *sql.Selector) {
+		s.Where(sql.NotIn(s.C(FieldCoinTypeID), v...))
+	})
+}
+
+// CoinTypeIDGT applies the GT predicate on the "coin_type_id" field.
+func CoinTypeIDGT(v uuid.UUID) predicate.Order {
+	return predicate.Order(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldCoinTypeID), v))
+	})
+}
+
+// CoinTypeIDGTE applies the GTE predicate on the "coin_type_id" field.
+func CoinTypeIDGTE(v uuid.UUID) predicate.Order {
+	return predicate.Order(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldCoinTypeID), v))
+	})
+}
+
+// CoinTypeIDLT applies the LT predicate on the "coin_type_id" field.
+func CoinTypeIDLT(v uuid.UUID) predicate.Order {
+	return predicate.Order(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldCoinTypeID), v))
+	})
+}
+
+// CoinTypeIDLTE applies the LTE predicate on the "coin_type_id" field.
+func CoinTypeIDLTE(v uuid.UUID) predicate.Order {
+	return predicate.Order(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldCoinTypeID), v))
+	})
+}
+
+// PaymentCoinTypeIDEQ applies the EQ predicate on the "payment_coin_type_id" field.
+func PaymentCoinTypeIDEQ(v uuid.UUID) predicate.Order {
+	return predicate.Order(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldPaymentCoinTypeID), v))
+	})
+}
+
+// PaymentCoinTypeIDNEQ applies the NEQ predicate on the "payment_coin_type_id" field.
+func PaymentCoinTypeIDNEQ(v uuid.UUID) predicate.Order {
+	return predicate.Order(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldPaymentCoinTypeID), v))
+	})
+}
+
+// PaymentCoinTypeIDIn applies the In predicate on the "payment_coin_type_id" field.
+func PaymentCoinTypeIDIn(vs ...uuid.UUID) predicate.Order {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Order(func(s *sql.Selector) {
+		s.Where(sql.In(s.C(FieldPaymentCoinTypeID), v...))
+	})
+}
+
+// PaymentCoinTypeIDNotIn applies the NotIn predicate on the "payment_coin_type_id" field.
+func PaymentCoinTypeIDNotIn(vs ...uuid.UUID) predicate.Order {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Order(func(s *sql.Selector) {
+		s.Where(sql.NotIn(s.C(FieldPaymentCoinTypeID), v...))
+	})
+}
+
+// PaymentCoinTypeIDGT applies the GT predicate on the "payment_coin_type_id" field.
+func PaymentCoinTypeIDGT(v uuid.UUID) predicate.Order {
+	return predicate.Order(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldPaymentCoinTypeID), v))
+	})
+}
+
+// PaymentCoinTypeIDGTE applies the GTE predicate on the "payment_coin_type_id" field.
+func PaymentCoinTypeIDGTE(v uuid.UUID) predicate.Order {
+	return predicate.Order(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldPaymentCoinTypeID), v))
+	})
+}
+
+// PaymentCoinTypeIDLT applies the LT predicate on the "payment_coin_type_id" field.
+func PaymentCoinTypeIDLT(v uuid.UUID) predicate.Order {
+	return predicate.Order(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldPaymentCoinTypeID), v))
+	})
+}
+
+// PaymentCoinTypeIDLTE applies the LTE predicate on the "payment_coin_type_id" field.
+func PaymentCoinTypeIDLTE(v uuid.UUID) predicate.Order {
+	return predicate.Order(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldPaymentCoinTypeID), v))
+	})
+}
+
+// TransferAmountEQ applies the EQ predicate on the "transfer_amount" field.
+func TransferAmountEQ(v decimal.Decimal) predicate.Order {
+	return predicate.Order(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldTransferAmount), v))
+	})
+}
+
+// TransferAmountNEQ applies the NEQ predicate on the "transfer_amount" field.
+func TransferAmountNEQ(v decimal.Decimal) predicate.Order {
+	return predicate.Order(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldTransferAmount), v))
+	})
+}
+
+// TransferAmountIn applies the In predicate on the "transfer_amount" field.
+func TransferAmountIn(vs ...decimal.Decimal) predicate.Order {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Order(func(s *sql.Selector) {
+		s.Where(sql.In(s.C(FieldTransferAmount), v...))
+	})
+}
+
+// TransferAmountNotIn applies the NotIn predicate on the "transfer_amount" field.
+func TransferAmountNotIn(vs ...decimal.Decimal) predicate.Order {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Order(func(s *sql.Selector) {
+		s.Where(sql.NotIn(s.C(FieldTransferAmount), v...))
+	})
+}
+
+// TransferAmountGT applies the GT predicate on the "transfer_amount" field.
+func TransferAmountGT(v decimal.Decimal) predicate.Order {
+	return predicate.Order(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldTransferAmount), v))
+	})
+}
+
+// TransferAmountGTE applies the GTE predicate on the "transfer_amount" field.
+func TransferAmountGTE(v decimal.Decimal) predicate.Order {
+	return predicate.Order(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldTransferAmount), v))
+	})
+}
+
+// TransferAmountLT applies the LT predicate on the "transfer_amount" field.
+func TransferAmountLT(v decimal.Decimal) predicate.Order {
+	return predicate.Order(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldTransferAmount), v))
+	})
+}
+
+// TransferAmountLTE applies the LTE predicate on the "transfer_amount" field.
+func TransferAmountLTE(v decimal.Decimal) predicate.Order {
+	return predicate.Order(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldTransferAmount), v))
+	})
+}
+
+// TransferAmountIsNil applies the IsNil predicate on the "transfer_amount" field.
+func TransferAmountIsNil() predicate.Order {
+	return predicate.Order(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldTransferAmount)))
+	})
+}
+
+// TransferAmountNotNil applies the NotNil predicate on the "transfer_amount" field.
+func TransferAmountNotNil() predicate.Order {
+	return predicate.Order(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldTransferAmount)))
+	})
+}
+
+// BalanceAmountEQ applies the EQ predicate on the "balance_amount" field.
+func BalanceAmountEQ(v decimal.Decimal) predicate.Order {
+	return predicate.Order(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldBalanceAmount), v))
+	})
+}
+
+// BalanceAmountNEQ applies the NEQ predicate on the "balance_amount" field.
+func BalanceAmountNEQ(v decimal.Decimal) predicate.Order {
+	return predicate.Order(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldBalanceAmount), v))
+	})
+}
+
+// BalanceAmountIn applies the In predicate on the "balance_amount" field.
+func BalanceAmountIn(vs ...decimal.Decimal) predicate.Order {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Order(func(s *sql.Selector) {
+		s.Where(sql.In(s.C(FieldBalanceAmount), v...))
+	})
+}
+
+// BalanceAmountNotIn applies the NotIn predicate on the "balance_amount" field.
+func BalanceAmountNotIn(vs ...decimal.Decimal) predicate.Order {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Order(func(s *sql.Selector) {
+		s.Where(sql.NotIn(s.C(FieldBalanceAmount), v...))
+	})
+}
+
+// BalanceAmountGT applies the GT predicate on the "balance_amount" field.
+func BalanceAmountGT(v decimal.Decimal) predicate.Order {
+	return predicate.Order(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldBalanceAmount), v))
+	})
+}
+
+// BalanceAmountGTE applies the GTE predicate on the "balance_amount" field.
+func BalanceAmountGTE(v decimal.Decimal) predicate.Order {
+	return predicate.Order(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldBalanceAmount), v))
+	})
+}
+
+// BalanceAmountLT applies the LT predicate on the "balance_amount" field.
+func BalanceAmountLT(v decimal.Decimal) predicate.Order {
+	return predicate.Order(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldBalanceAmount), v))
+	})
+}
+
+// BalanceAmountLTE applies the LTE predicate on the "balance_amount" field.
+func BalanceAmountLTE(v decimal.Decimal) predicate.Order {
+	return predicate.Order(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldBalanceAmount), v))
+	})
+}
+
+// BalanceAmountIsNil applies the IsNil predicate on the "balance_amount" field.
+func BalanceAmountIsNil() predicate.Order {
+	return predicate.Order(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldBalanceAmount)))
+	})
+}
+
+// BalanceAmountNotNil applies the NotNil predicate on the "balance_amount" field.
+func BalanceAmountNotNil() predicate.Order {
+	return predicate.Order(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldBalanceAmount)))
+	})
+}
+
+// CoinUsdCurrencyEQ applies the EQ predicate on the "coin_usd_currency" field.
+func CoinUsdCurrencyEQ(v decimal.Decimal) predicate.Order {
+	return predicate.Order(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldCoinUsdCurrency), v))
+	})
+}
+
+// CoinUsdCurrencyNEQ applies the NEQ predicate on the "coin_usd_currency" field.
+func CoinUsdCurrencyNEQ(v decimal.Decimal) predicate.Order {
+	return predicate.Order(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldCoinUsdCurrency), v))
+	})
+}
+
+// CoinUsdCurrencyIn applies the In predicate on the "coin_usd_currency" field.
+func CoinUsdCurrencyIn(vs ...decimal.Decimal) predicate.Order {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Order(func(s *sql.Selector) {
+		s.Where(sql.In(s.C(FieldCoinUsdCurrency), v...))
+	})
+}
+
+// CoinUsdCurrencyNotIn applies the NotIn predicate on the "coin_usd_currency" field.
+func CoinUsdCurrencyNotIn(vs ...decimal.Decimal) predicate.Order {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Order(func(s *sql.Selector) {
+		s.Where(sql.NotIn(s.C(FieldCoinUsdCurrency), v...))
+	})
+}
+
+// CoinUsdCurrencyGT applies the GT predicate on the "coin_usd_currency" field.
+func CoinUsdCurrencyGT(v decimal.Decimal) predicate.Order {
+	return predicate.Order(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldCoinUsdCurrency), v))
+	})
+}
+
+// CoinUsdCurrencyGTE applies the GTE predicate on the "coin_usd_currency" field.
+func CoinUsdCurrencyGTE(v decimal.Decimal) predicate.Order {
+	return predicate.Order(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldCoinUsdCurrency), v))
+	})
+}
+
+// CoinUsdCurrencyLT applies the LT predicate on the "coin_usd_currency" field.
+func CoinUsdCurrencyLT(v decimal.Decimal) predicate.Order {
+	return predicate.Order(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldCoinUsdCurrency), v))
+	})
+}
+
+// CoinUsdCurrencyLTE applies the LTE predicate on the "coin_usd_currency" field.
+func CoinUsdCurrencyLTE(v decimal.Decimal) predicate.Order {
+	return predicate.Order(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldCoinUsdCurrency), v))
+	})
+}
+
+// CoinUsdCurrencyIsNil applies the IsNil predicate on the "coin_usd_currency" field.
+func CoinUsdCurrencyIsNil() predicate.Order {
+	return predicate.Order(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldCoinUsdCurrency)))
+	})
+}
+
+// CoinUsdCurrencyNotNil applies the NotNil predicate on the "coin_usd_currency" field.
+func CoinUsdCurrencyNotNil() predicate.Order {
+	return predicate.Order(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldCoinUsdCurrency)))
+	})
+}
+
+// LocalCoinUsdCurrencyEQ applies the EQ predicate on the "local_coin_usd_currency" field.
+func LocalCoinUsdCurrencyEQ(v decimal.Decimal) predicate.Order {
+	return predicate.Order(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldLocalCoinUsdCurrency), v))
+	})
+}
+
+// LocalCoinUsdCurrencyNEQ applies the NEQ predicate on the "local_coin_usd_currency" field.
+func LocalCoinUsdCurrencyNEQ(v decimal.Decimal) predicate.Order {
+	return predicate.Order(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldLocalCoinUsdCurrency), v))
+	})
+}
+
+// LocalCoinUsdCurrencyIn applies the In predicate on the "local_coin_usd_currency" field.
+func LocalCoinUsdCurrencyIn(vs ...decimal.Decimal) predicate.Order {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Order(func(s *sql.Selector) {
+		s.Where(sql.In(s.C(FieldLocalCoinUsdCurrency), v...))
+	})
+}
+
+// LocalCoinUsdCurrencyNotIn applies the NotIn predicate on the "local_coin_usd_currency" field.
+func LocalCoinUsdCurrencyNotIn(vs ...decimal.Decimal) predicate.Order {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Order(func(s *sql.Selector) {
+		s.Where(sql.NotIn(s.C(FieldLocalCoinUsdCurrency), v...))
+	})
+}
+
+// LocalCoinUsdCurrencyGT applies the GT predicate on the "local_coin_usd_currency" field.
+func LocalCoinUsdCurrencyGT(v decimal.Decimal) predicate.Order {
+	return predicate.Order(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldLocalCoinUsdCurrency), v))
+	})
+}
+
+// LocalCoinUsdCurrencyGTE applies the GTE predicate on the "local_coin_usd_currency" field.
+func LocalCoinUsdCurrencyGTE(v decimal.Decimal) predicate.Order {
+	return predicate.Order(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldLocalCoinUsdCurrency), v))
+	})
+}
+
+// LocalCoinUsdCurrencyLT applies the LT predicate on the "local_coin_usd_currency" field.
+func LocalCoinUsdCurrencyLT(v decimal.Decimal) predicate.Order {
+	return predicate.Order(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldLocalCoinUsdCurrency), v))
+	})
+}
+
+// LocalCoinUsdCurrencyLTE applies the LTE predicate on the "local_coin_usd_currency" field.
+func LocalCoinUsdCurrencyLTE(v decimal.Decimal) predicate.Order {
+	return predicate.Order(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldLocalCoinUsdCurrency), v))
+	})
+}
+
+// LocalCoinUsdCurrencyIsNil applies the IsNil predicate on the "local_coin_usd_currency" field.
+func LocalCoinUsdCurrencyIsNil() predicate.Order {
+	return predicate.Order(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldLocalCoinUsdCurrency)))
+	})
+}
+
+// LocalCoinUsdCurrencyNotNil applies the NotNil predicate on the "local_coin_usd_currency" field.
+func LocalCoinUsdCurrencyNotNil() predicate.Order {
+	return predicate.Order(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldLocalCoinUsdCurrency)))
+	})
+}
+
+// LiveCoinUsdCurrencyEQ applies the EQ predicate on the "live_coin_usd_currency" field.
+func LiveCoinUsdCurrencyEQ(v decimal.Decimal) predicate.Order {
+	return predicate.Order(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldLiveCoinUsdCurrency), v))
+	})
+}
+
+// LiveCoinUsdCurrencyNEQ applies the NEQ predicate on the "live_coin_usd_currency" field.
+func LiveCoinUsdCurrencyNEQ(v decimal.Decimal) predicate.Order {
+	return predicate.Order(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldLiveCoinUsdCurrency), v))
+	})
+}
+
+// LiveCoinUsdCurrencyIn applies the In predicate on the "live_coin_usd_currency" field.
+func LiveCoinUsdCurrencyIn(vs ...decimal.Decimal) predicate.Order {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Order(func(s *sql.Selector) {
+		s.Where(sql.In(s.C(FieldLiveCoinUsdCurrency), v...))
+	})
+}
+
+// LiveCoinUsdCurrencyNotIn applies the NotIn predicate on the "live_coin_usd_currency" field.
+func LiveCoinUsdCurrencyNotIn(vs ...decimal.Decimal) predicate.Order {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Order(func(s *sql.Selector) {
+		s.Where(sql.NotIn(s.C(FieldLiveCoinUsdCurrency), v...))
+	})
+}
+
+// LiveCoinUsdCurrencyGT applies the GT predicate on the "live_coin_usd_currency" field.
+func LiveCoinUsdCurrencyGT(v decimal.Decimal) predicate.Order {
+	return predicate.Order(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldLiveCoinUsdCurrency), v))
+	})
+}
+
+// LiveCoinUsdCurrencyGTE applies the GTE predicate on the "live_coin_usd_currency" field.
+func LiveCoinUsdCurrencyGTE(v decimal.Decimal) predicate.Order {
+	return predicate.Order(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldLiveCoinUsdCurrency), v))
+	})
+}
+
+// LiveCoinUsdCurrencyLT applies the LT predicate on the "live_coin_usd_currency" field.
+func LiveCoinUsdCurrencyLT(v decimal.Decimal) predicate.Order {
+	return predicate.Order(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldLiveCoinUsdCurrency), v))
+	})
+}
+
+// LiveCoinUsdCurrencyLTE applies the LTE predicate on the "live_coin_usd_currency" field.
+func LiveCoinUsdCurrencyLTE(v decimal.Decimal) predicate.Order {
+	return predicate.Order(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldLiveCoinUsdCurrency), v))
+	})
+}
+
+// LiveCoinUsdCurrencyIsNil applies the IsNil predicate on the "live_coin_usd_currency" field.
+func LiveCoinUsdCurrencyIsNil() predicate.Order {
+	return predicate.Order(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldLiveCoinUsdCurrency)))
+	})
+}
+
+// LiveCoinUsdCurrencyNotNil applies the NotNil predicate on the "live_coin_usd_currency" field.
+func LiveCoinUsdCurrencyNotNil() predicate.Order {
+	return predicate.Order(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldLiveCoinUsdCurrency)))
 	})
 }
 

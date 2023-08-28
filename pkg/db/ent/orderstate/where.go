@@ -164,6 +164,13 @@ func UserSetCanceled(v bool) predicate.OrderState {
 	})
 }
 
+// AdminSetCanceled applies equality check predicate on the "admin_set_canceled" field. It's identical to AdminSetCanceledEQ.
+func AdminSetCanceled(v bool) predicate.OrderState {
+	return predicate.OrderState(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldAdminSetCanceled), v))
+	})
+}
+
 // PaymentTransactionID applies equality check predicate on the "payment_transaction_id" field. It's identical to PaymentTransactionIDEQ.
 func PaymentTransactionID(v string) predicate.OrderState {
 	return predicate.OrderState(func(s *sql.Selector) {
@@ -1081,6 +1088,34 @@ func UserSetCanceledIsNil() predicate.OrderState {
 func UserSetCanceledNotNil() predicate.OrderState {
 	return predicate.OrderState(func(s *sql.Selector) {
 		s.Where(sql.NotNull(s.C(FieldUserSetCanceled)))
+	})
+}
+
+// AdminSetCanceledEQ applies the EQ predicate on the "admin_set_canceled" field.
+func AdminSetCanceledEQ(v bool) predicate.OrderState {
+	return predicate.OrderState(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldAdminSetCanceled), v))
+	})
+}
+
+// AdminSetCanceledNEQ applies the NEQ predicate on the "admin_set_canceled" field.
+func AdminSetCanceledNEQ(v bool) predicate.OrderState {
+	return predicate.OrderState(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldAdminSetCanceled), v))
+	})
+}
+
+// AdminSetCanceledIsNil applies the IsNil predicate on the "admin_set_canceled" field.
+func AdminSetCanceledIsNil() predicate.OrderState {
+	return predicate.OrderState(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldAdminSetCanceled)))
+	})
+}
+
+// AdminSetCanceledNotNil applies the NotNil predicate on the "admin_set_canceled" field.
+func AdminSetCanceledNotNil() predicate.OrderState {
+	return predicate.OrderState(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldAdminSetCanceled)))
 	})
 }
 

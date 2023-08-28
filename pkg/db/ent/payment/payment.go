@@ -29,22 +29,10 @@ const (
 	FieldOrderID = "order_id"
 	// FieldAccountID holds the string denoting the account_id field in the database.
 	FieldAccountID = "account_id"
-	// FieldCoinTypeID holds the string denoting the coin_type_id field in the database.
-	FieldCoinTypeID = "coin_type_id"
 	// FieldCoinInfoID holds the string denoting the coin_info_id field in the database.
 	FieldCoinInfoID = "coin_info_id"
 	// FieldStartAmount holds the string denoting the start_amount field in the database.
 	FieldStartAmount = "start_amount"
-	// FieldTransferAmount holds the string denoting the transfer_amount field in the database.
-	FieldTransferAmount = "transfer_amount"
-	// FieldBalanceAmount holds the string denoting the balance_amount field in the database.
-	FieldBalanceAmount = "balance_amount"
-	// FieldCoinUsdCurrency holds the string denoting the coin_usd_currency field in the database.
-	FieldCoinUsdCurrency = "coin_usd_currency"
-	// FieldLocalCoinUsdCurrency holds the string denoting the local_coin_usd_currency field in the database.
-	FieldLocalCoinUsdCurrency = "local_coin_usd_currency"
-	// FieldLiveCoinUsdCurrency holds the string denoting the live_coin_usd_currency field in the database.
-	FieldLiveCoinUsdCurrency = "live_coin_usd_currency"
 	// Table holds the table name of the payment in the database.
 	Table = "payments"
 )
@@ -60,14 +48,8 @@ var Columns = []string{
 	FieldGoodID,
 	FieldOrderID,
 	FieldAccountID,
-	FieldCoinTypeID,
 	FieldCoinInfoID,
 	FieldStartAmount,
-	FieldTransferAmount,
-	FieldBalanceAmount,
-	FieldCoinUsdCurrency,
-	FieldLocalCoinUsdCurrency,
-	FieldLiveCoinUsdCurrency,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -99,16 +81,6 @@ var (
 	DefaultDeletedAt func() uint32
 	// DefaultStartAmount holds the default value on creation for the "start_amount" field.
 	DefaultStartAmount decimal.Decimal
-	// DefaultTransferAmount holds the default value on creation for the "transfer_amount" field.
-	DefaultTransferAmount decimal.Decimal
-	// DefaultBalanceAmount holds the default value on creation for the "balance_amount" field.
-	DefaultBalanceAmount decimal.Decimal
-	// DefaultCoinUsdCurrency holds the default value on creation for the "coin_usd_currency" field.
-	DefaultCoinUsdCurrency decimal.Decimal
-	// DefaultLocalCoinUsdCurrency holds the default value on creation for the "local_coin_usd_currency" field.
-	DefaultLocalCoinUsdCurrency decimal.Decimal
-	// DefaultLiveCoinUsdCurrency holds the default value on creation for the "live_coin_usd_currency" field.
-	DefaultLiveCoinUsdCurrency decimal.Decimal
 	// DefaultID holds the default value on creation for the "id" field.
 	DefaultID func() uuid.UUID
 )

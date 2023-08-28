@@ -146,6 +146,20 @@ func (oc *OrderCreate) SetNillableGoodValue(d *decimal.Decimal) *OrderCreate {
 	return oc
 }
 
+// SetGoodValueUsd sets the "good_value_usd" field.
+func (oc *OrderCreate) SetGoodValueUsd(d decimal.Decimal) *OrderCreate {
+	oc.mutation.SetGoodValueUsd(d)
+	return oc
+}
+
+// SetNillableGoodValueUsd sets the "good_value_usd" field if the given value is not nil.
+func (oc *OrderCreate) SetNillableGoodValueUsd(d *decimal.Decimal) *OrderCreate {
+	if d != nil {
+		oc.SetGoodValueUsd(*d)
+	}
+	return oc
+}
+
 // SetPaymentAmount sets the "payment_amount" field.
 func (oc *OrderCreate) SetPaymentAmount(d decimal.Decimal) *OrderCreate {
 	oc.mutation.SetPaymentAmount(d)
@@ -246,6 +260,88 @@ func (oc *OrderCreate) SetPaymentType(s string) *OrderCreate {
 func (oc *OrderCreate) SetNillablePaymentType(s *string) *OrderCreate {
 	if s != nil {
 		oc.SetPaymentType(*s)
+	}
+	return oc
+}
+
+// SetCoinTypeID sets the "coin_type_id" field.
+func (oc *OrderCreate) SetCoinTypeID(u uuid.UUID) *OrderCreate {
+	oc.mutation.SetCoinTypeID(u)
+	return oc
+}
+
+// SetPaymentCoinTypeID sets the "payment_coin_type_id" field.
+func (oc *OrderCreate) SetPaymentCoinTypeID(u uuid.UUID) *OrderCreate {
+	oc.mutation.SetPaymentCoinTypeID(u)
+	return oc
+}
+
+// SetTransferAmount sets the "transfer_amount" field.
+func (oc *OrderCreate) SetTransferAmount(d decimal.Decimal) *OrderCreate {
+	oc.mutation.SetTransferAmount(d)
+	return oc
+}
+
+// SetNillableTransferAmount sets the "transfer_amount" field if the given value is not nil.
+func (oc *OrderCreate) SetNillableTransferAmount(d *decimal.Decimal) *OrderCreate {
+	if d != nil {
+		oc.SetTransferAmount(*d)
+	}
+	return oc
+}
+
+// SetBalanceAmount sets the "balance_amount" field.
+func (oc *OrderCreate) SetBalanceAmount(d decimal.Decimal) *OrderCreate {
+	oc.mutation.SetBalanceAmount(d)
+	return oc
+}
+
+// SetNillableBalanceAmount sets the "balance_amount" field if the given value is not nil.
+func (oc *OrderCreate) SetNillableBalanceAmount(d *decimal.Decimal) *OrderCreate {
+	if d != nil {
+		oc.SetBalanceAmount(*d)
+	}
+	return oc
+}
+
+// SetCoinUsdCurrency sets the "coin_usd_currency" field.
+func (oc *OrderCreate) SetCoinUsdCurrency(d decimal.Decimal) *OrderCreate {
+	oc.mutation.SetCoinUsdCurrency(d)
+	return oc
+}
+
+// SetNillableCoinUsdCurrency sets the "coin_usd_currency" field if the given value is not nil.
+func (oc *OrderCreate) SetNillableCoinUsdCurrency(d *decimal.Decimal) *OrderCreate {
+	if d != nil {
+		oc.SetCoinUsdCurrency(*d)
+	}
+	return oc
+}
+
+// SetLocalCoinUsdCurrency sets the "local_coin_usd_currency" field.
+func (oc *OrderCreate) SetLocalCoinUsdCurrency(d decimal.Decimal) *OrderCreate {
+	oc.mutation.SetLocalCoinUsdCurrency(d)
+	return oc
+}
+
+// SetNillableLocalCoinUsdCurrency sets the "local_coin_usd_currency" field if the given value is not nil.
+func (oc *OrderCreate) SetNillableLocalCoinUsdCurrency(d *decimal.Decimal) *OrderCreate {
+	if d != nil {
+		oc.SetLocalCoinUsdCurrency(*d)
+	}
+	return oc
+}
+
+// SetLiveCoinUsdCurrency sets the "live_coin_usd_currency" field.
+func (oc *OrderCreate) SetLiveCoinUsdCurrency(d decimal.Decimal) *OrderCreate {
+	oc.mutation.SetLiveCoinUsdCurrency(d)
+	return oc
+}
+
+// SetNillableLiveCoinUsdCurrency sets the "live_coin_usd_currency" field if the given value is not nil.
+func (oc *OrderCreate) SetNillableLiveCoinUsdCurrency(d *decimal.Decimal) *OrderCreate {
+	if d != nil {
+		oc.SetLiveCoinUsdCurrency(*d)
 	}
 	return oc
 }
@@ -386,6 +482,10 @@ func (oc *OrderCreate) defaults() error {
 		v := order.DefaultGoodValue
 		oc.mutation.SetGoodValue(v)
 	}
+	if _, ok := oc.mutation.GoodValueUsd(); !ok {
+		v := order.DefaultGoodValueUsd
+		oc.mutation.SetGoodValueUsd(v)
+	}
 	if _, ok := oc.mutation.PaymentAmount(); !ok {
 		v := order.DefaultPaymentAmount
 		oc.mutation.SetPaymentAmount(v)
@@ -424,6 +524,26 @@ func (oc *OrderCreate) defaults() error {
 		v := order.DefaultPaymentType
 		oc.mutation.SetPaymentType(v)
 	}
+	if _, ok := oc.mutation.TransferAmount(); !ok {
+		v := order.DefaultTransferAmount
+		oc.mutation.SetTransferAmount(v)
+	}
+	if _, ok := oc.mutation.BalanceAmount(); !ok {
+		v := order.DefaultBalanceAmount
+		oc.mutation.SetBalanceAmount(v)
+	}
+	if _, ok := oc.mutation.CoinUsdCurrency(); !ok {
+		v := order.DefaultCoinUsdCurrency
+		oc.mutation.SetCoinUsdCurrency(v)
+	}
+	if _, ok := oc.mutation.LocalCoinUsdCurrency(); !ok {
+		v := order.DefaultLocalCoinUsdCurrency
+		oc.mutation.SetLocalCoinUsdCurrency(v)
+	}
+	if _, ok := oc.mutation.LiveCoinUsdCurrency(); !ok {
+		v := order.DefaultLiveCoinUsdCurrency
+		oc.mutation.SetLiveCoinUsdCurrency(v)
+	}
 	if _, ok := oc.mutation.ID(); !ok {
 		if order.DefaultID == nil {
 			return fmt.Errorf("ent: uninitialized order.DefaultID (forgotten import ent/runtime?)")
@@ -456,6 +576,12 @@ func (oc *OrderCreate) check() error {
 	}
 	if _, ok := oc.mutation.AppGoodID(); !ok {
 		return &ValidationError{Name: "app_good_id", err: errors.New(`ent: missing required field "Order.app_good_id"`)}
+	}
+	if _, ok := oc.mutation.CoinTypeID(); !ok {
+		return &ValidationError{Name: "coin_type_id", err: errors.New(`ent: missing required field "Order.coin_type_id"`)}
+	}
+	if _, ok := oc.mutation.PaymentCoinTypeID(); !ok {
+		return &ValidationError{Name: "payment_coin_type_id", err: errors.New(`ent: missing required field "Order.payment_coin_type_id"`)}
 	}
 	return nil
 }
@@ -582,6 +708,14 @@ func (oc *OrderCreate) createSpec() (*Order, *sqlgraph.CreateSpec) {
 		})
 		_node.GoodValue = value
 	}
+	if value, ok := oc.mutation.GoodValueUsd(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeOther,
+			Value:  value,
+			Column: order.FieldGoodValueUsd,
+		})
+		_node.GoodValueUsd = value
+	}
 	if value, ok := oc.mutation.PaymentAmount(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
 			Type:   field.TypeOther,
@@ -645,6 +779,62 @@ func (oc *OrderCreate) createSpec() (*Order, *sqlgraph.CreateSpec) {
 			Column: order.FieldPaymentType,
 		})
 		_node.PaymentType = value
+	}
+	if value, ok := oc.mutation.CoinTypeID(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Value:  value,
+			Column: order.FieldCoinTypeID,
+		})
+		_node.CoinTypeID = value
+	}
+	if value, ok := oc.mutation.PaymentCoinTypeID(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Value:  value,
+			Column: order.FieldPaymentCoinTypeID,
+		})
+		_node.PaymentCoinTypeID = value
+	}
+	if value, ok := oc.mutation.TransferAmount(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeOther,
+			Value:  value,
+			Column: order.FieldTransferAmount,
+		})
+		_node.TransferAmount = value
+	}
+	if value, ok := oc.mutation.BalanceAmount(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeOther,
+			Value:  value,
+			Column: order.FieldBalanceAmount,
+		})
+		_node.BalanceAmount = value
+	}
+	if value, ok := oc.mutation.CoinUsdCurrency(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeOther,
+			Value:  value,
+			Column: order.FieldCoinUsdCurrency,
+		})
+		_node.CoinUsdCurrency = value
+	}
+	if value, ok := oc.mutation.LocalCoinUsdCurrency(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeOther,
+			Value:  value,
+			Column: order.FieldLocalCoinUsdCurrency,
+		})
+		_node.LocalCoinUsdCurrency = value
+	}
+	if value, ok := oc.mutation.LiveCoinUsdCurrency(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeOther,
+			Value:  value,
+			Column: order.FieldLiveCoinUsdCurrency,
+		})
+		_node.LiveCoinUsdCurrency = value
 	}
 	return _node, _spec
 }
@@ -874,6 +1064,24 @@ func (u *OrderUpsert) ClearGoodValue() *OrderUpsert {
 	return u
 }
 
+// SetGoodValueUsd sets the "good_value_usd" field.
+func (u *OrderUpsert) SetGoodValueUsd(v decimal.Decimal) *OrderUpsert {
+	u.Set(order.FieldGoodValueUsd, v)
+	return u
+}
+
+// UpdateGoodValueUsd sets the "good_value_usd" field to the value that was provided on create.
+func (u *OrderUpsert) UpdateGoodValueUsd() *OrderUpsert {
+	u.SetExcluded(order.FieldGoodValueUsd)
+	return u
+}
+
+// ClearGoodValueUsd clears the value of the "good_value_usd" field.
+func (u *OrderUpsert) ClearGoodValueUsd() *OrderUpsert {
+	u.SetNull(order.FieldGoodValueUsd)
+	return u
+}
+
 // SetPaymentAmount sets the "payment_amount" field.
 func (u *OrderUpsert) SetPaymentAmount(v decimal.Decimal) *OrderUpsert {
 	u.Set(order.FieldPaymentAmount, v)
@@ -1021,6 +1229,120 @@ func (u *OrderUpsert) UpdatePaymentType() *OrderUpsert {
 // ClearPaymentType clears the value of the "payment_type" field.
 func (u *OrderUpsert) ClearPaymentType() *OrderUpsert {
 	u.SetNull(order.FieldPaymentType)
+	return u
+}
+
+// SetCoinTypeID sets the "coin_type_id" field.
+func (u *OrderUpsert) SetCoinTypeID(v uuid.UUID) *OrderUpsert {
+	u.Set(order.FieldCoinTypeID, v)
+	return u
+}
+
+// UpdateCoinTypeID sets the "coin_type_id" field to the value that was provided on create.
+func (u *OrderUpsert) UpdateCoinTypeID() *OrderUpsert {
+	u.SetExcluded(order.FieldCoinTypeID)
+	return u
+}
+
+// SetPaymentCoinTypeID sets the "payment_coin_type_id" field.
+func (u *OrderUpsert) SetPaymentCoinTypeID(v uuid.UUID) *OrderUpsert {
+	u.Set(order.FieldPaymentCoinTypeID, v)
+	return u
+}
+
+// UpdatePaymentCoinTypeID sets the "payment_coin_type_id" field to the value that was provided on create.
+func (u *OrderUpsert) UpdatePaymentCoinTypeID() *OrderUpsert {
+	u.SetExcluded(order.FieldPaymentCoinTypeID)
+	return u
+}
+
+// SetTransferAmount sets the "transfer_amount" field.
+func (u *OrderUpsert) SetTransferAmount(v decimal.Decimal) *OrderUpsert {
+	u.Set(order.FieldTransferAmount, v)
+	return u
+}
+
+// UpdateTransferAmount sets the "transfer_amount" field to the value that was provided on create.
+func (u *OrderUpsert) UpdateTransferAmount() *OrderUpsert {
+	u.SetExcluded(order.FieldTransferAmount)
+	return u
+}
+
+// ClearTransferAmount clears the value of the "transfer_amount" field.
+func (u *OrderUpsert) ClearTransferAmount() *OrderUpsert {
+	u.SetNull(order.FieldTransferAmount)
+	return u
+}
+
+// SetBalanceAmount sets the "balance_amount" field.
+func (u *OrderUpsert) SetBalanceAmount(v decimal.Decimal) *OrderUpsert {
+	u.Set(order.FieldBalanceAmount, v)
+	return u
+}
+
+// UpdateBalanceAmount sets the "balance_amount" field to the value that was provided on create.
+func (u *OrderUpsert) UpdateBalanceAmount() *OrderUpsert {
+	u.SetExcluded(order.FieldBalanceAmount)
+	return u
+}
+
+// ClearBalanceAmount clears the value of the "balance_amount" field.
+func (u *OrderUpsert) ClearBalanceAmount() *OrderUpsert {
+	u.SetNull(order.FieldBalanceAmount)
+	return u
+}
+
+// SetCoinUsdCurrency sets the "coin_usd_currency" field.
+func (u *OrderUpsert) SetCoinUsdCurrency(v decimal.Decimal) *OrderUpsert {
+	u.Set(order.FieldCoinUsdCurrency, v)
+	return u
+}
+
+// UpdateCoinUsdCurrency sets the "coin_usd_currency" field to the value that was provided on create.
+func (u *OrderUpsert) UpdateCoinUsdCurrency() *OrderUpsert {
+	u.SetExcluded(order.FieldCoinUsdCurrency)
+	return u
+}
+
+// ClearCoinUsdCurrency clears the value of the "coin_usd_currency" field.
+func (u *OrderUpsert) ClearCoinUsdCurrency() *OrderUpsert {
+	u.SetNull(order.FieldCoinUsdCurrency)
+	return u
+}
+
+// SetLocalCoinUsdCurrency sets the "local_coin_usd_currency" field.
+func (u *OrderUpsert) SetLocalCoinUsdCurrency(v decimal.Decimal) *OrderUpsert {
+	u.Set(order.FieldLocalCoinUsdCurrency, v)
+	return u
+}
+
+// UpdateLocalCoinUsdCurrency sets the "local_coin_usd_currency" field to the value that was provided on create.
+func (u *OrderUpsert) UpdateLocalCoinUsdCurrency() *OrderUpsert {
+	u.SetExcluded(order.FieldLocalCoinUsdCurrency)
+	return u
+}
+
+// ClearLocalCoinUsdCurrency clears the value of the "local_coin_usd_currency" field.
+func (u *OrderUpsert) ClearLocalCoinUsdCurrency() *OrderUpsert {
+	u.SetNull(order.FieldLocalCoinUsdCurrency)
+	return u
+}
+
+// SetLiveCoinUsdCurrency sets the "live_coin_usd_currency" field.
+func (u *OrderUpsert) SetLiveCoinUsdCurrency(v decimal.Decimal) *OrderUpsert {
+	u.Set(order.FieldLiveCoinUsdCurrency, v)
+	return u
+}
+
+// UpdateLiveCoinUsdCurrency sets the "live_coin_usd_currency" field to the value that was provided on create.
+func (u *OrderUpsert) UpdateLiveCoinUsdCurrency() *OrderUpsert {
+	u.SetExcluded(order.FieldLiveCoinUsdCurrency)
+	return u
+}
+
+// ClearLiveCoinUsdCurrency clears the value of the "live_coin_usd_currency" field.
+func (u *OrderUpsert) ClearLiveCoinUsdCurrency() *OrderUpsert {
+	u.SetNull(order.FieldLiveCoinUsdCurrency)
 	return u
 }
 
@@ -1277,6 +1599,27 @@ func (u *OrderUpsertOne) ClearGoodValue() *OrderUpsertOne {
 	})
 }
 
+// SetGoodValueUsd sets the "good_value_usd" field.
+func (u *OrderUpsertOne) SetGoodValueUsd(v decimal.Decimal) *OrderUpsertOne {
+	return u.Update(func(s *OrderUpsert) {
+		s.SetGoodValueUsd(v)
+	})
+}
+
+// UpdateGoodValueUsd sets the "good_value_usd" field to the value that was provided on create.
+func (u *OrderUpsertOne) UpdateGoodValueUsd() *OrderUpsertOne {
+	return u.Update(func(s *OrderUpsert) {
+		s.UpdateGoodValueUsd()
+	})
+}
+
+// ClearGoodValueUsd clears the value of the "good_value_usd" field.
+func (u *OrderUpsertOne) ClearGoodValueUsd() *OrderUpsertOne {
+	return u.Update(func(s *OrderUpsert) {
+		s.ClearGoodValueUsd()
+	})
+}
+
 // SetPaymentAmount sets the "payment_amount" field.
 func (u *OrderUpsertOne) SetPaymentAmount(v decimal.Decimal) *OrderUpsertOne {
 	return u.Update(func(s *OrderUpsert) {
@@ -1449,6 +1792,139 @@ func (u *OrderUpsertOne) UpdatePaymentType() *OrderUpsertOne {
 func (u *OrderUpsertOne) ClearPaymentType() *OrderUpsertOne {
 	return u.Update(func(s *OrderUpsert) {
 		s.ClearPaymentType()
+	})
+}
+
+// SetCoinTypeID sets the "coin_type_id" field.
+func (u *OrderUpsertOne) SetCoinTypeID(v uuid.UUID) *OrderUpsertOne {
+	return u.Update(func(s *OrderUpsert) {
+		s.SetCoinTypeID(v)
+	})
+}
+
+// UpdateCoinTypeID sets the "coin_type_id" field to the value that was provided on create.
+func (u *OrderUpsertOne) UpdateCoinTypeID() *OrderUpsertOne {
+	return u.Update(func(s *OrderUpsert) {
+		s.UpdateCoinTypeID()
+	})
+}
+
+// SetPaymentCoinTypeID sets the "payment_coin_type_id" field.
+func (u *OrderUpsertOne) SetPaymentCoinTypeID(v uuid.UUID) *OrderUpsertOne {
+	return u.Update(func(s *OrderUpsert) {
+		s.SetPaymentCoinTypeID(v)
+	})
+}
+
+// UpdatePaymentCoinTypeID sets the "payment_coin_type_id" field to the value that was provided on create.
+func (u *OrderUpsertOne) UpdatePaymentCoinTypeID() *OrderUpsertOne {
+	return u.Update(func(s *OrderUpsert) {
+		s.UpdatePaymentCoinTypeID()
+	})
+}
+
+// SetTransferAmount sets the "transfer_amount" field.
+func (u *OrderUpsertOne) SetTransferAmount(v decimal.Decimal) *OrderUpsertOne {
+	return u.Update(func(s *OrderUpsert) {
+		s.SetTransferAmount(v)
+	})
+}
+
+// UpdateTransferAmount sets the "transfer_amount" field to the value that was provided on create.
+func (u *OrderUpsertOne) UpdateTransferAmount() *OrderUpsertOne {
+	return u.Update(func(s *OrderUpsert) {
+		s.UpdateTransferAmount()
+	})
+}
+
+// ClearTransferAmount clears the value of the "transfer_amount" field.
+func (u *OrderUpsertOne) ClearTransferAmount() *OrderUpsertOne {
+	return u.Update(func(s *OrderUpsert) {
+		s.ClearTransferAmount()
+	})
+}
+
+// SetBalanceAmount sets the "balance_amount" field.
+func (u *OrderUpsertOne) SetBalanceAmount(v decimal.Decimal) *OrderUpsertOne {
+	return u.Update(func(s *OrderUpsert) {
+		s.SetBalanceAmount(v)
+	})
+}
+
+// UpdateBalanceAmount sets the "balance_amount" field to the value that was provided on create.
+func (u *OrderUpsertOne) UpdateBalanceAmount() *OrderUpsertOne {
+	return u.Update(func(s *OrderUpsert) {
+		s.UpdateBalanceAmount()
+	})
+}
+
+// ClearBalanceAmount clears the value of the "balance_amount" field.
+func (u *OrderUpsertOne) ClearBalanceAmount() *OrderUpsertOne {
+	return u.Update(func(s *OrderUpsert) {
+		s.ClearBalanceAmount()
+	})
+}
+
+// SetCoinUsdCurrency sets the "coin_usd_currency" field.
+func (u *OrderUpsertOne) SetCoinUsdCurrency(v decimal.Decimal) *OrderUpsertOne {
+	return u.Update(func(s *OrderUpsert) {
+		s.SetCoinUsdCurrency(v)
+	})
+}
+
+// UpdateCoinUsdCurrency sets the "coin_usd_currency" field to the value that was provided on create.
+func (u *OrderUpsertOne) UpdateCoinUsdCurrency() *OrderUpsertOne {
+	return u.Update(func(s *OrderUpsert) {
+		s.UpdateCoinUsdCurrency()
+	})
+}
+
+// ClearCoinUsdCurrency clears the value of the "coin_usd_currency" field.
+func (u *OrderUpsertOne) ClearCoinUsdCurrency() *OrderUpsertOne {
+	return u.Update(func(s *OrderUpsert) {
+		s.ClearCoinUsdCurrency()
+	})
+}
+
+// SetLocalCoinUsdCurrency sets the "local_coin_usd_currency" field.
+func (u *OrderUpsertOne) SetLocalCoinUsdCurrency(v decimal.Decimal) *OrderUpsertOne {
+	return u.Update(func(s *OrderUpsert) {
+		s.SetLocalCoinUsdCurrency(v)
+	})
+}
+
+// UpdateLocalCoinUsdCurrency sets the "local_coin_usd_currency" field to the value that was provided on create.
+func (u *OrderUpsertOne) UpdateLocalCoinUsdCurrency() *OrderUpsertOne {
+	return u.Update(func(s *OrderUpsert) {
+		s.UpdateLocalCoinUsdCurrency()
+	})
+}
+
+// ClearLocalCoinUsdCurrency clears the value of the "local_coin_usd_currency" field.
+func (u *OrderUpsertOne) ClearLocalCoinUsdCurrency() *OrderUpsertOne {
+	return u.Update(func(s *OrderUpsert) {
+		s.ClearLocalCoinUsdCurrency()
+	})
+}
+
+// SetLiveCoinUsdCurrency sets the "live_coin_usd_currency" field.
+func (u *OrderUpsertOne) SetLiveCoinUsdCurrency(v decimal.Decimal) *OrderUpsertOne {
+	return u.Update(func(s *OrderUpsert) {
+		s.SetLiveCoinUsdCurrency(v)
+	})
+}
+
+// UpdateLiveCoinUsdCurrency sets the "live_coin_usd_currency" field to the value that was provided on create.
+func (u *OrderUpsertOne) UpdateLiveCoinUsdCurrency() *OrderUpsertOne {
+	return u.Update(func(s *OrderUpsert) {
+		s.UpdateLiveCoinUsdCurrency()
+	})
+}
+
+// ClearLiveCoinUsdCurrency clears the value of the "live_coin_usd_currency" field.
+func (u *OrderUpsertOne) ClearLiveCoinUsdCurrency() *OrderUpsertOne {
+	return u.Update(func(s *OrderUpsert) {
+		s.ClearLiveCoinUsdCurrency()
 	})
 }
 
@@ -1871,6 +2347,27 @@ func (u *OrderUpsertBulk) ClearGoodValue() *OrderUpsertBulk {
 	})
 }
 
+// SetGoodValueUsd sets the "good_value_usd" field.
+func (u *OrderUpsertBulk) SetGoodValueUsd(v decimal.Decimal) *OrderUpsertBulk {
+	return u.Update(func(s *OrderUpsert) {
+		s.SetGoodValueUsd(v)
+	})
+}
+
+// UpdateGoodValueUsd sets the "good_value_usd" field to the value that was provided on create.
+func (u *OrderUpsertBulk) UpdateGoodValueUsd() *OrderUpsertBulk {
+	return u.Update(func(s *OrderUpsert) {
+		s.UpdateGoodValueUsd()
+	})
+}
+
+// ClearGoodValueUsd clears the value of the "good_value_usd" field.
+func (u *OrderUpsertBulk) ClearGoodValueUsd() *OrderUpsertBulk {
+	return u.Update(func(s *OrderUpsert) {
+		s.ClearGoodValueUsd()
+	})
+}
+
 // SetPaymentAmount sets the "payment_amount" field.
 func (u *OrderUpsertBulk) SetPaymentAmount(v decimal.Decimal) *OrderUpsertBulk {
 	return u.Update(func(s *OrderUpsert) {
@@ -2043,6 +2540,139 @@ func (u *OrderUpsertBulk) UpdatePaymentType() *OrderUpsertBulk {
 func (u *OrderUpsertBulk) ClearPaymentType() *OrderUpsertBulk {
 	return u.Update(func(s *OrderUpsert) {
 		s.ClearPaymentType()
+	})
+}
+
+// SetCoinTypeID sets the "coin_type_id" field.
+func (u *OrderUpsertBulk) SetCoinTypeID(v uuid.UUID) *OrderUpsertBulk {
+	return u.Update(func(s *OrderUpsert) {
+		s.SetCoinTypeID(v)
+	})
+}
+
+// UpdateCoinTypeID sets the "coin_type_id" field to the value that was provided on create.
+func (u *OrderUpsertBulk) UpdateCoinTypeID() *OrderUpsertBulk {
+	return u.Update(func(s *OrderUpsert) {
+		s.UpdateCoinTypeID()
+	})
+}
+
+// SetPaymentCoinTypeID sets the "payment_coin_type_id" field.
+func (u *OrderUpsertBulk) SetPaymentCoinTypeID(v uuid.UUID) *OrderUpsertBulk {
+	return u.Update(func(s *OrderUpsert) {
+		s.SetPaymentCoinTypeID(v)
+	})
+}
+
+// UpdatePaymentCoinTypeID sets the "payment_coin_type_id" field to the value that was provided on create.
+func (u *OrderUpsertBulk) UpdatePaymentCoinTypeID() *OrderUpsertBulk {
+	return u.Update(func(s *OrderUpsert) {
+		s.UpdatePaymentCoinTypeID()
+	})
+}
+
+// SetTransferAmount sets the "transfer_amount" field.
+func (u *OrderUpsertBulk) SetTransferAmount(v decimal.Decimal) *OrderUpsertBulk {
+	return u.Update(func(s *OrderUpsert) {
+		s.SetTransferAmount(v)
+	})
+}
+
+// UpdateTransferAmount sets the "transfer_amount" field to the value that was provided on create.
+func (u *OrderUpsertBulk) UpdateTransferAmount() *OrderUpsertBulk {
+	return u.Update(func(s *OrderUpsert) {
+		s.UpdateTransferAmount()
+	})
+}
+
+// ClearTransferAmount clears the value of the "transfer_amount" field.
+func (u *OrderUpsertBulk) ClearTransferAmount() *OrderUpsertBulk {
+	return u.Update(func(s *OrderUpsert) {
+		s.ClearTransferAmount()
+	})
+}
+
+// SetBalanceAmount sets the "balance_amount" field.
+func (u *OrderUpsertBulk) SetBalanceAmount(v decimal.Decimal) *OrderUpsertBulk {
+	return u.Update(func(s *OrderUpsert) {
+		s.SetBalanceAmount(v)
+	})
+}
+
+// UpdateBalanceAmount sets the "balance_amount" field to the value that was provided on create.
+func (u *OrderUpsertBulk) UpdateBalanceAmount() *OrderUpsertBulk {
+	return u.Update(func(s *OrderUpsert) {
+		s.UpdateBalanceAmount()
+	})
+}
+
+// ClearBalanceAmount clears the value of the "balance_amount" field.
+func (u *OrderUpsertBulk) ClearBalanceAmount() *OrderUpsertBulk {
+	return u.Update(func(s *OrderUpsert) {
+		s.ClearBalanceAmount()
+	})
+}
+
+// SetCoinUsdCurrency sets the "coin_usd_currency" field.
+func (u *OrderUpsertBulk) SetCoinUsdCurrency(v decimal.Decimal) *OrderUpsertBulk {
+	return u.Update(func(s *OrderUpsert) {
+		s.SetCoinUsdCurrency(v)
+	})
+}
+
+// UpdateCoinUsdCurrency sets the "coin_usd_currency" field to the value that was provided on create.
+func (u *OrderUpsertBulk) UpdateCoinUsdCurrency() *OrderUpsertBulk {
+	return u.Update(func(s *OrderUpsert) {
+		s.UpdateCoinUsdCurrency()
+	})
+}
+
+// ClearCoinUsdCurrency clears the value of the "coin_usd_currency" field.
+func (u *OrderUpsertBulk) ClearCoinUsdCurrency() *OrderUpsertBulk {
+	return u.Update(func(s *OrderUpsert) {
+		s.ClearCoinUsdCurrency()
+	})
+}
+
+// SetLocalCoinUsdCurrency sets the "local_coin_usd_currency" field.
+func (u *OrderUpsertBulk) SetLocalCoinUsdCurrency(v decimal.Decimal) *OrderUpsertBulk {
+	return u.Update(func(s *OrderUpsert) {
+		s.SetLocalCoinUsdCurrency(v)
+	})
+}
+
+// UpdateLocalCoinUsdCurrency sets the "local_coin_usd_currency" field to the value that was provided on create.
+func (u *OrderUpsertBulk) UpdateLocalCoinUsdCurrency() *OrderUpsertBulk {
+	return u.Update(func(s *OrderUpsert) {
+		s.UpdateLocalCoinUsdCurrency()
+	})
+}
+
+// ClearLocalCoinUsdCurrency clears the value of the "local_coin_usd_currency" field.
+func (u *OrderUpsertBulk) ClearLocalCoinUsdCurrency() *OrderUpsertBulk {
+	return u.Update(func(s *OrderUpsert) {
+		s.ClearLocalCoinUsdCurrency()
+	})
+}
+
+// SetLiveCoinUsdCurrency sets the "live_coin_usd_currency" field.
+func (u *OrderUpsertBulk) SetLiveCoinUsdCurrency(v decimal.Decimal) *OrderUpsertBulk {
+	return u.Update(func(s *OrderUpsert) {
+		s.SetLiveCoinUsdCurrency(v)
+	})
+}
+
+// UpdateLiveCoinUsdCurrency sets the "live_coin_usd_currency" field to the value that was provided on create.
+func (u *OrderUpsertBulk) UpdateLiveCoinUsdCurrency() *OrderUpsertBulk {
+	return u.Update(func(s *OrderUpsert) {
+		s.UpdateLiveCoinUsdCurrency()
+	})
+}
+
+// ClearLiveCoinUsdCurrency clears the value of the "live_coin_usd_currency" field.
+func (u *OrderUpsertBulk) ClearLiveCoinUsdCurrency() *OrderUpsertBulk {
+	return u.Update(func(s *OrderUpsert) {
+		s.ClearLiveCoinUsdCurrency()
 	})
 }
 

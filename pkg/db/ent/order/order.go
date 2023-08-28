@@ -35,6 +35,8 @@ const (
 	FieldUnitsV1 = "units_v1"
 	// FieldGoodValue holds the string denoting the good_value field in the database.
 	FieldGoodValue = "good_value"
+	// FieldGoodValueUsd holds the string denoting the good_value_usd field in the database.
+	FieldGoodValueUsd = "good_value_usd"
 	// FieldPaymentAmount holds the string denoting the payment_amount field in the database.
 	FieldPaymentAmount = "payment_amount"
 	// FieldDiscountAmount holds the string denoting the discount_amount field in the database.
@@ -51,6 +53,20 @@ const (
 	FieldCouponIds = "coupon_ids"
 	// FieldPaymentType holds the string denoting the payment_type field in the database.
 	FieldPaymentType = "payment_type"
+	// FieldCoinTypeID holds the string denoting the coin_type_id field in the database.
+	FieldCoinTypeID = "coin_type_id"
+	// FieldPaymentCoinTypeID holds the string denoting the payment_coin_type_id field in the database.
+	FieldPaymentCoinTypeID = "payment_coin_type_id"
+	// FieldTransferAmount holds the string denoting the transfer_amount field in the database.
+	FieldTransferAmount = "transfer_amount"
+	// FieldBalanceAmount holds the string denoting the balance_amount field in the database.
+	FieldBalanceAmount = "balance_amount"
+	// FieldCoinUsdCurrency holds the string denoting the coin_usd_currency field in the database.
+	FieldCoinUsdCurrency = "coin_usd_currency"
+	// FieldLocalCoinUsdCurrency holds the string denoting the local_coin_usd_currency field in the database.
+	FieldLocalCoinUsdCurrency = "local_coin_usd_currency"
+	// FieldLiveCoinUsdCurrency holds the string denoting the live_coin_usd_currency field in the database.
+	FieldLiveCoinUsdCurrency = "live_coin_usd_currency"
 	// Table holds the table name of the order in the database.
 	Table = "orders"
 )
@@ -69,6 +85,7 @@ var Columns = []string{
 	FieldParentOrderID,
 	FieldUnitsV1,
 	FieldGoodValue,
+	FieldGoodValueUsd,
 	FieldPaymentAmount,
 	FieldDiscountAmount,
 	FieldPromotionID,
@@ -77,6 +94,13 @@ var Columns = []string{
 	FieldInvestmentType,
 	FieldCouponIds,
 	FieldPaymentType,
+	FieldCoinTypeID,
+	FieldPaymentCoinTypeID,
+	FieldTransferAmount,
+	FieldBalanceAmount,
+	FieldCoinUsdCurrency,
+	FieldLocalCoinUsdCurrency,
+	FieldLiveCoinUsdCurrency,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -114,6 +138,8 @@ var (
 	DefaultUnitsV1 decimal.Decimal
 	// DefaultGoodValue holds the default value on creation for the "good_value" field.
 	DefaultGoodValue decimal.Decimal
+	// DefaultGoodValueUsd holds the default value on creation for the "good_value_usd" field.
+	DefaultGoodValueUsd decimal.Decimal
 	// DefaultPaymentAmount holds the default value on creation for the "payment_amount" field.
 	DefaultPaymentAmount decimal.Decimal
 	// DefaultDiscountAmount holds the default value on creation for the "discount_amount" field.
@@ -130,6 +156,16 @@ var (
 	DefaultCouponIds func() []uuid.UUID
 	// DefaultPaymentType holds the default value on creation for the "payment_type" field.
 	DefaultPaymentType string
+	// DefaultTransferAmount holds the default value on creation for the "transfer_amount" field.
+	DefaultTransferAmount decimal.Decimal
+	// DefaultBalanceAmount holds the default value on creation for the "balance_amount" field.
+	DefaultBalanceAmount decimal.Decimal
+	// DefaultCoinUsdCurrency holds the default value on creation for the "coin_usd_currency" field.
+	DefaultCoinUsdCurrency decimal.Decimal
+	// DefaultLocalCoinUsdCurrency holds the default value on creation for the "local_coin_usd_currency" field.
+	DefaultLocalCoinUsdCurrency decimal.Decimal
+	// DefaultLiveCoinUsdCurrency holds the default value on creation for the "live_coin_usd_currency" field.
+	DefaultLiveCoinUsdCurrency decimal.Decimal
 	// DefaultID holds the default value on creation for the "id" field.
 	DefaultID func() uuid.UUID
 )

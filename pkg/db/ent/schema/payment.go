@@ -38,49 +38,12 @@ func (Payment) Fields() []ent.Field {
 		field.
 			UUID("account_id", uuid.UUID{}),
 		field.
-			UUID("coin_type_id", uuid.UUID{}),
-		field.
 			UUID("coin_info_id", uuid.UUID{}).
 			Optional(),
 		field.
 			Other("start_amount", decimal.Decimal{}).
 			SchemaType(map[string]string{
 				dialect.MySQL: "decimal(37,18)",
-			}).
-			Optional().
-			Default(decimal.Decimal{}),
-		field.
-			Other("transfer_amount", decimal.Decimal{}).
-			SchemaType(map[string]string{
-				dialect.MySQL: "decimal(37,18)",
-			}).
-			Optional().
-			Default(decimal.Decimal{}),
-		field.
-			Other("balance_amount", decimal.Decimal{}).
-			SchemaType(map[string]string{
-				dialect.MySQL: "decimal(37, 18)",
-			}).
-			Optional().
-			Default(decimal.Decimal{}),
-		field.
-			Other("coin_usd_currency", decimal.Decimal{}).
-			SchemaType(map[string]string{
-				dialect.MySQL: "decimal(37, 18)",
-			}).
-			Optional().
-			Default(decimal.Decimal{}),
-		field.
-			Other("local_coin_usd_currency", decimal.Decimal{}).
-			SchemaType(map[string]string{
-				dialect.MySQL: "decimal(37, 18)",
-			}).
-			Optional().
-			Default(decimal.Decimal{}),
-		field.
-			Other("live_coin_usd_currency", decimal.Decimal{}).
-			SchemaType(map[string]string{
-				dialect.MySQL: "decimal(37, 18)",
 			}).
 			Optional().
 			Default(decimal.Decimal{}),

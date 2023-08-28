@@ -41,6 +41,7 @@ var (
 		{Name: "parent_order_id", Type: field.TypeUUID, Nullable: true},
 		{Name: "units_v1", Type: field.TypeOther, Nullable: true, SchemaType: map[string]string{"mysql": "decimal(37,18)"}},
 		{Name: "good_value", Type: field.TypeOther, Nullable: true, SchemaType: map[string]string{"mysql": "decimal(37,18)"}},
+		{Name: "good_value_usd", Type: field.TypeOther, Nullable: true, SchemaType: map[string]string{"mysql": "decimal(37,18)"}},
 		{Name: "payment_amount", Type: field.TypeOther, Nullable: true, SchemaType: map[string]string{"mysql": "decimal(37,18)"}},
 		{Name: "discount_amount", Type: field.TypeOther, Nullable: true, SchemaType: map[string]string{"mysql": "decimal(37,18)"}},
 		{Name: "promotion_id", Type: field.TypeUUID, Nullable: true},
@@ -49,6 +50,13 @@ var (
 		{Name: "investment_type", Type: field.TypeString, Nullable: true, Default: "FullPayment"},
 		{Name: "coupon_ids", Type: field.TypeJSON, Nullable: true},
 		{Name: "payment_type", Type: field.TypeString, Nullable: true, Default: "PayWithBalanceOnly"},
+		{Name: "coin_type_id", Type: field.TypeUUID},
+		{Name: "payment_coin_type_id", Type: field.TypeUUID},
+		{Name: "transfer_amount", Type: field.TypeOther, Nullable: true, SchemaType: map[string]string{"mysql": "decimal(37,18)"}},
+		{Name: "balance_amount", Type: field.TypeOther, Nullable: true, SchemaType: map[string]string{"mysql": "decimal(37, 18)"}},
+		{Name: "coin_usd_currency", Type: field.TypeOther, Nullable: true, SchemaType: map[string]string{"mysql": "decimal(37, 18)"}},
+		{Name: "local_coin_usd_currency", Type: field.TypeOther, Nullable: true, SchemaType: map[string]string{"mysql": "decimal(37, 18)"}},
+		{Name: "live_coin_usd_currency", Type: field.TypeOther, Nullable: true, SchemaType: map[string]string{"mysql": "decimal(37, 18)"}},
 	}
 	// OrdersTable holds the schema information for the "orders" table.
 	OrdersTable = &schema.Table{
@@ -71,6 +79,7 @@ var (
 		{Name: "benefit_state", Type: field.TypeString, Nullable: true, Default: "BenefitWait"},
 		{Name: "user_set_paid", Type: field.TypeBool, Nullable: true, Default: false},
 		{Name: "user_set_canceled", Type: field.TypeBool, Nullable: true, Default: false},
+		{Name: "admin_set_canceled", Type: field.TypeBool, Nullable: true, Default: false},
 		{Name: "payment_transaction_id", Type: field.TypeString, Nullable: true, Default: ""},
 		{Name: "payment_finish_amount", Type: field.TypeOther, Nullable: true, SchemaType: map[string]string{"mysql": "decimal(37,18)"}},
 		{Name: "payment_state", Type: field.TypeString, Nullable: true, Default: "PaymentStateWait"},
@@ -110,14 +119,8 @@ var (
 		{Name: "good_id", Type: field.TypeUUID},
 		{Name: "order_id", Type: field.TypeUUID},
 		{Name: "account_id", Type: field.TypeUUID},
-		{Name: "coin_type_id", Type: field.TypeUUID},
 		{Name: "coin_info_id", Type: field.TypeUUID, Nullable: true},
 		{Name: "start_amount", Type: field.TypeOther, Nullable: true, SchemaType: map[string]string{"mysql": "decimal(37,18)"}},
-		{Name: "transfer_amount", Type: field.TypeOther, Nullable: true, SchemaType: map[string]string{"mysql": "decimal(37,18)"}},
-		{Name: "balance_amount", Type: field.TypeOther, Nullable: true, SchemaType: map[string]string{"mysql": "decimal(37, 18)"}},
-		{Name: "coin_usd_currency", Type: field.TypeOther, Nullable: true, SchemaType: map[string]string{"mysql": "decimal(37, 18)"}},
-		{Name: "local_coin_usd_currency", Type: field.TypeOther, Nullable: true, SchemaType: map[string]string{"mysql": "decimal(37, 18)"}},
-		{Name: "live_coin_usd_currency", Type: field.TypeOther, Nullable: true, SchemaType: map[string]string{"mysql": "decimal(37, 18)"}},
 	}
 	// PaymentsTable holds the schema information for the "payments" table.
 	PaymentsTable = &schema.Table{

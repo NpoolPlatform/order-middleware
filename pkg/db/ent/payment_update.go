@@ -115,12 +115,6 @@ func (pu *PaymentUpdate) SetAccountID(u uuid.UUID) *PaymentUpdate {
 	return pu
 }
 
-// SetCoinTypeID sets the "coin_type_id" field.
-func (pu *PaymentUpdate) SetCoinTypeID(u uuid.UUID) *PaymentUpdate {
-	pu.mutation.SetCoinTypeID(u)
-	return pu
-}
-
 // SetCoinInfoID sets the "coin_info_id" field.
 func (pu *PaymentUpdate) SetCoinInfoID(u uuid.UUID) *PaymentUpdate {
 	pu.mutation.SetCoinInfoID(u)
@@ -158,106 +152,6 @@ func (pu *PaymentUpdate) SetNillableStartAmount(d *decimal.Decimal) *PaymentUpda
 // ClearStartAmount clears the value of the "start_amount" field.
 func (pu *PaymentUpdate) ClearStartAmount() *PaymentUpdate {
 	pu.mutation.ClearStartAmount()
-	return pu
-}
-
-// SetTransferAmount sets the "transfer_amount" field.
-func (pu *PaymentUpdate) SetTransferAmount(d decimal.Decimal) *PaymentUpdate {
-	pu.mutation.SetTransferAmount(d)
-	return pu
-}
-
-// SetNillableTransferAmount sets the "transfer_amount" field if the given value is not nil.
-func (pu *PaymentUpdate) SetNillableTransferAmount(d *decimal.Decimal) *PaymentUpdate {
-	if d != nil {
-		pu.SetTransferAmount(*d)
-	}
-	return pu
-}
-
-// ClearTransferAmount clears the value of the "transfer_amount" field.
-func (pu *PaymentUpdate) ClearTransferAmount() *PaymentUpdate {
-	pu.mutation.ClearTransferAmount()
-	return pu
-}
-
-// SetBalanceAmount sets the "balance_amount" field.
-func (pu *PaymentUpdate) SetBalanceAmount(d decimal.Decimal) *PaymentUpdate {
-	pu.mutation.SetBalanceAmount(d)
-	return pu
-}
-
-// SetNillableBalanceAmount sets the "balance_amount" field if the given value is not nil.
-func (pu *PaymentUpdate) SetNillableBalanceAmount(d *decimal.Decimal) *PaymentUpdate {
-	if d != nil {
-		pu.SetBalanceAmount(*d)
-	}
-	return pu
-}
-
-// ClearBalanceAmount clears the value of the "balance_amount" field.
-func (pu *PaymentUpdate) ClearBalanceAmount() *PaymentUpdate {
-	pu.mutation.ClearBalanceAmount()
-	return pu
-}
-
-// SetCoinUsdCurrency sets the "coin_usd_currency" field.
-func (pu *PaymentUpdate) SetCoinUsdCurrency(d decimal.Decimal) *PaymentUpdate {
-	pu.mutation.SetCoinUsdCurrency(d)
-	return pu
-}
-
-// SetNillableCoinUsdCurrency sets the "coin_usd_currency" field if the given value is not nil.
-func (pu *PaymentUpdate) SetNillableCoinUsdCurrency(d *decimal.Decimal) *PaymentUpdate {
-	if d != nil {
-		pu.SetCoinUsdCurrency(*d)
-	}
-	return pu
-}
-
-// ClearCoinUsdCurrency clears the value of the "coin_usd_currency" field.
-func (pu *PaymentUpdate) ClearCoinUsdCurrency() *PaymentUpdate {
-	pu.mutation.ClearCoinUsdCurrency()
-	return pu
-}
-
-// SetLocalCoinUsdCurrency sets the "local_coin_usd_currency" field.
-func (pu *PaymentUpdate) SetLocalCoinUsdCurrency(d decimal.Decimal) *PaymentUpdate {
-	pu.mutation.SetLocalCoinUsdCurrency(d)
-	return pu
-}
-
-// SetNillableLocalCoinUsdCurrency sets the "local_coin_usd_currency" field if the given value is not nil.
-func (pu *PaymentUpdate) SetNillableLocalCoinUsdCurrency(d *decimal.Decimal) *PaymentUpdate {
-	if d != nil {
-		pu.SetLocalCoinUsdCurrency(*d)
-	}
-	return pu
-}
-
-// ClearLocalCoinUsdCurrency clears the value of the "local_coin_usd_currency" field.
-func (pu *PaymentUpdate) ClearLocalCoinUsdCurrency() *PaymentUpdate {
-	pu.mutation.ClearLocalCoinUsdCurrency()
-	return pu
-}
-
-// SetLiveCoinUsdCurrency sets the "live_coin_usd_currency" field.
-func (pu *PaymentUpdate) SetLiveCoinUsdCurrency(d decimal.Decimal) *PaymentUpdate {
-	pu.mutation.SetLiveCoinUsdCurrency(d)
-	return pu
-}
-
-// SetNillableLiveCoinUsdCurrency sets the "live_coin_usd_currency" field if the given value is not nil.
-func (pu *PaymentUpdate) SetNillableLiveCoinUsdCurrency(d *decimal.Decimal) *PaymentUpdate {
-	if d != nil {
-		pu.SetLiveCoinUsdCurrency(*d)
-	}
-	return pu
-}
-
-// ClearLiveCoinUsdCurrency clears the value of the "live_coin_usd_currency" field.
-func (pu *PaymentUpdate) ClearLiveCoinUsdCurrency() *PaymentUpdate {
-	pu.mutation.ClearLiveCoinUsdCurrency()
 	return pu
 }
 
@@ -436,13 +330,6 @@ func (pu *PaymentUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: payment.FieldAccountID,
 		})
 	}
-	if value, ok := pu.mutation.CoinTypeID(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeUUID,
-			Value:  value,
-			Column: payment.FieldCoinTypeID,
-		})
-	}
 	if value, ok := pu.mutation.CoinInfoID(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeUUID,
@@ -467,71 +354,6 @@ func (pu *PaymentUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeOther,
 			Column: payment.FieldStartAmount,
-		})
-	}
-	if value, ok := pu.mutation.TransferAmount(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeOther,
-			Value:  value,
-			Column: payment.FieldTransferAmount,
-		})
-	}
-	if pu.mutation.TransferAmountCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeOther,
-			Column: payment.FieldTransferAmount,
-		})
-	}
-	if value, ok := pu.mutation.BalanceAmount(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeOther,
-			Value:  value,
-			Column: payment.FieldBalanceAmount,
-		})
-	}
-	if pu.mutation.BalanceAmountCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeOther,
-			Column: payment.FieldBalanceAmount,
-		})
-	}
-	if value, ok := pu.mutation.CoinUsdCurrency(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeOther,
-			Value:  value,
-			Column: payment.FieldCoinUsdCurrency,
-		})
-	}
-	if pu.mutation.CoinUsdCurrencyCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeOther,
-			Column: payment.FieldCoinUsdCurrency,
-		})
-	}
-	if value, ok := pu.mutation.LocalCoinUsdCurrency(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeOther,
-			Value:  value,
-			Column: payment.FieldLocalCoinUsdCurrency,
-		})
-	}
-	if pu.mutation.LocalCoinUsdCurrencyCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeOther,
-			Column: payment.FieldLocalCoinUsdCurrency,
-		})
-	}
-	if value, ok := pu.mutation.LiveCoinUsdCurrency(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeOther,
-			Value:  value,
-			Column: payment.FieldLiveCoinUsdCurrency,
-		})
-	}
-	if pu.mutation.LiveCoinUsdCurrencyCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeOther,
-			Column: payment.FieldLiveCoinUsdCurrency,
 		})
 	}
 	_spec.Modifiers = pu.modifiers
@@ -640,12 +462,6 @@ func (puo *PaymentUpdateOne) SetAccountID(u uuid.UUID) *PaymentUpdateOne {
 	return puo
 }
 
-// SetCoinTypeID sets the "coin_type_id" field.
-func (puo *PaymentUpdateOne) SetCoinTypeID(u uuid.UUID) *PaymentUpdateOne {
-	puo.mutation.SetCoinTypeID(u)
-	return puo
-}
-
 // SetCoinInfoID sets the "coin_info_id" field.
 func (puo *PaymentUpdateOne) SetCoinInfoID(u uuid.UUID) *PaymentUpdateOne {
 	puo.mutation.SetCoinInfoID(u)
@@ -683,106 +499,6 @@ func (puo *PaymentUpdateOne) SetNillableStartAmount(d *decimal.Decimal) *Payment
 // ClearStartAmount clears the value of the "start_amount" field.
 func (puo *PaymentUpdateOne) ClearStartAmount() *PaymentUpdateOne {
 	puo.mutation.ClearStartAmount()
-	return puo
-}
-
-// SetTransferAmount sets the "transfer_amount" field.
-func (puo *PaymentUpdateOne) SetTransferAmount(d decimal.Decimal) *PaymentUpdateOne {
-	puo.mutation.SetTransferAmount(d)
-	return puo
-}
-
-// SetNillableTransferAmount sets the "transfer_amount" field if the given value is not nil.
-func (puo *PaymentUpdateOne) SetNillableTransferAmount(d *decimal.Decimal) *PaymentUpdateOne {
-	if d != nil {
-		puo.SetTransferAmount(*d)
-	}
-	return puo
-}
-
-// ClearTransferAmount clears the value of the "transfer_amount" field.
-func (puo *PaymentUpdateOne) ClearTransferAmount() *PaymentUpdateOne {
-	puo.mutation.ClearTransferAmount()
-	return puo
-}
-
-// SetBalanceAmount sets the "balance_amount" field.
-func (puo *PaymentUpdateOne) SetBalanceAmount(d decimal.Decimal) *PaymentUpdateOne {
-	puo.mutation.SetBalanceAmount(d)
-	return puo
-}
-
-// SetNillableBalanceAmount sets the "balance_amount" field if the given value is not nil.
-func (puo *PaymentUpdateOne) SetNillableBalanceAmount(d *decimal.Decimal) *PaymentUpdateOne {
-	if d != nil {
-		puo.SetBalanceAmount(*d)
-	}
-	return puo
-}
-
-// ClearBalanceAmount clears the value of the "balance_amount" field.
-func (puo *PaymentUpdateOne) ClearBalanceAmount() *PaymentUpdateOne {
-	puo.mutation.ClearBalanceAmount()
-	return puo
-}
-
-// SetCoinUsdCurrency sets the "coin_usd_currency" field.
-func (puo *PaymentUpdateOne) SetCoinUsdCurrency(d decimal.Decimal) *PaymentUpdateOne {
-	puo.mutation.SetCoinUsdCurrency(d)
-	return puo
-}
-
-// SetNillableCoinUsdCurrency sets the "coin_usd_currency" field if the given value is not nil.
-func (puo *PaymentUpdateOne) SetNillableCoinUsdCurrency(d *decimal.Decimal) *PaymentUpdateOne {
-	if d != nil {
-		puo.SetCoinUsdCurrency(*d)
-	}
-	return puo
-}
-
-// ClearCoinUsdCurrency clears the value of the "coin_usd_currency" field.
-func (puo *PaymentUpdateOne) ClearCoinUsdCurrency() *PaymentUpdateOne {
-	puo.mutation.ClearCoinUsdCurrency()
-	return puo
-}
-
-// SetLocalCoinUsdCurrency sets the "local_coin_usd_currency" field.
-func (puo *PaymentUpdateOne) SetLocalCoinUsdCurrency(d decimal.Decimal) *PaymentUpdateOne {
-	puo.mutation.SetLocalCoinUsdCurrency(d)
-	return puo
-}
-
-// SetNillableLocalCoinUsdCurrency sets the "local_coin_usd_currency" field if the given value is not nil.
-func (puo *PaymentUpdateOne) SetNillableLocalCoinUsdCurrency(d *decimal.Decimal) *PaymentUpdateOne {
-	if d != nil {
-		puo.SetLocalCoinUsdCurrency(*d)
-	}
-	return puo
-}
-
-// ClearLocalCoinUsdCurrency clears the value of the "local_coin_usd_currency" field.
-func (puo *PaymentUpdateOne) ClearLocalCoinUsdCurrency() *PaymentUpdateOne {
-	puo.mutation.ClearLocalCoinUsdCurrency()
-	return puo
-}
-
-// SetLiveCoinUsdCurrency sets the "live_coin_usd_currency" field.
-func (puo *PaymentUpdateOne) SetLiveCoinUsdCurrency(d decimal.Decimal) *PaymentUpdateOne {
-	puo.mutation.SetLiveCoinUsdCurrency(d)
-	return puo
-}
-
-// SetNillableLiveCoinUsdCurrency sets the "live_coin_usd_currency" field if the given value is not nil.
-func (puo *PaymentUpdateOne) SetNillableLiveCoinUsdCurrency(d *decimal.Decimal) *PaymentUpdateOne {
-	if d != nil {
-		puo.SetLiveCoinUsdCurrency(*d)
-	}
-	return puo
-}
-
-// ClearLiveCoinUsdCurrency clears the value of the "live_coin_usd_currency" field.
-func (puo *PaymentUpdateOne) ClearLiveCoinUsdCurrency() *PaymentUpdateOne {
-	puo.mutation.ClearLiveCoinUsdCurrency()
 	return puo
 }
 
@@ -991,13 +707,6 @@ func (puo *PaymentUpdateOne) sqlSave(ctx context.Context) (_node *Payment, err e
 			Column: payment.FieldAccountID,
 		})
 	}
-	if value, ok := puo.mutation.CoinTypeID(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeUUID,
-			Value:  value,
-			Column: payment.FieldCoinTypeID,
-		})
-	}
 	if value, ok := puo.mutation.CoinInfoID(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeUUID,
@@ -1022,71 +731,6 @@ func (puo *PaymentUpdateOne) sqlSave(ctx context.Context) (_node *Payment, err e
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeOther,
 			Column: payment.FieldStartAmount,
-		})
-	}
-	if value, ok := puo.mutation.TransferAmount(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeOther,
-			Value:  value,
-			Column: payment.FieldTransferAmount,
-		})
-	}
-	if puo.mutation.TransferAmountCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeOther,
-			Column: payment.FieldTransferAmount,
-		})
-	}
-	if value, ok := puo.mutation.BalanceAmount(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeOther,
-			Value:  value,
-			Column: payment.FieldBalanceAmount,
-		})
-	}
-	if puo.mutation.BalanceAmountCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeOther,
-			Column: payment.FieldBalanceAmount,
-		})
-	}
-	if value, ok := puo.mutation.CoinUsdCurrency(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeOther,
-			Value:  value,
-			Column: payment.FieldCoinUsdCurrency,
-		})
-	}
-	if puo.mutation.CoinUsdCurrencyCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeOther,
-			Column: payment.FieldCoinUsdCurrency,
-		})
-	}
-	if value, ok := puo.mutation.LocalCoinUsdCurrency(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeOther,
-			Value:  value,
-			Column: payment.FieldLocalCoinUsdCurrency,
-		})
-	}
-	if puo.mutation.LocalCoinUsdCurrencyCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeOther,
-			Column: payment.FieldLocalCoinUsdCurrency,
-		})
-	}
-	if value, ok := puo.mutation.LiveCoinUsdCurrency(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeOther,
-			Value:  value,
-			Column: payment.FieldLiveCoinUsdCurrency,
-		})
-	}
-	if puo.mutation.LiveCoinUsdCurrencyCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeOther,
-			Column: payment.FieldLiveCoinUsdCurrency,
 		})
 	}
 	_spec.Modifiers = puo.modifiers

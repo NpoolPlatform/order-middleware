@@ -184,6 +184,20 @@ func (osc *OrderStateCreate) SetNillableUserSetCanceled(b *bool) *OrderStateCrea
 	return osc
 }
 
+// SetAdminSetCanceled sets the "admin_set_canceled" field.
+func (osc *OrderStateCreate) SetAdminSetCanceled(b bool) *OrderStateCreate {
+	osc.mutation.SetAdminSetCanceled(b)
+	return osc
+}
+
+// SetNillableAdminSetCanceled sets the "admin_set_canceled" field if the given value is not nil.
+func (osc *OrderStateCreate) SetNillableAdminSetCanceled(b *bool) *OrderStateCreate {
+	if b != nil {
+		osc.SetAdminSetCanceled(*b)
+	}
+	return osc
+}
+
 // SetPaymentTransactionID sets the "payment_transaction_id" field.
 func (osc *OrderStateCreate) SetPaymentTransactionID(s string) *OrderStateCreate {
 	osc.mutation.SetPaymentTransactionID(s)
@@ -400,6 +414,10 @@ func (osc *OrderStateCreate) defaults() error {
 		v := orderstate.DefaultUserSetCanceled
 		osc.mutation.SetUserSetCanceled(v)
 	}
+	if _, ok := osc.mutation.AdminSetCanceled(); !ok {
+		v := orderstate.DefaultAdminSetCanceled
+		osc.mutation.SetAdminSetCanceled(v)
+	}
 	if _, ok := osc.mutation.PaymentTransactionID(); !ok {
 		v := orderstate.DefaultPaymentTransactionID
 		osc.mutation.SetPaymentTransactionID(v)
@@ -576,6 +594,14 @@ func (osc *OrderStateCreate) createSpec() (*OrderState, *sqlgraph.CreateSpec) {
 			Column: orderstate.FieldUserSetCanceled,
 		})
 		_node.UserSetCanceled = value
+	}
+	if value, ok := osc.mutation.AdminSetCanceled(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Value:  value,
+			Column: orderstate.FieldAdminSetCanceled,
+		})
+		_node.AdminSetCanceled = value
 	}
 	if value, ok := osc.mutation.PaymentTransactionID(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -896,6 +922,24 @@ func (u *OrderStateUpsert) UpdateUserSetCanceled() *OrderStateUpsert {
 // ClearUserSetCanceled clears the value of the "user_set_canceled" field.
 func (u *OrderStateUpsert) ClearUserSetCanceled() *OrderStateUpsert {
 	u.SetNull(orderstate.FieldUserSetCanceled)
+	return u
+}
+
+// SetAdminSetCanceled sets the "admin_set_canceled" field.
+func (u *OrderStateUpsert) SetAdminSetCanceled(v bool) *OrderStateUpsert {
+	u.Set(orderstate.FieldAdminSetCanceled, v)
+	return u
+}
+
+// UpdateAdminSetCanceled sets the "admin_set_canceled" field to the value that was provided on create.
+func (u *OrderStateUpsert) UpdateAdminSetCanceled() *OrderStateUpsert {
+	u.SetExcluded(orderstate.FieldAdminSetCanceled)
+	return u
+}
+
+// ClearAdminSetCanceled clears the value of the "admin_set_canceled" field.
+func (u *OrderStateUpsert) ClearAdminSetCanceled() *OrderStateUpsert {
+	u.SetNull(orderstate.FieldAdminSetCanceled)
 	return u
 }
 
@@ -1314,6 +1358,27 @@ func (u *OrderStateUpsertOne) UpdateUserSetCanceled() *OrderStateUpsertOne {
 func (u *OrderStateUpsertOne) ClearUserSetCanceled() *OrderStateUpsertOne {
 	return u.Update(func(s *OrderStateUpsert) {
 		s.ClearUserSetCanceled()
+	})
+}
+
+// SetAdminSetCanceled sets the "admin_set_canceled" field.
+func (u *OrderStateUpsertOne) SetAdminSetCanceled(v bool) *OrderStateUpsertOne {
+	return u.Update(func(s *OrderStateUpsert) {
+		s.SetAdminSetCanceled(v)
+	})
+}
+
+// UpdateAdminSetCanceled sets the "admin_set_canceled" field to the value that was provided on create.
+func (u *OrderStateUpsertOne) UpdateAdminSetCanceled() *OrderStateUpsertOne {
+	return u.Update(func(s *OrderStateUpsert) {
+		s.UpdateAdminSetCanceled()
+	})
+}
+
+// ClearAdminSetCanceled clears the value of the "admin_set_canceled" field.
+func (u *OrderStateUpsertOne) ClearAdminSetCanceled() *OrderStateUpsertOne {
+	return u.Update(func(s *OrderStateUpsert) {
+		s.ClearAdminSetCanceled()
 	})
 }
 
@@ -1915,6 +1980,27 @@ func (u *OrderStateUpsertBulk) UpdateUserSetCanceled() *OrderStateUpsertBulk {
 func (u *OrderStateUpsertBulk) ClearUserSetCanceled() *OrderStateUpsertBulk {
 	return u.Update(func(s *OrderStateUpsert) {
 		s.ClearUserSetCanceled()
+	})
+}
+
+// SetAdminSetCanceled sets the "admin_set_canceled" field.
+func (u *OrderStateUpsertBulk) SetAdminSetCanceled(v bool) *OrderStateUpsertBulk {
+	return u.Update(func(s *OrderStateUpsert) {
+		s.SetAdminSetCanceled(v)
+	})
+}
+
+// UpdateAdminSetCanceled sets the "admin_set_canceled" field to the value that was provided on create.
+func (u *OrderStateUpsertBulk) UpdateAdminSetCanceled() *OrderStateUpsertBulk {
+	return u.Update(func(s *OrderStateUpsert) {
+		s.UpdateAdminSetCanceled()
+	})
+}
+
+// ClearAdminSetCanceled clears the value of the "admin_set_canceled" field.
+func (u *OrderStateUpsertBulk) ClearAdminSetCanceled() *OrderStateUpsertBulk {
+	return u.Update(func(s *OrderStateUpsert) {
+		s.ClearAdminSetCanceled()
 	})
 }
 

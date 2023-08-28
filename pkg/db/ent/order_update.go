@@ -189,6 +189,26 @@ func (ou *OrderUpdate) ClearGoodValue() *OrderUpdate {
 	return ou
 }
 
+// SetGoodValueUsd sets the "good_value_usd" field.
+func (ou *OrderUpdate) SetGoodValueUsd(d decimal.Decimal) *OrderUpdate {
+	ou.mutation.SetGoodValueUsd(d)
+	return ou
+}
+
+// SetNillableGoodValueUsd sets the "good_value_usd" field if the given value is not nil.
+func (ou *OrderUpdate) SetNillableGoodValueUsd(d *decimal.Decimal) *OrderUpdate {
+	if d != nil {
+		ou.SetGoodValueUsd(*d)
+	}
+	return ou
+}
+
+// ClearGoodValueUsd clears the value of the "good_value_usd" field.
+func (ou *OrderUpdate) ClearGoodValueUsd() *OrderUpdate {
+	ou.mutation.ClearGoodValueUsd()
+	return ou
+}
+
 // SetPaymentAmount sets the "payment_amount" field.
 func (ou *OrderUpdate) SetPaymentAmount(d decimal.Decimal) *OrderUpdate {
 	ou.mutation.SetPaymentAmount(d)
@@ -345,6 +365,118 @@ func (ou *OrderUpdate) SetNillablePaymentType(s *string) *OrderUpdate {
 // ClearPaymentType clears the value of the "payment_type" field.
 func (ou *OrderUpdate) ClearPaymentType() *OrderUpdate {
 	ou.mutation.ClearPaymentType()
+	return ou
+}
+
+// SetCoinTypeID sets the "coin_type_id" field.
+func (ou *OrderUpdate) SetCoinTypeID(u uuid.UUID) *OrderUpdate {
+	ou.mutation.SetCoinTypeID(u)
+	return ou
+}
+
+// SetPaymentCoinTypeID sets the "payment_coin_type_id" field.
+func (ou *OrderUpdate) SetPaymentCoinTypeID(u uuid.UUID) *OrderUpdate {
+	ou.mutation.SetPaymentCoinTypeID(u)
+	return ou
+}
+
+// SetTransferAmount sets the "transfer_amount" field.
+func (ou *OrderUpdate) SetTransferAmount(d decimal.Decimal) *OrderUpdate {
+	ou.mutation.SetTransferAmount(d)
+	return ou
+}
+
+// SetNillableTransferAmount sets the "transfer_amount" field if the given value is not nil.
+func (ou *OrderUpdate) SetNillableTransferAmount(d *decimal.Decimal) *OrderUpdate {
+	if d != nil {
+		ou.SetTransferAmount(*d)
+	}
+	return ou
+}
+
+// ClearTransferAmount clears the value of the "transfer_amount" field.
+func (ou *OrderUpdate) ClearTransferAmount() *OrderUpdate {
+	ou.mutation.ClearTransferAmount()
+	return ou
+}
+
+// SetBalanceAmount sets the "balance_amount" field.
+func (ou *OrderUpdate) SetBalanceAmount(d decimal.Decimal) *OrderUpdate {
+	ou.mutation.SetBalanceAmount(d)
+	return ou
+}
+
+// SetNillableBalanceAmount sets the "balance_amount" field if the given value is not nil.
+func (ou *OrderUpdate) SetNillableBalanceAmount(d *decimal.Decimal) *OrderUpdate {
+	if d != nil {
+		ou.SetBalanceAmount(*d)
+	}
+	return ou
+}
+
+// ClearBalanceAmount clears the value of the "balance_amount" field.
+func (ou *OrderUpdate) ClearBalanceAmount() *OrderUpdate {
+	ou.mutation.ClearBalanceAmount()
+	return ou
+}
+
+// SetCoinUsdCurrency sets the "coin_usd_currency" field.
+func (ou *OrderUpdate) SetCoinUsdCurrency(d decimal.Decimal) *OrderUpdate {
+	ou.mutation.SetCoinUsdCurrency(d)
+	return ou
+}
+
+// SetNillableCoinUsdCurrency sets the "coin_usd_currency" field if the given value is not nil.
+func (ou *OrderUpdate) SetNillableCoinUsdCurrency(d *decimal.Decimal) *OrderUpdate {
+	if d != nil {
+		ou.SetCoinUsdCurrency(*d)
+	}
+	return ou
+}
+
+// ClearCoinUsdCurrency clears the value of the "coin_usd_currency" field.
+func (ou *OrderUpdate) ClearCoinUsdCurrency() *OrderUpdate {
+	ou.mutation.ClearCoinUsdCurrency()
+	return ou
+}
+
+// SetLocalCoinUsdCurrency sets the "local_coin_usd_currency" field.
+func (ou *OrderUpdate) SetLocalCoinUsdCurrency(d decimal.Decimal) *OrderUpdate {
+	ou.mutation.SetLocalCoinUsdCurrency(d)
+	return ou
+}
+
+// SetNillableLocalCoinUsdCurrency sets the "local_coin_usd_currency" field if the given value is not nil.
+func (ou *OrderUpdate) SetNillableLocalCoinUsdCurrency(d *decimal.Decimal) *OrderUpdate {
+	if d != nil {
+		ou.SetLocalCoinUsdCurrency(*d)
+	}
+	return ou
+}
+
+// ClearLocalCoinUsdCurrency clears the value of the "local_coin_usd_currency" field.
+func (ou *OrderUpdate) ClearLocalCoinUsdCurrency() *OrderUpdate {
+	ou.mutation.ClearLocalCoinUsdCurrency()
+	return ou
+}
+
+// SetLiveCoinUsdCurrency sets the "live_coin_usd_currency" field.
+func (ou *OrderUpdate) SetLiveCoinUsdCurrency(d decimal.Decimal) *OrderUpdate {
+	ou.mutation.SetLiveCoinUsdCurrency(d)
+	return ou
+}
+
+// SetNillableLiveCoinUsdCurrency sets the "live_coin_usd_currency" field if the given value is not nil.
+func (ou *OrderUpdate) SetNillableLiveCoinUsdCurrency(d *decimal.Decimal) *OrderUpdate {
+	if d != nil {
+		ou.SetLiveCoinUsdCurrency(*d)
+	}
+	return ou
+}
+
+// ClearLiveCoinUsdCurrency clears the value of the "live_coin_usd_currency" field.
+func (ou *OrderUpdate) ClearLiveCoinUsdCurrency() *OrderUpdate {
+	ou.mutation.ClearLiveCoinUsdCurrency()
 	return ou
 }
 
@@ -568,6 +700,19 @@ func (ou *OrderUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: order.FieldGoodValue,
 		})
 	}
+	if value, ok := ou.mutation.GoodValueUsd(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeOther,
+			Value:  value,
+			Column: order.FieldGoodValueUsd,
+		})
+	}
+	if ou.mutation.GoodValueUsdCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeOther,
+			Column: order.FieldGoodValueUsd,
+		})
+	}
 	if value, ok := ou.mutation.PaymentAmount(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeOther,
@@ -677,6 +822,85 @@ func (ou *OrderUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
 			Column: order.FieldPaymentType,
+		})
+	}
+	if value, ok := ou.mutation.CoinTypeID(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Value:  value,
+			Column: order.FieldCoinTypeID,
+		})
+	}
+	if value, ok := ou.mutation.PaymentCoinTypeID(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Value:  value,
+			Column: order.FieldPaymentCoinTypeID,
+		})
+	}
+	if value, ok := ou.mutation.TransferAmount(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeOther,
+			Value:  value,
+			Column: order.FieldTransferAmount,
+		})
+	}
+	if ou.mutation.TransferAmountCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeOther,
+			Column: order.FieldTransferAmount,
+		})
+	}
+	if value, ok := ou.mutation.BalanceAmount(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeOther,
+			Value:  value,
+			Column: order.FieldBalanceAmount,
+		})
+	}
+	if ou.mutation.BalanceAmountCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeOther,
+			Column: order.FieldBalanceAmount,
+		})
+	}
+	if value, ok := ou.mutation.CoinUsdCurrency(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeOther,
+			Value:  value,
+			Column: order.FieldCoinUsdCurrency,
+		})
+	}
+	if ou.mutation.CoinUsdCurrencyCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeOther,
+			Column: order.FieldCoinUsdCurrency,
+		})
+	}
+	if value, ok := ou.mutation.LocalCoinUsdCurrency(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeOther,
+			Value:  value,
+			Column: order.FieldLocalCoinUsdCurrency,
+		})
+	}
+	if ou.mutation.LocalCoinUsdCurrencyCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeOther,
+			Column: order.FieldLocalCoinUsdCurrency,
+		})
+	}
+	if value, ok := ou.mutation.LiveCoinUsdCurrency(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeOther,
+			Value:  value,
+			Column: order.FieldLiveCoinUsdCurrency,
+		})
+	}
+	if ou.mutation.LiveCoinUsdCurrencyCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeOther,
+			Column: order.FieldLiveCoinUsdCurrency,
 		})
 	}
 	_spec.Modifiers = ou.modifiers
@@ -859,6 +1083,26 @@ func (ouo *OrderUpdateOne) ClearGoodValue() *OrderUpdateOne {
 	return ouo
 }
 
+// SetGoodValueUsd sets the "good_value_usd" field.
+func (ouo *OrderUpdateOne) SetGoodValueUsd(d decimal.Decimal) *OrderUpdateOne {
+	ouo.mutation.SetGoodValueUsd(d)
+	return ouo
+}
+
+// SetNillableGoodValueUsd sets the "good_value_usd" field if the given value is not nil.
+func (ouo *OrderUpdateOne) SetNillableGoodValueUsd(d *decimal.Decimal) *OrderUpdateOne {
+	if d != nil {
+		ouo.SetGoodValueUsd(*d)
+	}
+	return ouo
+}
+
+// ClearGoodValueUsd clears the value of the "good_value_usd" field.
+func (ouo *OrderUpdateOne) ClearGoodValueUsd() *OrderUpdateOne {
+	ouo.mutation.ClearGoodValueUsd()
+	return ouo
+}
+
 // SetPaymentAmount sets the "payment_amount" field.
 func (ouo *OrderUpdateOne) SetPaymentAmount(d decimal.Decimal) *OrderUpdateOne {
 	ouo.mutation.SetPaymentAmount(d)
@@ -1015,6 +1259,118 @@ func (ouo *OrderUpdateOne) SetNillablePaymentType(s *string) *OrderUpdateOne {
 // ClearPaymentType clears the value of the "payment_type" field.
 func (ouo *OrderUpdateOne) ClearPaymentType() *OrderUpdateOne {
 	ouo.mutation.ClearPaymentType()
+	return ouo
+}
+
+// SetCoinTypeID sets the "coin_type_id" field.
+func (ouo *OrderUpdateOne) SetCoinTypeID(u uuid.UUID) *OrderUpdateOne {
+	ouo.mutation.SetCoinTypeID(u)
+	return ouo
+}
+
+// SetPaymentCoinTypeID sets the "payment_coin_type_id" field.
+func (ouo *OrderUpdateOne) SetPaymentCoinTypeID(u uuid.UUID) *OrderUpdateOne {
+	ouo.mutation.SetPaymentCoinTypeID(u)
+	return ouo
+}
+
+// SetTransferAmount sets the "transfer_amount" field.
+func (ouo *OrderUpdateOne) SetTransferAmount(d decimal.Decimal) *OrderUpdateOne {
+	ouo.mutation.SetTransferAmount(d)
+	return ouo
+}
+
+// SetNillableTransferAmount sets the "transfer_amount" field if the given value is not nil.
+func (ouo *OrderUpdateOne) SetNillableTransferAmount(d *decimal.Decimal) *OrderUpdateOne {
+	if d != nil {
+		ouo.SetTransferAmount(*d)
+	}
+	return ouo
+}
+
+// ClearTransferAmount clears the value of the "transfer_amount" field.
+func (ouo *OrderUpdateOne) ClearTransferAmount() *OrderUpdateOne {
+	ouo.mutation.ClearTransferAmount()
+	return ouo
+}
+
+// SetBalanceAmount sets the "balance_amount" field.
+func (ouo *OrderUpdateOne) SetBalanceAmount(d decimal.Decimal) *OrderUpdateOne {
+	ouo.mutation.SetBalanceAmount(d)
+	return ouo
+}
+
+// SetNillableBalanceAmount sets the "balance_amount" field if the given value is not nil.
+func (ouo *OrderUpdateOne) SetNillableBalanceAmount(d *decimal.Decimal) *OrderUpdateOne {
+	if d != nil {
+		ouo.SetBalanceAmount(*d)
+	}
+	return ouo
+}
+
+// ClearBalanceAmount clears the value of the "balance_amount" field.
+func (ouo *OrderUpdateOne) ClearBalanceAmount() *OrderUpdateOne {
+	ouo.mutation.ClearBalanceAmount()
+	return ouo
+}
+
+// SetCoinUsdCurrency sets the "coin_usd_currency" field.
+func (ouo *OrderUpdateOne) SetCoinUsdCurrency(d decimal.Decimal) *OrderUpdateOne {
+	ouo.mutation.SetCoinUsdCurrency(d)
+	return ouo
+}
+
+// SetNillableCoinUsdCurrency sets the "coin_usd_currency" field if the given value is not nil.
+func (ouo *OrderUpdateOne) SetNillableCoinUsdCurrency(d *decimal.Decimal) *OrderUpdateOne {
+	if d != nil {
+		ouo.SetCoinUsdCurrency(*d)
+	}
+	return ouo
+}
+
+// ClearCoinUsdCurrency clears the value of the "coin_usd_currency" field.
+func (ouo *OrderUpdateOne) ClearCoinUsdCurrency() *OrderUpdateOne {
+	ouo.mutation.ClearCoinUsdCurrency()
+	return ouo
+}
+
+// SetLocalCoinUsdCurrency sets the "local_coin_usd_currency" field.
+func (ouo *OrderUpdateOne) SetLocalCoinUsdCurrency(d decimal.Decimal) *OrderUpdateOne {
+	ouo.mutation.SetLocalCoinUsdCurrency(d)
+	return ouo
+}
+
+// SetNillableLocalCoinUsdCurrency sets the "local_coin_usd_currency" field if the given value is not nil.
+func (ouo *OrderUpdateOne) SetNillableLocalCoinUsdCurrency(d *decimal.Decimal) *OrderUpdateOne {
+	if d != nil {
+		ouo.SetLocalCoinUsdCurrency(*d)
+	}
+	return ouo
+}
+
+// ClearLocalCoinUsdCurrency clears the value of the "local_coin_usd_currency" field.
+func (ouo *OrderUpdateOne) ClearLocalCoinUsdCurrency() *OrderUpdateOne {
+	ouo.mutation.ClearLocalCoinUsdCurrency()
+	return ouo
+}
+
+// SetLiveCoinUsdCurrency sets the "live_coin_usd_currency" field.
+func (ouo *OrderUpdateOne) SetLiveCoinUsdCurrency(d decimal.Decimal) *OrderUpdateOne {
+	ouo.mutation.SetLiveCoinUsdCurrency(d)
+	return ouo
+}
+
+// SetNillableLiveCoinUsdCurrency sets the "live_coin_usd_currency" field if the given value is not nil.
+func (ouo *OrderUpdateOne) SetNillableLiveCoinUsdCurrency(d *decimal.Decimal) *OrderUpdateOne {
+	if d != nil {
+		ouo.SetLiveCoinUsdCurrency(*d)
+	}
+	return ouo
+}
+
+// ClearLiveCoinUsdCurrency clears the value of the "live_coin_usd_currency" field.
+func (ouo *OrderUpdateOne) ClearLiveCoinUsdCurrency() *OrderUpdateOne {
+	ouo.mutation.ClearLiveCoinUsdCurrency()
 	return ouo
 }
 
@@ -1268,6 +1624,19 @@ func (ouo *OrderUpdateOne) sqlSave(ctx context.Context) (_node *Order, err error
 			Column: order.FieldGoodValue,
 		})
 	}
+	if value, ok := ouo.mutation.GoodValueUsd(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeOther,
+			Value:  value,
+			Column: order.FieldGoodValueUsd,
+		})
+	}
+	if ouo.mutation.GoodValueUsdCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeOther,
+			Column: order.FieldGoodValueUsd,
+		})
+	}
 	if value, ok := ouo.mutation.PaymentAmount(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeOther,
@@ -1377,6 +1746,85 @@ func (ouo *OrderUpdateOne) sqlSave(ctx context.Context) (_node *Order, err error
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
 			Column: order.FieldPaymentType,
+		})
+	}
+	if value, ok := ouo.mutation.CoinTypeID(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Value:  value,
+			Column: order.FieldCoinTypeID,
+		})
+	}
+	if value, ok := ouo.mutation.PaymentCoinTypeID(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Value:  value,
+			Column: order.FieldPaymentCoinTypeID,
+		})
+	}
+	if value, ok := ouo.mutation.TransferAmount(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeOther,
+			Value:  value,
+			Column: order.FieldTransferAmount,
+		})
+	}
+	if ouo.mutation.TransferAmountCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeOther,
+			Column: order.FieldTransferAmount,
+		})
+	}
+	if value, ok := ouo.mutation.BalanceAmount(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeOther,
+			Value:  value,
+			Column: order.FieldBalanceAmount,
+		})
+	}
+	if ouo.mutation.BalanceAmountCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeOther,
+			Column: order.FieldBalanceAmount,
+		})
+	}
+	if value, ok := ouo.mutation.CoinUsdCurrency(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeOther,
+			Value:  value,
+			Column: order.FieldCoinUsdCurrency,
+		})
+	}
+	if ouo.mutation.CoinUsdCurrencyCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeOther,
+			Column: order.FieldCoinUsdCurrency,
+		})
+	}
+	if value, ok := ouo.mutation.LocalCoinUsdCurrency(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeOther,
+			Value:  value,
+			Column: order.FieldLocalCoinUsdCurrency,
+		})
+	}
+	if ouo.mutation.LocalCoinUsdCurrencyCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeOther,
+			Column: order.FieldLocalCoinUsdCurrency,
+		})
+	}
+	if value, ok := ouo.mutation.LiveCoinUsdCurrency(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeOther,
+			Value:  value,
+			Column: order.FieldLiveCoinUsdCurrency,
+		})
+	}
+	if ouo.mutation.LiveCoinUsdCurrencyCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeOther,
+			Column: order.FieldLiveCoinUsdCurrency,
 		})
 	}
 	_spec.Modifiers = ouo.modifiers
