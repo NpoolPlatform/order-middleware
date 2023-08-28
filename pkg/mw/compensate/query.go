@@ -53,6 +53,7 @@ func (h *queryHandler) queryJoinMyself(s *sql.Selector) {
 		t.C(entcompensate.FieldOrderID),
 		t.C(entcompensate.FieldStartAt),
 		t.C(entcompensate.FieldEndAt),
+		t.C(entcompensate.FieldTitle),
 		t.C(entcompensate.FieldMessage),
 		t.C(entcompensate.FieldCreatedAt),
 		t.C(entcompensate.FieldUpdatedAt),

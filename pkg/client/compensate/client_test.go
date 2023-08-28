@@ -107,6 +107,7 @@ var (
 		OrderEndAt:   order.EndAt,
 		StartAt:      now - secondsPerDay,
 		EndAt:        now - secondsPerDay + 2*secondsPerHours,
+		Title:        "Title " + uuid.NewString(),
 		Message:      "Message " + uuid.NewString(),
 	}
 )
@@ -169,6 +170,7 @@ func createCompensate(t *testing.T) {
 			OrderID: &ret.OrderID,
 			StartAt: &ret.StartAt,
 			EndAt:   &ret.EndAt,
+			Title:   &ret.Title,
 			Message: &ret.Message,
 		}
 	)

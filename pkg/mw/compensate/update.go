@@ -24,6 +24,7 @@ func (h *updateHandler) updateCompensate(ctx context.Context, tx *ent.Tx) error 
 		&compensatecrud.Req{
 			StartAt: h.StartAt,
 			EndAt:   h.EndAt,
+			Title:   h.Title,
 			Message: h.Message,
 		},
 	).Save(ctx); err != nil {

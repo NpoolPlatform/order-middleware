@@ -21,6 +21,7 @@ func (s *Server) CreateCompensate(ctx context.Context, in *npool.CreateCompensat
 		compensate1.WithOrderID(req.OrderID, true),
 		compensate1.WithStartAt(req.StartAt, true),
 		compensate1.WithEndAt(req.EndAt, true),
+		compensate1.WithTitle(req.Title, true),
 		compensate1.WithMessage(req.Message, false),
 	)
 	if err != nil {

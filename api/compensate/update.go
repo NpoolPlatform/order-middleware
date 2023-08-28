@@ -20,6 +20,7 @@ func (s *Server) UpdateCompensate(ctx context.Context, in *npool.UpdateCompensat
 		compensate1.WithID(req.ID, true),
 		compensate1.WithStartAt(req.StartAt, false),
 		compensate1.WithEndAt(req.EndAt, false),
+		compensate1.WithTitle(req.Title, false),
 		compensate1.WithMessage(req.Message, false),
 	)
 	if err != nil {

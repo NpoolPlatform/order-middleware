@@ -28,6 +28,7 @@ func (h *createHandler) createCompensate(ctx context.Context, tx *ent.Tx) error 
 			OrderID: h.OrderID,
 			StartAt: h.StartAt,
 			EndAt:   h.EndAt,
+			Title:   h.Title,
 			Message: h.Message,
 		},
 	).Save(ctx); err != nil {

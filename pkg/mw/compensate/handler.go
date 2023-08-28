@@ -18,6 +18,7 @@ type Handler struct {
 	OrderID *uuid.UUID
 	StartAt *uint32
 	EndAt   *uint32
+	Title   *string
 	Message *string
 	Reqs    []*npool.CompensateReq
 	Conds   *compensatecrud.Conds
@@ -65,6 +66,19 @@ func WithOrderID(id *string, must bool) func(context.Context, *Handler) error {
 			return err
 		}
 		h.OrderID = &_id
+		return nil
+	}
+}
+
+func WithTitle(title *string, must bool) func(context.Context, *Handler) error {
+	return func(ctx context.Context, h *Handler) error {
+		if title == nil {
+			if must {
+				return fmt.Errorf("invalid title")
+			}
+			return nil
+		}
+		h.Title = title
 		return nil
 	}
 }
@@ -152,23 +166,6 @@ func WithLimit(limit int32) func(context.Context, *Handler) error {
 			limit = constant.DefaultRowLimit
 		}
 		h.Limit = limit
-		return nil
-	}
-}
-
-func WithReqs(reqs []*npool.CompensateReq) func(context.Context, *Handler) error {
-	return func(ctx context.Context, h *Handler) error {
-		for _, req := range reqs {
-			if _, err := uuid.Parse(*req.OrderID); err != nil {
-				return err
-			}
-			if req.ID != nil {
-				if _, err := uuid.Parse(*req.ID); err != nil {
-					return err
-				}
-			}
-		}
-		h.Reqs = reqs
 		return nil
 	}
 }

@@ -14,6 +14,7 @@ type Req struct {
 	OrderID   *uuid.UUID
 	StartAt   *uint32
 	EndAt     *uint32
+	Title     *string
 	Message   *string
 	CreatedAt *uint32
 	DeletedAt *uint32
@@ -32,6 +33,9 @@ func CreateSet(c *ent.CompensateCreate, req *Req) *ent.CompensateCreate {
 	if req.EndAt != nil {
 		c.SetEndAt(*req.EndAt)
 	}
+	if req.Title != nil {
+		c.SetTitle(*req.Title)
+	}
 	if req.Message != nil {
 		c.SetMessage(*req.Message)
 	}
@@ -47,6 +51,9 @@ func UpdateSet(u *ent.CompensateUpdateOne, req *Req) *ent.CompensateUpdateOne {
 	}
 	if req.EndAt != nil {
 		u.SetEndAt(*req.EndAt)
+	}
+	if req.Title != nil {
+		u.SetTitle(*req.Title)
 	}
 	if req.Message != nil {
 		u.SetMessage(*req.Message)
