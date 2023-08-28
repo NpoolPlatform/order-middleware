@@ -41,6 +41,7 @@ func (s *Server) ExistOrder(ctx context.Context, in *npool.ExistOrderRequest) (*
 	}, nil
 }
 
+//nolint:dupl
 func (s *Server) ExistOrderConds(ctx context.Context, in *npool.ExistOrderCondsRequest) (*npool.ExistOrderCondsResponse, error) {
 	handler, err := order1.NewHandler(
 		ctx,
