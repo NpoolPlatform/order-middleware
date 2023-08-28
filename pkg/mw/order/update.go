@@ -73,6 +73,7 @@ func (h *updateHandler) updateOrderState(ctx context.Context, tx *ent.Tx, req *o
 			BenefitState:         req.BenefitState,
 			UserSetPaid:          req.UserSetPaid,
 			UserSetCanceled:      req.UserSetCanceled,
+			AdminSetCanceled:     req.AdminSetCanceled,
 			PaymentTransactionID: req.PaymentTransactionID,
 			PaymentFinishAmount:  req.PaymentFinishAmount,
 			PaymentState:         req.PaymentState,

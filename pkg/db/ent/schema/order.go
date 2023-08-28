@@ -22,6 +22,7 @@ func (Order) Mixin() []ent.Mixin {
 }
 
 // Fields of the Order.
+//nolint:funlen
 func (Order) Fields() []ent.Field {
 	return []ent.Field{
 		field.

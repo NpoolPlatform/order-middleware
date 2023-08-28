@@ -22,7 +22,7 @@ type createHandler struct {
 }
 
 func (h *createHandler) paymentState() *ordertypes.PaymentState {
-	if h.PaymentTransferAmount != nil && h.PaymentTransferAmount.Cmp(decimal.NewFromInt(0)) > 0 {
+	if h.TransferAmount != nil && h.TransferAmount.Cmp(decimal.NewFromInt(0)) > 0 {
 		return ordertypes.PaymentState_PaymentStateWait.Enum()
 	}
 	return ordertypes.PaymentState_PaymentStateNoPayment.Enum()

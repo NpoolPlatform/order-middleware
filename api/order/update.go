@@ -27,6 +27,7 @@ func (s *Server) UpdateOrder(ctx context.Context, in *npool.UpdateOrderRequest) 
 		order1.WithBenefitState(req.BenefitState, false),
 		order1.WithUserSetPaid(req.UserSetPaid, false),
 		order1.WithUserSetCanceled(req.UserSetCanceled, false),
+		order1.WithAdminSetCanceled(req.AdminSetCanceled, false),
 		order1.WithPaymentTransactionID(req.PaymentTransactionID, false),
 		order1.WithPaymentFinishAmount(req.PaymentFinishAmount, false),
 		order1.WithOutOfGasHours(req.OutOfGasHours, false),

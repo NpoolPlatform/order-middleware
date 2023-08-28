@@ -61,6 +61,7 @@ func (h *queryHandler) queryJoinMyself(s *sql.Selector) {
 		t.C(entorder.FieldParentOrderID),
 		t.C(entorder.FieldUnitsV1),
 		t.C(entorder.FieldGoodValue),
+		t.C(entorder.FieldGoodValueUsd),
 		t.C(entorder.FieldPaymentAmount),
 		t.C(entorder.FieldDiscountAmount),
 		t.C(entorder.FieldPromotionID),
@@ -69,6 +70,13 @@ func (h *queryHandler) queryJoinMyself(s *sql.Selector) {
 		t.C(entorder.FieldInvestmentType),
 		t.C(entorder.FieldCouponIds),
 		t.C(entorder.FieldPaymentType),
+		t.C(entorder.FieldCoinTypeID),
+		t.C(entorder.FieldPaymentCoinTypeID),
+		t.C(entorder.FieldTransferAmount),
+		t.C(entorder.FieldBalanceAmount),
+		t.C(entorder.FieldCoinUsdCurrency),
+		t.C(entorder.FieldLocalCoinUsdCurrency),
+		t.C(entorder.FieldLiveCoinUsdCurrency),
 	)
 }
 
@@ -85,13 +93,7 @@ func (h *queryHandler) queryJoinPayment(s *sql.Selector) error { //nolint
 
 	s.AppendSelect(
 		sql.As(t.C(entpayment.FieldAccountID), "payment_account_id"),
-		sql.As(t.C(entpayment.FieldCoinTypeID), "payment_coin_type_id"),
 		sql.As(t.C(entpayment.FieldStartAmount), "payment_start_amount"),
-		sql.As(t.C(entpayment.FieldTransferAmount), "payment_transfer_amount"),
-		sql.As(t.C(entpayment.FieldBalanceAmount), "payment_balance_amount"),
-		sql.As(t.C(entpayment.FieldCoinUsdCurrency), "payment_coin_usd_currency"),
-		sql.As(t.C(entpayment.FieldLocalCoinUsdCurrency), "payment_local_coin_usd_currency"),
-		sql.As(t.C(entpayment.FieldLiveCoinUsdCurrency), "payment_live_coin_usd_currency"),
 	)
 	return nil
 }

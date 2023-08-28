@@ -15,28 +15,36 @@ import (
 )
 
 type Req struct {
-	ID             *uuid.UUID
-	AppID          *uuid.UUID
-	UserID         *uuid.UUID
-	GoodID         *uuid.UUID
-	AppGoodID      *uuid.UUID
-	PaymentID      *uuid.UUID
-	ParentOrderID  *uuid.UUID
-	Units          *decimal.Decimal
-	GoodValue      *decimal.Decimal
-	PaymentAmount  *decimal.Decimal
-	DiscountAmount *decimal.Decimal
-	PromotionID    *uuid.UUID
-	DurationDays   *uint32
-	OrderType      *basetypes.OrderType
-	InvestmentType *basetypes.InvestmentType
-	CouponIDs      *[]uuid.UUID
-	PaymentType    *basetypes.PaymentType
-	CreatedAt      *uint32
-	DeletedAt      *uint32
+	ID                   *uuid.UUID
+	AppID                *uuid.UUID
+	UserID               *uuid.UUID
+	GoodID               *uuid.UUID
+	AppGoodID            *uuid.UUID
+	PaymentID            *uuid.UUID
+	ParentOrderID        *uuid.UUID
+	Units                *decimal.Decimal
+	GoodValue            *decimal.Decimal
+	GoodValueUSD         *decimal.Decimal
+	PaymentAmount        *decimal.Decimal
+	DiscountAmount       *decimal.Decimal
+	PromotionID          *uuid.UUID
+	DurationDays         *uint32
+	OrderType            *basetypes.OrderType
+	InvestmentType       *basetypes.InvestmentType
+	CouponIDs            *[]uuid.UUID
+	PaymentType          *basetypes.PaymentType
+	PaymentCoinTypeID    *uuid.UUID
+	CoinTypeID           *uuid.UUID
+	TransferAmount       *decimal.Decimal
+	BalanceAmount        *decimal.Decimal
+	CoinUSDCurrency      *decimal.Decimal
+	LocalCoinUSDCurrency *decimal.Decimal
+	LiveCoinUSDCurrency  *decimal.Decimal
+	CreatedAt            *uint32
+	DeletedAt            *uint32
 }
 
-//nolint:gocyclo
+//nolint:funlen,gocyclo
 func CreateSet(c *ent.OrderCreate, req *Req) *ent.OrderCreate {
 	if req.ID != nil {
 		c.SetID(*req.ID)
@@ -65,6 +73,9 @@ func CreateSet(c *ent.OrderCreate, req *Req) *ent.OrderCreate {
 	if req.GoodValue != nil {
 		c.SetGoodValue(*req.GoodValue)
 	}
+	if req.GoodValueUSD != nil {
+		c.SetGoodValueUsd(*req.GoodValueUSD)
+	}
 	if req.PaymentAmount != nil {
 		c.SetPaymentAmount(*req.PaymentAmount)
 	}
@@ -88,6 +99,27 @@ func CreateSet(c *ent.OrderCreate, req *Req) *ent.OrderCreate {
 	}
 	if req.PaymentType != nil {
 		c.SetPaymentType(req.PaymentType.String())
+	}
+	if req.CoinTypeID != nil {
+		c.SetCoinTypeID(*req.CoinTypeID)
+	}
+	if req.PaymentCoinTypeID != nil {
+		c.SetPaymentCoinTypeID(*req.PaymentCoinTypeID)
+	}
+	if req.TransferAmount != nil {
+		c.SetTransferAmount(*req.TransferAmount)
+	}
+	if req.BalanceAmount != nil {
+		c.SetBalanceAmount(*req.BalanceAmount)
+	}
+	if req.CoinUSDCurrency != nil {
+		c.SetCoinUsdCurrency(*req.CoinUSDCurrency)
+	}
+	if req.LocalCoinUSDCurrency != nil {
+		c.SetLocalCoinUsdCurrency(*req.LocalCoinUSDCurrency)
+	}
+	if req.LiveCoinUSDCurrency != nil {
+		c.SetLiveCoinUsdCurrency(*req.LiveCoinUSDCurrency)
 	}
 	if req.CreatedAt != nil {
 		c.SetCreatedAt(*req.CreatedAt)
@@ -118,6 +150,7 @@ type Conds struct {
 	PaymentType       *cruder.Cond
 	CouponID          *cruder.Cond
 	CouponIDs         *cruder.Cond
+	CoinTypeID        *cruder.Cond
 	PaymentCoinTypeID *cruder.Cond
 }
 
@@ -260,6 +293,42 @@ func SetQueryConds(q *ent.OrderQuery, conds *Conds) (*ent.OrderQuery, error) {
 			q.Where(func(selector *sql.Selector) {
 				selector.Where(sqljson.ValueContains(entorder.FieldCouponIds, id))
 			})
+		default:
+			return nil, fmt.Errorf("invalid order field")
+		}
+	}
+	if conds.ParentOrderID != nil {
+		id, ok := conds.ParentOrderID.Val.(uuid.UUID)
+		if !ok {
+			return nil, fmt.Errorf("invalid parentorderid")
+		}
+		switch conds.ParentOrderID.Op {
+		case cruder.EQ:
+			q.Where(entorder.ParentOrderID(id))
+		default:
+			return nil, fmt.Errorf("invalid order field")
+		}
+	}
+	if conds.CoinTypeID != nil {
+		id, ok := conds.CoinTypeID.Val.(uuid.UUID)
+		if !ok {
+			return nil, fmt.Errorf("invalid cointypeid")
+		}
+		switch conds.CoinTypeID.Op {
+		case cruder.EQ:
+			q.Where(entorder.CoinTypeID(id))
+		default:
+			return nil, fmt.Errorf("invalid order field")
+		}
+	}
+	if conds.PaymentCoinTypeID != nil {
+		id, ok := conds.PaymentCoinTypeID.Val.(uuid.UUID)
+		if !ok {
+			return nil, fmt.Errorf("invalid paymentcointypeid")
+		}
+		switch conds.PaymentCoinTypeID.Op {
+		case cruder.EQ:
+			q.Where(entorder.PaymentCoinTypeID(id))
 		default:
 			return nil, fmt.Errorf("invalid order field")
 		}

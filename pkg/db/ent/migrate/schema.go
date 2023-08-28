@@ -119,6 +119,7 @@ var (
 		{Name: "good_id", Type: field.TypeUUID},
 		{Name: "order_id", Type: field.TypeUUID},
 		{Name: "account_id", Type: field.TypeUUID},
+		{Name: "coin_type_id", Type: field.TypeUUID, Nullable: true},
 		{Name: "coin_info_id", Type: field.TypeUUID, Nullable: true},
 		{Name: "start_amount", Type: field.TypeOther, Nullable: true, SchemaType: map[string]string{"mysql": "decimal(37,18)"}},
 	}

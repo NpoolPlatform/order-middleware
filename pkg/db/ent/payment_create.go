@@ -96,6 +96,20 @@ func (pc *PaymentCreate) SetAccountID(u uuid.UUID) *PaymentCreate {
 	return pc
 }
 
+// SetCoinTypeID sets the "coin_type_id" field.
+func (pc *PaymentCreate) SetCoinTypeID(u uuid.UUID) *PaymentCreate {
+	pc.mutation.SetCoinTypeID(u)
+	return pc
+}
+
+// SetNillableCoinTypeID sets the "coin_type_id" field if the given value is not nil.
+func (pc *PaymentCreate) SetNillableCoinTypeID(u *uuid.UUID) *PaymentCreate {
+	if u != nil {
+		pc.SetCoinTypeID(*u)
+	}
+	return pc
+}
+
 // SetCoinInfoID sets the "coin_info_id" field.
 func (pc *PaymentCreate) SetCoinInfoID(u uuid.UUID) *PaymentCreate {
 	pc.mutation.SetCoinInfoID(u)
@@ -379,6 +393,14 @@ func (pc *PaymentCreate) createSpec() (*Payment, *sqlgraph.CreateSpec) {
 		})
 		_node.AccountID = value
 	}
+	if value, ok := pc.mutation.CoinTypeID(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Value:  value,
+			Column: payment.FieldCoinTypeID,
+		})
+		_node.CoinTypeID = value
+	}
 	if value, ok := pc.mutation.CoinInfoID(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
 			Type:   field.TypeUUID,
@@ -560,6 +582,24 @@ func (u *PaymentUpsert) SetAccountID(v uuid.UUID) *PaymentUpsert {
 // UpdateAccountID sets the "account_id" field to the value that was provided on create.
 func (u *PaymentUpsert) UpdateAccountID() *PaymentUpsert {
 	u.SetExcluded(payment.FieldAccountID)
+	return u
+}
+
+// SetCoinTypeID sets the "coin_type_id" field.
+func (u *PaymentUpsert) SetCoinTypeID(v uuid.UUID) *PaymentUpsert {
+	u.Set(payment.FieldCoinTypeID, v)
+	return u
+}
+
+// UpdateCoinTypeID sets the "coin_type_id" field to the value that was provided on create.
+func (u *PaymentUpsert) UpdateCoinTypeID() *PaymentUpsert {
+	u.SetExcluded(payment.FieldCoinTypeID)
+	return u
+}
+
+// ClearCoinTypeID clears the value of the "coin_type_id" field.
+func (u *PaymentUpsert) ClearCoinTypeID() *PaymentUpsert {
+	u.SetNull(payment.FieldCoinTypeID)
 	return u
 }
 
@@ -779,6 +819,27 @@ func (u *PaymentUpsertOne) SetAccountID(v uuid.UUID) *PaymentUpsertOne {
 func (u *PaymentUpsertOne) UpdateAccountID() *PaymentUpsertOne {
 	return u.Update(func(s *PaymentUpsert) {
 		s.UpdateAccountID()
+	})
+}
+
+// SetCoinTypeID sets the "coin_type_id" field.
+func (u *PaymentUpsertOne) SetCoinTypeID(v uuid.UUID) *PaymentUpsertOne {
+	return u.Update(func(s *PaymentUpsert) {
+		s.SetCoinTypeID(v)
+	})
+}
+
+// UpdateCoinTypeID sets the "coin_type_id" field to the value that was provided on create.
+func (u *PaymentUpsertOne) UpdateCoinTypeID() *PaymentUpsertOne {
+	return u.Update(func(s *PaymentUpsert) {
+		s.UpdateCoinTypeID()
+	})
+}
+
+// ClearCoinTypeID clears the value of the "coin_type_id" field.
+func (u *PaymentUpsertOne) ClearCoinTypeID() *PaymentUpsertOne {
+	return u.Update(func(s *PaymentUpsert) {
+		s.ClearCoinTypeID()
 	})
 }
 
@@ -1170,6 +1231,27 @@ func (u *PaymentUpsertBulk) SetAccountID(v uuid.UUID) *PaymentUpsertBulk {
 func (u *PaymentUpsertBulk) UpdateAccountID() *PaymentUpsertBulk {
 	return u.Update(func(s *PaymentUpsert) {
 		s.UpdateAccountID()
+	})
+}
+
+// SetCoinTypeID sets the "coin_type_id" field.
+func (u *PaymentUpsertBulk) SetCoinTypeID(v uuid.UUID) *PaymentUpsertBulk {
+	return u.Update(func(s *PaymentUpsert) {
+		s.SetCoinTypeID(v)
+	})
+}
+
+// UpdateCoinTypeID sets the "coin_type_id" field to the value that was provided on create.
+func (u *PaymentUpsertBulk) UpdateCoinTypeID() *PaymentUpsertBulk {
+	return u.Update(func(s *PaymentUpsert) {
+		s.UpdateCoinTypeID()
+	})
+}
+
+// ClearCoinTypeID clears the value of the "coin_type_id" field.
+func (u *PaymentUpsertBulk) ClearCoinTypeID() *PaymentUpsertBulk {
+	return u.Update(func(s *PaymentUpsert) {
+		s.ClearCoinTypeID()
 	})
 }
 

@@ -11,21 +11,15 @@ import (
 )
 
 type Req struct {
-	ID                   *uuid.UUID
-	AppID                *uuid.UUID
-	UserID               *uuid.UUID
-	GoodID               *uuid.UUID
-	OrderID              *uuid.UUID
-	AccountID            *uuid.UUID
-	CoinTypeID           *uuid.UUID
-	StartAmount          *decimal.Decimal
-	TransferAmount       *decimal.Decimal
-	BalanceAmount        *decimal.Decimal
-	CoinUSDCurrency      *decimal.Decimal
-	LocalCoinUSDCurrency *decimal.Decimal
-	LiveCoinUSDCurrency  *decimal.Decimal
-	CreatedAt            *uint32
-	DeletedAt            *uint32
+	ID          *uuid.UUID
+	AppID       *uuid.UUID
+	UserID      *uuid.UUID
+	GoodID      *uuid.UUID
+	OrderID     *uuid.UUID
+	AccountID   *uuid.UUID
+	StartAmount *decimal.Decimal
+	CreatedAt   *uint32
+	DeletedAt   *uint32
 }
 
 func CreateSet(c *ent.PaymentCreate, req *Req) *ent.PaymentCreate {
@@ -47,26 +41,8 @@ func CreateSet(c *ent.PaymentCreate, req *Req) *ent.PaymentCreate {
 	if req.AccountID != nil {
 		c.SetAccountID(*req.AccountID)
 	}
-	if req.CoinTypeID != nil {
-		c.SetCoinTypeID(*req.CoinTypeID)
-	}
 	if req.StartAmount != nil {
 		c.SetStartAmount(*req.StartAmount)
-	}
-	if req.TransferAmount != nil {
-		c.SetTransferAmount(*req.TransferAmount)
-	}
-	if req.BalanceAmount != nil {
-		c.SetBalanceAmount(*req.BalanceAmount)
-	}
-	if req.CoinUSDCurrency != nil {
-		c.SetCoinUsdCurrency(*req.CoinUSDCurrency)
-	}
-	if req.LocalCoinUSDCurrency != nil {
-		c.SetLocalCoinUsdCurrency(*req.LocalCoinUSDCurrency)
-	}
-	if req.LiveCoinUSDCurrency != nil {
-		c.SetLiveCoinUsdCurrency(*req.LiveCoinUSDCurrency)
 	}
 	if req.CreatedAt != nil {
 		c.SetCreatedAt(*req.CreatedAt)
@@ -82,14 +58,13 @@ func UpdateSet(u *ent.PaymentUpdateOne, req *Req) *ent.PaymentUpdateOne {
 }
 
 type Conds struct {
-	ID         *cruder.Cond
-	IDs        *cruder.Cond
-	AppID      *cruder.Cond
-	UserID     *cruder.Cond
-	GoodID     *cruder.Cond
-	OrderID    *cruder.Cond
-	AccountID  *cruder.Cond
-	CoinTypeID *cruder.Cond
+	ID        *cruder.Cond
+	IDs       *cruder.Cond
+	AppID     *cruder.Cond
+	UserID    *cruder.Cond
+	GoodID    *cruder.Cond
+	OrderID   *cruder.Cond
+	AccountID *cruder.Cond
 }
 
 //nolint
@@ -179,18 +154,6 @@ func SetQueryConds(q *ent.PaymentQuery, conds *Conds) (*ent.PaymentQuery, error)
 		switch conds.AccountID.Op {
 		case cruder.EQ:
 			q.Where(entpayment.AccountID(id))
-		default:
-			return nil, fmt.Errorf("invalid payment field")
-		}
-	}
-	if conds.CoinTypeID != nil {
-		id, ok := conds.CoinTypeID.Val.(uuid.UUID)
-		if !ok {
-			return nil, fmt.Errorf("invalid cointypeid")
-		}
-		switch conds.CoinTypeID.Op {
-		case cruder.EQ:
-			q.Where(entpayment.CoinTypeID(id))
 		default:
 			return nil, fmt.Errorf("invalid payment field")
 		}

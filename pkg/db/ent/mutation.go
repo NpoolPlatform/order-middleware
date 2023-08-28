@@ -5846,6 +5846,7 @@ type PaymentMutation struct {
 	good_id       *uuid.UUID
 	order_id      *uuid.UUID
 	account_id    *uuid.UUID
+	coin_type_id  *uuid.UUID
 	coin_info_id  *uuid.UUID
 	start_amount  *decimal.Decimal
 	clearedFields map[string]struct{}
@@ -6306,6 +6307,55 @@ func (m *PaymentMutation) ResetAccountID() {
 	m.account_id = nil
 }
 
+// SetCoinTypeID sets the "coin_type_id" field.
+func (m *PaymentMutation) SetCoinTypeID(u uuid.UUID) {
+	m.coin_type_id = &u
+}
+
+// CoinTypeID returns the value of the "coin_type_id" field in the mutation.
+func (m *PaymentMutation) CoinTypeID() (r uuid.UUID, exists bool) {
+	v := m.coin_type_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCoinTypeID returns the old "coin_type_id" field's value of the Payment entity.
+// If the Payment object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PaymentMutation) OldCoinTypeID(ctx context.Context) (v uuid.UUID, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCoinTypeID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCoinTypeID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCoinTypeID: %w", err)
+	}
+	return oldValue.CoinTypeID, nil
+}
+
+// ClearCoinTypeID clears the value of the "coin_type_id" field.
+func (m *PaymentMutation) ClearCoinTypeID() {
+	m.coin_type_id = nil
+	m.clearedFields[payment.FieldCoinTypeID] = struct{}{}
+}
+
+// CoinTypeIDCleared returns if the "coin_type_id" field was cleared in this mutation.
+func (m *PaymentMutation) CoinTypeIDCleared() bool {
+	_, ok := m.clearedFields[payment.FieldCoinTypeID]
+	return ok
+}
+
+// ResetCoinTypeID resets all changes to the "coin_type_id" field.
+func (m *PaymentMutation) ResetCoinTypeID() {
+	m.coin_type_id = nil
+	delete(m.clearedFields, payment.FieldCoinTypeID)
+}
+
 // SetCoinInfoID sets the "coin_info_id" field.
 func (m *PaymentMutation) SetCoinInfoID(u uuid.UUID) {
 	m.coin_info_id = &u
@@ -6423,7 +6473,7 @@ func (m *PaymentMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *PaymentMutation) Fields() []string {
-	fields := make([]string, 0, 10)
+	fields := make([]string, 0, 11)
 	if m.created_at != nil {
 		fields = append(fields, payment.FieldCreatedAt)
 	}
@@ -6447,6 +6497,9 @@ func (m *PaymentMutation) Fields() []string {
 	}
 	if m.account_id != nil {
 		fields = append(fields, payment.FieldAccountID)
+	}
+	if m.coin_type_id != nil {
+		fields = append(fields, payment.FieldCoinTypeID)
 	}
 	if m.coin_info_id != nil {
 		fields = append(fields, payment.FieldCoinInfoID)
@@ -6478,6 +6531,8 @@ func (m *PaymentMutation) Field(name string) (ent.Value, bool) {
 		return m.OrderID()
 	case payment.FieldAccountID:
 		return m.AccountID()
+	case payment.FieldCoinTypeID:
+		return m.CoinTypeID()
 	case payment.FieldCoinInfoID:
 		return m.CoinInfoID()
 	case payment.FieldStartAmount:
@@ -6507,6 +6562,8 @@ func (m *PaymentMutation) OldField(ctx context.Context, name string) (ent.Value,
 		return m.OldOrderID(ctx)
 	case payment.FieldAccountID:
 		return m.OldAccountID(ctx)
+	case payment.FieldCoinTypeID:
+		return m.OldCoinTypeID(ctx)
 	case payment.FieldCoinInfoID:
 		return m.OldCoinInfoID(ctx)
 	case payment.FieldStartAmount:
@@ -6575,6 +6632,13 @@ func (m *PaymentMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetAccountID(v)
+		return nil
+	case payment.FieldCoinTypeID:
+		v, ok := value.(uuid.UUID)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCoinTypeID(v)
 		return nil
 	case payment.FieldCoinInfoID:
 		v, ok := value.(uuid.UUID)
@@ -6659,6 +6723,9 @@ func (m *PaymentMutation) AddField(name string, value ent.Value) error {
 // mutation.
 func (m *PaymentMutation) ClearedFields() []string {
 	var fields []string
+	if m.FieldCleared(payment.FieldCoinTypeID) {
+		fields = append(fields, payment.FieldCoinTypeID)
+	}
 	if m.FieldCleared(payment.FieldCoinInfoID) {
 		fields = append(fields, payment.FieldCoinInfoID)
 	}
@@ -6679,6 +6746,9 @@ func (m *PaymentMutation) FieldCleared(name string) bool {
 // error if the field is not defined in the schema.
 func (m *PaymentMutation) ClearField(name string) error {
 	switch name {
+	case payment.FieldCoinTypeID:
+		m.ClearCoinTypeID()
+		return nil
 	case payment.FieldCoinInfoID:
 		m.ClearCoinInfoID()
 		return nil
@@ -6716,6 +6786,9 @@ func (m *PaymentMutation) ResetField(name string) error {
 		return nil
 	case payment.FieldAccountID:
 		m.ResetAccountID()
+		return nil
+	case payment.FieldCoinTypeID:
+		m.ResetCoinTypeID()
 		return nil
 	case payment.FieldCoinInfoID:
 		m.ResetCoinInfoID()

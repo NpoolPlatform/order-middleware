@@ -22,6 +22,7 @@ type Req struct {
 	BenefitState         *basetypes.BenefitState
 	UserSetPaid          *bool
 	UserSetCanceled      *bool
+	AdminSetCanceled     *bool
 	PaymentTransactionID *string
 	PaymentFinishAmount  *decimal.Decimal
 	PaymentState         *basetypes.PaymentState
@@ -63,6 +64,9 @@ func CreateSet(c *ent.OrderStateCreate, req *Req) *ent.OrderStateCreate {
 	if req.UserSetCanceled != nil {
 		c.SetUserSetCanceled(*req.UserSetCanceled)
 	}
+	if req.AdminSetCanceled != nil {
+		c.SetAdminSetCanceled(*req.AdminSetCanceled)
+	}
 	if req.PaymentTransactionID != nil {
 		c.SetPaymentTransactionID(*req.PaymentTransactionID)
 	}
@@ -85,6 +89,7 @@ func CreateSet(c *ent.OrderStateCreate, req *Req) *ent.OrderStateCreate {
 	return c
 }
 
+//nolint:gocyclo
 func UpdateSet(u *ent.OrderStateUpdateOne, req *Req) *ent.OrderStateUpdateOne {
 	if req.OrderState != nil {
 		u.SetOrderState(req.OrderState.String())
@@ -109,6 +114,9 @@ func UpdateSet(u *ent.OrderStateUpdateOne, req *Req) *ent.OrderStateUpdateOne {
 	}
 	if req.UserSetCanceled != nil {
 		u.SetUserSetCanceled(*req.UserSetCanceled)
+	}
+	if req.AdminSetCanceled != nil {
+		u.SetAdminSetCanceled(*req.AdminSetCanceled)
 	}
 	if req.PaymentTransactionID != nil {
 		u.SetPaymentTransactionID(*req.PaymentTransactionID)

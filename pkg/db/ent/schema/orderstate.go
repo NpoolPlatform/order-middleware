@@ -63,6 +63,10 @@ func (OrderState) Fields() []ent.Field {
 			Optional().
 			Default(false),
 		field.
+			Bool("admin_set_canceled").
+			Optional().
+			Default(false),
+		field.
 			String("payment_transaction_id").
 			Optional().
 			Default(""),

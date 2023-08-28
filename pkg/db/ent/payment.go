@@ -33,6 +33,8 @@ type Payment struct {
 	OrderID uuid.UUID `json:"order_id,omitempty"`
 	// AccountID holds the value of the "account_id" field.
 	AccountID uuid.UUID `json:"account_id,omitempty"`
+	// CoinTypeID holds the value of the "coin_type_id" field.
+	CoinTypeID uuid.UUID `json:"coin_type_id,omitempty"`
 	// CoinInfoID holds the value of the "coin_info_id" field.
 	CoinInfoID uuid.UUID `json:"coin_info_id,omitempty"`
 	// StartAmount holds the value of the "start_amount" field.
@@ -48,7 +50,7 @@ func (*Payment) scanValues(columns []string) ([]interface{}, error) {
 			values[i] = new(decimal.Decimal)
 		case payment.FieldCreatedAt, payment.FieldUpdatedAt, payment.FieldDeletedAt:
 			values[i] = new(sql.NullInt64)
-		case payment.FieldID, payment.FieldAppID, payment.FieldUserID, payment.FieldGoodID, payment.FieldOrderID, payment.FieldAccountID, payment.FieldCoinInfoID:
+		case payment.FieldID, payment.FieldAppID, payment.FieldUserID, payment.FieldGoodID, payment.FieldOrderID, payment.FieldAccountID, payment.FieldCoinTypeID, payment.FieldCoinInfoID:
 			values[i] = new(uuid.UUID)
 		default:
 			return nil, fmt.Errorf("unexpected column %q for type Payment", columns[i])
@@ -119,6 +121,12 @@ func (pa *Payment) assignValues(columns []string, values []interface{}) error {
 			} else if value != nil {
 				pa.AccountID = *value
 			}
+		case payment.FieldCoinTypeID:
+			if value, ok := values[i].(*uuid.UUID); !ok {
+				return fmt.Errorf("unexpected type %T for field coin_type_id", values[i])
+			} else if value != nil {
+				pa.CoinTypeID = *value
+			}
 		case payment.FieldCoinInfoID:
 			if value, ok := values[i].(*uuid.UUID); !ok {
 				return fmt.Errorf("unexpected type %T for field coin_info_id", values[i])
@@ -182,6 +190,9 @@ func (pa *Payment) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("account_id=")
 	builder.WriteString(fmt.Sprintf("%v", pa.AccountID))
+	builder.WriteString(", ")
+	builder.WriteString("coin_type_id=")
+	builder.WriteString(fmt.Sprintf("%v", pa.CoinTypeID))
 	builder.WriteString(", ")
 	builder.WriteString("coin_info_id=")
 	builder.WriteString(fmt.Sprintf("%v", pa.CoinInfoID))

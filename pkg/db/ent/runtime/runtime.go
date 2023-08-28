@@ -335,7 +335,7 @@ func init() {
 	// payment.DefaultDeletedAt holds the default value on creation for the deleted_at field.
 	payment.DefaultDeletedAt = paymentDescDeletedAt.Default.(func() uint32)
 	// paymentDescStartAmount is the schema descriptor for start_amount field.
-	paymentDescStartAmount := paymentFields[7].Descriptor()
+	paymentDescStartAmount := paymentFields[8].Descriptor()
 	// payment.DefaultStartAmount holds the default value on creation for the start_amount field.
 	payment.DefaultStartAmount = paymentDescStartAmount.Default.(decimal.Decimal)
 	// paymentDescID is the schema descriptor for id field.
