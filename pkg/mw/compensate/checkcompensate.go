@@ -3,6 +3,7 @@ package compensate
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
 	compensatecrud "github.com/NpoolPlatform/order-middleware/pkg/crud/compensate"
@@ -12,6 +13,7 @@ import (
 	"github.com/google/uuid"
 )
 
+//nolint:gocyclo
 func (h *Handler) checkCompensate(ctx context.Context, newCompensate bool) (uint32, error) {
 	compensateSeconds := uint32(0)
 
@@ -45,6 +47,11 @@ func (h *Handler) checkCompensate(ctx context.Context, newCompensate bool) (uint
 	}
 
 	if *h.EndAt < *h.StartAt {
+		return 0, fmt.Errorf("invalid compensate")
+	}
+
+	now := uint32(time.Now().Unix())
+	if now < *h.EndAt {
 		return 0, fmt.Errorf("invalid compensate")
 	}
 

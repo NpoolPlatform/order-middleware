@@ -3,6 +3,7 @@ package outofgas
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
 	outofgascrud "github.com/NpoolPlatform/order-middleware/pkg/crud/outofgas"
@@ -12,6 +13,7 @@ import (
 	"github.com/google/uuid"
 )
 
+//nolint:gocyclo
 func (h *Handler) checkOutOfGas(ctx context.Context, newOutOfGas bool) (uint32, error) {
 	outOfGasSeconds := uint32(0)
 
@@ -45,6 +47,11 @@ func (h *Handler) checkOutOfGas(ctx context.Context, newOutOfGas bool) (uint32, 
 	}
 
 	if *h.EndAt < *h.StartAt {
+		return 0, fmt.Errorf("invalid outofgas")
+	}
+
+	now := uint32(time.Now().Unix())
+	if now < *h.EndAt {
 		return 0, fmt.Errorf("invalid outofgas")
 	}
 

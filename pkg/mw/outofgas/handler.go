@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 
-	basetypes "github.com/NpoolPlatform/message/npool/basetypes/v1"
 	npool "github.com/NpoolPlatform/message/npool/order/mw/v1/outofgas"
 	constant "github.com/NpoolPlatform/order-middleware/pkg/const"
 	outofgascrud "github.com/NpoolPlatform/order-middleware/pkg/crud/outofgas"
@@ -116,10 +115,10 @@ func WithConds(conds *npool.Conds) func(context.Context, *Handler) error {
 			h.Conds.OrderID = &cruder.Cond{Op: conds.GetOrderID().GetOp(), Val: id}
 		}
 		if conds.StartAt != nil {
-			h.Conds.StartAt = &cruder.Cond{Op: conds.GetStartAt().GetOp(), Val: basetypes.SignMethod(conds.GetStartAt().GetValue())}
+			h.Conds.StartAt = &cruder.Cond{Op: conds.GetStartAt().GetOp(), Val: conds.GetStartAt().GetValue()}
 		}
 		if conds.EndAt != nil {
-			h.Conds.EndAt = &cruder.Cond{Op: conds.GetEndAt().GetOp(), Val: basetypes.SignMethod(conds.GetEndAt().GetValue())}
+			h.Conds.EndAt = &cruder.Cond{Op: conds.GetEndAt().GetOp(), Val: conds.GetEndAt().GetValue()}
 		}
 
 		return nil
