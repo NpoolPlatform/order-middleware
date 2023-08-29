@@ -1,3 +1,4 @@
+//nolint:dupl
 package order
 
 import (
@@ -188,6 +189,9 @@ func WithUnits(value *string, must bool) func(context.Context, *Handler) error {
 		if err != nil {
 			return err
 		}
+		if amount.Cmp(decimal.NewFromInt(0)) <= 0 {
+			return fmt.Errorf("units is less than or equal to 0")
+		}
 		h.Units = &amount
 		return nil
 	}
@@ -204,6 +208,9 @@ func WithGoodValue(value *string, must bool) func(context.Context, *Handler) err
 		amount, err := decimal.NewFromString(*value)
 		if err != nil {
 			return err
+		}
+		if amount.Cmp(decimal.NewFromInt(0)) <= 0 {
+			return fmt.Errorf("goodvalue is less than or equal to 0")
 		}
 		h.GoodValue = &amount
 		return nil
@@ -222,6 +229,9 @@ func WithGoodValueUSD(value *string, must bool) func(context.Context, *Handler) 
 		if err != nil {
 			return err
 		}
+		if amount.Cmp(decimal.NewFromInt(0)) <= 0 {
+			return fmt.Errorf("goodvalueusd is less than or equal to 0")
+		}
 		h.GoodValueUSD = &amount
 		return nil
 	}
@@ -239,6 +249,9 @@ func WithPaymentAmount(value *string, must bool) func(context.Context, *Handler)
 		if err != nil {
 			return err
 		}
+		if amount.Cmp(decimal.NewFromInt(0)) < 0 {
+			return fmt.Errorf("paymentamount is less than 0")
+		}
 		h.PaymentAmount = &amount
 		return nil
 	}
@@ -255,6 +268,9 @@ func WithDiscountAmount(value *string, must bool) func(context.Context, *Handler
 		amount, err := decimal.NewFromString(*value)
 		if err != nil {
 			return err
+		}
+		if amount.Cmp(decimal.NewFromInt(0)) < 0 {
+			return fmt.Errorf("discountamount is less than 0")
 		}
 		h.DiscountAmount = &amount
 		return nil
@@ -438,8 +454,8 @@ func WithPaymentStartAmount(value *string, must bool) func(context.Context, *Han
 		if err != nil {
 			return err
 		}
-		if amount.Cmp(decimal.NewFromInt(0)) <= 0 {
-			return fmt.Errorf("paymentstartamount is less than or equal to 0")
+		if amount.Cmp(decimal.NewFromInt(0)) < 0 {
+			return fmt.Errorf("paymentstartamount is less than 0")
 		}
 		h.PaymentStartAmount = &amount
 		return nil
@@ -457,6 +473,9 @@ func WithTransferAmount(value *string, must bool) func(context.Context, *Handler
 		amount, err := decimal.NewFromString(*value)
 		if err != nil {
 			return err
+		}
+		if amount.Cmp(decimal.NewFromInt(0)) < 0 {
+			return fmt.Errorf("transferamount is less than 0")
 		}
 		h.TransferAmount = &amount
 		return nil
@@ -476,8 +495,8 @@ func WithBalanceAmount(value *string, must bool) func(context.Context, *Handler)
 		if err != nil {
 			return err
 		}
-		if amount.Cmp(decimal.NewFromInt(0)) <= 0 {
-			return fmt.Errorf("balanceamount is less than or equal to 0")
+		if amount.Cmp(decimal.NewFromInt(0)) < 0 {
+			return fmt.Errorf("balanceamount is less than 0")
 		}
 		h.BalanceAmount = &amount
 		return nil
@@ -712,6 +731,9 @@ func WithPaymentFinishAmount(value *string, must bool) func(context.Context, *Ha
 		amount, err := decimal.NewFromString(*value)
 		if err != nil {
 			return err
+		}
+		if amount.Cmp(decimal.NewFromInt(0)) < 0 {
+			return fmt.Errorf("paymentfinishamount is less than 0")
 		}
 		h.PaymentFinishAmount = &amount
 		return nil
@@ -1000,12 +1022,18 @@ func WithReqs(reqs []*npool.OrderReq) func(context.Context, *Handler) error {
 				if err != nil {
 					return err
 				}
+				if amount.Cmp(decimal.NewFromInt(0)) <= 0 {
+					return fmt.Errorf("units is less than or equal to 0")
+				}
 				_req.Units = &amount
 			}
 			if req.GoodValue != nil {
 				amount, err := decimal.NewFromString(*req.GoodValue)
 				if err != nil {
 					return err
+				}
+				if amount.Cmp(decimal.NewFromInt(0)) <= 0 {
+					return fmt.Errorf("goodvalue is less than or equal to 0")
 				}
 				_req.GoodValue = &amount
 			}
@@ -1014,6 +1042,9 @@ func WithReqs(reqs []*npool.OrderReq) func(context.Context, *Handler) error {
 				if err != nil {
 					return err
 				}
+				if amount.Cmp(decimal.NewFromInt(0)) <= 0 {
+					return fmt.Errorf("goodvalueusd is less than or equal to 0")
+				}
 				_req.GoodValueUSD = &amount
 			}
 			if req.PaymentAmount != nil {
@@ -1021,12 +1052,18 @@ func WithReqs(reqs []*npool.OrderReq) func(context.Context, *Handler) error {
 				if err != nil {
 					return err
 				}
+				if amount.Cmp(decimal.NewFromInt(0)) < 0 {
+					return fmt.Errorf("paymentamount is less than 0")
+				}
 				_req.PaymentAmount = &amount
 			}
 			if req.DiscountAmount != nil {
 				amount, err := decimal.NewFromString(*req.DiscountAmount)
 				if err != nil {
 					return err
+				}
+				if amount.Cmp(decimal.NewFromInt(0)) < 0 {
+					return fmt.Errorf("discountamount is less than 0")
 				}
 				_req.DiscountAmount = &amount
 			}
@@ -1070,7 +1107,7 @@ func WithReqs(reqs []*npool.OrderReq) func(context.Context, *Handler) error {
 					return err
 				}
 				if amount.Cmp(decimal.NewFromInt(0)) < 0 {
-					return fmt.Errorf("transferamount is less than or equal to 0")
+					return fmt.Errorf("transferamount is less than 0")
 				}
 				_req.TransferAmount = &amount
 			}
@@ -1080,7 +1117,7 @@ func WithReqs(reqs []*npool.OrderReq) func(context.Context, *Handler) error {
 					return err
 				}
 				if amount.Cmp(decimal.NewFromInt(0)) < 0 {
-					return fmt.Errorf("balanceamount is less than or equal to 0")
+					return fmt.Errorf("balanceamount is less than 0")
 				}
 				_req.BalanceAmount = &amount
 			}
@@ -1193,6 +1230,9 @@ func WithReqs(reqs []*npool.OrderReq) func(context.Context, *Handler) error {
 				if err != nil {
 					return err
 				}
+				if amount.Cmp(decimal.NewFromInt(0)) < 0 {
+					return fmt.Errorf("paymentfinishamount is less than 0")
+				}
 				_req.OrderStateReq.PaymentFinishAmount = &amount
 			}
 			if req.PaymentState != nil {
@@ -1245,8 +1285,8 @@ func WithReqs(reqs []*npool.OrderReq) func(context.Context, *Handler) error {
 				if err != nil {
 					return err
 				}
-				if amount.Cmp(decimal.NewFromInt(0)) <= 0 {
-					return fmt.Errorf("startamount is less than or equal to 0")
+				if amount.Cmp(decimal.NewFromInt(0)) < 0 {
+					return fmt.Errorf("startamount is less than 0")
 				}
 				_req.PaymentReq.StartAmount = &amount
 			}

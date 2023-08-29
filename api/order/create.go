@@ -46,7 +46,7 @@ func (s *Server) CreateOrder(ctx context.Context, in *npool.CreateOrderRequest) 
 		order1.WithTransferAmount(req.TransferAmount, true),
 		order1.WithBalanceAmount(req.BalanceAmount, true),
 		order1.WithCoinUSDCurrency(req.CoinUSDCurrency, true),
-		order1.WithLocalCoinUSDCurrency(req.LocalCoinUSDCurrency, true),
+		order1.WithLocalCoinUSDCurrency(req.LocalCoinUSDCurrency, false),
 		order1.WithLiveCoinUSDCurrency(req.LiveCoinUSDCurrency, true),
 		order1.WithPaymentAccountID(req.PaymentAccountID, false),
 		order1.WithPaymentStartAmount(req.PaymentStartAmount, false),
