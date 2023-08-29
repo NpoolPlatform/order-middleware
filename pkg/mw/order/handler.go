@@ -837,6 +837,14 @@ func WithConds(conds *npool.Conds) func(context.Context, *Handler) error {
 			}
 			h.Conds.ParentOrderID = &cruder.Cond{Op: conds.GetParentOrderID().GetOp(), Val: id}
 		}
+		if conds.PaymentAmount != nil {
+			fmt.Println("conds.GetParentOrderID().GetValue():  ", conds.GetPaymentAmount().GetValue())
+			amount, err := decimal.NewFromString(conds.GetPaymentAmount().GetValue())
+			if err != nil {
+				return err
+			}
+			h.Conds.PaymentAmount = &cruder.Cond{Op: conds.GetPaymentAmount().GetOp(), Val: amount}
+		}
 		if conds.OrderType != nil {
 			switch conds.GetOrderType().GetValue() {
 			case uint32(basetypes.OrderType_Airdrop):
@@ -853,7 +861,7 @@ func WithConds(conds *npool.Conds) func(context.Context, *Handler) error {
 			case uint32(basetypes.InvestmentType_FullPayment):
 			case uint32(basetypes.InvestmentType_UnionMining):
 			default:
-				return fmt.Errorf("invalid ordertype")
+				return fmt.Errorf("invalid investmenttype")
 			}
 			_type := conds.GetInvestmentType().GetValue()
 			h.Conds.InvestmentType = &cruder.Cond{Op: conds.GetInvestmentType().GetOp(), Val: basetypes.InvestmentType(_type)}
@@ -907,7 +915,7 @@ func WithConds(conds *npool.Conds) func(context.Context, *Handler) error {
 			case uint32(basetypes.OrderStartMode_OrderStartConfirmed):
 			case uint32(basetypes.OrderStartMode_OrderStartTBD):
 			default:
-				return fmt.Errorf("invalid orderstate")
+				return fmt.Errorf("invalid startmode")
 			}
 			_state := conds.GetStartMode().GetValue()
 			h.Conds.StartMode = &cruder.Cond{Op: conds.GetStartMode().GetOp(), Val: basetypes.OrderStartMode(_state)}
@@ -943,6 +951,43 @@ func WithConds(conds *npool.Conds) func(context.Context, *Handler) error {
 			}
 			_state := conds.GetPaymentState().GetValue()
 			h.Conds.PaymentState = &cruder.Cond{Op: conds.GetPaymentState().GetOp(), Val: basetypes.PaymentState(_state)}
+		}
+		if conds.IDs != nil {
+			ids := []uuid.UUID{}
+			for _, id := range conds.GetIDs().GetValue() {
+				_id, err := uuid.Parse(id)
+				if err != nil {
+					return err
+				}
+				ids = append(ids, _id)
+			}
+			h.Conds.IDs = &cruder.Cond{Op: conds.GetIDs().GetOp(), Val: ids}
+		}
+		if conds.CouponID != nil {
+			id, err := uuid.Parse(conds.GetCouponID().GetValue())
+			if err != nil {
+				return err
+			}
+			h.Conds.CouponID = &cruder.Cond{Op: conds.GetCouponID().GetOp(), Val: id}
+		}
+		if conds.OrderStates != nil {
+			states := []string{}
+			for _, state := range conds.GetOrderStates().GetValue() {
+				switch state {
+				case uint32(basetypes.OrderState_OrderStateWaitPayment):
+				case uint32(basetypes.OrderState_OrderStateCheckPayment):
+				case uint32(basetypes.OrderState_OrderStatePaid):
+				case uint32(basetypes.OrderState_OrderStatePaymentTimeout):
+				case uint32(basetypes.OrderState_OrderStateCanceled):
+				case uint32(basetypes.OrderState_OrderStateInService):
+				case uint32(basetypes.OrderState_OrderStateExpired):
+				default:
+					return fmt.Errorf("invalid orderstates")
+				}
+				_state := basetypes.OrderState(state)
+				states = append(states, _state.String())
+			}
+			h.Conds.OrderStates = &cruder.Cond{Op: conds.GetOrderStates().GetOp(), Val: states}
 		}
 		return nil
 	}
@@ -1286,7 +1331,7 @@ func WithReqs(reqs []*npool.OrderReq) func(context.Context, *Handler) error {
 					return err
 				}
 				if amount.Cmp(decimal.NewFromInt(0)) < 0 {
-					return fmt.Errorf("startamount is less than 0")
+					return fmt.Errorf("paymentstartamount is less than 0")
 				}
 				_req.PaymentReq.StartAmount = &amount
 			}

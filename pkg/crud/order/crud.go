@@ -171,20 +171,6 @@ func SetQueryConds(q *ent.OrderQuery, conds *Conds) (*ent.OrderQuery, error) {
 			return nil, fmt.Errorf("invalid order field")
 		}
 	}
-	if conds.IDs != nil {
-		ids, ok := conds.IDs.Val.([]uuid.UUID)
-		if !ok {
-			return nil, fmt.Errorf("invalid ids")
-		}
-		if len(ids) > 0 {
-			switch conds.IDs.Op {
-			case cruder.IN:
-				q.Where(entorder.IDIn(ids...))
-			default:
-				return nil, fmt.Errorf("invalid order field")
-			}
-		}
-	}
 	if conds.AppID != nil {
 		id, ok := conds.AppID.Val.(uuid.UUID)
 		if !ok {
@@ -245,7 +231,18 @@ func SetQueryConds(q *ent.OrderQuery, conds *Conds) (*ent.OrderQuery, error) {
 			return nil, fmt.Errorf("invalid order field")
 		}
 	}
-
+	if conds.PaymentAmount != nil {
+		paymentAmount, ok := conds.PaymentAmount.Val.(decimal.Decimal)
+		if !ok {
+			return nil, fmt.Errorf("invalid paymentamount")
+		}
+		switch conds.PaymentAmount.Op {
+		case cruder.EQ:
+			q.Where(entorder.PaymentAmount(paymentAmount))
+		default:
+			return nil, fmt.Errorf("invalid order field")
+		}
+	}
 	if conds.OrderType != nil {
 		ordertype, ok := conds.OrderType.Val.(basetypes.OrderType)
 		if !ok {
@@ -282,32 +279,6 @@ func SetQueryConds(q *ent.OrderQuery, conds *Conds) (*ent.OrderQuery, error) {
 			return nil, fmt.Errorf("invalid order field")
 		}
 	}
-	if conds.CouponID != nil {
-		id, ok := conds.CouponID.Val.(uuid.UUID)
-		if !ok {
-			return nil, fmt.Errorf("invalid goodid")
-		}
-		switch conds.CouponID.Op {
-		case cruder.LIKE:
-			q.Where(func(selector *sql.Selector) {
-				selector.Where(sqljson.ValueContains(entorder.FieldCouponIds, id))
-			})
-		default:
-			return nil, fmt.Errorf("invalid order field")
-		}
-	}
-	if conds.ParentOrderID != nil {
-		id, ok := conds.ParentOrderID.Val.(uuid.UUID)
-		if !ok {
-			return nil, fmt.Errorf("invalid parentorderid")
-		}
-		switch conds.ParentOrderID.Op {
-		case cruder.EQ:
-			q.Where(entorder.ParentOrderID(id))
-		default:
-			return nil, fmt.Errorf("invalid order field")
-		}
-	}
 	if conds.CoinTypeID != nil {
 		id, ok := conds.CoinTypeID.Val.(uuid.UUID)
 		if !ok {
@@ -328,6 +299,34 @@ func SetQueryConds(q *ent.OrderQuery, conds *Conds) (*ent.OrderQuery, error) {
 		switch conds.PaymentCoinTypeID.Op {
 		case cruder.EQ:
 			q.Where(entorder.PaymentCoinTypeID(id))
+		default:
+			return nil, fmt.Errorf("invalid order field")
+		}
+	}
+	if conds.IDs != nil {
+		ids, ok := conds.IDs.Val.([]uuid.UUID)
+		if !ok {
+			return nil, fmt.Errorf("invalid ids")
+		}
+		if len(ids) > 0 {
+			switch conds.IDs.Op {
+			case cruder.IN:
+				q.Where(entorder.IDIn(ids...))
+			default:
+				return nil, fmt.Errorf("invalid order field")
+			}
+		}
+	}
+	if conds.CouponID != nil {
+		id, ok := conds.CouponID.Val.(uuid.UUID)
+		if !ok {
+			return nil, fmt.Errorf("invalid goodid")
+		}
+		switch conds.CouponID.Op {
+		case cruder.LIKE:
+			q.Where(func(selector *sql.Selector) {
+				selector.Where(sqljson.ValueContains(entorder.FieldCouponIds, id))
+			})
 		default:
 			return nil, fmt.Errorf("invalid order field")
 		}

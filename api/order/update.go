@@ -25,7 +25,7 @@ func (s *Server) UpdateOrder(ctx context.Context, in *npool.UpdateOrderRequest) 
 	handler, err := order1.NewHandler(
 		ctx,
 		order1.WithID(req.ID, true),
-		order1.WithAppID(req.AppID, true),
+		order1.WithAppID(req.AppID, false),
 		order1.WithParentOrderID(req.ParentOrderID, false),
 		order1.WithStartMode(req.StartMode, false),
 		order1.WithStartAt(req.StartAt, false),
