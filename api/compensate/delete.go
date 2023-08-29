@@ -15,6 +15,13 @@ import (
 
 func (s *Server) DeleteCompensate(ctx context.Context, in *npool.DeleteCompensateRequest) (*npool.DeleteCompensateResponse, error) {
 	req := in.GetInfo()
+	if req == nil {
+		logger.Sugar().Errorw(
+			"DeleteCompensate",
+			"In", in,
+		)
+		return &npool.DeleteCompensateResponse{}, status.Error(codes.Aborted, "invalid argument")
+	}
 	handler, err := compensate1.NewHandler(
 		ctx,
 		compensate1.WithID(req.ID, true),

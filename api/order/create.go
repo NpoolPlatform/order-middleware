@@ -15,6 +15,13 @@ import (
 
 func (s *Server) CreateOrder(ctx context.Context, in *npool.CreateOrderRequest) (*npool.CreateOrderResponse, error) {
 	req := in.GetInfo()
+	if req == nil {
+		logger.Sugar().Errorw(
+			"CreateOrder",
+			"In", in,
+		)
+		return &npool.CreateOrderResponse{}, status.Error(codes.Aborted, "invalid argument")
+	}
 	handler, err := order1.NewHandler(
 		ctx,
 		order1.WithID(req.ID, false),

@@ -15,6 +15,13 @@ import (
 
 func (s *Server) CreateCompensate(ctx context.Context, in *npool.CreateCompensateRequest) (*npool.CreateCompensateResponse, error) {
 	req := in.GetInfo()
+	if req == nil {
+		logger.Sugar().Errorw(
+			"CreateCompensate",
+			"In", in,
+		)
+		return &npool.CreateCompensateResponse{}, status.Error(codes.Aborted, "invalid argument")
+	}
 	handler, err := compensate1.NewHandler(
 		ctx,
 		compensate1.WithID(req.ID, false),

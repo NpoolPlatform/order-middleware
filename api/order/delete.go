@@ -14,6 +14,13 @@ import (
 
 func (s *Server) DeleteOrder(ctx context.Context, in *npool.DeleteOrderRequest) (*npool.DeleteOrderResponse, error) {
 	req := in.GetInfo()
+	if req == nil {
+		logger.Sugar().Errorw(
+			"DeleteOrder",
+			"In", in,
+		)
+		return &npool.DeleteOrderResponse{}, status.Error(codes.Aborted, "invalid argument")
+	}
 	handler, err := order1.NewHandler(
 		ctx,
 		order1.WithID(req.ID, true),

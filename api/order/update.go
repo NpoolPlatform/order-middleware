@@ -15,9 +15,16 @@ import (
 
 func (s *Server) UpdateOrder(ctx context.Context, in *npool.UpdateOrderRequest) (*npool.UpdateOrderResponse, error) {
 	req := in.GetInfo()
+	if req == nil {
+		logger.Sugar().Errorw(
+			"UpdateOrder",
+			"In", in,
+		)
+		return &npool.UpdateOrderResponse{}, status.Error(codes.Aborted, "invalid argument")
+	}
 	handler, err := order1.NewHandler(
 		ctx,
-		order1.WithID(req.ID, false),
+		order1.WithID(req.ID, true),
 		order1.WithAppID(req.AppID, true),
 		order1.WithParentOrderID(req.ParentOrderID, false),
 		order1.WithStartMode(req.StartMode, false),

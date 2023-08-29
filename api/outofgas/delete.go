@@ -15,6 +15,13 @@ import (
 
 func (s *Server) DeleteOutOfGas(ctx context.Context, in *npool.DeleteOutOfGasRequest) (*npool.DeleteOutOfGasResponse, error) {
 	req := in.GetInfo()
+	if req == nil {
+		logger.Sugar().Errorw(
+			"DeleteOutOfGas",
+			"In", in,
+		)
+		return &npool.DeleteOutOfGasResponse{}, status.Error(codes.Aborted, "invalid argument")
+	}
 	handler, err := outofgas1.NewHandler(
 		ctx,
 		outofgas1.WithID(req.ID, true),
