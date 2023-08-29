@@ -72,7 +72,7 @@ func (h *Handler) CreateOrder(ctx context.Context) (*npool.Order, error) {
 	}
 
 	h.PaymentState = handler.paymentState()
-	req, err := h.ToOrderReq()
+	req, err := h.ToOrderReq(ctx, true)
 	if err != nil {
 		return nil, err
 	}

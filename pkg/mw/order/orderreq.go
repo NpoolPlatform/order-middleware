@@ -1,6 +1,7 @@
 package order
 
 import (
+	"context"
 	"fmt"
 
 	basetypes "github.com/NpoolPlatform/message/npool/basetypes/order/v1"
@@ -17,7 +18,31 @@ type OrderReq struct {
 	PaymentReq    *paymentcrud.Req
 }
 
-func (h *Handler) ToOrderReq() (*OrderReq, error) {
+func (h *Handler) ToOrderReq(ctx context.Context, newOrder bool) (*OrderReq, error) {
+	if !newOrder {
+		info, err := h.GetOrder(ctx)
+		if err != nil {
+			return nil, err
+		}
+		if info == nil {
+			return nil, fmt.Errorf("invalid order")
+		}
+		if h.StartAt == nil {
+			h.StartAt = &info.StartAt
+		}
+		if h.EndAt == nil {
+			h.EndAt = &info.EndAt
+		}
+	}
+
+	if h.StartAt == nil || h.EndAt == nil {
+		return nil, fmt.Errorf("invalid duration")
+	}
+
+	if *h.EndAt <= *h.StartAt {
+		return nil, fmt.Errorf("invalid order")
+	}
+
 	req := &OrderReq{
 		Req: &ordercrud.Req{
 			ID:                   h.ID,

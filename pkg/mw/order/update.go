@@ -88,7 +88,7 @@ func (h *updateHandler) updateOrderState(ctx context.Context, tx *ent.Tx, req *o
 }
 
 func (h *Handler) UpdateOrder(ctx context.Context) (*npool.Order, error) {
-	req, err := h.ToOrderReq()
+	req, err := h.ToOrderReq(ctx, false)
 	if err != nil {
 		return nil, err
 	}
