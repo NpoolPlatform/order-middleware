@@ -74,6 +74,7 @@ func (h *Handler) ToOrderReq(ctx context.Context, newOrder bool) (*OrderReq, err
 			OrderID:              h.ID,
 			OrderState:           h.OrderState,
 			StartMode:            h.StartMode,
+			PaymentState:         h.PaymentState,
 			StartAt:              h.StartAt,
 			EndAt:                h.EndAt,
 			LastBenefitAt:        h.LastBenefitAt,
