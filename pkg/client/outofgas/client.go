@@ -81,11 +81,11 @@ func GetOutOfGas(ctx context.Context, id string) (*npool.OutOfGas, error) {
 	return info.(*npool.OutOfGas), nil
 }
 
-func GetOutOfGass(ctx context.Context, conds *npool.Conds, offset, limit int32) ([]*npool.OutOfGas, uint32, error) {
+func GetOutOfGases(ctx context.Context, conds *npool.Conds, offset, limit int32) ([]*npool.OutOfGas, uint32, error) {
 	total := uint32(0)
 
 	infos, err := do(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
-		resp, err := cli.GetOutOfGass(ctx, &npool.GetOutOfGassRequest{
+		resp, err := cli.GetOutOfGases(ctx, &npool.GetOutOfGasesRequest{
 			Conds:  conds,
 			Offset: offset,
 			Limit:  limit,
@@ -107,7 +107,7 @@ func GetOutOfGass(ctx context.Context, conds *npool.Conds, offset, limit int32) 
 func GetOutOfGasOnly(ctx context.Context, conds *npool.Conds) (*npool.OutOfGas, error) {
 	const limit = 2
 	infos, err := do(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
-		resp, err := cli.GetOutOfGass(ctx, &npool.GetOutOfGassRequest{
+		resp, err := cli.GetOutOfGases(ctx, &npool.GetOutOfGasesRequest{
 			Conds:  conds,
 			Offset: 0,
 			Limit:  limit,

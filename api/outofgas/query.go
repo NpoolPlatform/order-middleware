@@ -36,7 +36,7 @@ func (s *Server) GetOutOfGas(ctx context.Context, in *npool.GetOutOfGasRequest) 
 	}, nil
 }
 
-func (s *Server) GetOutOfGass(ctx context.Context, in *npool.GetOutOfGassRequest) (*npool.GetOutOfGassResponse, error) {
+func (s *Server) GetOutOfGases(ctx context.Context, in *npool.GetOutOfGasesRequest) (*npool.GetOutOfGasesResponse, error) {
 	handler, err := outofgas1.NewHandler(
 		ctx,
 		outofgas1.WithConds(in.GetConds()),
@@ -45,18 +45,18 @@ func (s *Server) GetOutOfGass(ctx context.Context, in *npool.GetOutOfGassRequest
 	)
 	if err != nil {
 		logger.Sugar().Errorw(
-			"GetOutOfGass",
+			"GetOutOfGases",
 			"In", in,
 			"error", err,
 		)
-		return &npool.GetOutOfGassResponse{}, status.Error(codes.InvalidArgument, err.Error())
+		return &npool.GetOutOfGasesResponse{}, status.Error(codes.InvalidArgument, err.Error())
 	}
-	infos, total, err := handler.GetOutOfGass(ctx)
+	infos, total, err := handler.GetOutOfGases(ctx)
 	if err != nil {
-		return &npool.GetOutOfGassResponse{}, status.Error(codes.Internal, err.Error())
+		return &npool.GetOutOfGasesResponse{}, status.Error(codes.Internal, err.Error())
 	}
 
-	return &npool.GetOutOfGassResponse{
+	return &npool.GetOutOfGasesResponse{
 		Infos: infos,
 		Total: total,
 	}, nil

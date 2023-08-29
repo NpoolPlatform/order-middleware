@@ -41,7 +41,7 @@ func (h *queryHandler) queryOutOfGas(cli *ent.Client) {
 	)
 }
 
-func (h *queryHandler) queryOutOfGass(ctx context.Context, cli *ent.Client) error {
+func (h *queryHandler) queryOutOfGases(ctx context.Context, cli *ent.Client) error {
 	stm, err := outofgascrud.SetQueryConds(cli.OutOfGas.Query(), h.Conds)
 	if err != nil {
 		return err
@@ -83,13 +83,13 @@ func (h *Handler) GetOutOfGas(ctx context.Context) (*npool.OutOfGas, error) {
 	return handler.infos[0], nil
 }
 
-func (h *Handler) GetOutOfGass(ctx context.Context) ([]*npool.OutOfGas, uint32, error) {
+func (h *Handler) GetOutOfGases(ctx context.Context) ([]*npool.OutOfGas, uint32, error) {
 	handler := &queryHandler{
 		Handler: h,
 	}
 
 	err := db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
-		if err := handler.queryOutOfGass(_ctx, cli); err != nil {
+		if err := handler.queryOutOfGases(_ctx, cli); err != nil {
 			return err
 		}
 

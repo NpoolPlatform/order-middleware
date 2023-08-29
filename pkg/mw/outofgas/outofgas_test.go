@@ -195,7 +195,7 @@ func getOutOfGas(t *testing.T) {
 	}
 }
 
-func getOutOfGass(t *testing.T) {
+func getOutOfGases(t *testing.T) {
 	handler, err := NewHandler(
 		context.Background(),
 		WithConds(&npool.Conds{
@@ -205,7 +205,7 @@ func getOutOfGass(t *testing.T) {
 		WithLimit(0),
 	)
 	if assert.Nil(t, err) {
-		infos, total, err := handler.GetOutOfGass(context.Background())
+		infos, total, err := handler.GetOutOfGases(context.Background())
 		if assert.Nil(t, err) {
 			if assert.Equal(t, uint32(1), total) {
 				assert.Equal(t, &ret, infos[0])
@@ -242,6 +242,6 @@ func TestOutOfGas(t *testing.T) {
 	t.Run("createOutOfGas", createOutOfGas)
 	t.Run("updateOutOfGas", updateOutOfGas)
 	t.Run("getOutOfGas", getOutOfGas)
-	t.Run("getOutOfGass", getOutOfGass)
+	t.Run("getOutOfGases", getOutOfGases)
 	t.Run("deleteOutOfGas", deleteOutOfGas)
 }

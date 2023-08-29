@@ -204,8 +204,8 @@ func getOutOfGas(t *testing.T) {
 	}
 }
 
-func getOutOfGass(t *testing.T) {
-	infos, _, err := GetOutOfGass(context.Background(), &npool.Conds{
+func getOutOfGases(t *testing.T) {
+	infos, _, err := GetOutOfGases(context.Background(), &npool.Conds{
 		OrderID: &basetypes.StringVal{Op: cruder.EQ, Value: ret.OrderID},
 	}, 0, 1)
 	if assert.Nil(t, err) {
@@ -248,6 +248,6 @@ func TestOutOfGas(t *testing.T) {
 	t.Run("createOutOfGas", createOutOfGas)
 	t.Run("updateOutOfGas", updateOutOfGas)
 	t.Run("getOutOfGas", getOutOfGas)
-	t.Run("getOutOfGass", getOutOfGass)
+	t.Run("getOutOfGases", getOutOfGases)
 	t.Run("deleteOutOfGas", deleteOutOfGas)
 }
