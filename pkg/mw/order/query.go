@@ -77,6 +77,8 @@ func (h *queryHandler) queryJoinMyself(s *sql.Selector) {
 		t.C(entorder.FieldCoinUsdCurrency),
 		t.C(entorder.FieldLocalCoinUsdCurrency),
 		t.C(entorder.FieldLiveCoinUsdCurrency),
+		t.C(entorder.FieldCreatedAt),
+		t.C(entorder.FieldUpdatedAt),
 	)
 }
 
