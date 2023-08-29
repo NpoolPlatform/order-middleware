@@ -31,7 +31,14 @@ func (h *createHandler) paymentState() *ordertypes.PaymentState {
 func (h *createHandler) createOrderState(ctx context.Context, tx *ent.Tx, req *orderstatecrud.Req) error {
 	if _, err := orderstatecrud.CreateSet(
 		tx.OrderState.Create(),
-		req,
+		&orderstatecrud.Req{
+			OrderID:      req.OrderID,
+			OrderState:   req.OrderState,
+			StartMode:    req.StartMode,
+			StartAt:      req.StartAt,
+			EndAt:        req.EndAt,
+			PaymentState: req.PaymentState,
+		},
 	).Save(ctx); err != nil {
 		return err
 	}

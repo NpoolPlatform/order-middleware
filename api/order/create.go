@@ -53,15 +53,7 @@ func (s *Server) CreateOrder(ctx context.Context, in *npool.CreateOrderRequest) 
 		order1.WithStartMode(req.StartMode, false),
 		order1.WithStartAt(req.StartAt, true),
 		order1.WithEndAt(req.EndAt, true),
-		order1.WithLastBenefitAt(req.LastBenefitAt, false),
-		order1.WithBenefitState(req.BenefitState, false),
-		order1.WithUserSetPaid(req.UserSetPaid, false),
-		order1.WithUserSetCanceled(req.UserSetCanceled, false),
-		order1.WithAdminSetCanceled(req.AdminSetCanceled, false),
-		order1.WithPaymentTransactionID(req.PaymentTransactionID, false),
-		order1.WithPaymentFinishAmount(req.PaymentFinishAmount, false),
-		order1.WithOutOfGasHours(req.OutOfGasHours, false),
-		order1.WithCompensateHours(req.CompensateHours, false),
+		order1.WithPaymentState(req.PaymentState, false),
 	)
 	if err != nil {
 		logger.Sugar().Errorw(
