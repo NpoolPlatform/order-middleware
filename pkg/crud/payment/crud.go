@@ -69,6 +69,7 @@ type Conds struct {
 
 //nolint
 func SetQueryConds(q *ent.PaymentQuery, conds *Conds) (*ent.PaymentQuery, error) {
+	q.Where(entpayment.DeletedAt(0))
 	if conds == nil {
 		return q, nil
 	}
@@ -158,6 +159,5 @@ func SetQueryConds(q *ent.PaymentQuery, conds *Conds) (*ent.PaymentQuery, error)
 			return nil, fmt.Errorf("invalid payment field")
 		}
 	}
-	q.Where(entpayment.DeletedAt(0))
 	return q, nil
 }

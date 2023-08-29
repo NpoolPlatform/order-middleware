@@ -154,6 +154,7 @@ type Conds struct {
 
 //nolint
 func SetQueryConds(q *ent.OrderStateQuery, conds *Conds) (*ent.OrderStateQuery, error) {
+	q.Where(entorderstate.DeletedAt(0))
 	if conds == nil {
 		return q, nil
 	}
@@ -281,7 +282,5 @@ func SetQueryConds(q *ent.OrderStateQuery, conds *Conds) (*ent.OrderStateQuery, 
 			}
 		}
 	}
-
-	q.Where(entorderstate.DeletedAt(0))
 	return q, nil
 }

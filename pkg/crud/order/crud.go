@@ -138,7 +138,6 @@ func UpdateSet(u *ent.OrderUpdateOne, req *Req) *ent.OrderUpdateOne {
 type Conds struct {
 	orderstatecrud.Conds
 	ID                *cruder.Cond
-	IDs               *cruder.Cond
 	AppID             *cruder.Cond
 	UserID            *cruder.Cond
 	GoodID            *cruder.Cond
@@ -148,10 +147,10 @@ type Conds struct {
 	OrderType         *cruder.Cond
 	InvestmentType    *cruder.Cond
 	PaymentType       *cruder.Cond
-	CouponID          *cruder.Cond
-	CouponIDs         *cruder.Cond
 	CoinTypeID        *cruder.Cond
 	PaymentCoinTypeID *cruder.Cond
+	IDs               *cruder.Cond
+	CouponID          *cruder.Cond
 }
 
 //nolint
@@ -329,28 +328,6 @@ func SetQueryConds(q *ent.OrderQuery, conds *Conds) (*ent.OrderQuery, error) {
 		switch conds.PaymentCoinTypeID.Op {
 		case cruder.EQ:
 			q.Where(entorder.PaymentCoinTypeID(id))
-		default:
-			return nil, fmt.Errorf("invalid order field")
-		}
-	}
-	if conds.CouponIDs != nil {
-		ids, ok := conds.CouponIDs.Val.([]uuid.UUID)
-		if !ok {
-			return nil, fmt.Errorf("invalid couponids")
-		}
-		switch conds.CouponIDs.Op {
-		case cruder.EQ:
-			if len(ids) > 0 {
-				q.Where(func(selector *sql.Selector) {
-					for i := 0; i < len(ids); i++ {
-						if i == 0 {
-							selector.Where(sqljson.ValueContains(entorder.FieldCouponIds, ids[i]))
-						} else {
-							selector.Or().Where(sqljson.ValueContains(entorder.FieldCouponIds, ids[i]))
-						}
-					}
-				})
-			}
 		default:
 			return nil, fmt.Errorf("invalid order field")
 		}

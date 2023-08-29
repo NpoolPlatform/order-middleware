@@ -836,17 +836,6 @@ func WithConds(conds *npool.Conds) func(context.Context, *Handler) error {
 			_type := conds.GetInvestmentType().GetValue()
 			h.Conds.InvestmentType = &cruder.Cond{Op: conds.GetInvestmentType().GetOp(), Val: basetypes.InvestmentType(_type)}
 		}
-		if conds.CouponIDs != nil {
-			ids := []uuid.UUID{}
-			for _, id := range conds.GetCouponIDs().GetValue() {
-				_id, err := uuid.Parse(id)
-				if err != nil {
-					return err
-				}
-				ids = append(ids, _id)
-			}
-			h.Conds.CouponIDs = &cruder.Cond{Op: conds.GetCouponIDs().GetOp(), Val: ids}
-		}
 		if conds.PaymentType != nil {
 			switch conds.GetPaymentType().GetValue() {
 			case uint32(basetypes.PaymentType_PayWithBalanceOnly):
