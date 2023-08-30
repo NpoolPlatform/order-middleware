@@ -10,29 +10,20 @@ import (
 	"github.com/NpoolPlatform/order-middleware/pkg/db"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent"
 	entorder "github.com/NpoolPlatform/order-middleware/pkg/db/ent/order"
-	entorderstate "github.com/NpoolPlatform/order-middleware/pkg/db/ent/orderstate"
-	entpayment "github.com/NpoolPlatform/order-middleware/pkg/db/ent/payment"
-	"github.com/shopspring/decimal"
 
 	npool "github.com/NpoolPlatform/message/npool/order/mw/v1/order"
-	ordercrud "github.com/NpoolPlatform/order-middleware/pkg/crud/order"
 )
 
 type queryHandler struct {
 	*Handler
 	stmSelect *ent.OrderSelect
 	stmCount  *ent.OrderSelect
-	stmSum    *ent.OrderSelect
 	infos     []*npool.Order
 	total     uint32
 }
 
-func (h *queryHandler) selectOrder(stm *ent.OrderQuery) *ent.OrderSelect {
-	return stm.Select(entorder.FieldID)
-}
-
 func (h *queryHandler) queryOrder(cli *ent.Client) {
-	h.stmSelect = h.selectOrder(
+	h.stmSelect = h.SelectOrder(
 		cli.Order.
 			Query().
 			Where(
@@ -42,100 +33,12 @@ func (h *queryHandler) queryOrder(cli *ent.Client) {
 	)
 }
 
-func (h *queryHandler) queryOrders(cli *ent.Client) (*ent.OrderSelect, error) {
-	stm, err := ordercrud.SetQueryConds(cli.Order.Query(), h.Conds)
-	if err != nil {
-		return nil, err
-	}
-	return h.selectOrder(stm), nil
-}
-
-func (h *queryHandler) queryJoinMyself(s *sql.Selector) {
-	t := sql.Table(entorder.Table)
-	s.AppendSelect(
-		t.C(entorder.FieldID),
-		t.C(entorder.FieldAppID),
-		t.C(entorder.FieldUserID),
-		t.C(entorder.FieldGoodID),
-		t.C(entorder.FieldAppGoodID),
-		t.C(entorder.FieldPaymentID),
-		t.C(entorder.FieldParentOrderID),
-		t.C(entorder.FieldUnitsV1),
-		t.C(entorder.FieldGoodValue),
-		t.C(entorder.FieldGoodValueUsd),
-		t.C(entorder.FieldPaymentAmount),
-		t.C(entorder.FieldDiscountAmount),
-		t.C(entorder.FieldPromotionID),
-		t.C(entorder.FieldDurationDays),
-		t.C(entorder.FieldOrderType),
-		t.C(entorder.FieldInvestmentType),
-		t.C(entorder.FieldCouponIds),
-		t.C(entorder.FieldPaymentType),
-		t.C(entorder.FieldCoinTypeID),
-		t.C(entorder.FieldPaymentCoinTypeID),
-		t.C(entorder.FieldTransferAmount),
-		t.C(entorder.FieldBalanceAmount),
-		t.C(entorder.FieldCoinUsdCurrency),
-		t.C(entorder.FieldLocalCoinUsdCurrency),
-		t.C(entorder.FieldLiveCoinUsdCurrency),
-		t.C(entorder.FieldCreatedAt),
-		t.C(entorder.FieldUpdatedAt),
-	)
-}
-
-func (h *queryHandler) queryJoinPayment(s *sql.Selector) error { //nolint
-	t := sql.Table(entpayment.Table)
-	s.LeftJoin(t).
-		On(
-			s.C(entorder.FieldID),
-			t.C(entpayment.FieldOrderID),
-		).
-		OnP(
-			sql.EQ(t.C(entpayment.FieldDeletedAt), 0),
-		)
-
-	s.AppendSelect(
-		sql.As(t.C(entpayment.FieldAccountID), "payment_account_id"),
-		sql.As(t.C(entpayment.FieldStartAmount), "payment_start_amount"),
-	)
-	return nil
-}
-
-func (h *queryHandler) queryJoinOrderState(s *sql.Selector) error { //nolint
-	t := sql.Table(entorderstate.Table)
-	s.LeftJoin(t).
-		On(
-			s.C(entorder.FieldID),
-			t.C(entorderstate.FieldOrderID),
-		).
-		OnP(
-			sql.EQ(t.C(entorderstate.FieldDeletedAt), 0),
-		)
-
-	s.AppendSelect(
-		sql.As(t.C(entorderstate.FieldOrderState), "order_state"),
-		sql.As(t.C(entorderstate.FieldStartMode), "start_mode"),
-		sql.As(t.C(entorderstate.FieldStartAt), "start_at"),
-		sql.As(t.C(entorderstate.FieldEndAt), "end_at"),
-		sql.As(t.C(entorderstate.FieldLastBenefitAt), "last_benefit_at"),
-		sql.As(t.C(entorderstate.FieldBenefitState), "benefit_state"),
-		sql.As(t.C(entorderstate.FieldUserSetPaid), "user_set_paid"),
-		sql.As(t.C(entorderstate.FieldUserSetCanceled), "user_set_canceled"),
-		sql.As(t.C(entorderstate.FieldPaymentTransactionID), "payment_transaction_id"),
-		sql.As(t.C(entorderstate.FieldPaymentFinishAmount), "payment_finish_amount"),
-		sql.As(t.C(entorderstate.FieldPaymentState), "payment_state"),
-		sql.As(t.C(entorderstate.FieldOutofgasHours), "outofgas_hours"),
-		sql.As(t.C(entorderstate.FieldCompensateHours), "compensate_hours"),
-	)
-	return nil
-}
-
 func (h *queryHandler) queryJoin() error {
 	var err error
 	h.stmSelect.Modify(func(s *sql.Selector) {
-		h.queryJoinMyself(s)
-		err = h.queryJoinPayment(s)
-		err = h.queryJoinOrderState(s)
+		h.QueryJoinMyself(s)
+		err = h.QueryJoinPayment(s)
+		err = h.QueryJoinOrderState(s)
 	})
 	if err != nil {
 		return err
@@ -144,21 +47,8 @@ func (h *queryHandler) queryJoin() error {
 		return nil
 	}
 	h.stmCount.Modify(func(s *sql.Selector) {
-		err = h.queryJoinPayment(s)
-		err = h.queryJoinOrderState(s)
-	})
-	return err
-}
-
-func (h *queryHandler) queryJoinSum() error {
-	var err error
-	h.stmCount.Modify(func(s *sql.Selector) {
-		err = h.queryJoinPayment(s)
-		err = h.queryJoinOrderState(s)
-	})
-	h.stmSum.Modify(func(s *sql.Selector) {
-		err = h.queryJoinPayment(s)
-		err = h.queryJoinOrderState(s)
+		err = h.QueryJoinPayment(s)
+		err = h.QueryJoinOrderState(s)
 	})
 	return err
 }
@@ -214,11 +104,11 @@ func (h *Handler) GetOrders(ctx context.Context) ([]*npool.Order, uint32, error)
 
 	var err error
 	err = db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
-		handler.stmSelect, err = handler.queryOrders(cli)
+		handler.stmSelect, err = handler.QueryOrders(cli)
 		if err != nil {
 			return err
 		}
-		handler.stmCount, err = handler.queryOrders(cli)
+		handler.stmCount, err = handler.QueryOrders(cli)
 		if err != nil {
 			return err
 		}
@@ -247,46 +137,4 @@ func (h *Handler) GetOrders(ctx context.Context) ([]*npool.Order, uint32, error)
 	handler.formalize()
 
 	return handler.infos, handler.total, nil
-}
-
-func (h *Handler) SumOrderUnits(ctx context.Context) (string, error) {
-	sum := decimal.NewFromInt(0).String()
-	handler := &queryHandler{
-		Handler: h,
-	}
-	var err error
-	err = db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
-		handler.stmCount, err = handler.queryOrders(cli)
-		if err != nil {
-			return err
-		}
-		handler.stmSum, err = handler.queryOrders(cli.Debug())
-		if err != nil {
-			return err
-		}
-		if err := handler.queryJoinSum(); err != nil {
-			return err
-		}
-		_total, err := handler.stmCount.Count(_ctx)
-		if err != nil {
-			return err
-		}
-		if _total == 0 {
-			return nil
-		}
-		_sum, err := handler.stmSum.Modify(func(s *sql.Selector) {
-			s.Select(sql.Sum(entorder.FieldUnitsV1))
-		}).
-			String(_ctx)
-		if err != nil {
-			return err
-		}
-		sum = _sum
-
-		return nil
-	})
-	if err != nil {
-		return sum, err
-	}
-	return sum, nil
 }
