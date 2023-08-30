@@ -20,6 +20,7 @@ type updateHandler struct {
 	*Handler
 }
 
+//nolint:gocyclo
 func (h *updateHandler) updateOrderState(ctx context.Context, tx *ent.Tx, req *orderstatecrud.Req) error {
 	orderstate, err := tx.OrderState.
 		Query().
@@ -62,6 +63,18 @@ func (h *updateHandler) updateOrderState(ctx context.Context, tx *ent.Tx, req *o
 		order.OrderType == basetypes.OrderType_Normal.String() {
 		if req.UserSetCanceled != nil && *req.UserSetCanceled {
 			return fmt.Errorf("not wait payment")
+		}
+	}
+
+	_orderState := basetypes.OrderState(basetypes.OrderState_value[orderstate.OrderState])
+	if h.Rollback != nil && *h.Rollback {
+		switch _orderState {
+		case basetypes.OrderState_OrderStateCanceled:
+			req.OrderState = basetypes.OrderState_OrderStateCancelBalance.Enum()
+		case basetypes.OrderState_OrderStateCancelBalance:
+			req.OrderState = basetypes.OrderState_OrderStateCancelStock.Enum()
+		default:
+			return fmt.Errorf("invalid orderstate")
 		}
 	}
 

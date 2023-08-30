@@ -41,6 +41,7 @@ func (s *Server) UpdateOrder(ctx context.Context, in *npool.UpdateOrderRequest) 
 		order1.WithPaymentState(req.PaymentState, false),
 		order1.WithOutOfGasHours(req.OutOfGasHours, false),
 		order1.WithCompensateHours(req.CompensateHours, false),
+		order1.WithRollback(req.Rollback, false),
 	)
 	if err != nil {
 		logger.Sugar().Errorw(

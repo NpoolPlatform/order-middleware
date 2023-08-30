@@ -60,6 +60,7 @@ type Handler struct {
 	PaymentState         *basetypes.PaymentState
 	OutOfGasHours        *uint32
 	CompensateHours      *uint32
+	Rollback             *bool
 	Reqs                 []*OrderReq
 	Conds                *ordercrud.Conds
 	Offset               int32
@@ -580,6 +581,9 @@ func WithOrderState(state *basetypes.OrderState, must bool) func(context.Context
 		case basetypes.OrderState_OrderStateCheckPayment:
 		case basetypes.OrderState_OrderStatePaid:
 		case basetypes.OrderState_OrderStatePaymentTimeout:
+		case basetypes.OrderState_OrderStatePreCancel:
+		case basetypes.OrderState_OrderStateCancelStock:
+		case basetypes.OrderState_OrderStateCancelBalance:
 		case basetypes.OrderState_OrderStateCanceled:
 		case basetypes.OrderState_OrderStateInService:
 		case basetypes.OrderState_OrderStateExpired:
@@ -793,6 +797,19 @@ func WithCompensateHours(compensateHours *uint32, must bool) func(context.Contex
 	}
 }
 
+func WithRollback(rollback *bool, must bool) func(context.Context, *Handler) error {
+	return func(ctx context.Context, h *Handler) error {
+		if rollback == nil {
+			if must {
+				return fmt.Errorf("invalid rollback")
+			}
+			return nil
+		}
+		h.Rollback = rollback
+		return nil
+	}
+}
+
 //nolint:funlen,gocyclo
 func WithConds(conds *npool.Conds) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
@@ -905,6 +922,9 @@ func WithConds(conds *npool.Conds) func(context.Context, *Handler) error {
 			case uint32(basetypes.OrderState_OrderStateCheckPayment):
 			case uint32(basetypes.OrderState_OrderStatePaid):
 			case uint32(basetypes.OrderState_OrderStatePaymentTimeout):
+			case uint32(basetypes.OrderState_OrderStatePreCancel):
+			case uint32(basetypes.OrderState_OrderStateCancelStock):
+			case uint32(basetypes.OrderState_OrderStateCancelBalance):
 			case uint32(basetypes.OrderState_OrderStateCanceled):
 			case uint32(basetypes.OrderState_OrderStateInService):
 			case uint32(basetypes.OrderState_OrderStateExpired):
@@ -982,6 +1002,9 @@ func WithConds(conds *npool.Conds) func(context.Context, *Handler) error {
 				case uint32(basetypes.OrderState_OrderStateCheckPayment):
 				case uint32(basetypes.OrderState_OrderStatePaid):
 				case uint32(basetypes.OrderState_OrderStatePaymentTimeout):
+				case uint32(basetypes.OrderState_OrderStatePreCancel):
+				case uint32(basetypes.OrderState_OrderStateCancelStock):
+				case uint32(basetypes.OrderState_OrderStateCancelBalance):
 				case uint32(basetypes.OrderState_OrderStateCanceled):
 				case uint32(basetypes.OrderState_OrderStateInService):
 				case uint32(basetypes.OrderState_OrderStateExpired):
@@ -1288,6 +1311,9 @@ func WithReqs(reqs []*npool.OrderReq, must bool) func(context.Context, *Handler)
 				case basetypes.OrderState_OrderStateCheckPayment:
 				case basetypes.OrderState_OrderStatePaid:
 				case basetypes.OrderState_OrderStatePaymentTimeout:
+				case basetypes.OrderState_OrderStatePreCancel:
+				case basetypes.OrderState_OrderStateCancelStock:
+				case basetypes.OrderState_OrderStateCancelBalance:
 				case basetypes.OrderState_OrderStateCanceled:
 				case basetypes.OrderState_OrderStateInService:
 				case basetypes.OrderState_OrderStateExpired:
