@@ -56,6 +56,9 @@ func (h *updateHandler) updateOrderState(ctx context.Context, tx *ent.Tx, req *o
 		startAt = *req.StartAt
 	}
 	endAt := startAt + duration
+	if req.EndAt != nil && startMode == basetypes.OrderStartMode_OrderStartTBD {
+		endAt = *h.EndAt
+	}
 
 	if orderstate.PaymentState != basetypes.PaymentState_PaymentStateWait.String() && order.OrderType == basetypes.OrderType_Normal.String() {
 		if req.UserSetCanceled != nil && *req.UserSetCanceled {
