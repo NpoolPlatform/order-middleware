@@ -14,6 +14,10 @@ import (
 	entpayment "github.com/NpoolPlatform/order-middleware/pkg/db/ent/payment"
 )
 
+type baseQueryHandler struct {
+	*Handler
+}
+
 func (h *Handler) SelectOrder(stm *ent.OrderQuery) *ent.OrderSelect {
 	return stm.Select(entorder.FieldID)
 }

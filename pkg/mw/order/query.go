@@ -15,7 +15,7 @@ import (
 )
 
 type queryHandler struct {
-	*Handler
+	*baseQueryHandler
 	stmSelect *ent.OrderSelect
 	stmCount  *ent.OrderSelect
 	infos     []*npool.Order
@@ -72,7 +72,9 @@ func (h *queryHandler) formalize() {
 
 func (h *Handler) GetOrder(ctx context.Context) (*npool.Order, error) {
 	handler := &queryHandler{
-		Handler: h,
+		baseQueryHandler: &baseQueryHandler{
+			Handler: h,
+		},
 	}
 
 	err := db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
@@ -99,7 +101,9 @@ func (h *Handler) GetOrder(ctx context.Context) (*npool.Order, error) {
 
 func (h *Handler) GetOrders(ctx context.Context) ([]*npool.Order, uint32, error) {
 	handler := &queryHandler{
-		Handler: h,
+		baseQueryHandler: &baseQueryHandler{
+			Handler: h,
+		},
 	}
 
 	var err error
