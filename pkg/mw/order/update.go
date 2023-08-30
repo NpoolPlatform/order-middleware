@@ -32,14 +32,12 @@ func (h *updateHandler) updateOrderState(ctx context.Context, tx *ent.Tx, req *o
 	if err != nil {
 		return err
 	}
-	if orderstate == nil {
-		return fmt.Errorf("invalid order")
-	}
 
 	order, err := tx.Order.
 		Query().
 		Where(
 			entorder.ID(*req.OrderID),
+			entorder.DeletedAt(0),
 		).
 		Only(ctx)
 	if err != nil {
@@ -57,10 +55,11 @@ func (h *updateHandler) updateOrderState(ctx context.Context, tx *ent.Tx, req *o
 	}
 	endAt := startAt + duration
 	if req.EndAt != nil && startMode == basetypes.OrderStartMode_OrderStartTBD {
-		endAt = *h.EndAt
+		endAt = *req.EndAt
 	}
 
-	if orderstate.PaymentState != basetypes.PaymentState_PaymentStateWait.String() && order.OrderType == basetypes.OrderType_Normal.String() {
+	if orderstate.PaymentState != basetypes.PaymentState_PaymentStateWait.String() &&
+		order.OrderType == basetypes.OrderType_Normal.String() {
 		if req.UserSetCanceled != nil && *req.UserSetCanceled {
 			return fmt.Errorf("not wait payment")
 		}
