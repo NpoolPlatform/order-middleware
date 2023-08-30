@@ -67,7 +67,7 @@ func (s *Server) UpdateOrder(ctx context.Context, in *npool.UpdateOrderRequest) 
 func (s *Server) UpdateOrders(ctx context.Context, in *npool.UpdateOrdersRequest) (*npool.UpdateOrdersResponse, error) {
 	handler, err := order1.NewHandler(
 		ctx,
-		order1.WithReqs(in.GetInfos()),
+		order1.WithReqs(in.GetInfos(), false),
 	)
 	if err != nil {
 		logger.Sugar().Errorw(

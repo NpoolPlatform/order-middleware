@@ -89,10 +89,7 @@ func (h *Handler) ToOrderReq(ctx context.Context, newOrder bool) (*OrderReq, err
 		},
 	}
 
-	if req.PaymentType != nil {
-		if req.PaymentAmount == nil {
-			return req, fmt.Errorf("invalid paymentamount")
-		}
+	if newOrder && req.PaymentType != nil {
 		if req.PaymentAmount.Cmp(decimal.NewFromInt(0)) < 0 {
 			return req, fmt.Errorf("invalid paymentamount")
 		}
@@ -119,39 +116,26 @@ func (h *Handler) ToOrderReq(ctx context.Context, newOrder bool) (*OrderReq, err
 	return req, nil
 }
 
-//nolint:gocyclo
 func (r *OrderReq) HasPayment() (bool, error) {
 	switch *r.PaymentType {
 	case basetypes.PaymentType_PayWithBalanceOnly:
-		if r.TransferAmount != nil && r.TransferAmount.Cmp(decimal.NewFromInt(0)) > 0 {
+		if r.TransferAmount.Cmp(decimal.NewFromInt(0)) > 0 {
 			return false, fmt.Errorf("invalid transferamount")
-		}
-		if r.BalanceAmount == nil {
-			return false, fmt.Errorf("invalid balanceamount")
 		}
 		if r.BalanceAmount.Cmp(decimal.NewFromInt(0)) <= 0 {
 			return false, fmt.Errorf("invalid balanceamount")
 		}
 		return false, nil
 	case basetypes.PaymentType_PayWithTransferOnly:
-		if r.BalanceAmount != nil && r.BalanceAmount.Cmp(decimal.NewFromInt(0)) > 0 {
+		if r.BalanceAmount.Cmp(decimal.NewFromInt(0)) > 0 {
 			return false, fmt.Errorf("invalid balanceamount")
-		}
-		if r.TransferAmount == nil {
-			return false, fmt.Errorf("invalid transferamount")
 		}
 		if r.TransferAmount.Cmp(decimal.NewFromInt(0)) <= 0 {
 			return false, fmt.Errorf("invalid transferamount")
 		}
 	case basetypes.PaymentType_PayWithTransferAndBalance:
-		if r.TransferAmount == nil {
-			return false, fmt.Errorf("invalid transferamount")
-		}
 		if r.TransferAmount.Cmp(decimal.NewFromInt(0)) <= 0 {
 			return false, fmt.Errorf("invalid transferamount")
-		}
-		if r.BalanceAmount == nil {
-			return false, fmt.Errorf("invalid balanceamount")
 		}
 		if r.BalanceAmount.Cmp(decimal.NewFromInt(0)) <= 0 {
 			return false, fmt.Errorf("invalid balanceamount")

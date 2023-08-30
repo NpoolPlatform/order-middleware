@@ -285,7 +285,7 @@ func createOrders(t *testing.T) {
 	}
 	handler, err := NewHandler(
 		context.Background(),
-		WithReqs(retsReq),
+		WithReqs(retsReq, true),
 	)
 	if assert.Nil(t, err) {
 		infos, err := handler.CreateOrders(context.Background())

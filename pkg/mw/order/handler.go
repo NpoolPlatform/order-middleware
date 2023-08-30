@@ -1015,13 +1015,75 @@ func WithLimit(limit int32) func(context.Context, *Handler) error {
 }
 
 //nolint:funlen,gocyclo
-func WithReqs(reqs []*npool.OrderReq) func(context.Context, *Handler) error {
+func WithReqs(reqs []*npool.OrderReq, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		_reqs := []*OrderReq{}
 		for _, req := range reqs {
 			_req := &OrderReq{
 				Req:           &ordercrud.Req{},
 				OrderStateReq: &orderstatecrud.Req{},
+			}
+			if must {
+				if req.AppID == nil {
+					return fmt.Errorf("invalid appid")
+				}
+				if req.UserID == nil {
+					return fmt.Errorf("invalid userid")
+				}
+				if req.GoodID == nil {
+					return fmt.Errorf("invalid goodid")
+				}
+				if req.AppGoodID == nil {
+					return fmt.Errorf("invalid appgoodid")
+				}
+				if req.Units == nil {
+					return fmt.Errorf("invalid units")
+				}
+				if req.GoodValue == nil {
+					return fmt.Errorf("invalid goodvalue")
+				}
+				if req.GoodValueUSD == nil {
+					return fmt.Errorf("invalid goodvalueusd")
+				}
+				if req.PaymentAmount == nil {
+					return fmt.Errorf("invalid paymentamount")
+				}
+				if req.DurationDays == nil {
+					return fmt.Errorf("invalid durationdays")
+				}
+				if req.OrderType == nil {
+					return fmt.Errorf("invalid ordertype")
+				}
+				if req.InvestmentType == nil {
+					return fmt.Errorf("invalid investmenttype")
+				}
+				if req.PaymentType == nil {
+					return fmt.Errorf("invalid paymenttype")
+				}
+				if req.CoinTypeID == nil {
+					return fmt.Errorf("invalid cointypeid")
+				}
+				if req.PaymentCoinTypeID == nil {
+					return fmt.Errorf("invalid paymentcointypeid")
+				}
+				if req.TransferAmount == nil {
+					return fmt.Errorf("invalid transferamount")
+				}
+				if req.BalanceAmount == nil {
+					return fmt.Errorf("invalid balanceamount")
+				}
+				if req.CoinUSDCurrency == nil {
+					return fmt.Errorf("invalid coinusdcurrency")
+				}
+				if req.LiveCoinUSDCurrency == nil {
+					return fmt.Errorf("invalid livecoinusdcurrency")
+				}
+				if req.StartAt == nil {
+					return fmt.Errorf("invalid startat")
+				}
+				if req.EndAt == nil {
+					return fmt.Errorf("invalid endat")
+				}
 			}
 			if req.ID != nil {
 				id, err := uuid.Parse(*req.ID)
