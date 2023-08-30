@@ -22,6 +22,7 @@ type queryHandler struct {
 	*Handler
 	stmSelect *ent.OrderSelect
 	stmCount  *ent.OrderSelect
+	stmSum    *ent.OrderSelect
 	infos     []*npool.Order
 	total     uint32
 }
@@ -144,6 +145,20 @@ func (h *queryHandler) queryJoin() error {
 	}
 	h.stmCount.Modify(func(s *sql.Selector) {
 		err = h.queryJoinPayment(s)
+		err = h.queryJoinOrderState(s)
+	})
+	return err
+}
+
+func (h *queryHandler) queryJoinSum() error {
+	var err error
+	h.stmCount.Modify(func(s *sql.Selector) {
+		err = h.queryJoinPayment(s)
+		err = h.queryJoinOrderState(s)
+	})
+	h.stmSum.Modify(func(s *sql.Selector) {
+		err = h.queryJoinPayment(s)
+		err = h.queryJoinOrderState(s)
 	})
 	return err
 }
@@ -236,23 +251,33 @@ func (h *Handler) GetOrders(ctx context.Context) ([]*npool.Order, uint32, error)
 
 func (h *Handler) SumOrderUnits(ctx context.Context) (string, error) {
 	sum := decimal.NewFromInt(0).String()
-	err := db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
-		stm, err := ordercrud.SetQueryConds(cli.Order.Query(), &ordercrud.Conds{})
+	handler := &queryHandler{
+		Handler: h,
+	}
+	var err error
+	err = db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
+		handler.stmCount, err = handler.queryOrders(cli)
 		if err != nil {
 			return err
 		}
-		_count, err := stm.Count(ctx)
+		handler.stmSum, err = handler.queryOrders(cli.Debug())
 		if err != nil {
 			return err
 		}
-		if _count == 0 {
+		if err := handler.queryJoinSum(); err != nil {
+			return err
+		}
+		_total, err := handler.stmCount.Count(_ctx)
+		if err != nil {
+			return err
+		}
+		if _total == 0 {
 			return nil
 		}
-		_sum, err := stm.
-			Modify(func(s *sql.Selector) {
-				s.Select(sql.Sum(entorder.FieldUnitsV1))
-			}).
-			String(ctx)
+		_sum, err := handler.stmSum.Modify(func(s *sql.Selector) {
+			s.Select(sql.Sum(entorder.FieldUnitsV1))
+		}).
+			String(_ctx)
 		if err != nil {
 			return err
 		}

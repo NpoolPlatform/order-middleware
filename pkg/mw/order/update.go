@@ -51,7 +51,8 @@ func (h *updateHandler) updateOrderState(ctx context.Context, tx *ent.Tx, req *o
 
 	duration := orderstate.EndAt - orderstate.StartAt
 	startAt := orderstate.StartAt
-	if req.StartAt != nil && *req.StartAt > startAt {
+	startMode := basetypes.OrderStartMode(basetypes.OrderStartMode_value[orderstate.StartMode])
+	if req.StartAt != nil && startMode == basetypes.OrderStartMode_OrderStartTBD {
 		startAt = *req.StartAt
 	}
 	endAt := startAt + duration

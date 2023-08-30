@@ -4,6 +4,7 @@ package order
 import (
 	"context"
 	"fmt"
+	"time"
 
 	basetypes "github.com/NpoolPlatform/message/npool/basetypes/order/v1"
 	npool "github.com/NpoolPlatform/message/npool/order/mw/v1/order"
@@ -617,6 +618,10 @@ func WithStartAt(startAt *uint32, must bool) func(context.Context, *Handler) err
 			}
 			return nil
 		}
+		now := uint32(time.Now().Unix())
+		if *startAt < now {
+			return fmt.Errorf("invalid startat")
+		}
 		h.StartAt = startAt
 		return nil
 	}
@@ -838,7 +843,6 @@ func WithConds(conds *npool.Conds) func(context.Context, *Handler) error {
 			h.Conds.ParentOrderID = &cruder.Cond{Op: conds.GetParentOrderID().GetOp(), Val: id}
 		}
 		if conds.PaymentAmount != nil {
-			fmt.Println("conds.GetParentOrderID().GetValue():  ", conds.GetPaymentAmount().GetValue())
 			amount, err := decimal.NewFromString(conds.GetPaymentAmount().GetValue())
 			if err != nil {
 				return err
@@ -1240,6 +1244,10 @@ func WithReqs(reqs []*npool.OrderReq) func(context.Context, *Handler) error {
 				_req.OrderStateReq.StartMode = req.StartMode
 			}
 			if req.StartAt != nil {
+				now := uint32(time.Now().Unix())
+				if *req.StartAt < now {
+					return fmt.Errorf("invalid startat")
+				}
 				_req.OrderStateReq.StartAt = req.StartAt
 			}
 			if req.EndAt != nil {

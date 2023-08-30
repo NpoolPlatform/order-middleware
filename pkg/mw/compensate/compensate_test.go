@@ -31,7 +31,7 @@ func init() {
 }
 
 const secondsPerDay = 24 * 60 * 60
-const secondsPerHours = 60 * 60
+const seconds = 1
 
 var (
 	now   = uint32(time.Now().Unix())
@@ -42,10 +42,10 @@ var (
 		GoodID:               uuid.NewString(),
 		AppGoodID:            uuid.NewString(),
 		ParentOrderID:        uuid.NewString(),
-		Units:                "10001.000000000000000000",
+		Units:                "100.000000000000000000",
 		GoodValue:            "1007.000000000000000000",
 		GoodValueUSD:         "1007.000000000000000000",
-		PaymentAmount:        "1007.000000000000000000",
+		PaymentAmount:        "1121.000000000000000000",
 		DiscountAmount:       "10.000000000000000000",
 		PromotionID:          uuid.NewString(),
 		DurationDays:         now + 5*secondsPerDay,
@@ -70,7 +70,7 @@ var (
 		OrderState:           ordertypes.OrderState_OrderStateWaitPayment,
 		StartModeStr:         ordertypes.OrderStartMode_OrderStartConfirmed.String(),
 		StartMode:            ordertypes.OrderStartMode_OrderStartConfirmed,
-		StartAt:              now - 5*secondsPerDay,
+		StartAt:              now + 5*seconds,
 		EndAt:                now + 5*secondsPerDay,
 		LastBenefitAt:        0,
 		BenefitStateStr:      ordertypes.BenefitState_BenefitWait.String(),
@@ -95,8 +95,8 @@ var (
 		Units:        order.Units,
 		OrderStartAt: order.StartAt,
 		OrderEndAt:   order.EndAt,
-		StartAt:      now - secondsPerDay,
-		EndAt:        now - secondsPerDay + 2*secondsPerHours,
+		StartAt:      now + 6*seconds,
+		EndAt:        now + 7*seconds,
 		Title:        "title " + uuid.NewString(),
 		Message:      "message " + uuid.NewString(),
 	}
@@ -169,8 +169,8 @@ func createCompensate(t *testing.T) {
 
 func updateCompensate(t *testing.T) {
 	ret.Message = "change message " + uuid.NewString()
-	ret.StartAt = now - secondsPerDay + 2*secondsPerHours
-	ret.EndAt = now - secondsPerDay + 6*secondsPerHours
+	ret.StartAt = now + 7*seconds
+	ret.EndAt = now + 8*seconds
 	handler, err := NewHandler(
 		context.Background(),
 		WithID(&ret.ID, true),
@@ -247,6 +247,7 @@ func TestCompensate(t *testing.T) {
 	teardown := setup(t)
 	defer teardown(t)
 
+	time.Sleep(10 * time.Second)
 	t.Run("createCompensate", createCompensate)
 	t.Run("updateCompensate", updateCompensate)
 	t.Run("getCompensate", getCompensate)

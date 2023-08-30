@@ -2,6 +2,7 @@ package order
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
 	"github.com/NpoolPlatform/order-middleware/pkg/db"
@@ -19,6 +20,35 @@ import (
 
 type createHandler struct {
 	*Handler
+}
+
+func (h *createHandler) validate(req *OrderReq) error {
+	if (req.TransferAmount.Add(*req.BalanceAmount)).Cmp(*req.PaymentAmount) != 0 {
+		return fmt.Errorf("invalid amount")
+	}
+	switch *req.OrderType {
+	case ordertypes.OrderType_Normal:
+		switch *req.PaymentType {
+		case ordertypes.PaymentType_PayWithTransferOnly:
+		case ordertypes.PaymentType_PayWithTransferAndBalance:
+		case ordertypes.PaymentType_PayWithBalanceOnly:
+		case ordertypes.PaymentType_PayWithParentOrder:
+		default:
+			return fmt.Errorf("invalid paymenttype")
+		}
+	case ordertypes.OrderType_Offline:
+		if *req.PaymentType != ordertypes.PaymentType_PayWithOffline {
+			return fmt.Errorf("invalid paymenttype")
+		}
+	case ordertypes.OrderType_Airdrop:
+		if *req.PaymentType != ordertypes.PaymentType_PayWithNoPayment {
+			return fmt.Errorf("invalid paymenttype")
+		}
+	default:
+		return fmt.Errorf("invalid ordertype")
+	}
+
+	return nil
 }
 
 func (h *createHandler) paymentState() *ordertypes.PaymentState {
@@ -83,8 +113,14 @@ func (h *Handler) CreateOrder(ctx context.Context) (*npool.Order, error) {
 	if err != nil {
 		return nil, err
 	}
+	if *req.PaymentType == ordertypes.PaymentType_PayWithParentOrder {
+		return nil, fmt.Errorf("invalid paymenttype")
+	}
 
 	err = db.WithTx(ctx, func(ctx context.Context, tx *ent.Tx) error {
+		if err := handler.validate(req); err != nil {
+			return err
+		}
 		if err := handler.createOrder(ctx, tx, req.Req); err != nil {
 			return err
 		}
@@ -118,6 +154,9 @@ func (h *Handler) CreateOrders(ctx context.Context) ([]*npool.Order, error) {
 				req.Req.ID = &id
 				req.OrderStateReq.OrderID = &id
 			}
+			if err := handler.validate(req); err != nil {
+				return err
+			}
 			if err := handler.createOrder(ctx, tx, req.Req); err != nil {
 				return err
 			}
@@ -129,6 +168,7 @@ func (h *Handler) CreateOrders(ctx context.Context) ([]*npool.Order, error) {
 			if req.PaymentReq == nil {
 				continue
 			}
+			req.PaymentReq.OrderID = req.Req.ID
 			if err := handler.createPayment(ctx, tx, req.PaymentReq); err != nil {
 				return err
 			}

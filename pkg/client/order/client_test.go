@@ -6,6 +6,7 @@ import (
 	"os"
 	"strconv"
 	"testing"
+	"time"
 
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
 
@@ -34,58 +35,61 @@ func init() {
 	}
 }
 
-var ret = npool.Order{
-	ID:                   uuid.NewString(),
-	AppID:                uuid.NewString(),
-	UserID:               uuid.NewString(),
-	GoodID:               uuid.NewString(),
-	AppGoodID:            uuid.NewString(),
-	ParentOrderID:        uuid.NewString(),
-	Units:                "10001.000000000000000000",
-	GoodValue:            "1007.000000000000000000",
-	GoodValueUSD:         "1007.000000000000000000",
-	PaymentAmount:        "1007.000000000000000000",
-	DiscountAmount:       "10.000000000000000000",
-	PromotionID:          uuid.NewString(),
-	DurationDays:         10006,
-	OrderTypeStr:         ordertypes.OrderType_Normal.String(),
-	OrderType:            ordertypes.OrderType_Normal,
-	InvestmentType:       ordertypes.InvestmentType_FullPayment,
-	InvestmentTypeStr:    ordertypes.InvestmentType_FullPayment.String(),
-	PaymentTypeStr:       ordertypes.PaymentType_PayWithTransferAndBalance.String(),
-	PaymentType:          ordertypes.PaymentType_PayWithTransferAndBalance,
-	CoinTypeID:           uuid.NewString(),
-	PaymentCoinTypeID:    uuid.NewString(),
-	TransferAmount:       "1011.000000000000000000",
-	BalanceAmount:        "110.000000000000000000",
-	CoinUSDCurrency:      "1004.000000000000000000",
-	LocalCoinUSDCurrency: "1005.000000000000000000",
-	LiveCoinUSDCurrency:  "1006.000000000000000000",
-
-	PaymentAccountID:   uuid.NewString(),
-	PaymentStartAmount: "1010.000000000000000000",
-
-	OrderStateStr:        ordertypes.OrderState_OrderStateWaitPayment.String(),
-	OrderState:           ordertypes.OrderState_OrderStateWaitPayment,
-	StartModeStr:         ordertypes.OrderStartMode_OrderStartConfirmed.String(),
-	StartMode:            ordertypes.OrderStartMode_OrderStartConfirmed,
-	StartAt:              10002,
-	EndAt:                10003,
-	LastBenefitAt:        0,
-	BenefitStateStr:      ordertypes.BenefitState_BenefitWait.String(),
-	BenefitState:         ordertypes.BenefitState_BenefitWait,
-	UserSetPaid:          false,
-	UserSetCanceled:      false,
-	AdminSetCanceled:     false,
-	PaymentTransactionID: "",
-	PaymentFinishAmount:  "0.000000000000000000",
-	PaymentStateStr:      ordertypes.PaymentState_PaymentStateWait.String(),
-	PaymentState:         ordertypes.PaymentState_PaymentStateWait,
-	OutOfGasHours:        0,
-	CompensateHours:      0,
-}
+const secondsPerDay = 24 * 60 * 60
 
 var (
+	now = uint32(time.Now().Unix())
+	ret = npool.Order{
+		ID:                   uuid.NewString(),
+		AppID:                uuid.NewString(),
+		UserID:               uuid.NewString(),
+		GoodID:               uuid.NewString(),
+		AppGoodID:            uuid.NewString(),
+		ParentOrderID:        uuid.NewString(),
+		Units:                "100.000000000000000000",
+		GoodValue:            "1007.000000000000000000",
+		GoodValueUSD:         "1007.000000000000000000",
+		PaymentAmount:        "1121.000000000000000000",
+		DiscountAmount:       "10.000000000000000000",
+		PromotionID:          uuid.NewString(),
+		DurationDays:         6 * secondsPerDay,
+		OrderTypeStr:         ordertypes.OrderType_Normal.String(),
+		OrderType:            ordertypes.OrderType_Normal,
+		InvestmentType:       ordertypes.InvestmentType_FullPayment,
+		InvestmentTypeStr:    ordertypes.InvestmentType_FullPayment.String(),
+		PaymentTypeStr:       ordertypes.PaymentType_PayWithTransferAndBalance.String(),
+		PaymentType:          ordertypes.PaymentType_PayWithTransferAndBalance,
+		CoinTypeID:           uuid.NewString(),
+		PaymentCoinTypeID:    uuid.NewString(),
+		TransferAmount:       "1011.000000000000000000",
+		BalanceAmount:        "110.000000000000000000",
+		CoinUSDCurrency:      "1004.000000000000000000",
+		LocalCoinUSDCurrency: "1005.000000000000000000",
+		LiveCoinUSDCurrency:  "1006.000000000000000000",
+
+		PaymentAccountID:   uuid.NewString(),
+		PaymentStartAmount: "1010.000000000000000000",
+
+		OrderStateStr:        ordertypes.OrderState_OrderStateWaitPayment.String(),
+		OrderState:           ordertypes.OrderState_OrderStateWaitPayment,
+		StartModeStr:         ordertypes.OrderStartMode_OrderStartConfirmed.String(),
+		StartMode:            ordertypes.OrderStartMode_OrderStartConfirmed,
+		StartAt:              now + secondsPerDay,
+		EndAt:                now + 6*secondsPerDay,
+		LastBenefitAt:        0,
+		BenefitStateStr:      ordertypes.BenefitState_BenefitWait.String(),
+		BenefitState:         ordertypes.BenefitState_BenefitWait,
+		UserSetPaid:          false,
+		UserSetCanceled:      false,
+		AdminSetCanceled:     false,
+		PaymentTransactionID: "",
+		PaymentFinishAmount:  "0.000000000000000000",
+		PaymentStateStr:      ordertypes.PaymentState_PaymentStateWait.String(),
+		PaymentState:         ordertypes.PaymentState_PaymentStateWait,
+		OutOfGasHours:        0,
+		CompensateHours:      0,
+	}
+
 	req = npool.OrderReq{
 		ID:                   &ret.ID,
 		AppID:                &ret.AppID,

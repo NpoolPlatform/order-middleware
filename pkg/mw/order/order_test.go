@@ -6,6 +6,7 @@ import (
 	"os"
 	"strconv"
 	"testing"
+	"time"
 
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
 	ordertypes "github.com/NpoolPlatform/message/npool/basetypes/order/v1"
@@ -27,7 +28,10 @@ func init() {
 	}
 }
 
+const secondsPerDay = 24 * 60 * 60
+
 var (
+	now = uint32(time.Now().Unix())
 	ret = npool.Order{
 		ID:                   uuid.NewString(),
 		AppID:                uuid.NewString(),
@@ -35,13 +39,13 @@ var (
 		GoodID:               uuid.NewString(),
 		AppGoodID:            uuid.NewString(),
 		ParentOrderID:        uuid.NewString(),
-		Units:                "10001.000000000000000000",
+		Units:                "100.000000000000000000",
 		GoodValue:            "1007.000000000000000000",
 		GoodValueUSD:         "1007.000000000000000000",
-		PaymentAmount:        "1007.000000000000000000",
+		PaymentAmount:        "1121.000000000000000000",
 		DiscountAmount:       "10.000000000000000000",
 		PromotionID:          uuid.NewString(),
-		DurationDays:         10006,
+		DurationDays:         6 * secondsPerDay,
 		OrderTypeStr:         ordertypes.OrderType_Normal.String(),
 		OrderType:            ordertypes.OrderType_Normal,
 		InvestmentType:       ordertypes.InvestmentType_FullPayment,
@@ -63,8 +67,8 @@ var (
 		OrderState:           ordertypes.OrderState_OrderStateWaitPayment,
 		StartModeStr:         ordertypes.OrderStartMode_OrderStartConfirmed.String(),
 		StartMode:            ordertypes.OrderStartMode_OrderStartConfirmed,
-		StartAt:              10002,
-		EndAt:                10003,
+		StartAt:              now + secondsPerDay,
+		EndAt:                now + 6*secondsPerDay,
 		LastBenefitAt:        0,
 		BenefitStateStr:      ordertypes.BenefitState_BenefitWait.String(),
 		BenefitState:         ordertypes.BenefitState_BenefitWait,
@@ -92,10 +96,10 @@ var (
 			Units:                "1001.000000000000000000",
 			GoodValue:            "1002.000000000000000000",
 			GoodValueUSD:         "1002.000000000000000000",
-			PaymentAmount:        "1003.000000000000000000",
+			PaymentAmount:        "1115.000000000000000000",
 			DiscountAmount:       "101.000000000000000000",
 			PromotionID:          uuid.NewString(),
-			DurationDays:         10006,
+			DurationDays:         6 * secondsPerDay,
 			OrderTypeStr:         ordertypes.OrderType_Normal.String(),
 			OrderType:            ordertypes.OrderType_Normal,
 			InvestmentType:       ordertypes.InvestmentType_FullPayment,
@@ -105,10 +109,10 @@ var (
 			CoinTypeID:           uuid.NewString(),
 			PaymentCoinTypeID:    uuid.NewString(),
 			TransferAmount:       "1012.000000000000000000",
-			BalanceAmount:        "111.000000000000000000",
-			CoinUSDCurrency:      "1003.000000000000000000",
-			LocalCoinUSDCurrency: "1004.000000000000000000",
-			LiveCoinUSDCurrency:  "1005.000000000000000000",
+			BalanceAmount:        "103.000000000000000000",
+			CoinUSDCurrency:      "11.000000000000000000",
+			LocalCoinUSDCurrency: "12.000000000000000000",
+			LiveCoinUSDCurrency:  "13.000000000000000000",
 
 			PaymentAccountID:   uuid.NewString(),
 			PaymentStartAmount: "1011.000000000000000000",
@@ -117,8 +121,8 @@ var (
 			OrderState:           ordertypes.OrderState_OrderStateWaitPayment,
 			StartModeStr:         ordertypes.OrderStartMode_OrderStartConfirmed.String(),
 			StartMode:            ordertypes.OrderStartMode_OrderStartConfirmed,
-			StartAt:              10001,
-			EndAt:                10002,
+			StartAt:              now + secondsPerDay,
+			EndAt:                now + 6*secondsPerDay,
 			LastBenefitAt:        0,
 			BenefitStateStr:      ordertypes.BenefitState_BenefitWait.String(),
 			BenefitState:         ordertypes.BenefitState_BenefitWait,
@@ -146,7 +150,7 @@ var (
 			PaymentAmount:        "0.000000000000000000",
 			DiscountAmount:       "0.000000000000000000",
 			PromotionID:          uuid.NewString(),
-			DurationDays:         10008,
+			DurationDays:         3 * secondsPerDay,
 			OrderTypeStr:         ordertypes.OrderType_Normal.String(),
 			OrderType:            ordertypes.OrderType_Normal,
 			InvestmentType:       ordertypes.InvestmentType_FullPayment,
@@ -165,8 +169,8 @@ var (
 			OrderState:           ordertypes.OrderState_OrderStateWaitPayment,
 			StartModeStr:         ordertypes.OrderStartMode_OrderStartConfirmed.String(),
 			StartMode:            ordertypes.OrderStartMode_OrderStartConfirmed,
-			StartAt:              10011,
-			EndAt:                10012,
+			StartAt:              now + secondsPerDay,
+			EndAt:                now + 3*secondsPerDay,
 			LastBenefitAt:        0,
 			BenefitStateStr:      ordertypes.BenefitState_BenefitWait.String(),
 			BenefitState:         ordertypes.BenefitState_BenefitWait,
