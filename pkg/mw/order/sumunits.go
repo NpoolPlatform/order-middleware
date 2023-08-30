@@ -11,7 +11,7 @@ import (
 )
 
 type sumUnitsHandler struct {
-	*Handler
+	*baseQueryHandler
 	stmCount *ent.OrderSelect
 	stmSum   *ent.OrderSelect
 }
@@ -32,7 +32,9 @@ func (h *sumUnitsHandler) queryJoin() error {
 func (h *Handler) SumOrderUnits(ctx context.Context) (string, error) {
 	sum := decimal.NewFromInt(0).String()
 	handler := &sumUnitsHandler{
-		Handler: h,
+		baseQueryHandler: &baseQueryHandler{
+			Handler: h,
+		},
 	}
 	var err error
 	err = db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {

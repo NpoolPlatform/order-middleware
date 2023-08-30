@@ -18,11 +18,11 @@ type baseQueryHandler struct {
 	*Handler
 }
 
-func (h *Handler) SelectOrder(stm *ent.OrderQuery) *ent.OrderSelect {
+func (h *baseQueryHandler) SelectOrder(stm *ent.OrderQuery) *ent.OrderSelect {
 	return stm.Select(entorder.FieldID)
 }
 
-func (h *Handler) QueryOrders(cli *ent.Client) (*ent.OrderSelect, error) {
+func (h *baseQueryHandler) QueryOrders(cli *ent.Client) (*ent.OrderSelect, error) {
 	stm, err := ordercrud.SetQueryConds(cli.Order.Query(), h.Conds)
 	if err != nil {
 		return nil, err
@@ -30,7 +30,7 @@ func (h *Handler) QueryOrders(cli *ent.Client) (*ent.OrderSelect, error) {
 	return h.SelectOrder(stm), nil
 }
 
-func (h *Handler) QueryJoinMyself(s *sql.Selector) {
+func (h *baseQueryHandler) QueryJoinMyself(s *sql.Selector) {
 	t := sql.Table(entorder.Table)
 	s.AppendSelect(
 		t.C(entorder.FieldID),
@@ -63,7 +63,7 @@ func (h *Handler) QueryJoinMyself(s *sql.Selector) {
 	)
 }
 
-func (h *Handler) QueryJoinPayment(s *sql.Selector) error {
+func (h *baseQueryHandler) QueryJoinPayment(s *sql.Selector) error {
 	t := sql.Table(entpayment.Table)
 	s.LeftJoin(t).
 		On(
@@ -82,7 +82,7 @@ func (h *Handler) QueryJoinPayment(s *sql.Selector) error {
 }
 
 //nolint:gocyclo
-func (h *Handler) QueryJoinOrderState(s *sql.Selector) error {
+func (h *baseQueryHandler) QueryJoinOrderState(s *sql.Selector) error {
 	t := sql.Table(entorderstate.Table)
 	s.LeftJoin(t).
 		On(

@@ -11,7 +11,7 @@ import (
 )
 
 type existHandler struct {
-	*Handler
+	*baseQueryHandler
 	stmExist *ent.OrderSelect
 }
 
@@ -37,7 +37,9 @@ func (h *existHandler) queryJoin() error {
 
 func (h *Handler) ExistOrder(ctx context.Context) (bool, error) {
 	handler := &existHandler{
-		Handler: h,
+		baseQueryHandler: &baseQueryHandler{
+			Handler: h,
+		},
 	}
 
 	exist := false
@@ -62,7 +64,9 @@ func (h *Handler) ExistOrder(ctx context.Context) (bool, error) {
 
 func (h *Handler) ExistOrderConds(ctx context.Context) (bool, error) {
 	handler := &existHandler{
-		Handler: h,
+		baseQueryHandler: &baseQueryHandler{
+			Handler: h,
+		},
 	}
 
 	exist := false
