@@ -20,61 +20,29 @@ type updateHandler struct {
 	*Handler
 }
 
-//nolint:gocyclo
+var stateMap = map[basetypes.OrderState][]basetypes.OrderState{
+	basetypes.OrderState_OrderStateWaitPayment:           {basetypes.OrderState_OrderStateCheckPayment},
+	basetypes.OrderState_OrderStateCheckPayment:          {basetypes.OrderState_OrderStatePaid, basetypes.OrderState_OrderStatePaymentTimeout},
+	basetypes.OrderState_OrderStatePaid:                  {basetypes.OrderState_OrderStateInService, basetypes.OrderState_OrderStatePreCancel},
+	basetypes.OrderState_OrderStateInService:             {basetypes.OrderState_OrderStatePreExpired, basetypes.OrderState_OrderStatePreCancel},
+	basetypes.OrderState_OrderStatePreExpired:            {basetypes.OrderState_OrderStateRestoreExpiredStock},
+	basetypes.OrderState_OrderStateRestoreExpiredStock:   {basetypes.OrderState_OrderStateExpired, basetypes.OrderState_OrderStateRestoreExpiredStock},
+	basetypes.OrderState_OrderStateExpired:               {basetypes.OrderState_OrderStateExpired},
+	basetypes.OrderState_OrderStatePreCancel:             {basetypes.OrderState_OrderStateRestoreCanceledStock},
+	basetypes.OrderState_OrderStateRestoreCanceledStock:  {basetypes.OrderState_OrderStateReturnCalceledBalance},
+	basetypes.OrderState_OrderStateReturnCalceledBalance: {basetypes.OrderState_OrderStateCanceled, basetypes.OrderState_OrderStateReturnCalceledBalance},
+	basetypes.OrderState_OrderStateCanceled:              {basetypes.OrderState_OrderStateCanceled},
+	basetypes.OrderState_OrderStatePaymentTimeout:        {basetypes.OrderState_OrderStatePreCancel},
+}
+
 func (h *updateHandler) checkOrderState(oldState basetypes.OrderState) error {
-	switch oldState {
-	case basetypes.OrderState_OrderStateWaitPayment:
-		if *h.OrderState != basetypes.OrderState_OrderStateCheckPayment {
-			return fmt.Errorf("invalid orderstate")
+	allowedStates := stateMap[oldState]
+	for _, state := range allowedStates {
+		if state == *h.OrderState {
+			return nil
 		}
-	case basetypes.OrderState_OrderStateCheckPayment:
-		if *h.OrderState != basetypes.OrderState_OrderStatePaid && *h.OrderState != basetypes.OrderState_OrderStatePaymentTimeout {
-			return fmt.Errorf("invalid orderstate")
-		}
-	case basetypes.OrderState_OrderStatePaid:
-		if *h.OrderState != basetypes.OrderState_OrderStateInService && *h.OrderState != basetypes.OrderState_OrderStatePreCancel {
-			return fmt.Errorf("invalid orderstate")
-		}
-	case basetypes.OrderState_OrderStateInService:
-		if *h.OrderState != basetypes.OrderState_OrderStatePreExpired && *h.OrderState != basetypes.OrderState_OrderStatePreCancel {
-			return fmt.Errorf("invalid orderstate")
-		}
-	case basetypes.OrderState_OrderStatePreExpired:
-		if *h.OrderState != basetypes.OrderState_OrderStateRestoreExpiredStock {
-			return fmt.Errorf("invalid orderstate")
-		}
-	case basetypes.OrderState_OrderStateRestoreExpiredStock:
-		if *h.OrderState != basetypes.OrderState_OrderStateExpired && *h.OrderState != basetypes.OrderState_OrderStateRestoreExpiredStock {
-			return fmt.Errorf("invalid orderstate")
-		}
-	case basetypes.OrderState_OrderStatePaymentTimeout:
-		if *h.OrderState != basetypes.OrderState_OrderStatePreCancel {
-			return fmt.Errorf("invalid orderstate")
-		}
-	case basetypes.OrderState_OrderStatePreCancel:
-		if *h.OrderState != basetypes.OrderState_OrderStateRestoreCanceledStock {
-			return fmt.Errorf("invalid orderstate")
-		}
-	case basetypes.OrderState_OrderStateRestoreCanceledStock:
-		if *h.OrderState != basetypes.OrderState_OrderStateReturnCalceledBalance {
-			return fmt.Errorf("invalid orderstate")
-		}
-	case basetypes.OrderState_OrderStateReturnCalceledBalance:
-		if *h.OrderState != basetypes.OrderState_OrderStateCanceled && *h.OrderState != basetypes.OrderState_OrderStateReturnCalceledBalance {
-			return fmt.Errorf("invalid orderstate")
-		}
-	case basetypes.OrderState_OrderStateCanceled:
-		if *h.OrderState != basetypes.OrderState_OrderStateCanceled {
-			return fmt.Errorf("invalid orderstate")
-		}
-	case basetypes.OrderState_OrderStateExpired:
-		if *h.OrderState != basetypes.OrderState_OrderStateExpired {
-			return fmt.Errorf("invalid orderstate")
-		}
-	default:
-		return fmt.Errorf("invalid orderstate")
 	}
-	return nil
+	return fmt.Errorf("invalid orderstate")
 }
 
 //nolint:gocyclo
