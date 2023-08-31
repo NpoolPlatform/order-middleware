@@ -580,12 +580,14 @@ func WithOrderState(state *basetypes.OrderState, must bool) func(context.Context
 		case basetypes.OrderState_OrderStateWaitPayment:
 		case basetypes.OrderState_OrderStateCheckPayment:
 		case basetypes.OrderState_OrderStatePaid:
+		case basetypes.OrderState_OrderStateInService:
 		case basetypes.OrderState_OrderStatePaymentTimeout:
 		case basetypes.OrderState_OrderStatePreCancel:
-		case basetypes.OrderState_OrderStateCancelStock:
-		case basetypes.OrderState_OrderStateCancelBalance:
+		case basetypes.OrderState_OrderStatePreExpired:
+		case basetypes.OrderState_OrderStateRestoreExpiredStock:
+		case basetypes.OrderState_OrderStateRestoreCanceledStock:
+		case basetypes.OrderState_OrderStateReturnCalceledBalance:
 		case basetypes.OrderState_OrderStateCanceled:
-		case basetypes.OrderState_OrderStateInService:
 		case basetypes.OrderState_OrderStateExpired:
 		default:
 			return fmt.Errorf("invalid orderstate")
@@ -887,6 +889,17 @@ func WithConds(conds *npool.Conds) func(context.Context, *Handler) error {
 			_type := conds.GetInvestmentType().GetValue()
 			h.Conds.InvestmentType = &cruder.Cond{Op: conds.GetInvestmentType().GetOp(), Val: basetypes.InvestmentType(_type)}
 		}
+		if conds.CouponIDs != nil {
+			ids := []uuid.UUID{}
+			for _, id := range conds.GetCouponIDs().GetValue() {
+				_id, err := uuid.Parse(id)
+				if err != nil {
+					return err
+				}
+				ids = append(ids, _id)
+			}
+			h.Conds.CouponIDs = &cruder.Cond{Op: conds.GetCouponIDs().GetOp(), Val: ids}
+		}
 		if conds.PaymentType != nil {
 			switch conds.GetPaymentType().GetValue() {
 			case uint32(basetypes.PaymentType_PayWithBalanceOnly):
@@ -921,12 +934,14 @@ func WithConds(conds *npool.Conds) func(context.Context, *Handler) error {
 			case uint32(basetypes.OrderState_OrderStateWaitPayment):
 			case uint32(basetypes.OrderState_OrderStateCheckPayment):
 			case uint32(basetypes.OrderState_OrderStatePaid):
+			case uint32(basetypes.OrderState_OrderStateInService):
 			case uint32(basetypes.OrderState_OrderStatePaymentTimeout):
 			case uint32(basetypes.OrderState_OrderStatePreCancel):
-			case uint32(basetypes.OrderState_OrderStateCancelStock):
-			case uint32(basetypes.OrderState_OrderStateCancelBalance):
+			case uint32(basetypes.OrderState_OrderStatePreExpired):
+			case uint32(basetypes.OrderState_OrderStateRestoreExpiredStock):
+			case uint32(basetypes.OrderState_OrderStateRestoreCanceledStock):
+			case uint32(basetypes.OrderState_OrderStateReturnCalceledBalance):
 			case uint32(basetypes.OrderState_OrderStateCanceled):
-			case uint32(basetypes.OrderState_OrderStateInService):
 			case uint32(basetypes.OrderState_OrderStateExpired):
 			default:
 				return fmt.Errorf("invalid orderstate")
@@ -1001,12 +1016,14 @@ func WithConds(conds *npool.Conds) func(context.Context, *Handler) error {
 				case uint32(basetypes.OrderState_OrderStateWaitPayment):
 				case uint32(basetypes.OrderState_OrderStateCheckPayment):
 				case uint32(basetypes.OrderState_OrderStatePaid):
+				case uint32(basetypes.OrderState_OrderStateInService):
 				case uint32(basetypes.OrderState_OrderStatePaymentTimeout):
 				case uint32(basetypes.OrderState_OrderStatePreCancel):
-				case uint32(basetypes.OrderState_OrderStateCancelStock):
-				case uint32(basetypes.OrderState_OrderStateCancelBalance):
+				case uint32(basetypes.OrderState_OrderStatePreExpired):
+				case uint32(basetypes.OrderState_OrderStateRestoreExpiredStock):
+				case uint32(basetypes.OrderState_OrderStateRestoreCanceledStock):
+				case uint32(basetypes.OrderState_OrderStateReturnCalceledBalance):
 				case uint32(basetypes.OrderState_OrderStateCanceled):
-				case uint32(basetypes.OrderState_OrderStateInService):
 				case uint32(basetypes.OrderState_OrderStateExpired):
 				default:
 					return fmt.Errorf("invalid orderstates")
@@ -1310,12 +1327,14 @@ func WithReqs(reqs []*npool.OrderReq, must bool) func(context.Context, *Handler)
 				case basetypes.OrderState_OrderStateWaitPayment:
 				case basetypes.OrderState_OrderStateCheckPayment:
 				case basetypes.OrderState_OrderStatePaid:
+				case basetypes.OrderState_OrderStateInService:
 				case basetypes.OrderState_OrderStatePaymentTimeout:
 				case basetypes.OrderState_OrderStatePreCancel:
-				case basetypes.OrderState_OrderStateCancelStock:
-				case basetypes.OrderState_OrderStateCancelBalance:
+				case basetypes.OrderState_OrderStatePreExpired:
+				case basetypes.OrderState_OrderStateRestoreExpiredStock:
+				case basetypes.OrderState_OrderStateRestoreCanceledStock:
+				case basetypes.OrderState_OrderStateReturnCalceledBalance:
 				case basetypes.OrderState_OrderStateCanceled:
-				case basetypes.OrderState_OrderStateInService:
 				case basetypes.OrderState_OrderStateExpired:
 				default:
 					return fmt.Errorf("invalid orderstate")

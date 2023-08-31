@@ -151,6 +151,7 @@ type Conds struct {
 	PaymentCoinTypeID *cruder.Cond
 	IDs               *cruder.Cond
 	CouponID          *cruder.Cond
+	CouponIDs         *cruder.Cond
 }
 
 //nolint
@@ -323,10 +324,32 @@ func SetQueryConds(q *ent.OrderQuery, conds *Conds) (*ent.OrderQuery, error) {
 			return nil, fmt.Errorf("invalid goodid")
 		}
 		switch conds.CouponID.Op {
-		case cruder.LIKE:
+		case cruder.IN:
 			q.Where(func(selector *sql.Selector) {
 				selector.Where(sqljson.ValueContains(entorder.FieldCouponIds, id))
 			})
+		default:
+			return nil, fmt.Errorf("invalid order field")
+		}
+	}
+	if conds.CouponIDs != nil {
+		ids, ok := conds.CouponIDs.Val.([]uuid.UUID)
+		if !ok {
+			return nil, fmt.Errorf("invalid couponids")
+		}
+		switch conds.CouponIDs.Op {
+		case cruder.IN:
+			if len(ids) > 0 {
+				q.Where(func(selector *sql.Selector) {
+					for i := 0; i < len(ids); i++ {
+						if i == 0 {
+							selector.Where(sqljson.ValueContains(entorder.FieldCouponIds, ids[i]))
+						} else {
+							selector.Or().Where(sqljson.ValueContains(entorder.FieldCouponIds, ids[i]))
+						}
+					}
+				})
+			}
 		default:
 			return nil, fmt.Errorf("invalid order field")
 		}
