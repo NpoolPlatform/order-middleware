@@ -150,6 +150,15 @@ func create(t *testing.T) {
 
 func update(t *testing.T) {
 	var err error
+	var (
+		orderState = ordertypes.OrderState_OrderStateCheckPayment
+		req        = npool.OrderReq{
+			ID:         &ret.ID,
+			OrderState: &orderState,
+		}
+	)
+	ret.OrderState = orderState
+	ret.OrderStateStr = orderState.String()
 	info, err = UpdateOrder(context.Background(), &req)
 	if assert.Nil(t, err) {
 		ret.UpdatedAt = info.UpdatedAt
