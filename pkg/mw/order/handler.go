@@ -568,6 +568,7 @@ func WithLiveCoinUSDCurrency(value *string, must bool) func(context.Context, *Ha
 	}
 }
 
+//nolint:gocyclo
 func WithOrderState(state *basetypes.OrderState, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if state == nil {
@@ -583,10 +584,15 @@ func WithOrderState(state *basetypes.OrderState, must bool) func(context.Context
 		case basetypes.OrderState_OrderStateInService:
 		case basetypes.OrderState_OrderStatePaymentTimeout:
 		case basetypes.OrderState_OrderStatePreCancel:
+		case basetypes.OrderState_OrderStatePreCancelCheck:
 		case basetypes.OrderState_OrderStatePreExpired:
+		case basetypes.OrderState_OrderStatePreExpiredCheck:
 		case basetypes.OrderState_OrderStateRestoreExpiredStock:
+		case basetypes.OrderState_OrderStateRestoreExpiredStockCheck:
 		case basetypes.OrderState_OrderStateRestoreCanceledStock:
-		case basetypes.OrderState_OrderStateReturnCalceledBalance:
+		case basetypes.OrderState_OrderStateRestoreCanceledStockCheck:
+		case basetypes.OrderState_OrderStateReturnCanceledBalance:
+		case basetypes.OrderState_OrderStateReturnCanceledBalanceCheck:
 		case basetypes.OrderState_OrderStateCanceled:
 		case basetypes.OrderState_OrderStateExpired:
 		default:
@@ -937,10 +943,15 @@ func WithConds(conds *npool.Conds) func(context.Context, *Handler) error {
 			case uint32(basetypes.OrderState_OrderStateInService):
 			case uint32(basetypes.OrderState_OrderStatePaymentTimeout):
 			case uint32(basetypes.OrderState_OrderStatePreCancel):
+			case uint32(basetypes.OrderState_OrderStatePreCancelCheck):
 			case uint32(basetypes.OrderState_OrderStatePreExpired):
+			case uint32(basetypes.OrderState_OrderStatePreExpiredCheck):
 			case uint32(basetypes.OrderState_OrderStateRestoreExpiredStock):
+			case uint32(basetypes.OrderState_OrderStateRestoreExpiredStockCheck):
 			case uint32(basetypes.OrderState_OrderStateRestoreCanceledStock):
-			case uint32(basetypes.OrderState_OrderStateReturnCalceledBalance):
+			case uint32(basetypes.OrderState_OrderStateRestoreCanceledStockCheck):
+			case uint32(basetypes.OrderState_OrderStateReturnCanceledBalance):
+			case uint32(basetypes.OrderState_OrderStateReturnCanceledBalanceCheck):
 			case uint32(basetypes.OrderState_OrderStateCanceled):
 			case uint32(basetypes.OrderState_OrderStateExpired):
 			default:
@@ -1019,10 +1030,15 @@ func WithConds(conds *npool.Conds) func(context.Context, *Handler) error {
 				case uint32(basetypes.OrderState_OrderStateInService):
 				case uint32(basetypes.OrderState_OrderStatePaymentTimeout):
 				case uint32(basetypes.OrderState_OrderStatePreCancel):
+				case uint32(basetypes.OrderState_OrderStatePreCancelCheck):
 				case uint32(basetypes.OrderState_OrderStatePreExpired):
+				case uint32(basetypes.OrderState_OrderStatePreExpiredCheck):
 				case uint32(basetypes.OrderState_OrderStateRestoreExpiredStock):
+				case uint32(basetypes.OrderState_OrderStateRestoreExpiredStockCheck):
 				case uint32(basetypes.OrderState_OrderStateRestoreCanceledStock):
-				case uint32(basetypes.OrderState_OrderStateReturnCalceledBalance):
+				case uint32(basetypes.OrderState_OrderStateRestoreCanceledStockCheck):
+				case uint32(basetypes.OrderState_OrderStateReturnCanceledBalance):
+				case uint32(basetypes.OrderState_OrderStateReturnCanceledBalanceCheck):
 				case uint32(basetypes.OrderState_OrderStateCanceled):
 				case uint32(basetypes.OrderState_OrderStateExpired):
 				default:
@@ -1330,10 +1346,15 @@ func WithReqs(reqs []*npool.OrderReq, must bool) func(context.Context, *Handler)
 				case basetypes.OrderState_OrderStateInService:
 				case basetypes.OrderState_OrderStatePaymentTimeout:
 				case basetypes.OrderState_OrderStatePreCancel:
+				case basetypes.OrderState_OrderStatePreCancelCheck:
 				case basetypes.OrderState_OrderStatePreExpired:
+				case basetypes.OrderState_OrderStatePreExpiredCheck:
 				case basetypes.OrderState_OrderStateRestoreExpiredStock:
+				case basetypes.OrderState_OrderStateRestoreExpiredStockCheck:
 				case basetypes.OrderState_OrderStateRestoreCanceledStock:
-				case basetypes.OrderState_OrderStateReturnCalceledBalance:
+				case basetypes.OrderState_OrderStateRestoreCanceledStockCheck:
+				case basetypes.OrderState_OrderStateReturnCanceledBalance:
+				case basetypes.OrderState_OrderStateReturnCanceledBalanceCheck:
 				case basetypes.OrderState_OrderStateCanceled:
 				case basetypes.OrderState_OrderStateExpired:
 				default:
