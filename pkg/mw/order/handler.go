@@ -586,6 +586,10 @@ func WithOrderState(state *basetypes.OrderState, must bool) func(context.Context
 		case basetypes.OrderState_OrderStatePaymentTransferBookKeptCheck:
 		case basetypes.OrderState_OrderStatePaymentBalanceSpent:
 		case basetypes.OrderState_OrderStatePaymentBalanceSpentCheck:
+		case basetypes.OrderState_OrderStateGoodStockTransferred:
+		case basetypes.OrderState_OrderStateGoodStockTransferredCheck:
+		case basetypes.OrderState_OrderStateAchievementBookKept:
+		case basetypes.OrderState_OrderStateAchievementBookKeptCheck:
 		case basetypes.OrderState_OrderStatePaid:
 		case basetypes.OrderState_OrderStateInService:
 		case basetypes.OrderState_OrderStatePaymentTimeout:
@@ -951,6 +955,10 @@ func WithConds(conds *npool.Conds) func(context.Context, *Handler) error {
 			case uint32(basetypes.OrderState_OrderStatePaymentTransferBookKeptCheck):
 			case uint32(basetypes.OrderState_OrderStatePaymentBalanceSpent):
 			case uint32(basetypes.OrderState_OrderStatePaymentBalanceSpentCheck):
+			case uint32(basetypes.OrderState_OrderStateGoodStockTransferred):
+			case uint32(basetypes.OrderState_OrderStateGoodStockTransferredCheck):
+			case uint32(basetypes.OrderState_OrderStateAchievementBookKept):
+			case uint32(basetypes.OrderState_OrderStateAchievementBookKeptCheck):
 			case uint32(basetypes.OrderState_OrderStatePaid):
 			case uint32(basetypes.OrderState_OrderStateInService):
 			case uint32(basetypes.OrderState_OrderStatePaymentTimeout):
@@ -1044,6 +1052,10 @@ func WithConds(conds *npool.Conds) func(context.Context, *Handler) error {
 				case uint32(basetypes.OrderState_OrderStatePaymentTransferBookKeptCheck):
 				case uint32(basetypes.OrderState_OrderStatePaymentBalanceSpent):
 				case uint32(basetypes.OrderState_OrderStatePaymentBalanceSpentCheck):
+				case uint32(basetypes.OrderState_OrderStateGoodStockTransferred):
+				case uint32(basetypes.OrderState_OrderStateGoodStockTransferredCheck):
+				case uint32(basetypes.OrderState_OrderStateAchievementBookKept):
+				case uint32(basetypes.OrderState_OrderStateAchievementBookKeptCheck):
 				case uint32(basetypes.OrderState_OrderStatePaid):
 				case uint32(basetypes.OrderState_OrderStateInService):
 				case uint32(basetypes.OrderState_OrderStatePaymentTimeout):
@@ -1366,6 +1378,10 @@ func WithReqs(reqs []*npool.OrderReq, must bool) func(context.Context, *Handler)
 				case basetypes.OrderState_OrderStatePaymentTransferBookKeptCheck:
 				case basetypes.OrderState_OrderStatePaymentBalanceSpent:
 				case basetypes.OrderState_OrderStatePaymentBalanceSpentCheck:
+				case basetypes.OrderState_OrderStateGoodStockTransferred:
+				case basetypes.OrderState_OrderStateGoodStockTransferredCheck:
+				case basetypes.OrderState_OrderStateAchievementBookKept:
+				case basetypes.OrderState_OrderStateAchievementBookKeptCheck:
 				case basetypes.OrderState_OrderStatePaid:
 				case basetypes.OrderState_OrderStateInService:
 				case basetypes.OrderState_OrderStatePaymentTimeout:
