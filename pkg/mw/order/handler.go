@@ -588,6 +588,8 @@ func WithOrderState(state *basetypes.OrderState, must bool) func(context.Context
 		case basetypes.OrderState_OrderStatePaymentBalanceSpentCheck:
 		case basetypes.OrderState_OrderStateGoodStockTransferred:
 		case basetypes.OrderState_OrderStateGoodStockTransferredCheck:
+		case basetypes.OrderState_OrderStateCommissionAdded:
+		case basetypes.OrderState_OrderStateCommissionAddedCheck:
 		case basetypes.OrderState_OrderStateAchievementBookKept:
 		case basetypes.OrderState_OrderStateAchievementBookKeptCheck:
 		case basetypes.OrderState_OrderStatePaid:
@@ -957,6 +959,8 @@ func WithConds(conds *npool.Conds) func(context.Context, *Handler) error {
 			case uint32(basetypes.OrderState_OrderStatePaymentBalanceSpentCheck):
 			case uint32(basetypes.OrderState_OrderStateGoodStockTransferred):
 			case uint32(basetypes.OrderState_OrderStateGoodStockTransferredCheck):
+			case uint32(basetypes.OrderState_OrderStateCommissionAdded):
+			case uint32(basetypes.OrderState_OrderStateCommissionAddedCheck):
 			case uint32(basetypes.OrderState_OrderStateAchievementBookKept):
 			case uint32(basetypes.OrderState_OrderStateAchievementBookKeptCheck):
 			case uint32(basetypes.OrderState_OrderStatePaid):
@@ -1054,6 +1058,8 @@ func WithConds(conds *npool.Conds) func(context.Context, *Handler) error {
 				case uint32(basetypes.OrderState_OrderStatePaymentBalanceSpentCheck):
 				case uint32(basetypes.OrderState_OrderStateGoodStockTransferred):
 				case uint32(basetypes.OrderState_OrderStateGoodStockTransferredCheck):
+				case uint32(basetypes.OrderState_OrderStateCommissionAdded):
+				case uint32(basetypes.OrderState_OrderStateCommissionAddedCheck):
 				case uint32(basetypes.OrderState_OrderStateAchievementBookKept):
 				case uint32(basetypes.OrderState_OrderStateAchievementBookKeptCheck):
 				case uint32(basetypes.OrderState_OrderStatePaid):
@@ -1380,6 +1386,8 @@ func WithReqs(reqs []*npool.OrderReq, must bool) func(context.Context, *Handler)
 				case basetypes.OrderState_OrderStatePaymentBalanceSpentCheck:
 				case basetypes.OrderState_OrderStateGoodStockTransferred:
 				case basetypes.OrderState_OrderStateGoodStockTransferredCheck:
+				case basetypes.OrderState_OrderStateCommissionAdded:
+				case basetypes.OrderState_OrderStateCommissionAddedCheck:
 				case basetypes.OrderState_OrderStateAchievementBookKept:
 				case basetypes.OrderState_OrderStateAchievementBookKeptCheck:
 				case basetypes.OrderState_OrderStatePaid:
