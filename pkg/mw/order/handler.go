@@ -580,6 +580,12 @@ func WithOrderState(state *basetypes.OrderState, must bool) func(context.Context
 		switch *state {
 		case basetypes.OrderState_OrderStateWaitPayment:
 		case basetypes.OrderState_OrderStateCheckPayment:
+		case basetypes.OrderState_OrderStatePaymentTransferReceived:
+		case basetypes.OrderState_OrderStatePaymentTransferReceivedCheck:
+		case basetypes.OrderState_OrderStatePaymentTransferBookKept:
+		case basetypes.OrderState_OrderStatePaymentTransferBookKeptCheck:
+		case basetypes.OrderState_OrderStatePaymentBalanceSpent:
+		case basetypes.OrderState_OrderStatePaymentBalanceSpentCheck:
 		case basetypes.OrderState_OrderStatePaid:
 		case basetypes.OrderState_OrderStateInService:
 		case basetypes.OrderState_OrderStatePaymentTimeout:
@@ -939,6 +945,12 @@ func WithConds(conds *npool.Conds) func(context.Context, *Handler) error {
 			switch conds.GetOrderState().GetValue() {
 			case uint32(basetypes.OrderState_OrderStateWaitPayment):
 			case uint32(basetypes.OrderState_OrderStateCheckPayment):
+			case uint32(basetypes.OrderState_OrderStatePaymentTransferReceived):
+			case uint32(basetypes.OrderState_OrderStatePaymentTransferReceivedCheck):
+			case uint32(basetypes.OrderState_OrderStatePaymentTransferBookKept):
+			case uint32(basetypes.OrderState_OrderStatePaymentTransferBookKeptCheck):
+			case uint32(basetypes.OrderState_OrderStatePaymentBalanceSpent):
+			case uint32(basetypes.OrderState_OrderStatePaymentBalanceSpentCheck):
 			case uint32(basetypes.OrderState_OrderStatePaid):
 			case uint32(basetypes.OrderState_OrderStateInService):
 			case uint32(basetypes.OrderState_OrderStatePaymentTimeout):
@@ -1026,6 +1038,12 @@ func WithConds(conds *npool.Conds) func(context.Context, *Handler) error {
 				switch state {
 				case uint32(basetypes.OrderState_OrderStateWaitPayment):
 				case uint32(basetypes.OrderState_OrderStateCheckPayment):
+				case uint32(basetypes.OrderState_OrderStatePaymentTransferReceived):
+				case uint32(basetypes.OrderState_OrderStatePaymentTransferReceivedCheck):
+				case uint32(basetypes.OrderState_OrderStatePaymentTransferBookKept):
+				case uint32(basetypes.OrderState_OrderStatePaymentTransferBookKeptCheck):
+				case uint32(basetypes.OrderState_OrderStatePaymentBalanceSpent):
+				case uint32(basetypes.OrderState_OrderStatePaymentBalanceSpentCheck):
 				case uint32(basetypes.OrderState_OrderStatePaid):
 				case uint32(basetypes.OrderState_OrderStateInService):
 				case uint32(basetypes.OrderState_OrderStatePaymentTimeout):
@@ -1342,6 +1360,12 @@ func WithReqs(reqs []*npool.OrderReq, must bool) func(context.Context, *Handler)
 				switch *req.OrderState {
 				case basetypes.OrderState_OrderStateWaitPayment:
 				case basetypes.OrderState_OrderStateCheckPayment:
+				case basetypes.OrderState_OrderStatePaymentTransferReceived:
+				case basetypes.OrderState_OrderStatePaymentTransferReceivedCheck:
+				case basetypes.OrderState_OrderStatePaymentTransferBookKept:
+				case basetypes.OrderState_OrderStatePaymentTransferBookKeptCheck:
+				case basetypes.OrderState_OrderStatePaymentBalanceSpent:
+				case basetypes.OrderState_OrderStatePaymentBalanceSpentCheck:
 				case basetypes.OrderState_OrderStatePaid:
 				case basetypes.OrderState_OrderStateInService:
 				case basetypes.OrderState_OrderStatePaymentTimeout:

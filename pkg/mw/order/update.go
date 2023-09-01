@@ -20,34 +20,59 @@ type updateHandler struct {
 	*Handler
 }
 
-var stateMap = map[basetypes.OrderState][]basetypes.OrderState{
-	basetypes.OrderState_OrderStateWaitPayment:                {basetypes.OrderState_OrderStateCheckPayment},
-	basetypes.OrderState_OrderStateCheckPayment:               {basetypes.OrderState_OrderStatePaid, basetypes.OrderState_OrderStatePaymentTimeout},
-	basetypes.OrderState_OrderStatePaid:                       {basetypes.OrderState_OrderStateInService, basetypes.OrderState_OrderStatePreCancel},
-	basetypes.OrderState_OrderStateInService:                  {basetypes.OrderState_OrderStatePreExpired, basetypes.OrderState_OrderStatePreCancel},
-	basetypes.OrderState_OrderStatePreExpired:                 {basetypes.OrderState_OrderStatePreExpiredCheck},
-	basetypes.OrderState_OrderStatePreExpiredCheck:            {basetypes.OrderState_OrderStateRestoreExpiredStock},
-	basetypes.OrderState_OrderStateRestoreExpiredStock:        {basetypes.OrderState_OrderStateRestoreExpiredStockCheck, basetypes.OrderState_OrderStateRestoreExpiredStock},
-	basetypes.OrderState_OrderStateRestoreExpiredStockCheck:   {basetypes.OrderState_OrderStateExpired},
-	basetypes.OrderState_OrderStateExpired:                    {basetypes.OrderState_OrderStateExpired},
-	basetypes.OrderState_OrderStatePreCancel:                  {basetypes.OrderState_OrderStatePreCancelCheck},
-	basetypes.OrderState_OrderStatePreCancelCheck:             {basetypes.OrderState_OrderStateRestoreCanceledStock},
-	basetypes.OrderState_OrderStateRestoreCanceledStock:       {basetypes.OrderState_OrderStateRestoreCanceledStockCheck, basetypes.OrderState_OrderStateRestoreCanceledStock},
-	basetypes.OrderState_OrderStateRestoreCanceledStockCheck:  {basetypes.OrderState_OrderStateReturnCanceledBalance},
-	basetypes.OrderState_OrderStateReturnCanceledBalance:      {basetypes.OrderState_OrderStateReturnCanceledBalanceCheck, basetypes.OrderState_OrderStateReturnCanceledBalance},
-	basetypes.OrderState_OrderStateReturnCanceledBalanceCheck: {basetypes.OrderState_OrderStateCanceled},
-	basetypes.OrderState_OrderStateCanceled:                   {basetypes.OrderState_OrderStateCanceled},
-	basetypes.OrderState_OrderStatePaymentTimeout:             {basetypes.OrderState_OrderStatePreCancel},
+var stateAllowMap = map[basetypes.OrderState][]basetypes.OrderState{
+	basetypes.OrderState_OrderStateWaitPayment:                  {basetypes.OrderState_OrderStateCheckPayment},
+	basetypes.OrderState_OrderStateCheckPayment:                 {basetypes.OrderState_OrderStatePaymentTransferReceived, basetypes.OrderState_OrderStatePreCancel, basetypes.OrderState_OrderStatePaymentTimeout}, //nolint
+	basetypes.OrderState_OrderStatePaymentTransferReceived:      {basetypes.OrderState_OrderStatePaymentTransferReceivedCheck},
+	basetypes.OrderState_OrderStatePaymentTransferReceivedCheck: {basetypes.OrderState_OrderStatePaymentTransferBookKept},
+	basetypes.OrderState_OrderStatePaymentTransferBookKept:      {basetypes.OrderState_OrderStatePaymentTransferBookKeptCheck},
+	basetypes.OrderState_OrderStatePaymentTransferBookKeptCheck: {basetypes.OrderState_OrderStatePaymentBalanceSpent},
+	basetypes.OrderState_OrderStatePaymentBalanceSpent:          {basetypes.OrderState_OrderStatePaymentBalanceSpentCheck},
+	basetypes.OrderState_OrderStatePaymentBalanceSpentCheck:     {basetypes.OrderState_OrderStatePaid},
+	basetypes.OrderState_OrderStatePaid:                         {basetypes.OrderState_OrderStateInService, basetypes.OrderState_OrderStatePreCancel},
+	basetypes.OrderState_OrderStateInService:                    {basetypes.OrderState_OrderStatePreExpired, basetypes.OrderState_OrderStatePreCancel},
+	basetypes.OrderState_OrderStatePreExpired:                   {basetypes.OrderState_OrderStatePreExpiredCheck},
+	basetypes.OrderState_OrderStatePreExpiredCheck:              {basetypes.OrderState_OrderStateRestoreExpiredStock},
+	basetypes.OrderState_OrderStateRestoreExpiredStock:          {basetypes.OrderState_OrderStateRestoreExpiredStockCheck},
+	basetypes.OrderState_OrderStateRestoreExpiredStockCheck:     {basetypes.OrderState_OrderStateExpired},
+	basetypes.OrderState_OrderStateExpired:                      {},
+	basetypes.OrderState_OrderStatePreCancel:                    {basetypes.OrderState_OrderStatePreCancelCheck},
+	basetypes.OrderState_OrderStatePreCancelCheck:               {basetypes.OrderState_OrderStateRestoreCanceledStock},
+	basetypes.OrderState_OrderStateRestoreCanceledStock:         {basetypes.OrderState_OrderStateRestoreCanceledStockCheck},
+	basetypes.OrderState_OrderStateRestoreCanceledStockCheck:    {basetypes.OrderState_OrderStateReturnCanceledBalance},
+	basetypes.OrderState_OrderStateReturnCanceledBalance:        {basetypes.OrderState_OrderStateReturnCanceledBalanceCheck},
+	basetypes.OrderState_OrderStateReturnCanceledBalanceCheck:   {basetypes.OrderState_OrderStateCanceled},
+	basetypes.OrderState_OrderStateCanceled:                     {},
+	basetypes.OrderState_OrderStatePaymentTimeout:               {basetypes.OrderState_OrderStatePreCancel},
+}
+
+var stateRollbackMap = map[basetypes.OrderState]*basetypes.OrderState{
+	basetypes.OrderState_OrderStatePaymentTransferBookKept: basetypes.OrderState_OrderStatePaymentTransferReceivedCheck.Enum(),
+	basetypes.OrderState_OrderStatePaymentBalanceSpent:     basetypes.OrderState_OrderStatePaymentTransferBookKeptCheck.Enum(),
+	basetypes.OrderState_OrderStatePaid:                    basetypes.OrderState_OrderStatePaymentBalanceSpentCheck.Enum(),
+	basetypes.OrderState_OrderStateRestoreExpiredStock:     basetypes.OrderState_OrderStatePreExpiredCheck.Enum(),
+	basetypes.OrderState_OrderStateExpired:                 basetypes.OrderState_OrderStateRestoreExpiredStockCheck.Enum(),
+	basetypes.OrderState_OrderStateRestoreCanceledStock:    basetypes.OrderState_OrderStatePreCancelCheck.Enum(),
+	basetypes.OrderState_OrderStateReturnCanceledBalance:   basetypes.OrderState_OrderStateRestoreCanceledStockCheck.Enum(),
+	basetypes.OrderState_OrderStateCanceled:                basetypes.OrderState_OrderStateReturnCanceledBalanceCheck.Enum(),
 }
 
 func (h *updateHandler) checkOrderState(oldState basetypes.OrderState) error {
-	allowedStates := stateMap[oldState]
+	allowedStates := stateAllowMap[oldState]
 	for _, state := range allowedStates {
 		if state == *h.OrderState {
 			return nil
 		}
 	}
 	return fmt.Errorf("invalid orderstate")
+}
+
+func (h *updateHandler) checkOrderStateRollback() (*basetypes.OrderState, error) {
+	rollbackState := stateRollbackMap[*h.OrderState]
+	if rollbackState == nil {
+		return nil, fmt.Errorf("invalid orderstate")
+	}
+	return rollbackState, nil
 }
 
 //nolint:gocyclo
@@ -98,24 +123,16 @@ func (h *updateHandler) updateOrderState(ctx context.Context, tx *ent.Tx, req *o
 
 	if h.OrderState != nil {
 		_orderState := basetypes.OrderState(basetypes.OrderState_value[orderstate.OrderState])
-		if err := h.checkOrderState(_orderState); err != nil {
-			return err
-		}
-
 		if h.Rollback != nil && *h.Rollback && *h.OrderState == _orderState {
-			switch _orderState {
-			case basetypes.OrderState_OrderStateExpired:
-				req.OrderState = basetypes.OrderState_OrderStateRestoreExpiredStock.Enum()
-			case basetypes.OrderState_OrderStateRestoreExpiredStock:
-				req.OrderState = basetypes.OrderState_OrderStatePreExpired.Enum()
-			case basetypes.OrderState_OrderStateCanceled:
-				req.OrderState = basetypes.OrderState_OrderStateReturnCanceledBalance.Enum()
-			case basetypes.OrderState_OrderStateReturnCanceledBalance:
-				req.OrderState = basetypes.OrderState_OrderStateRestoreCanceledStock.Enum()
-			case basetypes.OrderState_OrderStateRestoreCanceledStock:
-				req.OrderState = basetypes.OrderState_OrderStatePreCancel.Enum()
-			default:
-				return fmt.Errorf("invalid orderstate")
+			rollbackOrderState, err := h.checkOrderStateRollback()
+			if err != nil {
+				return err
+			}
+			req.OrderState = rollbackOrderState
+		} else {
+			err := h.checkOrderState(_orderState)
+			if err != nil {
+				return err
 			}
 		}
 	}
