@@ -22,32 +22,6 @@ type createHandler struct {
 	*Handler
 }
 
-func (h *createHandler) validate(req *OrderReq) error {
-	switch *req.OrderType {
-	case ordertypes.OrderType_Normal:
-		switch *req.PaymentType {
-		case ordertypes.PaymentType_PayWithTransferOnly:
-		case ordertypes.PaymentType_PayWithTransferAndBalance:
-		case ordertypes.PaymentType_PayWithBalanceOnly:
-		case ordertypes.PaymentType_PayWithParentOrder:
-		default:
-			return fmt.Errorf("invalid paymenttype")
-		}
-	case ordertypes.OrderType_Offline:
-		if *req.PaymentType != ordertypes.PaymentType_PayWithOffline {
-			return fmt.Errorf("invalid paymenttype")
-		}
-	case ordertypes.OrderType_Airdrop:
-		if *req.PaymentType != ordertypes.PaymentType_PayWithNoPayment {
-			return fmt.Errorf("invalid paymenttype")
-		}
-	default:
-		return fmt.Errorf("invalid ordertype")
-	}
-
-	return nil
-}
-
 func (h *createHandler) paymentState() *ordertypes.PaymentState {
 	if h.TransferAmount != nil && h.TransferAmount.Cmp(decimal.NewFromInt(0)) > 0 {
 		return ordertypes.PaymentState_PaymentStateWait.Enum()
@@ -115,9 +89,6 @@ func (h *Handler) CreateOrder(ctx context.Context) (*npool.Order, error) {
 	}
 
 	err = db.WithTx(ctx, func(ctx context.Context, tx *ent.Tx) error {
-		if err := handler.validate(req); err != nil {
-			return err
-		}
 		if err := handler.createOrder(ctx, tx, req.Req); err != nil {
 			return err
 		}
@@ -150,9 +121,6 @@ func (h *Handler) CreateOrders(ctx context.Context) ([]*npool.Order, error) {
 			if req.Req.ID == nil {
 				req.Req.ID = &id
 				req.OrderStateReq.OrderID = &id
-			}
-			if err := handler.validate(req); err != nil {
-				return err
 			}
 			if err := handler.createOrder(ctx, tx, req.Req); err != nil {
 				return err

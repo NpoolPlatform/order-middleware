@@ -90,8 +90,8 @@ func (h *Handler) ToOrderReq(ctx context.Context, newOrder bool) (*OrderReq, err
 	}
 
 	if newOrder && req.PaymentType != nil {
-		if req.PaymentAmount.Cmp(decimal.NewFromInt(0)) < 0 {
-			return req, fmt.Errorf("invalid paymentamount")
+		if err := req.CheckOrderType(); err != nil {
+			return req, err
 		}
 		has, err := req.HasPayment()
 		if err != nil {
@@ -116,57 +116,67 @@ func (h *Handler) ToOrderReq(ctx context.Context, newOrder bool) (*OrderReq, err
 	return req, nil
 }
 
+func (r *OrderReq) CheckOrderType() error {
+	switch *r.OrderType {
+	case basetypes.OrderType_Normal:
+		switch *r.PaymentType {
+		case basetypes.PaymentType_PayWithTransferOnly:
+		case basetypes.PaymentType_PayWithTransferAndBalance:
+		case basetypes.PaymentType_PayWithBalanceOnly:
+		case basetypes.PaymentType_PayWithParentOrder:
+		default:
+			return fmt.Errorf("invalid paymenttype")
+		}
+	case basetypes.OrderType_Offline:
+		if *r.PaymentType != basetypes.PaymentType_PayWithOffline {
+			return fmt.Errorf("invalid paymenttype")
+		}
+	case basetypes.OrderType_Airdrop:
+		if *r.PaymentType != basetypes.PaymentType_PayWithNoPayment {
+			return fmt.Errorf("invalid paymenttype")
+		}
+	default:
+		return fmt.Errorf("invalid ordertype")
+	}
+	return nil
+}
+
 //nolint:gocyclo
 func (r *OrderReq) HasPayment() (bool, error) {
+	zeroAmount := decimal.NewFromInt(0)
+	if r.PaymentAmount == nil {
+		r.PaymentAmount = &zeroAmount
+	}
+	if r.BalanceAmount == nil {
+		r.BalanceAmount = &zeroAmount
+	}
+	if r.TransferAmount == nil {
+		r.TransferAmount = &zeroAmount
+	}
 	switch *r.PaymentType {
 	case basetypes.PaymentType_PayWithBalanceOnly:
-		if r.TransferAmount != nil && r.TransferAmount.Cmp(decimal.NewFromInt(0)) > 0 {
-			return false, fmt.Errorf("invalid transferamount")
-		}
-		if r.BalanceAmount == nil || r.BalanceAmount.Cmp(decimal.NewFromInt(0)) <= 0 {
-			return false, fmt.Errorf("invalid balanceamount")
-		}
-		if r.BalanceAmount.Cmp(*r.PaymentAmount) != 0 {
-			return false, fmt.Errorf("invalid balanceamount")
-		}
-		return false, nil
-	case basetypes.PaymentType_PayWithTransferOnly:
-		if r.BalanceAmount != nil && r.BalanceAmount.Cmp(decimal.NewFromInt(0)) > 0 {
-			return false, fmt.Errorf("invalid balanceamount")
-		}
-		if r.TransferAmount == nil || r.TransferAmount.Cmp(decimal.NewFromInt(0)) <= 0 {
-			return false, fmt.Errorf("invalid transferamount")
-		}
-		if r.TransferAmount.Cmp(*r.PaymentAmount) != 0 {
-			return false, fmt.Errorf("invalid transferamount")
-		}
-	case basetypes.PaymentType_PayWithTransferAndBalance:
-		if r.TransferAmount == nil || r.BalanceAmount == nil {
-			return false, fmt.Errorf("invalid transferamount and balanceamount")
-		}
-		if r.TransferAmount.Cmp(decimal.NewFromInt(0)) <= 0 {
-			return false, fmt.Errorf("invalid transferamount")
-		}
-		if r.BalanceAmount.Cmp(decimal.NewFromInt(0)) <= 0 {
-			return false, fmt.Errorf("invalid balanceamount")
-		}
+		r.TransferAmount = &zeroAmount
 		if r.TransferAmount.Add(*r.BalanceAmount).Cmp(*r.PaymentAmount) != 0 {
 			return false, fmt.Errorf("invalid paymentAmount")
 		}
+		return false, nil
+	case basetypes.PaymentType_PayWithTransferOnly:
+		r.BalanceAmount = &zeroAmount
+		fallthrough //nolint
+	case basetypes.PaymentType_PayWithTransferAndBalance:
+		if r.TransferAmount.Add(*r.BalanceAmount).Cmp(*r.PaymentAmount) != 0 {
+			return false, fmt.Errorf("invalid paymentAmount")
+		}
+	case basetypes.PaymentType_PayWithOffline:
+		r.BalanceAmount = &zeroAmount
+		r.TransferAmount = &zeroAmount
+		return false, nil
 	case basetypes.PaymentType_PayWithParentOrder:
 		fallthrough //nolint
-	case basetypes.PaymentType_PayWithOffline:
-		fallthrough //nolint
 	case basetypes.PaymentType_PayWithNoPayment:
-		if r.BalanceAmount != nil && r.BalanceAmount.Cmp(decimal.NewFromInt(0)) > 0 {
-			return false, fmt.Errorf("invalid balanceamount")
-		}
-		if r.TransferAmount != nil && r.TransferAmount.Cmp(decimal.NewFromInt(0)) > 0 {
-			return false, fmt.Errorf("invalid transferamount")
-		}
-		if r.PaymentAmount.Cmp(decimal.NewFromInt(0)) > 0 {
-			return false, fmt.Errorf("invalid paymentamount")
-		}
+		r.PaymentAmount = &zeroAmount
+		r.BalanceAmount = &zeroAmount
+		r.TransferAmount = &zeroAmount
 		return false, nil
 	default:
 		return false, fmt.Errorf("invalid paymenttype")

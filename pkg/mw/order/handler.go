@@ -1153,9 +1153,6 @@ func WithReqs(reqs []*npool.OrderReq, must bool) func(context.Context, *Handler)
 				if req.GoodValueUSD == nil {
 					return fmt.Errorf("invalid goodvalueusd")
 				}
-				if req.PaymentAmount == nil {
-					return fmt.Errorf("invalid paymentamount")
-				}
 				if req.DurationDays == nil {
 					return fmt.Errorf("invalid durationdays")
 				}
@@ -1173,12 +1170,6 @@ func WithReqs(reqs []*npool.OrderReq, must bool) func(context.Context, *Handler)
 				}
 				if req.PaymentCoinTypeID == nil {
 					return fmt.Errorf("invalid paymentcointypeid")
-				}
-				if req.TransferAmount == nil {
-					return fmt.Errorf("invalid transferamount")
-				}
-				if req.BalanceAmount == nil {
-					return fmt.Errorf("invalid balanceamount")
 				}
 				if req.CoinUSDCurrency == nil {
 					return fmt.Errorf("invalid coinusdcurrency")
@@ -1501,13 +1492,18 @@ func WithReqs(reqs []*npool.OrderReq, must bool) func(context.Context, *Handler)
 
 			if req.PaymentType != nil {
 				_req.PaymentType = req.PaymentType
-				has, err := _req.HasPayment()
-				if err != nil {
-					return err
-				}
-				if !has {
-					_reqs = append(_reqs, _req)
-					continue
+				if must {
+					if err := _req.CheckOrderType(); err != nil {
+						return err
+					}
+					has, err := _req.HasPayment()
+					if err != nil {
+						return err
+					}
+					if !has {
+						_reqs = append(_reqs, _req)
+						continue
+					}
 				}
 			}
 
