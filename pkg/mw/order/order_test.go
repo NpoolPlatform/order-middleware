@@ -65,6 +65,8 @@ var (
 
 		OrderStateStr:        ordertypes.OrderState_OrderStateWaitPayment.String(),
 		OrderState:           ordertypes.OrderState_OrderStateWaitPayment,
+		CancelStateStr:       ordertypes.OrderState_DefaultOrderState.String(),
+		CancelState:          ordertypes.OrderState_DefaultOrderState,
 		StartModeStr:         ordertypes.OrderStartMode_OrderStartConfirmed.String(),
 		StartMode:            ordertypes.OrderStartMode_OrderStartConfirmed,
 		StartAt:              now + secondsPerDay,
@@ -119,6 +121,8 @@ var (
 
 			OrderStateStr:        ordertypes.OrderState_OrderStateWaitPayment.String(),
 			OrderState:           ordertypes.OrderState_OrderStateWaitPayment,
+			CancelStateStr:       ordertypes.OrderState_DefaultOrderState.String(),
+			CancelState:          ordertypes.OrderState_DefaultOrderState,
 			StartModeStr:         ordertypes.OrderStartMode_OrderStartConfirmed.String(),
 			StartMode:            ordertypes.OrderStartMode_OrderStartConfirmed,
 			StartAt:              now + secondsPerDay,
@@ -167,6 +171,8 @@ var (
 
 			OrderStateStr:        ordertypes.OrderState_OrderStateWaitPayment.String(),
 			OrderState:           ordertypes.OrderState_OrderStateWaitPayment,
+			CancelStateStr:       ordertypes.OrderState_DefaultOrderState.String(),
+			CancelState:          ordertypes.OrderState_DefaultOrderState,
 			StartModeStr:         ordertypes.OrderStartMode_OrderStartConfirmed.String(),
 			StartMode:            ordertypes.OrderStartMode_OrderStartConfirmed,
 			StartAt:              now + secondsPerDay,

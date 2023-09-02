@@ -45,7 +45,9 @@ var stateAllowMap = map[basetypes.OrderState][]basetypes.OrderState{
 	basetypes.OrderState_OrderStatePreCancel:                    {basetypes.OrderState_OrderStatePreCancelCheck},
 	basetypes.OrderState_OrderStatePreCancelCheck:               {basetypes.OrderState_OrderStateRestoreCanceledStock},
 	basetypes.OrderState_OrderStateRestoreCanceledStock:         {basetypes.OrderState_OrderStateRestoreCanceledStockCheck},
-	basetypes.OrderState_OrderStateRestoreCanceledStockCheck:    {basetypes.OrderState_OrderStateReturnCanceledBalance},
+	basetypes.OrderState_OrderStateRestoreCanceledStockCheck:    {basetypes.OrderState_OrderStateCancelAchievement},
+	basetypes.OrderState_OrderStateCancelAchievement:            {basetypes.OrderState_OrderStateCancelAchievementCheck},
+	basetypes.OrderState_OrderStateCancelAchievementCheck:       {basetypes.OrderState_OrderStateReturnCanceledBalance},
 	basetypes.OrderState_OrderStateReturnCanceledBalance:        {basetypes.OrderState_OrderStateReturnCanceledBalanceCheck},
 	basetypes.OrderState_OrderStateReturnCanceledBalanceCheck:   {basetypes.OrderState_OrderStateCanceled},
 	basetypes.OrderState_OrderStateCanceled:                     {},
@@ -62,7 +64,8 @@ var stateRollbackMap = map[basetypes.OrderState]*basetypes.OrderState{
 	basetypes.OrderState_OrderStateRestoreExpiredStock:     basetypes.OrderState_OrderStatePreExpiredCheck.Enum(),
 	basetypes.OrderState_OrderStateExpired:                 basetypes.OrderState_OrderStateRestoreExpiredStockCheck.Enum(),
 	basetypes.OrderState_OrderStateRestoreCanceledStock:    basetypes.OrderState_OrderStatePreCancelCheck.Enum(),
-	basetypes.OrderState_OrderStateReturnCanceledBalance:   basetypes.OrderState_OrderStateRestoreCanceledStockCheck.Enum(),
+	basetypes.OrderState_OrderStateCancelAchievement:       basetypes.OrderState_OrderStateRestoreCanceledStockCheck.Enum(),
+	basetypes.OrderState_OrderStateReturnCanceledBalance:   basetypes.OrderState_OrderStateCancelAchievementCheck.Enum(),
 	basetypes.OrderState_OrderStateCanceled:                basetypes.OrderState_OrderStateReturnCanceledBalanceCheck.Enum(),
 }
 
@@ -150,6 +153,7 @@ func (h *updateHandler) updateOrderState(ctx context.Context, tx *ent.Tx, req *o
 		orderstate.Update(),
 		&orderstatecrud.Req{
 			OrderState:           req.OrderState,
+			CancelState:          req.CancelState,
 			StartMode:            req.StartMode,
 			StartAt:              &startAt,
 			EndAt:                &endAt,

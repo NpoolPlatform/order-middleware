@@ -165,6 +165,7 @@ func (h *baseQueryHandler) QueryJoinOrderState(s *sql.Selector) error {
 
 	s.AppendSelect(
 		sql.As(t.C(entorderstate.FieldOrderState), "order_state"),
+		sql.As(t.C(entorderstate.FieldCancelState), "cancel_state"),
 		sql.As(t.C(entorderstate.FieldStartMode), "start_mode"),
 		sql.As(t.C(entorderstate.FieldStartAt), "start_at"),
 		sql.As(t.C(entorderstate.FieldEndAt), "end_at"),

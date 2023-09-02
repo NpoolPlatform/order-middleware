@@ -61,6 +61,7 @@ func (h *queryHandler) formalize() {
 	for _, info := range h.infos {
 		info.OrderType = basetypes.OrderType(basetypes.OrderType_value[info.OrderTypeStr])
 		info.OrderState = basetypes.OrderState(basetypes.OrderState_value[info.OrderStateStr])
+		info.CancelState = basetypes.OrderState(basetypes.OrderState_value[info.CancelStateStr])
 		info.PaymentState = basetypes.PaymentState(basetypes.PaymentState_value[info.PaymentStateStr])
 		info.PaymentType = basetypes.PaymentType(basetypes.PaymentType_value[info.PaymentTypeStr])
 		info.InvestmentType = basetypes.InvestmentType(basetypes.InvestmentType_value[info.InvestmentTypeStr])

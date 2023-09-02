@@ -15,6 +15,7 @@ type Req struct {
 	ID                   *uuid.UUID
 	OrderID              *uuid.UUID
 	OrderState           *basetypes.OrderState
+	CancelState          *basetypes.OrderState
 	StartMode            *basetypes.OrderStartMode
 	StartAt              *uint32
 	EndAt                *uint32
@@ -42,6 +43,9 @@ func CreateSet(c *ent.OrderStateCreate, req *Req) *ent.OrderStateCreate {
 	}
 	if req.OrderState != nil {
 		c.SetOrderState(req.OrderState.String())
+	}
+	if req.CancelState != nil {
+		c.SetCancelState(req.CancelState.String())
 	}
 	if req.StartMode != nil {
 		c.SetStartMode(req.StartMode.String())
@@ -93,6 +97,9 @@ func CreateSet(c *ent.OrderStateCreate, req *Req) *ent.OrderStateCreate {
 func UpdateSet(u *ent.OrderStateUpdateOne, req *Req) *ent.OrderStateUpdateOne {
 	if req.OrderState != nil {
 		u.SetOrderState(req.OrderState.String())
+	}
+	if req.CancelState != nil {
+		u.SetCancelState(req.CancelState.String())
 	}
 	if req.StartMode != nil {
 		u.SetStartMode(req.StartMode.String())
