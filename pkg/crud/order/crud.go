@@ -152,6 +152,7 @@ type Conds struct {
 	IDs               *cruder.Cond
 	CouponID          *cruder.Cond
 	CouponIDs         *cruder.Cond
+	PaymentTypes      *cruder.Cond
 }
 
 //nolint
@@ -276,6 +277,24 @@ func SetQueryConds(q *ent.OrderQuery, conds *Conds) (*ent.OrderQuery, error) {
 		switch conds.PaymentType.Op {
 		case cruder.EQ:
 			q.Where(entorder.PaymentType(paymenttype.String()))
+		case cruder.NEQ:
+			q.Where(entorder.PaymentTypeNEQ(paymenttype.String()))
+		default:
+			return nil, fmt.Errorf("invalid order field")
+		}
+	}
+	if conds.PaymentTypes != nil {
+		paymenttypes, ok := conds.PaymentTypes.Val.([]basetypes.PaymentType)
+		if !ok {
+			return nil, fmt.Errorf("invalid paymenttypes")
+		}
+		_types := []string{}
+		for _, _type := range paymenttypes {
+			_types = append(_types, _type.String())
+		}
+		switch conds.PaymentType.Op {
+		case cruder.IN:
+			q.Where(entorder.PaymentTypeIn(_types...))
 		default:
 			return nil, fmt.Errorf("invalid order field")
 		}

@@ -932,7 +932,23 @@ func WithConds(conds *npool.Conds) func(context.Context, *Handler) error {
 			_type := conds.GetPaymentType().GetValue()
 			h.Conds.PaymentType = &cruder.Cond{Op: conds.GetPaymentType().GetOp(), Val: basetypes.PaymentType(_type)}
 		}
-
+		if conds.PaymentTypes != nil {
+			_types := []basetypes.PaymentType{}
+			for _, _type := range conds.GetPaymentTypes().GetValue() {
+				switch _type {
+				case uint32(basetypes.PaymentType_PayWithBalanceOnly):
+				case uint32(basetypes.PaymentType_PayWithTransferOnly):
+				case uint32(basetypes.PaymentType_PayWithTransferAndBalance):
+				case uint32(basetypes.PaymentType_PayWithParentOrder):
+				case uint32(basetypes.PaymentType_PayWithOffline):
+				case uint32(basetypes.PaymentType_PayWithNoPayment):
+				default:
+					return fmt.Errorf("invalid paymenttype")
+				}
+				_types = append(_types, basetypes.PaymentType(_type))
+			}
+			h.Conds.PaymentTypes = &cruder.Cond{Op: conds.GetPaymentType().GetOp(), Val: _types}
+		}
 		if conds.CoinTypeID != nil {
 			id, err := uuid.Parse(conds.GetCoinTypeID().GetValue())
 			if err != nil {
