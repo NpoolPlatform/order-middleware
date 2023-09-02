@@ -141,7 +141,6 @@ func (r *OrderReq) CheckOrderType() error {
 	return nil
 }
 
-//nolint:gocyclo
 func (r *OrderReq) HasPayment() (bool, error) {
 	zeroAmount := decimal.NewFromInt(0)
 	if r.PaymentAmount == nil {
@@ -162,7 +161,7 @@ func (r *OrderReq) HasPayment() (bool, error) {
 		return false, nil
 	case basetypes.PaymentType_PayWithTransferOnly:
 		r.BalanceAmount = &zeroAmount
-		fallthrough //nolint
+		fallthrough
 	case basetypes.PaymentType_PayWithTransferAndBalance:
 		if r.TransferAmount.Add(*r.BalanceAmount).Cmp(*r.PaymentAmount) != 0 {
 			return false, fmt.Errorf("invalid paymentAmount")
