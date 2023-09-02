@@ -27,6 +27,8 @@ type OrderState struct {
 	OrderID uuid.UUID `json:"order_id,omitempty"`
 	// OrderState holds the value of the "order_state" field.
 	OrderState string `json:"order_state,omitempty"`
+	// CancelState holds the value of the "cancel_state" field.
+	CancelState string `json:"cancel_state,omitempty"`
 	// StartMode holds the value of the "start_mode" field.
 	StartMode string `json:"start_mode,omitempty"`
 	// StartAt holds the value of the "start_at" field.
@@ -66,7 +68,7 @@ func (*OrderState) scanValues(columns []string) ([]interface{}, error) {
 			values[i] = new(sql.NullBool)
 		case orderstate.FieldCreatedAt, orderstate.FieldUpdatedAt, orderstate.FieldDeletedAt, orderstate.FieldStartAt, orderstate.FieldEndAt, orderstate.FieldLastBenefitAt, orderstate.FieldOutofgasHours, orderstate.FieldCompensateHours:
 			values[i] = new(sql.NullInt64)
-		case orderstate.FieldOrderState, orderstate.FieldStartMode, orderstate.FieldBenefitState, orderstate.FieldPaymentTransactionID, orderstate.FieldPaymentState:
+		case orderstate.FieldOrderState, orderstate.FieldCancelState, orderstate.FieldStartMode, orderstate.FieldBenefitState, orderstate.FieldPaymentTransactionID, orderstate.FieldPaymentState:
 			values[i] = new(sql.NullString)
 		case orderstate.FieldID, orderstate.FieldOrderID:
 			values[i] = new(uuid.UUID)
@@ -120,6 +122,12 @@ func (os *OrderState) assignValues(columns []string, values []interface{}) error
 				return fmt.Errorf("unexpected type %T for field order_state", values[i])
 			} else if value.Valid {
 				os.OrderState = value.String
+			}
+		case orderstate.FieldCancelState:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field cancel_state", values[i])
+			} else if value.Valid {
+				os.CancelState = value.String
 			}
 		case orderstate.FieldStartMode:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -241,6 +249,9 @@ func (os *OrderState) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("order_state=")
 	builder.WriteString(os.OrderState)
+	builder.WriteString(", ")
+	builder.WriteString("cancel_state=")
+	builder.WriteString(os.CancelState)
 	builder.WriteString(", ")
 	builder.WriteString("start_mode=")
 	builder.WriteString(os.StartMode)

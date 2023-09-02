@@ -3269,6 +3269,7 @@ type OrderStateMutation struct {
 	adddeleted_at          *int32
 	order_id               *uuid.UUID
 	order_state            *string
+	cancel_state           *string
 	start_mode             *string
 	start_at               *uint32
 	addstart_at            *int32
@@ -3648,6 +3649,55 @@ func (m *OrderStateMutation) OrderStateCleared() bool {
 func (m *OrderStateMutation) ResetOrderState() {
 	m.order_state = nil
 	delete(m.clearedFields, orderstate.FieldOrderState)
+}
+
+// SetCancelState sets the "cancel_state" field.
+func (m *OrderStateMutation) SetCancelState(s string) {
+	m.cancel_state = &s
+}
+
+// CancelState returns the value of the "cancel_state" field in the mutation.
+func (m *OrderStateMutation) CancelState() (r string, exists bool) {
+	v := m.cancel_state
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCancelState returns the old "cancel_state" field's value of the OrderState entity.
+// If the OrderState object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *OrderStateMutation) OldCancelState(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCancelState is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCancelState requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCancelState: %w", err)
+	}
+	return oldValue.CancelState, nil
+}
+
+// ClearCancelState clears the value of the "cancel_state" field.
+func (m *OrderStateMutation) ClearCancelState() {
+	m.cancel_state = nil
+	m.clearedFields[orderstate.FieldCancelState] = struct{}{}
+}
+
+// CancelStateCleared returns if the "cancel_state" field was cleared in this mutation.
+func (m *OrderStateMutation) CancelStateCleared() bool {
+	_, ok := m.clearedFields[orderstate.FieldCancelState]
+	return ok
+}
+
+// ResetCancelState resets all changes to the "cancel_state" field.
+func (m *OrderStateMutation) ResetCancelState() {
+	m.cancel_state = nil
+	delete(m.clearedFields, orderstate.FieldCancelState)
 }
 
 // SetStartMode sets the "start_mode" field.
@@ -4411,7 +4461,7 @@ func (m *OrderStateMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *OrderStateMutation) Fields() []string {
-	fields := make([]string, 0, 18)
+	fields := make([]string, 0, 19)
 	if m.created_at != nil {
 		fields = append(fields, orderstate.FieldCreatedAt)
 	}
@@ -4426,6 +4476,9 @@ func (m *OrderStateMutation) Fields() []string {
 	}
 	if m.order_state != nil {
 		fields = append(fields, orderstate.FieldOrderState)
+	}
+	if m.cancel_state != nil {
+		fields = append(fields, orderstate.FieldCancelState)
 	}
 	if m.start_mode != nil {
 		fields = append(fields, orderstate.FieldStartMode)
@@ -4484,6 +4537,8 @@ func (m *OrderStateMutation) Field(name string) (ent.Value, bool) {
 		return m.OrderID()
 	case orderstate.FieldOrderState:
 		return m.OrderState()
+	case orderstate.FieldCancelState:
+		return m.CancelState()
 	case orderstate.FieldStartMode:
 		return m.StartMode()
 	case orderstate.FieldStartAt:
@@ -4529,6 +4584,8 @@ func (m *OrderStateMutation) OldField(ctx context.Context, name string) (ent.Val
 		return m.OldOrderID(ctx)
 	case orderstate.FieldOrderState:
 		return m.OldOrderState(ctx)
+	case orderstate.FieldCancelState:
+		return m.OldCancelState(ctx)
 	case orderstate.FieldStartMode:
 		return m.OldStartMode(ctx)
 	case orderstate.FieldStartAt:
@@ -4598,6 +4655,13 @@ func (m *OrderStateMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetOrderState(v)
+		return nil
+	case orderstate.FieldCancelState:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCancelState(v)
 		return nil
 	case orderstate.FieldStartMode:
 		v, ok := value.(string)
@@ -4822,6 +4886,9 @@ func (m *OrderStateMutation) ClearedFields() []string {
 	if m.FieldCleared(orderstate.FieldOrderState) {
 		fields = append(fields, orderstate.FieldOrderState)
 	}
+	if m.FieldCleared(orderstate.FieldCancelState) {
+		fields = append(fields, orderstate.FieldCancelState)
+	}
 	if m.FieldCleared(orderstate.FieldStartMode) {
 		fields = append(fields, orderstate.FieldStartMode)
 	}
@@ -4877,6 +4944,9 @@ func (m *OrderStateMutation) ClearField(name string) error {
 	switch name {
 	case orderstate.FieldOrderState:
 		m.ClearOrderState()
+		return nil
+	case orderstate.FieldCancelState:
+		m.ClearCancelState()
 		return nil
 	case orderstate.FieldStartMode:
 		m.ClearStartMode()
@@ -4939,6 +5009,9 @@ func (m *OrderStateMutation) ResetField(name string) error {
 		return nil
 	case orderstate.FieldOrderState:
 		m.ResetOrderState()
+		return nil
+	case orderstate.FieldCancelState:
+		m.ResetCancelState()
 		return nil
 	case orderstate.FieldStartMode:
 		m.ResetStartMode()

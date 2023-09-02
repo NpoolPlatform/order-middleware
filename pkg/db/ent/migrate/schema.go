@@ -72,6 +72,7 @@ var (
 		{Name: "deleted_at", Type: field.TypeUint32},
 		{Name: "order_id", Type: field.TypeUUID},
 		{Name: "order_state", Type: field.TypeString, Nullable: true, Default: "OrderStateWaitPayment"},
+		{Name: "cancel_state", Type: field.TypeString, Nullable: true, Default: "DefaultOrderState"},
 		{Name: "start_mode", Type: field.TypeString, Nullable: true, Default: "OrderStartConfirmed"},
 		{Name: "start_at", Type: field.TypeUint32, Nullable: true, Default: 0},
 		{Name: "end_at", Type: field.TypeUint32, Nullable: true, Default: 0},

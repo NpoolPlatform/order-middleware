@@ -115,6 +115,13 @@ func OrderState(v string) predicate.OrderState {
 	})
 }
 
+// CancelState applies equality check predicate on the "cancel_state" field. It's identical to CancelStateEQ.
+func CancelState(v string) predicate.OrderState {
+	return predicate.OrderState(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldCancelState), v))
+	})
+}
+
 // StartMode applies equality check predicate on the "start_mode" field. It's identical to StartModeEQ.
 func StartMode(v string) predicate.OrderState {
 	return predicate.OrderState(func(s *sql.Selector) {
@@ -572,6 +579,119 @@ func OrderStateEqualFold(v string) predicate.OrderState {
 func OrderStateContainsFold(v string) predicate.OrderState {
 	return predicate.OrderState(func(s *sql.Selector) {
 		s.Where(sql.ContainsFold(s.C(FieldOrderState), v))
+	})
+}
+
+// CancelStateEQ applies the EQ predicate on the "cancel_state" field.
+func CancelStateEQ(v string) predicate.OrderState {
+	return predicate.OrderState(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldCancelState), v))
+	})
+}
+
+// CancelStateNEQ applies the NEQ predicate on the "cancel_state" field.
+func CancelStateNEQ(v string) predicate.OrderState {
+	return predicate.OrderState(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldCancelState), v))
+	})
+}
+
+// CancelStateIn applies the In predicate on the "cancel_state" field.
+func CancelStateIn(vs ...string) predicate.OrderState {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.OrderState(func(s *sql.Selector) {
+		s.Where(sql.In(s.C(FieldCancelState), v...))
+	})
+}
+
+// CancelStateNotIn applies the NotIn predicate on the "cancel_state" field.
+func CancelStateNotIn(vs ...string) predicate.OrderState {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.OrderState(func(s *sql.Selector) {
+		s.Where(sql.NotIn(s.C(FieldCancelState), v...))
+	})
+}
+
+// CancelStateGT applies the GT predicate on the "cancel_state" field.
+func CancelStateGT(v string) predicate.OrderState {
+	return predicate.OrderState(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldCancelState), v))
+	})
+}
+
+// CancelStateGTE applies the GTE predicate on the "cancel_state" field.
+func CancelStateGTE(v string) predicate.OrderState {
+	return predicate.OrderState(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldCancelState), v))
+	})
+}
+
+// CancelStateLT applies the LT predicate on the "cancel_state" field.
+func CancelStateLT(v string) predicate.OrderState {
+	return predicate.OrderState(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldCancelState), v))
+	})
+}
+
+// CancelStateLTE applies the LTE predicate on the "cancel_state" field.
+func CancelStateLTE(v string) predicate.OrderState {
+	return predicate.OrderState(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldCancelState), v))
+	})
+}
+
+// CancelStateContains applies the Contains predicate on the "cancel_state" field.
+func CancelStateContains(v string) predicate.OrderState {
+	return predicate.OrderState(func(s *sql.Selector) {
+		s.Where(sql.Contains(s.C(FieldCancelState), v))
+	})
+}
+
+// CancelStateHasPrefix applies the HasPrefix predicate on the "cancel_state" field.
+func CancelStateHasPrefix(v string) predicate.OrderState {
+	return predicate.OrderState(func(s *sql.Selector) {
+		s.Where(sql.HasPrefix(s.C(FieldCancelState), v))
+	})
+}
+
+// CancelStateHasSuffix applies the HasSuffix predicate on the "cancel_state" field.
+func CancelStateHasSuffix(v string) predicate.OrderState {
+	return predicate.OrderState(func(s *sql.Selector) {
+		s.Where(sql.HasSuffix(s.C(FieldCancelState), v))
+	})
+}
+
+// CancelStateIsNil applies the IsNil predicate on the "cancel_state" field.
+func CancelStateIsNil() predicate.OrderState {
+	return predicate.OrderState(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldCancelState)))
+	})
+}
+
+// CancelStateNotNil applies the NotNil predicate on the "cancel_state" field.
+func CancelStateNotNil() predicate.OrderState {
+	return predicate.OrderState(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldCancelState)))
+	})
+}
+
+// CancelStateEqualFold applies the EqualFold predicate on the "cancel_state" field.
+func CancelStateEqualFold(v string) predicate.OrderState {
+	return predicate.OrderState(func(s *sql.Selector) {
+		s.Where(sql.EqualFold(s.C(FieldCancelState), v))
+	})
+}
+
+// CancelStateContainsFold applies the ContainsFold predicate on the "cancel_state" field.
+func CancelStateContainsFold(v string) predicate.OrderState {
+	return predicate.OrderState(func(s *sql.Selector) {
+		s.Where(sql.ContainsFold(s.C(FieldCancelState), v))
 	})
 }
 

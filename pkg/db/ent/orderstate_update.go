@@ -111,6 +111,26 @@ func (osu *OrderStateUpdate) ClearOrderState() *OrderStateUpdate {
 	return osu
 }
 
+// SetCancelState sets the "cancel_state" field.
+func (osu *OrderStateUpdate) SetCancelState(s string) *OrderStateUpdate {
+	osu.mutation.SetCancelState(s)
+	return osu
+}
+
+// SetNillableCancelState sets the "cancel_state" field if the given value is not nil.
+func (osu *OrderStateUpdate) SetNillableCancelState(s *string) *OrderStateUpdate {
+	if s != nil {
+		osu.SetCancelState(*s)
+	}
+	return osu
+}
+
+// ClearCancelState clears the value of the "cancel_state" field.
+func (osu *OrderStateUpdate) ClearCancelState() *OrderStateUpdate {
+	osu.mutation.ClearCancelState()
+	return osu
+}
+
 // SetStartMode sets the "start_mode" field.
 func (osu *OrderStateUpdate) SetStartMode(s string) *OrderStateUpdate {
 	osu.mutation.SetStartMode(s)
@@ -566,6 +586,19 @@ func (osu *OrderStateUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: orderstate.FieldOrderState,
 		})
 	}
+	if value, ok := osu.mutation.CancelState(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: orderstate.FieldCancelState,
+		})
+	}
+	if osu.mutation.CancelStateCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Column: orderstate.FieldCancelState,
+		})
+	}
 	if value, ok := osu.mutation.StartMode(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
@@ -869,6 +902,26 @@ func (osuo *OrderStateUpdateOne) SetNillableOrderState(s *string) *OrderStateUpd
 // ClearOrderState clears the value of the "order_state" field.
 func (osuo *OrderStateUpdateOne) ClearOrderState() *OrderStateUpdateOne {
 	osuo.mutation.ClearOrderState()
+	return osuo
+}
+
+// SetCancelState sets the "cancel_state" field.
+func (osuo *OrderStateUpdateOne) SetCancelState(s string) *OrderStateUpdateOne {
+	osuo.mutation.SetCancelState(s)
+	return osuo
+}
+
+// SetNillableCancelState sets the "cancel_state" field if the given value is not nil.
+func (osuo *OrderStateUpdateOne) SetNillableCancelState(s *string) *OrderStateUpdateOne {
+	if s != nil {
+		osuo.SetCancelState(*s)
+	}
+	return osuo
+}
+
+// ClearCancelState clears the value of the "cancel_state" field.
+func (osuo *OrderStateUpdateOne) ClearCancelState() *OrderStateUpdateOne {
+	osuo.mutation.ClearCancelState()
 	return osuo
 }
 
@@ -1355,6 +1408,19 @@ func (osuo *OrderStateUpdateOne) sqlSave(ctx context.Context) (_node *OrderState
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
 			Column: orderstate.FieldOrderState,
+		})
+	}
+	if value, ok := osuo.mutation.CancelState(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: orderstate.FieldCancelState,
+		})
+	}
+	if osuo.mutation.CancelStateCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Column: orderstate.FieldCancelState,
 		})
 	}
 	if value, ok := osuo.mutation.StartMode(); ok {

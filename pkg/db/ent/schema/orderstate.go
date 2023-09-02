@@ -35,6 +35,10 @@ func (OrderState) Fields() []ent.Field {
 			Optional().
 			Default(types.OrderState_OrderStateWaitPayment.String()),
 		field.
+			String("cancel_state").
+			Optional().
+			Default(types.OrderState_DefaultOrderState.String()),
+		field.
 			String("start_mode").
 			Optional().
 			Default(types.OrderStartMode_OrderStartConfirmed.String()),

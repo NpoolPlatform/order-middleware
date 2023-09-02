@@ -23,6 +23,8 @@ const (
 	FieldOrderID = "order_id"
 	// FieldOrderState holds the string denoting the order_state field in the database.
 	FieldOrderState = "order_state"
+	// FieldCancelState holds the string denoting the cancel_state field in the database.
+	FieldCancelState = "cancel_state"
 	// FieldStartMode holds the string denoting the start_mode field in the database.
 	FieldStartMode = "start_mode"
 	// FieldStartAt holds the string denoting the start_at field in the database.
@@ -61,6 +63,7 @@ var Columns = []string{
 	FieldDeletedAt,
 	FieldOrderID,
 	FieldOrderState,
+	FieldCancelState,
 	FieldStartMode,
 	FieldStartAt,
 	FieldEndAt,
@@ -105,6 +108,8 @@ var (
 	DefaultDeletedAt func() uint32
 	// DefaultOrderState holds the default value on creation for the "order_state" field.
 	DefaultOrderState string
+	// DefaultCancelState holds the default value on creation for the "cancel_state" field.
+	DefaultCancelState string
 	// DefaultStartMode holds the default value on creation for the "start_mode" field.
 	DefaultStartMode string
 	// DefaultStartAt holds the default value on creation for the "start_at" field.

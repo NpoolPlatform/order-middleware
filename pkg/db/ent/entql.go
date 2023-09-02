@@ -96,6 +96,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			orderstate.FieldDeletedAt:            {Type: field.TypeUint32, Column: orderstate.FieldDeletedAt},
 			orderstate.FieldOrderID:              {Type: field.TypeUUID, Column: orderstate.FieldOrderID},
 			orderstate.FieldOrderState:           {Type: field.TypeString, Column: orderstate.FieldOrderState},
+			orderstate.FieldCancelState:          {Type: field.TypeString, Column: orderstate.FieldCancelState},
 			orderstate.FieldStartMode:            {Type: field.TypeString, Column: orderstate.FieldStartMode},
 			orderstate.FieldStartAt:              {Type: field.TypeUint32, Column: orderstate.FieldStartAt},
 			orderstate.FieldEndAt:                {Type: field.TypeUint32, Column: orderstate.FieldEndAt},
@@ -486,6 +487,11 @@ func (f *OrderStateFilter) WhereOrderID(p entql.ValueP) {
 // WhereOrderState applies the entql string predicate on the order_state field.
 func (f *OrderStateFilter) WhereOrderState(p entql.StringP) {
 	f.Where(p.Field(orderstate.FieldOrderState))
+}
+
+// WhereCancelState applies the entql string predicate on the cancel_state field.
+func (f *OrderStateFilter) WhereCancelState(p entql.StringP) {
+	f.Where(p.Field(orderstate.FieldCancelState))
 }
 
 // WhereStartMode applies the entql string predicate on the start_mode field.

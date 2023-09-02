@@ -86,6 +86,20 @@ func (osc *OrderStateCreate) SetNillableOrderState(s *string) *OrderStateCreate 
 	return osc
 }
 
+// SetCancelState sets the "cancel_state" field.
+func (osc *OrderStateCreate) SetCancelState(s string) *OrderStateCreate {
+	osc.mutation.SetCancelState(s)
+	return osc
+}
+
+// SetNillableCancelState sets the "cancel_state" field if the given value is not nil.
+func (osc *OrderStateCreate) SetNillableCancelState(s *string) *OrderStateCreate {
+	if s != nil {
+		osc.SetCancelState(*s)
+	}
+	return osc
+}
+
 // SetStartMode sets the "start_mode" field.
 func (osc *OrderStateCreate) SetStartMode(s string) *OrderStateCreate {
 	osc.mutation.SetStartMode(s)
@@ -386,6 +400,10 @@ func (osc *OrderStateCreate) defaults() error {
 		v := orderstate.DefaultOrderState
 		osc.mutation.SetOrderState(v)
 	}
+	if _, ok := osc.mutation.CancelState(); !ok {
+		v := orderstate.DefaultCancelState
+		osc.mutation.SetCancelState(v)
+	}
 	if _, ok := osc.mutation.StartMode(); !ok {
 		v := orderstate.DefaultStartMode
 		osc.mutation.SetStartMode(v)
@@ -538,6 +556,14 @@ func (osc *OrderStateCreate) createSpec() (*OrderState, *sqlgraph.CreateSpec) {
 			Column: orderstate.FieldOrderState,
 		})
 		_node.OrderState = value
+	}
+	if value, ok := osc.mutation.CancelState(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: orderstate.FieldCancelState,
+		})
+		_node.CancelState = value
 	}
 	if value, ok := osc.mutation.StartMode(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -778,6 +804,24 @@ func (u *OrderStateUpsert) UpdateOrderState() *OrderStateUpsert {
 // ClearOrderState clears the value of the "order_state" field.
 func (u *OrderStateUpsert) ClearOrderState() *OrderStateUpsert {
 	u.SetNull(orderstate.FieldOrderState)
+	return u
+}
+
+// SetCancelState sets the "cancel_state" field.
+func (u *OrderStateUpsert) SetCancelState(v string) *OrderStateUpsert {
+	u.Set(orderstate.FieldCancelState, v)
+	return u
+}
+
+// UpdateCancelState sets the "cancel_state" field to the value that was provided on create.
+func (u *OrderStateUpsert) UpdateCancelState() *OrderStateUpsert {
+	u.SetExcluded(orderstate.FieldCancelState)
+	return u
+}
+
+// ClearCancelState clears the value of the "cancel_state" field.
+func (u *OrderStateUpsert) ClearCancelState() *OrderStateUpsert {
+	u.SetNull(orderstate.FieldCancelState)
 	return u
 }
 
@@ -1190,6 +1234,27 @@ func (u *OrderStateUpsertOne) UpdateOrderState() *OrderStateUpsertOne {
 func (u *OrderStateUpsertOne) ClearOrderState() *OrderStateUpsertOne {
 	return u.Update(func(s *OrderStateUpsert) {
 		s.ClearOrderState()
+	})
+}
+
+// SetCancelState sets the "cancel_state" field.
+func (u *OrderStateUpsertOne) SetCancelState(v string) *OrderStateUpsertOne {
+	return u.Update(func(s *OrderStateUpsert) {
+		s.SetCancelState(v)
+	})
+}
+
+// UpdateCancelState sets the "cancel_state" field to the value that was provided on create.
+func (u *OrderStateUpsertOne) UpdateCancelState() *OrderStateUpsertOne {
+	return u.Update(func(s *OrderStateUpsert) {
+		s.UpdateCancelState()
+	})
+}
+
+// ClearCancelState clears the value of the "cancel_state" field.
+func (u *OrderStateUpsertOne) ClearCancelState() *OrderStateUpsertOne {
+	return u.Update(func(s *OrderStateUpsert) {
+		s.ClearCancelState()
 	})
 }
 
@@ -1812,6 +1877,27 @@ func (u *OrderStateUpsertBulk) UpdateOrderState() *OrderStateUpsertBulk {
 func (u *OrderStateUpsertBulk) ClearOrderState() *OrderStateUpsertBulk {
 	return u.Update(func(s *OrderStateUpsert) {
 		s.ClearOrderState()
+	})
+}
+
+// SetCancelState sets the "cancel_state" field.
+func (u *OrderStateUpsertBulk) SetCancelState(v string) *OrderStateUpsertBulk {
+	return u.Update(func(s *OrderStateUpsert) {
+		s.SetCancelState(v)
+	})
+}
+
+// UpdateCancelState sets the "cancel_state" field to the value that was provided on create.
+func (u *OrderStateUpsertBulk) UpdateCancelState() *OrderStateUpsertBulk {
+	return u.Update(func(s *OrderStateUpsert) {
+		s.UpdateCancelState()
+	})
+}
+
+// ClearCancelState clears the value of the "cancel_state" field.
+func (u *OrderStateUpsertBulk) ClearCancelState() *OrderStateUpsertBulk {
+	return u.Update(func(s *OrderStateUpsert) {
+		s.ClearCancelState()
 	})
 }
 
