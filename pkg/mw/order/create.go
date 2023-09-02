@@ -23,9 +23,6 @@ type createHandler struct {
 }
 
 func (h *createHandler) validate(req *OrderReq) error {
-	if req.TransferAmount.Add(*req.BalanceAmount).Cmp(*req.PaymentAmount) != 0 {
-		return fmt.Errorf("invalid amount")
-	}
 	switch *req.OrderType {
 	case ordertypes.OrderType_Normal:
 		switch *req.PaymentType {
