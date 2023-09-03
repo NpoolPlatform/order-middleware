@@ -30,6 +30,10 @@ func (h *createHandler) paymentState(req *ordercrud.Req) *ordertypes.PaymentStat
 }
 
 func (h *createHandler) createOrderState(ctx context.Context, tx *ent.Tx, req *orderstatecrud.Req) error {
+	if *req.EndAt <= *req.StartAt {
+		return fmt.Errorf("invalid startend")
+	}
+
 	if _, err := orderstatecrud.CreateSet(
 		tx.OrderState.Create(),
 		&orderstatecrud.Req{
