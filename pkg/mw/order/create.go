@@ -22,8 +22,8 @@ type createHandler struct {
 	*Handler
 }
 
-func (h *createHandler) paymentState() *ordertypes.PaymentState {
-	if h.TransferAmount != nil && h.TransferAmount.Cmp(decimal.NewFromInt(0)) > 0 {
+func (h *createHandler) paymentState(req *ordercrud.Req) *ordertypes.PaymentState {
+	if req.TransferAmount != nil && req.TransferAmount.Cmp(decimal.NewFromInt(0)) > 0 {
 		return ordertypes.PaymentState_PaymentStateWait.Enum()
 	}
 	return ordertypes.PaymentState_PaymentStateNoPayment.Enum()
@@ -79,11 +79,11 @@ func (h *Handler) CreateOrder(ctx context.Context) (*npool.Order, error) {
 		Handler: h,
 	}
 
-	h.PaymentState = handler.paymentState()
 	req, err := h.ToOrderReq(ctx, true)
 	if err != nil {
 		return nil, err
 	}
+	h.PaymentState = handler.paymentState(req.Req)
 	if *req.PaymentType == ordertypes.PaymentType_PayWithParentOrder {
 		return nil, fmt.Errorf("invalid paymenttype")
 	}
@@ -117,6 +117,7 @@ func (h *Handler) CreateOrders(ctx context.Context) ([]*npool.Order, error) {
 	ids := []uuid.UUID{}
 	err := db.WithTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {
 		for _, req := range h.Reqs {
+			req.OrderStateReq.PaymentState = handler.paymentState(req.Req)
 			id := uuid.New()
 			if req.Req.ID == nil {
 				req.Req.ID = &id
