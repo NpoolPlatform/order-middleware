@@ -46,3 +46,38 @@ func (s *Server) DeleteOrder(ctx context.Context, in *npool.DeleteOrderRequest) 
 		Info: info,
 	}, nil
 }
+
+func (s *Server) DeleteOrders(ctx context.Context, in *npool.DeleteOrdersRequest) (*npool.DeleteOrdersResponse, error) {
+	reqs := in.GetInfos()
+	if len(reqs) == 0 {
+		logger.Sugar().Errorw(
+			"DeleteOrders",
+			"In", in,
+		)
+		return &npool.DeleteOrdersResponse{}, status.Error(codes.Aborted, "invalid argument")
+	}
+	handler, err := order1.NewHandler(
+		ctx,
+		order1.WithReqs(reqs, true),
+	)
+	if err != nil {
+		logger.Sugar().Errorw(
+			"DeleteOrders",
+			"In", in,
+			"Error", err,
+		)
+		return &npool.DeleteOrdersResponse{}, status.Error(codes.Aborted, err.Error())
+	}
+	infos, err := handler.DeleteOrders(ctx)
+	if err != nil {
+		logger.Sugar().Errorw(
+			"DeleteOrders",
+			"In", in,
+			"Error", err,
+		)
+		return &npool.DeleteOrdersResponse{}, status.Error(codes.Aborted, err.Error())
+	}
+	return &npool.DeleteOrdersResponse{
+		Infos: infos,
+	}, nil
+}
