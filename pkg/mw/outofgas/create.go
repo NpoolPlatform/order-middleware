@@ -21,6 +21,10 @@ type createHandler struct {
 }
 
 func (h *createHandler) createOutOfGas(ctx context.Context, tx *ent.Tx) error {
+	if *h.EndAt <= *h.StartAt {
+		return fmt.Errorf("invalid startend")
+	}
+
 	if _, err := outofgascrud.CreateSet(
 		tx.OutOfGas.Create(),
 		&outofgascrud.Req{
