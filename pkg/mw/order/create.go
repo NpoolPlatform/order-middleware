@@ -9,7 +9,7 @@ import (
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent"
 	"github.com/shopspring/decimal"
 
-	ordertypes "github.com/NpoolPlatform/message/npool/basetypes/order/v1"
+	types "github.com/NpoolPlatform/message/npool/basetypes/order/v1"
 	npool "github.com/NpoolPlatform/message/npool/order/mw/v1/order"
 	ordercrud "github.com/NpoolPlatform/order-middleware/pkg/crud/order"
 	orderstatecrud "github.com/NpoolPlatform/order-middleware/pkg/crud/orderstate"
@@ -22,11 +22,11 @@ type createHandler struct {
 	*Handler
 }
 
-func (h *createHandler) paymentState(req *ordercrud.Req) *ordertypes.PaymentState {
+func (h *createHandler) paymentState(req *ordercrud.Req) *types.PaymentState {
 	if req.TransferAmount != nil && req.TransferAmount.Cmp(decimal.NewFromInt(0)) > 0 {
-		return ordertypes.PaymentState_PaymentStateWait.Enum()
+		return types.PaymentState_PaymentStateWait.Enum()
 	}
-	return ordertypes.PaymentState_PaymentStateNoPayment.Enum()
+	return types.PaymentState_PaymentStateNoPayment.Enum()
 }
 
 func (h *createHandler) createOrderState(ctx context.Context, tx *ent.Tx, req *orderstatecrud.Req) error {
@@ -63,6 +63,19 @@ func (h *createHandler) createPayment(ctx context.Context, tx *ent.Tx, req *paym
 }
 
 func (h *createHandler) createOrder(ctx context.Context, tx *ent.Tx, req *ordercrud.Req) error {
+	switch *req.PaymentType {
+	case types.PaymentType_PayWithBalanceOnly:
+		// Before we should already set transfer amount to 0
+		fallthrough //nolint
+	case types.PaymentType_PayWithTransferAndBalance:
+		fallthrough //nolint
+	case types.PaymentType_PayWithTransferOnly:
+		// Before we should already set balance amount to 0
+		if req.TransferAmount.Add(*req.BalanceAmount).Cmp(*req.PaymentAmount) != 0 {
+			return fmt.Errorf("invalid paymentamount")
+		}
+	}
+
 	if _, err := ordercrud.CreateSet(
 		tx.Order.Create(),
 		req,
@@ -88,7 +101,7 @@ func (h *Handler) CreateOrder(ctx context.Context) (*npool.Order, error) {
 		return nil, err
 	}
 	h.PaymentState = handler.paymentState(req.Req)
-	if *req.PaymentType == ordertypes.PaymentType_PayWithParentOrder {
+	if *req.PaymentType == types.PaymentType_PayWithParentOrder {
 		return nil, fmt.Errorf("invalid paymenttype")
 	}
 
