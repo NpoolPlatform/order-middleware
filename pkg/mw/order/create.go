@@ -76,6 +76,20 @@ func (h *createHandler) createOrder(ctx context.Context, tx *ent.Tx, req *orderc
 		}
 	}
 
+	stm, err := ordercrud.SetQueryConds(tx.Order.Query(), &ordercrud.Conds{
+		CouponIDs: &cruder.Cond{Op: cruder.IN, Val: req.CouponIDs},
+	})
+	if err != nil {
+		return err
+	}
+	exist, err := stm.Exist(ctx)
+	if err != nil {
+		return err
+	}
+	if exist {
+		return fmt.Errorf("coupons already used")
+	}
+
 	if _, err := ordercrud.CreateSet(
 		tx.Order.Create(),
 		req,
