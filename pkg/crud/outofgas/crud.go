@@ -108,13 +108,19 @@ func SetQueryConds(q *ent.OutOfGasQuery, conds *Conds) (*ent.OutOfGasQuery, erro
 	if conds.StartAt != nil {
 		start, ok := conds.StartAt.Val.(uint32)
 		if !ok {
-			return nil, fmt.Errorf("invalid start")
+			return nil, fmt.Errorf("invalid startat")
 		}
 		switch conds.StartAt.Op {
+		case cruder.LT:
+			q.Where(entoutofgas.StartAtLT(start))
 		case cruder.LTE:
 			q.Where(entoutofgas.StartAtLTE(start))
+		case cruder.GT:
+			q.Where(entoutofgas.StartAtGT(start))
 		case cruder.GTE:
 			q.Where(entoutofgas.StartAtGTE(start))
+		case cruder.EQ:
+			q.Where(entoutofgas.StartAt(start))
 		default:
 			return nil, fmt.Errorf("invalid outofgas field")
 		}
@@ -122,13 +128,19 @@ func SetQueryConds(q *ent.OutOfGasQuery, conds *Conds) (*ent.OutOfGasQuery, erro
 	if conds.EndAt != nil {
 		end, ok := conds.EndAt.Val.(uint32)
 		if !ok {
-			return nil, fmt.Errorf("invalid end")
+			return nil, fmt.Errorf("invalid endat")
 		}
 		switch conds.EndAt.Op {
+		case cruder.LT:
+			q.Where(entoutofgas.EndAtLT(end))
 		case cruder.LTE:
 			q.Where(entoutofgas.EndAtLTE(end))
+		case cruder.GT:
+			q.Where(entoutofgas.EndAtGT(end))
 		case cruder.GTE:
 			q.Where(entoutofgas.EndAtGTE(end))
+		case cruder.EQ:
+			q.Where(entoutofgas.EndAtEQ(end))
 		default:
 			return nil, fmt.Errorf("invalid outofgas field")
 		}
