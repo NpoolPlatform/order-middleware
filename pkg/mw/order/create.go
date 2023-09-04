@@ -156,6 +156,18 @@ func (h *Handler) CreateOrders(ctx context.Context) ([]*npool.Order, error) {
 				req.Req.ID = &id
 				req.OrderStateReq.OrderID = &id
 			}
+
+			if req.PaymentReq != nil {
+				if req.PaymentReq.ID == nil {
+					id = uuid.New()
+				}
+				req.Req.PaymentID = &id
+				req.PaymentReq.ID = &id
+				req.PaymentReq.OrderID = req.Req.ID
+				if err := handler.createPayment(ctx, tx, req.PaymentReq); err != nil {
+					return err
+				}
+			}
 			if err := handler.createOrder(ctx, tx, req.Req); err != nil {
 				return err
 			}
@@ -163,14 +175,6 @@ func (h *Handler) CreateOrders(ctx context.Context) ([]*npool.Order, error) {
 				return err
 			}
 			ids = append(ids, *req.Req.ID)
-
-			if req.PaymentReq == nil {
-				continue
-			}
-			req.PaymentReq.OrderID = req.Req.ID
-			if err := handler.createPayment(ctx, tx, req.PaymentReq); err != nil {
-				return err
-			}
 		}
 		return nil
 	})
