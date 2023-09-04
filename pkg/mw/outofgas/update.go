@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	timedef "github.com/NpoolPlatform/go-service-framework/pkg/const/time"
+	types "github.com/NpoolPlatform/message/npool/basetypes/order/v1"
 	npool "github.com/NpoolPlatform/message/npool/order/mw/v1/outofgas"
 	orderstatecrud "github.com/NpoolPlatform/order-middleware/pkg/crud/orderstate"
 	outofgascrud "github.com/NpoolPlatform/order-middleware/pkg/crud/outofgas"
@@ -44,6 +45,9 @@ func (h *updateHandler) updateOrder(ctx context.Context, tx *ent.Tx) error {
 		return err
 	}
 
+	if orderstate.OrderState != types.OrderState_OrderStateInService.String() {
+		return fmt.Errorf("permission denied")
+	}
 	if *h.StartAt < orderstate.StartAt || orderstate.EndAt < *h.EndAt {
 		return fmt.Errorf("invalid outofgas")
 	}
