@@ -136,13 +136,6 @@ func (h *updateHandler) updateOrderState(ctx context.Context, tx *ent.Tx, req *o
 		endAt = *req.EndAt
 	}
 
-	if orderstate.PaymentState != types.PaymentState_PaymentStateWait.String() &&
-		order.OrderType == types.OrderType_Normal.String() {
-		if req.UserSetCanceled != nil && *req.UserSetCanceled {
-			return fmt.Errorf("not wait payment")
-		}
-	}
-
 	if req.OrderState != nil {
 		_orderState := types.OrderState(types.OrderState_value[orderstate.OrderState])
 		if rollback && *req.OrderState == _orderState {
