@@ -978,7 +978,7 @@ func WithConds(conds *npool.Conds) func(context.Context, *Handler) error {
 				}
 				_types = append(_types, basetypes.PaymentType(_type))
 			}
-			h.Conds.PaymentTypes = &cruder.Cond{Op: conds.GetPaymentType().GetOp(), Val: _types}
+			h.Conds.PaymentTypes = &cruder.Cond{Op: conds.GetPaymentTypes().GetOp(), Val: _types}
 		}
 		if conds.CoinTypeID != nil {
 			id, err := uuid.Parse(conds.GetCoinTypeID().GetValue())
