@@ -33,7 +33,7 @@ func (OrderState) Fields() []ent.Field {
 		field.
 			String("order_state").
 			Optional().
-			Default(types.OrderState_OrderStateWaitPayment.String()),
+			Default(types.OrderState_OrderStateCreated.String()),
 		field.
 			String("cancel_state").
 			Optional().

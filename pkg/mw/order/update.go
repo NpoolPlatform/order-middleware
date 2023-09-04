@@ -21,6 +21,7 @@ type updateHandler struct {
 }
 
 var stateAllowMap = map[types.OrderState][]types.OrderState{
+	types.OrderState_OrderStateCreated:     {types.OrderState_OrderStateWaitPayment},
 	types.OrderState_OrderStateWaitPayment: {types.OrderState_OrderStateCheckPayment},
 	types.OrderState_OrderStateCheckPayment: {
 		types.OrderState_OrderStatePaymentTransferReceived,
@@ -136,8 +137,23 @@ func (h *updateHandler) updateOrderState(ctx context.Context, tx *ent.Tx, req *o
 		endAt = *req.EndAt
 	}
 
+	_orderState := types.OrderState(types.OrderState_value[orderstate.OrderState])
+	if (req.UserSetCanceled != nil && *req.UserSetCanceled) ||
+		(req.AdminSetCanceled != nil && *req.AdminSetCanceled) {
+		if req.OrderState != nil {
+			return fmt.Errorf("permission denied")
+		}
+		switch _orderState {
+		case types.OrderState_OrderStateWaitPayment:
+		case types.OrderState_OrderStateCheckPayment:
+		case types.OrderState_OrderStatePaid:
+		case types.OrderState_OrderStateInService:
+		default:
+			return fmt.Errorf("invalid cancel state")
+		}
+	}
+
 	if req.OrderState != nil {
-		_orderState := types.OrderState(types.OrderState_value[orderstate.OrderState])
 		if rollback && *req.OrderState == _orderState {
 			rollbackOrderState, err := h.checkOrderStateRollback(req)
 			if err != nil {

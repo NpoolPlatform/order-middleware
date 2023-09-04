@@ -579,6 +579,7 @@ func WithOrderState(state *basetypes.OrderState, must bool) func(context.Context
 			return nil
 		}
 		switch *state {
+		case basetypes.OrderState_OrderStateCreated:
 		case basetypes.OrderState_OrderStateWaitPayment:
 		case basetypes.OrderState_OrderStateCheckPayment:
 		case basetypes.OrderState_OrderStatePaymentTransferReceived:
@@ -630,35 +631,8 @@ func WithCancelState(state *basetypes.OrderState, must bool) func(context.Contex
 		switch *state {
 		case basetypes.OrderState_OrderStateWaitPayment:
 		case basetypes.OrderState_OrderStateCheckPayment:
-		case basetypes.OrderState_OrderStatePaymentTransferReceived:
-		case basetypes.OrderState_OrderStatePaymentTransferReceivedCheck:
-		case basetypes.OrderState_OrderStatePaymentTransferBookKept:
-		case basetypes.OrderState_OrderStatePaymentTransferBookKeptCheck:
-		case basetypes.OrderState_OrderStatePaymentBalanceSpent:
-		case basetypes.OrderState_OrderStatePaymentBalanceSpentCheck:
-		case basetypes.OrderState_OrderStateGoodStockTransferred:
-		case basetypes.OrderState_OrderStateGoodStockTransferredCheck:
-		case basetypes.OrderState_OrderStateCommissionAdded:
-		case basetypes.OrderState_OrderStateCommissionAddedCheck:
-		case basetypes.OrderState_OrderStateAchievementBookKept:
-		case basetypes.OrderState_OrderStateAchievementBookKeptCheck:
 		case basetypes.OrderState_OrderStatePaid:
 		case basetypes.OrderState_OrderStateInService:
-		case basetypes.OrderState_OrderStatePaymentTimeout:
-		case basetypes.OrderState_OrderStatePreCancel:
-		case basetypes.OrderState_OrderStatePreCancelCheck:
-		case basetypes.OrderState_OrderStatePreExpired:
-		case basetypes.OrderState_OrderStatePreExpiredCheck:
-		case basetypes.OrderState_OrderStateRestoreExpiredStock:
-		case basetypes.OrderState_OrderStateRestoreExpiredStockCheck:
-		case basetypes.OrderState_OrderStateRestoreCanceledStock:
-		case basetypes.OrderState_OrderStateRestoreCanceledStockCheck:
-		case basetypes.OrderState_OrderStateCancelAchievement:
-		case basetypes.OrderState_OrderStateCancelAchievementCheck:
-		case basetypes.OrderState_OrderStateReturnCanceledBalance:
-		case basetypes.OrderState_OrderStateReturnCanceledBalanceCheck:
-		case basetypes.OrderState_OrderStateCanceled:
-		case basetypes.OrderState_OrderStateExpired:
 		default:
 			return fmt.Errorf("invalid cancelstate")
 		}
@@ -1016,41 +990,6 @@ func WithConds(conds *npool.Conds) func(context.Context, *Handler) error {
 			h.Conds.PaymentCoinTypeID = &cruder.Cond{Op: conds.GetPaymentCoinTypeID().GetOp(), Val: id}
 		}
 		if conds.OrderState != nil {
-			switch conds.GetOrderState().GetValue() {
-			case uint32(basetypes.OrderState_OrderStateWaitPayment):
-			case uint32(basetypes.OrderState_OrderStateCheckPayment):
-			case uint32(basetypes.OrderState_OrderStatePaymentTransferReceived):
-			case uint32(basetypes.OrderState_OrderStatePaymentTransferReceivedCheck):
-			case uint32(basetypes.OrderState_OrderStatePaymentTransferBookKept):
-			case uint32(basetypes.OrderState_OrderStatePaymentTransferBookKeptCheck):
-			case uint32(basetypes.OrderState_OrderStatePaymentBalanceSpent):
-			case uint32(basetypes.OrderState_OrderStatePaymentBalanceSpentCheck):
-			case uint32(basetypes.OrderState_OrderStateGoodStockTransferred):
-			case uint32(basetypes.OrderState_OrderStateGoodStockTransferredCheck):
-			case uint32(basetypes.OrderState_OrderStateCommissionAdded):
-			case uint32(basetypes.OrderState_OrderStateCommissionAddedCheck):
-			case uint32(basetypes.OrderState_OrderStateAchievementBookKept):
-			case uint32(basetypes.OrderState_OrderStateAchievementBookKeptCheck):
-			case uint32(basetypes.OrderState_OrderStatePaid):
-			case uint32(basetypes.OrderState_OrderStateInService):
-			case uint32(basetypes.OrderState_OrderStatePaymentTimeout):
-			case uint32(basetypes.OrderState_OrderStatePreCancel):
-			case uint32(basetypes.OrderState_OrderStatePreCancelCheck):
-			case uint32(basetypes.OrderState_OrderStatePreExpired):
-			case uint32(basetypes.OrderState_OrderStatePreExpiredCheck):
-			case uint32(basetypes.OrderState_OrderStateRestoreExpiredStock):
-			case uint32(basetypes.OrderState_OrderStateRestoreExpiredStockCheck):
-			case uint32(basetypes.OrderState_OrderStateRestoreCanceledStock):
-			case uint32(basetypes.OrderState_OrderStateRestoreCanceledStockCheck):
-			case uint32(basetypes.OrderState_OrderStateCancelAchievement):
-			case uint32(basetypes.OrderState_OrderStateCancelAchievementCheck):
-			case uint32(basetypes.OrderState_OrderStateReturnCanceledBalance):
-			case uint32(basetypes.OrderState_OrderStateReturnCanceledBalanceCheck):
-			case uint32(basetypes.OrderState_OrderStateCanceled):
-			case uint32(basetypes.OrderState_OrderStateExpired):
-			default:
-				return fmt.Errorf("invalid orderstate")
-			}
 			_state := conds.GetOrderState().GetValue()
 			h.Conds.OrderState = &cruder.Cond{Op: conds.GetOrderState().GetOp(), Val: basetypes.OrderState(_state)}
 		}
@@ -1117,41 +1056,6 @@ func WithConds(conds *npool.Conds) func(context.Context, *Handler) error {
 		if conds.OrderStates != nil {
 			states := []string{}
 			for _, state := range conds.GetOrderStates().GetValue() {
-				switch state {
-				case uint32(basetypes.OrderState_OrderStateWaitPayment):
-				case uint32(basetypes.OrderState_OrderStateCheckPayment):
-				case uint32(basetypes.OrderState_OrderStatePaymentTransferReceived):
-				case uint32(basetypes.OrderState_OrderStatePaymentTransferReceivedCheck):
-				case uint32(basetypes.OrderState_OrderStatePaymentTransferBookKept):
-				case uint32(basetypes.OrderState_OrderStatePaymentTransferBookKeptCheck):
-				case uint32(basetypes.OrderState_OrderStatePaymentBalanceSpent):
-				case uint32(basetypes.OrderState_OrderStatePaymentBalanceSpentCheck):
-				case uint32(basetypes.OrderState_OrderStateGoodStockTransferred):
-				case uint32(basetypes.OrderState_OrderStateGoodStockTransferredCheck):
-				case uint32(basetypes.OrderState_OrderStateCommissionAdded):
-				case uint32(basetypes.OrderState_OrderStateCommissionAddedCheck):
-				case uint32(basetypes.OrderState_OrderStateAchievementBookKept):
-				case uint32(basetypes.OrderState_OrderStateAchievementBookKeptCheck):
-				case uint32(basetypes.OrderState_OrderStatePaid):
-				case uint32(basetypes.OrderState_OrderStateInService):
-				case uint32(basetypes.OrderState_OrderStatePaymentTimeout):
-				case uint32(basetypes.OrderState_OrderStatePreCancel):
-				case uint32(basetypes.OrderState_OrderStatePreCancelCheck):
-				case uint32(basetypes.OrderState_OrderStatePreExpired):
-				case uint32(basetypes.OrderState_OrderStatePreExpiredCheck):
-				case uint32(basetypes.OrderState_OrderStateRestoreExpiredStock):
-				case uint32(basetypes.OrderState_OrderStateRestoreExpiredStockCheck):
-				case uint32(basetypes.OrderState_OrderStateRestoreCanceledStock):
-				case uint32(basetypes.OrderState_OrderStateRestoreCanceledStockCheck):
-				case uint32(basetypes.OrderState_OrderStateCancelAchievement):
-				case uint32(basetypes.OrderState_OrderStateCancelAchievementCheck):
-				case uint32(basetypes.OrderState_OrderStateReturnCanceledBalance):
-				case uint32(basetypes.OrderState_OrderStateReturnCanceledBalanceCheck):
-				case uint32(basetypes.OrderState_OrderStateCanceled):
-				case uint32(basetypes.OrderState_OrderStateExpired):
-				default:
-					return fmt.Errorf("invalid orderstates")
-				}
 				_state := basetypes.OrderState(state)
 				states = append(states, _state.String())
 			}
@@ -1439,6 +1343,7 @@ func WithReqs(reqs []*npool.OrderReq, must bool) func(context.Context, *Handler)
 			}
 			if req.OrderState != nil {
 				switch *req.OrderState {
+				case basetypes.OrderState_OrderStateCreated:
 				case basetypes.OrderState_OrderStateWaitPayment:
 				case basetypes.OrderState_OrderStateCheckPayment:
 				case basetypes.OrderState_OrderStatePaymentTransferReceived:
@@ -1479,35 +1384,8 @@ func WithReqs(reqs []*npool.OrderReq, must bool) func(context.Context, *Handler)
 				switch *req.CancelState {
 				case basetypes.OrderState_OrderStateWaitPayment:
 				case basetypes.OrderState_OrderStateCheckPayment:
-				case basetypes.OrderState_OrderStatePaymentTransferReceived:
-				case basetypes.OrderState_OrderStatePaymentTransferReceivedCheck:
-				case basetypes.OrderState_OrderStatePaymentTransferBookKept:
-				case basetypes.OrderState_OrderStatePaymentTransferBookKeptCheck:
-				case basetypes.OrderState_OrderStatePaymentBalanceSpent:
-				case basetypes.OrderState_OrderStatePaymentBalanceSpentCheck:
-				case basetypes.OrderState_OrderStateGoodStockTransferred:
-				case basetypes.OrderState_OrderStateGoodStockTransferredCheck:
-				case basetypes.OrderState_OrderStateCommissionAdded:
-				case basetypes.OrderState_OrderStateCommissionAddedCheck:
-				case basetypes.OrderState_OrderStateAchievementBookKept:
-				case basetypes.OrderState_OrderStateAchievementBookKeptCheck:
 				case basetypes.OrderState_OrderStatePaid:
 				case basetypes.OrderState_OrderStateInService:
-				case basetypes.OrderState_OrderStatePaymentTimeout:
-				case basetypes.OrderState_OrderStatePreCancel:
-				case basetypes.OrderState_OrderStatePreCancelCheck:
-				case basetypes.OrderState_OrderStatePreExpired:
-				case basetypes.OrderState_OrderStatePreExpiredCheck:
-				case basetypes.OrderState_OrderStateRestoreExpiredStock:
-				case basetypes.OrderState_OrderStateRestoreExpiredStockCheck:
-				case basetypes.OrderState_OrderStateRestoreCanceledStock:
-				case basetypes.OrderState_OrderStateRestoreCanceledStockCheck:
-				case basetypes.OrderState_OrderStateCancelAchievement:
-				case basetypes.OrderState_OrderStateCancelAchievementCheck:
-				case basetypes.OrderState_OrderStateReturnCanceledBalance:
-				case basetypes.OrderState_OrderStateReturnCanceledBalanceCheck:
-				case basetypes.OrderState_OrderStateCanceled:
-				case basetypes.OrderState_OrderStateExpired:
 				default:
 					return fmt.Errorf("invalid cancelstate")
 				}
