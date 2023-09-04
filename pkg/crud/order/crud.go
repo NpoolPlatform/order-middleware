@@ -340,12 +340,12 @@ func SetQueryConds(q *ent.OrderQuery, conds *Conds) (*ent.OrderQuery, error) {
 	if conds.CouponID != nil {
 		id, ok := conds.CouponID.Val.(uuid.UUID)
 		if !ok {
-			return nil, fmt.Errorf("invalid goodid")
+			return nil, fmt.Errorf("invalid couponid")
 		}
 		switch conds.CouponID.Op {
-		case cruder.IN:
-			q.Where(func(selector *sql.Selector) {
-				selector.Where(sqljson.ValueContains(entorder.FieldCouponIds, id))
+		case cruder.EQ:
+			q.Where(func(s *sql.Selector) {
+				s.Where(sqljson.ValueContains(entorder.FieldCouponIds, id))
 			})
 		default:
 			return nil, fmt.Errorf("invalid order field")
@@ -358,17 +358,13 @@ func SetQueryConds(q *ent.OrderQuery, conds *Conds) (*ent.OrderQuery, error) {
 		}
 		switch conds.CouponIDs.Op {
 		case cruder.IN:
-			if len(ids) > 0 {
-				q.Where(func(selector *sql.Selector) {
-					for i := 0; i < len(ids); i++ {
-						if i == 0 {
-							selector.Where(sqljson.ValueContains(entorder.FieldCouponIds, ids[i]))
-						} else {
-							selector.Or().Where(sqljson.ValueContains(entorder.FieldCouponIds, ids[i]))
-						}
-					}
-				})
-			}
+			q.Where(func(s *sql.Selector) {
+				predicates := []*sql.Predicate{}
+				for _, id := range ids {
+					predicates = append(predicates, sqljson.ValueContains(entorder.FieldCouponIds, id))
+				}
+				s.Where(sql.Or(predicates...))
+			})
 		default:
 			return nil, fmt.Errorf("invalid order field")
 		}

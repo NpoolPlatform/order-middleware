@@ -58,8 +58,7 @@ func (h *Handler) SumOrderUnits(ctx context.Context) (string, error) {
 		}
 		_sum, err := handler.stmSum.Modify(func(s *sql.Selector) {
 			s.Select(sql.Sum(entorder.FieldUnitsV1))
-		}).
-			String(_ctx)
+		}).String(_ctx)
 		if err != nil {
 			return err
 		}
