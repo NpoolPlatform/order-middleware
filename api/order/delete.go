@@ -58,7 +58,7 @@ func (s *Server) DeleteOrders(ctx context.Context, in *npool.DeleteOrdersRequest
 	}
 	handler, err := order1.NewHandler(
 		ctx,
-		order1.WithReqs(reqs, true),
+		order1.WithReqs(reqs, false),
 	)
 	if err != nil {
 		logger.Sugar().Errorw(

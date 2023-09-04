@@ -2,6 +2,7 @@ package order
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
@@ -141,6 +142,9 @@ func (h *Handler) DeleteOrders(ctx context.Context) ([]*npool.Order, error) {
 
 	ids := []uuid.UUID{}
 	for _, req := range h.Reqs {
+		if req.ID == nil {
+			return nil, fmt.Errorf("invalid id")
+		}
 		ids = append(ids, *req.ID)
 	}
 	h.Conds = &ordercrud.Conds{
