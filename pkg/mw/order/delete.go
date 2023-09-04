@@ -6,6 +6,8 @@ import (
 	"time"
 
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
+	types "github.com/NpoolPlatform/message/npool/basetypes/order/v1"
+	npool "github.com/NpoolPlatform/message/npool/order/mw/v1/order"
 	ordercrud "github.com/NpoolPlatform/order-middleware/pkg/crud/order"
 	orderstatecrud "github.com/NpoolPlatform/order-middleware/pkg/crud/orderstate"
 	paymentcrud "github.com/NpoolPlatform/order-middleware/pkg/crud/payment"
@@ -14,9 +16,8 @@ import (
 	entorder "github.com/NpoolPlatform/order-middleware/pkg/db/ent/order"
 	entorderstate "github.com/NpoolPlatform/order-middleware/pkg/db/ent/orderstate"
 	entpayment "github.com/NpoolPlatform/order-middleware/pkg/db/ent/payment"
-	"github.com/google/uuid"
 
-	npool "github.com/NpoolPlatform/message/npool/order/mw/v1/order"
+	"github.com/google/uuid"
 )
 
 type deleteHandler struct {
@@ -108,6 +109,10 @@ func (h *Handler) DeleteOrder(ctx context.Context) (*npool.Order, error) {
 		return nil, nil
 	}
 
+	if info.OrderState != types.OrderState_OrderStateCreated {
+		return nil, fmt.Errorf("permission denied")
+	}
+
 	handler := &deleteHandler{
 		Handler:   h,
 		deletedAt: uint32(time.Now().Unix()),
@@ -153,6 +158,12 @@ func (h *Handler) DeleteOrders(ctx context.Context) ([]*npool.Order, error) {
 	infos, _, err := h.GetOrders(ctx)
 	if err != nil {
 		return nil, err
+	}
+
+	for _, info := range infos {
+		if info.OrderState != types.OrderState_OrderStateCreated {
+			return nil, fmt.Errorf("permission denied")
+		}
 	}
 
 	err = db.WithTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {
