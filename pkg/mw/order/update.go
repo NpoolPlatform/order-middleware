@@ -138,7 +138,8 @@ func (h *updateHandler) updateOrderState(ctx context.Context, tx *ent.Tx, req *o
 	}
 
 	if (req.UserSetCanceled != nil && !*req.UserSetCanceled) ||
-		(req.AdminSetCanceled != nil && !*req.AdminSetCanceled) {
+		(req.AdminSetCanceled != nil && !*req.AdminSetCanceled) ||
+		(req.UserSetPaid != nil && !*req.UserSetPaid) {
 		return fmt.Errorf("permission denied")
 	}
 
@@ -176,6 +177,14 @@ func (h *updateHandler) updateOrderState(ctx context.Context, tx *ent.Tx, req *o
 		case types.OrderState_OrderStateInService:
 		default:
 			return fmt.Errorf("invalid cancel state")
+		}
+	}
+
+	if req.UserSetPaid != nil && *req.UserSetPaid {
+		switch _orderType {
+		case types.OrderType_Normal:
+		default:
+			return fmt.Errorf("permissioned denied")
 		}
 	}
 
