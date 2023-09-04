@@ -112,6 +112,23 @@ func (h *updateHandler) updateOrderState(ctx context.Context, tx *ent.Tx, req *o
 		return err
 	}
 
+	if req.PaymentTransactionID != nil {
+		exist, err := tx.OrderState.
+			Query().
+			Where(
+				entorderstate.PaymentTransactionID(*req.PaymentTransactionID),
+				entorderstate.IDNEQ(orderstate.ID),
+				entorderstate.DeletedAt(0),
+			).
+			Exist(ctx)
+		if err != nil {
+			return err
+		}
+		if exist {
+			return fmt.Errorf("invalid paymenttransactionid")
+		}
+	}
+
 	order, err := tx.Order.
 		Query().
 		Where(
