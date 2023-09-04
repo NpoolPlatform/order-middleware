@@ -137,6 +137,11 @@ func (h *updateHandler) updateOrderState(ctx context.Context, tx *ent.Tx, req *o
 		endAt = *req.EndAt
 	}
 
+	if (req.UserSetCanceled != nil && !*req.UserSetCanceled) ||
+		(req.AdminSetCanceled != nil && !*req.AdminSetCanceled) {
+		return fmt.Errorf("permission denied")
+	}
+
 	_orderState := types.OrderState(types.OrderState_value[orderstate.OrderState])
 	if (req.UserSetCanceled != nil && *req.UserSetCanceled) ||
 		(req.AdminSetCanceled != nil && *req.AdminSetCanceled) {
