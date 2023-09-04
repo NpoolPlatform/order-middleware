@@ -72,7 +72,7 @@ func (h *Handler) ExistOrderConds(ctx context.Context) (bool, error) {
 	exist := false
 	var err error
 	err = db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
-		handler.stmExist, err = handler.QueryOrders(cli.Debug())
+		handler.stmExist, err = handler.QueryOrders(cli)
 		if err != nil {
 			return err
 		}

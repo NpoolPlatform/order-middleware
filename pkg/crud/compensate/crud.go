@@ -125,10 +125,16 @@ func SetQueryConds(q *ent.CompensateQuery, conds *Conds) (*ent.CompensateQuery, 
 			return nil, fmt.Errorf("invalid startat")
 		}
 		switch conds.StartAt.Op {
+		case cruder.LT:
+			q.Where(entcompensate.StartAtLT(start))
 		case cruder.LTE:
 			q.Where(entcompensate.StartAtLTE(start))
+		case cruder.GT:
+			q.Where(entcompensate.StartAtGT(start))
 		case cruder.GTE:
 			q.Where(entcompensate.StartAtGTE(start))
+		case cruder.EQ:
+			q.Where(entcompensate.StartAt(start))
 		default:
 			return nil, fmt.Errorf("invalid compensate field")
 		}
@@ -139,10 +145,16 @@ func SetQueryConds(q *ent.CompensateQuery, conds *Conds) (*ent.CompensateQuery, 
 			return nil, fmt.Errorf("invalid endat")
 		}
 		switch conds.EndAt.Op {
+		case cruder.LT:
+			q.Where(entcompensate.EndAtLT(end))
 		case cruder.LTE:
 			q.Where(entcompensate.EndAtLTE(end))
+		case cruder.GT:
+			q.Where(entcompensate.EndAtGT(end))
 		case cruder.GTE:
 			q.Where(entcompensate.EndAtGTE(end))
+		case cruder.EQ:
+			q.Where(entcompensate.EndAtEQ(end))
 		default:
 			return nil, fmt.Errorf("invalid compensate field")
 		}
