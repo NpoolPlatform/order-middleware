@@ -162,6 +162,11 @@ func (h *updateHandler) updateOrderState(ctx context.Context, tx *ent.Tx, req *o
 
 	_orderType := types.OrderType(types.OrderType_value[order.OrderType])
 	_orderState := types.OrderState(types.OrderState_value[orderstate.OrderState])
+	_cancelState := types.OrderState(types.OrderState_value[orderstate.CancelState])
+	if _cancelState != types.OrderState_DefaultOrderState && req.CancelState != nil {
+		return fmt.Errorf("permission denied")
+	}
+
 	switch _orderState {
 	case types.OrderState_OrderStateExpired:
 		fallthrough //nolint
