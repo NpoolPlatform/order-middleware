@@ -21,6 +21,9 @@ type createHandler struct {
 }
 
 func (h *createHandler) createCompensate(ctx context.Context, tx *ent.Tx) error {
+	if *h.EndAt <= *h.StartAt {
+		return fmt.Errorf("invalid startend")
+	}
 	if _, err := compensatecrud.CreateSet(
 		tx.Compensate.Create(),
 		&compensatecrud.Req{
