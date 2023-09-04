@@ -5,15 +5,15 @@ import (
 	"fmt"
 
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
-	"github.com/NpoolPlatform/order-middleware/pkg/db"
-	"github.com/NpoolPlatform/order-middleware/pkg/db/ent"
-	"github.com/shopspring/decimal"
-
 	types "github.com/NpoolPlatform/message/npool/basetypes/order/v1"
 	npool "github.com/NpoolPlatform/message/npool/order/mw/v1/order"
 	ordercrud "github.com/NpoolPlatform/order-middleware/pkg/crud/order"
 	orderstatecrud "github.com/NpoolPlatform/order-middleware/pkg/crud/orderstate"
 	paymentcrud "github.com/NpoolPlatform/order-middleware/pkg/crud/payment"
+	"github.com/NpoolPlatform/order-middleware/pkg/db"
+	"github.com/NpoolPlatform/order-middleware/pkg/db/ent"
+	entorder "github.com/NpoolPlatform/order-middleware/pkg/db/ent/order"
+	"github.com/shopspring/decimal"
 
 	"github.com/google/uuid"
 )
@@ -143,10 +143,50 @@ func (h *Handler) CreateOrder(ctx context.Context) (*npool.Order, error) {
 	return h.GetOrder(ctx)
 }
 
+func (h *createHandler) checkBatchParentOrder(ctx context.Context) error {
+	var parentOrder uuid.UUID
+	for _, req := range h.Reqs {
+		if req.ParentOrderID == nil {
+			continue
+		}
+		if parentOrder != uuid.Nil && *req.ParentOrderID != parentOrder {
+			return fmt.Errorf("invalid parentorder")
+		}
+		parentOrder = *req.ParentOrderID
+	}
+	if parentOrder == uuid.Nil {
+		return nil
+	}
+
+	return db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
+		exist, err := cli.
+			Order.
+			Query().
+			Where(
+				entorder.ID(parentOrder),
+				entorder.DeletedAt(0),
+			).
+			Exist(_ctx)
+		if err != nil {
+			return err
+		}
+		if !exist {
+			return fmt.Errorf("invalid parentorder")
+		}
+		return nil
+	})
+}
+
 func (h *Handler) CreateOrders(ctx context.Context) ([]*npool.Order, error) {
+
 	handler := &createHandler{
 		Handler: h,
 	}
+
+	if err := handler.checkBatchParentOrder(ctx); err != nil {
+		return nil, err
+	}
+
 	ids := []uuid.UUID{}
 	err := db.WithTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {
 		for _, req := range h.Reqs {
