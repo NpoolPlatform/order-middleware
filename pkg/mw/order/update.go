@@ -194,6 +194,7 @@ func (h *updateHandler) updateOrderState(ctx context.Context, tx *ent.Tx, req *o
 		switch _orderType {
 		case types.OrderType_Offline:
 		case types.OrderType_Airdrop:
+		case types.OrderType_Normal:
 		default:
 			return fmt.Errorf("permission denied")
 		}
