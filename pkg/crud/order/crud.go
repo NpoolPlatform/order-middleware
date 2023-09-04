@@ -31,7 +31,7 @@ type Req struct {
 	DurationDays         *uint32
 	OrderType            *basetypes.OrderType
 	InvestmentType       *basetypes.InvestmentType
-	CouponIDs            *[]uuid.UUID
+	CouponIDs            []uuid.UUID
 	PaymentType          *basetypes.PaymentType
 	PaymentCoinTypeID    *uuid.UUID
 	CoinTypeID           *uuid.UUID
@@ -94,8 +94,8 @@ func CreateSet(c *ent.OrderCreate, req *Req) *ent.OrderCreate {
 	if req.InvestmentType != nil {
 		c.SetInvestmentType(req.InvestmentType.String())
 	}
-	if req.CouponIDs != nil {
-		c.SetCouponIds(*req.CouponIDs)
+	if len(req.CouponIDs) > 0 {
+		c.SetCouponIds(req.CouponIDs)
 	}
 	if req.PaymentType != nil {
 		c.SetPaymentType(req.PaymentType.String())

@@ -1435,7 +1435,7 @@ func WithReqs(reqs []*npool.OrderReq, must bool) func(context.Context, *Handler)
 					}
 					_ids = append(_ids, _id)
 				}
-				_req.CouponIDs = &_ids
+				_req.CouponIDs = _ids
 			}
 			if req.OrderState != nil {
 				switch *req.OrderState {
