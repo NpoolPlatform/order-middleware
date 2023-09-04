@@ -21,8 +21,12 @@ type updateHandler struct {
 }
 
 var stateAllowMap = map[basetypes.OrderState][]basetypes.OrderState{
-	basetypes.OrderState_OrderStateWaitPayment:                  {basetypes.OrderState_OrderStateCheckPayment},
-	basetypes.OrderState_OrderStateCheckPayment:                 {basetypes.OrderState_OrderStatePaymentTransferReceived, basetypes.OrderState_OrderStatePreCancel, basetypes.OrderState_OrderStatePaymentTimeout}, //nolint
+	basetypes.OrderState_OrderStateWaitPayment: {basetypes.OrderState_OrderStateCheckPayment},
+	basetypes.OrderState_OrderStateCheckPayment: {
+		basetypes.OrderState_OrderStatePaymentTransferReceived,
+		basetypes.OrderState_OrderStatePreCancel,
+		basetypes.OrderState_OrderStatePaymentTimeout,
+	},
 	basetypes.OrderState_OrderStatePaymentTransferReceived:      {basetypes.OrderState_OrderStatePaymentTransferReceivedCheck},
 	basetypes.OrderState_OrderStatePaymentTransferReceivedCheck: {basetypes.OrderState_OrderStatePaymentTransferBookKept},
 	basetypes.OrderState_OrderStatePaymentTransferBookKept:      {basetypes.OrderState_OrderStatePaymentTransferBookKeptCheck},
