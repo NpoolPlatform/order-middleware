@@ -172,6 +172,7 @@ func (h *baseQueryHandler) QueryJoinOrderState(s *sql.Selector) error {
 		sql.As(t.C(entorderstate.FieldLastBenefitAt), "last_benefit_at"),
 		sql.As(t.C(entorderstate.FieldBenefitState), "benefit_state"),
 		sql.As(t.C(entorderstate.FieldUserSetPaid), "user_set_paid"),
+		sql.As(t.C(entorderstate.FieldAdminSetCanceled), "admin_set_canceled"),
 		sql.As(t.C(entorderstate.FieldUserSetCanceled), "user_set_canceled"),
 		sql.As(t.C(entorderstate.FieldPaymentTransactionID), "payment_transaction_id"),
 		sql.As(t.C(entorderstate.FieldPaymentFinishAmount), "payment_finish_amount"),
