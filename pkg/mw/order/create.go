@@ -156,6 +156,13 @@ func (h *Handler) CreateOrders(ctx context.Context) ([]*npool.Order, error) {
 				req.Req.ID = &id
 				req.OrderStateReq.OrderID = &id
 			}
+			if req.PaymentReq != nil {
+				id1 := uuid.New()
+				req.Req.PaymentID = &id1
+			}
+			if *req.PaymentType == types.PaymentType_PayWithParentOrder && req.ParentOrderID == nil {
+				return fmt.Errorf("invalid parentorderid")
+			}
 			if err := handler.createOrder(ctx, tx, req.Req); err != nil {
 				return err
 			}
@@ -168,6 +175,7 @@ func (h *Handler) CreateOrders(ctx context.Context) ([]*npool.Order, error) {
 				continue
 			}
 			req.PaymentReq.OrderID = req.Req.ID
+			req.PaymentReq.ID = req.Req.PaymentID
 			if err := handler.createPayment(ctx, tx, req.PaymentReq); err != nil {
 				return err
 			}
