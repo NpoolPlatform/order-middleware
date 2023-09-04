@@ -292,7 +292,7 @@ func SetQueryConds(q *ent.OrderQuery, conds *Conds) (*ent.OrderQuery, error) {
 		for _, _type := range paymenttypes {
 			_types = append(_types, _type.String())
 		}
-		switch conds.PaymentType.Op {
+		switch conds.PaymentTypes.Op {
 		case cruder.IN:
 			q.Where(entorder.PaymentTypeIn(_types...))
 		default:
