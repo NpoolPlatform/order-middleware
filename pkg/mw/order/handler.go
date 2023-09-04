@@ -171,11 +171,21 @@ func WithParentOrderID(id *string, must bool) func(context.Context, *Handler) er
 			}
 			return nil
 		}
-		_id, err := uuid.Parse(*id)
+		handler, err := NewHandler(
+			ctx,
+			WithID(id, true),
+		)
 		if err != nil {
 			return err
 		}
-		h.ParentOrderID = &_id
+		exist, err := handler.ExistOrder(ctx)
+		if err != nil {
+			return err
+		}
+		if !exist {
+			return fmt.Errorf("invalid parentorderid")
+		}
+		h.ParentOrderID = handler.ID
 		return nil
 	}
 }
