@@ -358,12 +358,17 @@ func WithCouponIDs(ids []string, must bool) func(context.Context, *Handler) erro
 			return nil
 		}
 		_ids := []uuid.UUID{}
+		idMap := map[uuid.UUID]struct{}{}
 		for _, id := range ids {
 			_id, err := uuid.Parse(id)
 			if err != nil {
 				return err
 			}
 			_ids = append(_ids, _id)
+			idMap[_id] = struct{}{}
+		}
+		if len(_ids) != len(idMap) {
+			return fmt.Errorf("invalid couponids")
 		}
 		h.CouponIDs = _ids
 		return nil
