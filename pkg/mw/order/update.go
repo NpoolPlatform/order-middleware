@@ -142,15 +142,36 @@ func (h *updateHandler) updateOrderState(ctx context.Context, tx *ent.Tx, req *o
 		return fmt.Errorf("permission denied")
 	}
 
+	_orderType := types.OrderType(types.OrderType_value[order.OrderType])
 	_orderState := types.OrderState(types.OrderState_value[orderstate.OrderState])
-	if (req.UserSetCanceled != nil && *req.UserSetCanceled) ||
-		(req.AdminSetCanceled != nil && *req.AdminSetCanceled) {
-		if req.OrderState != nil {
+
+	if req.UserSetCanceled != nil && *req.UserSetCanceled {
+		switch _orderType {
+		case types.OrderType_Normal:
+		default:
 			return fmt.Errorf("permission denied")
 		}
 		switch _orderState {
 		case types.OrderState_OrderStateWaitPayment:
 		case types.OrderState_OrderStateCheckPayment:
+		case types.OrderState_OrderStatePaid:
+		case types.OrderState_OrderStateInService:
+		default:
+			return fmt.Errorf("invalid cancel state")
+		}
+	}
+
+	if req.AdminSetCanceled != nil && *req.AdminSetCanceled {
+		if req.OrderState != nil {
+			return fmt.Errorf("permission denied")
+		}
+		switch _orderType {
+		case types.OrderType_Offline:
+		case types.OrderType_Airdrop:
+		default:
+			return fmt.Errorf("permission denied")
+		}
+		switch _orderState {
 		case types.OrderState_OrderStatePaid:
 		case types.OrderState_OrderStateInService:
 		default:
