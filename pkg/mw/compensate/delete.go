@@ -6,6 +6,7 @@ import (
 	"time"
 
 	timedef "github.com/NpoolPlatform/go-service-framework/pkg/const/time"
+	types "github.com/NpoolPlatform/message/npool/basetypes/order/v1"
 	npool "github.com/NpoolPlatform/message/npool/order/mw/v1/compensate"
 	compensatecrud "github.com/NpoolPlatform/order-middleware/pkg/crud/compensate"
 	orderstatecrud "github.com/NpoolPlatform/order-middleware/pkg/crud/orderstate"
@@ -44,8 +45,16 @@ func (h *deleteHandler) updateOrder(ctx context.Context, tx *ent.Tx) error {
 		return err
 	}
 
+	now := uint32(time.Now().Unix())
+	if orderstate.OrderState != types.OrderState_OrderStateInService.String() {
+		return fmt.Errorf("order not inservice")
+	}
+	if orderstate.EndAt <= now {
+		return fmt.Errorf("order expired")
+	}
+
 	endAt := orderstate.EndAt - (*h.EndAt - *h.StartAt)
-	if endAt <= orderstate.StartAt || endAt < uint32(time.Now().Unix()) {
+	if endAt <= orderstate.StartAt || endAt < now {
 		return fmt.Errorf("invalid compensate")
 	}
 	if orderstate.CompensateHours < (*h.EndAt-*h.StartAt)/timedef.SecondsPerHour {
