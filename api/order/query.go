@@ -84,3 +84,26 @@ func (s *Server) SumOrderUnits(ctx context.Context, in *npool.SumOrderUnitsReque
 		Info: count,
 	}, nil
 }
+
+func (s *Server) CountOrders(ctx context.Context, in *npool.CountOrdersRequest) (*npool.CountOrdersResponse, error) {
+	handler, err := order1.NewHandler(
+		ctx,
+		order1.WithConds(in.GetConds()),
+	)
+	if err != nil {
+		logger.Sugar().Errorw(
+			"CountOrders",
+			"In", in,
+			"error", err,
+		)
+		return &npool.CountOrdersResponse{}, status.Error(codes.InvalidArgument, err.Error())
+	}
+	count, err := handler.CountOrders(ctx)
+	if err != nil {
+		return &npool.CountOrdersResponse{}, status.Error(codes.Internal, err.Error())
+	}
+
+	return &npool.CountOrdersResponse{
+		Info: count,
+	}, nil
+}

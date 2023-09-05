@@ -229,3 +229,20 @@ func DeleteOrder(ctx context.Context, in *npool.OrderReq) (*npool.Order, error) 
 	}
 	return info.(*npool.Order), nil
 }
+
+func CountOrders(ctx context.Context, conds *npool.Conds) (uint32, error) {
+	count, err := do(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
+		resp, err := cli.CountOrders(ctx, &npool.CountOrdersRequest{
+			Conds: conds,
+		})
+		if err != nil {
+			return false, err
+		}
+
+		return resp.Info, nil
+	})
+	if err != nil {
+		return 0, err
+	}
+	return count.(uint32), err
+}
