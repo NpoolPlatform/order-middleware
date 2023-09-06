@@ -634,7 +634,6 @@ func WithOrderState(state *basetypes.OrderState, must bool) func(context.Context
 	}
 }
 
-//nolint:gocyclo
 func WithCancelState(state *basetypes.OrderState, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if state == nil {

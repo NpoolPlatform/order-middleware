@@ -98,7 +98,7 @@ func (h *updateHandler) checkOrderStateRollback(req *orderstatecrud.Req) (*types
 	return rollbackState, nil
 }
 
-//nolint:gocyclo
+//nolint:funlen,gocyclo
 func (h *updateHandler) updateOrderState(ctx context.Context, tx *ent.Tx, req *orderstatecrud.Req, rollback bool) error {
 	orderstate, err := tx.OrderState.
 		Query().

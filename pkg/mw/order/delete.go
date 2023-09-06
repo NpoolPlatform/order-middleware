@@ -25,7 +25,6 @@ type deleteHandler struct {
 	deletedAt uint32
 }
 
-//nolint:dupl
 func (h *deleteHandler) deleteOrder(ctx context.Context, tx *ent.Tx, id uuid.UUID) error {
 	order, err := tx.Order.
 		Query().
@@ -49,7 +48,6 @@ func (h *deleteHandler) deleteOrder(ctx context.Context, tx *ent.Tx, id uuid.UUI
 	return nil
 }
 
-//nolint:dupl
 func (h *deleteHandler) deleteOrderState(ctx context.Context, tx *ent.Tx, orderID uuid.UUID) error {
 	orderstate, err := tx.OrderState.
 		Query().
@@ -73,7 +71,6 @@ func (h *deleteHandler) deleteOrderState(ctx context.Context, tx *ent.Tx, orderI
 	return nil
 }
 
-//nolint:dupl
 func (h *deleteHandler) deletePayment(ctx context.Context, tx *ent.Tx, orderID uuid.UUID) error {
 	payment, err := tx.Payment.
 		Query().
