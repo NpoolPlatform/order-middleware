@@ -35,6 +35,8 @@ type OrderState struct {
 	StartAt uint32 `json:"start_at,omitempty"`
 	// EndAt holds the value of the "end_at" field.
 	EndAt uint32 `json:"end_at,omitempty"`
+	// PaidAt holds the value of the "paid_at" field.
+	PaidAt uint32 `json:"paid_at,omitempty"`
 	// LastBenefitAt holds the value of the "last_benefit_at" field.
 	LastBenefitAt uint32 `json:"last_benefit_at,omitempty"`
 	// BenefitState holds the value of the "benefit_state" field.
@@ -66,7 +68,7 @@ func (*OrderState) scanValues(columns []string) ([]interface{}, error) {
 			values[i] = new(decimal.Decimal)
 		case orderstate.FieldUserSetPaid, orderstate.FieldUserSetCanceled, orderstate.FieldAdminSetCanceled:
 			values[i] = new(sql.NullBool)
-		case orderstate.FieldCreatedAt, orderstate.FieldUpdatedAt, orderstate.FieldDeletedAt, orderstate.FieldStartAt, orderstate.FieldEndAt, orderstate.FieldLastBenefitAt, orderstate.FieldOutofgasHours, orderstate.FieldCompensateHours:
+		case orderstate.FieldCreatedAt, orderstate.FieldUpdatedAt, orderstate.FieldDeletedAt, orderstate.FieldStartAt, orderstate.FieldEndAt, orderstate.FieldPaidAt, orderstate.FieldLastBenefitAt, orderstate.FieldOutofgasHours, orderstate.FieldCompensateHours:
 			values[i] = new(sql.NullInt64)
 		case orderstate.FieldOrderState, orderstate.FieldCancelState, orderstate.FieldStartMode, orderstate.FieldBenefitState, orderstate.FieldPaymentTransactionID, orderstate.FieldPaymentState:
 			values[i] = new(sql.NullString)
@@ -146,6 +148,12 @@ func (os *OrderState) assignValues(columns []string, values []interface{}) error
 				return fmt.Errorf("unexpected type %T for field end_at", values[i])
 			} else if value.Valid {
 				os.EndAt = uint32(value.Int64)
+			}
+		case orderstate.FieldPaidAt:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field paid_at", values[i])
+			} else if value.Valid {
+				os.PaidAt = uint32(value.Int64)
 			}
 		case orderstate.FieldLastBenefitAt:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
@@ -261,6 +269,9 @@ func (os *OrderState) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("end_at=")
 	builder.WriteString(fmt.Sprintf("%v", os.EndAt))
+	builder.WriteString(", ")
+	builder.WriteString("paid_at=")
+	builder.WriteString(fmt.Sprintf("%v", os.PaidAt))
 	builder.WriteString(", ")
 	builder.WriteString("last_benefit_at=")
 	builder.WriteString(fmt.Sprintf("%v", os.LastBenefitAt))

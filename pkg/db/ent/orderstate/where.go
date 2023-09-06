@@ -143,6 +143,13 @@ func EndAt(v uint32) predicate.OrderState {
 	})
 }
 
+// PaidAt applies equality check predicate on the "paid_at" field. It's identical to PaidAtEQ.
+func PaidAt(v uint32) predicate.OrderState {
+	return predicate.OrderState(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldPaidAt), v))
+	})
+}
+
 // LastBenefitAt applies equality check predicate on the "last_benefit_at" field. It's identical to LastBenefitAtEQ.
 func LastBenefitAt(v uint32) predicate.OrderState {
 	return predicate.OrderState(func(s *sql.Selector) {
@@ -961,6 +968,84 @@ func EndAtIsNil() predicate.OrderState {
 func EndAtNotNil() predicate.OrderState {
 	return predicate.OrderState(func(s *sql.Selector) {
 		s.Where(sql.NotNull(s.C(FieldEndAt)))
+	})
+}
+
+// PaidAtEQ applies the EQ predicate on the "paid_at" field.
+func PaidAtEQ(v uint32) predicate.OrderState {
+	return predicate.OrderState(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldPaidAt), v))
+	})
+}
+
+// PaidAtNEQ applies the NEQ predicate on the "paid_at" field.
+func PaidAtNEQ(v uint32) predicate.OrderState {
+	return predicate.OrderState(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldPaidAt), v))
+	})
+}
+
+// PaidAtIn applies the In predicate on the "paid_at" field.
+func PaidAtIn(vs ...uint32) predicate.OrderState {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.OrderState(func(s *sql.Selector) {
+		s.Where(sql.In(s.C(FieldPaidAt), v...))
+	})
+}
+
+// PaidAtNotIn applies the NotIn predicate on the "paid_at" field.
+func PaidAtNotIn(vs ...uint32) predicate.OrderState {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.OrderState(func(s *sql.Selector) {
+		s.Where(sql.NotIn(s.C(FieldPaidAt), v...))
+	})
+}
+
+// PaidAtGT applies the GT predicate on the "paid_at" field.
+func PaidAtGT(v uint32) predicate.OrderState {
+	return predicate.OrderState(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldPaidAt), v))
+	})
+}
+
+// PaidAtGTE applies the GTE predicate on the "paid_at" field.
+func PaidAtGTE(v uint32) predicate.OrderState {
+	return predicate.OrderState(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldPaidAt), v))
+	})
+}
+
+// PaidAtLT applies the LT predicate on the "paid_at" field.
+func PaidAtLT(v uint32) predicate.OrderState {
+	return predicate.OrderState(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldPaidAt), v))
+	})
+}
+
+// PaidAtLTE applies the LTE predicate on the "paid_at" field.
+func PaidAtLTE(v uint32) predicate.OrderState {
+	return predicate.OrderState(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldPaidAt), v))
+	})
+}
+
+// PaidAtIsNil applies the IsNil predicate on the "paid_at" field.
+func PaidAtIsNil() predicate.OrderState {
+	return predicate.OrderState(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldPaidAt)))
+	})
+}
+
+// PaidAtNotNil applies the NotNil predicate on the "paid_at" field.
+func PaidAtNotNil() predicate.OrderState {
+	return predicate.OrderState(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldPaidAt)))
 	})
 }
 

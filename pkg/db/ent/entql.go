@@ -100,6 +100,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			orderstate.FieldStartMode:            {Type: field.TypeString, Column: orderstate.FieldStartMode},
 			orderstate.FieldStartAt:              {Type: field.TypeUint32, Column: orderstate.FieldStartAt},
 			orderstate.FieldEndAt:                {Type: field.TypeUint32, Column: orderstate.FieldEndAt},
+			orderstate.FieldPaidAt:               {Type: field.TypeUint32, Column: orderstate.FieldPaidAt},
 			orderstate.FieldLastBenefitAt:        {Type: field.TypeUint32, Column: orderstate.FieldLastBenefitAt},
 			orderstate.FieldBenefitState:         {Type: field.TypeString, Column: orderstate.FieldBenefitState},
 			orderstate.FieldUserSetPaid:          {Type: field.TypeBool, Column: orderstate.FieldUserSetPaid},
@@ -507,6 +508,11 @@ func (f *OrderStateFilter) WhereStartAt(p entql.Uint32P) {
 // WhereEndAt applies the entql uint32 predicate on the end_at field.
 func (f *OrderStateFilter) WhereEndAt(p entql.Uint32P) {
 	f.Where(p.Field(orderstate.FieldEndAt))
+}
+
+// WherePaidAt applies the entql uint32 predicate on the paid_at field.
+func (f *OrderStateFilter) WherePaidAt(p entql.Uint32P) {
+	f.Where(p.Field(orderstate.FieldPaidAt))
 }
 
 // WhereLastBenefitAt applies the entql uint32 predicate on the last_benefit_at field.

@@ -205,6 +205,33 @@ func (osu *OrderStateUpdate) ClearEndAt() *OrderStateUpdate {
 	return osu
 }
 
+// SetPaidAt sets the "paid_at" field.
+func (osu *OrderStateUpdate) SetPaidAt(u uint32) *OrderStateUpdate {
+	osu.mutation.ResetPaidAt()
+	osu.mutation.SetPaidAt(u)
+	return osu
+}
+
+// SetNillablePaidAt sets the "paid_at" field if the given value is not nil.
+func (osu *OrderStateUpdate) SetNillablePaidAt(u *uint32) *OrderStateUpdate {
+	if u != nil {
+		osu.SetPaidAt(*u)
+	}
+	return osu
+}
+
+// AddPaidAt adds u to the "paid_at" field.
+func (osu *OrderStateUpdate) AddPaidAt(u int32) *OrderStateUpdate {
+	osu.mutation.AddPaidAt(u)
+	return osu
+}
+
+// ClearPaidAt clears the value of the "paid_at" field.
+func (osu *OrderStateUpdate) ClearPaidAt() *OrderStateUpdate {
+	osu.mutation.ClearPaidAt()
+	return osu
+}
+
 // SetLastBenefitAt sets the "last_benefit_at" field.
 func (osu *OrderStateUpdate) SetLastBenefitAt(u uint32) *OrderStateUpdate {
 	osu.mutation.ResetLastBenefitAt()
@@ -652,6 +679,26 @@ func (osu *OrderStateUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: orderstate.FieldEndAt,
 		})
 	}
+	if value, ok := osu.mutation.PaidAt(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeUint32,
+			Value:  value,
+			Column: orderstate.FieldPaidAt,
+		})
+	}
+	if value, ok := osu.mutation.AddedPaidAt(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeUint32,
+			Value:  value,
+			Column: orderstate.FieldPaidAt,
+		})
+	}
+	if osu.mutation.PaidAtCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeUint32,
+			Column: orderstate.FieldPaidAt,
+		})
+	}
 	if value, ok := osu.mutation.LastBenefitAt(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeUint32,
@@ -996,6 +1043,33 @@ func (osuo *OrderStateUpdateOne) AddEndAt(u int32) *OrderStateUpdateOne {
 // ClearEndAt clears the value of the "end_at" field.
 func (osuo *OrderStateUpdateOne) ClearEndAt() *OrderStateUpdateOne {
 	osuo.mutation.ClearEndAt()
+	return osuo
+}
+
+// SetPaidAt sets the "paid_at" field.
+func (osuo *OrderStateUpdateOne) SetPaidAt(u uint32) *OrderStateUpdateOne {
+	osuo.mutation.ResetPaidAt()
+	osuo.mutation.SetPaidAt(u)
+	return osuo
+}
+
+// SetNillablePaidAt sets the "paid_at" field if the given value is not nil.
+func (osuo *OrderStateUpdateOne) SetNillablePaidAt(u *uint32) *OrderStateUpdateOne {
+	if u != nil {
+		osuo.SetPaidAt(*u)
+	}
+	return osuo
+}
+
+// AddPaidAt adds u to the "paid_at" field.
+func (osuo *OrderStateUpdateOne) AddPaidAt(u int32) *OrderStateUpdateOne {
+	osuo.mutation.AddPaidAt(u)
+	return osuo
+}
+
+// ClearPaidAt clears the value of the "paid_at" field.
+func (osuo *OrderStateUpdateOne) ClearPaidAt() *OrderStateUpdateOne {
+	osuo.mutation.ClearPaidAt()
 	return osuo
 }
 
@@ -1474,6 +1548,26 @@ func (osuo *OrderStateUpdateOne) sqlSave(ctx context.Context) (_node *OrderState
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeUint32,
 			Column: orderstate.FieldEndAt,
+		})
+	}
+	if value, ok := osuo.mutation.PaidAt(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeUint32,
+			Value:  value,
+			Column: orderstate.FieldPaidAt,
+		})
+	}
+	if value, ok := osuo.mutation.AddedPaidAt(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeUint32,
+			Value:  value,
+			Column: orderstate.FieldPaidAt,
+		})
+	}
+	if osuo.mutation.PaidAtCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeUint32,
+			Column: orderstate.FieldPaidAt,
 		})
 	}
 	if value, ok := osuo.mutation.LastBenefitAt(); ok {

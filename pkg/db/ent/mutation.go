@@ -3275,6 +3275,8 @@ type OrderStateMutation struct {
 	addstart_at            *int32
 	end_at                 *uint32
 	addend_at              *int32
+	paid_at                *uint32
+	addpaid_at             *int32
 	last_benefit_at        *uint32
 	addlast_benefit_at     *int32
 	benefit_state          *string
@@ -3889,6 +3891,76 @@ func (m *OrderStateMutation) ResetEndAt() {
 	delete(m.clearedFields, orderstate.FieldEndAt)
 }
 
+// SetPaidAt sets the "paid_at" field.
+func (m *OrderStateMutation) SetPaidAt(u uint32) {
+	m.paid_at = &u
+	m.addpaid_at = nil
+}
+
+// PaidAt returns the value of the "paid_at" field in the mutation.
+func (m *OrderStateMutation) PaidAt() (r uint32, exists bool) {
+	v := m.paid_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldPaidAt returns the old "paid_at" field's value of the OrderState entity.
+// If the OrderState object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *OrderStateMutation) OldPaidAt(ctx context.Context) (v uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldPaidAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldPaidAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldPaidAt: %w", err)
+	}
+	return oldValue.PaidAt, nil
+}
+
+// AddPaidAt adds u to the "paid_at" field.
+func (m *OrderStateMutation) AddPaidAt(u int32) {
+	if m.addpaid_at != nil {
+		*m.addpaid_at += u
+	} else {
+		m.addpaid_at = &u
+	}
+}
+
+// AddedPaidAt returns the value that was added to the "paid_at" field in this mutation.
+func (m *OrderStateMutation) AddedPaidAt() (r int32, exists bool) {
+	v := m.addpaid_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearPaidAt clears the value of the "paid_at" field.
+func (m *OrderStateMutation) ClearPaidAt() {
+	m.paid_at = nil
+	m.addpaid_at = nil
+	m.clearedFields[orderstate.FieldPaidAt] = struct{}{}
+}
+
+// PaidAtCleared returns if the "paid_at" field was cleared in this mutation.
+func (m *OrderStateMutation) PaidAtCleared() bool {
+	_, ok := m.clearedFields[orderstate.FieldPaidAt]
+	return ok
+}
+
+// ResetPaidAt resets all changes to the "paid_at" field.
+func (m *OrderStateMutation) ResetPaidAt() {
+	m.paid_at = nil
+	m.addpaid_at = nil
+	delete(m.clearedFields, orderstate.FieldPaidAt)
+}
+
 // SetLastBenefitAt sets the "last_benefit_at" field.
 func (m *OrderStateMutation) SetLastBenefitAt(u uint32) {
 	m.last_benefit_at = &u
@@ -4461,7 +4533,7 @@ func (m *OrderStateMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *OrderStateMutation) Fields() []string {
-	fields := make([]string, 0, 19)
+	fields := make([]string, 0, 20)
 	if m.created_at != nil {
 		fields = append(fields, orderstate.FieldCreatedAt)
 	}
@@ -4488,6 +4560,9 @@ func (m *OrderStateMutation) Fields() []string {
 	}
 	if m.end_at != nil {
 		fields = append(fields, orderstate.FieldEndAt)
+	}
+	if m.paid_at != nil {
+		fields = append(fields, orderstate.FieldPaidAt)
 	}
 	if m.last_benefit_at != nil {
 		fields = append(fields, orderstate.FieldLastBenefitAt)
@@ -4545,6 +4620,8 @@ func (m *OrderStateMutation) Field(name string) (ent.Value, bool) {
 		return m.StartAt()
 	case orderstate.FieldEndAt:
 		return m.EndAt()
+	case orderstate.FieldPaidAt:
+		return m.PaidAt()
 	case orderstate.FieldLastBenefitAt:
 		return m.LastBenefitAt()
 	case orderstate.FieldBenefitState:
@@ -4592,6 +4669,8 @@ func (m *OrderStateMutation) OldField(ctx context.Context, name string) (ent.Val
 		return m.OldStartAt(ctx)
 	case orderstate.FieldEndAt:
 		return m.OldEndAt(ctx)
+	case orderstate.FieldPaidAt:
+		return m.OldPaidAt(ctx)
 	case orderstate.FieldLastBenefitAt:
 		return m.OldLastBenefitAt(ctx)
 	case orderstate.FieldBenefitState:
@@ -4683,6 +4762,13 @@ func (m *OrderStateMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetEndAt(v)
+		return nil
+	case orderstate.FieldPaidAt:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetPaidAt(v)
 		return nil
 	case orderstate.FieldLastBenefitAt:
 		v, ok := value.(uint32)
@@ -4777,6 +4863,9 @@ func (m *OrderStateMutation) AddedFields() []string {
 	if m.addend_at != nil {
 		fields = append(fields, orderstate.FieldEndAt)
 	}
+	if m.addpaid_at != nil {
+		fields = append(fields, orderstate.FieldPaidAt)
+	}
 	if m.addlast_benefit_at != nil {
 		fields = append(fields, orderstate.FieldLastBenefitAt)
 	}
@@ -4804,6 +4893,8 @@ func (m *OrderStateMutation) AddedField(name string) (ent.Value, bool) {
 		return m.AddedStartAt()
 	case orderstate.FieldEndAt:
 		return m.AddedEndAt()
+	case orderstate.FieldPaidAt:
+		return m.AddedPaidAt()
 	case orderstate.FieldLastBenefitAt:
 		return m.AddedLastBenefitAt()
 	case orderstate.FieldOutofgasHours:
@@ -4854,6 +4945,13 @@ func (m *OrderStateMutation) AddField(name string, value ent.Value) error {
 		}
 		m.AddEndAt(v)
 		return nil
+	case orderstate.FieldPaidAt:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddPaidAt(v)
+		return nil
 	case orderstate.FieldLastBenefitAt:
 		v, ok := value.(int32)
 		if !ok {
@@ -4897,6 +4995,9 @@ func (m *OrderStateMutation) ClearedFields() []string {
 	}
 	if m.FieldCleared(orderstate.FieldEndAt) {
 		fields = append(fields, orderstate.FieldEndAt)
+	}
+	if m.FieldCleared(orderstate.FieldPaidAt) {
+		fields = append(fields, orderstate.FieldPaidAt)
 	}
 	if m.FieldCleared(orderstate.FieldLastBenefitAt) {
 		fields = append(fields, orderstate.FieldLastBenefitAt)
@@ -4956,6 +5057,9 @@ func (m *OrderStateMutation) ClearField(name string) error {
 		return nil
 	case orderstate.FieldEndAt:
 		m.ClearEndAt()
+		return nil
+	case orderstate.FieldPaidAt:
+		m.ClearPaidAt()
 		return nil
 	case orderstate.FieldLastBenefitAt:
 		m.ClearLastBenefitAt()
@@ -5021,6 +5125,9 @@ func (m *OrderStateMutation) ResetField(name string) error {
 		return nil
 	case orderstate.FieldEndAt:
 		m.ResetEndAt()
+		return nil
+	case orderstate.FieldPaidAt:
+		m.ResetPaidAt()
 		return nil
 	case orderstate.FieldLastBenefitAt:
 		m.ResetLastBenefitAt()

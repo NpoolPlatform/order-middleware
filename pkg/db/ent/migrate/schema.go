@@ -76,6 +76,7 @@ var (
 		{Name: "start_mode", Type: field.TypeString, Nullable: true, Default: "OrderStartConfirmed"},
 		{Name: "start_at", Type: field.TypeUint32, Nullable: true, Default: 0},
 		{Name: "end_at", Type: field.TypeUint32, Nullable: true, Default: 0},
+		{Name: "paid_at", Type: field.TypeUint32, Nullable: true, Default: 0},
 		{Name: "last_benefit_at", Type: field.TypeUint32, Nullable: true, Default: 0},
 		{Name: "benefit_state", Type: field.TypeString, Nullable: true, Default: "BenefitWait"},
 		{Name: "user_set_paid", Type: field.TypeBool, Nullable: true, Default: false},

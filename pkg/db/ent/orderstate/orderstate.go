@@ -31,6 +31,8 @@ const (
 	FieldStartAt = "start_at"
 	// FieldEndAt holds the string denoting the end_at field in the database.
 	FieldEndAt = "end_at"
+	// FieldPaidAt holds the string denoting the paid_at field in the database.
+	FieldPaidAt = "paid_at"
 	// FieldLastBenefitAt holds the string denoting the last_benefit_at field in the database.
 	FieldLastBenefitAt = "last_benefit_at"
 	// FieldBenefitState holds the string denoting the benefit_state field in the database.
@@ -67,6 +69,7 @@ var Columns = []string{
 	FieldStartMode,
 	FieldStartAt,
 	FieldEndAt,
+	FieldPaidAt,
 	FieldLastBenefitAt,
 	FieldBenefitState,
 	FieldUserSetPaid,
@@ -116,6 +119,8 @@ var (
 	DefaultStartAt uint32
 	// DefaultEndAt holds the default value on creation for the "end_at" field.
 	DefaultEndAt uint32
+	// DefaultPaidAt holds the default value on creation for the "paid_at" field.
+	DefaultPaidAt uint32
 	// DefaultLastBenefitAt holds the default value on creation for the "last_benefit_at" field.
 	DefaultLastBenefitAt uint32
 	// DefaultBenefitState holds the default value on creation for the "benefit_state" field.

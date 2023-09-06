@@ -51,6 +51,10 @@ func (OrderState) Fields() []ent.Field {
 			Optional().
 			Default(0),
 		field.
+			Uint32("paid_at").
+			Optional().
+			Default(0),
+		field.
 			Uint32("last_benefit_at").
 			Optional().
 			Default(0),

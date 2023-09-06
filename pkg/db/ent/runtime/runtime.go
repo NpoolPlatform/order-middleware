@@ -226,44 +226,48 @@ func init() {
 	orderstateDescEndAt := orderstateFields[6].Descriptor()
 	// orderstate.DefaultEndAt holds the default value on creation for the end_at field.
 	orderstate.DefaultEndAt = orderstateDescEndAt.Default.(uint32)
+	// orderstateDescPaidAt is the schema descriptor for paid_at field.
+	orderstateDescPaidAt := orderstateFields[7].Descriptor()
+	// orderstate.DefaultPaidAt holds the default value on creation for the paid_at field.
+	orderstate.DefaultPaidAt = orderstateDescPaidAt.Default.(uint32)
 	// orderstateDescLastBenefitAt is the schema descriptor for last_benefit_at field.
-	orderstateDescLastBenefitAt := orderstateFields[7].Descriptor()
+	orderstateDescLastBenefitAt := orderstateFields[8].Descriptor()
 	// orderstate.DefaultLastBenefitAt holds the default value on creation for the last_benefit_at field.
 	orderstate.DefaultLastBenefitAt = orderstateDescLastBenefitAt.Default.(uint32)
 	// orderstateDescBenefitState is the schema descriptor for benefit_state field.
-	orderstateDescBenefitState := orderstateFields[8].Descriptor()
+	orderstateDescBenefitState := orderstateFields[9].Descriptor()
 	// orderstate.DefaultBenefitState holds the default value on creation for the benefit_state field.
 	orderstate.DefaultBenefitState = orderstateDescBenefitState.Default.(string)
 	// orderstateDescUserSetPaid is the schema descriptor for user_set_paid field.
-	orderstateDescUserSetPaid := orderstateFields[9].Descriptor()
+	orderstateDescUserSetPaid := orderstateFields[10].Descriptor()
 	// orderstate.DefaultUserSetPaid holds the default value on creation for the user_set_paid field.
 	orderstate.DefaultUserSetPaid = orderstateDescUserSetPaid.Default.(bool)
 	// orderstateDescUserSetCanceled is the schema descriptor for user_set_canceled field.
-	orderstateDescUserSetCanceled := orderstateFields[10].Descriptor()
+	orderstateDescUserSetCanceled := orderstateFields[11].Descriptor()
 	// orderstate.DefaultUserSetCanceled holds the default value on creation for the user_set_canceled field.
 	orderstate.DefaultUserSetCanceled = orderstateDescUserSetCanceled.Default.(bool)
 	// orderstateDescAdminSetCanceled is the schema descriptor for admin_set_canceled field.
-	orderstateDescAdminSetCanceled := orderstateFields[11].Descriptor()
+	orderstateDescAdminSetCanceled := orderstateFields[12].Descriptor()
 	// orderstate.DefaultAdminSetCanceled holds the default value on creation for the admin_set_canceled field.
 	orderstate.DefaultAdminSetCanceled = orderstateDescAdminSetCanceled.Default.(bool)
 	// orderstateDescPaymentTransactionID is the schema descriptor for payment_transaction_id field.
-	orderstateDescPaymentTransactionID := orderstateFields[12].Descriptor()
+	orderstateDescPaymentTransactionID := orderstateFields[13].Descriptor()
 	// orderstate.DefaultPaymentTransactionID holds the default value on creation for the payment_transaction_id field.
 	orderstate.DefaultPaymentTransactionID = orderstateDescPaymentTransactionID.Default.(string)
 	// orderstateDescPaymentFinishAmount is the schema descriptor for payment_finish_amount field.
-	orderstateDescPaymentFinishAmount := orderstateFields[13].Descriptor()
+	orderstateDescPaymentFinishAmount := orderstateFields[14].Descriptor()
 	// orderstate.DefaultPaymentFinishAmount holds the default value on creation for the payment_finish_amount field.
 	orderstate.DefaultPaymentFinishAmount = orderstateDescPaymentFinishAmount.Default.(decimal.Decimal)
 	// orderstateDescPaymentState is the schema descriptor for payment_state field.
-	orderstateDescPaymentState := orderstateFields[14].Descriptor()
+	orderstateDescPaymentState := orderstateFields[15].Descriptor()
 	// orderstate.DefaultPaymentState holds the default value on creation for the payment_state field.
 	orderstate.DefaultPaymentState = orderstateDescPaymentState.Default.(string)
 	// orderstateDescOutofgasHours is the schema descriptor for outofgas_hours field.
-	orderstateDescOutofgasHours := orderstateFields[15].Descriptor()
+	orderstateDescOutofgasHours := orderstateFields[16].Descriptor()
 	// orderstate.DefaultOutofgasHours holds the default value on creation for the outofgas_hours field.
 	orderstate.DefaultOutofgasHours = orderstateDescOutofgasHours.Default.(uint32)
 	// orderstateDescCompensateHours is the schema descriptor for compensate_hours field.
-	orderstateDescCompensateHours := orderstateFields[16].Descriptor()
+	orderstateDescCompensateHours := orderstateFields[17].Descriptor()
 	// orderstate.DefaultCompensateHours holds the default value on creation for the compensate_hours field.
 	orderstate.DefaultCompensateHours = orderstateDescCompensateHours.Default.(uint32)
 	// orderstateDescID is the schema descriptor for id field.

@@ -142,6 +142,20 @@ func (osc *OrderStateCreate) SetNillableEndAt(u *uint32) *OrderStateCreate {
 	return osc
 }
 
+// SetPaidAt sets the "paid_at" field.
+func (osc *OrderStateCreate) SetPaidAt(u uint32) *OrderStateCreate {
+	osc.mutation.SetPaidAt(u)
+	return osc
+}
+
+// SetNillablePaidAt sets the "paid_at" field if the given value is not nil.
+func (osc *OrderStateCreate) SetNillablePaidAt(u *uint32) *OrderStateCreate {
+	if u != nil {
+		osc.SetPaidAt(*u)
+	}
+	return osc
+}
+
 // SetLastBenefitAt sets the "last_benefit_at" field.
 func (osc *OrderStateCreate) SetLastBenefitAt(u uint32) *OrderStateCreate {
 	osc.mutation.SetLastBenefitAt(u)
@@ -416,6 +430,10 @@ func (osc *OrderStateCreate) defaults() error {
 		v := orderstate.DefaultEndAt
 		osc.mutation.SetEndAt(v)
 	}
+	if _, ok := osc.mutation.PaidAt(); !ok {
+		v := orderstate.DefaultPaidAt
+		osc.mutation.SetPaidAt(v)
+	}
 	if _, ok := osc.mutation.LastBenefitAt(); !ok {
 		v := orderstate.DefaultLastBenefitAt
 		osc.mutation.SetLastBenefitAt(v)
@@ -588,6 +606,14 @@ func (osc *OrderStateCreate) createSpec() (*OrderState, *sqlgraph.CreateSpec) {
 			Column: orderstate.FieldEndAt,
 		})
 		_node.EndAt = value
+	}
+	if value, ok := osc.mutation.PaidAt(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeUint32,
+			Value:  value,
+			Column: orderstate.FieldPaidAt,
+		})
+		_node.PaidAt = value
 	}
 	if value, ok := osc.mutation.LastBenefitAt(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -888,6 +914,30 @@ func (u *OrderStateUpsert) AddEndAt(v uint32) *OrderStateUpsert {
 // ClearEndAt clears the value of the "end_at" field.
 func (u *OrderStateUpsert) ClearEndAt() *OrderStateUpsert {
 	u.SetNull(orderstate.FieldEndAt)
+	return u
+}
+
+// SetPaidAt sets the "paid_at" field.
+func (u *OrderStateUpsert) SetPaidAt(v uint32) *OrderStateUpsert {
+	u.Set(orderstate.FieldPaidAt, v)
+	return u
+}
+
+// UpdatePaidAt sets the "paid_at" field to the value that was provided on create.
+func (u *OrderStateUpsert) UpdatePaidAt() *OrderStateUpsert {
+	u.SetExcluded(orderstate.FieldPaidAt)
+	return u
+}
+
+// AddPaidAt adds v to the "paid_at" field.
+func (u *OrderStateUpsert) AddPaidAt(v uint32) *OrderStateUpsert {
+	u.Add(orderstate.FieldPaidAt, v)
+	return u
+}
+
+// ClearPaidAt clears the value of the "paid_at" field.
+func (u *OrderStateUpsert) ClearPaidAt() *OrderStateUpsert {
+	u.SetNull(orderstate.FieldPaidAt)
 	return u
 }
 
@@ -1332,6 +1382,34 @@ func (u *OrderStateUpsertOne) UpdateEndAt() *OrderStateUpsertOne {
 func (u *OrderStateUpsertOne) ClearEndAt() *OrderStateUpsertOne {
 	return u.Update(func(s *OrderStateUpsert) {
 		s.ClearEndAt()
+	})
+}
+
+// SetPaidAt sets the "paid_at" field.
+func (u *OrderStateUpsertOne) SetPaidAt(v uint32) *OrderStateUpsertOne {
+	return u.Update(func(s *OrderStateUpsert) {
+		s.SetPaidAt(v)
+	})
+}
+
+// AddPaidAt adds v to the "paid_at" field.
+func (u *OrderStateUpsertOne) AddPaidAt(v uint32) *OrderStateUpsertOne {
+	return u.Update(func(s *OrderStateUpsert) {
+		s.AddPaidAt(v)
+	})
+}
+
+// UpdatePaidAt sets the "paid_at" field to the value that was provided on create.
+func (u *OrderStateUpsertOne) UpdatePaidAt() *OrderStateUpsertOne {
+	return u.Update(func(s *OrderStateUpsert) {
+		s.UpdatePaidAt()
+	})
+}
+
+// ClearPaidAt clears the value of the "paid_at" field.
+func (u *OrderStateUpsertOne) ClearPaidAt() *OrderStateUpsertOne {
+	return u.Update(func(s *OrderStateUpsert) {
+		s.ClearPaidAt()
 	})
 }
 
@@ -1975,6 +2053,34 @@ func (u *OrderStateUpsertBulk) UpdateEndAt() *OrderStateUpsertBulk {
 func (u *OrderStateUpsertBulk) ClearEndAt() *OrderStateUpsertBulk {
 	return u.Update(func(s *OrderStateUpsert) {
 		s.ClearEndAt()
+	})
+}
+
+// SetPaidAt sets the "paid_at" field.
+func (u *OrderStateUpsertBulk) SetPaidAt(v uint32) *OrderStateUpsertBulk {
+	return u.Update(func(s *OrderStateUpsert) {
+		s.SetPaidAt(v)
+	})
+}
+
+// AddPaidAt adds v to the "paid_at" field.
+func (u *OrderStateUpsertBulk) AddPaidAt(v uint32) *OrderStateUpsertBulk {
+	return u.Update(func(s *OrderStateUpsert) {
+		s.AddPaidAt(v)
+	})
+}
+
+// UpdatePaidAt sets the "paid_at" field to the value that was provided on create.
+func (u *OrderStateUpsertBulk) UpdatePaidAt() *OrderStateUpsertBulk {
+	return u.Update(func(s *OrderStateUpsert) {
+		s.UpdatePaidAt()
+	})
+}
+
+// ClearPaidAt clears the value of the "paid_at" field.
+func (u *OrderStateUpsertBulk) ClearPaidAt() *OrderStateUpsertBulk {
+	return u.Update(func(s *OrderStateUpsert) {
+		s.ClearPaidAt()
 	})
 }
 
