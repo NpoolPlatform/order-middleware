@@ -3,6 +3,7 @@ package order
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
 	types "github.com/NpoolPlatform/message/npool/basetypes/order/v1"
@@ -262,6 +263,11 @@ func (h *updateHandler) updateOrderState(ctx context.Context, tx *ent.Tx, req *o
 		}
 	}
 
+	if req.PaymentState != nil && *req.PaymentState == types.PaymentState_PaymentStateDone {
+		now := uint32(time.Now().Unix())
+		req.PaidAt = &now
+	}
+
 	if _, err := orderstatecrud.UpdateSet(
 		orderstate.Update(),
 		&orderstatecrud.Req{
@@ -271,6 +277,7 @@ func (h *updateHandler) updateOrderState(ctx context.Context, tx *ent.Tx, req *o
 			StartAt:              &startAt,
 			EndAt:                &endAt,
 			LastBenefitAt:        req.LastBenefitAt,
+			PaidAt:               req.PaidAt,
 			BenefitState:         req.BenefitState,
 			UserSetPaid:          req.UserSetPaid,
 			UserSetCanceled:      req.UserSetCanceled,

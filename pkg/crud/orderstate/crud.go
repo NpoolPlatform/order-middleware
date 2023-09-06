@@ -19,6 +19,7 @@ type Req struct {
 	StartMode            *basetypes.OrderStartMode
 	StartAt              *uint32
 	EndAt                *uint32
+	PaidAt               *uint32
 	LastBenefitAt        *uint32
 	BenefitState         *basetypes.BenefitState
 	UserSetPaid          *bool
@@ -109,6 +110,9 @@ func UpdateSet(u *ent.OrderStateUpdateOne, req *Req) *ent.OrderStateUpdateOne {
 	}
 	if req.EndAt != nil {
 		u.SetEndAt(*req.EndAt)
+	}
+	if req.PaidAt != nil {
+		u.SetPaidAt(*req.PaidAt)
 	}
 	if req.LastBenefitAt != nil {
 		u.SetLastBenefitAt(*req.LastBenefitAt)
