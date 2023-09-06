@@ -41,7 +41,6 @@ var (
 		UserID:               uuid.NewString(),
 		GoodID:               uuid.NewString(),
 		AppGoodID:            uuid.NewString(),
-		ParentOrderID:        uuid.NewString(),
 		Units:                "100.000000000000000000",
 		GoodValue:            "1007.000000000000000000",
 		GoodValueUSD:         "1007.000000000000000000",
@@ -93,6 +92,7 @@ var (
 	}
 )
 
+//nolint:funlen
 func setup(t *testing.T) func(*testing.T) {
 	h1, err := order1.NewHandler(
 		context.Background(),
@@ -101,7 +101,6 @@ func setup(t *testing.T) func(*testing.T) {
 		order1.WithUserID(&order.UserID, true),
 		order1.WithGoodID(&order.GoodID, true),
 		order1.WithAppGoodID(&order.AppGoodID, true),
-		order1.WithParentOrderID(&order.ParentOrderID, false),
 		order1.WithUnits(&order.Units, true),
 		order1.WithGoodValue(&order.GoodValue, true),
 		order1.WithGoodValueUSD(&order.GoodValue, true),
@@ -130,6 +129,166 @@ func setup(t *testing.T) func(*testing.T) {
 	assert.Nil(t, err)
 
 	_, err = h1.CreateOrder(context.Background())
+	assert.Nil(t, err)
+
+	order.OrderState = ordertypes.OrderState_OrderStateWaitPayment
+	h2, err := order1.NewHandler(
+		context.Background(),
+		order1.WithID(&order.ID, true),
+		order1.WithOrderState(&order.OrderState, true),
+	)
+	assert.Nil(t, err)
+	_, err = h2.UpdateOrder(context.Background())
+	assert.Nil(t, err)
+
+	order.OrderState = ordertypes.OrderState_OrderStateCheckPayment
+	h3, err := order1.NewHandler(
+		context.Background(),
+		order1.WithID(&order.ID, true),
+		order1.WithOrderState(&order.OrderState, true),
+	)
+	assert.Nil(t, err)
+	_, err = h3.UpdateOrder(context.Background())
+	assert.Nil(t, err)
+
+	order.OrderState = ordertypes.OrderState_OrderStatePaymentTransferReceived
+	h4, err := order1.NewHandler(
+		context.Background(),
+		order1.WithID(&order.ID, true),
+		order1.WithOrderState(&order.OrderState, true),
+	)
+	assert.Nil(t, err)
+	_, err = h4.UpdateOrder(context.Background())
+	assert.Nil(t, err)
+
+	order.OrderState = ordertypes.OrderState_OrderStatePaymentTransferReceivedCheck
+	h5, err := order1.NewHandler(
+		context.Background(),
+		order1.WithID(&order.ID, true),
+		order1.WithOrderState(&order.OrderState, true),
+	)
+	assert.Nil(t, err)
+	_, err = h5.UpdateOrder(context.Background())
+	assert.Nil(t, err)
+
+	order.OrderState = ordertypes.OrderState_OrderStatePaymentTransferBookKept
+	h6, err := order1.NewHandler(
+		context.Background(),
+		order1.WithID(&order.ID, true),
+		order1.WithOrderState(&order.OrderState, true),
+	)
+	assert.Nil(t, err)
+	_, err = h6.UpdateOrder(context.Background())
+	assert.Nil(t, err)
+
+	order.OrderState = ordertypes.OrderState_OrderStatePaymentTransferBookKeptCheck
+	h7, err := order1.NewHandler(
+		context.Background(),
+		order1.WithID(&order.ID, true),
+		order1.WithOrderState(&order.OrderState, true),
+	)
+	assert.Nil(t, err)
+	_, err = h7.UpdateOrder(context.Background())
+	assert.Nil(t, err)
+
+	order.OrderState = ordertypes.OrderState_OrderStatePaymentBalanceSpent
+	h8, err := order1.NewHandler(
+		context.Background(),
+		order1.WithID(&order.ID, true),
+		order1.WithOrderState(&order.OrderState, true),
+	)
+	assert.Nil(t, err)
+	_, err = h8.UpdateOrder(context.Background())
+	assert.Nil(t, err)
+
+	order.OrderState = ordertypes.OrderState_OrderStatePaymentBalanceSpentCheck
+	h9, err := order1.NewHandler(
+		context.Background(),
+		order1.WithID(&order.ID, true),
+		order1.WithOrderState(&order.OrderState, true),
+	)
+	assert.Nil(t, err)
+	_, err = h9.UpdateOrder(context.Background())
+	assert.Nil(t, err)
+
+	order.OrderState = ordertypes.OrderState_OrderStateGoodStockTransferred
+	h10, err := order1.NewHandler(
+		context.Background(),
+		order1.WithID(&order.ID, true),
+		order1.WithOrderState(&order.OrderState, true),
+	)
+	assert.Nil(t, err)
+	_, err = h10.UpdateOrder(context.Background())
+	assert.Nil(t, err)
+
+	order.OrderState = ordertypes.OrderState_OrderStateGoodStockTransferredCheck
+	h11, err := order1.NewHandler(
+		context.Background(),
+		order1.WithID(&order.ID, true),
+		order1.WithOrderState(&order.OrderState, true),
+	)
+	assert.Nil(t, err)
+	_, err = h11.UpdateOrder(context.Background())
+	assert.Nil(t, err)
+
+	order.OrderState = ordertypes.OrderState_OrderStateCommissionAdded
+	h12, err := order1.NewHandler(
+		context.Background(),
+		order1.WithID(&order.ID, true),
+		order1.WithOrderState(&order.OrderState, true),
+	)
+	assert.Nil(t, err)
+	_, err = h12.UpdateOrder(context.Background())
+	assert.Nil(t, err)
+
+	order.OrderState = ordertypes.OrderState_OrderStateCommissionAddedCheck
+	h13, err := order1.NewHandler(
+		context.Background(),
+		order1.WithID(&order.ID, true),
+		order1.WithOrderState(&order.OrderState, true),
+	)
+	assert.Nil(t, err)
+	_, err = h13.UpdateOrder(context.Background())
+	assert.Nil(t, err)
+
+	order.OrderState = ordertypes.OrderState_OrderStateAchievementBookKept
+	h14, err := order1.NewHandler(
+		context.Background(),
+		order1.WithID(&order.ID, true),
+		order1.WithOrderState(&order.OrderState, true),
+	)
+	assert.Nil(t, err)
+	_, err = h14.UpdateOrder(context.Background())
+	assert.Nil(t, err)
+
+	order.OrderState = ordertypes.OrderState_OrderStateAchievementBookKeptCheck
+	h15, err := order1.NewHandler(
+		context.Background(),
+		order1.WithID(&order.ID, true),
+		order1.WithOrderState(&order.OrderState, true),
+	)
+	assert.Nil(t, err)
+	_, err = h15.UpdateOrder(context.Background())
+	assert.Nil(t, err)
+
+	order.OrderState = ordertypes.OrderState_OrderStatePaid
+	h16, err := order1.NewHandler(
+		context.Background(),
+		order1.WithID(&order.ID, true),
+		order1.WithOrderState(&order.OrderState, true),
+	)
+	assert.Nil(t, err)
+	_, err = h16.UpdateOrder(context.Background())
+	assert.Nil(t, err)
+
+	order.OrderState = ordertypes.OrderState_OrderStateInService
+	h17, err := order1.NewHandler(
+		context.Background(),
+		order1.WithID(&order.ID, true),
+		order1.WithOrderState(&order.OrderState, true),
+	)
+	assert.Nil(t, err)
+	_, err = h17.UpdateOrder(context.Background())
 	assert.Nil(t, err)
 
 	return func(*testing.T) {

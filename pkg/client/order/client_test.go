@@ -45,7 +45,6 @@ var (
 		UserID:               uuid.NewString(),
 		GoodID:               uuid.NewString(),
 		AppGoodID:            uuid.NewString(),
-		ParentOrderID:        uuid.NewString(),
 		Units:                "100.000000000000000000",
 		GoodValue:            "1007.000000000000000000",
 		GoodValueUSD:         "1007.000000000000000000",
@@ -70,8 +69,8 @@ var (
 		PaymentAccountID:   uuid.NewString(),
 		PaymentStartAmount: "1010.000000000000000000",
 
-		OrderStateStr:        ordertypes.OrderState_OrderStateWaitPayment.String(),
-		OrderState:           ordertypes.OrderState_OrderStateWaitPayment,
+		OrderStateStr:        ordertypes.OrderState_OrderStateCreated.String(),
+		OrderState:           ordertypes.OrderState_OrderStateCreated,
 		CancelStateStr:       ordertypes.OrderState_DefaultOrderState.String(),
 		CancelState:          ordertypes.OrderState_DefaultOrderState,
 		StartModeStr:         ordertypes.OrderStartMode_OrderStartConfirmed.String(),
@@ -98,7 +97,6 @@ var (
 		UserID:               &ret.UserID,
 		GoodID:               &ret.GoodID,
 		AppGoodID:            &ret.AppGoodID,
-		ParentOrderID:        &ret.ParentOrderID,
 		Units:                &ret.Units,
 		GoodValue:            &ret.GoodValue,
 		GoodValueUSD:         &ret.GoodValueUSD,
@@ -146,6 +144,7 @@ func create(t *testing.T) {
 		ret.CouponIDs = info.CouponIDs
 		ret.CouponIDsStr = info.CouponIDsStr
 		ret.PaymentID = info.PaymentID
+		ret.ParentOrderID = info.ParentOrderID
 		assert.Equal(t, info, &ret)
 	}
 }
@@ -153,14 +152,10 @@ func create(t *testing.T) {
 func update(t *testing.T) {
 	var err error
 	var (
-		orderState = ordertypes.OrderState_OrderStateCheckPayment
-		req        = npool.OrderReq{
-			ID:         &ret.ID,
-			OrderState: &orderState,
+		req = npool.OrderReq{
+			ID: &ret.ID,
 		}
 	)
-	ret.OrderState = orderState
-	ret.OrderStateStr = orderState.String()
 	info, err = UpdateOrder(context.Background(), &req)
 	if assert.Nil(t, err) {
 		ret.UpdatedAt = info.UpdatedAt

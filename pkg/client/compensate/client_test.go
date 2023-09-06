@@ -50,7 +50,6 @@ var (
 		UserID:               uuid.NewString(),
 		GoodID:               uuid.NewString(),
 		AppGoodID:            uuid.NewString(),
-		ParentOrderID:        uuid.NewString(),
 		Units:                "100.000000000000000000",
 		GoodValue:            "1007.000000000000000000",
 		GoodValueUSD:         "1007.000000000000000000",
@@ -112,6 +111,7 @@ var (
 	}
 )
 
+//nolint:funlen
 func setup(t *testing.T) func(*testing.T) {
 	_, err := order1.CreateOrder(context.Background(), &ordermwpb.OrderReq{
 		ID:                   &order.ID,
@@ -119,7 +119,6 @@ func setup(t *testing.T) func(*testing.T) {
 		UserID:               &order.UserID,
 		GoodID:               &order.GoodID,
 		AppGoodID:            &order.AppGoodID,
-		ParentOrderID:        &order.ParentOrderID,
 		Units:                &order.Units,
 		GoodValue:            &order.GoodValue,
 		GoodValueUSD:         &order.GoodValueUSD,
@@ -139,11 +138,122 @@ func setup(t *testing.T) func(*testing.T) {
 		LiveCoinUSDCurrency:  &order.LiveCoinUSDCurrency,
 		PaymentAccountID:     &order.PaymentAccountID,
 		PaymentStartAmount:   &order.PaymentStartAmount,
-		OrderState:           &order.OrderState,
 		StartMode:            &order.StartMode,
 		StartAt:              &order.StartAt,
 		EndAt:                &order.EndAt,
 		PaymentState:         &order.PaymentState,
+	})
+	assert.Nil(t, err)
+
+	order.OrderState = ordertypes.OrderState_OrderStateWaitPayment
+	_, err = order1.UpdateOrder(context.Background(), &ordermwpb.OrderReq{
+		ID:         &order.ID,
+		OrderState: &order.OrderState,
+	})
+	assert.Nil(t, err)
+
+	order.OrderState = ordertypes.OrderState_OrderStateCheckPayment
+	_, err = order1.UpdateOrder(context.Background(), &ordermwpb.OrderReq{
+		ID:         &order.ID,
+		OrderState: &order.OrderState,
+	})
+	assert.Nil(t, err)
+
+	order.OrderState = ordertypes.OrderState_OrderStatePaymentTransferReceived
+	_, err = order1.UpdateOrder(context.Background(), &ordermwpb.OrderReq{
+		ID:         &order.ID,
+		OrderState: &order.OrderState,
+	})
+	assert.Nil(t, err)
+
+	order.OrderState = ordertypes.OrderState_OrderStatePaymentTransferReceivedCheck
+	_, err = order1.UpdateOrder(context.Background(), &ordermwpb.OrderReq{
+		ID:         &order.ID,
+		OrderState: &order.OrderState,
+	})
+	assert.Nil(t, err)
+
+	order.OrderState = ordertypes.OrderState_OrderStatePaymentTransferBookKept
+	_, err = order1.UpdateOrder(context.Background(), &ordermwpb.OrderReq{
+		ID:         &order.ID,
+		OrderState: &order.OrderState,
+	})
+	assert.Nil(t, err)
+
+	order.OrderState = ordertypes.OrderState_OrderStatePaymentTransferBookKeptCheck
+	_, err = order1.UpdateOrder(context.Background(), &ordermwpb.OrderReq{
+		ID:         &order.ID,
+		OrderState: &order.OrderState,
+	})
+	assert.Nil(t, err)
+
+	order.OrderState = ordertypes.OrderState_OrderStatePaymentBalanceSpent
+	_, err = order1.UpdateOrder(context.Background(), &ordermwpb.OrderReq{
+		ID:         &order.ID,
+		OrderState: &order.OrderState,
+	})
+	assert.Nil(t, err)
+
+	order.OrderState = ordertypes.OrderState_OrderStatePaymentBalanceSpentCheck
+	_, err = order1.UpdateOrder(context.Background(), &ordermwpb.OrderReq{
+		ID:         &order.ID,
+		OrderState: &order.OrderState,
+	})
+	assert.Nil(t, err)
+
+	order.OrderState = ordertypes.OrderState_OrderStateGoodStockTransferred
+	_, err = order1.UpdateOrder(context.Background(), &ordermwpb.OrderReq{
+		ID:         &order.ID,
+		OrderState: &order.OrderState,
+	})
+	assert.Nil(t, err)
+
+	order.OrderState = ordertypes.OrderState_OrderStateGoodStockTransferredCheck
+	_, err = order1.UpdateOrder(context.Background(), &ordermwpb.OrderReq{
+		ID:         &order.ID,
+		OrderState: &order.OrderState,
+	})
+	assert.Nil(t, err)
+
+	order.OrderState = ordertypes.OrderState_OrderStateCommissionAdded
+	_, err = order1.UpdateOrder(context.Background(), &ordermwpb.OrderReq{
+		ID:         &order.ID,
+		OrderState: &order.OrderState,
+	})
+	assert.Nil(t, err)
+
+	order.OrderState = ordertypes.OrderState_OrderStateCommissionAddedCheck
+	_, err = order1.UpdateOrder(context.Background(), &ordermwpb.OrderReq{
+		ID:         &order.ID,
+		OrderState: &order.OrderState,
+	})
+	assert.Nil(t, err)
+
+	order.OrderState = ordertypes.OrderState_OrderStateAchievementBookKept
+	_, err = order1.UpdateOrder(context.Background(), &ordermwpb.OrderReq{
+		ID:         &order.ID,
+		OrderState: &order.OrderState,
+	})
+	assert.Nil(t, err)
+
+	order.OrderState = ordertypes.OrderState_OrderStateAchievementBookKeptCheck
+	_, err = order1.UpdateOrder(context.Background(), &ordermwpb.OrderReq{
+		ID:         &order.ID,
+		OrderState: &order.OrderState,
+	})
+	assert.Nil(t, err)
+
+	order.OrderState = ordertypes.OrderState_OrderStatePaid
+	_, err = order1.UpdateOrder(context.Background(), &ordermwpb.OrderReq{
+		ID:         &order.ID,
+		OrderState: &order.OrderState,
+	})
+	assert.Nil(t, err)
+
+	order.OrderState = ordertypes.OrderState_OrderStateInService
+	_, err = order1.UpdateOrder(context.Background(), &ordermwpb.OrderReq{
+		ID:         &order.ID,
+		OrderState: &order.OrderState,
 	})
 	assert.Nil(t, err)
 

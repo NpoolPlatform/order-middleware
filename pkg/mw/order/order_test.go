@@ -38,7 +38,6 @@ var (
 		UserID:               uuid.NewString(),
 		GoodID:               uuid.NewString(),
 		AppGoodID:            uuid.NewString(),
-		ParentOrderID:        uuid.NewString(),
 		Units:                "100.000000000000000000",
 		GoodValue:            "1007.000000000000000000",
 		GoodValueUSD:         "1007.000000000000000000",
@@ -63,8 +62,8 @@ var (
 		PaymentAccountID:   uuid.NewString(),
 		PaymentStartAmount: "1010.000000000000000000",
 
-		OrderStateStr:        ordertypes.OrderState_OrderStateWaitPayment.String(),
-		OrderState:           ordertypes.OrderState_OrderStateWaitPayment,
+		OrderStateStr:        ordertypes.OrderState_OrderStateCreated.String(),
+		OrderState:           ordertypes.OrderState_OrderStateCreated,
 		CancelStateStr:       ordertypes.OrderState_DefaultOrderState.String(),
 		CancelState:          ordertypes.OrderState_DefaultOrderState,
 		StartModeStr:         ordertypes.OrderStartMode_OrderStartConfirmed.String(),
@@ -119,8 +118,8 @@ var (
 			PaymentAccountID:   uuid.NewString(),
 			PaymentStartAmount: "1011.000000000000000000",
 
-			OrderStateStr:        ordertypes.OrderState_OrderStateWaitPayment.String(),
-			OrderState:           ordertypes.OrderState_OrderStateWaitPayment,
+			OrderStateStr:        ordertypes.OrderState_OrderStateCreated.String(),
+			OrderState:           ordertypes.OrderState_OrderStateCreated,
 			CancelStateStr:       ordertypes.OrderState_DefaultOrderState.String(),
 			CancelState:          ordertypes.OrderState_DefaultOrderState,
 			StartModeStr:         ordertypes.OrderStartMode_OrderStartConfirmed.String(),
@@ -169,8 +168,8 @@ var (
 			LocalCoinUSDCurrency: "1004.000000000000000000",
 			LiveCoinUSDCurrency:  "1005.000000000000000000",
 
-			OrderStateStr:        ordertypes.OrderState_OrderStateWaitPayment.String(),
-			OrderState:           ordertypes.OrderState_OrderStateWaitPayment,
+			OrderStateStr:        ordertypes.OrderState_OrderStateCreated.String(),
+			OrderState:           ordertypes.OrderState_OrderStateCreated,
 			CancelStateStr:       ordertypes.OrderState_DefaultOrderState.String(),
 			CancelState:          ordertypes.OrderState_DefaultOrderState,
 			StartModeStr:         ordertypes.OrderStartMode_OrderStartConfirmed.String(),
@@ -200,7 +199,6 @@ func createOrder(t *testing.T) {
 		WithUserID(&ret.UserID, true),
 		WithGoodID(&ret.GoodID, true),
 		WithAppGoodID(&ret.AppGoodID, true),
-		WithParentOrderID(&ret.ParentOrderID, false),
 		WithUnits(&ret.Units, true),
 		WithGoodValue(&ret.GoodValue, true),
 		WithGoodValueUSD(&ret.GoodValueUSD, true),
@@ -229,6 +227,7 @@ func createOrder(t *testing.T) {
 	if assert.Nil(t, err) {
 		info, err := handler.CreateOrder(context.Background())
 		if assert.Nil(t, err) {
+			ret.ParentOrderID = info.ParentOrderID
 			ret.CouponIDs = info.CouponIDs
 			ret.CouponIDsStr = info.CouponIDsStr
 			ret.PaymentID = info.PaymentID
@@ -281,11 +280,11 @@ func createOrders(t *testing.T) {
 			LocalCoinUSDCurrency: &rets[key].LocalCoinUSDCurrency,
 			LiveCoinUSDCurrency:  &rets[key].LiveCoinUSDCurrency,
 		}
-		if rets[key].TransferAmount != "" {
+		if rets[key].PaymentType != ordertypes.PaymentType_PayWithParentOrder {
 			retReq.PaymentAccountID = &rets[key].PaymentAccountID
 			retReq.PaymentStartAmount = &rets[key].PaymentStartAmount
 		} else {
-			retReq.ParentOrderID = &rets[key].ParentOrderID
+			retReq.ParentOrderID = &parentOrderID
 		}
 		retsReq = append(retsReq, &retReq)
 	}
@@ -302,11 +301,9 @@ func createOrders(t *testing.T) {
 }
 
 func updateOrder(t *testing.T) {
-	ret.UserSetCanceled = true
 	handler, err := NewHandler(
 		context.Background(),
 		WithID(&ret.ID, true),
-		WithUserSetCanceled(&ret.UserSetCanceled, false),
 	)
 	if assert.Nil(t, err) {
 		info, err := handler.UpdateOrder(context.Background())
@@ -349,6 +346,21 @@ func getOrders(t *testing.T) {
 	}
 }
 
+func countOrders(t *testing.T) {
+	handler, err := NewHandler(
+		context.Background(),
+		WithConds(&npool.Conds{
+			GoodID: &basetypes.StringVal{Op: cruder.EQ, Value: ret.GoodID},
+		}),
+	)
+	if assert.Nil(t, err) {
+		infos, err := handler.CountOrders(context.Background())
+		if assert.Nil(t, err) {
+			assert.Equal(t, uint32(1), infos)
+		}
+	}
+}
+
 func deleteOrder(t *testing.T) {
 	handler, err := NewHandler(
 		context.Background(),
@@ -387,5 +399,6 @@ func TestOrder(t *testing.T) {
 	t.Run("updateOrder", updateOrder)
 	t.Run("getOrder", getOrder)
 	t.Run("getOrders", getOrders)
+	t.Run("countOrders", countOrders)
 	t.Run("deleteOrder", deleteOrder)
 }

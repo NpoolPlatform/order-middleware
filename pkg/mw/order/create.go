@@ -145,16 +145,21 @@ func (h *Handler) CreateOrder(ctx context.Context) (*npool.Order, error) {
 
 func (h *createHandler) checkBatchParentOrder(ctx context.Context) error {
 	var parentOrder uuid.UUID
+	createParent := false
 	for _, req := range h.Reqs {
 		if req.ParentOrderID == nil {
+			parentOrder = *req.ID
+			createParent = true
 			continue
 		}
 		if parentOrder != uuid.Nil && *req.ParentOrderID != parentOrder {
 			return fmt.Errorf("invalid parentorder")
 		}
-		parentOrder = *req.ParentOrderID
 	}
 	if parentOrder == uuid.Nil {
+		return nil
+	}
+	if createParent {
 		return nil
 	}
 
