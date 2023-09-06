@@ -143,6 +143,10 @@ func (h *updateHandler) updateOrderState(ctx context.Context, tx *ent.Tx, req *o
 		return fmt.Errorf("invalid order")
 	}
 
+	if order.PaymentType == types.PaymentType_PayWithParentOrder.String() {
+		return fmt.Errorf("permission denied")
+	}
+
 	duration := orderstate.EndAt - orderstate.StartAt
 	startAt := orderstate.StartAt
 	startMode := types.OrderStartMode(types.OrderStartMode_value[orderstate.StartMode])
