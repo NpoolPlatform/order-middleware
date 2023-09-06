@@ -555,7 +555,7 @@ func WithLocalCoinUSDCurrency(value *string, must bool) func(context.Context, *H
 		if err != nil {
 			return err
 		}
-		if amount.Cmp(decimal.NewFromInt(0)) <= 0 {
+		if amount.Cmp(decimal.NewFromInt(0)) < 0 {
 			return fmt.Errorf("localcoinusdcurrency is less than or equal to 0")
 		}
 		h.LocalCoinUSDCurrency = &amount
@@ -1321,7 +1321,7 @@ func WithReqs(reqs []*npool.OrderReq, must bool) func(context.Context, *Handler)
 				if err != nil {
 					return err
 				}
-				if amount.Cmp(decimal.NewFromInt(0)) <= 0 {
+				if amount.Cmp(decimal.NewFromInt(0)) < 0 {
 					return fmt.Errorf("localcoinusdcurrency is less than or equal to 0")
 				}
 				_req.LocalCoinUSDCurrency = &amount
