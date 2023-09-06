@@ -143,10 +143,6 @@ func (h *updateHandler) updateOrderState(ctx context.Context, tx *ent.Tx, req *o
 		return fmt.Errorf("invalid order")
 	}
 
-	if order.PaymentType == types.PaymentType_PayWithParentOrder.String() {
-		return fmt.Errorf("permission denied")
-	}
-
 	duration := orderstate.EndAt - orderstate.StartAt
 	startAt := orderstate.StartAt
 	startMode := types.OrderStartMode(types.OrderStartMode_value[orderstate.StartMode])
@@ -182,6 +178,9 @@ func (h *updateHandler) updateOrderState(ctx context.Context, tx *ent.Tx, req *o
 	}
 
 	if req.UserSetCanceled != nil && *req.UserSetCanceled {
+		if order.PaymentType == types.PaymentType_PayWithParentOrder.String() {
+			return fmt.Errorf("permission denied")
+		}
 		switch _orderType {
 		case types.OrderType_Normal:
 		default:
@@ -198,6 +197,9 @@ func (h *updateHandler) updateOrderState(ctx context.Context, tx *ent.Tx, req *o
 	}
 
 	if req.AdminSetCanceled != nil && *req.AdminSetCanceled {
+		if order.PaymentType == types.PaymentType_PayWithParentOrder.String() {
+			return fmt.Errorf("permission denied")
+		}
 		if req.OrderState != nil {
 			return fmt.Errorf("permission denied")
 		}
