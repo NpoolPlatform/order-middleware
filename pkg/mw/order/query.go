@@ -143,32 +143,3 @@ func (h *Handler) GetOrders(ctx context.Context) ([]*npool.Order, uint32, error)
 
 	return handler.infos, handler.total, nil
 }
-
-func (h *Handler) CountOrders(ctx context.Context) (uint32, error) {
-	count := uint32(0)
-	handler := &queryHandler{
-		baseQueryHandler: &baseQueryHandler{
-			Handler: h,
-		},
-	}
-
-	var err error
-	err = db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
-		handler.stmCount, err = handler.QueryOrders(cli)
-		if err != nil {
-			return err
-		}
-
-		_total, err := handler.stmCount.Count(_ctx)
-		if err != nil {
-			return err
-		}
-		count = uint32(_total)
-		return nil
-	})
-	if err != nil {
-		return 0, err
-	}
-
-	return count, err
-}
