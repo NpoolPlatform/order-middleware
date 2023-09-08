@@ -728,7 +728,7 @@ func WithBenefitState(benefitState *basetypes.BenefitState, must bool) func(cont
 		switch *benefitState {
 		case basetypes.BenefitState_BenefitWait:
 		case basetypes.BenefitState_BenefitCalculated:
-		case basetypes.BenefitState_BenefitDone:
+		case basetypes.BenefitState_BenefitBookKept:
 		default:
 			return fmt.Errorf("invalid benefitstate")
 		}
@@ -1025,7 +1025,7 @@ func WithConds(conds *npool.Conds) func(context.Context, *Handler) error {
 			switch conds.GetBenefitState().GetValue() {
 			case uint32(basetypes.BenefitState_BenefitWait):
 			case uint32(basetypes.BenefitState_BenefitCalculated):
-			case uint32(basetypes.BenefitState_BenefitDone):
+			case uint32(basetypes.BenefitState_BenefitBookKept):
 			default:
 				return fmt.Errorf("invalid benefitstate")
 			}
@@ -1431,7 +1431,7 @@ func WithReqs(reqs []*npool.OrderReq, must bool) func(context.Context, *Handler)
 				switch *req.BenefitState {
 				case basetypes.BenefitState_BenefitWait:
 				case basetypes.BenefitState_BenefitCalculated:
-				case basetypes.BenefitState_BenefitDone:
+				case basetypes.BenefitState_BenefitBookKept:
 				default:
 					return fmt.Errorf("invalid benefitstate")
 				}
