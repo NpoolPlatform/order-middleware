@@ -2,12 +2,14 @@ package orderlock
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
 	npool "github.com/NpoolPlatform/message/npool/order/mw/v1/order/orderlock"
 	orderlockcrud "github.com/NpoolPlatform/order-middleware/pkg/crud/order/orderlock"
 	"github.com/NpoolPlatform/order-middleware/pkg/db"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent"
+	entorder "github.com/NpoolPlatform/order-middleware/pkg/db/ent/order"
 
 	"github.com/google/uuid"
 )
@@ -17,6 +19,20 @@ type createHandler struct {
 }
 
 func (h *createHandler) createOrderLock(ctx context.Context, tx *ent.Tx, req *orderlockcrud.Req) error {
+	order, err := tx.Order.
+		Query().
+		Where(
+			entorder.ID(*req.OrderID),
+			entorder.DeletedAt(0),
+		).
+		Only(ctx)
+	if err != nil {
+		return err
+	}
+	if order == nil {
+		return fmt.Errorf("invalid order")
+	}
+
 	if _, err := orderlockcrud.CreateSet(
 		tx.OrderLock.Create(),
 		&orderlockcrud.Req{
