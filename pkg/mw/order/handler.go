@@ -10,6 +10,7 @@ import (
 	npool "github.com/NpoolPlatform/message/npool/order/mw/v1/order"
 	constant "github.com/NpoolPlatform/order-middleware/pkg/const"
 	ordercrud "github.com/NpoolPlatform/order-middleware/pkg/crud/order"
+	orderlockcrud "github.com/NpoolPlatform/order-middleware/pkg/crud/order/orderlock"
 	orderstatecrud "github.com/NpoolPlatform/order-middleware/pkg/crud/orderstate"
 	paymentcrud "github.com/NpoolPlatform/order-middleware/pkg/crud/payment"
 	"github.com/shopspring/decimal"
@@ -63,7 +64,6 @@ type Handler struct {
 	CompensateHours      *uint32
 	AppGoodStockLockID   *uuid.UUID
 	LedgerLockID         *uuid.UUID
-	CommissionLockID     *uuid.UUID
 	Rollback             *bool
 	Reqs                 []*OrderReq
 	Conds                *ordercrud.Conds
@@ -894,23 +894,6 @@ func WithLedgerLockID(id *string, must bool) func(context.Context, *Handler) err
 	}
 }
 
-func WithCommissionLockID(id *string, must bool) func(context.Context, *Handler) error {
-	return func(ctx context.Context, h *Handler) error {
-		if id == nil {
-			if must {
-				return fmt.Errorf("invalid commissionlockid")
-			}
-			return nil
-		}
-		_id, err := uuid.Parse(*id)
-		if err != nil {
-			return err
-		}
-		h.CommissionLockID = &_id
-		return nil
-	}
-}
-
 func WithRollback(rollback *bool, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if rollback == nil {
@@ -1158,6 +1141,7 @@ func WithReqs(reqs []*npool.OrderReq, must bool) func(context.Context, *Handler)
 			_req := &OrderReq{
 				Req:           &ordercrud.Req{},
 				OrderStateReq: &orderstatecrud.Req{},
+				StockLockReq:  &orderlockcrud.Req{},
 			}
 			if must {
 				if req.AppID == nil {
@@ -1467,21 +1451,11 @@ func WithReqs(reqs []*npool.OrderReq, must bool) func(context.Context, *Handler)
 				if err != nil {
 					return err
 				}
-				_req.OrderStateReq.AppGoodStockLockID = &id
-			}
-			if req.LedgerLockID != nil {
-				id, err := uuid.Parse(*req.LedgerLockID)
-				if err != nil {
-					return err
-				}
-				_req.OrderStateReq.LedgerLockID = &id
-			}
-			if req.CommissionLockID != nil {
-				id, err := uuid.Parse(*req.CommissionLockID)
-				if err != nil {
-					return err
-				}
-				_req.OrderStateReq.CommissionLockID = &id
+				_req.StockLockReq.ID = &id
+				_req.StockLockReq.AppID = _req.AppID
+				_req.StockLockReq.UserID = _req.UserID
+				_req.StockLockReq.OrderID = _req.ID
+				_req.StockLockReq.LockType = basetypes.OrderLockType_LockStock.Enum()
 			}
 			if req.StartMode != nil {
 				switch *req.StartMode {
@@ -1585,6 +1559,20 @@ func WithReqs(reqs []*npool.OrderReq, must bool) func(context.Context, *Handler)
 					return err
 				}
 				_req.PaymentReq.AccountID = &id
+			}
+
+			if req.LedgerLockID != nil {
+				id, err := uuid.Parse(*req.LedgerLockID)
+				if err != nil {
+					return err
+				}
+				_req.BalanceLockReq = &orderlockcrud.Req{
+					ID:       &id,
+					AppID:    _req.AppID,
+					UserID:   _req.UserID,
+					OrderID:  _req.ID,
+					LockType: basetypes.OrderLockType_LockBalance.Enum(),
+				}
 			}
 
 			if req.PaymentStartAmount != nil {

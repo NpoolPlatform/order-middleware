@@ -40,6 +40,8 @@ func (h *queryHandler) queryJoin() error {
 		h.QueryJoinMyself(s)
 		err = h.QueryJoinPayment(s)
 		err = h.QueryJoinOrderState(s)
+		h.QueryJoinStockLock(s)
+		h.QueryJoinBalanceLock(s)
 	})
 	if err != nil {
 		return err
@@ -50,6 +52,8 @@ func (h *queryHandler) queryJoin() error {
 	h.stmCount.Modify(func(s *sql.Selector) {
 		err = h.QueryJoinPayment(s)
 		err = h.QueryJoinOrderState(s)
+		h.QueryJoinStockLock(s)
+		h.QueryJoinBalanceLock(s)
 	})
 	return err
 }

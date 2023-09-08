@@ -8,6 +8,7 @@ import (
 	types "github.com/NpoolPlatform/message/npool/basetypes/order/v1"
 	npool "github.com/NpoolPlatform/message/npool/order/mw/v1/order"
 	ordercrud "github.com/NpoolPlatform/order-middleware/pkg/crud/order"
+	orderlockcrud "github.com/NpoolPlatform/order-middleware/pkg/crud/order/orderlock"
 	orderstatecrud "github.com/NpoolPlatform/order-middleware/pkg/crud/orderstate"
 	paymentcrud "github.com/NpoolPlatform/order-middleware/pkg/crud/payment"
 	"github.com/NpoolPlatform/order-middleware/pkg/db"
@@ -29,6 +30,20 @@ func (h *createHandler) paymentState(req *ordercrud.Req) *types.PaymentState {
 	return types.PaymentState_PaymentStateNoPayment.Enum()
 }
 
+func (h *createHandler) createOrderLock(ctx context.Context, tx *ent.Tx, req *orderlockcrud.Req) error {
+	if req.ID == nil {
+		return fmt.Errorf("invalid lockid")
+	}
+	if _, err := orderlockcrud.CreateSet(
+		tx.OrderLock.Create(),
+		req,
+	).Save(ctx); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func (h *createHandler) createOrderState(ctx context.Context, tx *ent.Tx, req *orderstatecrud.Req) error {
 	if *req.EndAt <= *req.StartAt {
 		return fmt.Errorf("invalid startend")
@@ -37,14 +52,12 @@ func (h *createHandler) createOrderState(ctx context.Context, tx *ent.Tx, req *o
 	if _, err := orderstatecrud.CreateSet(
 		tx.OrderState.Create(),
 		&orderstatecrud.Req{
-			OrderID:            req.OrderID,
-			OrderState:         req.OrderState,
-			StartMode:          req.StartMode,
-			StartAt:            req.StartAt,
-			EndAt:              req.EndAt,
-			PaymentState:       req.PaymentState,
-			AppGoodStockLockID: req.AppGoodStockLockID,
-			LedgerLockID:       req.LedgerLockID,
+			OrderID:      req.OrderID,
+			OrderState:   req.OrderState,
+			StartMode:    req.StartMode,
+			StartAt:      req.StartAt,
+			EndAt:        req.EndAt,
+			PaymentState: req.PaymentState,
 		},
 	).Save(ctx); err != nil {
 		return err
@@ -130,10 +143,16 @@ func (h *Handler) CreateOrder(ctx context.Context) (*npool.Order, error) {
 		if err := handler.createOrderState(ctx, tx, req.OrderStateReq); err != nil {
 			return err
 		}
+		if err := handler.createOrderLock(ctx, tx, req.StockLockReq); err != nil {
+			return err
+		}
 		if req.PaymentReq == nil {
 			return nil
 		}
 		if err := handler.createPayment(ctx, tx, req.PaymentReq); err != nil {
+			return err
+		}
+		if err := handler.createOrderLock(ctx, tx, req.BalanceLockReq); err != nil {
 			return err
 		}
 		return nil
@@ -201,6 +220,7 @@ func (h *Handler) CreateOrders(ctx context.Context) ([]*npool.Order, error) {
 			if req.Req.ID == nil {
 				req.Req.ID = &id
 				req.OrderStateReq.OrderID = &id
+				req.StockLockReq.OrderID = &id
 			}
 			if req.PaymentReq != nil {
 				id1 := uuid.New()
@@ -215,6 +235,9 @@ func (h *Handler) CreateOrders(ctx context.Context) ([]*npool.Order, error) {
 			if err := handler.createOrderState(ctx, tx, req.OrderStateReq); err != nil {
 				return err
 			}
+			if err := handler.createOrderLock(ctx, tx, req.StockLockReq); err != nil {
+				return err
+			}
 			ids = append(ids, *req.Req.ID)
 
 			if req.PaymentReq == nil {
@@ -223,6 +246,10 @@ func (h *Handler) CreateOrders(ctx context.Context) ([]*npool.Order, error) {
 			req.PaymentReq.OrderID = req.Req.ID
 			req.PaymentReq.ID = req.Req.PaymentID
 			if err := handler.createPayment(ctx, tx, req.PaymentReq); err != nil {
+				return err
+			}
+			req.BalanceLockReq.OrderID = req.Req.ID
+			if err := handler.createOrderLock(ctx, tx, req.BalanceLockReq); err != nil {
 				return err
 			}
 		}

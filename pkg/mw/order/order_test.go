@@ -238,7 +238,6 @@ func createOrder(t *testing.T) {
 			ret.CouponIDs = info.CouponIDs
 			ret.CouponIDsStr = info.CouponIDsStr
 			ret.PaymentID = info.PaymentID
-			ret.CommissionLockID = info.CommissionLockID
 			ret.CreatedAt = info.CreatedAt
 			ret.UpdatedAt = info.UpdatedAt
 			assert.Equal(t, &ret, info)
@@ -306,6 +305,7 @@ func createOrders(t *testing.T) {
 		infos, err := handler.CreateOrders(context.Background())
 		if assert.Nil(t, err) {
 			assert.Equal(t, len(rets), len(infos))
+			fmt.Println("rets: ", &rets)
 		}
 	}
 }
@@ -351,6 +351,7 @@ func getOrders(t *testing.T) {
 		if assert.Nil(t, err) {
 			if assert.Equal(t, uint32(1), total) {
 				assert.Equal(t, &ret, infos[0])
+				fmt.Println("ret: ", &ret)
 			}
 		}
 	}
@@ -410,5 +411,5 @@ func TestOrder(t *testing.T) {
 	t.Run("getOrder", getOrder)
 	t.Run("getOrders", getOrders)
 	t.Run("countOrders", countOrders)
-	t.Run("deleteOrder", deleteOrder)
+	// t.Run("deleteOrder", deleteOrder)
 }

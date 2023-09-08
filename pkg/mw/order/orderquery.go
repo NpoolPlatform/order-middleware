@@ -10,6 +10,7 @@ import (
 
 	ordercrud "github.com/NpoolPlatform/order-middleware/pkg/crud/order"
 	entorder "github.com/NpoolPlatform/order-middleware/pkg/db/ent/order"
+	entorderlock "github.com/NpoolPlatform/order-middleware/pkg/db/ent/orderlock"
 	entorderstate "github.com/NpoolPlatform/order-middleware/pkg/db/ent/orderstate"
 	entpayment "github.com/NpoolPlatform/order-middleware/pkg/db/ent/payment"
 )
@@ -81,7 +82,7 @@ func (h *baseQueryHandler) QueryJoinPayment(s *sql.Selector) error {
 	return nil
 }
 
-//nolint:funlen,gocyclo
+//nolint:gocyclo
 func (h *baseQueryHandler) QueryJoinOrderState(s *sql.Selector) error {
 	t := sql.Table(entorderstate.Table)
 	s.LeftJoin(t).
@@ -179,9 +180,48 @@ func (h *baseQueryHandler) QueryJoinOrderState(s *sql.Selector) error {
 		sql.As(t.C(entorderstate.FieldPaymentState), "payment_state"),
 		sql.As(t.C(entorderstate.FieldOutofgasHours), "outofgas_hours"),
 		sql.As(t.C(entorderstate.FieldCompensateHours), "compensate_hours"),
-		sql.As(t.C(entorderstate.FieldAppGoodStockLockID), "app_good_stock_lock_id"),
-		sql.As(t.C(entorderstate.FieldLedgerLockID), "ledger_lock_id"),
-		sql.As(t.C(entorderstate.FieldCommissionLockID), "commission_lock_id"),
 	)
 	return nil
+}
+
+//nolint:dupl
+func (h *baseQueryHandler) QueryJoinStockLock(s *sql.Selector) {
+	t := sql.Table(entorderlock.Table)
+	lockType := basetypes.OrderLockType_LockStock
+	s.LeftJoin(t).
+		On(
+			s.C(entorder.FieldID),
+			t.C(entorderlock.FieldOrderID),
+		).
+		OnP(
+			sql.EQ(t.C(entorderlock.FieldDeletedAt), 0),
+		).
+		OnP(
+			sql.EQ(t.C(entorderlock.FieldLockType), lockType.String()),
+		)
+
+	s.AppendSelect(
+		sql.As(t.C(entorderlock.FieldID), "app_good_stock_lock_id"),
+	)
+}
+
+//nolint:dupl
+func (h *baseQueryHandler) QueryJoinBalanceLock(s *sql.Selector) {
+	t := sql.Table(entorderlock.Table)
+	lockType := basetypes.OrderLockType_LockBalance
+	s.LeftJoin(t).
+		On(
+			s.C(entorder.FieldID),
+			t.C(entorderlock.FieldOrderID),
+		).
+		OnP(
+			sql.EQ(t.C(entorderlock.FieldDeletedAt), 0),
+		).
+		OnP(
+			sql.EQ(t.C(entorderlock.FieldLockType), lockType.String()),
+		)
+
+	s.AppendSelect(
+		sql.As(t.C(entorderlock.FieldID), "ledger_lock_id"),
+	)
 }

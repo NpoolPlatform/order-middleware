@@ -6,6 +6,7 @@ import (
 
 	basetypes "github.com/NpoolPlatform/message/npool/basetypes/order/v1"
 	ordercrud "github.com/NpoolPlatform/order-middleware/pkg/crud/order"
+	orderlockcrud "github.com/NpoolPlatform/order-middleware/pkg/crud/order/orderlock"
 	orderstatecrud "github.com/NpoolPlatform/order-middleware/pkg/crud/orderstate"
 	paymentcrud "github.com/NpoolPlatform/order-middleware/pkg/crud/payment"
 	"github.com/google/uuid"
@@ -14,10 +15,13 @@ import (
 
 type OrderReq struct {
 	*ordercrud.Req
-	OrderStateReq *orderstatecrud.Req
-	PaymentReq    *paymentcrud.Req
+	OrderStateReq  *orderstatecrud.Req
+	PaymentReq     *paymentcrud.Req
+	StockLockReq   *orderlockcrud.Req
+	BalanceLockReq *orderlockcrud.Req
 }
 
+//nolint:funlen
 func (h *Handler) ToOrderReq(ctx context.Context, newOrder bool) (*OrderReq, error) {
 	if !newOrder {
 		info, err := h.GetOrder(ctx)
@@ -87,9 +91,13 @@ func (h *Handler) ToOrderReq(ctx context.Context, newOrder bool) (*OrderReq, err
 			PaymentFinishAmount:  h.PaymentFinishAmount,
 			OutOfGasHours:        h.OutOfGasHours,
 			CompensateHours:      h.CompensateHours,
-			AppGoodStockLockID:   h.AppGoodStockLockID,
-			LedgerLockID:         h.LedgerLockID,
-			CommissionLockID:     h.CommissionLockID,
+		},
+		StockLockReq: &orderlockcrud.Req{
+			ID:       h.AppGoodStockLockID,
+			AppID:    h.AppID,
+			UserID:   h.UserID,
+			OrderID:  h.ID,
+			LockType: basetypes.OrderLockType_LockStock.Enum(),
 		},
 	}
 
@@ -116,6 +124,13 @@ func (h *Handler) ToOrderReq(ctx context.Context, newOrder bool) (*OrderReq, err
 		GoodID:      h.GoodID,
 		AccountID:   h.PaymentAccountID,
 		StartAmount: h.PaymentStartAmount,
+	}
+	req.BalanceLockReq = &orderlockcrud.Req{
+		ID:       h.LedgerLockID,
+		AppID:    h.AppID,
+		UserID:   h.UserID,
+		OrderID:  h.ID,
+		LockType: basetypes.OrderLockType_LockBalance.Enum(),
 	}
 	return req, nil
 }
