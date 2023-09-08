@@ -89,6 +89,8 @@ var (
 		PaymentState:         ordertypes.PaymentState_PaymentStateWait,
 		OutOfGasHours:        0,
 		CompensateHours:      0,
+		AppGoodStockLockID:   uuid.NewString(),
+		LedgerLockID:         uuid.NewString(),
 	}
 
 	req = npool.OrderReq{
@@ -130,6 +132,8 @@ var (
 		PaymentState:         &ret.PaymentState,
 		OutOfGasHours:        &ret.OutOfGasHours,
 		CompensateHours:      &ret.CompensateHours,
+		AppGoodStockLockID:   &ret.AppGoodStockLockID,
+		LedgerLockID:         &ret.LedgerLockID,
 	}
 )
 
@@ -144,6 +148,7 @@ func create(t *testing.T) {
 		ret.CouponIDs = info.CouponIDs
 		ret.CouponIDsStr = info.CouponIDsStr
 		ret.PaymentID = info.PaymentID
+		ret.CommissionLockID = info.CommissionLockID
 		ret.ParentOrderID = info.ParentOrderID
 		assert.Equal(t, info, &ret)
 	}

@@ -83,6 +83,8 @@ var (
 		PaymentState:         ordertypes.PaymentState_PaymentStateWait,
 		OutOfGasHours:        0,
 		CompensateHours:      0,
+		AppGoodStockLockID:   uuid.NewString(),
+		LedgerLockID:         uuid.NewString(),
 	}
 	ret = npool.OutOfGas{
 		ID:      uuid.NewString(),
@@ -125,6 +127,8 @@ func setup(t *testing.T) func(*testing.T) {
 		order1.WithStartAt(&order.StartAt, true),
 		order1.WithEndAt(&order.EndAt, true),
 		order1.WithPaymentState(&order.PaymentState, false),
+		order1.WithAppGoodStockLockID(&order.AppGoodStockLockID, true),
+		order1.WithLedgerLockID(&order.LedgerLockID, true),
 	)
 	assert.Nil(t, err)
 
