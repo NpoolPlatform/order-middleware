@@ -10,6 +10,7 @@ import (
 	"github.com/NpoolPlatform/order-middleware/pkg/db"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent"
 	entorder "github.com/NpoolPlatform/order-middleware/pkg/db/ent/order"
+	"github.com/shopspring/decimal"
 
 	npool "github.com/NpoolPlatform/message/npool/order/mw/v1/order"
 )
@@ -68,6 +69,78 @@ func (h *queryHandler) formalize() {
 		info.StartMode = basetypes.OrderStartMode(basetypes.OrderStartMode_value[info.StartModeStr])
 		info.BenefitState = basetypes.BenefitState(basetypes.BenefitState_value[info.BenefitStateStr])
 		_ = json.Unmarshal([]byte(info.CouponIDsStr), &info.CouponIDs)
+		amount, err := decimal.NewFromString(info.Units)
+		if err != nil {
+			info.Units = decimal.NewFromInt(0).String()
+		} else {
+			info.Units = amount.String()
+		}
+		amount, err = decimal.NewFromString(info.GoodValue)
+		if err != nil {
+			info.GoodValue = decimal.NewFromInt(0).String()
+		} else {
+			info.GoodValue = amount.String()
+		}
+		amount, err = decimal.NewFromString(info.GoodValueUSD)
+		if err != nil {
+			info.GoodValueUSD = decimal.NewFromInt(0).String()
+		} else {
+			info.GoodValueUSD = amount.String()
+		}
+		amount, err = decimal.NewFromString(info.PaymentAmount)
+		if err != nil {
+			info.PaymentAmount = decimal.NewFromInt(0).String()
+		} else {
+			info.PaymentAmount = amount.String()
+		}
+		amount, err = decimal.NewFromString(info.DiscountAmount)
+		if err != nil {
+			info.DiscountAmount = decimal.NewFromInt(0).String()
+		} else {
+			info.DiscountAmount = amount.String()
+		}
+		amount, err = decimal.NewFromString(info.TransferAmount)
+		if err != nil {
+			info.TransferAmount = decimal.NewFromInt(0).String()
+		} else {
+			info.TransferAmount = amount.String()
+		}
+		amount, err = decimal.NewFromString(info.BalanceAmount)
+		if err != nil {
+			info.BalanceAmount = decimal.NewFromInt(0).String()
+		} else {
+			info.BalanceAmount = amount.String()
+		}
+		amount, err = decimal.NewFromString(info.CoinUSDCurrency)
+		if err != nil {
+			info.CoinUSDCurrency = decimal.NewFromInt(0).String()
+		} else {
+			info.CoinUSDCurrency = amount.String()
+		}
+		amount, err = decimal.NewFromString(info.LocalCoinUSDCurrency)
+		if err != nil {
+			info.LocalCoinUSDCurrency = decimal.NewFromInt(0).String()
+		} else {
+			info.LocalCoinUSDCurrency = amount.String()
+		}
+		amount, err = decimal.NewFromString(info.LiveCoinUSDCurrency)
+		if err != nil {
+			info.LiveCoinUSDCurrency = decimal.NewFromInt(0).String()
+		} else {
+			info.LiveCoinUSDCurrency = amount.String()
+		}
+		amount, err = decimal.NewFromString(info.PaymentStartAmount)
+		if err != nil {
+			info.PaymentStartAmount = decimal.NewFromInt(0).String()
+		} else {
+			info.PaymentStartAmount = amount.String()
+		}
+		amount, err = decimal.NewFromString(info.PaymentFinishAmount)
+		if err != nil {
+			info.PaymentFinishAmount = decimal.NewFromInt(0).String()
+		} else {
+			info.PaymentFinishAmount = amount.String()
+		}
 	}
 }
 

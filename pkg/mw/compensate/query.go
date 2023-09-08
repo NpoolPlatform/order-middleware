@@ -8,6 +8,7 @@ import (
 	"github.com/NpoolPlatform/order-middleware/pkg/db"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent"
 	entcompensate "github.com/NpoolPlatform/order-middleware/pkg/db/ent/compensate"
+	"github.com/shopspring/decimal"
 
 	npool "github.com/NpoolPlatform/message/npool/order/mw/v1/compensate"
 	compensatecrud "github.com/NpoolPlatform/order-middleware/pkg/crud/compensate"
@@ -123,6 +124,17 @@ func (h *queryHandler) scan(ctx context.Context) error {
 	return h.stmSelect.Scan(ctx, &h.infos)
 }
 
+func (h *queryHandler) formalize() {
+	for _, info := range h.infos {
+		amount, err := decimal.NewFromString(info.Units)
+		if err != nil {
+			info.Units = decimal.NewFromInt(0).String()
+		} else {
+			info.Units = amount.String()
+		}
+	}
+}
+
 func (h *Handler) GetCompensate(ctx context.Context) (*npool.Compensate, error) {
 	handler := &queryHandler{
 		Handler: h,
@@ -144,6 +156,8 @@ func (h *Handler) GetCompensate(ctx context.Context) (*npool.Compensate, error) 
 	if len(handler.infos) > 1 {
 		return nil, fmt.Errorf("too many records")
 	}
+
+	handler.formalize()
 
 	return handler.infos[0], nil
 }
@@ -184,6 +198,8 @@ func (h *Handler) GetCompensates(ctx context.Context) ([]*npool.Compensate, uint
 	if err != nil {
 		return nil, 0, err
 	}
+
+	handler.formalize()
 
 	return handler.infos, handler.total, nil
 }
