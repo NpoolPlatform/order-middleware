@@ -58,7 +58,6 @@ var (
 func creates(t *testing.T) {
 	var err error
 	infos, err := CreateOrderLocks(context.Background(), reqs)
-	fmt.Println("err: z", err)
 	if assert.Nil(t, err) {
 		ret.CreatedAt = infos[0].CreatedAt
 		ret.UpdatedAt = infos[0].UpdatedAt
