@@ -57,6 +57,10 @@ type OrderState struct {
 	OutofgasHours uint32 `json:"outofgas_hours,omitempty"`
 	// CompensateHours holds the value of the "compensate_hours" field.
 	CompensateHours uint32 `json:"compensate_hours,omitempty"`
+	// AppGoodStockLockID holds the value of the "app_good_stock_lock_id" field.
+	AppGoodStockLockID uuid.UUID `json:"app_good_stock_lock_id,omitempty"`
+	// LedgerLockID holds the value of the "ledger_lock_id" field.
+	LedgerLockID uuid.UUID `json:"ledger_lock_id,omitempty"`
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -72,7 +76,7 @@ func (*OrderState) scanValues(columns []string) ([]interface{}, error) {
 			values[i] = new(sql.NullInt64)
 		case orderstate.FieldOrderState, orderstate.FieldCancelState, orderstate.FieldStartMode, orderstate.FieldBenefitState, orderstate.FieldPaymentTransactionID, orderstate.FieldPaymentState:
 			values[i] = new(sql.NullString)
-		case orderstate.FieldID, orderstate.FieldOrderID:
+		case orderstate.FieldID, orderstate.FieldOrderID, orderstate.FieldAppGoodStockLockID, orderstate.FieldLedgerLockID:
 			values[i] = new(uuid.UUID)
 		default:
 			return nil, fmt.Errorf("unexpected column %q for type OrderState", columns[i])
@@ -215,6 +219,18 @@ func (os *OrderState) assignValues(columns []string, values []interface{}) error
 			} else if value.Valid {
 				os.CompensateHours = uint32(value.Int64)
 			}
+		case orderstate.FieldAppGoodStockLockID:
+			if value, ok := values[i].(*uuid.UUID); !ok {
+				return fmt.Errorf("unexpected type %T for field app_good_stock_lock_id", values[i])
+			} else if value != nil {
+				os.AppGoodStockLockID = *value
+			}
+		case orderstate.FieldLedgerLockID:
+			if value, ok := values[i].(*uuid.UUID); !ok {
+				return fmt.Errorf("unexpected type %T for field ledger_lock_id", values[i])
+			} else if value != nil {
+				os.LedgerLockID = *value
+			}
 		}
 	}
 	return nil
@@ -302,6 +318,12 @@ func (os *OrderState) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("compensate_hours=")
 	builder.WriteString(fmt.Sprintf("%v", os.CompensateHours))
+	builder.WriteString(", ")
+	builder.WriteString("app_good_stock_lock_id=")
+	builder.WriteString(fmt.Sprintf("%v", os.AppGoodStockLockID))
+	builder.WriteString(", ")
+	builder.WriteString("ledger_lock_id=")
+	builder.WriteString(fmt.Sprintf("%v", os.LedgerLockID))
 	builder.WriteByte(')')
 	return builder.String()
 }

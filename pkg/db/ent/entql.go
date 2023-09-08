@@ -111,6 +111,8 @@ var schemaGraph = func() *sqlgraph.Schema {
 			orderstate.FieldPaymentState:         {Type: field.TypeString, Column: orderstate.FieldPaymentState},
 			orderstate.FieldOutofgasHours:        {Type: field.TypeUint32, Column: orderstate.FieldOutofgasHours},
 			orderstate.FieldCompensateHours:      {Type: field.TypeUint32, Column: orderstate.FieldCompensateHours},
+			orderstate.FieldAppGoodStockLockID:   {Type: field.TypeUUID, Column: orderstate.FieldAppGoodStockLockID},
+			orderstate.FieldLedgerLockID:         {Type: field.TypeUUID, Column: orderstate.FieldLedgerLockID},
 		},
 	}
 	graph.Nodes[3] = &sqlgraph.Node{
@@ -563,6 +565,16 @@ func (f *OrderStateFilter) WhereOutofgasHours(p entql.Uint32P) {
 // WhereCompensateHours applies the entql uint32 predicate on the compensate_hours field.
 func (f *OrderStateFilter) WhereCompensateHours(p entql.Uint32P) {
 	f.Where(p.Field(orderstate.FieldCompensateHours))
+}
+
+// WhereAppGoodStockLockID applies the entql [16]byte predicate on the app_good_stock_lock_id field.
+func (f *OrderStateFilter) WhereAppGoodStockLockID(p entql.ValueP) {
+	f.Where(p.Field(orderstate.FieldAppGoodStockLockID))
+}
+
+// WhereLedgerLockID applies the entql [16]byte predicate on the ledger_lock_id field.
+func (f *OrderStateFilter) WhereLedgerLockID(p entql.ValueP) {
+	f.Where(p.Field(orderstate.FieldLedgerLockID))
 }
 
 // addPredicate implements the predicateAdder interface.

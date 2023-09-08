@@ -97,6 +97,18 @@ func (OrderState) Fields() []ent.Field {
 			Uint32("compensate_hours").
 			Optional().
 			Default(0),
+		field.
+			UUID("app_good_stock_lock_id", uuid.UUID{}).
+			Optional().
+			Default(func() uuid.UUID {
+				return uuid.Nil
+			}),
+		field.
+			UUID("ledger_lock_id", uuid.UUID{}).
+			Optional().
+			Default(func() uuid.UUID {
+				return uuid.Nil
+			}),
 	}
 }
 

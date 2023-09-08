@@ -3290,6 +3290,8 @@ type OrderStateMutation struct {
 	addoutofgas_hours      *int32
 	compensate_hours       *uint32
 	addcompensate_hours    *int32
+	app_good_stock_lock_id *uuid.UUID
+	ledger_lock_id         *uuid.UUID
 	clearedFields          map[string]struct{}
 	done                   bool
 	oldValue               func(context.Context) (*OrderState, error)
@@ -4514,6 +4516,104 @@ func (m *OrderStateMutation) ResetCompensateHours() {
 	delete(m.clearedFields, orderstate.FieldCompensateHours)
 }
 
+// SetAppGoodStockLockID sets the "app_good_stock_lock_id" field.
+func (m *OrderStateMutation) SetAppGoodStockLockID(u uuid.UUID) {
+	m.app_good_stock_lock_id = &u
+}
+
+// AppGoodStockLockID returns the value of the "app_good_stock_lock_id" field in the mutation.
+func (m *OrderStateMutation) AppGoodStockLockID() (r uuid.UUID, exists bool) {
+	v := m.app_good_stock_lock_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldAppGoodStockLockID returns the old "app_good_stock_lock_id" field's value of the OrderState entity.
+// If the OrderState object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *OrderStateMutation) OldAppGoodStockLockID(ctx context.Context) (v uuid.UUID, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldAppGoodStockLockID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldAppGoodStockLockID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldAppGoodStockLockID: %w", err)
+	}
+	return oldValue.AppGoodStockLockID, nil
+}
+
+// ClearAppGoodStockLockID clears the value of the "app_good_stock_lock_id" field.
+func (m *OrderStateMutation) ClearAppGoodStockLockID() {
+	m.app_good_stock_lock_id = nil
+	m.clearedFields[orderstate.FieldAppGoodStockLockID] = struct{}{}
+}
+
+// AppGoodStockLockIDCleared returns if the "app_good_stock_lock_id" field was cleared in this mutation.
+func (m *OrderStateMutation) AppGoodStockLockIDCleared() bool {
+	_, ok := m.clearedFields[orderstate.FieldAppGoodStockLockID]
+	return ok
+}
+
+// ResetAppGoodStockLockID resets all changes to the "app_good_stock_lock_id" field.
+func (m *OrderStateMutation) ResetAppGoodStockLockID() {
+	m.app_good_stock_lock_id = nil
+	delete(m.clearedFields, orderstate.FieldAppGoodStockLockID)
+}
+
+// SetLedgerLockID sets the "ledger_lock_id" field.
+func (m *OrderStateMutation) SetLedgerLockID(u uuid.UUID) {
+	m.ledger_lock_id = &u
+}
+
+// LedgerLockID returns the value of the "ledger_lock_id" field in the mutation.
+func (m *OrderStateMutation) LedgerLockID() (r uuid.UUID, exists bool) {
+	v := m.ledger_lock_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldLedgerLockID returns the old "ledger_lock_id" field's value of the OrderState entity.
+// If the OrderState object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *OrderStateMutation) OldLedgerLockID(ctx context.Context) (v uuid.UUID, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldLedgerLockID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldLedgerLockID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldLedgerLockID: %w", err)
+	}
+	return oldValue.LedgerLockID, nil
+}
+
+// ClearLedgerLockID clears the value of the "ledger_lock_id" field.
+func (m *OrderStateMutation) ClearLedgerLockID() {
+	m.ledger_lock_id = nil
+	m.clearedFields[orderstate.FieldLedgerLockID] = struct{}{}
+}
+
+// LedgerLockIDCleared returns if the "ledger_lock_id" field was cleared in this mutation.
+func (m *OrderStateMutation) LedgerLockIDCleared() bool {
+	_, ok := m.clearedFields[orderstate.FieldLedgerLockID]
+	return ok
+}
+
+// ResetLedgerLockID resets all changes to the "ledger_lock_id" field.
+func (m *OrderStateMutation) ResetLedgerLockID() {
+	m.ledger_lock_id = nil
+	delete(m.clearedFields, orderstate.FieldLedgerLockID)
+}
+
 // Where appends a list predicates to the OrderStateMutation builder.
 func (m *OrderStateMutation) Where(ps ...predicate.OrderState) {
 	m.predicates = append(m.predicates, ps...)
@@ -4533,7 +4633,7 @@ func (m *OrderStateMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *OrderStateMutation) Fields() []string {
-	fields := make([]string, 0, 20)
+	fields := make([]string, 0, 22)
 	if m.created_at != nil {
 		fields = append(fields, orderstate.FieldCreatedAt)
 	}
@@ -4594,6 +4694,12 @@ func (m *OrderStateMutation) Fields() []string {
 	if m.compensate_hours != nil {
 		fields = append(fields, orderstate.FieldCompensateHours)
 	}
+	if m.app_good_stock_lock_id != nil {
+		fields = append(fields, orderstate.FieldAppGoodStockLockID)
+	}
+	if m.ledger_lock_id != nil {
+		fields = append(fields, orderstate.FieldLedgerLockID)
+	}
 	return fields
 }
 
@@ -4642,6 +4748,10 @@ func (m *OrderStateMutation) Field(name string) (ent.Value, bool) {
 		return m.OutofgasHours()
 	case orderstate.FieldCompensateHours:
 		return m.CompensateHours()
+	case orderstate.FieldAppGoodStockLockID:
+		return m.AppGoodStockLockID()
+	case orderstate.FieldLedgerLockID:
+		return m.LedgerLockID()
 	}
 	return nil, false
 }
@@ -4691,6 +4801,10 @@ func (m *OrderStateMutation) OldField(ctx context.Context, name string) (ent.Val
 		return m.OldOutofgasHours(ctx)
 	case orderstate.FieldCompensateHours:
 		return m.OldCompensateHours(ctx)
+	case orderstate.FieldAppGoodStockLockID:
+		return m.OldAppGoodStockLockID(ctx)
+	case orderstate.FieldLedgerLockID:
+		return m.OldLedgerLockID(ctx)
 	}
 	return nil, fmt.Errorf("unknown OrderState field %s", name)
 }
@@ -4839,6 +4953,20 @@ func (m *OrderStateMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetCompensateHours(v)
+		return nil
+	case orderstate.FieldAppGoodStockLockID:
+		v, ok := value.(uuid.UUID)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetAppGoodStockLockID(v)
+		return nil
+	case orderstate.FieldLedgerLockID:
+		v, ok := value.(uuid.UUID)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetLedgerLockID(v)
 		return nil
 	}
 	return fmt.Errorf("unknown OrderState field %s", name)
@@ -5029,6 +5157,12 @@ func (m *OrderStateMutation) ClearedFields() []string {
 	if m.FieldCleared(orderstate.FieldCompensateHours) {
 		fields = append(fields, orderstate.FieldCompensateHours)
 	}
+	if m.FieldCleared(orderstate.FieldAppGoodStockLockID) {
+		fields = append(fields, orderstate.FieldAppGoodStockLockID)
+	}
+	if m.FieldCleared(orderstate.FieldLedgerLockID) {
+		fields = append(fields, orderstate.FieldLedgerLockID)
+	}
 	return fields
 }
 
@@ -5090,6 +5224,12 @@ func (m *OrderStateMutation) ClearField(name string) error {
 		return nil
 	case orderstate.FieldCompensateHours:
 		m.ClearCompensateHours()
+		return nil
+	case orderstate.FieldAppGoodStockLockID:
+		m.ClearAppGoodStockLockID()
+		return nil
+	case orderstate.FieldLedgerLockID:
+		m.ClearLedgerLockID()
 		return nil
 	}
 	return fmt.Errorf("unknown OrderState nullable field %s", name)
@@ -5158,6 +5298,12 @@ func (m *OrderStateMutation) ResetField(name string) error {
 		return nil
 	case orderstate.FieldCompensateHours:
 		m.ResetCompensateHours()
+		return nil
+	case orderstate.FieldAppGoodStockLockID:
+		m.ResetAppGoodStockLockID()
+		return nil
+	case orderstate.FieldLedgerLockID:
+		m.ResetLedgerLockID()
 		return nil
 	}
 	return fmt.Errorf("unknown OrderState field %s", name)

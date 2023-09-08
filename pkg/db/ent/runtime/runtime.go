@@ -270,6 +270,14 @@ func init() {
 	orderstateDescCompensateHours := orderstateFields[17].Descriptor()
 	// orderstate.DefaultCompensateHours holds the default value on creation for the compensate_hours field.
 	orderstate.DefaultCompensateHours = orderstateDescCompensateHours.Default.(uint32)
+	// orderstateDescAppGoodStockLockID is the schema descriptor for app_good_stock_lock_id field.
+	orderstateDescAppGoodStockLockID := orderstateFields[18].Descriptor()
+	// orderstate.DefaultAppGoodStockLockID holds the default value on creation for the app_good_stock_lock_id field.
+	orderstate.DefaultAppGoodStockLockID = orderstateDescAppGoodStockLockID.Default.(func() uuid.UUID)
+	// orderstateDescLedgerLockID is the schema descriptor for ledger_lock_id field.
+	orderstateDescLedgerLockID := orderstateFields[19].Descriptor()
+	// orderstate.DefaultLedgerLockID holds the default value on creation for the ledger_lock_id field.
+	orderstate.DefaultLedgerLockID = orderstateDescLedgerLockID.Default.(func() uuid.UUID)
 	// orderstateDescID is the schema descriptor for id field.
 	orderstateDescID := orderstateFields[0].Descriptor()
 	// orderstate.DefaultID holds the default value on creation for the id field.

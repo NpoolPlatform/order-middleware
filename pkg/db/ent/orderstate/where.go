@@ -220,6 +220,20 @@ func CompensateHours(v uint32) predicate.OrderState {
 	})
 }
 
+// AppGoodStockLockID applies equality check predicate on the "app_good_stock_lock_id" field. It's identical to AppGoodStockLockIDEQ.
+func AppGoodStockLockID(v uuid.UUID) predicate.OrderState {
+	return predicate.OrderState(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldAppGoodStockLockID), v))
+	})
+}
+
+// LedgerLockID applies equality check predicate on the "ledger_lock_id" field. It's identical to LedgerLockIDEQ.
+func LedgerLockID(v uuid.UUID) predicate.OrderState {
+	return predicate.OrderState(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldLedgerLockID), v))
+	})
+}
+
 // CreatedAtEQ applies the EQ predicate on the "created_at" field.
 func CreatedAtEQ(v uint32) predicate.OrderState {
 	return predicate.OrderState(func(s *sql.Selector) {
@@ -1781,6 +1795,162 @@ func CompensateHoursIsNil() predicate.OrderState {
 func CompensateHoursNotNil() predicate.OrderState {
 	return predicate.OrderState(func(s *sql.Selector) {
 		s.Where(sql.NotNull(s.C(FieldCompensateHours)))
+	})
+}
+
+// AppGoodStockLockIDEQ applies the EQ predicate on the "app_good_stock_lock_id" field.
+func AppGoodStockLockIDEQ(v uuid.UUID) predicate.OrderState {
+	return predicate.OrderState(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldAppGoodStockLockID), v))
+	})
+}
+
+// AppGoodStockLockIDNEQ applies the NEQ predicate on the "app_good_stock_lock_id" field.
+func AppGoodStockLockIDNEQ(v uuid.UUID) predicate.OrderState {
+	return predicate.OrderState(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldAppGoodStockLockID), v))
+	})
+}
+
+// AppGoodStockLockIDIn applies the In predicate on the "app_good_stock_lock_id" field.
+func AppGoodStockLockIDIn(vs ...uuid.UUID) predicate.OrderState {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.OrderState(func(s *sql.Selector) {
+		s.Where(sql.In(s.C(FieldAppGoodStockLockID), v...))
+	})
+}
+
+// AppGoodStockLockIDNotIn applies the NotIn predicate on the "app_good_stock_lock_id" field.
+func AppGoodStockLockIDNotIn(vs ...uuid.UUID) predicate.OrderState {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.OrderState(func(s *sql.Selector) {
+		s.Where(sql.NotIn(s.C(FieldAppGoodStockLockID), v...))
+	})
+}
+
+// AppGoodStockLockIDGT applies the GT predicate on the "app_good_stock_lock_id" field.
+func AppGoodStockLockIDGT(v uuid.UUID) predicate.OrderState {
+	return predicate.OrderState(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldAppGoodStockLockID), v))
+	})
+}
+
+// AppGoodStockLockIDGTE applies the GTE predicate on the "app_good_stock_lock_id" field.
+func AppGoodStockLockIDGTE(v uuid.UUID) predicate.OrderState {
+	return predicate.OrderState(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldAppGoodStockLockID), v))
+	})
+}
+
+// AppGoodStockLockIDLT applies the LT predicate on the "app_good_stock_lock_id" field.
+func AppGoodStockLockIDLT(v uuid.UUID) predicate.OrderState {
+	return predicate.OrderState(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldAppGoodStockLockID), v))
+	})
+}
+
+// AppGoodStockLockIDLTE applies the LTE predicate on the "app_good_stock_lock_id" field.
+func AppGoodStockLockIDLTE(v uuid.UUID) predicate.OrderState {
+	return predicate.OrderState(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldAppGoodStockLockID), v))
+	})
+}
+
+// AppGoodStockLockIDIsNil applies the IsNil predicate on the "app_good_stock_lock_id" field.
+func AppGoodStockLockIDIsNil() predicate.OrderState {
+	return predicate.OrderState(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldAppGoodStockLockID)))
+	})
+}
+
+// AppGoodStockLockIDNotNil applies the NotNil predicate on the "app_good_stock_lock_id" field.
+func AppGoodStockLockIDNotNil() predicate.OrderState {
+	return predicate.OrderState(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldAppGoodStockLockID)))
+	})
+}
+
+// LedgerLockIDEQ applies the EQ predicate on the "ledger_lock_id" field.
+func LedgerLockIDEQ(v uuid.UUID) predicate.OrderState {
+	return predicate.OrderState(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldLedgerLockID), v))
+	})
+}
+
+// LedgerLockIDNEQ applies the NEQ predicate on the "ledger_lock_id" field.
+func LedgerLockIDNEQ(v uuid.UUID) predicate.OrderState {
+	return predicate.OrderState(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldLedgerLockID), v))
+	})
+}
+
+// LedgerLockIDIn applies the In predicate on the "ledger_lock_id" field.
+func LedgerLockIDIn(vs ...uuid.UUID) predicate.OrderState {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.OrderState(func(s *sql.Selector) {
+		s.Where(sql.In(s.C(FieldLedgerLockID), v...))
+	})
+}
+
+// LedgerLockIDNotIn applies the NotIn predicate on the "ledger_lock_id" field.
+func LedgerLockIDNotIn(vs ...uuid.UUID) predicate.OrderState {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.OrderState(func(s *sql.Selector) {
+		s.Where(sql.NotIn(s.C(FieldLedgerLockID), v...))
+	})
+}
+
+// LedgerLockIDGT applies the GT predicate on the "ledger_lock_id" field.
+func LedgerLockIDGT(v uuid.UUID) predicate.OrderState {
+	return predicate.OrderState(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldLedgerLockID), v))
+	})
+}
+
+// LedgerLockIDGTE applies the GTE predicate on the "ledger_lock_id" field.
+func LedgerLockIDGTE(v uuid.UUID) predicate.OrderState {
+	return predicate.OrderState(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldLedgerLockID), v))
+	})
+}
+
+// LedgerLockIDLT applies the LT predicate on the "ledger_lock_id" field.
+func LedgerLockIDLT(v uuid.UUID) predicate.OrderState {
+	return predicate.OrderState(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldLedgerLockID), v))
+	})
+}
+
+// LedgerLockIDLTE applies the LTE predicate on the "ledger_lock_id" field.
+func LedgerLockIDLTE(v uuid.UUID) predicate.OrderState {
+	return predicate.OrderState(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldLedgerLockID), v))
+	})
+}
+
+// LedgerLockIDIsNil applies the IsNil predicate on the "ledger_lock_id" field.
+func LedgerLockIDIsNil() predicate.OrderState {
+	return predicate.OrderState(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldLedgerLockID)))
+	})
+}
+
+// LedgerLockIDNotNil applies the NotNil predicate on the "ledger_lock_id" field.
+func LedgerLockIDNotNil() predicate.OrderState {
+	return predicate.OrderState(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldLedgerLockID)))
 	})
 }
 

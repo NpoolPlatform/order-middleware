@@ -296,6 +296,34 @@ func (osc *OrderStateCreate) SetNillableCompensateHours(u *uint32) *OrderStateCr
 	return osc
 }
 
+// SetAppGoodStockLockID sets the "app_good_stock_lock_id" field.
+func (osc *OrderStateCreate) SetAppGoodStockLockID(u uuid.UUID) *OrderStateCreate {
+	osc.mutation.SetAppGoodStockLockID(u)
+	return osc
+}
+
+// SetNillableAppGoodStockLockID sets the "app_good_stock_lock_id" field if the given value is not nil.
+func (osc *OrderStateCreate) SetNillableAppGoodStockLockID(u *uuid.UUID) *OrderStateCreate {
+	if u != nil {
+		osc.SetAppGoodStockLockID(*u)
+	}
+	return osc
+}
+
+// SetLedgerLockID sets the "ledger_lock_id" field.
+func (osc *OrderStateCreate) SetLedgerLockID(u uuid.UUID) *OrderStateCreate {
+	osc.mutation.SetLedgerLockID(u)
+	return osc
+}
+
+// SetNillableLedgerLockID sets the "ledger_lock_id" field if the given value is not nil.
+func (osc *OrderStateCreate) SetNillableLedgerLockID(u *uuid.UUID) *OrderStateCreate {
+	if u != nil {
+		osc.SetLedgerLockID(*u)
+	}
+	return osc
+}
+
 // SetID sets the "id" field.
 func (osc *OrderStateCreate) SetID(u uuid.UUID) *OrderStateCreate {
 	osc.mutation.SetID(u)
@@ -473,6 +501,20 @@ func (osc *OrderStateCreate) defaults() error {
 	if _, ok := osc.mutation.CompensateHours(); !ok {
 		v := orderstate.DefaultCompensateHours
 		osc.mutation.SetCompensateHours(v)
+	}
+	if _, ok := osc.mutation.AppGoodStockLockID(); !ok {
+		if orderstate.DefaultAppGoodStockLockID == nil {
+			return fmt.Errorf("ent: uninitialized orderstate.DefaultAppGoodStockLockID (forgotten import ent/runtime?)")
+		}
+		v := orderstate.DefaultAppGoodStockLockID()
+		osc.mutation.SetAppGoodStockLockID(v)
+	}
+	if _, ok := osc.mutation.LedgerLockID(); !ok {
+		if orderstate.DefaultLedgerLockID == nil {
+			return fmt.Errorf("ent: uninitialized orderstate.DefaultLedgerLockID (forgotten import ent/runtime?)")
+		}
+		v := orderstate.DefaultLedgerLockID()
+		osc.mutation.SetLedgerLockID(v)
 	}
 	if _, ok := osc.mutation.ID(); !ok {
 		if orderstate.DefaultID == nil {
@@ -694,6 +736,22 @@ func (osc *OrderStateCreate) createSpec() (*OrderState, *sqlgraph.CreateSpec) {
 			Column: orderstate.FieldCompensateHours,
 		})
 		_node.CompensateHours = value
+	}
+	if value, ok := osc.mutation.AppGoodStockLockID(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Value:  value,
+			Column: orderstate.FieldAppGoodStockLockID,
+		})
+		_node.AppGoodStockLockID = value
+	}
+	if value, ok := osc.mutation.LedgerLockID(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Value:  value,
+			Column: orderstate.FieldLedgerLockID,
+		})
+		_node.LedgerLockID = value
 	}
 	return _node, _spec
 }
@@ -1136,6 +1194,42 @@ func (u *OrderStateUpsert) AddCompensateHours(v uint32) *OrderStateUpsert {
 // ClearCompensateHours clears the value of the "compensate_hours" field.
 func (u *OrderStateUpsert) ClearCompensateHours() *OrderStateUpsert {
 	u.SetNull(orderstate.FieldCompensateHours)
+	return u
+}
+
+// SetAppGoodStockLockID sets the "app_good_stock_lock_id" field.
+func (u *OrderStateUpsert) SetAppGoodStockLockID(v uuid.UUID) *OrderStateUpsert {
+	u.Set(orderstate.FieldAppGoodStockLockID, v)
+	return u
+}
+
+// UpdateAppGoodStockLockID sets the "app_good_stock_lock_id" field to the value that was provided on create.
+func (u *OrderStateUpsert) UpdateAppGoodStockLockID() *OrderStateUpsert {
+	u.SetExcluded(orderstate.FieldAppGoodStockLockID)
+	return u
+}
+
+// ClearAppGoodStockLockID clears the value of the "app_good_stock_lock_id" field.
+func (u *OrderStateUpsert) ClearAppGoodStockLockID() *OrderStateUpsert {
+	u.SetNull(orderstate.FieldAppGoodStockLockID)
+	return u
+}
+
+// SetLedgerLockID sets the "ledger_lock_id" field.
+func (u *OrderStateUpsert) SetLedgerLockID(v uuid.UUID) *OrderStateUpsert {
+	u.Set(orderstate.FieldLedgerLockID, v)
+	return u
+}
+
+// UpdateLedgerLockID sets the "ledger_lock_id" field to the value that was provided on create.
+func (u *OrderStateUpsert) UpdateLedgerLockID() *OrderStateUpsert {
+	u.SetExcluded(orderstate.FieldLedgerLockID)
+	return u
+}
+
+// ClearLedgerLockID clears the value of the "ledger_lock_id" field.
+func (u *OrderStateUpsert) ClearLedgerLockID() *OrderStateUpsert {
+	u.SetNull(orderstate.FieldLedgerLockID)
 	return u
 }
 
@@ -1641,6 +1735,48 @@ func (u *OrderStateUpsertOne) UpdateCompensateHours() *OrderStateUpsertOne {
 func (u *OrderStateUpsertOne) ClearCompensateHours() *OrderStateUpsertOne {
 	return u.Update(func(s *OrderStateUpsert) {
 		s.ClearCompensateHours()
+	})
+}
+
+// SetAppGoodStockLockID sets the "app_good_stock_lock_id" field.
+func (u *OrderStateUpsertOne) SetAppGoodStockLockID(v uuid.UUID) *OrderStateUpsertOne {
+	return u.Update(func(s *OrderStateUpsert) {
+		s.SetAppGoodStockLockID(v)
+	})
+}
+
+// UpdateAppGoodStockLockID sets the "app_good_stock_lock_id" field to the value that was provided on create.
+func (u *OrderStateUpsertOne) UpdateAppGoodStockLockID() *OrderStateUpsertOne {
+	return u.Update(func(s *OrderStateUpsert) {
+		s.UpdateAppGoodStockLockID()
+	})
+}
+
+// ClearAppGoodStockLockID clears the value of the "app_good_stock_lock_id" field.
+func (u *OrderStateUpsertOne) ClearAppGoodStockLockID() *OrderStateUpsertOne {
+	return u.Update(func(s *OrderStateUpsert) {
+		s.ClearAppGoodStockLockID()
+	})
+}
+
+// SetLedgerLockID sets the "ledger_lock_id" field.
+func (u *OrderStateUpsertOne) SetLedgerLockID(v uuid.UUID) *OrderStateUpsertOne {
+	return u.Update(func(s *OrderStateUpsert) {
+		s.SetLedgerLockID(v)
+	})
+}
+
+// UpdateLedgerLockID sets the "ledger_lock_id" field to the value that was provided on create.
+func (u *OrderStateUpsertOne) UpdateLedgerLockID() *OrderStateUpsertOne {
+	return u.Update(func(s *OrderStateUpsert) {
+		s.UpdateLedgerLockID()
+	})
+}
+
+// ClearLedgerLockID clears the value of the "ledger_lock_id" field.
+func (u *OrderStateUpsertOne) ClearLedgerLockID() *OrderStateUpsertOne {
+	return u.Update(func(s *OrderStateUpsert) {
+		s.ClearLedgerLockID()
 	})
 }
 
@@ -2312,6 +2448,48 @@ func (u *OrderStateUpsertBulk) UpdateCompensateHours() *OrderStateUpsertBulk {
 func (u *OrderStateUpsertBulk) ClearCompensateHours() *OrderStateUpsertBulk {
 	return u.Update(func(s *OrderStateUpsert) {
 		s.ClearCompensateHours()
+	})
+}
+
+// SetAppGoodStockLockID sets the "app_good_stock_lock_id" field.
+func (u *OrderStateUpsertBulk) SetAppGoodStockLockID(v uuid.UUID) *OrderStateUpsertBulk {
+	return u.Update(func(s *OrderStateUpsert) {
+		s.SetAppGoodStockLockID(v)
+	})
+}
+
+// UpdateAppGoodStockLockID sets the "app_good_stock_lock_id" field to the value that was provided on create.
+func (u *OrderStateUpsertBulk) UpdateAppGoodStockLockID() *OrderStateUpsertBulk {
+	return u.Update(func(s *OrderStateUpsert) {
+		s.UpdateAppGoodStockLockID()
+	})
+}
+
+// ClearAppGoodStockLockID clears the value of the "app_good_stock_lock_id" field.
+func (u *OrderStateUpsertBulk) ClearAppGoodStockLockID() *OrderStateUpsertBulk {
+	return u.Update(func(s *OrderStateUpsert) {
+		s.ClearAppGoodStockLockID()
+	})
+}
+
+// SetLedgerLockID sets the "ledger_lock_id" field.
+func (u *OrderStateUpsertBulk) SetLedgerLockID(v uuid.UUID) *OrderStateUpsertBulk {
+	return u.Update(func(s *OrderStateUpsert) {
+		s.SetLedgerLockID(v)
+	})
+}
+
+// UpdateLedgerLockID sets the "ledger_lock_id" field to the value that was provided on create.
+func (u *OrderStateUpsertBulk) UpdateLedgerLockID() *OrderStateUpsertBulk {
+	return u.Update(func(s *OrderStateUpsert) {
+		s.UpdateLedgerLockID()
+	})
+}
+
+// ClearLedgerLockID clears the value of the "ledger_lock_id" field.
+func (u *OrderStateUpsertBulk) ClearLedgerLockID() *OrderStateUpsertBulk {
+	return u.Update(func(s *OrderStateUpsert) {
+		s.ClearLedgerLockID()
 	})
 }
 
