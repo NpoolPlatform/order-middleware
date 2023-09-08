@@ -287,6 +287,7 @@ func (h *updateHandler) updateOrderState(ctx context.Context, tx *ent.Tx, req *o
 			PaymentState:         req.PaymentState,
 			OutOfGasHours:        req.OutOfGasHours,
 			CompensateHours:      req.CompensateHours,
+			CommissionLockID:     req.CommissionLockID,
 		},
 	).Save(ctx); err != nil {
 		return err

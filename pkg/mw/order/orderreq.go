@@ -89,6 +89,7 @@ func (h *Handler) ToOrderReq(ctx context.Context, newOrder bool) (*OrderReq, err
 			CompensateHours:      h.CompensateHours,
 			AppGoodStockLockID:   h.AppGoodStockLockID,
 			LedgerLockID:         h.LedgerLockID,
+			CommissionLockID:     h.CommissionLockID,
 		},
 	}
 

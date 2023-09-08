@@ -32,6 +32,7 @@ type Req struct {
 	CompensateHours      *uint32
 	AppGoodStockLockID   *uuid.UUID
 	LedgerLockID         *uuid.UUID
+	CommissionLockID     *uuid.UUID
 	CreatedAt            *uint32
 	DeletedAt            *uint32
 }
@@ -151,6 +152,9 @@ func UpdateSet(u *ent.OrderStateUpdateOne, req *Req) *ent.OrderStateUpdateOne {
 	}
 	if req.CompensateHours != nil {
 		u.SetCompensateHours(*req.CompensateHours)
+	}
+	if req.CommissionLockID != nil {
+		u.SetCommissionLockID(*req.CommissionLockID)
 	}
 	if req.DeletedAt != nil {
 		u.SetDeletedAt(*req.DeletedAt)

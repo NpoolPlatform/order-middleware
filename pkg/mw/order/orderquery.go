@@ -181,6 +181,7 @@ func (h *baseQueryHandler) QueryJoinOrderState(s *sql.Selector) error {
 		sql.As(t.C(entorderstate.FieldCompensateHours), "compensate_hours"),
 		sql.As(t.C(entorderstate.FieldAppGoodStockLockID), "app_good_stock_lock_id"),
 		sql.As(t.C(entorderstate.FieldLedgerLockID), "ledger_lock_id"),
+		sql.As(t.C(entorderstate.FieldCommissionLockID), "commission_lock_id"),
 	)
 	return nil
 }

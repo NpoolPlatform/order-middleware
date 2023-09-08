@@ -63,6 +63,7 @@ type Handler struct {
 	CompensateHours      *uint32
 	AppGoodStockLockID   *uuid.UUID
 	LedgerLockID         *uuid.UUID
+	CommissionLockID     *uuid.UUID
 	Rollback             *bool
 	Reqs                 []*OrderReq
 	Conds                *ordercrud.Conds
@@ -893,6 +894,23 @@ func WithLedgerLockID(id *string, must bool) func(context.Context, *Handler) err
 	}
 }
 
+func WithCommissionLockID(id *string, must bool) func(context.Context, *Handler) error {
+	return func(ctx context.Context, h *Handler) error {
+		if id == nil {
+			if must {
+				return fmt.Errorf("invalid commissionlockid")
+			}
+			return nil
+		}
+		_id, err := uuid.Parse(*id)
+		if err != nil {
+			return err
+		}
+		h.CommissionLockID = &_id
+		return nil
+	}
+}
+
 func WithRollback(rollback *bool, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if rollback == nil {
@@ -1457,6 +1475,13 @@ func WithReqs(reqs []*npool.OrderReq, must bool) func(context.Context, *Handler)
 					return err
 				}
 				_req.OrderStateReq.LedgerLockID = &id
+			}
+			if req.CommissionLockID != nil {
+				id, err := uuid.Parse(*req.CommissionLockID)
+				if err != nil {
+					return err
+				}
+				_req.OrderStateReq.CommissionLockID = &id
 			}
 			if req.StartMode != nil {
 				switch *req.StartMode {
