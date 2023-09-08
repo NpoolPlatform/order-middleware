@@ -30,6 +30,8 @@ type Req struct {
 	PaymentState         *basetypes.PaymentState
 	OutOfGasHours        *uint32
 	CompensateHours      *uint32
+	AppGoodStockLockID   *uuid.UUID
+	LedgerLockID         *uuid.UUID
 	CreatedAt            *uint32
 	DeletedAt            *uint32
 }
@@ -86,6 +88,12 @@ func CreateSet(c *ent.OrderStateCreate, req *Req) *ent.OrderStateCreate {
 	}
 	if req.CompensateHours != nil {
 		c.SetCompensateHours(*req.CompensateHours)
+	}
+	if req.AppGoodStockLockID != nil {
+		c.SetAppGoodStockLockID(*req.AppGoodStockLockID)
+	}
+	if req.LedgerLockID != nil {
+		c.SetLedgerLockID(*req.LedgerLockID)
 	}
 	if req.CreatedAt != nil {
 		c.SetCreatedAt(*req.CreatedAt)

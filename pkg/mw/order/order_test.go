@@ -82,6 +82,8 @@ var (
 		PaymentState:         ordertypes.PaymentState_PaymentStateWait,
 		OutOfGasHours:        0,
 		CompensateHours:      0,
+		AppGoodStockLockID:   uuid.NewString(),
+		LedgerLockID:         uuid.NewString(),
 	}
 
 	appID         = uuid.NewString()

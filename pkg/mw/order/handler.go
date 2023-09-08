@@ -61,6 +61,8 @@ type Handler struct {
 	PaymentState         *basetypes.PaymentState
 	OutOfGasHours        *uint32
 	CompensateHours      *uint32
+	AppGoodStockLockID   *uuid.UUID
+	LedgerLockID         *uuid.UUID
 	Rollback             *bool
 	Reqs                 []*OrderReq
 	Conds                *ordercrud.Conds
@@ -857,6 +859,40 @@ func WithCompensateHours(compensateHours *uint32, must bool) func(context.Contex
 	}
 }
 
+func WithAppGoodStockLockID(id *string, must bool) func(context.Context, *Handler) error {
+	return func(ctx context.Context, h *Handler) error {
+		if id == nil {
+			if must {
+				return fmt.Errorf("invalid appgoodstocklockid")
+			}
+			return nil
+		}
+		_id, err := uuid.Parse(*id)
+		if err != nil {
+			return err
+		}
+		h.AppGoodStockLockID = &_id
+		return nil
+	}
+}
+
+func WithLedgerLockID(id *string, must bool) func(context.Context, *Handler) error {
+	return func(ctx context.Context, h *Handler) error {
+		if id == nil {
+			if must {
+				return fmt.Errorf("invalid ledgerlockid")
+			}
+			return nil
+		}
+		_id, err := uuid.Parse(*id)
+		if err != nil {
+			return err
+		}
+		h.LedgerLockID = &_id
+		return nil
+	}
+}
+
 func WithRollback(rollback *bool, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if rollback == nil {
@@ -1157,6 +1193,9 @@ func WithReqs(reqs []*npool.OrderReq, must bool) func(context.Context, *Handler)
 				if req.EndAt == nil {
 					return fmt.Errorf("invalid endat")
 				}
+				if req.AppGoodStockLockID == nil {
+					return fmt.Errorf("invalid appgoodstocklockid")
+				}
 			}
 			if req.ID != nil {
 				id, err := uuid.Parse(*req.ID)
@@ -1404,6 +1443,20 @@ func WithReqs(reqs []*npool.OrderReq, must bool) func(context.Context, *Handler)
 					return fmt.Errorf("invalid cancelstate")
 				}
 				_req.OrderStateReq.CancelState = req.CancelState
+			}
+			if req.AppGoodStockLockID != nil {
+				id, err := uuid.Parse(*req.AppGoodStockLockID)
+				if err != nil {
+					return err
+				}
+				_req.OrderStateReq.AppGoodStockLockID = &id
+			}
+			if req.LedgerLockID != nil {
+				id, err := uuid.Parse(*req.LedgerLockID)
+				if err != nil {
+					return err
+				}
+				_req.OrderStateReq.LedgerLockID = &id
 			}
 			if req.StartMode != nil {
 				switch *req.StartMode {

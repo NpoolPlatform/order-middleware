@@ -37,12 +37,14 @@ func (h *createHandler) createOrderState(ctx context.Context, tx *ent.Tx, req *o
 	if _, err := orderstatecrud.CreateSet(
 		tx.OrderState.Create(),
 		&orderstatecrud.Req{
-			OrderID:      req.OrderID,
-			OrderState:   req.OrderState,
-			StartMode:    req.StartMode,
-			StartAt:      req.StartAt,
-			EndAt:        req.EndAt,
-			PaymentState: req.PaymentState,
+			OrderID:            req.OrderID,
+			OrderState:         req.OrderState,
+			StartMode:          req.StartMode,
+			StartAt:            req.StartAt,
+			EndAt:              req.EndAt,
+			PaymentState:       req.PaymentState,
+			AppGoodStockLockID: req.AppGoodStockLockID,
+			LedgerLockID:       req.LedgerLockID,
 		},
 	).Save(ctx); err != nil {
 		return err
