@@ -5,6 +5,7 @@ package ent
 import (
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/compensate"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/order"
+	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/orderlock"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/orderstate"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/outofgas"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/payment"
@@ -17,7 +18,7 @@ import (
 
 // schemaGraph holds a representation of ent/schema at runtime.
 var schemaGraph = func() *sqlgraph.Schema {
-	graph := &sqlgraph.Schema{Nodes: make([]*sqlgraph.Node, 5)}
+	graph := &sqlgraph.Schema{Nodes: make([]*sqlgraph.Node, 6)}
 	graph.Nodes[0] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   compensate.Table,
@@ -82,6 +83,26 @@ var schemaGraph = func() *sqlgraph.Schema {
 	}
 	graph.Nodes[2] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
+			Table:   orderlock.Table,
+			Columns: orderlock.Columns,
+			ID: &sqlgraph.FieldSpec{
+				Type:   field.TypeUUID,
+				Column: orderlock.FieldID,
+			},
+		},
+		Type: "OrderLock",
+		Fields: map[string]*sqlgraph.FieldSpec{
+			orderlock.FieldCreatedAt: {Type: field.TypeUint32, Column: orderlock.FieldCreatedAt},
+			orderlock.FieldUpdatedAt: {Type: field.TypeUint32, Column: orderlock.FieldUpdatedAt},
+			orderlock.FieldDeletedAt: {Type: field.TypeUint32, Column: orderlock.FieldDeletedAt},
+			orderlock.FieldAppID:     {Type: field.TypeUUID, Column: orderlock.FieldAppID},
+			orderlock.FieldUserID:    {Type: field.TypeUUID, Column: orderlock.FieldUserID},
+			orderlock.FieldOrderID:   {Type: field.TypeUUID, Column: orderlock.FieldOrderID},
+			orderlock.FieldLockType:  {Type: field.TypeString, Column: orderlock.FieldLockType},
+		},
+	}
+	graph.Nodes[3] = &sqlgraph.Node{
+		NodeSpec: sqlgraph.NodeSpec{
 			Table:   orderstate.Table,
 			Columns: orderstate.Columns,
 			ID: &sqlgraph.FieldSpec{
@@ -111,12 +132,9 @@ var schemaGraph = func() *sqlgraph.Schema {
 			orderstate.FieldPaymentState:         {Type: field.TypeString, Column: orderstate.FieldPaymentState},
 			orderstate.FieldOutofgasHours:        {Type: field.TypeUint32, Column: orderstate.FieldOutofgasHours},
 			orderstate.FieldCompensateHours:      {Type: field.TypeUint32, Column: orderstate.FieldCompensateHours},
-			orderstate.FieldAppGoodStockLockID:   {Type: field.TypeUUID, Column: orderstate.FieldAppGoodStockLockID},
-			orderstate.FieldLedgerLockID:         {Type: field.TypeUUID, Column: orderstate.FieldLedgerLockID},
-			orderstate.FieldCommissionLockID:     {Type: field.TypeUUID, Column: orderstate.FieldCommissionLockID},
 		},
 	}
-	graph.Nodes[3] = &sqlgraph.Node{
+	graph.Nodes[4] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   outofgas.Table,
 			Columns: outofgas.Columns,
@@ -135,7 +153,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			outofgas.FieldEndAt:     {Type: field.TypeUint32, Column: outofgas.FieldEndAt},
 		},
 	}
-	graph.Nodes[4] = &sqlgraph.Node{
+	graph.Nodes[5] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   payment.Table,
 			Columns: payment.Columns,
@@ -429,6 +447,81 @@ func (f *OrderFilter) WhereLiveCoinUsdCurrency(p entql.OtherP) {
 }
 
 // addPredicate implements the predicateAdder interface.
+func (olq *OrderLockQuery) addPredicate(pred func(s *sql.Selector)) {
+	olq.predicates = append(olq.predicates, pred)
+}
+
+// Filter returns a Filter implementation to apply filters on the OrderLockQuery builder.
+func (olq *OrderLockQuery) Filter() *OrderLockFilter {
+	return &OrderLockFilter{config: olq.config, predicateAdder: olq}
+}
+
+// addPredicate implements the predicateAdder interface.
+func (m *OrderLockMutation) addPredicate(pred func(s *sql.Selector)) {
+	m.predicates = append(m.predicates, pred)
+}
+
+// Filter returns an entql.Where implementation to apply filters on the OrderLockMutation builder.
+func (m *OrderLockMutation) Filter() *OrderLockFilter {
+	return &OrderLockFilter{config: m.config, predicateAdder: m}
+}
+
+// OrderLockFilter provides a generic filtering capability at runtime for OrderLockQuery.
+type OrderLockFilter struct {
+	predicateAdder
+	config
+}
+
+// Where applies the entql predicate on the query filter.
+func (f *OrderLockFilter) Where(p entql.P) {
+	f.addPredicate(func(s *sql.Selector) {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[2].Type, p, s); err != nil {
+			s.AddError(err)
+		}
+	})
+}
+
+// WhereID applies the entql [16]byte predicate on the id field.
+func (f *OrderLockFilter) WhereID(p entql.ValueP) {
+	f.Where(p.Field(orderlock.FieldID))
+}
+
+// WhereCreatedAt applies the entql uint32 predicate on the created_at field.
+func (f *OrderLockFilter) WhereCreatedAt(p entql.Uint32P) {
+	f.Where(p.Field(orderlock.FieldCreatedAt))
+}
+
+// WhereUpdatedAt applies the entql uint32 predicate on the updated_at field.
+func (f *OrderLockFilter) WhereUpdatedAt(p entql.Uint32P) {
+	f.Where(p.Field(orderlock.FieldUpdatedAt))
+}
+
+// WhereDeletedAt applies the entql uint32 predicate on the deleted_at field.
+func (f *OrderLockFilter) WhereDeletedAt(p entql.Uint32P) {
+	f.Where(p.Field(orderlock.FieldDeletedAt))
+}
+
+// WhereAppID applies the entql [16]byte predicate on the app_id field.
+func (f *OrderLockFilter) WhereAppID(p entql.ValueP) {
+	f.Where(p.Field(orderlock.FieldAppID))
+}
+
+// WhereUserID applies the entql [16]byte predicate on the user_id field.
+func (f *OrderLockFilter) WhereUserID(p entql.ValueP) {
+	f.Where(p.Field(orderlock.FieldUserID))
+}
+
+// WhereOrderID applies the entql [16]byte predicate on the order_id field.
+func (f *OrderLockFilter) WhereOrderID(p entql.ValueP) {
+	f.Where(p.Field(orderlock.FieldOrderID))
+}
+
+// WhereLockType applies the entql string predicate on the lock_type field.
+func (f *OrderLockFilter) WhereLockType(p entql.StringP) {
+	f.Where(p.Field(orderlock.FieldLockType))
+}
+
+// addPredicate implements the predicateAdder interface.
 func (osq *OrderStateQuery) addPredicate(pred func(s *sql.Selector)) {
 	osq.predicates = append(osq.predicates, pred)
 }
@@ -457,7 +550,7 @@ type OrderStateFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *OrderStateFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[2].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[3].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})
@@ -568,21 +661,6 @@ func (f *OrderStateFilter) WhereCompensateHours(p entql.Uint32P) {
 	f.Where(p.Field(orderstate.FieldCompensateHours))
 }
 
-// WhereAppGoodStockLockID applies the entql [16]byte predicate on the app_good_stock_lock_id field.
-func (f *OrderStateFilter) WhereAppGoodStockLockID(p entql.ValueP) {
-	f.Where(p.Field(orderstate.FieldAppGoodStockLockID))
-}
-
-// WhereLedgerLockID applies the entql [16]byte predicate on the ledger_lock_id field.
-func (f *OrderStateFilter) WhereLedgerLockID(p entql.ValueP) {
-	f.Where(p.Field(orderstate.FieldLedgerLockID))
-}
-
-// WhereCommissionLockID applies the entql [16]byte predicate on the commission_lock_id field.
-func (f *OrderStateFilter) WhereCommissionLockID(p entql.ValueP) {
-	f.Where(p.Field(orderstate.FieldCommissionLockID))
-}
-
 // addPredicate implements the predicateAdder interface.
 func (oogq *OutOfGasQuery) addPredicate(pred func(s *sql.Selector)) {
 	oogq.predicates = append(oogq.predicates, pred)
@@ -612,7 +690,7 @@ type OutOfGasFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *OutOfGasFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[3].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[4].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})
@@ -682,7 +760,7 @@ type PaymentFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *PaymentFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[4].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[5].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})

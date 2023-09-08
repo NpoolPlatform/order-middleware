@@ -12,6 +12,9 @@ type Compensate func(*sql.Selector)
 // Order is the predicate function for order builders.
 type Order func(*sql.Selector)
 
+// OrderLock is the predicate function for orderlock builders.
+type OrderLock func(*sql.Selector)
+
 // OrderState is the predicate function for orderstate builders.
 type OrderState func(*sql.Selector)
 

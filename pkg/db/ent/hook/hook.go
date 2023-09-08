@@ -35,6 +35,19 @@ func (f OrderFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error
 	return f(ctx, mv)
 }
 
+// The OrderLockFunc type is an adapter to allow the use of ordinary
+// function as OrderLock mutator.
+type OrderLockFunc func(context.Context, *ent.OrderLockMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f OrderLockFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	mv, ok := m.(*ent.OrderLockMutation)
+	if !ok {
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.OrderLockMutation", m)
+	}
+	return f(ctx, mv)
+}
+
 // The OrderStateFunc type is an adapter to allow the use of ordinary
 // function as OrderState mutator.
 type OrderStateFunc func(context.Context, *ent.OrderStateMutation) (ent.Value, error)

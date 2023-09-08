@@ -453,66 +453,6 @@ func (osu *OrderStateUpdate) ClearCompensateHours() *OrderStateUpdate {
 	return osu
 }
 
-// SetAppGoodStockLockID sets the "app_good_stock_lock_id" field.
-func (osu *OrderStateUpdate) SetAppGoodStockLockID(u uuid.UUID) *OrderStateUpdate {
-	osu.mutation.SetAppGoodStockLockID(u)
-	return osu
-}
-
-// SetNillableAppGoodStockLockID sets the "app_good_stock_lock_id" field if the given value is not nil.
-func (osu *OrderStateUpdate) SetNillableAppGoodStockLockID(u *uuid.UUID) *OrderStateUpdate {
-	if u != nil {
-		osu.SetAppGoodStockLockID(*u)
-	}
-	return osu
-}
-
-// ClearAppGoodStockLockID clears the value of the "app_good_stock_lock_id" field.
-func (osu *OrderStateUpdate) ClearAppGoodStockLockID() *OrderStateUpdate {
-	osu.mutation.ClearAppGoodStockLockID()
-	return osu
-}
-
-// SetLedgerLockID sets the "ledger_lock_id" field.
-func (osu *OrderStateUpdate) SetLedgerLockID(u uuid.UUID) *OrderStateUpdate {
-	osu.mutation.SetLedgerLockID(u)
-	return osu
-}
-
-// SetNillableLedgerLockID sets the "ledger_lock_id" field if the given value is not nil.
-func (osu *OrderStateUpdate) SetNillableLedgerLockID(u *uuid.UUID) *OrderStateUpdate {
-	if u != nil {
-		osu.SetLedgerLockID(*u)
-	}
-	return osu
-}
-
-// ClearLedgerLockID clears the value of the "ledger_lock_id" field.
-func (osu *OrderStateUpdate) ClearLedgerLockID() *OrderStateUpdate {
-	osu.mutation.ClearLedgerLockID()
-	return osu
-}
-
-// SetCommissionLockID sets the "commission_lock_id" field.
-func (osu *OrderStateUpdate) SetCommissionLockID(u uuid.UUID) *OrderStateUpdate {
-	osu.mutation.SetCommissionLockID(u)
-	return osu
-}
-
-// SetNillableCommissionLockID sets the "commission_lock_id" field if the given value is not nil.
-func (osu *OrderStateUpdate) SetNillableCommissionLockID(u *uuid.UUID) *OrderStateUpdate {
-	if u != nil {
-		osu.SetCommissionLockID(*u)
-	}
-	return osu
-}
-
-// ClearCommissionLockID clears the value of the "commission_lock_id" field.
-func (osu *OrderStateUpdate) ClearCommissionLockID() *OrderStateUpdate {
-	osu.mutation.ClearCommissionLockID()
-	return osu
-}
-
 // Mutation returns the OrderStateMutation object of the builder.
 func (osu *OrderStateUpdate) Mutation() *OrderStateMutation {
 	return osu.mutation
@@ -908,45 +848,6 @@ func (osu *OrderStateUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeUint32,
 			Column: orderstate.FieldCompensateHours,
-		})
-	}
-	if value, ok := osu.mutation.AppGoodStockLockID(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeUUID,
-			Value:  value,
-			Column: orderstate.FieldAppGoodStockLockID,
-		})
-	}
-	if osu.mutation.AppGoodStockLockIDCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeUUID,
-			Column: orderstate.FieldAppGoodStockLockID,
-		})
-	}
-	if value, ok := osu.mutation.LedgerLockID(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeUUID,
-			Value:  value,
-			Column: orderstate.FieldLedgerLockID,
-		})
-	}
-	if osu.mutation.LedgerLockIDCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeUUID,
-			Column: orderstate.FieldLedgerLockID,
-		})
-	}
-	if value, ok := osu.mutation.CommissionLockID(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeUUID,
-			Value:  value,
-			Column: orderstate.FieldCommissionLockID,
-		})
-	}
-	if osu.mutation.CommissionLockIDCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeUUID,
-			Column: orderstate.FieldCommissionLockID,
 		})
 	}
 	_spec.Modifiers = osu.modifiers
@@ -1393,66 +1294,6 @@ func (osuo *OrderStateUpdateOne) ClearCompensateHours() *OrderStateUpdateOne {
 	return osuo
 }
 
-// SetAppGoodStockLockID sets the "app_good_stock_lock_id" field.
-func (osuo *OrderStateUpdateOne) SetAppGoodStockLockID(u uuid.UUID) *OrderStateUpdateOne {
-	osuo.mutation.SetAppGoodStockLockID(u)
-	return osuo
-}
-
-// SetNillableAppGoodStockLockID sets the "app_good_stock_lock_id" field if the given value is not nil.
-func (osuo *OrderStateUpdateOne) SetNillableAppGoodStockLockID(u *uuid.UUID) *OrderStateUpdateOne {
-	if u != nil {
-		osuo.SetAppGoodStockLockID(*u)
-	}
-	return osuo
-}
-
-// ClearAppGoodStockLockID clears the value of the "app_good_stock_lock_id" field.
-func (osuo *OrderStateUpdateOne) ClearAppGoodStockLockID() *OrderStateUpdateOne {
-	osuo.mutation.ClearAppGoodStockLockID()
-	return osuo
-}
-
-// SetLedgerLockID sets the "ledger_lock_id" field.
-func (osuo *OrderStateUpdateOne) SetLedgerLockID(u uuid.UUID) *OrderStateUpdateOne {
-	osuo.mutation.SetLedgerLockID(u)
-	return osuo
-}
-
-// SetNillableLedgerLockID sets the "ledger_lock_id" field if the given value is not nil.
-func (osuo *OrderStateUpdateOne) SetNillableLedgerLockID(u *uuid.UUID) *OrderStateUpdateOne {
-	if u != nil {
-		osuo.SetLedgerLockID(*u)
-	}
-	return osuo
-}
-
-// ClearLedgerLockID clears the value of the "ledger_lock_id" field.
-func (osuo *OrderStateUpdateOne) ClearLedgerLockID() *OrderStateUpdateOne {
-	osuo.mutation.ClearLedgerLockID()
-	return osuo
-}
-
-// SetCommissionLockID sets the "commission_lock_id" field.
-func (osuo *OrderStateUpdateOne) SetCommissionLockID(u uuid.UUID) *OrderStateUpdateOne {
-	osuo.mutation.SetCommissionLockID(u)
-	return osuo
-}
-
-// SetNillableCommissionLockID sets the "commission_lock_id" field if the given value is not nil.
-func (osuo *OrderStateUpdateOne) SetNillableCommissionLockID(u *uuid.UUID) *OrderStateUpdateOne {
-	if u != nil {
-		osuo.SetCommissionLockID(*u)
-	}
-	return osuo
-}
-
-// ClearCommissionLockID clears the value of the "commission_lock_id" field.
-func (osuo *OrderStateUpdateOne) ClearCommissionLockID() *OrderStateUpdateOne {
-	osuo.mutation.ClearCommissionLockID()
-	return osuo
-}
-
 // Mutation returns the OrderStateMutation object of the builder.
 func (osuo *OrderStateUpdateOne) Mutation() *OrderStateMutation {
 	return osuo.mutation
@@ -1878,45 +1719,6 @@ func (osuo *OrderStateUpdateOne) sqlSave(ctx context.Context) (_node *OrderState
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeUint32,
 			Column: orderstate.FieldCompensateHours,
-		})
-	}
-	if value, ok := osuo.mutation.AppGoodStockLockID(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeUUID,
-			Value:  value,
-			Column: orderstate.FieldAppGoodStockLockID,
-		})
-	}
-	if osuo.mutation.AppGoodStockLockIDCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeUUID,
-			Column: orderstate.FieldAppGoodStockLockID,
-		})
-	}
-	if value, ok := osuo.mutation.LedgerLockID(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeUUID,
-			Value:  value,
-			Column: orderstate.FieldLedgerLockID,
-		})
-	}
-	if osuo.mutation.LedgerLockIDCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeUUID,
-			Column: orderstate.FieldLedgerLockID,
-		})
-	}
-	if value, ok := osuo.mutation.CommissionLockID(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeUUID,
-			Value:  value,
-			Column: orderstate.FieldCommissionLockID,
-		})
-	}
-	if osuo.mutation.CommissionLockIDCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeUUID,
-			Column: orderstate.FieldCommissionLockID,
 		})
 	}
 	_spec.Modifiers = osuo.modifiers

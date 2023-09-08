@@ -53,12 +53,6 @@ const (
 	FieldOutofgasHours = "outofgas_hours"
 	// FieldCompensateHours holds the string denoting the compensate_hours field in the database.
 	FieldCompensateHours = "compensate_hours"
-	// FieldAppGoodStockLockID holds the string denoting the app_good_stock_lock_id field in the database.
-	FieldAppGoodStockLockID = "app_good_stock_lock_id"
-	// FieldLedgerLockID holds the string denoting the ledger_lock_id field in the database.
-	FieldLedgerLockID = "ledger_lock_id"
-	// FieldCommissionLockID holds the string denoting the commission_lock_id field in the database.
-	FieldCommissionLockID = "commission_lock_id"
 	// Table holds the table name of the orderstate in the database.
 	Table = "order_states"
 )
@@ -86,9 +80,6 @@ var Columns = []string{
 	FieldPaymentState,
 	FieldOutofgasHours,
 	FieldCompensateHours,
-	FieldAppGoodStockLockID,
-	FieldLedgerLockID,
-	FieldCommissionLockID,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -150,12 +141,6 @@ var (
 	DefaultOutofgasHours uint32
 	// DefaultCompensateHours holds the default value on creation for the "compensate_hours" field.
 	DefaultCompensateHours uint32
-	// DefaultAppGoodStockLockID holds the default value on creation for the "app_good_stock_lock_id" field.
-	DefaultAppGoodStockLockID func() uuid.UUID
-	// DefaultLedgerLockID holds the default value on creation for the "ledger_lock_id" field.
-	DefaultLedgerLockID func() uuid.UUID
-	// DefaultCommissionLockID holds the default value on creation for the "commission_lock_id" field.
-	DefaultCommissionLockID func() uuid.UUID
 	// DefaultID holds the default value on creation for the "id" field.
 	DefaultID func() uuid.UUID
 )

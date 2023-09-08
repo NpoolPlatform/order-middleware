@@ -198,6 +198,30 @@ func (f OrderMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation)
 	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.OrderMutation", m)
 }
 
+// The OrderLockQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type OrderLockQueryRuleFunc func(context.Context, *ent.OrderLockQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f OrderLockQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.OrderLockQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("ent/privacy: unexpected query type %T, expect *ent.OrderLockQuery", q)
+}
+
+// The OrderLockMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type OrderLockMutationRuleFunc func(context.Context, *ent.OrderLockMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f OrderLockMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
+	if m, ok := m.(*ent.OrderLockMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.OrderLockMutation", m)
+}
+
 // The OrderStateQueryRuleFunc type is an adapter to allow the use of ordinary
 // functions as a query rule.
 type OrderStateQueryRuleFunc func(context.Context, *ent.OrderStateQuery) error
@@ -309,6 +333,8 @@ func queryFilter(q ent.Query) (Filter, error) {
 		return q.Filter(), nil
 	case *ent.OrderQuery:
 		return q.Filter(), nil
+	case *ent.OrderLockQuery:
+		return q.Filter(), nil
 	case *ent.OrderStateQuery:
 		return q.Filter(), nil
 	case *ent.OutOfGasQuery:
@@ -325,6 +351,8 @@ func mutationFilter(m ent.Mutation) (Filter, error) {
 	case *ent.CompensateMutation:
 		return m.Filter(), nil
 	case *ent.OrderMutation:
+		return m.Filter(), nil
+	case *ent.OrderLockMutation:
 		return m.Filter(), nil
 	case *ent.OrderStateMutation:
 		return m.Filter(), nil

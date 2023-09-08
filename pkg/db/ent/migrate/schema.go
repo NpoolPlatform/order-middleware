@@ -64,6 +64,23 @@ var (
 		Columns:    OrdersColumns,
 		PrimaryKey: []*schema.Column{OrdersColumns[0]},
 	}
+	// OrderLocksColumns holds the columns for the "order_locks" table.
+	OrderLocksColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUUID, Unique: true},
+		{Name: "created_at", Type: field.TypeUint32},
+		{Name: "updated_at", Type: field.TypeUint32},
+		{Name: "deleted_at", Type: field.TypeUint32},
+		{Name: "app_id", Type: field.TypeUUID},
+		{Name: "user_id", Type: field.TypeUUID},
+		{Name: "order_id", Type: field.TypeUUID},
+		{Name: "lock_type", Type: field.TypeString, Nullable: true, Default: "DefaultOrderLockType"},
+	}
+	// OrderLocksTable holds the schema information for the "order_locks" table.
+	OrderLocksTable = &schema.Table{
+		Name:       "order_locks",
+		Columns:    OrderLocksColumns,
+		PrimaryKey: []*schema.Column{OrderLocksColumns[0]},
+	}
 	// OrderStatesColumns holds the columns for the "order_states" table.
 	OrderStatesColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUUID, Unique: true},
@@ -87,9 +104,6 @@ var (
 		{Name: "payment_state", Type: field.TypeString, Nullable: true, Default: "PaymentStateWait"},
 		{Name: "outofgas_hours", Type: field.TypeUint32, Nullable: true, Default: 0},
 		{Name: "compensate_hours", Type: field.TypeUint32, Nullable: true, Default: 0},
-		{Name: "app_good_stock_lock_id", Type: field.TypeUUID, Nullable: true},
-		{Name: "ledger_lock_id", Type: field.TypeUUID, Nullable: true},
-		{Name: "commission_lock_id", Type: field.TypeUUID, Nullable: true},
 	}
 	// OrderStatesTable holds the schema information for the "order_states" table.
 	OrderStatesTable = &schema.Table{
@@ -138,6 +152,7 @@ var (
 	Tables = []*schema.Table{
 		CompensatesTable,
 		OrdersTable,
+		OrderLocksTable,
 		OrderStatesTable,
 		OutOfGasTable,
 		PaymentsTable,

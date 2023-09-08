@@ -30,6 +30,7 @@ type config struct {
 type hooks struct {
 	Compensate []ent.Hook
 	Order      []ent.Hook
+	OrderLock  []ent.Hook
 	OrderState []ent.Hook
 	OutOfGas   []ent.Hook
 	Payment    []ent.Hook

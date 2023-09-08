@@ -7,6 +7,7 @@ import (
 
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/compensate"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/order"
+	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/orderlock"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/orderstate"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/outofgas"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/payment"
@@ -178,6 +179,42 @@ func init() {
 	orderDescID := orderFields[0].Descriptor()
 	// order.DefaultID holds the default value on creation for the id field.
 	order.DefaultID = orderDescID.Default.(func() uuid.UUID)
+	orderlockMixin := schema.OrderLock{}.Mixin()
+	orderlock.Policy = privacy.NewPolicies(orderlockMixin[0], schema.OrderLock{})
+	orderlock.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+			if err := orderlock.Policy.EvalMutation(ctx, m); err != nil {
+				return nil, err
+			}
+			return next.Mutate(ctx, m)
+		})
+	}
+	orderlockMixinFields0 := orderlockMixin[0].Fields()
+	_ = orderlockMixinFields0
+	orderlockFields := schema.OrderLock{}.Fields()
+	_ = orderlockFields
+	// orderlockDescCreatedAt is the schema descriptor for created_at field.
+	orderlockDescCreatedAt := orderlockMixinFields0[0].Descriptor()
+	// orderlock.DefaultCreatedAt holds the default value on creation for the created_at field.
+	orderlock.DefaultCreatedAt = orderlockDescCreatedAt.Default.(func() uint32)
+	// orderlockDescUpdatedAt is the schema descriptor for updated_at field.
+	orderlockDescUpdatedAt := orderlockMixinFields0[1].Descriptor()
+	// orderlock.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	orderlock.DefaultUpdatedAt = orderlockDescUpdatedAt.Default.(func() uint32)
+	// orderlock.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	orderlock.UpdateDefaultUpdatedAt = orderlockDescUpdatedAt.UpdateDefault.(func() uint32)
+	// orderlockDescDeletedAt is the schema descriptor for deleted_at field.
+	orderlockDescDeletedAt := orderlockMixinFields0[2].Descriptor()
+	// orderlock.DefaultDeletedAt holds the default value on creation for the deleted_at field.
+	orderlock.DefaultDeletedAt = orderlockDescDeletedAt.Default.(func() uint32)
+	// orderlockDescLockType is the schema descriptor for lock_type field.
+	orderlockDescLockType := orderlockFields[4].Descriptor()
+	// orderlock.DefaultLockType holds the default value on creation for the lock_type field.
+	orderlock.DefaultLockType = orderlockDescLockType.Default.(string)
+	// orderlockDescID is the schema descriptor for id field.
+	orderlockDescID := orderlockFields[0].Descriptor()
+	// orderlock.DefaultID holds the default value on creation for the id field.
+	orderlock.DefaultID = orderlockDescID.Default.(func() uuid.UUID)
 	orderstateMixin := schema.OrderState{}.Mixin()
 	orderstate.Policy = privacy.NewPolicies(orderstateMixin[0], schema.OrderState{})
 	orderstate.Hooks[0] = func(next ent.Mutator) ent.Mutator {
@@ -270,18 +307,6 @@ func init() {
 	orderstateDescCompensateHours := orderstateFields[17].Descriptor()
 	// orderstate.DefaultCompensateHours holds the default value on creation for the compensate_hours field.
 	orderstate.DefaultCompensateHours = orderstateDescCompensateHours.Default.(uint32)
-	// orderstateDescAppGoodStockLockID is the schema descriptor for app_good_stock_lock_id field.
-	orderstateDescAppGoodStockLockID := orderstateFields[18].Descriptor()
-	// orderstate.DefaultAppGoodStockLockID holds the default value on creation for the app_good_stock_lock_id field.
-	orderstate.DefaultAppGoodStockLockID = orderstateDescAppGoodStockLockID.Default.(func() uuid.UUID)
-	// orderstateDescLedgerLockID is the schema descriptor for ledger_lock_id field.
-	orderstateDescLedgerLockID := orderstateFields[19].Descriptor()
-	// orderstate.DefaultLedgerLockID holds the default value on creation for the ledger_lock_id field.
-	orderstate.DefaultLedgerLockID = orderstateDescLedgerLockID.Default.(func() uuid.UUID)
-	// orderstateDescCommissionLockID is the schema descriptor for commission_lock_id field.
-	orderstateDescCommissionLockID := orderstateFields[20].Descriptor()
-	// orderstate.DefaultCommissionLockID holds the default value on creation for the commission_lock_id field.
-	orderstate.DefaultCommissionLockID = orderstateDescCommissionLockID.Default.(func() uuid.UUID)
 	// orderstateDescID is the schema descriptor for id field.
 	orderstateDescID := orderstateFields[0].Descriptor()
 	// orderstate.DefaultID holds the default value on creation for the id field.

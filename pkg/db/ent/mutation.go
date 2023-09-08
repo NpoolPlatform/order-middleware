@@ -10,6 +10,7 @@ import (
 
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/compensate"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/order"
+	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/orderlock"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/orderstate"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/outofgas"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/payment"
@@ -31,6 +32,7 @@ const (
 	// Node types.
 	TypeCompensate = "Compensate"
 	TypeOrder      = "Order"
+	TypeOrderLock  = "OrderLock"
 	TypeOrderState = "OrderState"
 	TypeOutOfGas   = "OutOfGas"
 	TypePayment    = "Payment"
@@ -3255,6 +3257,771 @@ func (m *OrderMutation) ResetEdge(name string) error {
 	return fmt.Errorf("unknown Order edge %s", name)
 }
 
+// OrderLockMutation represents an operation that mutates the OrderLock nodes in the graph.
+type OrderLockMutation struct {
+	config
+	op            Op
+	typ           string
+	id            *uuid.UUID
+	created_at    *uint32
+	addcreated_at *int32
+	updated_at    *uint32
+	addupdated_at *int32
+	deleted_at    *uint32
+	adddeleted_at *int32
+	app_id        *uuid.UUID
+	user_id       *uuid.UUID
+	order_id      *uuid.UUID
+	lock_type     *string
+	clearedFields map[string]struct{}
+	done          bool
+	oldValue      func(context.Context) (*OrderLock, error)
+	predicates    []predicate.OrderLock
+}
+
+var _ ent.Mutation = (*OrderLockMutation)(nil)
+
+// orderlockOption allows management of the mutation configuration using functional options.
+type orderlockOption func(*OrderLockMutation)
+
+// newOrderLockMutation creates new mutation for the OrderLock entity.
+func newOrderLockMutation(c config, op Op, opts ...orderlockOption) *OrderLockMutation {
+	m := &OrderLockMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeOrderLock,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withOrderLockID sets the ID field of the mutation.
+func withOrderLockID(id uuid.UUID) orderlockOption {
+	return func(m *OrderLockMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *OrderLock
+		)
+		m.oldValue = func(ctx context.Context) (*OrderLock, error) {
+			once.Do(func() {
+				if m.done {
+					err = errors.New("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().OrderLock.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withOrderLock sets the old OrderLock of the mutation.
+func withOrderLock(node *OrderLock) orderlockOption {
+	return func(m *OrderLockMutation) {
+		m.oldValue = func(context.Context) (*OrderLock, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m OrderLockMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m OrderLockMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, errors.New("ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// SetID sets the value of the id field. Note that this
+// operation is only accepted on creation of OrderLock entities.
+func (m *OrderLockMutation) SetID(id uuid.UUID) {
+	m.id = &id
+}
+
+// ID returns the ID value in the mutation. Note that the ID is only available
+// if it was provided to the builder or after it was returned from the database.
+func (m *OrderLockMutation) ID() (id uuid.UUID, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// IDs queries the database and returns the entity ids that match the mutation's predicate.
+// That means, if the mutation is applied within a transaction with an isolation level such
+// as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
+// or updated by the mutation.
+func (m *OrderLockMutation) IDs(ctx context.Context) ([]uuid.UUID, error) {
+	switch {
+	case m.op.Is(OpUpdateOne | OpDeleteOne):
+		id, exists := m.ID()
+		if exists {
+			return []uuid.UUID{id}, nil
+		}
+		fallthrough
+	case m.op.Is(OpUpdate | OpDelete):
+		return m.Client().OrderLock.Query().Where(m.predicates...).IDs(ctx)
+	default:
+		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
+	}
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (m *OrderLockMutation) SetCreatedAt(u uint32) {
+	m.created_at = &u
+	m.addcreated_at = nil
+}
+
+// CreatedAt returns the value of the "created_at" field in the mutation.
+func (m *OrderLockMutation) CreatedAt() (r uint32, exists bool) {
+	v := m.created_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedAt returns the old "created_at" field's value of the OrderLock entity.
+// If the OrderLock object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *OrderLockMutation) OldCreatedAt(ctx context.Context) (v uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedAt: %w", err)
+	}
+	return oldValue.CreatedAt, nil
+}
+
+// AddCreatedAt adds u to the "created_at" field.
+func (m *OrderLockMutation) AddCreatedAt(u int32) {
+	if m.addcreated_at != nil {
+		*m.addcreated_at += u
+	} else {
+		m.addcreated_at = &u
+	}
+}
+
+// AddedCreatedAt returns the value that was added to the "created_at" field in this mutation.
+func (m *OrderLockMutation) AddedCreatedAt() (r int32, exists bool) {
+	v := m.addcreated_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetCreatedAt resets all changes to the "created_at" field.
+func (m *OrderLockMutation) ResetCreatedAt() {
+	m.created_at = nil
+	m.addcreated_at = nil
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (m *OrderLockMutation) SetUpdatedAt(u uint32) {
+	m.updated_at = &u
+	m.addupdated_at = nil
+}
+
+// UpdatedAt returns the value of the "updated_at" field in the mutation.
+func (m *OrderLockMutation) UpdatedAt() (r uint32, exists bool) {
+	v := m.updated_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedAt returns the old "updated_at" field's value of the OrderLock entity.
+// If the OrderLock object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *OrderLockMutation) OldUpdatedAt(ctx context.Context) (v uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedAt: %w", err)
+	}
+	return oldValue.UpdatedAt, nil
+}
+
+// AddUpdatedAt adds u to the "updated_at" field.
+func (m *OrderLockMutation) AddUpdatedAt(u int32) {
+	if m.addupdated_at != nil {
+		*m.addupdated_at += u
+	} else {
+		m.addupdated_at = &u
+	}
+}
+
+// AddedUpdatedAt returns the value that was added to the "updated_at" field in this mutation.
+func (m *OrderLockMutation) AddedUpdatedAt() (r int32, exists bool) {
+	v := m.addupdated_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetUpdatedAt resets all changes to the "updated_at" field.
+func (m *OrderLockMutation) ResetUpdatedAt() {
+	m.updated_at = nil
+	m.addupdated_at = nil
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (m *OrderLockMutation) SetDeletedAt(u uint32) {
+	m.deleted_at = &u
+	m.adddeleted_at = nil
+}
+
+// DeletedAt returns the value of the "deleted_at" field in the mutation.
+func (m *OrderLockMutation) DeletedAt() (r uint32, exists bool) {
+	v := m.deleted_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDeletedAt returns the old "deleted_at" field's value of the OrderLock entity.
+// If the OrderLock object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *OrderLockMutation) OldDeletedAt(ctx context.Context) (v uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDeletedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDeletedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDeletedAt: %w", err)
+	}
+	return oldValue.DeletedAt, nil
+}
+
+// AddDeletedAt adds u to the "deleted_at" field.
+func (m *OrderLockMutation) AddDeletedAt(u int32) {
+	if m.adddeleted_at != nil {
+		*m.adddeleted_at += u
+	} else {
+		m.adddeleted_at = &u
+	}
+}
+
+// AddedDeletedAt returns the value that was added to the "deleted_at" field in this mutation.
+func (m *OrderLockMutation) AddedDeletedAt() (r int32, exists bool) {
+	v := m.adddeleted_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetDeletedAt resets all changes to the "deleted_at" field.
+func (m *OrderLockMutation) ResetDeletedAt() {
+	m.deleted_at = nil
+	m.adddeleted_at = nil
+}
+
+// SetAppID sets the "app_id" field.
+func (m *OrderLockMutation) SetAppID(u uuid.UUID) {
+	m.app_id = &u
+}
+
+// AppID returns the value of the "app_id" field in the mutation.
+func (m *OrderLockMutation) AppID() (r uuid.UUID, exists bool) {
+	v := m.app_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldAppID returns the old "app_id" field's value of the OrderLock entity.
+// If the OrderLock object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *OrderLockMutation) OldAppID(ctx context.Context) (v uuid.UUID, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldAppID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldAppID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldAppID: %w", err)
+	}
+	return oldValue.AppID, nil
+}
+
+// ResetAppID resets all changes to the "app_id" field.
+func (m *OrderLockMutation) ResetAppID() {
+	m.app_id = nil
+}
+
+// SetUserID sets the "user_id" field.
+func (m *OrderLockMutation) SetUserID(u uuid.UUID) {
+	m.user_id = &u
+}
+
+// UserID returns the value of the "user_id" field in the mutation.
+func (m *OrderLockMutation) UserID() (r uuid.UUID, exists bool) {
+	v := m.user_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUserID returns the old "user_id" field's value of the OrderLock entity.
+// If the OrderLock object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *OrderLockMutation) OldUserID(ctx context.Context) (v uuid.UUID, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUserID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUserID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUserID: %w", err)
+	}
+	return oldValue.UserID, nil
+}
+
+// ResetUserID resets all changes to the "user_id" field.
+func (m *OrderLockMutation) ResetUserID() {
+	m.user_id = nil
+}
+
+// SetOrderID sets the "order_id" field.
+func (m *OrderLockMutation) SetOrderID(u uuid.UUID) {
+	m.order_id = &u
+}
+
+// OrderID returns the value of the "order_id" field in the mutation.
+func (m *OrderLockMutation) OrderID() (r uuid.UUID, exists bool) {
+	v := m.order_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldOrderID returns the old "order_id" field's value of the OrderLock entity.
+// If the OrderLock object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *OrderLockMutation) OldOrderID(ctx context.Context) (v uuid.UUID, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldOrderID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldOrderID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldOrderID: %w", err)
+	}
+	return oldValue.OrderID, nil
+}
+
+// ResetOrderID resets all changes to the "order_id" field.
+func (m *OrderLockMutation) ResetOrderID() {
+	m.order_id = nil
+}
+
+// SetLockType sets the "lock_type" field.
+func (m *OrderLockMutation) SetLockType(s string) {
+	m.lock_type = &s
+}
+
+// LockType returns the value of the "lock_type" field in the mutation.
+func (m *OrderLockMutation) LockType() (r string, exists bool) {
+	v := m.lock_type
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldLockType returns the old "lock_type" field's value of the OrderLock entity.
+// If the OrderLock object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *OrderLockMutation) OldLockType(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldLockType is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldLockType requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldLockType: %w", err)
+	}
+	return oldValue.LockType, nil
+}
+
+// ClearLockType clears the value of the "lock_type" field.
+func (m *OrderLockMutation) ClearLockType() {
+	m.lock_type = nil
+	m.clearedFields[orderlock.FieldLockType] = struct{}{}
+}
+
+// LockTypeCleared returns if the "lock_type" field was cleared in this mutation.
+func (m *OrderLockMutation) LockTypeCleared() bool {
+	_, ok := m.clearedFields[orderlock.FieldLockType]
+	return ok
+}
+
+// ResetLockType resets all changes to the "lock_type" field.
+func (m *OrderLockMutation) ResetLockType() {
+	m.lock_type = nil
+	delete(m.clearedFields, orderlock.FieldLockType)
+}
+
+// Where appends a list predicates to the OrderLockMutation builder.
+func (m *OrderLockMutation) Where(ps ...predicate.OrderLock) {
+	m.predicates = append(m.predicates, ps...)
+}
+
+// Op returns the operation name.
+func (m *OrderLockMutation) Op() Op {
+	return m.op
+}
+
+// Type returns the node type of this mutation (OrderLock).
+func (m *OrderLockMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *OrderLockMutation) Fields() []string {
+	fields := make([]string, 0, 7)
+	if m.created_at != nil {
+		fields = append(fields, orderlock.FieldCreatedAt)
+	}
+	if m.updated_at != nil {
+		fields = append(fields, orderlock.FieldUpdatedAt)
+	}
+	if m.deleted_at != nil {
+		fields = append(fields, orderlock.FieldDeletedAt)
+	}
+	if m.app_id != nil {
+		fields = append(fields, orderlock.FieldAppID)
+	}
+	if m.user_id != nil {
+		fields = append(fields, orderlock.FieldUserID)
+	}
+	if m.order_id != nil {
+		fields = append(fields, orderlock.FieldOrderID)
+	}
+	if m.lock_type != nil {
+		fields = append(fields, orderlock.FieldLockType)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *OrderLockMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case orderlock.FieldCreatedAt:
+		return m.CreatedAt()
+	case orderlock.FieldUpdatedAt:
+		return m.UpdatedAt()
+	case orderlock.FieldDeletedAt:
+		return m.DeletedAt()
+	case orderlock.FieldAppID:
+		return m.AppID()
+	case orderlock.FieldUserID:
+		return m.UserID()
+	case orderlock.FieldOrderID:
+		return m.OrderID()
+	case orderlock.FieldLockType:
+		return m.LockType()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *OrderLockMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case orderlock.FieldCreatedAt:
+		return m.OldCreatedAt(ctx)
+	case orderlock.FieldUpdatedAt:
+		return m.OldUpdatedAt(ctx)
+	case orderlock.FieldDeletedAt:
+		return m.OldDeletedAt(ctx)
+	case orderlock.FieldAppID:
+		return m.OldAppID(ctx)
+	case orderlock.FieldUserID:
+		return m.OldUserID(ctx)
+	case orderlock.FieldOrderID:
+		return m.OldOrderID(ctx)
+	case orderlock.FieldLockType:
+		return m.OldLockType(ctx)
+	}
+	return nil, fmt.Errorf("unknown OrderLock field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *OrderLockMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case orderlock.FieldCreatedAt:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedAt(v)
+		return nil
+	case orderlock.FieldUpdatedAt:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedAt(v)
+		return nil
+	case orderlock.FieldDeletedAt:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDeletedAt(v)
+		return nil
+	case orderlock.FieldAppID:
+		v, ok := value.(uuid.UUID)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetAppID(v)
+		return nil
+	case orderlock.FieldUserID:
+		v, ok := value.(uuid.UUID)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUserID(v)
+		return nil
+	case orderlock.FieldOrderID:
+		v, ok := value.(uuid.UUID)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetOrderID(v)
+		return nil
+	case orderlock.FieldLockType:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetLockType(v)
+		return nil
+	}
+	return fmt.Errorf("unknown OrderLock field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *OrderLockMutation) AddedFields() []string {
+	var fields []string
+	if m.addcreated_at != nil {
+		fields = append(fields, orderlock.FieldCreatedAt)
+	}
+	if m.addupdated_at != nil {
+		fields = append(fields, orderlock.FieldUpdatedAt)
+	}
+	if m.adddeleted_at != nil {
+		fields = append(fields, orderlock.FieldDeletedAt)
+	}
+	return fields
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *OrderLockMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	case orderlock.FieldCreatedAt:
+		return m.AddedCreatedAt()
+	case orderlock.FieldUpdatedAt:
+		return m.AddedUpdatedAt()
+	case orderlock.FieldDeletedAt:
+		return m.AddedDeletedAt()
+	}
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *OrderLockMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	case orderlock.FieldCreatedAt:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddCreatedAt(v)
+		return nil
+	case orderlock.FieldUpdatedAt:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddUpdatedAt(v)
+		return nil
+	case orderlock.FieldDeletedAt:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddDeletedAt(v)
+		return nil
+	}
+	return fmt.Errorf("unknown OrderLock numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *OrderLockMutation) ClearedFields() []string {
+	var fields []string
+	if m.FieldCleared(orderlock.FieldLockType) {
+		fields = append(fields, orderlock.FieldLockType)
+	}
+	return fields
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *OrderLockMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *OrderLockMutation) ClearField(name string) error {
+	switch name {
+	case orderlock.FieldLockType:
+		m.ClearLockType()
+		return nil
+	}
+	return fmt.Errorf("unknown OrderLock nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *OrderLockMutation) ResetField(name string) error {
+	switch name {
+	case orderlock.FieldCreatedAt:
+		m.ResetCreatedAt()
+		return nil
+	case orderlock.FieldUpdatedAt:
+		m.ResetUpdatedAt()
+		return nil
+	case orderlock.FieldDeletedAt:
+		m.ResetDeletedAt()
+		return nil
+	case orderlock.FieldAppID:
+		m.ResetAppID()
+		return nil
+	case orderlock.FieldUserID:
+		m.ResetUserID()
+		return nil
+	case orderlock.FieldOrderID:
+		m.ResetOrderID()
+		return nil
+	case orderlock.FieldLockType:
+		m.ResetLockType()
+		return nil
+	}
+	return fmt.Errorf("unknown OrderLock field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *OrderLockMutation) AddedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *OrderLockMutation) AddedIDs(name string) []ent.Value {
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *OrderLockMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *OrderLockMutation) RemovedIDs(name string) []ent.Value {
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *OrderLockMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *OrderLockMutation) EdgeCleared(name string) bool {
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *OrderLockMutation) ClearEdge(name string) error {
+	return fmt.Errorf("unknown OrderLock unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *OrderLockMutation) ResetEdge(name string) error {
+	return fmt.Errorf("unknown OrderLock edge %s", name)
+}
+
 // OrderStateMutation represents an operation that mutates the OrderState nodes in the graph.
 type OrderStateMutation struct {
 	config
@@ -3290,9 +4057,6 @@ type OrderStateMutation struct {
 	addoutofgas_hours      *int32
 	compensate_hours       *uint32
 	addcompensate_hours    *int32
-	app_good_stock_lock_id *uuid.UUID
-	ledger_lock_id         *uuid.UUID
-	commission_lock_id     *uuid.UUID
 	clearedFields          map[string]struct{}
 	done                   bool
 	oldValue               func(context.Context) (*OrderState, error)
@@ -4517,153 +5281,6 @@ func (m *OrderStateMutation) ResetCompensateHours() {
 	delete(m.clearedFields, orderstate.FieldCompensateHours)
 }
 
-// SetAppGoodStockLockID sets the "app_good_stock_lock_id" field.
-func (m *OrderStateMutation) SetAppGoodStockLockID(u uuid.UUID) {
-	m.app_good_stock_lock_id = &u
-}
-
-// AppGoodStockLockID returns the value of the "app_good_stock_lock_id" field in the mutation.
-func (m *OrderStateMutation) AppGoodStockLockID() (r uuid.UUID, exists bool) {
-	v := m.app_good_stock_lock_id
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldAppGoodStockLockID returns the old "app_good_stock_lock_id" field's value of the OrderState entity.
-// If the OrderState object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *OrderStateMutation) OldAppGoodStockLockID(ctx context.Context) (v uuid.UUID, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldAppGoodStockLockID is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldAppGoodStockLockID requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldAppGoodStockLockID: %w", err)
-	}
-	return oldValue.AppGoodStockLockID, nil
-}
-
-// ClearAppGoodStockLockID clears the value of the "app_good_stock_lock_id" field.
-func (m *OrderStateMutation) ClearAppGoodStockLockID() {
-	m.app_good_stock_lock_id = nil
-	m.clearedFields[orderstate.FieldAppGoodStockLockID] = struct{}{}
-}
-
-// AppGoodStockLockIDCleared returns if the "app_good_stock_lock_id" field was cleared in this mutation.
-func (m *OrderStateMutation) AppGoodStockLockIDCleared() bool {
-	_, ok := m.clearedFields[orderstate.FieldAppGoodStockLockID]
-	return ok
-}
-
-// ResetAppGoodStockLockID resets all changes to the "app_good_stock_lock_id" field.
-func (m *OrderStateMutation) ResetAppGoodStockLockID() {
-	m.app_good_stock_lock_id = nil
-	delete(m.clearedFields, orderstate.FieldAppGoodStockLockID)
-}
-
-// SetLedgerLockID sets the "ledger_lock_id" field.
-func (m *OrderStateMutation) SetLedgerLockID(u uuid.UUID) {
-	m.ledger_lock_id = &u
-}
-
-// LedgerLockID returns the value of the "ledger_lock_id" field in the mutation.
-func (m *OrderStateMutation) LedgerLockID() (r uuid.UUID, exists bool) {
-	v := m.ledger_lock_id
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldLedgerLockID returns the old "ledger_lock_id" field's value of the OrderState entity.
-// If the OrderState object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *OrderStateMutation) OldLedgerLockID(ctx context.Context) (v uuid.UUID, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldLedgerLockID is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldLedgerLockID requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldLedgerLockID: %w", err)
-	}
-	return oldValue.LedgerLockID, nil
-}
-
-// ClearLedgerLockID clears the value of the "ledger_lock_id" field.
-func (m *OrderStateMutation) ClearLedgerLockID() {
-	m.ledger_lock_id = nil
-	m.clearedFields[orderstate.FieldLedgerLockID] = struct{}{}
-}
-
-// LedgerLockIDCleared returns if the "ledger_lock_id" field was cleared in this mutation.
-func (m *OrderStateMutation) LedgerLockIDCleared() bool {
-	_, ok := m.clearedFields[orderstate.FieldLedgerLockID]
-	return ok
-}
-
-// ResetLedgerLockID resets all changes to the "ledger_lock_id" field.
-func (m *OrderStateMutation) ResetLedgerLockID() {
-	m.ledger_lock_id = nil
-	delete(m.clearedFields, orderstate.FieldLedgerLockID)
-}
-
-// SetCommissionLockID sets the "commission_lock_id" field.
-func (m *OrderStateMutation) SetCommissionLockID(u uuid.UUID) {
-	m.commission_lock_id = &u
-}
-
-// CommissionLockID returns the value of the "commission_lock_id" field in the mutation.
-func (m *OrderStateMutation) CommissionLockID() (r uuid.UUID, exists bool) {
-	v := m.commission_lock_id
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldCommissionLockID returns the old "commission_lock_id" field's value of the OrderState entity.
-// If the OrderState object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *OrderStateMutation) OldCommissionLockID(ctx context.Context) (v uuid.UUID, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldCommissionLockID is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldCommissionLockID requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldCommissionLockID: %w", err)
-	}
-	return oldValue.CommissionLockID, nil
-}
-
-// ClearCommissionLockID clears the value of the "commission_lock_id" field.
-func (m *OrderStateMutation) ClearCommissionLockID() {
-	m.commission_lock_id = nil
-	m.clearedFields[orderstate.FieldCommissionLockID] = struct{}{}
-}
-
-// CommissionLockIDCleared returns if the "commission_lock_id" field was cleared in this mutation.
-func (m *OrderStateMutation) CommissionLockIDCleared() bool {
-	_, ok := m.clearedFields[orderstate.FieldCommissionLockID]
-	return ok
-}
-
-// ResetCommissionLockID resets all changes to the "commission_lock_id" field.
-func (m *OrderStateMutation) ResetCommissionLockID() {
-	m.commission_lock_id = nil
-	delete(m.clearedFields, orderstate.FieldCommissionLockID)
-}
-
 // Where appends a list predicates to the OrderStateMutation builder.
 func (m *OrderStateMutation) Where(ps ...predicate.OrderState) {
 	m.predicates = append(m.predicates, ps...)
@@ -4683,7 +5300,7 @@ func (m *OrderStateMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *OrderStateMutation) Fields() []string {
-	fields := make([]string, 0, 23)
+	fields := make([]string, 0, 20)
 	if m.created_at != nil {
 		fields = append(fields, orderstate.FieldCreatedAt)
 	}
@@ -4744,15 +5361,6 @@ func (m *OrderStateMutation) Fields() []string {
 	if m.compensate_hours != nil {
 		fields = append(fields, orderstate.FieldCompensateHours)
 	}
-	if m.app_good_stock_lock_id != nil {
-		fields = append(fields, orderstate.FieldAppGoodStockLockID)
-	}
-	if m.ledger_lock_id != nil {
-		fields = append(fields, orderstate.FieldLedgerLockID)
-	}
-	if m.commission_lock_id != nil {
-		fields = append(fields, orderstate.FieldCommissionLockID)
-	}
 	return fields
 }
 
@@ -4801,12 +5409,6 @@ func (m *OrderStateMutation) Field(name string) (ent.Value, bool) {
 		return m.OutofgasHours()
 	case orderstate.FieldCompensateHours:
 		return m.CompensateHours()
-	case orderstate.FieldAppGoodStockLockID:
-		return m.AppGoodStockLockID()
-	case orderstate.FieldLedgerLockID:
-		return m.LedgerLockID()
-	case orderstate.FieldCommissionLockID:
-		return m.CommissionLockID()
 	}
 	return nil, false
 }
@@ -4856,12 +5458,6 @@ func (m *OrderStateMutation) OldField(ctx context.Context, name string) (ent.Val
 		return m.OldOutofgasHours(ctx)
 	case orderstate.FieldCompensateHours:
 		return m.OldCompensateHours(ctx)
-	case orderstate.FieldAppGoodStockLockID:
-		return m.OldAppGoodStockLockID(ctx)
-	case orderstate.FieldLedgerLockID:
-		return m.OldLedgerLockID(ctx)
-	case orderstate.FieldCommissionLockID:
-		return m.OldCommissionLockID(ctx)
 	}
 	return nil, fmt.Errorf("unknown OrderState field %s", name)
 }
@@ -5010,27 +5606,6 @@ func (m *OrderStateMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetCompensateHours(v)
-		return nil
-	case orderstate.FieldAppGoodStockLockID:
-		v, ok := value.(uuid.UUID)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetAppGoodStockLockID(v)
-		return nil
-	case orderstate.FieldLedgerLockID:
-		v, ok := value.(uuid.UUID)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetLedgerLockID(v)
-		return nil
-	case orderstate.FieldCommissionLockID:
-		v, ok := value.(uuid.UUID)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetCommissionLockID(v)
 		return nil
 	}
 	return fmt.Errorf("unknown OrderState field %s", name)
@@ -5221,15 +5796,6 @@ func (m *OrderStateMutation) ClearedFields() []string {
 	if m.FieldCleared(orderstate.FieldCompensateHours) {
 		fields = append(fields, orderstate.FieldCompensateHours)
 	}
-	if m.FieldCleared(orderstate.FieldAppGoodStockLockID) {
-		fields = append(fields, orderstate.FieldAppGoodStockLockID)
-	}
-	if m.FieldCleared(orderstate.FieldLedgerLockID) {
-		fields = append(fields, orderstate.FieldLedgerLockID)
-	}
-	if m.FieldCleared(orderstate.FieldCommissionLockID) {
-		fields = append(fields, orderstate.FieldCommissionLockID)
-	}
 	return fields
 }
 
@@ -5291,15 +5857,6 @@ func (m *OrderStateMutation) ClearField(name string) error {
 		return nil
 	case orderstate.FieldCompensateHours:
 		m.ClearCompensateHours()
-		return nil
-	case orderstate.FieldAppGoodStockLockID:
-		m.ClearAppGoodStockLockID()
-		return nil
-	case orderstate.FieldLedgerLockID:
-		m.ClearLedgerLockID()
-		return nil
-	case orderstate.FieldCommissionLockID:
-		m.ClearCommissionLockID()
 		return nil
 	}
 	return fmt.Errorf("unknown OrderState nullable field %s", name)
@@ -5368,15 +5925,6 @@ func (m *OrderStateMutation) ResetField(name string) error {
 		return nil
 	case orderstate.FieldCompensateHours:
 		m.ResetCompensateHours()
-		return nil
-	case orderstate.FieldAppGoodStockLockID:
-		m.ResetAppGoodStockLockID()
-		return nil
-	case orderstate.FieldLedgerLockID:
-		m.ResetLedgerLockID()
-		return nil
-	case orderstate.FieldCommissionLockID:
-		m.ResetCommissionLockID()
 		return nil
 	}
 	return fmt.Errorf("unknown OrderState field %s", name)
