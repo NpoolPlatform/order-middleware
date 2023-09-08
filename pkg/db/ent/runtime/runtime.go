@@ -278,6 +278,10 @@ func init() {
 	orderstateDescLedgerLockID := orderstateFields[19].Descriptor()
 	// orderstate.DefaultLedgerLockID holds the default value on creation for the ledger_lock_id field.
 	orderstate.DefaultLedgerLockID = orderstateDescLedgerLockID.Default.(func() uuid.UUID)
+	// orderstateDescCommissionLockID is the schema descriptor for commission_lock_id field.
+	orderstateDescCommissionLockID := orderstateFields[20].Descriptor()
+	// orderstate.DefaultCommissionLockID holds the default value on creation for the commission_lock_id field.
+	orderstate.DefaultCommissionLockID = orderstateDescCommissionLockID.Default.(func() uuid.UUID)
 	// orderstateDescID is the schema descriptor for id field.
 	orderstateDescID := orderstateFields[0].Descriptor()
 	// orderstate.DefaultID holds the default value on creation for the id field.

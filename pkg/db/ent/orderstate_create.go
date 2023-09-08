@@ -324,6 +324,20 @@ func (osc *OrderStateCreate) SetNillableLedgerLockID(u *uuid.UUID) *OrderStateCr
 	return osc
 }
 
+// SetCommissionLockID sets the "commission_lock_id" field.
+func (osc *OrderStateCreate) SetCommissionLockID(u uuid.UUID) *OrderStateCreate {
+	osc.mutation.SetCommissionLockID(u)
+	return osc
+}
+
+// SetNillableCommissionLockID sets the "commission_lock_id" field if the given value is not nil.
+func (osc *OrderStateCreate) SetNillableCommissionLockID(u *uuid.UUID) *OrderStateCreate {
+	if u != nil {
+		osc.SetCommissionLockID(*u)
+	}
+	return osc
+}
+
 // SetID sets the "id" field.
 func (osc *OrderStateCreate) SetID(u uuid.UUID) *OrderStateCreate {
 	osc.mutation.SetID(u)
@@ -515,6 +529,13 @@ func (osc *OrderStateCreate) defaults() error {
 		}
 		v := orderstate.DefaultLedgerLockID()
 		osc.mutation.SetLedgerLockID(v)
+	}
+	if _, ok := osc.mutation.CommissionLockID(); !ok {
+		if orderstate.DefaultCommissionLockID == nil {
+			return fmt.Errorf("ent: uninitialized orderstate.DefaultCommissionLockID (forgotten import ent/runtime?)")
+		}
+		v := orderstate.DefaultCommissionLockID()
+		osc.mutation.SetCommissionLockID(v)
 	}
 	if _, ok := osc.mutation.ID(); !ok {
 		if orderstate.DefaultID == nil {
@@ -752,6 +773,14 @@ func (osc *OrderStateCreate) createSpec() (*OrderState, *sqlgraph.CreateSpec) {
 			Column: orderstate.FieldLedgerLockID,
 		})
 		_node.LedgerLockID = value
+	}
+	if value, ok := osc.mutation.CommissionLockID(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Value:  value,
+			Column: orderstate.FieldCommissionLockID,
+		})
+		_node.CommissionLockID = value
 	}
 	return _node, _spec
 }
@@ -1230,6 +1259,24 @@ func (u *OrderStateUpsert) UpdateLedgerLockID() *OrderStateUpsert {
 // ClearLedgerLockID clears the value of the "ledger_lock_id" field.
 func (u *OrderStateUpsert) ClearLedgerLockID() *OrderStateUpsert {
 	u.SetNull(orderstate.FieldLedgerLockID)
+	return u
+}
+
+// SetCommissionLockID sets the "commission_lock_id" field.
+func (u *OrderStateUpsert) SetCommissionLockID(v uuid.UUID) *OrderStateUpsert {
+	u.Set(orderstate.FieldCommissionLockID, v)
+	return u
+}
+
+// UpdateCommissionLockID sets the "commission_lock_id" field to the value that was provided on create.
+func (u *OrderStateUpsert) UpdateCommissionLockID() *OrderStateUpsert {
+	u.SetExcluded(orderstate.FieldCommissionLockID)
+	return u
+}
+
+// ClearCommissionLockID clears the value of the "commission_lock_id" field.
+func (u *OrderStateUpsert) ClearCommissionLockID() *OrderStateUpsert {
+	u.SetNull(orderstate.FieldCommissionLockID)
 	return u
 }
 
@@ -1777,6 +1824,27 @@ func (u *OrderStateUpsertOne) UpdateLedgerLockID() *OrderStateUpsertOne {
 func (u *OrderStateUpsertOne) ClearLedgerLockID() *OrderStateUpsertOne {
 	return u.Update(func(s *OrderStateUpsert) {
 		s.ClearLedgerLockID()
+	})
+}
+
+// SetCommissionLockID sets the "commission_lock_id" field.
+func (u *OrderStateUpsertOne) SetCommissionLockID(v uuid.UUID) *OrderStateUpsertOne {
+	return u.Update(func(s *OrderStateUpsert) {
+		s.SetCommissionLockID(v)
+	})
+}
+
+// UpdateCommissionLockID sets the "commission_lock_id" field to the value that was provided on create.
+func (u *OrderStateUpsertOne) UpdateCommissionLockID() *OrderStateUpsertOne {
+	return u.Update(func(s *OrderStateUpsert) {
+		s.UpdateCommissionLockID()
+	})
+}
+
+// ClearCommissionLockID clears the value of the "commission_lock_id" field.
+func (u *OrderStateUpsertOne) ClearCommissionLockID() *OrderStateUpsertOne {
+	return u.Update(func(s *OrderStateUpsert) {
+		s.ClearCommissionLockID()
 	})
 }
 
@@ -2490,6 +2558,27 @@ func (u *OrderStateUpsertBulk) UpdateLedgerLockID() *OrderStateUpsertBulk {
 func (u *OrderStateUpsertBulk) ClearLedgerLockID() *OrderStateUpsertBulk {
 	return u.Update(func(s *OrderStateUpsert) {
 		s.ClearLedgerLockID()
+	})
+}
+
+// SetCommissionLockID sets the "commission_lock_id" field.
+func (u *OrderStateUpsertBulk) SetCommissionLockID(v uuid.UUID) *OrderStateUpsertBulk {
+	return u.Update(func(s *OrderStateUpsert) {
+		s.SetCommissionLockID(v)
+	})
+}
+
+// UpdateCommissionLockID sets the "commission_lock_id" field to the value that was provided on create.
+func (u *OrderStateUpsertBulk) UpdateCommissionLockID() *OrderStateUpsertBulk {
+	return u.Update(func(s *OrderStateUpsert) {
+		s.UpdateCommissionLockID()
+	})
+}
+
+// ClearCommissionLockID clears the value of the "commission_lock_id" field.
+func (u *OrderStateUpsertBulk) ClearCommissionLockID() *OrderStateUpsertBulk {
+	return u.Update(func(s *OrderStateUpsert) {
+		s.ClearCommissionLockID()
 	})
 }
 

@@ -234,6 +234,13 @@ func LedgerLockID(v uuid.UUID) predicate.OrderState {
 	})
 }
 
+// CommissionLockID applies equality check predicate on the "commission_lock_id" field. It's identical to CommissionLockIDEQ.
+func CommissionLockID(v uuid.UUID) predicate.OrderState {
+	return predicate.OrderState(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldCommissionLockID), v))
+	})
+}
+
 // CreatedAtEQ applies the EQ predicate on the "created_at" field.
 func CreatedAtEQ(v uint32) predicate.OrderState {
 	return predicate.OrderState(func(s *sql.Selector) {
@@ -1951,6 +1958,84 @@ func LedgerLockIDIsNil() predicate.OrderState {
 func LedgerLockIDNotNil() predicate.OrderState {
 	return predicate.OrderState(func(s *sql.Selector) {
 		s.Where(sql.NotNull(s.C(FieldLedgerLockID)))
+	})
+}
+
+// CommissionLockIDEQ applies the EQ predicate on the "commission_lock_id" field.
+func CommissionLockIDEQ(v uuid.UUID) predicate.OrderState {
+	return predicate.OrderState(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldCommissionLockID), v))
+	})
+}
+
+// CommissionLockIDNEQ applies the NEQ predicate on the "commission_lock_id" field.
+func CommissionLockIDNEQ(v uuid.UUID) predicate.OrderState {
+	return predicate.OrderState(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldCommissionLockID), v))
+	})
+}
+
+// CommissionLockIDIn applies the In predicate on the "commission_lock_id" field.
+func CommissionLockIDIn(vs ...uuid.UUID) predicate.OrderState {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.OrderState(func(s *sql.Selector) {
+		s.Where(sql.In(s.C(FieldCommissionLockID), v...))
+	})
+}
+
+// CommissionLockIDNotIn applies the NotIn predicate on the "commission_lock_id" field.
+func CommissionLockIDNotIn(vs ...uuid.UUID) predicate.OrderState {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.OrderState(func(s *sql.Selector) {
+		s.Where(sql.NotIn(s.C(FieldCommissionLockID), v...))
+	})
+}
+
+// CommissionLockIDGT applies the GT predicate on the "commission_lock_id" field.
+func CommissionLockIDGT(v uuid.UUID) predicate.OrderState {
+	return predicate.OrderState(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldCommissionLockID), v))
+	})
+}
+
+// CommissionLockIDGTE applies the GTE predicate on the "commission_lock_id" field.
+func CommissionLockIDGTE(v uuid.UUID) predicate.OrderState {
+	return predicate.OrderState(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldCommissionLockID), v))
+	})
+}
+
+// CommissionLockIDLT applies the LT predicate on the "commission_lock_id" field.
+func CommissionLockIDLT(v uuid.UUID) predicate.OrderState {
+	return predicate.OrderState(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldCommissionLockID), v))
+	})
+}
+
+// CommissionLockIDLTE applies the LTE predicate on the "commission_lock_id" field.
+func CommissionLockIDLTE(v uuid.UUID) predicate.OrderState {
+	return predicate.OrderState(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldCommissionLockID), v))
+	})
+}
+
+// CommissionLockIDIsNil applies the IsNil predicate on the "commission_lock_id" field.
+func CommissionLockIDIsNil() predicate.OrderState {
+	return predicate.OrderState(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldCommissionLockID)))
+	})
+}
+
+// CommissionLockIDNotNil applies the NotNil predicate on the "commission_lock_id" field.
+func CommissionLockIDNotNil() predicate.OrderState {
+	return predicate.OrderState(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldCommissionLockID)))
 	})
 }
 

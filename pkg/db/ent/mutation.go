@@ -3292,6 +3292,7 @@ type OrderStateMutation struct {
 	addcompensate_hours    *int32
 	app_good_stock_lock_id *uuid.UUID
 	ledger_lock_id         *uuid.UUID
+	commission_lock_id     *uuid.UUID
 	clearedFields          map[string]struct{}
 	done                   bool
 	oldValue               func(context.Context) (*OrderState, error)
@@ -4614,6 +4615,55 @@ func (m *OrderStateMutation) ResetLedgerLockID() {
 	delete(m.clearedFields, orderstate.FieldLedgerLockID)
 }
 
+// SetCommissionLockID sets the "commission_lock_id" field.
+func (m *OrderStateMutation) SetCommissionLockID(u uuid.UUID) {
+	m.commission_lock_id = &u
+}
+
+// CommissionLockID returns the value of the "commission_lock_id" field in the mutation.
+func (m *OrderStateMutation) CommissionLockID() (r uuid.UUID, exists bool) {
+	v := m.commission_lock_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCommissionLockID returns the old "commission_lock_id" field's value of the OrderState entity.
+// If the OrderState object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *OrderStateMutation) OldCommissionLockID(ctx context.Context) (v uuid.UUID, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCommissionLockID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCommissionLockID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCommissionLockID: %w", err)
+	}
+	return oldValue.CommissionLockID, nil
+}
+
+// ClearCommissionLockID clears the value of the "commission_lock_id" field.
+func (m *OrderStateMutation) ClearCommissionLockID() {
+	m.commission_lock_id = nil
+	m.clearedFields[orderstate.FieldCommissionLockID] = struct{}{}
+}
+
+// CommissionLockIDCleared returns if the "commission_lock_id" field was cleared in this mutation.
+func (m *OrderStateMutation) CommissionLockIDCleared() bool {
+	_, ok := m.clearedFields[orderstate.FieldCommissionLockID]
+	return ok
+}
+
+// ResetCommissionLockID resets all changes to the "commission_lock_id" field.
+func (m *OrderStateMutation) ResetCommissionLockID() {
+	m.commission_lock_id = nil
+	delete(m.clearedFields, orderstate.FieldCommissionLockID)
+}
+
 // Where appends a list predicates to the OrderStateMutation builder.
 func (m *OrderStateMutation) Where(ps ...predicate.OrderState) {
 	m.predicates = append(m.predicates, ps...)
@@ -4633,7 +4683,7 @@ func (m *OrderStateMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *OrderStateMutation) Fields() []string {
-	fields := make([]string, 0, 22)
+	fields := make([]string, 0, 23)
 	if m.created_at != nil {
 		fields = append(fields, orderstate.FieldCreatedAt)
 	}
@@ -4700,6 +4750,9 @@ func (m *OrderStateMutation) Fields() []string {
 	if m.ledger_lock_id != nil {
 		fields = append(fields, orderstate.FieldLedgerLockID)
 	}
+	if m.commission_lock_id != nil {
+		fields = append(fields, orderstate.FieldCommissionLockID)
+	}
 	return fields
 }
 
@@ -4752,6 +4805,8 @@ func (m *OrderStateMutation) Field(name string) (ent.Value, bool) {
 		return m.AppGoodStockLockID()
 	case orderstate.FieldLedgerLockID:
 		return m.LedgerLockID()
+	case orderstate.FieldCommissionLockID:
+		return m.CommissionLockID()
 	}
 	return nil, false
 }
@@ -4805,6 +4860,8 @@ func (m *OrderStateMutation) OldField(ctx context.Context, name string) (ent.Val
 		return m.OldAppGoodStockLockID(ctx)
 	case orderstate.FieldLedgerLockID:
 		return m.OldLedgerLockID(ctx)
+	case orderstate.FieldCommissionLockID:
+		return m.OldCommissionLockID(ctx)
 	}
 	return nil, fmt.Errorf("unknown OrderState field %s", name)
 }
@@ -4967,6 +5024,13 @@ func (m *OrderStateMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetLedgerLockID(v)
+		return nil
+	case orderstate.FieldCommissionLockID:
+		v, ok := value.(uuid.UUID)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCommissionLockID(v)
 		return nil
 	}
 	return fmt.Errorf("unknown OrderState field %s", name)
@@ -5163,6 +5227,9 @@ func (m *OrderStateMutation) ClearedFields() []string {
 	if m.FieldCleared(orderstate.FieldLedgerLockID) {
 		fields = append(fields, orderstate.FieldLedgerLockID)
 	}
+	if m.FieldCleared(orderstate.FieldCommissionLockID) {
+		fields = append(fields, orderstate.FieldCommissionLockID)
+	}
 	return fields
 }
 
@@ -5230,6 +5297,9 @@ func (m *OrderStateMutation) ClearField(name string) error {
 		return nil
 	case orderstate.FieldLedgerLockID:
 		m.ClearLedgerLockID()
+		return nil
+	case orderstate.FieldCommissionLockID:
+		m.ClearCommissionLockID()
 		return nil
 	}
 	return fmt.Errorf("unknown OrderState nullable field %s", name)
@@ -5304,6 +5374,9 @@ func (m *OrderStateMutation) ResetField(name string) error {
 		return nil
 	case orderstate.FieldLedgerLockID:
 		m.ResetLedgerLockID()
+		return nil
+	case orderstate.FieldCommissionLockID:
+		m.ResetCommissionLockID()
 		return nil
 	}
 	return fmt.Errorf("unknown OrderState field %s", name)

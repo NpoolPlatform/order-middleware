@@ -89,6 +89,7 @@ var (
 		{Name: "compensate_hours", Type: field.TypeUint32, Nullable: true, Default: 0},
 		{Name: "app_good_stock_lock_id", Type: field.TypeUUID, Nullable: true},
 		{Name: "ledger_lock_id", Type: field.TypeUUID, Nullable: true},
+		{Name: "commission_lock_id", Type: field.TypeUUID, Nullable: true},
 	}
 	// OrderStatesTable holds the schema information for the "order_states" table.
 	OrderStatesTable = &schema.Table{

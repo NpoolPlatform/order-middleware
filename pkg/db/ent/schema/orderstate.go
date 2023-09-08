@@ -109,6 +109,12 @@ func (OrderState) Fields() []ent.Field {
 			Default(func() uuid.UUID {
 				return uuid.Nil
 			}),
+		field.
+			UUID("commission_lock_id", uuid.UUID{}).
+			Optional().
+			Default(func() uuid.UUID {
+				return uuid.Nil
+			}),
 	}
 }
 
