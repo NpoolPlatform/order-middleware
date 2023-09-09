@@ -48,7 +48,6 @@ type Handler struct {
 	PaymentAccountID     *uuid.UUID
 	PaymentStartAmount   *decimal.Decimal
 	OrderState           *basetypes.OrderState
-	CancelState          *basetypes.OrderState
 	StartMode            *basetypes.OrderStartMode
 	StartAt              *uint32
 	EndAt                *uint32
@@ -633,27 +632,6 @@ func WithOrderState(state *basetypes.OrderState, must bool) func(context.Context
 			return fmt.Errorf("invalid orderstate")
 		}
 		h.OrderState = state
-		return nil
-	}
-}
-
-func WithCancelState(state *basetypes.OrderState, must bool) func(context.Context, *Handler) error {
-	return func(ctx context.Context, h *Handler) error {
-		if state == nil {
-			if must {
-				return fmt.Errorf("invalid cancelstate")
-			}
-			return nil
-		}
-		switch *state {
-		case basetypes.OrderState_OrderStateWaitPayment:
-		case basetypes.OrderState_OrderStateCheckPayment:
-		case basetypes.OrderState_OrderStatePaid:
-		case basetypes.OrderState_OrderStateInService:
-		default:
-			return fmt.Errorf("invalid cancelstate")
-		}
-		h.CancelState = state
 		return nil
 	}
 }
@@ -1434,17 +1412,6 @@ func WithReqs(reqs []*npool.OrderReq, must bool) func(context.Context, *Handler)
 					return fmt.Errorf("invalid orderstate")
 				}
 				_req.OrderStateReq.OrderState = req.OrderState
-			}
-			if req.CancelState != nil {
-				switch *req.CancelState {
-				case basetypes.OrderState_OrderStateWaitPayment:
-				case basetypes.OrderState_OrderStateCheckPayment:
-				case basetypes.OrderState_OrderStatePaid:
-				case basetypes.OrderState_OrderStateInService:
-				default:
-					return fmt.Errorf("invalid cancelstate")
-				}
-				_req.OrderStateReq.CancelState = req.CancelState
 			}
 			if req.AppGoodStockLockID != nil {
 				id, err := uuid.Parse(*req.AppGoodStockLockID)

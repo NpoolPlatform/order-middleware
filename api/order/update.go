@@ -28,7 +28,6 @@ func (s *Server) UpdateOrder(ctx context.Context, in *npool.UpdateOrderRequest) 
 		order1.WithAppID(req.AppID, false),
 		order1.WithParentOrderID(req.ParentOrderID, false),
 		order1.WithOrderState(req.OrderState, false),
-		order1.WithCancelState(req.CancelState, false),
 		order1.WithStartMode(req.StartMode, false),
 		order1.WithStartAt(req.StartAt, false),
 		order1.WithEndAt(req.EndAt, false),

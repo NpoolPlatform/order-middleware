@@ -23,7 +23,7 @@ type updateHandler struct {
 
 var stateAllowMap = map[types.OrderState][]types.OrderState{
 	types.OrderState_OrderStateCreated:     {types.OrderState_OrderStateWaitPayment},
-	types.OrderState_OrderStateWaitPayment: {types.OrderState_OrderStateCheckPayment},
+	types.OrderState_OrderStateWaitPayment: {types.OrderState_OrderStateCheckPayment, types.OrderState_OrderStatePreCancel},
 	types.OrderState_OrderStateCheckPayment: {
 		types.OrderState_OrderStatePaymentTransferReceived,
 		types.OrderState_OrderStatePreCancel,
@@ -165,10 +165,6 @@ func (h *updateHandler) updateOrderState(ctx context.Context, tx *ent.Tx, req *o
 	_orderState := types.OrderState(types.OrderState_value[orderstate.OrderState])
 	_cancelState := types.OrderState(types.OrderState_value[orderstate.CancelState])
 
-	if _cancelState != types.OrderState_DefaultOrderState && req.CancelState != nil {
-		return fmt.Errorf("permission denied")
-	}
-
 	switch _orderState {
 	case types.OrderState_OrderStateExpired:
 		fallthrough //nolint
@@ -193,7 +189,7 @@ func (h *updateHandler) updateOrderState(ctx context.Context, tx *ent.Tx, req *o
 		case types.OrderState_OrderStatePaid:
 		case types.OrderState_OrderStateInService:
 		default:
-			return fmt.Errorf("invalid cancel state")
+			return fmt.Errorf("invalid cancelstate")
 		}
 	}
 
@@ -215,7 +211,7 @@ func (h *updateHandler) updateOrderState(ctx context.Context, tx *ent.Tx, req *o
 		case types.OrderState_OrderStatePaid:
 		case types.OrderState_OrderStateInService:
 		default:
-			return fmt.Errorf("invalid cancel state")
+			return fmt.Errorf("invalid cancelstate")
 		}
 	}
 
@@ -235,6 +231,20 @@ func (h *updateHandler) updateOrderState(ctx context.Context, tx *ent.Tx, req *o
 			}
 			req.OrderState = rollbackOrderState
 		} else {
+			if *req.OrderState == types.OrderState_OrderStatePreCancel {
+				if _cancelState != types.OrderState_DefaultOrderState {
+					return fmt.Errorf("permission denied")
+				}
+				switch _orderState {
+				case types.OrderState_OrderStateWaitPayment:
+				case types.OrderState_OrderStateCheckPayment:
+				case types.OrderState_OrderStatePaymentTimeout:
+				case types.OrderState_OrderStatePaid:
+				case types.OrderState_OrderStateInService:
+				default:
+					return fmt.Errorf("permission denied")
+				}
+			}
 			err := h.checkOrderState(_orderState, req)
 			if err != nil {
 				return err
@@ -268,27 +278,27 @@ func (h *updateHandler) updateOrderState(ctx context.Context, tx *ent.Tx, req *o
 		req.PaidAt = &now
 	}
 
-	if _, err := orderstatecrud.UpdateSet(
-		orderstate.Update(),
-		&orderstatecrud.Req{
-			OrderState:           req.OrderState,
-			CancelState:          req.CancelState,
-			StartMode:            req.StartMode,
-			StartAt:              &startAt,
-			EndAt:                &endAt,
-			LastBenefitAt:        req.LastBenefitAt,
-			PaidAt:               req.PaidAt,
-			BenefitState:         req.BenefitState,
-			UserSetPaid:          req.UserSetPaid,
-			UserSetCanceled:      req.UserSetCanceled,
-			AdminSetCanceled:     req.AdminSetCanceled,
-			PaymentTransactionID: req.PaymentTransactionID,
-			PaymentFinishAmount:  req.PaymentFinishAmount,
-			PaymentState:         req.PaymentState,
-			OutOfGasHours:        req.OutOfGasHours,
-			CompensateHours:      req.CompensateHours,
-		},
-	).Save(ctx); err != nil {
+	_req := &orderstatecrud.Req{
+		OrderState:           req.OrderState,
+		StartMode:            req.StartMode,
+		StartAt:              &startAt,
+		EndAt:                &endAt,
+		LastBenefitAt:        req.LastBenefitAt,
+		PaidAt:               req.PaidAt,
+		BenefitState:         req.BenefitState,
+		UserSetPaid:          req.UserSetPaid,
+		UserSetCanceled:      req.UserSetCanceled,
+		AdminSetCanceled:     req.AdminSetCanceled,
+		PaymentTransactionID: req.PaymentTransactionID,
+		PaymentFinishAmount:  req.PaymentFinishAmount,
+		PaymentState:         req.PaymentState,
+		OutOfGasHours:        req.OutOfGasHours,
+		CompensateHours:      req.CompensateHours,
+	}
+	if req.OrderState != nil && *req.OrderState == types.OrderState_OrderStatePreCancel {
+		req.CancelState = &_orderState
+	}
+	if _, err := orderstatecrud.UpdateSet(orderstate.Update(), _req).Save(ctx); err != nil {
 		return err
 	}
 
