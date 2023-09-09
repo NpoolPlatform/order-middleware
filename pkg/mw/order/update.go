@@ -278,27 +278,12 @@ func (h *updateHandler) updateOrderState(ctx context.Context, tx *ent.Tx, req *o
 		req.PaidAt = &now
 	}
 
-	_req := &orderstatecrud.Req{
-		OrderState:           req.OrderState,
-		StartMode:            req.StartMode,
-		StartAt:              &startAt,
-		EndAt:                &endAt,
-		LastBenefitAt:        req.LastBenefitAt,
-		PaidAt:               req.PaidAt,
-		BenefitState:         req.BenefitState,
-		UserSetPaid:          req.UserSetPaid,
-		UserSetCanceled:      req.UserSetCanceled,
-		AdminSetCanceled:     req.AdminSetCanceled,
-		PaymentTransactionID: req.PaymentTransactionID,
-		PaymentFinishAmount:  req.PaymentFinishAmount,
-		PaymentState:         req.PaymentState,
-		OutOfGasHours:        req.OutOfGasHours,
-		CompensateHours:      req.CompensateHours,
-	}
+	req.StartAt = &startAt
+	req.EndAt = &endAt
 	if req.OrderState != nil && *req.OrderState == types.OrderState_OrderStatePreCancel {
 		req.CancelState = &_orderState
 	}
-	if _, err := orderstatecrud.UpdateSet(orderstate.Update(), _req).Save(ctx); err != nil {
+	if _, err := orderstatecrud.UpdateSet(orderstate.Update(), req).Save(ctx); err != nil {
 		return err
 	}
 
