@@ -1,3 +1,4 @@
+//nolint:dupl
 package orderlock
 
 import (
@@ -13,9 +14,17 @@ import (
 )
 
 func (s *Server) CreateOrderLocks(ctx context.Context, in *npool.CreateOrderLocksRequest) (*npool.CreateOrderLocksResponse, error) {
+	reqs := in.GetInfos()
+	if len(reqs) == 0 {
+		logger.Sugar().Errorw(
+			"CreateOrderLocks",
+			"In", in,
+		)
+		return &npool.CreateOrderLocksResponse{}, status.Error(codes.Aborted, "invalid argument")
+	}
 	handler, err := orderlock1.NewHandler(
 		ctx,
-		orderlock1.WithReqs(in.GetInfos()),
+		orderlock1.WithReqs(reqs, true),
 	)
 	if err != nil {
 		logger.Sugar().Errorw(

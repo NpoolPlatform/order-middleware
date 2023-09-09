@@ -5,11 +5,13 @@ import (
 	"fmt"
 
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
+	basetypes "github.com/NpoolPlatform/message/npool/basetypes/order/v1"
 	npool "github.com/NpoolPlatform/message/npool/order/mw/v1/order/orderlock"
 	orderlockcrud "github.com/NpoolPlatform/order-middleware/pkg/crud/order/orderlock"
 	"github.com/NpoolPlatform/order-middleware/pkg/db"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent"
 	entorder "github.com/NpoolPlatform/order-middleware/pkg/db/ent/order"
+	entorderlock "github.com/NpoolPlatform/order-middleware/pkg/db/ent/orderlock"
 
 	"github.com/google/uuid"
 )
@@ -18,21 +20,44 @@ type createHandler struct {
 	*Handler
 }
 
-func (h *createHandler) createOrderLock(ctx context.Context, tx *ent.Tx, req *orderlockcrud.Req) error {
-	order, err := tx.Order.
+func (h *createHandler) checkOrderExist(ctx context.Context, tx *ent.Tx, req *orderlockcrud.Req) error {
+	exist, err := tx.Order.
 		Query().
 		Where(
 			entorder.ID(*req.OrderID),
 			entorder.DeletedAt(0),
 		).
-		Only(ctx)
+		Exist(ctx)
 	if err != nil {
 		return err
 	}
-	if order == nil {
+	if !exist {
 		return fmt.Errorf("invalid order")
 	}
+	return nil
+}
 
+func (h *createHandler) checkLockExist(ctx context.Context, tx *ent.Tx, req *orderlockcrud.Req) error {
+	if *req.LockType == basetypes.OrderLockType_LockCommission {
+		return nil
+	}
+	exist, err := tx.OrderLock.
+		Query().
+		Where(
+			entorderlock.OrderID(*req.OrderID),
+			entorderlock.LockType(req.LockType.String()),
+		).
+		Exist(ctx)
+	if err != nil {
+		return err
+	}
+	if exist {
+		return fmt.Errorf("orderlockid is exist")
+	}
+	return nil
+}
+
+func (h *createHandler) createOrderLock(ctx context.Context, tx *ent.Tx, req *orderlockcrud.Req) error {
 	if _, err := orderlockcrud.CreateSet(
 		tx.OrderLock.Create(),
 		&orderlockcrud.Req{
@@ -58,6 +83,12 @@ func (h *Handler) CreateOrderLocks(ctx context.Context) ([]*npool.OrderLock, err
 			id := uuid.New()
 			if req.ID == nil {
 				req.ID = &id
+			}
+			if err := handler.checkOrderExist(ctx, tx, req); err != nil {
+				return err
+			}
+			if err := handler.checkLockExist(ctx, tx, req); err != nil {
+				return err
 			}
 			if err := handler.createOrderLock(ctx, tx, req); err != nil {
 				return err

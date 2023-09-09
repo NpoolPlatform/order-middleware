@@ -214,10 +214,25 @@ func WithLimit(limit int32) func(context.Context, *Handler) error {
 	}
 }
 
-func WithReqs(reqs []*npool.OrderLockReq) func(context.Context, *Handler) error {
+//nolint:gocyclo
+func WithReqs(reqs []*npool.OrderLockReq, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		_reqs := []*orderlockcrud.Req{}
 		for _, req := range reqs {
+			if must {
+				if req.AppID == nil {
+					return fmt.Errorf("invalid appid")
+				}
+				if req.UserID == nil {
+					return fmt.Errorf("invalid userid")
+				}
+				if req.OrderID == nil {
+					return fmt.Errorf("invalid orderid")
+				}
+				if req.LockType == nil {
+					return fmt.Errorf("invalid locktype")
+				}
+			}
 			_req := &orderlockcrud.Req{}
 			if req.ID != nil {
 				id, err := uuid.Parse(*req.ID)
