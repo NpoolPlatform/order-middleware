@@ -1,3 +1,4 @@
+//nolint:dupl
 package orderlock
 
 import (
@@ -23,7 +24,7 @@ func (s *Server) DeleteOrderLocks(ctx context.Context, in *npool.DeleteOrderLock
 	}
 	handler, err := orderlock1.NewHandler(
 		ctx,
-		orderlock1.WithReqs(reqs),
+		orderlock1.WithReqs(reqs, false),
 	)
 	if err != nil {
 		logger.Sugar().Errorw(

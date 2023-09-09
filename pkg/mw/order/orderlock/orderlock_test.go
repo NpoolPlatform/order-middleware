@@ -157,7 +157,7 @@ func createOrderLocks(t *testing.T) {
 	}
 	handler, err := NewHandler(
 		context.Background(),
-		WithReqs(retsReq),
+		WithReqs(retsReq, true),
 	)
 	if assert.Nil(t, err) {
 		infos, err := handler.CreateOrderLocks(context.Background())
@@ -215,7 +215,7 @@ func deleteOrderLocks(t *testing.T) {
 	}
 	handler, err := NewHandler(
 		context.Background(),
-		WithReqs(retsReq),
+		WithReqs(retsReq, false),
 	)
 	if assert.Nil(t, err) {
 		infos, err := handler.DeleteOrderLocks(context.Background())
