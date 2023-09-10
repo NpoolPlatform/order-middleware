@@ -34,7 +34,8 @@ var stateAllowMap = map[types.OrderState][]types.OrderState{
 	types.OrderState_OrderStateTransferGoodStockLocked:     {types.OrderState_OrderStateAddCommission},
 	types.OrderState_OrderStateAddCommission:               {types.OrderState_OrderStateAchievementBookKeeping},
 	types.OrderState_OrderStateAchievementBookKeeping:      {types.OrderState_OrderStateUpdatePaidChilds},
-	types.OrderState_OrderStateUpdatePaidChilds:            {types.OrderState_OrderStatePaid},
+	types.OrderState_OrderStateUpdatePaidChilds:            {types.OrderState_OrderStatePaymentUnlockAccount},
+	types.OrderState_OrderStatePaymentUnlockAccount:        {types.OrderState_OrderStatePaid},
 	types.OrderState_OrderStatePaid:                        {types.OrderState_OrderStateTransferGoodStockWaitStart, types.OrderState_OrderStatePreCancel},
 	types.OrderState_OrderStateTransferGoodStockWaitStart:  {types.OrderState_OrderStateUpdateInServiceChilds},
 	types.OrderState_OrderStateUpdateInServiceChilds:       {types.OrderState_OrderStateInService},
@@ -49,8 +50,8 @@ var stateAllowMap = map[types.OrderState][]types.OrderState{
 	types.OrderState_OrderStateDeductLockedCommission:      {types.OrderState_OrderStateReturnCanceledBalance},
 	types.OrderState_OrderStateReturnCanceledBalance:       {types.OrderState_OrderStateUpdateCanceledChilds},
 	types.OrderState_OrderStateUpdateCanceledChilds:        {types.OrderState_OrderStateCanceledTransferBookKeeping},
-	types.OrderState_OrderStateCanceledTransferBookKeeping: {types.OrderState_OrderStateUnlockPaymentAccount},
-	types.OrderState_OrderStateUnlockPaymentAccount:        {types.OrderState_OrderStateCanceled},
+	types.OrderState_OrderStateCanceledTransferBookKeeping: {types.OrderState_OrderStateCancelUnlockPaymentAccount},
+	types.OrderState_OrderStateCancelUnlockPaymentAccount:  {types.OrderState_OrderStateCanceled},
 	types.OrderState_OrderStateCanceled:                    {},
 	types.OrderState_OrderStatePaymentTimeout:              {types.OrderState_OrderStatePreCancel},
 }
@@ -62,7 +63,8 @@ var stateRollbackMap = map[types.OrderState]*types.OrderState{
 	types.OrderState_OrderStateAddCommission:               types.OrderState_OrderStateTransferGoodStockLocked.Enum(),
 	types.OrderState_OrderStateAchievementBookKeeping:      types.OrderState_OrderStateAddCommission.Enum(),
 	types.OrderState_OrderStateUpdatePaidChilds:            types.OrderState_OrderStateAchievementBookKeeping.Enum(),
-	types.OrderState_OrderStatePaid:                        types.OrderState_OrderStateUpdatePaidChilds.Enum(),
+	types.OrderState_OrderStatePaymentUnlockAccount:        types.OrderState_OrderStateUpdatePaidChilds.Enum(),
+	types.OrderState_OrderStatePaid:                        types.OrderState_OrderStatePaymentUnlockAccount.Enum(),
 	types.OrderState_OrderStateTransferGoodStockWaitStart:  types.OrderState_OrderStatePaid.Enum(),
 	types.OrderState_OrderStateUpdateInServiceChilds:       types.OrderState_OrderStateTransferGoodStockWaitStart.Enum(),
 	types.OrderState_OrderStateInService:                   types.OrderState_OrderStateUpdateInServiceChilds.Enum(),
@@ -75,8 +77,8 @@ var stateRollbackMap = map[types.OrderState]*types.OrderState{
 	types.OrderState_OrderStateReturnCanceledBalance:       types.OrderState_OrderStateDeductLockedCommission.Enum(),
 	types.OrderState_OrderStateUpdateCanceledChilds:        types.OrderState_OrderStateReturnCanceledBalance.Enum(),
 	types.OrderState_OrderStateCanceledTransferBookKeeping: types.OrderState_OrderStateUpdateCanceledChilds.Enum(),
-	types.OrderState_OrderStateUnlockPaymentAccount:        types.OrderState_OrderStateCanceledTransferBookKeeping.Enum(),
-	types.OrderState_OrderStateCanceled:                    types.OrderState_OrderStateUnlockPaymentAccount.Enum(),
+	types.OrderState_OrderStateCancelUnlockPaymentAccount:  types.OrderState_OrderStateCanceledTransferBookKeeping.Enum(),
+	types.OrderState_OrderStateCanceled:                    types.OrderState_OrderStateCancelUnlockPaymentAccount.Enum(),
 }
 
 func (h *updateHandler) checkOrderState(oldState types.OrderState, req *orderstatecrud.Req) error {
