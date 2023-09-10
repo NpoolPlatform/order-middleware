@@ -356,8 +356,8 @@ func TestOutOfGas(t *testing.T) {
 
 	time.Sleep(10 * time.Second)
 	t.Run("createOutOfGas", createOutOfGas)
-	// t.Run("updateOutOfGas", updateOutOfGas)
-	//t.Run("getOutOfGas", getOutOfGas)
-	//t.Run("getOutOfGases", getOutOfGases)
-	//t.Run("deleteOutOfGas", deleteOutOfGas)
+	t.Run("updateOutOfGas", updateOutOfGas)
+	t.Run("getOutOfGas", getOutOfGas)
+	t.Run("getOutOfGases", getOutOfGases)
+	t.Run("deleteOutOfGas", deleteOutOfGas)
 }
