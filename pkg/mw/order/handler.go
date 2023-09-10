@@ -604,20 +604,20 @@ func WithOrderState(state *basetypes.OrderState, must bool) func(context.Context
 		case basetypes.OrderState_OrderStateTransferGoodStockLocked:
 		case basetypes.OrderState_OrderStateAddCommission:
 		case basetypes.OrderState_OrderStateAchievementBookKeeping:
-		case basetypes.OrderState_OrderStateUpdateWaitPaymentChilds:
+		case basetypes.OrderState_OrderStateUpdatePaidChilds:
 		case basetypes.OrderState_OrderStatePaid:
 		case basetypes.OrderState_OrderStateTransferGoodStockWaitStart:
-		case basetypes.OrderState_OrderStateUpdatePaidChilds:
-		case basetypes.OrderState_OrderStateInService:
-		case basetypes.OrderState_OrderStateTransferGoodStockInService:
 		case basetypes.OrderState_OrderStateUpdateInServiceChilds:
+		case basetypes.OrderState_OrderStateInService:
 		case basetypes.OrderState_OrderStatePaymentTimeout:
 		case basetypes.OrderState_OrderStatePreCancel:
 		case basetypes.OrderState_OrderStatePreExpired:
 		case basetypes.OrderState_OrderStateRestoreExpiredStock:
+		case basetypes.OrderState_OrderStateUpdateExpiredChilds:
 		case basetypes.OrderState_OrderStateRestoreCanceledStock:
 		case basetypes.OrderState_OrderStateCancelAchievement:
 		case basetypes.OrderState_OrderStateReturnCanceledBalance:
+		case basetypes.OrderState_OrderStateUpdateCanceledChilds:
 		case basetypes.OrderState_OrderStateCanceled:
 		case basetypes.OrderState_OrderStateExpired:
 		default:
@@ -1376,20 +1376,20 @@ func WithReqs(reqs []*npool.OrderReq, must bool) func(context.Context, *Handler)
 				case basetypes.OrderState_OrderStateTransferGoodStockLocked:
 				case basetypes.OrderState_OrderStateAddCommission:
 				case basetypes.OrderState_OrderStateAchievementBookKeeping:
-				case basetypes.OrderState_OrderStateUpdateWaitPaymentChilds:
+				case basetypes.OrderState_OrderStateUpdatePaidChilds:
 				case basetypes.OrderState_OrderStatePaid:
 				case basetypes.OrderState_OrderStateTransferGoodStockWaitStart:
-				case basetypes.OrderState_OrderStateUpdatePaidChilds:
-				case basetypes.OrderState_OrderStateInService:
-				case basetypes.OrderState_OrderStateTransferGoodStockInService:
 				case basetypes.OrderState_OrderStateUpdateInServiceChilds:
+				case basetypes.OrderState_OrderStateInService:
 				case basetypes.OrderState_OrderStatePaymentTimeout:
 				case basetypes.OrderState_OrderStatePreCancel:
 				case basetypes.OrderState_OrderStatePreExpired:
 				case basetypes.OrderState_OrderStateRestoreExpiredStock:
+				case basetypes.OrderState_OrderStateUpdateExpiredChilds:
 				case basetypes.OrderState_OrderStateRestoreCanceledStock:
 				case basetypes.OrderState_OrderStateCancelAchievement:
 				case basetypes.OrderState_OrderStateReturnCanceledBalance:
+				case basetypes.OrderState_OrderStateUpdateCanceledChilds:
 				case basetypes.OrderState_OrderStateCanceled:
 				case basetypes.OrderState_OrderStateExpired:
 				default:
