@@ -215,6 +215,17 @@ func setup(t *testing.T) func(*testing.T) {
 	_, err = h15.UpdateOrder(context.Background())
 	assert.Nil(t, err)
 
+	order.OrderState = ordertypes.OrderState_OrderStatePaymentUnlockAccount
+	h20, err := order1.NewHandler(
+		context.Background(),
+		order1.WithID(&order.ID, true),
+		order1.WithOrderState(&order.OrderState, true),
+	)
+	assert.Nil(t, err)
+	_, err = h20.UpdateOrder(context.Background())
+	assert.Nil(t, err)
+
+	order.OrderState = ordertypes.OrderState_OrderStateTransferGoodStockWaitStart
 	order.OrderState = ordertypes.OrderState_OrderStatePaid
 	h16, err := order1.NewHandler(
 		context.Background(),
