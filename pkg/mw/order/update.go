@@ -36,7 +36,7 @@ var stateAllowMap = map[types.OrderState][]types.OrderState{
 	types.OrderState_OrderStateAchievementBookKeeping:     {types.OrderState_OrderStateUpdatePaidChilds},
 	types.OrderState_OrderStateUpdatePaidChilds:           {types.OrderState_OrderStatePaid},
 	types.OrderState_OrderStatePaid:                       {types.OrderState_OrderStateTransferGoodStockWaitStart, types.OrderState_OrderStatePreCancel},
-	types.OrderState_OrderStateTransferGoodStockWaitStart: {types.OrderState_OrderStateUpdatePaidChilds},
+	types.OrderState_OrderStateTransferGoodStockWaitStart: {types.OrderState_OrderStateUpdateInServiceChilds},
 	types.OrderState_OrderStateUpdateInServiceChilds:      {types.OrderState_OrderStateInService},
 	types.OrderState_OrderStateInService:                  {types.OrderState_OrderStatePreExpired, types.OrderState_OrderStatePreCancel},
 	types.OrderState_OrderStatePreExpired:                 {types.OrderState_OrderStateRestoreExpiredStock},
