@@ -21,7 +21,7 @@ type OrderReq struct {
 	BalanceLockReq *orderlockcrud.Req
 }
 
-//nolint:funlen
+//nolint:funlen,gocyclo
 func (h *Handler) ToOrderReq(ctx context.Context, newOrder bool) (*OrderReq, error) {
 	if !newOrder {
 		info, err := h.GetOrder(ctx)
