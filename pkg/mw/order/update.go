@@ -22,57 +22,48 @@ type updateHandler struct {
 }
 
 var stateAllowMap = map[types.OrderState][]types.OrderState{
-	types.OrderState_OrderStateCreated:     {types.OrderState_OrderStateWaitPayment},
-	types.OrderState_OrderStateWaitPayment: {types.OrderState_OrderStateCheckPayment, types.OrderState_OrderStatePreCancel},
-	types.OrderState_OrderStateCheckPayment: {
+	types.OrderState_OrderStateCreated: {types.OrderState_OrderStateWaitPayment},
+	types.OrderState_OrderStateWaitPayment: {
 		types.OrderState_OrderStatePaymentTransferReceived,
 		types.OrderState_OrderStatePreCancel,
 		types.OrderState_OrderStatePaymentTimeout,
 	},
-	types.OrderState_OrderStatePaymentTransferReceived:      {types.OrderState_OrderStatePaymentTransferReceivedCheck},
-	types.OrderState_OrderStatePaymentTransferReceivedCheck: {types.OrderState_OrderStatePaymentTransferBookKept},
-	types.OrderState_OrderStatePaymentTransferBookKept:      {types.OrderState_OrderStatePaymentTransferBookKeptCheck},
-	types.OrderState_OrderStatePaymentTransferBookKeptCheck: {types.OrderState_OrderStatePaymentBalanceSpent},
-	types.OrderState_OrderStatePaymentBalanceSpent:          {types.OrderState_OrderStatePaymentBalanceSpentCheck},
-	types.OrderState_OrderStatePaymentBalanceSpentCheck:     {types.OrderState_OrderStateGoodStockTransferred},
-	types.OrderState_OrderStateGoodStockTransferred:         {types.OrderState_OrderStateGoodStockTransferredCheck},
-	types.OrderState_OrderStateGoodStockTransferredCheck:    {types.OrderState_OrderStateCommissionAdded},
-	types.OrderState_OrderStateCommissionAdded:              {types.OrderState_OrderStateCommissionAddedCheck},
-	types.OrderState_OrderStateCommissionAddedCheck:         {types.OrderState_OrderStateAchievementBookKept},
-	types.OrderState_OrderStateAchievementBookKept:          {types.OrderState_OrderStateAchievementBookKeptCheck},
-	types.OrderState_OrderStateAchievementBookKeptCheck:     {types.OrderState_OrderStatePaid},
-	types.OrderState_OrderStatePaid:                         {types.OrderState_OrderStateInService, types.OrderState_OrderStatePreCancel},
-	types.OrderState_OrderStateInService:                    {types.OrderState_OrderStatePreExpired, types.OrderState_OrderStatePreCancel},
-	types.OrderState_OrderStatePreExpired:                   {types.OrderState_OrderStatePreExpiredCheck},
-	types.OrderState_OrderStatePreExpiredCheck:              {types.OrderState_OrderStateRestoreExpiredStock},
-	types.OrderState_OrderStateRestoreExpiredStock:          {types.OrderState_OrderStateRestoreExpiredStockCheck},
-	types.OrderState_OrderStateRestoreExpiredStockCheck:     {types.OrderState_OrderStateExpired},
-	types.OrderState_OrderStateExpired:                      {},
-	types.OrderState_OrderStatePreCancel:                    {types.OrderState_OrderStatePreCancelCheck},
-	types.OrderState_OrderStatePreCancelCheck:               {types.OrderState_OrderStateRestoreCanceledStock},
-	types.OrderState_OrderStateRestoreCanceledStock:         {types.OrderState_OrderStateRestoreCanceledStockCheck},
-	types.OrderState_OrderStateRestoreCanceledStockCheck:    {types.OrderState_OrderStateCancelAchievement},
-	types.OrderState_OrderStateCancelAchievement:            {types.OrderState_OrderStateCancelAchievementCheck},
-	types.OrderState_OrderStateCancelAchievementCheck:       {types.OrderState_OrderStateReturnCanceledBalance},
-	types.OrderState_OrderStateReturnCanceledBalance:        {types.OrderState_OrderStateReturnCanceledBalanceCheck},
-	types.OrderState_OrderStateReturnCanceledBalanceCheck:   {types.OrderState_OrderStateCanceled},
-	types.OrderState_OrderStateCanceled:                     {},
-	types.OrderState_OrderStatePaymentTimeout:               {types.OrderState_OrderStatePreCancel},
+	types.OrderState_OrderStatePaymentTransferReceived:    {types.OrderState_OrderStatePaymentTransferBookKeeping},
+	types.OrderState_OrderStatePaymentTransferBookKeeping: {types.OrderState_OrderStatePaymentSpendBalance},
+	types.OrderState_OrderStatePaymentSpendBalance:        {types.OrderState_OrderStateTransferGoodStockLocked},
+	types.OrderState_OrderStateTransferGoodStockLocked:    {types.OrderState_OrderStateAddCommission},
+	types.OrderState_OrderStateAddCommission:              {types.OrderState_OrderStateAchievementBookKeeping},
+	types.OrderState_OrderStateAchievementBookKeeping:     {types.OrderState_OrderStatePaid},
+	types.OrderState_OrderStatePaid:                       {types.OrderState_OrderStateTransferGoodStockWaitStart, types.OrderState_OrderStatePreCancel},
+	types.OrderState_OrderStateTransferGoodStockWaitStart: {types.OrderState_OrderStateInService},
+	types.OrderState_OrderStateInService:                  {types.OrderState_OrderStateTransferGoodStockInService, types.OrderState_OrderStatePreCancel},
+	types.OrderState_OrderStateTransferGoodStockInService: {types.OrderState_OrderStatePreExpired},
+	types.OrderState_OrderStatePreExpired:                 {types.OrderState_OrderStateRestoreExpiredStock},
+	types.OrderState_OrderStateRestoreExpiredStock:        {types.OrderState_OrderStateExpired},
+	types.OrderState_OrderStateExpired:                    {},
+	types.OrderState_OrderStatePreCancel:                  {types.OrderState_OrderStateRestoreCanceledStock},
+	types.OrderState_OrderStateRestoreCanceledStock:       {types.OrderState_OrderStateCancelAchievement},
+	types.OrderState_OrderStateCancelAchievement:          {types.OrderState_OrderStateReturnCanceledBalance},
+	types.OrderState_OrderStateReturnCanceledBalance:      {types.OrderState_OrderStateCanceled},
+	types.OrderState_OrderStateCanceled:                   {},
+	types.OrderState_OrderStatePaymentTimeout:             {types.OrderState_OrderStatePreCancel},
 }
 
 var stateRollbackMap = map[types.OrderState]*types.OrderState{
-	types.OrderState_OrderStatePaymentTransferBookKept: types.OrderState_OrderStatePaymentTransferReceivedCheck.Enum(),
-	types.OrderState_OrderStatePaymentBalanceSpent:     types.OrderState_OrderStatePaymentTransferBookKeptCheck.Enum(),
-	types.OrderState_OrderStateGoodStockTransferred:    types.OrderState_OrderStatePaymentBalanceSpentCheck.Enum(),
-	types.OrderState_OrderStateCommissionAdded:         types.OrderState_OrderStateGoodStockTransferredCheck.Enum(),
-	types.OrderState_OrderStateAchievementBookKept:     types.OrderState_OrderStateCommissionAddedCheck.Enum(),
-	types.OrderState_OrderStatePaid:                    types.OrderState_OrderStateAchievementBookKeptCheck.Enum(),
-	types.OrderState_OrderStateRestoreExpiredStock:     types.OrderState_OrderStatePreExpiredCheck.Enum(),
-	types.OrderState_OrderStateExpired:                 types.OrderState_OrderStateRestoreExpiredStockCheck.Enum(),
-	types.OrderState_OrderStateRestoreCanceledStock:    types.OrderState_OrderStatePreCancelCheck.Enum(),
-	types.OrderState_OrderStateCancelAchievement:       types.OrderState_OrderStateRestoreCanceledStockCheck.Enum(),
-	types.OrderState_OrderStateReturnCanceledBalance:   types.OrderState_OrderStateCancelAchievementCheck.Enum(),
-	types.OrderState_OrderStateCanceled:                types.OrderState_OrderStateReturnCanceledBalanceCheck.Enum(),
+	types.OrderState_OrderStatePaymentTransferBookKeeping: types.OrderState_OrderStatePaymentTransferReceived.Enum(),
+	types.OrderState_OrderStatePaymentSpendBalance:        types.OrderState_OrderStatePaymentTransferBookKeeping.Enum(),
+	types.OrderState_OrderStateTransferGoodStockLocked:    types.OrderState_OrderStatePaymentSpendBalance.Enum(),
+	types.OrderState_OrderStateAddCommission:              types.OrderState_OrderStateTransferGoodStockLocked.Enum(),
+	types.OrderState_OrderStateAchievementBookKeeping:     types.OrderState_OrderStateAddCommission.Enum(),
+	types.OrderState_OrderStatePaid:                       types.OrderState_OrderStateAchievementBookKeeping.Enum(),
+	types.OrderState_OrderStateTransferGoodStockWaitStart: types.OrderState_OrderStatePaid.Enum(),
+	types.OrderState_OrderStateTransferGoodStockInService: types.OrderState_OrderStateInService.Enum(),
+	types.OrderState_OrderStateRestoreExpiredStock:        types.OrderState_OrderStatePreExpired.Enum(),
+	types.OrderState_OrderStateExpired:                    types.OrderState_OrderStateRestoreExpiredStock.Enum(),
+	types.OrderState_OrderStateRestoreCanceledStock:       types.OrderState_OrderStatePreCancel.Enum(),
+	types.OrderState_OrderStateCancelAchievement:          types.OrderState_OrderStateRestoreCanceledStock.Enum(),
+	types.OrderState_OrderStateReturnCanceledBalance:      types.OrderState_OrderStateCancelAchievement.Enum(),
+	types.OrderState_OrderStateCanceled:                   types.OrderState_OrderStateReturnCanceledBalance.Enum(),
 }
 
 func (h *updateHandler) checkOrderState(oldState types.OrderState, req *orderstatecrud.Req) error {
@@ -191,7 +182,6 @@ func (h *updateHandler) updateOrderState(ctx context.Context, tx *ent.Tx, req *o
 		}
 		switch _orderState {
 		case types.OrderState_OrderStateWaitPayment:
-		case types.OrderState_OrderStateCheckPayment:
 		case types.OrderState_OrderStatePaid:
 		case types.OrderState_OrderStateInService:
 		default:
@@ -243,7 +233,6 @@ func (h *updateHandler) updateOrderState(ctx context.Context, tx *ent.Tx, req *o
 				}
 				switch _orderState {
 				case types.OrderState_OrderStateWaitPayment:
-				case types.OrderState_OrderStateCheckPayment:
 				case types.OrderState_OrderStatePaymentTimeout:
 				case types.OrderState_OrderStatePaid:
 				case types.OrderState_OrderStateInService:

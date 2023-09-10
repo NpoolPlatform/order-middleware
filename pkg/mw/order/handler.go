@@ -598,34 +598,23 @@ func WithOrderState(state *basetypes.OrderState, must bool) func(context.Context
 		switch *state {
 		case basetypes.OrderState_OrderStateCreated:
 		case basetypes.OrderState_OrderStateWaitPayment:
-		case basetypes.OrderState_OrderStateCheckPayment:
 		case basetypes.OrderState_OrderStatePaymentTransferReceived:
-		case basetypes.OrderState_OrderStatePaymentTransferReceivedCheck:
-		case basetypes.OrderState_OrderStatePaymentTransferBookKept:
-		case basetypes.OrderState_OrderStatePaymentTransferBookKeptCheck:
-		case basetypes.OrderState_OrderStatePaymentBalanceSpent:
-		case basetypes.OrderState_OrderStatePaymentBalanceSpentCheck:
-		case basetypes.OrderState_OrderStateGoodStockTransferred:
-		case basetypes.OrderState_OrderStateGoodStockTransferredCheck:
-		case basetypes.OrderState_OrderStateCommissionAdded:
-		case basetypes.OrderState_OrderStateCommissionAddedCheck:
-		case basetypes.OrderState_OrderStateAchievementBookKept:
-		case basetypes.OrderState_OrderStateAchievementBookKeptCheck:
+		case basetypes.OrderState_OrderStatePaymentTransferBookKeeping:
+		case basetypes.OrderState_OrderStatePaymentSpendBalance:
+		case basetypes.OrderState_OrderStateTransferGoodStockLocked:
+		case basetypes.OrderState_OrderStateAddCommission:
+		case basetypes.OrderState_OrderStateAchievementBookKeeping:
 		case basetypes.OrderState_OrderStatePaid:
+		case basetypes.OrderState_OrderStateTransferGoodStockWaitStart:
 		case basetypes.OrderState_OrderStateInService:
+		case basetypes.OrderState_OrderStateTransferGoodStockInService:
 		case basetypes.OrderState_OrderStatePaymentTimeout:
 		case basetypes.OrderState_OrderStatePreCancel:
-		case basetypes.OrderState_OrderStatePreCancelCheck:
 		case basetypes.OrderState_OrderStatePreExpired:
-		case basetypes.OrderState_OrderStatePreExpiredCheck:
 		case basetypes.OrderState_OrderStateRestoreExpiredStock:
-		case basetypes.OrderState_OrderStateRestoreExpiredStockCheck:
 		case basetypes.OrderState_OrderStateRestoreCanceledStock:
-		case basetypes.OrderState_OrderStateRestoreCanceledStockCheck:
 		case basetypes.OrderState_OrderStateCancelAchievement:
-		case basetypes.OrderState_OrderStateCancelAchievementCheck:
 		case basetypes.OrderState_OrderStateReturnCanceledBalance:
-		case basetypes.OrderState_OrderStateReturnCanceledBalanceCheck:
 		case basetypes.OrderState_OrderStateCanceled:
 		case basetypes.OrderState_OrderStateExpired:
 		default:
@@ -1378,34 +1367,23 @@ func WithReqs(reqs []*npool.OrderReq, must bool) func(context.Context, *Handler)
 				switch *req.OrderState {
 				case basetypes.OrderState_OrderStateCreated:
 				case basetypes.OrderState_OrderStateWaitPayment:
-				case basetypes.OrderState_OrderStateCheckPayment:
 				case basetypes.OrderState_OrderStatePaymentTransferReceived:
-				case basetypes.OrderState_OrderStatePaymentTransferReceivedCheck:
-				case basetypes.OrderState_OrderStatePaymentTransferBookKept:
-				case basetypes.OrderState_OrderStatePaymentTransferBookKeptCheck:
-				case basetypes.OrderState_OrderStatePaymentBalanceSpent:
-				case basetypes.OrderState_OrderStatePaymentBalanceSpentCheck:
-				case basetypes.OrderState_OrderStateGoodStockTransferred:
-				case basetypes.OrderState_OrderStateGoodStockTransferredCheck:
-				case basetypes.OrderState_OrderStateCommissionAdded:
-				case basetypes.OrderState_OrderStateCommissionAddedCheck:
-				case basetypes.OrderState_OrderStateAchievementBookKept:
-				case basetypes.OrderState_OrderStateAchievementBookKeptCheck:
+				case basetypes.OrderState_OrderStatePaymentTransferBookKeeping:
+				case basetypes.OrderState_OrderStatePaymentSpendBalance:
+				case basetypes.OrderState_OrderStateTransferGoodStockLocked:
+				case basetypes.OrderState_OrderStateAddCommission:
+				case basetypes.OrderState_OrderStateAchievementBookKeeping:
 				case basetypes.OrderState_OrderStatePaid:
+				case basetypes.OrderState_OrderStateTransferGoodStockWaitStart:
 				case basetypes.OrderState_OrderStateInService:
+				case basetypes.OrderState_OrderStateTransferGoodStockInService:
 				case basetypes.OrderState_OrderStatePaymentTimeout:
 				case basetypes.OrderState_OrderStatePreCancel:
-				case basetypes.OrderState_OrderStatePreCancelCheck:
 				case basetypes.OrderState_OrderStatePreExpired:
-				case basetypes.OrderState_OrderStatePreExpiredCheck:
 				case basetypes.OrderState_OrderStateRestoreExpiredStock:
-				case basetypes.OrderState_OrderStateRestoreExpiredStockCheck:
 				case basetypes.OrderState_OrderStateRestoreCanceledStock:
-				case basetypes.OrderState_OrderStateRestoreCanceledStockCheck:
 				case basetypes.OrderState_OrderStateCancelAchievement:
-				case basetypes.OrderState_OrderStateCancelAchievementCheck:
 				case basetypes.OrderState_OrderStateReturnCanceledBalance:
-				case basetypes.OrderState_OrderStateReturnCanceledBalanceCheck:
 				case basetypes.OrderState_OrderStateCanceled:
 				case basetypes.OrderState_OrderStateExpired:
 				default:
