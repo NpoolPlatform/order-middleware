@@ -38,16 +38,19 @@ func (h *createHandler) checkOrderExist(ctx context.Context, tx *ent.Tx, req *or
 }
 
 func (h *createHandler) checkLockExist(ctx context.Context, tx *ent.Tx, req *orderlockcrud.Req) error {
-	if *req.LockType == basetypes.OrderLockType_LockCommission {
-		return nil
-	}
-	exist, err := tx.OrderLock.
+	stm := tx.OrderLock.
 		Query().
 		Where(
 			entorderlock.OrderID(*req.OrderID),
 			entorderlock.LockType(req.LockType.String()),
-		).
-		Exist(ctx)
+		)
+	if *req.LockType == basetypes.OrderLockType_LockCommission {
+		stm.Where(
+			entorderlock.AppID(*req.AppID),
+			entorderlock.UserID(*req.UserID),
+		)
+	}
+	exist, err := stm.Exist(ctx)
 	if err != nil {
 		return err
 	}
