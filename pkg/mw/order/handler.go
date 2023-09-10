@@ -604,6 +604,7 @@ func WithOrderState(state *basetypes.OrderState, must bool) func(context.Context
 		case basetypes.OrderState_OrderStateTransferGoodStockLocked:
 		case basetypes.OrderState_OrderStateAddCommission:
 		case basetypes.OrderState_OrderStateAchievementBookKeeping:
+		case basetypes.OrderState_OrderStateAchievementBookKept:
 		case basetypes.OrderState_OrderStatePaid:
 		case basetypes.OrderState_OrderStateTransferGoodStockWaitStart:
 		case basetypes.OrderState_OrderStateInService:
@@ -1373,6 +1374,7 @@ func WithReqs(reqs []*npool.OrderReq, must bool) func(context.Context, *Handler)
 				case basetypes.OrderState_OrderStateTransferGoodStockLocked:
 				case basetypes.OrderState_OrderStateAddCommission:
 				case basetypes.OrderState_OrderStateAchievementBookKeeping:
+				case basetypes.OrderState_OrderStateAchievementBookKept:
 				case basetypes.OrderState_OrderStatePaid:
 				case basetypes.OrderState_OrderStateTransferGoodStockWaitStart:
 				case basetypes.OrderState_OrderStateInService:
