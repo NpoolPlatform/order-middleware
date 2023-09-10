@@ -619,6 +619,8 @@ func WithOrderState(state *basetypes.OrderState, must bool) func(context.Context
 		case basetypes.OrderState_OrderStateDeductLockedCommission:
 		case basetypes.OrderState_OrderStateReturnCanceledBalance:
 		case basetypes.OrderState_OrderStateUpdateCanceledChilds:
+		case basetypes.OrderState_OrderStateCanceledTransferBookKeeping:
+		case basetypes.OrderState_OrderStateUnlockPaymentAccount:
 		case basetypes.OrderState_OrderStateCanceled:
 		case basetypes.OrderState_OrderStateExpired:
 		default:
@@ -1392,6 +1394,8 @@ func WithReqs(reqs []*npool.OrderReq, must bool) func(context.Context, *Handler)
 				case basetypes.OrderState_OrderStateDeductLockedCommission:
 				case basetypes.OrderState_OrderStateReturnCanceledBalance:
 				case basetypes.OrderState_OrderStateUpdateCanceledChilds:
+				case basetypes.OrderState_OrderStateCanceledTransferBookKeeping:
+				case basetypes.OrderState_OrderStateUnlockPaymentAccount:
 				case basetypes.OrderState_OrderStateCanceled:
 				case basetypes.OrderState_OrderStateExpired:
 				default:
