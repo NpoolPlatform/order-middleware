@@ -146,13 +146,15 @@ func (h *Handler) CreateOrder(ctx context.Context) (*npool.Order, error) {
 		if err := handler.createOrderLock(ctx, tx, req.StockLockReq); err != nil {
 			return err
 		}
+		if req.BalanceLockReq != nil {
+			if err := handler.createOrderLock(ctx, tx, req.BalanceLockReq); err != nil {
+				return err
+			}
+		}
 		if req.PaymentReq == nil {
 			return nil
 		}
 		if err := handler.createPayment(ctx, tx, req.PaymentReq); err != nil {
-			return err
-		}
-		if err := handler.createOrderLock(ctx, tx, req.BalanceLockReq); err != nil {
 			return err
 		}
 		return nil
@@ -240,16 +242,19 @@ func (h *Handler) CreateOrders(ctx context.Context) ([]*npool.Order, error) {
 			}
 			ids = append(ids, *req.Req.ID)
 
+			if req.BalanceLockReq != nil {
+				req.BalanceLockReq.OrderID = req.Req.ID
+				if err := handler.createOrderLock(ctx, tx, req.BalanceLockReq); err != nil {
+					return err
+				}
+			}
+
 			if req.PaymentReq == nil {
 				continue
 			}
 			req.PaymentReq.OrderID = req.Req.ID
 			req.PaymentReq.ID = req.Req.PaymentID
 			if err := handler.createPayment(ctx, tx, req.PaymentReq); err != nil {
-				return err
-			}
-			req.BalanceLockReq.OrderID = req.Req.ID
-			if err := handler.createOrderLock(ctx, tx, req.BalanceLockReq); err != nil {
 				return err
 			}
 		}

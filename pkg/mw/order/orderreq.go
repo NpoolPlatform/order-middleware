@@ -113,6 +113,16 @@ func (h *Handler) ToOrderReq(ctx context.Context, newOrder bool) (*OrderReq, err
 		}
 	}
 
+	if h.BalanceAmount != nil && h.BalanceAmount.Cmp(decimal.NewFromInt(0)) > 0 {
+		req.BalanceLockReq = &orderlockcrud.Req{
+			ID:       h.LedgerLockID,
+			AppID:    h.AppID,
+			UserID:   h.UserID,
+			OrderID:  h.ID,
+			LockType: basetypes.OrderLockType_LockBalance.Enum(),
+		}
+	}
+
 	paymentID := uuid.New()
 	req.Req.PaymentID = &paymentID
 	req.PaymentReq = &paymentcrud.Req{
@@ -123,13 +133,6 @@ func (h *Handler) ToOrderReq(ctx context.Context, newOrder bool) (*OrderReq, err
 		GoodID:      h.GoodID,
 		AccountID:   h.PaymentAccountID,
 		StartAmount: h.PaymentStartAmount,
-	}
-	req.BalanceLockReq = &orderlockcrud.Req{
-		ID:       h.LedgerLockID,
-		AppID:    h.AppID,
-		UserID:   h.UserID,
-		OrderID:  h.ID,
-		LockType: basetypes.OrderLockType_LockBalance.Enum(),
 	}
 	return req, nil
 }

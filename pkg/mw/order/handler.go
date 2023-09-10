@@ -1489,6 +1489,23 @@ func WithReqs(reqs []*npool.OrderReq, must bool) func(context.Context, *Handler)
 				_req.OrderStateReq.CompensateHours = req.CompensateHours
 			}
 
+			if req.BalanceAmount != nil && _req.BalanceAmount.Cmp(decimal.NewFromInt(0)) > 0 {
+				if req.LedgerLockID == nil {
+					return fmt.Errorf("invalid ledgerlockid")
+				}
+				id, err := uuid.Parse(*req.LedgerLockID)
+				if err != nil {
+					return err
+				}
+				_req.BalanceLockReq = &orderlockcrud.Req{
+					ID:       &id,
+					AppID:    _req.AppID,
+					UserID:   _req.UserID,
+					OrderID:  _req.ID,
+					LockType: basetypes.OrderLockType_LockBalance.Enum(),
+				}
+			}
+
 			if req.PaymentType != nil {
 				_req.PaymentType = req.PaymentType
 				if must {
@@ -1520,27 +1537,13 @@ func WithReqs(reqs []*npool.OrderReq, must bool) func(context.Context, *Handler)
 				_req.PaymentReq.AccountID = &id
 			}
 
-			if req.LedgerLockID != nil {
-				id, err := uuid.Parse(*req.LedgerLockID)
-				if err != nil {
-					return err
-				}
-				_req.BalanceLockReq = &orderlockcrud.Req{
-					ID:       &id,
-					AppID:    _req.AppID,
-					UserID:   _req.UserID,
-					OrderID:  _req.ID,
-					LockType: basetypes.OrderLockType_LockBalance.Enum(),
-				}
-			}
-
 			if req.PaymentStartAmount != nil {
 				amount, err := decimal.NewFromString(*req.PaymentStartAmount)
 				if err != nil {
 					return err
 				}
 				if amount.Cmp(decimal.NewFromInt(0)) < 0 {
-					return fmt.Errorf("paymentstartamount is less than 0")
+					return fmt.Errorf("invalid paymentstartamount")
 				}
 				_req.PaymentReq.StartAmount = &amount
 			}
