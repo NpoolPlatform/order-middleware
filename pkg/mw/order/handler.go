@@ -604,11 +604,13 @@ func WithOrderState(state *basetypes.OrderState, must bool) func(context.Context
 		case basetypes.OrderState_OrderStateTransferGoodStockLocked:
 		case basetypes.OrderState_OrderStateAddCommission:
 		case basetypes.OrderState_OrderStateAchievementBookKeeping:
-		case basetypes.OrderState_OrderStateAchievementBookKept:
+		case basetypes.OrderState_OrderStateUpdateWaitPaymentChilds:
 		case basetypes.OrderState_OrderStatePaid:
 		case basetypes.OrderState_OrderStateTransferGoodStockWaitStart:
+		case basetypes.OrderState_OrderStateUpdatePaidChilds:
 		case basetypes.OrderState_OrderStateInService:
 		case basetypes.OrderState_OrderStateTransferGoodStockInService:
+		case basetypes.OrderState_OrderStateUpdateInServiceChilds:
 		case basetypes.OrderState_OrderStatePaymentTimeout:
 		case basetypes.OrderState_OrderStatePreCancel:
 		case basetypes.OrderState_OrderStatePreExpired:
@@ -1374,11 +1376,13 @@ func WithReqs(reqs []*npool.OrderReq, must bool) func(context.Context, *Handler)
 				case basetypes.OrderState_OrderStateTransferGoodStockLocked:
 				case basetypes.OrderState_OrderStateAddCommission:
 				case basetypes.OrderState_OrderStateAchievementBookKeeping:
-				case basetypes.OrderState_OrderStateAchievementBookKept:
+				case basetypes.OrderState_OrderStateUpdateWaitPaymentChilds:
 				case basetypes.OrderState_OrderStatePaid:
 				case basetypes.OrderState_OrderStateTransferGoodStockWaitStart:
+				case basetypes.OrderState_OrderStateUpdatePaidChilds:
 				case basetypes.OrderState_OrderStateInService:
 				case basetypes.OrderState_OrderStateTransferGoodStockInService:
+				case basetypes.OrderState_OrderStateUpdateInServiceChilds:
 				case basetypes.OrderState_OrderStatePaymentTimeout:
 				case basetypes.OrderState_OrderStatePreCancel:
 				case basetypes.OrderState_OrderStatePreExpired:
