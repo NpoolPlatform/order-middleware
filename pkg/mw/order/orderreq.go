@@ -100,18 +100,6 @@ func (h *Handler) ToOrderReq(ctx context.Context, newOrder bool) (*OrderReq, err
 		},
 	}
 
-	hasPayment := false
-	if newOrder && req.PaymentType != nil {
-		if err := req.CheckOrderType(); err != nil {
-			return nil, err
-		}
-		has, err := req.HasPayment()
-		if err != nil {
-			return nil, err
-		}
-		hasPayment = has
-	}
-
 	if h.BalanceAmount != nil && h.BalanceAmount.Cmp(decimal.NewFromInt(0)) > 0 {
 		req.BalanceLockReq = &orderlockcrud.Req{
 			ID:       h.LedgerLockID,
@@ -122,8 +110,17 @@ func (h *Handler) ToOrderReq(ctx context.Context, newOrder bool) (*OrderReq, err
 		}
 	}
 
-	if !hasPayment {
-		return req, nil
+	if newOrder && req.PaymentType != nil {
+		if err := req.CheckOrderType(); err != nil {
+			return nil, err
+		}
+		has, err := req.HasPayment()
+		if err != nil {
+			return nil, err
+		}
+		if !has {
+			return req, nil
+		}
 	}
 
 	paymentID := uuid.New()
