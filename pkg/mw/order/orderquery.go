@@ -81,7 +81,7 @@ func (h *baseQueryHandler) QueryJoinPayment(s *sql.Selector) error {
 	return nil
 }
 
-//nolint:gocyclo
+//nolint:gocyclo,funlen
 func (h *baseQueryHandler) QueryJoinOrderState(s *sql.Selector) error {
 	t := sql.Table(entorderstate.Table)
 	s.LeftJoin(t).
