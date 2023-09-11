@@ -4,11 +4,10 @@ import (
 	"fmt"
 
 	"entgo.io/ent/dialect/sql"
-	"github.com/NpoolPlatform/order-middleware/pkg/db/ent"
-
+	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
 	basetypes "github.com/NpoolPlatform/message/npool/basetypes/order/v1"
-
 	ordercrud "github.com/NpoolPlatform/order-middleware/pkg/crud/order"
+	"github.com/NpoolPlatform/order-middleware/pkg/db/ent"
 	entorder "github.com/NpoolPlatform/order-middleware/pkg/db/ent/order"
 	entorderlock "github.com/NpoolPlatform/order-middleware/pkg/db/ent/orderlock"
 	entorderstate "github.com/NpoolPlatform/order-middleware/pkg/db/ent/orderstate"
@@ -99,9 +98,16 @@ func (h *baseQueryHandler) QueryJoinOrderState(s *sql.Selector) error {
 		if !ok {
 			return fmt.Errorf("invalid order orderstate")
 		}
-		s.Where(
-			sql.EQ(t.C(entorderstate.FieldOrderState), state.String()),
-		)
+		switch h.Conds.OrderState.Op {
+		case cruder.EQ:
+			s.Where(
+				sql.EQ(t.C(entorderstate.FieldOrderState), state.String()),
+			)
+		case cruder.NEQ:
+			s.Where(
+				sql.NEQ(t.C(entorderstate.FieldOrderState), state.String()),
+			)
+		}
 	}
 	if h.Conds != nil && h.Conds.StartMode != nil {
 		startMode, ok := h.Conds.StartMode.Val.(basetypes.OrderStartMode)
@@ -153,7 +159,7 @@ func (h *baseQueryHandler) QueryJoinOrderState(s *sql.Selector) error {
 		if !ok {
 			return fmt.Errorf("invalid order orderstates")
 		}
-		if len(states) > 0 {
+		if len(states) == 0 {
 			var valueInterfaces []interface{}
 			for _, value := range states {
 				valueInterfaces = append(valueInterfaces, value)
