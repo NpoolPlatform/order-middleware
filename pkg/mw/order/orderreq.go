@@ -100,17 +100,16 @@ func (h *Handler) ToOrderReq(ctx context.Context, newOrder bool) (*OrderReq, err
 		},
 	}
 
+	hasPayment := false
 	if newOrder && req.PaymentType != nil {
 		if err := req.CheckOrderType(); err != nil {
-			return req, err
+			return nil, err
 		}
 		has, err := req.HasPayment()
 		if err != nil {
-			return req, err
+			return nil, err
 		}
-		if !has {
-			return req, err
-		}
+		hasPayment = has
 	}
 
 	if h.BalanceAmount != nil && h.BalanceAmount.Cmp(decimal.NewFromInt(0)) > 0 {
@@ -121,6 +120,10 @@ func (h *Handler) ToOrderReq(ctx context.Context, newOrder bool) (*OrderReq, err
 			OrderID:  h.ID,
 			LockType: basetypes.OrderLockType_LockBalance.Enum(),
 		}
+	}
+
+	if !hasPayment {
+		return req, nil
 	}
 
 	paymentID := uuid.New()
