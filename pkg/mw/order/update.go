@@ -41,7 +41,7 @@ var stateAllowMap = map[types.OrderState][]types.OrderState{
 	types.OrderState_OrderStateUpdateInServiceChilds:       {types.OrderState_OrderStateInService},
 	types.OrderState_OrderStateInService:                   {types.OrderState_OrderStatePreExpired, types.OrderState_OrderStatePreCancel},
 	types.OrderState_OrderStatePreExpired:                  {types.OrderState_OrderStateRestoreExpiredStock},
-	types.OrderState_OrderStateRestoreExpiredStock:         {types.OrderState_OrderStateExpired},
+	types.OrderState_OrderStateRestoreExpiredStock:         {types.OrderState_OrderStateUpdateExpiredChilds},
 	types.OrderState_OrderStateUpdateExpiredChilds:         {types.OrderState_OrderStateExpired},
 	types.OrderState_OrderStateExpired:                     {},
 	types.OrderState_OrderStatePreCancel:                   {types.OrderState_OrderStateRestoreCanceledStock},
@@ -57,7 +57,6 @@ var stateAllowMap = map[types.OrderState][]types.OrderState{
 }
 
 var stateRollbackMap = map[types.OrderState]*types.OrderState{
-	types.OrderState_OrderStatePaymentTransferBookKeeping:  types.OrderState_OrderStatePaymentTransferReceived.Enum(),
 	types.OrderState_OrderStatePaymentSpendBalance:         types.OrderState_OrderStatePaymentTransferBookKeeping.Enum(),
 	types.OrderState_OrderStateTransferGoodStockLocked:     types.OrderState_OrderStatePaymentSpendBalance.Enum(),
 	types.OrderState_OrderStateAddCommission:               types.OrderState_OrderStateTransferGoodStockLocked.Enum(),
@@ -65,12 +64,11 @@ var stateRollbackMap = map[types.OrderState]*types.OrderState{
 	types.OrderState_OrderStateUpdatePaidChilds:            types.OrderState_OrderStateAchievementBookKeeping.Enum(),
 	types.OrderState_OrderStatePaymentUnlockAccount:        types.OrderState_OrderStateUpdatePaidChilds.Enum(),
 	types.OrderState_OrderStatePaid:                        types.OrderState_OrderStatePaymentUnlockAccount.Enum(),
-	types.OrderState_OrderStateTransferGoodStockWaitStart:  types.OrderState_OrderStatePaid.Enum(),
 	types.OrderState_OrderStateUpdateInServiceChilds:       types.OrderState_OrderStateTransferGoodStockWaitStart.Enum(),
 	types.OrderState_OrderStateInService:                   types.OrderState_OrderStateUpdateInServiceChilds.Enum(),
 	types.OrderState_OrderStateRestoreExpiredStock:         types.OrderState_OrderStatePreExpired.Enum(),
 	types.OrderState_OrderStateUpdateExpiredChilds:         types.OrderState_OrderStateRestoreExpiredStock.Enum(),
-	types.OrderState_OrderStateExpired:                     types.OrderState_OrderStateRestoreExpiredStock.Enum(),
+	types.OrderState_OrderStateExpired:                     types.OrderState_OrderStateUpdateExpiredChilds.Enum(),
 	types.OrderState_OrderStateRestoreCanceledStock:        types.OrderState_OrderStatePreCancel.Enum(),
 	types.OrderState_OrderStateCancelAchievement:           types.OrderState_OrderStateRestoreCanceledStock.Enum(),
 	types.OrderState_OrderStateDeductLockedCommission:      types.OrderState_OrderStateCancelAchievement.Enum(),
