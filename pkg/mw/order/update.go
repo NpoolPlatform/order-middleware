@@ -324,6 +324,7 @@ func (h *Handler) UpdateOrder(ctx context.Context) (*npool.Order, error) {
 	return h.GetOrder(ctx)
 }
 
+//nolint
 func (h *updateHandler) checkChildOrderStates(ctx context.Context) error {
 	orderIDs := []uuid.UUID{}
 	updateState := false
