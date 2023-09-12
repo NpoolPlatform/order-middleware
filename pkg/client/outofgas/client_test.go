@@ -189,14 +189,14 @@ func setup(t *testing.T) func(*testing.T) {
 	})
 	assert.Nil(t, err)
 
-	order.OrderState = ordertypes.OrderState_OrderStateUpdatePaidChilds
+	order.OrderState = ordertypes.OrderState_OrderStatePaymentUnlockAccount
 	_, err = order1.UpdateOrder(context.Background(), &ordermwpb.OrderReq{
 		ID:         &order.ID,
 		OrderState: &order.OrderState,
 	})
 	assert.Nil(t, err)
 
-	order.OrderState = ordertypes.OrderState_OrderStatePaymentUnlockAccount
+	order.OrderState = ordertypes.OrderState_OrderStateUpdatePaidChilds
 	_, err = order1.UpdateOrder(context.Background(), &ordermwpb.OrderReq{
 		ID:         &order.ID,
 		OrderState: &order.OrderState,
