@@ -348,6 +348,9 @@ func (h *updateHandler) checkChildOrderStates(ctx context.Context) error {
 	if err != nil {
 		return err
 	}
+	if len(orders) == 1 && orders[0].PaymentType != types.PaymentType_PayWithParentOrder {
+		return nil
+	}
 
 	parentOrderID1 := uuid.Nil.String() // Child's parent ID
 	parentOrderID2 := uuid.Nil.String() // Parent ID
