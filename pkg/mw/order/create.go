@@ -218,7 +218,6 @@ func (h *createHandler) checkBatchParentOrder(ctx context.Context) error {
 	})
 }
 
-//nolint:gocyclo
 func (h *Handler) CreateOrders(ctx context.Context) ([]*npool.Order, error) {
 	handler := &createHandler{
 		Handler: h,
