@@ -1172,6 +1172,7 @@ func WithReqs(reqs []*npool.OrderReq, must bool) func(context.Context, *Handler)
 				if req.AppGoodStockLockID == nil {
 					return fmt.Errorf("invalid appgoodstocklockid")
 				}
+
 			}
 			if req.ID != nil {
 				id, err := uuid.Parse(*req.ID)
