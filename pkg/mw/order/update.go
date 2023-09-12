@@ -328,6 +328,7 @@ func (h *Handler) UpdateOrder(ctx context.Context) (*npool.Order, error) {
 func (h *updateHandler) checkChildOrderStates(ctx context.Context) error {
 	orderIDs := []uuid.UUID{}
 	updateState := false
+	orderMap := map[string]*npool.Order{}
 
 	for _, req := range h.Reqs {
 		orderIDs = append(orderIDs, *req.ID)
@@ -353,6 +354,7 @@ func (h *updateHandler) checkChildOrderStates(ctx context.Context) error {
 	var parentOrder *npool.Order
 
 	for _, order := range orders {
+		orderMap[order.ID] = order
 		if order.ParentOrderID != uuid.Nil.String() {
 			continue
 		}
@@ -398,7 +400,11 @@ func (h *updateHandler) checkChildOrderStates(ctx context.Context) error {
 		if req.ID.String() == parentOrderID1 {
 			continue
 		}
-		if *req.PaymentType != types.PaymentType_PayWithParentOrder {
+		order, ok := orderMap[req.ID.String()]
+		if !ok {
+			return fmt.Errorf("invalid order")
+		}
+		if order.PaymentType != types.PaymentType_PayWithParentOrder {
 			return fmt.Errorf("invalid paymenttype")
 		}
 		if *req.OrderStateReq.OrderState != parentOrderState {
