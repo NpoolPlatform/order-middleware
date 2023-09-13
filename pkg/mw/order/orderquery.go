@@ -164,9 +164,16 @@ func (h *baseQueryHandler) QueryJoinOrderState(s *sql.Selector) error {
 			for _, value := range states {
 				valueInterfaces = append(valueInterfaces, value)
 			}
-			s.Where(
-				sql.In(t.C(entorderstate.FieldOrderState), valueInterfaces...),
-			)
+			switch h.Conds.OrderState.Op {
+			case cruder.IN:
+				s.Where(
+					sql.In(t.C(entorderstate.FieldOrderState), valueInterfaces...),
+				)
+			case cruder.NIN:
+				s.Where(
+					sql.NotIn(t.C(entorderstate.FieldOrderState), valueInterfaces...),
+				)
+			}
 		}
 	}
 
