@@ -395,7 +395,11 @@ func (h *updateHandler) checkChildOrderStates(ctx context.Context) error {
 	parentOrderState := parentOrder.OrderState
 	for _, req := range h.Reqs {
 		if req.ID.String() == parentOrderID1 {
+			if req.OrderStateReq.OrderState == nil {
+				break
+			}
 			parentOrderState = *req.OrderStateReq.OrderState
+			break
 		}
 	}
 	for _, req := range h.Reqs {
@@ -408,6 +412,9 @@ func (h *updateHandler) checkChildOrderStates(ctx context.Context) error {
 		}
 		if order.PaymentType != types.PaymentType_PayWithParentOrder {
 			return fmt.Errorf("invalid paymenttype")
+		}
+		if req.OrderStateReq.OrderState == nil {
+			continue
 		}
 		if *req.OrderStateReq.OrderState != parentOrderState {
 			return fmt.Errorf("invalid orderstate")
