@@ -24,20 +24,34 @@ type createHandler struct {
 }
 
 func (h *createHandler) paymentState(req *ordercrud.Req) *types.PaymentState {
-	if req.TransferAmount != nil && req.TransferAmount.Cmp(decimal.NewFromInt(0)) > 0 {
+	if req.PaymentType != nil && *req.PaymentType == types.PaymentType_PayWithNoPayment {
+		return types.PaymentState_PaymentStateNoPayment.Enum()
+	}
+	if (req.TransferAmount != nil && req.TransferAmount.Cmp(decimal.NewFromInt(0)) > 0) ||
+		(req.BalanceAmount != nil && req.BalanceAmount.Cmp(decimal.NewFromInt(0)) > 0) {
 		return types.PaymentState_PaymentStateWait.Enum()
 	}
 	return types.PaymentState_PaymentStateNoPayment.Enum()
 }
 
-func (h *createHandler) createOrderLock(ctx context.Context, tx *ent.Tx, req *orderlockcrud.Req) error {
-	if req.ID == nil {
-		return fmt.Errorf("invalid lockid")
+func (h *createHandler) createOrderLocks(ctx context.Context, tx *ent.Tx, stockLockReq, balanceLockReq *orderlockcrud.Req) error {
+	if stockLockReq == nil {
+		return fmt.Errorf("invalid stocklock")
 	}
-	if _, err := orderlockcrud.CreateSet(
-		tx.OrderLock.Create(),
-		req,
-	).Save(ctx); err != nil {
+	if stockLockReq.ID == nil {
+		return fmt.Errorf("invalid stocklockid")
+	}
+	reqs := []*ent.OrderLockCreate{}
+	if stockLockReq != nil {
+		reqs = append(reqs, orderlockcrud.CreateSet(tx.OrderLock.Create(), stockLockReq))
+	}
+	if balanceLockReq != nil {
+		if balanceLockReq.ID == nil {
+			return fmt.Errorf("invalid balancelockid")
+		}
+		reqs = append(reqs, orderlockcrud.CreateSet(tx.OrderLock.Create(), balanceLockReq))
+	}
+	if _, err := tx.OrderLock.CreateBulk(reqs...).Save(ctx); err != nil {
 		return err
 	}
 
@@ -137,19 +151,18 @@ func (h *Handler) CreateOrder(ctx context.Context) (*npool.Order, error) {
 	}
 
 	err = db.WithTx(ctx, func(ctx context.Context, tx *ent.Tx) error {
+		req.OrderStateReq.PaymentState = handler.paymentState(req.Req)
 		if err := handler.createOrder(ctx, tx, req.Req); err != nil {
 			return err
 		}
 		if err := handler.createOrderState(ctx, tx, req.OrderStateReq); err != nil {
 			return err
 		}
-		if err := handler.createOrderLock(ctx, tx, req.StockLockReq); err != nil {
-			return err
-		}
 		if req.BalanceLockReq != nil {
-			if err := handler.createOrderLock(ctx, tx, req.BalanceLockReq); err != nil {
-				return err
-			}
+			req.BalanceLockReq.OrderID = req.Req.ID
+		}
+		if err := handler.createOrderLocks(ctx, tx, req.StockLockReq, req.BalanceLockReq); err != nil {
+			return err
 		}
 		if req.PaymentReq == nil {
 			return nil
@@ -205,7 +218,6 @@ func (h *createHandler) checkBatchParentOrder(ctx context.Context) error {
 	})
 }
 
-//nolint:gocyclo
 func (h *Handler) CreateOrders(ctx context.Context) ([]*npool.Order, error) {
 	handler := &createHandler{
 		Handler: h,
@@ -238,17 +250,13 @@ func (h *Handler) CreateOrders(ctx context.Context) ([]*npool.Order, error) {
 			if err := handler.createOrderState(ctx, tx, req.OrderStateReq); err != nil {
 				return err
 			}
-			if err := handler.createOrderLock(ctx, tx, req.StockLockReq); err != nil {
+			if req.BalanceLockReq != nil {
+				req.BalanceLockReq.OrderID = req.Req.ID
+			}
+			if err := handler.createOrderLocks(ctx, tx, req.StockLockReq, req.BalanceLockReq); err != nil {
 				return err
 			}
 			ids = append(ids, *req.Req.ID)
-
-			if req.BalanceLockReq != nil {
-				req.BalanceLockReq.OrderID = req.Req.ID
-				if err := handler.createOrderLock(ctx, tx, req.BalanceLockReq); err != nil {
-					return err
-				}
-			}
 
 			if req.PaymentReq == nil {
 				continue
