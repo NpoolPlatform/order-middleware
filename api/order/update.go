@@ -4,96 +4,89 @@ package order
 import (
 	"context"
 
-	order1 "github.com/NpoolPlatform/order-middleware/pkg/order"
-	commontracer "github.com/NpoolPlatform/order-middleware/pkg/tracer"
-	tracer "github.com/NpoolPlatform/order-middleware/pkg/tracer/order"
-
-	constant "github.com/NpoolPlatform/order-middleware/pkg/message/const"
-
-	"go.opentelemetry.io/otel"
-	scodes "go.opentelemetry.io/otel/codes"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
 	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
 	npool "github.com/NpoolPlatform/message/npool/order/mw/v1/order"
 
-	"github.com/google/uuid"
+	order1 "github.com/NpoolPlatform/order-middleware/pkg/mw/order"
 )
 
 func (s *Server) UpdateOrder(ctx context.Context, in *npool.UpdateOrderRequest) (*npool.UpdateOrderResponse, error) {
-	var err error
-
-	_, span := otel.Tracer(constant.ServiceName).Start(ctx, "UpdateOrder")
-	defer span.End()
-
-	defer func() {
-		if err != nil {
-			span.SetStatus(scodes.Error, err.Error())
-			span.RecordError(err)
-		}
-	}()
-
-	span = tracer.Trace(span, in.GetInfo())
-
-	if _, err := uuid.Parse(in.GetInfo().GetID()); err != nil {
-		logger.Sugar().Errorw("UpdateOrder", "ID", in.GetInfo().GetID(), "error", err)
-		return &npool.UpdateOrderResponse{}, err
+	req := in.GetInfo()
+	if req == nil {
+		logger.Sugar().Errorw(
+			"UpdateOrder",
+			"In", in,
+		)
+		return &npool.UpdateOrderResponse{}, status.Error(codes.Aborted, "invalid argument")
 	}
-	if _, err := uuid.Parse(in.GetInfo().GetPaymentID()); err != nil {
-		logger.Sugar().Errorw("UpdateOrder", "PaymentID", in.GetInfo().GetPaymentID(), "error", err)
-		return &npool.UpdateOrderResponse{}, err
-	}
-
-	span = commontracer.TraceInvoker(span, "order", "middleware", "Update")
-
-	info, err := order1.UpdateOrder(ctx, in.GetInfo())
+	handler, err := order1.NewHandler(
+		ctx,
+		order1.WithID(req.ID, true),
+		order1.WithAppID(req.AppID, false),
+		order1.WithParentOrderID(req.ParentOrderID, false),
+		order1.WithOrderState(req.OrderState, false),
+		order1.WithStartMode(req.StartMode, false),
+		order1.WithStartAt(req.StartAt, false),
+		order1.WithEndAt(req.EndAt, false),
+		order1.WithLastBenefitAt(req.LastBenefitAt, false),
+		order1.WithBenefitState(req.BenefitState, false),
+		order1.WithUserSetPaid(req.UserSetPaid, false),
+		order1.WithUserSetCanceled(req.UserSetCanceled, false),
+		order1.WithAdminSetCanceled(req.AdminSetCanceled, false),
+		order1.WithPaymentTransactionID(req.PaymentTransactionID, false),
+		order1.WithPaymentFinishAmount(req.PaymentFinishAmount, false),
+		order1.WithPaymentState(req.PaymentState, false),
+		order1.WithOutOfGasHours(req.OutOfGasHours, false),
+		order1.WithCompensateHours(req.CompensateHours, false),
+		order1.WithRollback(req.Rollback, false),
+	)
 	if err != nil {
-		logger.Sugar().Errorw("UpdateOrder", "error", err)
-		return &npool.UpdateOrderResponse{}, status.Error(codes.Internal, err.Error())
+		logger.Sugar().Errorw(
+			"UpdateOrder",
+			"In", in,
+			"Error", err,
+		)
+		return &npool.UpdateOrderResponse{}, status.Error(codes.Aborted, err.Error())
 	}
-
+	info, err := handler.UpdateOrder(ctx)
+	if err != nil {
+		logger.Sugar().Errorw(
+			"UpdateOrder",
+			"In", in,
+			"Error", err,
+		)
+		return &npool.UpdateOrderResponse{}, status.Error(codes.Aborted, err.Error())
+	}
 	return &npool.UpdateOrderResponse{
 		Info: info,
 	}, nil
 }
 
 func (s *Server) UpdateOrders(ctx context.Context, in *npool.UpdateOrdersRequest) (*npool.UpdateOrdersResponse, error) {
-	var err error
-
-	_, span := otel.Tracer(constant.ServiceName).Start(ctx, "UpdateOrders")
-	defer span.End()
-
-	defer func() {
-		if err != nil {
-			span.SetStatus(scodes.Error, err.Error())
-			span.RecordError(err)
-		}
-	}()
-
-	if len(in.GetInfos()) == 0 {
-		return &npool.UpdateOrdersResponse{}, status.Error(codes.InvalidArgument, "Infos is empty")
-	}
-
-	for _, info := range in.GetInfos() {
-		if _, err := uuid.Parse(info.GetID()); err != nil {
-			logger.Sugar().Errorw("UpdateOrders", "ID", info.GetID(), "error", err)
-			return &npool.UpdateOrdersResponse{}, err
-		}
-		if _, err := uuid.Parse(info.GetPaymentID()); err != nil {
-			logger.Sugar().Errorw("UpdateOrders", "PaymentID", info.GetPaymentID(), "error", err)
-			return &npool.UpdateOrdersResponse{}, err
-		}
-	}
-
-	span = commontracer.TraceInvoker(span, "order", "middleware", "Update")
-
-	infos, err := order1.UpdateOrders(ctx, in.GetInfos())
+	handler, err := order1.NewHandler(
+		ctx,
+		order1.WithReqs(in.GetInfos(), false),
+	)
 	if err != nil {
-		logger.Sugar().Errorw("UpdateOrders", "error", err)
-		return &npool.UpdateOrdersResponse{}, status.Error(codes.Internal, err.Error())
+		logger.Sugar().Errorw(
+			"UpdateOrders",
+			"In", in,
+			"Error", err,
+		)
+		return &npool.UpdateOrdersResponse{}, status.Error(codes.Aborted, err.Error())
 	}
-
+	infos, err := handler.UpdateOrders(ctx)
+	if err != nil {
+		logger.Sugar().Errorw(
+			"UpdateOrders",
+			"In", in,
+			"Error", err,
+		)
+		return &npool.UpdateOrdersResponse{}, status.Error(codes.Aborted, err.Error())
+	}
 	return &npool.UpdateOrdersResponse{
 		Infos: infos,
 	}, nil

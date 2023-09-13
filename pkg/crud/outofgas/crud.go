@@ -1,0 +1,176 @@
+package outofgas
+
+import (
+	"fmt"
+
+	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
+	"github.com/NpoolPlatform/order-middleware/pkg/db/ent"
+	entoutofgas "github.com/NpoolPlatform/order-middleware/pkg/db/ent/outofgas"
+	"github.com/google/uuid"
+)
+
+type Req struct {
+	ID        *uuid.UUID
+	OrderID   *uuid.UUID
+	StartAt   *uint32
+	EndAt     *uint32
+	CreatedAt *uint32
+	DeletedAt *uint32
+}
+
+func CreateSet(c *ent.OutOfGasCreate, req *Req) *ent.OutOfGasCreate {
+	if req.ID != nil {
+		c.SetID(*req.ID)
+	}
+	if req.OrderID != nil {
+		c.SetOrderID(*req.OrderID)
+	}
+	if req.StartAt != nil {
+		c.SetStartAt(*req.StartAt)
+	}
+	if req.EndAt != nil {
+		c.SetEndAt(*req.EndAt)
+	}
+	if req.CreatedAt != nil {
+		c.SetCreatedAt(*req.CreatedAt)
+	}
+	return c
+}
+
+func UpdateSet(u *ent.OutOfGasUpdateOne, req *Req) *ent.OutOfGasUpdateOne {
+	if req.StartAt != nil {
+		u.SetStartAt(*req.StartAt)
+	}
+	if req.EndAt != nil {
+		u.SetEndAt(*req.EndAt)
+	}
+	if req.DeletedAt != nil {
+		u.SetDeletedAt(*req.DeletedAt)
+	}
+	return u
+}
+
+type Conds struct {
+	ID       *cruder.Cond
+	IDs      *cruder.Cond
+	OrderID  *cruder.Cond
+	StartAt  *cruder.Cond
+	EndAt    *cruder.Cond
+	StartEnd *cruder.Cond
+}
+
+//nolint
+func SetQueryConds(q *ent.OutOfGasQuery, conds *Conds) (*ent.OutOfGasQuery, error) {
+	q.Where(entoutofgas.DeletedAt(0))
+	if conds == nil {
+		return q, nil
+	}
+	if conds.ID != nil {
+		id, ok := conds.ID.Val.(uuid.UUID)
+		if !ok {
+			return nil, fmt.Errorf("invalid id")
+		}
+		switch conds.ID.Op {
+		case cruder.EQ:
+			q.Where(entoutofgas.ID(id))
+		case cruder.NEQ:
+			q.Where(entoutofgas.IDNEQ(id))
+		default:
+			return nil, fmt.Errorf("invalid outofgas field")
+		}
+	}
+	if conds.IDs != nil {
+		ids, ok := conds.IDs.Val.([]uuid.UUID)
+		if !ok {
+			return nil, fmt.Errorf("invalid ids")
+		}
+		if len(ids) > 0 {
+			switch conds.IDs.Op {
+			case cruder.IN:
+				q.Where(entoutofgas.IDIn(ids...))
+			default:
+				return nil, fmt.Errorf("invalid outofgas field")
+			}
+		}
+	}
+	if conds.OrderID != nil {
+		id, ok := conds.OrderID.Val.(uuid.UUID)
+		if !ok {
+			return nil, fmt.Errorf("invalid orderid")
+		}
+		switch conds.OrderID.Op {
+		case cruder.EQ:
+			q.Where(entoutofgas.OrderID(id))
+		default:
+			return nil, fmt.Errorf("invalid outofgas field")
+		}
+	}
+	if conds.StartAt != nil {
+		start, ok := conds.StartAt.Val.(uint32)
+		if !ok {
+			return nil, fmt.Errorf("invalid startat")
+		}
+		switch conds.StartAt.Op {
+		case cruder.LT:
+			q.Where(entoutofgas.StartAtLT(start))
+		case cruder.LTE:
+			q.Where(entoutofgas.StartAtLTE(start))
+		case cruder.GT:
+			q.Where(entoutofgas.StartAtGT(start))
+		case cruder.GTE:
+			q.Where(entoutofgas.StartAtGTE(start))
+		case cruder.EQ:
+			q.Where(entoutofgas.StartAt(start))
+		default:
+			return nil, fmt.Errorf("invalid outofgas field")
+		}
+	}
+	if conds.EndAt != nil {
+		end, ok := conds.EndAt.Val.(uint32)
+		if !ok {
+			return nil, fmt.Errorf("invalid endat")
+		}
+		switch conds.EndAt.Op {
+		case cruder.LT:
+			q.Where(entoutofgas.EndAtLT(end))
+		case cruder.LTE:
+			q.Where(entoutofgas.EndAtLTE(end))
+		case cruder.GT:
+			q.Where(entoutofgas.EndAtGT(end))
+		case cruder.GTE:
+			q.Where(entoutofgas.EndAtGTE(end))
+		case cruder.EQ:
+			q.Where(entoutofgas.EndAtEQ(end))
+		default:
+			return nil, fmt.Errorf("invalid outofgas field")
+		}
+	}
+	if conds.StartEnd != nil {
+		ats, ok := conds.StartEnd.Val.([]uint32)
+		if !ok || len(ats) != 2 {
+			return nil, fmt.Errorf("invalid startend")
+		}
+		switch conds.StartEnd.Op {
+		case cruder.OVERLAP:
+			q.Where(
+				entoutofgas.Or(
+					entoutofgas.And(
+						entoutofgas.StartAtLTE(ats[0]),
+						entoutofgas.EndAtGTE(ats[0]),
+					),
+					entoutofgas.And(
+						entoutofgas.StartAtLTE(ats[1]),
+						entoutofgas.EndAtGTE(ats[1]),
+					),
+					entoutofgas.And(
+						entoutofgas.StartAtGTE(ats[0]),
+						entoutofgas.EndAtLTE(ats[1]),
+					),
+				),
+			)
+		default:
+			return nil, fmt.Errorf("invalid outofgas field")
+		}
+	}
+	return q, nil
+}
