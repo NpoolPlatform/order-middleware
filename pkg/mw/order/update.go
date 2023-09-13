@@ -69,7 +69,6 @@ var stateRollbackMap = map[types.OrderState]*types.OrderState{
 	types.OrderState_OrderStateRestoreExpiredStock:         types.OrderState_OrderStatePreExpired.Enum(),
 	types.OrderState_OrderStateUpdateExpiredChilds:         types.OrderState_OrderStateRestoreExpiredStock.Enum(),
 	types.OrderState_OrderStateExpired:                     types.OrderState_OrderStateUpdateExpiredChilds.Enum(),
-	types.OrderState_OrderStateRestoreCanceledStock:        types.OrderState_OrderStatePreCancel.Enum(),
 	types.OrderState_OrderStateCancelAchievement:           types.OrderState_OrderStateRestoreCanceledStock.Enum(),
 	types.OrderState_OrderStateDeductLockedCommission:      types.OrderState_OrderStateCancelAchievement.Enum(),
 	types.OrderState_OrderStateReturnCanceledBalance:       types.OrderState_OrderStateDeductLockedCommission.Enum(),
