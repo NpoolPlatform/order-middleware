@@ -44,25 +44,12 @@ func (h *deleteHandler) deleteOrderLock(ctx context.Context, tx *ent.Tx, id uuid
 }
 
 func (h *Handler) DeleteOrderLocks(ctx context.Context) ([]*npool.OrderLock, error) {
-	handler := &deleteHandler{
-		Handler:   h,
-		deletedAt: uint32(time.Now().Unix()),
-	}
 	ids := []uuid.UUID{}
-	err := db.WithTx(ctx, func(ctx context.Context, tx *ent.Tx) error {
-		for _, req := range h.Reqs {
-			if req.ID == nil {
-				return fmt.Errorf("invalid id")
-			}
-			if err := handler.deleteOrderLock(ctx, tx, *req.ID); err != nil {
-				return err
-			}
-			ids = append(ids, *req.ID)
+	for _, req := range h.Reqs {
+		if req.ID == nil {
+			return nil, fmt.Errorf("invalid id")
 		}
-		return nil
-	})
-	if err != nil {
-		return nil, err
+		ids = append(ids, *req.ID)
 	}
 
 	h.Conds = &orderlockcrud.Conds{
@@ -72,6 +59,28 @@ func (h *Handler) DeleteOrderLocks(ctx context.Context) ([]*npool.OrderLock, err
 	h.Limit = int32(len(ids))
 
 	infos, _, err := h.GetOrderLocks(ctx)
+	if err != nil {
+		return nil, err
+	}
+	if len(infos) == 0 {
+		return nil, nil
+	}
+	if len(infos) > 0 && len(infos) < len(ids) {
+		return nil, fmt.Errorf("atomic denied")
+	}
+
+	handler := &deleteHandler{
+		Handler:   h,
+		deletedAt: uint32(time.Now().Unix()),
+	}
+	err = db.WithTx(ctx, func(ctx context.Context, tx *ent.Tx) error {
+		for _, req := range h.Reqs {
+			if err := handler.deleteOrderLock(ctx, tx, *req.ID); err != nil {
+				return err
+			}
+		}
+		return nil
+	})
 	if err != nil {
 		return nil, err
 	}
