@@ -93,6 +93,24 @@ func (h *baseQueryHandler) QueryJoinOrderState(s *sql.Selector) error {
 			sql.EQ(t.C(entorderstate.FieldDeletedAt), 0),
 		)
 
+	s.AppendSelect(
+		sql.As(t.C(entorderstate.FieldOrderState), "order_state"),
+		sql.As(t.C(entorderstate.FieldCancelState), "cancel_state"),
+		sql.As(t.C(entorderstate.FieldStartMode), "start_mode"),
+		sql.As(t.C(entorderstate.FieldStartAt), "start_at"),
+		sql.As(t.C(entorderstate.FieldEndAt), "end_at"),
+		sql.As(t.C(entorderstate.FieldLastBenefitAt), "last_benefit_at"),
+		sql.As(t.C(entorderstate.FieldBenefitState), "benefit_state"),
+		sql.As(t.C(entorderstate.FieldUserSetPaid), "user_set_paid"),
+		sql.As(t.C(entorderstate.FieldAdminSetCanceled), "admin_set_canceled"),
+		sql.As(t.C(entorderstate.FieldUserSetCanceled), "user_set_canceled"),
+		sql.As(t.C(entorderstate.FieldPaymentTransactionID), "payment_transaction_id"),
+		sql.As(t.C(entorderstate.FieldPaymentFinishAmount), "payment_finish_amount"),
+		sql.As(t.C(entorderstate.FieldPaymentState), "payment_state"),
+		sql.As(t.C(entorderstate.FieldOutofgasHours), "outofgas_hours"),
+		sql.As(t.C(entorderstate.FieldCompensateHours), "compensate_hours"),
+	)
+
 	if h.Conds != nil && h.Conds.OrderState != nil {
 		state, ok := h.Conds.OrderState.Val.(basetypes.OrderState)
 		if !ok {
@@ -159,41 +177,21 @@ func (h *baseQueryHandler) QueryJoinOrderState(s *sql.Selector) error {
 		if !ok {
 			return fmt.Errorf("invalid order orderstates")
 		}
-		if len(states) == 0 {
-			var valueInterfaces []interface{}
-			for _, value := range states {
-				valueInterfaces = append(valueInterfaces, value)
-			}
-			switch h.Conds.OrderState.Op {
-			case cruder.IN:
-				s.Where(
-					sql.In(t.C(entorderstate.FieldOrderState), valueInterfaces...),
-				)
-			case cruder.NIN:
-				s.Where(
-					sql.NotIn(t.C(entorderstate.FieldOrderState), valueInterfaces...),
-				)
-			}
+		var valueInterfaces []interface{}
+		for _, value := range states {
+			valueInterfaces = append(valueInterfaces, value)
+		}
+		switch h.Conds.OrderStates.Op {
+		case cruder.IN:
+			s.Where(
+				sql.In(t.C(entorderstate.FieldOrderState), valueInterfaces...),
+			)
+		case cruder.NIN:
+			s.Where(
+				sql.NotIn(t.C(entorderstate.FieldOrderState), valueInterfaces...),
+			)
 		}
 	}
-
-	s.AppendSelect(
-		sql.As(t.C(entorderstate.FieldOrderState), "order_state"),
-		sql.As(t.C(entorderstate.FieldCancelState), "cancel_state"),
-		sql.As(t.C(entorderstate.FieldStartMode), "start_mode"),
-		sql.As(t.C(entorderstate.FieldStartAt), "start_at"),
-		sql.As(t.C(entorderstate.FieldEndAt), "end_at"),
-		sql.As(t.C(entorderstate.FieldLastBenefitAt), "last_benefit_at"),
-		sql.As(t.C(entorderstate.FieldBenefitState), "benefit_state"),
-		sql.As(t.C(entorderstate.FieldUserSetPaid), "user_set_paid"),
-		sql.As(t.C(entorderstate.FieldAdminSetCanceled), "admin_set_canceled"),
-		sql.As(t.C(entorderstate.FieldUserSetCanceled), "user_set_canceled"),
-		sql.As(t.C(entorderstate.FieldPaymentTransactionID), "payment_transaction_id"),
-		sql.As(t.C(entorderstate.FieldPaymentFinishAmount), "payment_finish_amount"),
-		sql.As(t.C(entorderstate.FieldPaymentState), "payment_state"),
-		sql.As(t.C(entorderstate.FieldOutofgasHours), "outofgas_hours"),
-		sql.As(t.C(entorderstate.FieldCompensateHours), "compensate_hours"),
-	)
 	return nil
 }
 

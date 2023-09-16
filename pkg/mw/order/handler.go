@@ -1084,7 +1084,9 @@ func WithConds(conds *npool.Conds) func(context.Context, *Handler) error {
 				_state := basetypes.OrderState(state)
 				states = append(states, _state.String())
 			}
-			h.Conds.OrderStates = &cruder.Cond{Op: conds.GetOrderStates().GetOp(), Val: states}
+			if len(states) > 0 {
+				h.Conds.OrderStates = &cruder.Cond{Op: conds.GetOrderStates().GetOp(), Val: states}
+			}
 		}
 		return nil
 	}

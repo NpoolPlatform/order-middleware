@@ -38,8 +38,12 @@ func (h *queryHandler) queryJoin() error {
 	var err error
 	h.stmSelect.Modify(func(s *sql.Selector) {
 		h.QueryJoinMyself(s)
-		err = h.QueryJoinPayment(s)
-		err = h.QueryJoinOrderState(s)
+		if err = h.QueryJoinPayment(s); err != nil {
+			return
+		}
+		if err = h.QueryJoinOrderState(s); err != nil {
+			return
+		}
 		h.QueryJoinStockLock(s)
 		h.QueryJoinBalanceLock(s)
 	})
@@ -50,8 +54,12 @@ func (h *queryHandler) queryJoin() error {
 		return nil
 	}
 	h.stmCount.Modify(func(s *sql.Selector) {
-		err = h.QueryJoinPayment(s)
-		err = h.QueryJoinOrderState(s)
+		if err = h.QueryJoinPayment(s); err != nil {
+			return
+		}
+		if err = h.QueryJoinOrderState(s); err != nil {
+			return
+		}
 		h.QueryJoinStockLock(s)
 		h.QueryJoinBalanceLock(s)
 	})
