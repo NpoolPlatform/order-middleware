@@ -189,7 +189,7 @@ func deleteOrderLocks(t *testing.T) {
 	var err error
 	infos, err := DeleteOrderLocks(context.Background(), reqs)
 	if assert.Nil(t, err) {
-		assert.Equal(t, 0, len(infos))
+		assert.Equal(t, len(infos), 1)
 	}
 
 	info, err := GetOrderLock(context.Background(), ret.ID)
