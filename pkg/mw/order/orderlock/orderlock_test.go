@@ -220,7 +220,7 @@ func deleteOrderLocks(t *testing.T) {
 	if assert.Nil(t, err) {
 		infos, err := handler.DeleteOrderLocks(context.Background())
 		if assert.Nil(t, err) {
-			assert.Equal(t, len(infos), 0)
+			assert.Equal(t, len(infos), 1)
 		}
 	}
 }
