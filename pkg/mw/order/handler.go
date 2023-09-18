@@ -1153,9 +1153,6 @@ func WithReqs(reqs []*npool.OrderReq, must bool) func(context.Context, *Handler)
 				if req.PaymentType == nil {
 					return fmt.Errorf("invalid paymenttype")
 				}
-				if req.CoinTypeID == nil {
-					return fmt.Errorf("invalid cointypeid")
-				}
 				if req.PaymentCoinTypeID == nil {
 					return fmt.Errorf("invalid paymentcointypeid")
 				}
@@ -1170,9 +1167,6 @@ func WithReqs(reqs []*npool.OrderReq, must bool) func(context.Context, *Handler)
 				}
 				if req.EndAt == nil {
 					return fmt.Errorf("invalid endat")
-				}
-				if req.AppGoodStockLockID == nil {
-					return fmt.Errorf("invalid appgoodstocklockid")
 				}
 			}
 			if req.ID != nil {

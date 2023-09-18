@@ -54,7 +54,7 @@ func (s *Server) CreateOrder(ctx context.Context, in *npool.CreateOrderRequest) 
 		order1.WithStartAt(req.StartAt, true),
 		order1.WithEndAt(req.EndAt, true),
 		order1.WithPaymentState(req.PaymentState, false),
-		order1.WithAppGoodStockLockID(req.AppGoodStockLockID, true),
+		order1.WithAppGoodStockLockID(req.AppGoodStockLockID, false),
 		order1.WithLedgerLockID(req.LedgerLockID, false),
 	)
 	if err != nil {
