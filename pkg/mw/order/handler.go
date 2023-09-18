@@ -1117,7 +1117,6 @@ func WithReqs(reqs []*npool.OrderReq, must bool) func(context.Context, *Handler)
 			_req := &OrderReq{
 				Req:           &ordercrud.Req{},
 				OrderStateReq: &orderstatecrud.Req{},
-				StockLockReq:  &orderlockcrud.Req{},
 			}
 			if must {
 				if req.AppID == nil {
@@ -1406,6 +1405,7 @@ func WithReqs(reqs []*npool.OrderReq, must bool) func(context.Context, *Handler)
 				if err != nil {
 					return err
 				}
+				_req.StockLockReq = &orderlockcrud.Req{}
 				_req.StockLockReq.ID = &id
 				_req.StockLockReq.AppID = _req.AppID
 				_req.StockLockReq.UserID = _req.UserID

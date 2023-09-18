@@ -91,15 +91,17 @@ func (h *Handler) ToOrderReq(ctx context.Context, newOrder bool) (*OrderReq, err
 			OutOfGasHours:        h.OutOfGasHours,
 			CompensateHours:      h.CompensateHours,
 		},
-		StockLockReq: &orderlockcrud.Req{
+	}
+
+	if h.AppGoodStockLockID != nil {
+		req.StockLockReq = &orderlockcrud.Req{
 			ID:       h.AppGoodStockLockID,
 			AppID:    h.AppID,
 			UserID:   h.UserID,
 			OrderID:  h.ID,
 			LockType: basetypes.OrderLockType_LockStock.Enum(),
-		},
+		}
 	}
-
 	if h.BalanceAmount != nil && h.BalanceAmount.Cmp(decimal.NewFromInt(0)) > 0 {
 		req.BalanceLockReq = &orderlockcrud.Req{
 			ID:       h.LedgerLockID,

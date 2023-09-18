@@ -161,6 +161,9 @@ func (h *Handler) CreateOrder(ctx context.Context) (*npool.Order, error) {
 		if req.BalanceLockReq != nil {
 			req.BalanceLockReq.OrderID = req.Req.ID
 		}
+		if req.StockLockReq != nil {
+			req.StockLockReq.OrderID = req.Req.ID
+		}
 		if err := handler.createOrderLocks(ctx, tx, req.StockLockReq, req.BalanceLockReq); err != nil {
 			return err
 		}
@@ -235,7 +238,6 @@ func (h *Handler) CreateOrders(ctx context.Context) ([]*npool.Order, error) {
 			if req.Req.ID == nil {
 				req.Req.ID = &id
 				req.OrderStateReq.OrderID = &id
-				req.StockLockReq.OrderID = &id
 			}
 			if req.PaymentReq != nil {
 				id1 := uuid.New()
@@ -252,6 +254,9 @@ func (h *Handler) CreateOrders(ctx context.Context) ([]*npool.Order, error) {
 			}
 			if req.BalanceLockReq != nil {
 				req.BalanceLockReq.OrderID = req.Req.ID
+			}
+			if req.StockLockReq != nil {
+				req.StockLockReq.OrderID = req.Req.ID
 			}
 			if err := handler.createOrderLocks(ctx, tx, req.StockLockReq, req.BalanceLockReq); err != nil {
 				return err
