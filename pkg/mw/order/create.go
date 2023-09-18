@@ -35,14 +35,11 @@ func (h *createHandler) paymentState(req *ordercrud.Req) *types.PaymentState {
 }
 
 func (h *createHandler) createOrderLocks(ctx context.Context, tx *ent.Tx, stockLockReq, balanceLockReq *orderlockcrud.Req) error {
-	if stockLockReq == nil {
-		return fmt.Errorf("invalid stocklock")
-	}
-	if stockLockReq.ID == nil {
-		return fmt.Errorf("invalid stocklockid")
-	}
 	reqs := []*ent.OrderLockCreate{}
 	if stockLockReq != nil {
+		if stockLockReq.ID == nil {
+			return fmt.Errorf("invalid stocklockid")
+		}
 		reqs = append(reqs, orderlockcrud.CreateSet(tx.OrderLock.Create(), stockLockReq))
 	}
 	if balanceLockReq != nil {
@@ -50,6 +47,9 @@ func (h *createHandler) createOrderLocks(ctx context.Context, tx *ent.Tx, stockL
 			return fmt.Errorf("invalid balancelockid")
 		}
 		reqs = append(reqs, orderlockcrud.CreateSet(tx.OrderLock.Create(), balanceLockReq))
+	}
+	if len(reqs) == 0 {
+		return nil
 	}
 	if _, err := tx.OrderLock.CreateBulk(reqs...).Save(ctx); err != nil {
 		return err
