@@ -110,6 +110,13 @@ var (
 		Name:       "order_states",
 		Columns:    OrderStatesColumns,
 		PrimaryKey: []*schema.Column{OrderStatesColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "orderstate_order_id",
+				Unique:  false,
+				Columns: []*schema.Column{OrderStatesColumns[4]},
+			},
+		},
 	}
 	// OutOfGasColumns holds the columns for the "out_of_gas" table.
 	OutOfGasColumns = []*schema.Column{
@@ -147,6 +154,13 @@ var (
 		Name:       "payments",
 		Columns:    PaymentsColumns,
 		PrimaryKey: []*schema.Column{PaymentsColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "payment_order_id",
+				Unique:  false,
+				Columns: []*schema.Column{PaymentsColumns[7]},
+			},
+		},
 	}
 	// Tables holds all the tables in the schema.
 	Tables = []*schema.Table{

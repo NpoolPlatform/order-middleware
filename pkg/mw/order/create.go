@@ -235,8 +235,8 @@ func (h *Handler) CreateOrders(ctx context.Context) ([]*npool.Order, error) {
 	err := db.WithTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {
 		for _, req := range h.Reqs {
 			req.OrderStateReq.PaymentState = handler.paymentState(req.Req)
-			id := uuid.New()
 			if req.Req.ID == nil {
+				id := uuid.New()
 				req.Req.ID = &id
 				req.OrderStateReq.OrderID = &id
 			}

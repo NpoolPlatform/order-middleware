@@ -4,6 +4,7 @@ import (
 	"entgo.io/ent"
 	"entgo.io/ent/dialect"
 	"entgo.io/ent/schema/field"
+	"entgo.io/ent/schema/index"
 	types "github.com/NpoolPlatform/message/npool/basetypes/order/v1"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/mixin"
 	"github.com/google/uuid"
@@ -103,4 +104,10 @@ func (OrderState) Fields() []ent.Field {
 // Edges of the OrderState.
 func (OrderState) Edges() []ent.Edge {
 	return nil
+}
+
+func (OrderState) Indexes() []ent.Index {
+	return []ent.Index{
+		index.Fields("order_id"),
+	}
 }

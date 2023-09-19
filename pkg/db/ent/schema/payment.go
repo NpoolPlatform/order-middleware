@@ -4,6 +4,7 @@ import (
 	"entgo.io/ent"
 	"entgo.io/ent/dialect"
 	"entgo.io/ent/schema/field"
+	"entgo.io/ent/schema/index"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/mixin"
 	"github.com/google/uuid"
 	"github.com/shopspring/decimal"
@@ -56,4 +57,10 @@ func (Payment) Fields() []ent.Field {
 // Edges of the Payment.
 func (Payment) Edges() []ent.Edge {
 	return nil
+}
+
+func (Payment) Indexes() []ent.Index {
+	return []ent.Index{
+		index.Fields("order_id"),
+	}
 }
