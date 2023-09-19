@@ -156,6 +156,9 @@ func (h *Handler) DeleteOrders(ctx context.Context) ([]*npool.Order, error) {
 	if err != nil {
 		return nil, err
 	}
+	if len(infos) == 0 {
+		return nil, nil
+	}
 
 	for _, info := range infos {
 		if info.OrderState != types.OrderState_OrderStateCreated {
