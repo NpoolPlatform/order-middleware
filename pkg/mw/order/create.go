@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
 	types "github.com/NpoolPlatform/message/npool/basetypes/order/v1"
 	npool "github.com/NpoolPlatform/message/npool/order/mw/v1/order"
@@ -179,7 +180,15 @@ func (h *Handler) CreateOrder(ctx context.Context) (*npool.Order, error) {
 		return nil, err
 	}
 
-	return h.GetOrder(ctx)
+	info, err := h.GetOrder(ctx)
+	if err != nil {
+		logger.Sugar().Warnw(
+			"CreateOrders",
+			"IDs", *h.ID,
+			"Error", err,
+		)
+	}
+	return info, nil
 }
 
 func (h *createHandler) checkBatchParentOrder(ctx context.Context) error {
@@ -287,7 +296,11 @@ func (h *Handler) CreateOrders(ctx context.Context) ([]*npool.Order, error) {
 
 	infos, _, err := h.GetOrders(ctx)
 	if err != nil {
-		return nil, err
+		logger.Sugar().Warnw(
+			"CreateOrders",
+			"IDs", ids,
+			"Error", err,
+		)
 	}
 	return infos, nil
 }
