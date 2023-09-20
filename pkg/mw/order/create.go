@@ -155,6 +155,7 @@ func (h *Handler) CreateOrder(ctx context.Context) (*npool.Order, error) {
 	}
 
 	start := time.Now()
+	callID := uuid.New()
 
 	err = db.WithTx(ctx, func(ctx context.Context, tx *ent.Tx) error {
 		req.OrderStateReq.PaymentState = handler.paymentState(req.Req)
@@ -184,6 +185,7 @@ func (h *Handler) CreateOrder(ctx context.Context) (*npool.Order, error) {
 	logger.Sugar().Infow(
 		"CreateOrder",
 		"ID", *h.ID,
+		"CallID", callID,
 		"Elapsed", time.Since(start),
 		"Error", err,
 	)
@@ -195,7 +197,8 @@ func (h *Handler) CreateOrder(ctx context.Context) (*npool.Order, error) {
 	if err != nil {
 		logger.Sugar().Warnw(
 			"CreateOrders",
-			"IDs", *h.ID,
+			"CallID", callID,
+			"ID", *h.ID,
 			"Error", err,
 		)
 	}
@@ -251,6 +254,7 @@ func (h *Handler) CreateOrders(ctx context.Context) ([]*npool.Order, error) {
 
 	start := time.Now()
 	ids := []uuid.UUID{}
+	callID := uuid.New()
 
 	err := db.WithTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {
 		for _, req := range h.Reqs {
@@ -299,6 +303,7 @@ func (h *Handler) CreateOrders(ctx context.Context) ([]*npool.Order, error) {
 	logger.Sugar().Infow(
 		"CreateOrders",
 		"ID", handler.parentOrderID,
+		"CallID", callID,
 		"CreateParent", handler.createParent,
 		"Elapsed", time.Since(start),
 		"Error", err,
@@ -317,6 +322,7 @@ func (h *Handler) CreateOrders(ctx context.Context) ([]*npool.Order, error) {
 	if err != nil {
 		logger.Sugar().Warnw(
 			"CreateOrders",
+			"CallID", callID,
 			"IDs", ids,
 			"Error", err,
 		)
