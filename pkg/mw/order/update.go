@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
 	types "github.com/NpoolPlatform/message/npool/basetypes/order/v1"
 	npool "github.com/NpoolPlatform/message/npool/order/mw/v1/order"
@@ -320,7 +321,15 @@ func (h *Handler) UpdateOrder(ctx context.Context) (*npool.Order, error) {
 		return nil, err
 	}
 
-	return h.GetOrder(ctx)
+	info, err := h.GetOrder(ctx)
+	if err != nil {
+		logger.Sugar().Warnw(
+			"CreateOrders",
+			"ID", *h.ID,
+			"Error", err,
+		)
+	}
+	return info, nil
 }
 
 //nolint
@@ -458,8 +467,12 @@ func (h *Handler) UpdateOrders(ctx context.Context) ([]*npool.Order, error) {
 
 	infos, _, err := h.GetOrders(ctx)
 	if err != nil {
-		return nil, err
+		logger.Sugar().Warnw(
+			"CreateOrders",
+			"IDs", ids,
+			"Error", err,
+		)
 	}
 
-	return infos, err
+	return infos, nil
 }
