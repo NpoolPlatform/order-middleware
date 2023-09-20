@@ -184,7 +184,7 @@ func (h *Handler) CreateOrder(ctx context.Context) (*npool.Order, error) {
 	logger.Sugar().Infow(
 		"CreateOrder",
 		"ID", *h.ID,
-		"Elapsed", time.Now().Sub(start),
+		"Elapsed", time.Since(start),
 		"Error", err,
 	)
 	if err != nil {
@@ -300,7 +300,7 @@ func (h *Handler) CreateOrders(ctx context.Context) ([]*npool.Order, error) {
 		"CreateOrders",
 		"ID", handler.parentOrderID,
 		"CreateParent", handler.createParent,
-		"Elapsed", time.Now().Sub(start),
+		"Elapsed", time.Since(start),
 		"Error", err,
 	)
 	if err != nil {
