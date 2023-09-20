@@ -153,6 +153,7 @@ type Conds struct {
 	CouponID          *cruder.Cond
 	CouponIDs         *cruder.Cond
 	PaymentTypes      *cruder.Cond
+	CreatedAt         *cruder.Cond
 }
 
 //nolint
@@ -365,6 +366,24 @@ func SetQueryConds(q *ent.OrderQuery, conds *Conds) (*ent.OrderQuery, error) {
 				}
 				s.Where(sql.Or(predicates...))
 			})
+		default:
+			return nil, fmt.Errorf("invalid order field")
+		}
+	}
+	if conds.CreatedAt != nil {
+		at, ok := conds.CreatedAt.Val.(uint32)
+		if !ok {
+			return nil, fmt.Errorf("invalid createdat")
+		}
+		switch conds.CreatedAt.Op {
+		case cruder.LT:
+			q.Where(entorder.CreatedAtLT(at))
+		case cruder.LTE:
+			q.Where(entorder.CreatedAtLTE(at))
+		case cruder.GT:
+			q.Where(entorder.CreatedAtGT(at))
+		case cruder.GTE:
+			q.Where(entorder.CreatedAtGTE(at))
 		default:
 			return nil, fmt.Errorf("invalid order field")
 		}
