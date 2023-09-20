@@ -3,7 +3,9 @@ package order
 import (
 	"context"
 	"fmt"
+	"time"
 
+	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
 	types "github.com/NpoolPlatform/message/npool/basetypes/order/v1"
 	npool "github.com/NpoolPlatform/message/npool/order/mw/v1/order"
@@ -21,6 +23,8 @@ import (
 
 type createHandler struct {
 	*Handler
+	parentOrderID uuid.UUID
+	createParent  bool
 }
 
 func (h *createHandler) paymentState(req *ordercrud.Req) *types.PaymentState {
@@ -150,6 +154,8 @@ func (h *Handler) CreateOrder(ctx context.Context) (*npool.Order, error) {
 		return nil, fmt.Errorf("invalid paymenttype")
 	}
 
+	start := time.Now()
+
 	err = db.WithTx(ctx, func(ctx context.Context, tx *ent.Tx) error {
 		req.OrderStateReq.PaymentState = handler.paymentState(req.Req)
 		if err := handler.createOrder(ctx, tx, req.Req); err != nil {
@@ -175,6 +181,12 @@ func (h *Handler) CreateOrder(ctx context.Context) (*npool.Order, error) {
 		}
 		return nil
 	})
+	logger.Sugar().Infow(
+		"CreateOrder",
+		"ID", *h.ID,
+		"Elapsed", time.Now().Sub(start),
+		"Error", err,
+	)
 	if err != nil {
 		return nil, err
 	}
@@ -183,22 +195,20 @@ func (h *Handler) CreateOrder(ctx context.Context) (*npool.Order, error) {
 }
 
 func (h *createHandler) checkBatchParentOrder(ctx context.Context) error {
-	var parentOrder uuid.UUID
-	createParent := false
 	for _, req := range h.Reqs {
 		if req.ParentOrderID == nil {
-			parentOrder = *req.ID
-			createParent = true
+			h.parentOrderID = *req.ID
+			h.createParent = true
 			continue
 		}
-		if parentOrder != uuid.Nil && *req.ParentOrderID != parentOrder {
+		if h.parentOrderID != uuid.Nil && *req.ParentOrderID != h.parentOrderID {
 			return fmt.Errorf("invalid parentorder")
 		}
 	}
-	if parentOrder == uuid.Nil {
+	if h.parentOrderID == uuid.Nil {
 		return nil
 	}
-	if createParent {
+	if h.createParent {
 		return nil
 	}
 
@@ -207,7 +217,7 @@ func (h *createHandler) checkBatchParentOrder(ctx context.Context) error {
 			Order.
 			Query().
 			Where(
-				entorder.ID(parentOrder),
+				entorder.ID(h.parentOrderID),
 				entorder.DeletedAt(0),
 			).
 			Exist(_ctx)
@@ -231,7 +241,9 @@ func (h *Handler) CreateOrders(ctx context.Context) ([]*npool.Order, error) {
 		return nil, err
 	}
 
+	start := time.Now()
 	ids := []uuid.UUID{}
+
 	err := db.WithTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {
 		for _, req := range h.Reqs {
 			req.OrderStateReq.PaymentState = handler.paymentState(req.Req)
@@ -275,6 +287,14 @@ func (h *Handler) CreateOrders(ctx context.Context) ([]*npool.Order, error) {
 		}
 		return nil
 	})
+
+	logger.Sugar().Infow(
+		"CreateOrders",
+		"ID", handler.parentOrderID,
+		"CreateParent", handler.createParent,
+		"Elapsed", time.Now().Sub(start),
+		"Error", err,
+	)
 	if err != nil {
 		return nil, err
 	}
