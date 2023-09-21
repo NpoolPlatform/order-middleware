@@ -192,6 +192,48 @@ func (h *baseQueryHandler) QueryJoinOrderState(s *sql.Selector) error {
 			)
 		}
 	}
+	if h.Conds != nil && h.Conds.UpdatedAt != nil {
+		updatedAt, ok := h.Conds.UpdatedAt.Val.(uint32)
+		if !ok {
+			return fmt.Errorf("invalid order updatedat")
+		}
+		switch h.Conds.UpdatedAt.Op {
+		case cruder.LT:
+			s.Where(
+				sql.LT(t.C(entorderstate.FieldUpdatedAt), updatedAt),
+			)
+		case cruder.LTE:
+			s.Where(
+				sql.EQ(t.C(entorderstate.FieldUpdatedAt), updatedAt),
+			)
+		case cruder.GT:
+			s.Where(
+				sql.GT(t.C(entorderstate.FieldUpdatedAt), updatedAt),
+			)
+		case cruder.GTE:
+			s.Where(
+				sql.GTE(t.C(entorderstate.FieldUpdatedAt), updatedAt),
+			)
+		}
+	}
+	if h.Conds != nil && h.Conds.AdminSetCanceled != nil {
+		b, ok := h.Conds.AdminSetCanceled.Val.(bool)
+		if !ok {
+			return fmt.Errorf("invalid order adminsetcanceled")
+		}
+		s.Where(
+			sql.EQ(t.C(entorderstate.FieldAdminSetCanceled), b),
+		)
+	}
+	if h.Conds != nil && h.Conds.UserSetCanceled != nil {
+		b, ok := h.Conds.UserSetCanceled.Val.(bool)
+		if !ok {
+			return fmt.Errorf("invalid order usersetcanceled")
+		}
+		s.Where(
+			sql.EQ(t.C(entorderstate.FieldUserSetCanceled), b),
+		)
+	}
 	return nil
 }
 

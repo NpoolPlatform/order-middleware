@@ -155,6 +155,8 @@ type Conds struct {
 	PaymentTypes      *cruder.Cond
 	CreatedAt         *cruder.Cond
 	UpdatedAt         *cruder.Cond
+	AdminSetCanceled  *cruder.Cond
+	UserSetCanceled   *cruder.Cond
 }
 
 //nolint

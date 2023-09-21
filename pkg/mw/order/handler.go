@@ -1041,16 +1041,40 @@ func WithConds(conds *npool.Conds) func(context.Context, *Handler) error {
 				return fmt.Errorf("invalid benefitstate")
 			}
 			_state := conds.GetBenefitState().GetValue()
-			h.Conds.BenefitState = &cruder.Cond{Op: conds.GetBenefitState().GetOp(), Val: basetypes.BenefitState(_state)}
+			h.Conds.BenefitState = &cruder.Cond{
+				Op:  conds.GetBenefitState().GetOp(),
+				Val: basetypes.BenefitState(_state),
+			}
 		}
 		if conds.PaymentTransactionID != nil {
-			h.Conds.PaymentTransactionID = &cruder.Cond{Op: conds.GetPaymentTransactionID().GetOp(), Val: conds.GetPaymentTransactionID().GetValue()}
+			h.Conds.PaymentTransactionID = &cruder.Cond{
+				Op:  conds.GetPaymentTransactionID().GetOp(),
+				Val: conds.GetPaymentTransactionID().GetValue(),
+			}
 		}
 		if conds.CreatedAt != nil {
-			h.Conds.CreatedAt = &cruder.Cond{Op: conds.GetCreatedAt().GetOp(), Val: conds.GetCreatedAt().GetValue()}
+			h.Conds.CreatedAt = &cruder.Cond{
+				Op:  conds.GetCreatedAt().GetOp(),
+				Val: conds.GetCreatedAt().GetValue(),
+			}
 		}
 		if conds.UpdatedAt != nil {
-			h.Conds.UpdatedAt = &cruder.Cond{Op: conds.GetUpdatedAt().GetOp(), Val: conds.GetUpdatedAt().GetValue()}
+			h.Conds.UpdatedAt = &cruder.Cond{
+				Op:  conds.GetUpdatedAt().GetOp(),
+				Val: conds.GetUpdatedAt().GetValue(),
+			}
+		}
+		if conds.AdminSetCanceled != nil {
+			h.Conds.AdminSetCanceled = &cruder.Cond{
+				Op:  conds.GetAdminSetCanceled().GetOp(),
+				Val: conds.GetAdminSetCanceled().GetValue(),
+			}
+		}
+		if conds.UserSetCanceled != nil {
+			h.Conds.UserSetCanceled = &cruder.Cond{
+				Op:  conds.GetUserSetCanceled().GetOp(),
+				Val: conds.GetUserSetCanceled().GetValue(),
+			}
 		}
 
 		if conds.PaymentState != nil {
