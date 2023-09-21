@@ -1049,6 +1049,9 @@ func WithConds(conds *npool.Conds) func(context.Context, *Handler) error {
 		if conds.CreatedAt != nil {
 			h.Conds.CreatedAt = &cruder.Cond{Op: conds.GetCreatedAt().GetOp(), Val: conds.GetCreatedAt().GetValue()}
 		}
+		if conds.UpdatedAt != nil {
+			h.Conds.UpdatedAt = &cruder.Cond{Op: conds.GetUpdatedAt().GetOp(), Val: conds.GetUpdatedAt().GetValue()}
+		}
 
 		if conds.PaymentState != nil {
 			switch conds.GetPaymentState().GetValue() {
