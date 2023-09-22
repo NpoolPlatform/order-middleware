@@ -115,7 +115,11 @@ func (Order) Fields() []ent.Field {
 		field.
 			UUID("coin_type_id", uuid.UUID{}),
 		field.
-			UUID("payment_coin_type_id", uuid.UUID{}),
+			UUID("payment_coin_type_id", uuid.UUID{}).
+			Optional().
+			Default(func() uuid.UUID {
+				return uuid.Nil
+			}),
 		field.
 			Other("transfer_amount", decimal.Decimal{}).
 			SchemaType(map[string]string{

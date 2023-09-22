@@ -105,6 +105,8 @@ func CreateSet(c *ent.OrderCreate, req *Req) *ent.OrderCreate {
 	}
 	if req.PaymentCoinTypeID != nil {
 		c.SetPaymentCoinTypeID(*req.PaymentCoinTypeID)
+	} else {
+		c.SetPaymentCoinTypeID(uuid.Nil)
 	}
 	if req.TransferAmount != nil {
 		c.SetTransferAmount(*req.TransferAmount)
