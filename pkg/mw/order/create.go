@@ -28,8 +28,13 @@ type createHandler struct {
 }
 
 func (h *createHandler) paymentState(req *ordercrud.Req) *types.PaymentState {
-	if req.PaymentType != nil && *req.PaymentType == types.PaymentType_PayWithNoPayment {
-		return types.PaymentState_PaymentStateNoPayment.Enum()
+	if req.PaymentType != nil {
+		switch *req.PaymentType {
+		case types.PaymentType_PayWithNoPayment:
+			return types.PaymentState_PaymentStateNoPayment.Enum()
+		case types.PaymentType_PayWithOffline:
+			return types.PaymentState_PaymentStateWait.Enum()
+		}
 	}
 	if (req.TransferAmount != nil && req.TransferAmount.Cmp(decimal.NewFromInt(0)) > 0) ||
 		(req.BalanceAmount != nil && req.BalanceAmount.Cmp(decimal.NewFromInt(0)) > 0) {
