@@ -224,8 +224,8 @@ func WithGoodValue(value *string, must bool) func(context.Context, *Handler) err
 		if err != nil {
 			return err
 		}
-		if amount.Cmp(decimal.NewFromInt(0)) <= 0 {
-			return fmt.Errorf("goodvalue is less than or equal to 0")
+		if amount.Cmp(decimal.NewFromInt(0)) < 0 {
+			return fmt.Errorf("goodvalue is less than to 0")
 		}
 		h.GoodValue = &amount
 		return nil
