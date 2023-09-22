@@ -1164,9 +1164,6 @@ func WithReqs(reqs []*npool.OrderReq, must bool) func(context.Context, *Handler)
 				if req.Units == nil {
 					return fmt.Errorf("invalid units")
 				}
-				if req.GoodValue == nil {
-					return fmt.Errorf("invalid goodvalue")
-				}
 				if req.GoodValueUSD == nil {
 					return fmt.Errorf("invalid goodvalueusd")
 				}
