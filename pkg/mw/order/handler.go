@@ -1546,6 +1546,9 @@ func WithReqs(reqs []*npool.OrderReq, must bool) func(context.Context, *Handler)
 						_reqs = append(_reqs, _req)
 						continue
 					}
+					if req.PaymentCoinTypeID == nil {
+						return fmt.Errorf("invalid paymentcointypeid")
+					}
 				}
 			}
 

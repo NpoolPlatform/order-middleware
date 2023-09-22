@@ -123,6 +123,9 @@ func (h *Handler) ToOrderReq(ctx context.Context, newOrder bool) (*OrderReq, err
 		if !has {
 			return req, nil
 		}
+		if req.PaymentCoinTypeID == nil {
+			return nil, fmt.Errorf("invalid paymentcointypeid")
+		}
 	}
 
 	paymentID := uuid.New()
