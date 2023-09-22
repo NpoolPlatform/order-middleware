@@ -63,7 +63,7 @@ func (s *Server) CreateOrder(ctx context.Context, in *npool.CreateOrderRequest) 
 			"Req", req,
 			"error", err,
 		)
-		return &npool.CreateOrderResponse{}, status.Error(codes.InvalidArgument, err.Error())
+		return &npool.CreateOrderResponse{}, status.Error(codes.Aborted, err.Error())
 	}
 	info, err := handler.CreateOrder(ctx)
 	if err != nil {
