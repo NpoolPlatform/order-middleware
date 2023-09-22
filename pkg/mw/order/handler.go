@@ -536,8 +536,8 @@ func WithCoinUSDCurrency(value *string, must bool) func(context.Context, *Handle
 		if err != nil {
 			return err
 		}
-		if amount.Cmp(decimal.NewFromInt(0)) <= 0 {
-			return fmt.Errorf("coinusdcurrency is less than or equal to 0")
+		if amount.Cmp(decimal.NewFromInt(0)) < 0 {
+			return fmt.Errorf("coinusdcurrency is less than to 0")
 		}
 		h.CoinUSDCurrency = &amount
 		return nil
@@ -558,7 +558,7 @@ func WithLocalCoinUSDCurrency(value *string, must bool) func(context.Context, *H
 			return err
 		}
 		if amount.Cmp(decimal.NewFromInt(0)) < 0 {
-			return fmt.Errorf("localcoinusdcurrency is less than or equal to 0")
+			return fmt.Errorf("localcoinusdcurrency is less than to 0")
 		}
 		h.LocalCoinUSDCurrency = &amount
 		return nil
@@ -578,8 +578,8 @@ func WithLiveCoinUSDCurrency(value *string, must bool) func(context.Context, *Ha
 		if err != nil {
 			return err
 		}
-		if amount.Cmp(decimal.NewFromInt(0)) <= 0 {
-			return fmt.Errorf("livecoinusdcurrency is less than or equal to 0")
+		if amount.Cmp(decimal.NewFromInt(0)) < 0 {
+			return fmt.Errorf("livecoinusdcurrency is less than to 0")
 		}
 		h.LiveCoinUSDCurrency = &amount
 		return nil
