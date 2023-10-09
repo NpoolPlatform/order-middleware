@@ -2239,9 +2239,22 @@ func (m *OrderMutation) OldPaymentCoinTypeID(ctx context.Context) (v uuid.UUID, 
 	return oldValue.PaymentCoinTypeID, nil
 }
 
+// ClearPaymentCoinTypeID clears the value of the "payment_coin_type_id" field.
+func (m *OrderMutation) ClearPaymentCoinTypeID() {
+	m.payment_coin_type_id = nil
+	m.clearedFields[order.FieldPaymentCoinTypeID] = struct{}{}
+}
+
+// PaymentCoinTypeIDCleared returns if the "payment_coin_type_id" field was cleared in this mutation.
+func (m *OrderMutation) PaymentCoinTypeIDCleared() bool {
+	_, ok := m.clearedFields[order.FieldPaymentCoinTypeID]
+	return ok
+}
+
 // ResetPaymentCoinTypeID resets all changes to the "payment_coin_type_id" field.
 func (m *OrderMutation) ResetPaymentCoinTypeID() {
 	m.payment_coin_type_id = nil
+	delete(m.clearedFields, order.FieldPaymentCoinTypeID)
 }
 
 // SetTransferAmount sets the "transfer_amount" field.
@@ -3033,6 +3046,9 @@ func (m *OrderMutation) ClearedFields() []string {
 	if m.FieldCleared(order.FieldPaymentType) {
 		fields = append(fields, order.FieldPaymentType)
 	}
+	if m.FieldCleared(order.FieldPaymentCoinTypeID) {
+		fields = append(fields, order.FieldPaymentCoinTypeID)
+	}
 	if m.FieldCleared(order.FieldTransferAmount) {
 		fields = append(fields, order.FieldTransferAmount)
 	}
@@ -3100,6 +3116,9 @@ func (m *OrderMutation) ClearField(name string) error {
 		return nil
 	case order.FieldPaymentType:
 		m.ClearPaymentType()
+		return nil
+	case order.FieldPaymentCoinTypeID:
+		m.ClearPaymentCoinTypeID()
 		return nil
 	case order.FieldTransferAmount:
 		m.ClearTransferAmount()

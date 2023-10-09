@@ -155,6 +155,10 @@ func init() {
 	orderDescPaymentType := orderFields[17].Descriptor()
 	// order.DefaultPaymentType holds the default value on creation for the payment_type field.
 	order.DefaultPaymentType = orderDescPaymentType.Default.(string)
+	// orderDescPaymentCoinTypeID is the schema descriptor for payment_coin_type_id field.
+	orderDescPaymentCoinTypeID := orderFields[19].Descriptor()
+	// order.DefaultPaymentCoinTypeID holds the default value on creation for the payment_coin_type_id field.
+	order.DefaultPaymentCoinTypeID = orderDescPaymentCoinTypeID.Default.(func() uuid.UUID)
 	// orderDescTransferAmount is the schema descriptor for transfer_amount field.
 	orderDescTransferAmount := orderFields[20].Descriptor()
 	// order.DefaultTransferAmount holds the default value on creation for the transfer_amount field.

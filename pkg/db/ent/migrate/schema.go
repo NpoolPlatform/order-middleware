@@ -26,6 +26,13 @@ var (
 		Name:       "compensates",
 		Columns:    CompensatesColumns,
 		PrimaryKey: []*schema.Column{CompensatesColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "compensate_order_id",
+				Unique:  false,
+				Columns: []*schema.Column{CompensatesColumns[4]},
+			},
+		},
 	}
 	// OrdersColumns holds the columns for the "orders" table.
 	OrdersColumns = []*schema.Column{
@@ -51,7 +58,7 @@ var (
 		{Name: "coupon_ids", Type: field.TypeJSON, Nullable: true},
 		{Name: "payment_type", Type: field.TypeString, Nullable: true, Default: "PayWithBalanceOnly"},
 		{Name: "coin_type_id", Type: field.TypeUUID},
-		{Name: "payment_coin_type_id", Type: field.TypeUUID},
+		{Name: "payment_coin_type_id", Type: field.TypeUUID, Nullable: true},
 		{Name: "transfer_amount", Type: field.TypeOther, Nullable: true, SchemaType: map[string]string{"mysql": "decimal(37,18)"}},
 		{Name: "balance_amount", Type: field.TypeOther, Nullable: true, SchemaType: map[string]string{"mysql": "decimal(37, 18)"}},
 		{Name: "coin_usd_currency", Type: field.TypeOther, Nullable: true, SchemaType: map[string]string{"mysql": "decimal(37, 18)"}},
@@ -63,6 +70,13 @@ var (
 		Name:       "orders",
 		Columns:    OrdersColumns,
 		PrimaryKey: []*schema.Column{OrdersColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "order_app_id_user_id_good_id_app_good_id",
+				Unique:  false,
+				Columns: []*schema.Column{OrdersColumns[4], OrdersColumns[5], OrdersColumns[6], OrdersColumns[7]},
+			},
+		},
 	}
 	// OrderLocksColumns holds the columns for the "order_locks" table.
 	OrderLocksColumns = []*schema.Column{
@@ -80,6 +94,13 @@ var (
 		Name:       "order_locks",
 		Columns:    OrderLocksColumns,
 		PrimaryKey: []*schema.Column{OrderLocksColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "orderlock_order_id",
+				Unique:  false,
+				Columns: []*schema.Column{OrderLocksColumns[6]},
+			},
+		},
 	}
 	// OrderStatesColumns holds the columns for the "order_states" table.
 	OrderStatesColumns = []*schema.Column{

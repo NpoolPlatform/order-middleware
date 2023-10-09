@@ -1893,6 +1893,20 @@ func PaymentCoinTypeIDLTE(v uuid.UUID) predicate.Order {
 	})
 }
 
+// PaymentCoinTypeIDIsNil applies the IsNil predicate on the "payment_coin_type_id" field.
+func PaymentCoinTypeIDIsNil() predicate.Order {
+	return predicate.Order(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldPaymentCoinTypeID)))
+	})
+}
+
+// PaymentCoinTypeIDNotNil applies the NotNil predicate on the "payment_coin_type_id" field.
+func PaymentCoinTypeIDNotNil() predicate.Order {
+	return predicate.Order(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldPaymentCoinTypeID)))
+	})
+}
+
 // TransferAmountEQ applies the EQ predicate on the "transfer_amount" field.
 func TransferAmountEQ(v decimal.Decimal) predicate.Order {
 	return predicate.Order(func(s *sql.Selector) {

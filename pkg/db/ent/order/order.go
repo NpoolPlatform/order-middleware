@@ -156,6 +156,8 @@ var (
 	DefaultCouponIds func() []uuid.UUID
 	// DefaultPaymentType holds the default value on creation for the "payment_type" field.
 	DefaultPaymentType string
+	// DefaultPaymentCoinTypeID holds the default value on creation for the "payment_coin_type_id" field.
+	DefaultPaymentCoinTypeID func() uuid.UUID
 	// DefaultTransferAmount holds the default value on creation for the "transfer_amount" field.
 	DefaultTransferAmount decimal.Decimal
 	// DefaultBalanceAmount holds the default value on creation for the "balance_amount" field.

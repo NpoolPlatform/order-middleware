@@ -276,6 +276,14 @@ func (oc *OrderCreate) SetPaymentCoinTypeID(u uuid.UUID) *OrderCreate {
 	return oc
 }
 
+// SetNillablePaymentCoinTypeID sets the "payment_coin_type_id" field if the given value is not nil.
+func (oc *OrderCreate) SetNillablePaymentCoinTypeID(u *uuid.UUID) *OrderCreate {
+	if u != nil {
+		oc.SetPaymentCoinTypeID(*u)
+	}
+	return oc
+}
+
 // SetTransferAmount sets the "transfer_amount" field.
 func (oc *OrderCreate) SetTransferAmount(d decimal.Decimal) *OrderCreate {
 	oc.mutation.SetTransferAmount(d)
@@ -524,6 +532,13 @@ func (oc *OrderCreate) defaults() error {
 		v := order.DefaultPaymentType
 		oc.mutation.SetPaymentType(v)
 	}
+	if _, ok := oc.mutation.PaymentCoinTypeID(); !ok {
+		if order.DefaultPaymentCoinTypeID == nil {
+			return fmt.Errorf("ent: uninitialized order.DefaultPaymentCoinTypeID (forgotten import ent/runtime?)")
+		}
+		v := order.DefaultPaymentCoinTypeID()
+		oc.mutation.SetPaymentCoinTypeID(v)
+	}
 	if _, ok := oc.mutation.TransferAmount(); !ok {
 		v := order.DefaultTransferAmount
 		oc.mutation.SetTransferAmount(v)
@@ -579,9 +594,6 @@ func (oc *OrderCreate) check() error {
 	}
 	if _, ok := oc.mutation.CoinTypeID(); !ok {
 		return &ValidationError{Name: "coin_type_id", err: errors.New(`ent: missing required field "Order.coin_type_id"`)}
-	}
-	if _, ok := oc.mutation.PaymentCoinTypeID(); !ok {
-		return &ValidationError{Name: "payment_coin_type_id", err: errors.New(`ent: missing required field "Order.payment_coin_type_id"`)}
 	}
 	return nil
 }
@@ -1256,6 +1268,12 @@ func (u *OrderUpsert) UpdatePaymentCoinTypeID() *OrderUpsert {
 	return u
 }
 
+// ClearPaymentCoinTypeID clears the value of the "payment_coin_type_id" field.
+func (u *OrderUpsert) ClearPaymentCoinTypeID() *OrderUpsert {
+	u.SetNull(order.FieldPaymentCoinTypeID)
+	return u
+}
+
 // SetTransferAmount sets the "transfer_amount" field.
 func (u *OrderUpsert) SetTransferAmount(v decimal.Decimal) *OrderUpsert {
 	u.Set(order.FieldTransferAmount, v)
@@ -1820,6 +1838,13 @@ func (u *OrderUpsertOne) SetPaymentCoinTypeID(v uuid.UUID) *OrderUpsertOne {
 func (u *OrderUpsertOne) UpdatePaymentCoinTypeID() *OrderUpsertOne {
 	return u.Update(func(s *OrderUpsert) {
 		s.UpdatePaymentCoinTypeID()
+	})
+}
+
+// ClearPaymentCoinTypeID clears the value of the "payment_coin_type_id" field.
+func (u *OrderUpsertOne) ClearPaymentCoinTypeID() *OrderUpsertOne {
+	return u.Update(func(s *OrderUpsert) {
+		s.ClearPaymentCoinTypeID()
 	})
 }
 
@@ -2568,6 +2593,13 @@ func (u *OrderUpsertBulk) SetPaymentCoinTypeID(v uuid.UUID) *OrderUpsertBulk {
 func (u *OrderUpsertBulk) UpdatePaymentCoinTypeID() *OrderUpsertBulk {
 	return u.Update(func(s *OrderUpsert) {
 		s.UpdatePaymentCoinTypeID()
+	})
+}
+
+// ClearPaymentCoinTypeID clears the value of the "payment_coin_type_id" field.
+func (u *OrderUpsertBulk) ClearPaymentCoinTypeID() *OrderUpsertBulk {
+	return u.Update(func(s *OrderUpsert) {
+		s.ClearPaymentCoinTypeID()
 	})
 }
 

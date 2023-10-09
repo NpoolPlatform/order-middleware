@@ -380,6 +380,20 @@ func (ou *OrderUpdate) SetPaymentCoinTypeID(u uuid.UUID) *OrderUpdate {
 	return ou
 }
 
+// SetNillablePaymentCoinTypeID sets the "payment_coin_type_id" field if the given value is not nil.
+func (ou *OrderUpdate) SetNillablePaymentCoinTypeID(u *uuid.UUID) *OrderUpdate {
+	if u != nil {
+		ou.SetPaymentCoinTypeID(*u)
+	}
+	return ou
+}
+
+// ClearPaymentCoinTypeID clears the value of the "payment_coin_type_id" field.
+func (ou *OrderUpdate) ClearPaymentCoinTypeID() *OrderUpdate {
+	ou.mutation.ClearPaymentCoinTypeID()
+	return ou
+}
+
 // SetTransferAmount sets the "transfer_amount" field.
 func (ou *OrderUpdate) SetTransferAmount(d decimal.Decimal) *OrderUpdate {
 	ou.mutation.SetTransferAmount(d)
@@ -838,6 +852,12 @@ func (ou *OrderUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: order.FieldPaymentCoinTypeID,
 		})
 	}
+	if ou.mutation.PaymentCoinTypeIDCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Column: order.FieldPaymentCoinTypeID,
+		})
+	}
 	if value, ok := ou.mutation.TransferAmount(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeOther,
@@ -1271,6 +1291,20 @@ func (ouo *OrderUpdateOne) SetCoinTypeID(u uuid.UUID) *OrderUpdateOne {
 // SetPaymentCoinTypeID sets the "payment_coin_type_id" field.
 func (ouo *OrderUpdateOne) SetPaymentCoinTypeID(u uuid.UUID) *OrderUpdateOne {
 	ouo.mutation.SetPaymentCoinTypeID(u)
+	return ouo
+}
+
+// SetNillablePaymentCoinTypeID sets the "payment_coin_type_id" field if the given value is not nil.
+func (ouo *OrderUpdateOne) SetNillablePaymentCoinTypeID(u *uuid.UUID) *OrderUpdateOne {
+	if u != nil {
+		ouo.SetPaymentCoinTypeID(*u)
+	}
+	return ouo
+}
+
+// ClearPaymentCoinTypeID clears the value of the "payment_coin_type_id" field.
+func (ouo *OrderUpdateOne) ClearPaymentCoinTypeID() *OrderUpdateOne {
+	ouo.mutation.ClearPaymentCoinTypeID()
 	return ouo
 }
 
@@ -1759,6 +1793,12 @@ func (ouo *OrderUpdateOne) sqlSave(ctx context.Context) (_node *Order, err error
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeUUID,
 			Value:  value,
+			Column: order.FieldPaymentCoinTypeID,
+		})
+	}
+	if ouo.mutation.PaymentCoinTypeIDCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
 			Column: order.FieldPaymentCoinTypeID,
 		})
 	}

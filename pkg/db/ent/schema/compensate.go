@@ -3,6 +3,7 @@ package schema
 import (
 	"entgo.io/ent"
 	"entgo.io/ent/schema/field"
+	"entgo.io/ent/schema/index"
 	types "github.com/NpoolPlatform/message/npool/basetypes/order/v1"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/mixin"
 	"github.com/google/uuid"
@@ -54,4 +55,10 @@ func (Compensate) Fields() []ent.Field {
 // Edges of the Compensate.
 func (Compensate) Edges() []ent.Edge {
 	return nil
+}
+
+func (Compensate) Indexes() []ent.Index {
+	return []ent.Index{
+		index.Fields("order_id"),
+	}
 }
