@@ -84,6 +84,20 @@ func (cu *CompensateUpdate) AddDeletedAt(u int32) *CompensateUpdate {
 	return cu
 }
 
+// SetEntID sets the "ent_id" field.
+func (cu *CompensateUpdate) SetEntID(u uuid.UUID) *CompensateUpdate {
+	cu.mutation.SetEntID(u)
+	return cu
+}
+
+// SetNillableEntID sets the "ent_id" field if the given value is not nil.
+func (cu *CompensateUpdate) SetNillableEntID(u *uuid.UUID) *CompensateUpdate {
+	if u != nil {
+		cu.SetEntID(*u)
+	}
+	return cu
+}
+
 // SetOrderID sets the "order_id" field.
 func (cu *CompensateUpdate) SetOrderID(u uuid.UUID) *CompensateUpdate {
 	cu.mutation.SetOrderID(u)
@@ -290,7 +304,7 @@ func (cu *CompensateUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Table:   compensate.Table,
 			Columns: compensate.Columns,
 			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeUUID,
+				Type:   field.TypeUint32,
 				Column: compensate.FieldID,
 			},
 		},
@@ -342,6 +356,13 @@ func (cu *CompensateUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Type:   field.TypeUint32,
 			Value:  value,
 			Column: compensate.FieldDeletedAt,
+		})
+	}
+	if value, ok := cu.mutation.EntID(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Value:  value,
+			Column: compensate.FieldEntID,
 		})
 	}
 	if value, ok := cu.mutation.OrderID(); ok {
@@ -503,6 +524,20 @@ func (cuo *CompensateUpdateOne) SetNillableDeletedAt(u *uint32) *CompensateUpdat
 // AddDeletedAt adds u to the "deleted_at" field.
 func (cuo *CompensateUpdateOne) AddDeletedAt(u int32) *CompensateUpdateOne {
 	cuo.mutation.AddDeletedAt(u)
+	return cuo
+}
+
+// SetEntID sets the "ent_id" field.
+func (cuo *CompensateUpdateOne) SetEntID(u uuid.UUID) *CompensateUpdateOne {
+	cuo.mutation.SetEntID(u)
+	return cuo
+}
+
+// SetNillableEntID sets the "ent_id" field if the given value is not nil.
+func (cuo *CompensateUpdateOne) SetNillableEntID(u *uuid.UUID) *CompensateUpdateOne {
+	if u != nil {
+		cuo.SetEntID(*u)
+	}
 	return cuo
 }
 
@@ -725,7 +760,7 @@ func (cuo *CompensateUpdateOne) sqlSave(ctx context.Context) (_node *Compensate,
 			Table:   compensate.Table,
 			Columns: compensate.Columns,
 			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeUUID,
+				Type:   field.TypeUint32,
 				Column: compensate.FieldID,
 			},
 		},
@@ -794,6 +829,13 @@ func (cuo *CompensateUpdateOne) sqlSave(ctx context.Context) (_node *Compensate,
 			Type:   field.TypeUint32,
 			Value:  value,
 			Column: compensate.FieldDeletedAt,
+		})
+	}
+	if value, ok := cuo.mutation.EntID(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Value:  value,
+			Column: compensate.FieldEntID,
 		})
 	}
 	if value, ok := cuo.mutation.OrderID(); ok {

@@ -7,7 +7,6 @@ import (
 	"errors"
 	"fmt"
 
-	"entgo.io/ent/dialect"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
@@ -65,6 +64,20 @@ func (oogc *OutOfGasCreate) SetNillableDeletedAt(u *uint32) *OutOfGasCreate {
 	return oogc
 }
 
+// SetEntID sets the "ent_id" field.
+func (oogc *OutOfGasCreate) SetEntID(u uuid.UUID) *OutOfGasCreate {
+	oogc.mutation.SetEntID(u)
+	return oogc
+}
+
+// SetNillableEntID sets the "ent_id" field if the given value is not nil.
+func (oogc *OutOfGasCreate) SetNillableEntID(u *uuid.UUID) *OutOfGasCreate {
+	if u != nil {
+		oogc.SetEntID(*u)
+	}
+	return oogc
+}
+
 // SetOrderID sets the "order_id" field.
 func (oogc *OutOfGasCreate) SetOrderID(u uuid.UUID) *OutOfGasCreate {
 	oogc.mutation.SetOrderID(u)
@@ -100,16 +113,8 @@ func (oogc *OutOfGasCreate) SetNillableEndAt(u *uint32) *OutOfGasCreate {
 }
 
 // SetID sets the "id" field.
-func (oogc *OutOfGasCreate) SetID(u uuid.UUID) *OutOfGasCreate {
+func (oogc *OutOfGasCreate) SetID(u uint32) *OutOfGasCreate {
 	oogc.mutation.SetID(u)
-	return oogc
-}
-
-// SetNillableID sets the "id" field if the given value is not nil.
-func (oogc *OutOfGasCreate) SetNillableID(u *uuid.UUID) *OutOfGasCreate {
-	if u != nil {
-		oogc.SetID(*u)
-	}
 	return oogc
 }
 
@@ -213,6 +218,13 @@ func (oogc *OutOfGasCreate) defaults() error {
 		v := outofgas.DefaultDeletedAt()
 		oogc.mutation.SetDeletedAt(v)
 	}
+	if _, ok := oogc.mutation.EntID(); !ok {
+		if outofgas.DefaultEntID == nil {
+			return fmt.Errorf("ent: uninitialized outofgas.DefaultEntID (forgotten import ent/runtime?)")
+		}
+		v := outofgas.DefaultEntID()
+		oogc.mutation.SetEntID(v)
+	}
 	if _, ok := oogc.mutation.StartAt(); !ok {
 		v := outofgas.DefaultStartAt
 		oogc.mutation.SetStartAt(v)
@@ -220,13 +232,6 @@ func (oogc *OutOfGasCreate) defaults() error {
 	if _, ok := oogc.mutation.EndAt(); !ok {
 		v := outofgas.DefaultEndAt
 		oogc.mutation.SetEndAt(v)
-	}
-	if _, ok := oogc.mutation.ID(); !ok {
-		if outofgas.DefaultID == nil {
-			return fmt.Errorf("ent: uninitialized outofgas.DefaultID (forgotten import ent/runtime?)")
-		}
-		v := outofgas.DefaultID()
-		oogc.mutation.SetID(v)
 	}
 	return nil
 }
@@ -242,6 +247,9 @@ func (oogc *OutOfGasCreate) check() error {
 	if _, ok := oogc.mutation.DeletedAt(); !ok {
 		return &ValidationError{Name: "deleted_at", err: errors.New(`ent: missing required field "OutOfGas.deleted_at"`)}
 	}
+	if _, ok := oogc.mutation.EntID(); !ok {
+		return &ValidationError{Name: "ent_id", err: errors.New(`ent: missing required field "OutOfGas.ent_id"`)}
+	}
 	if _, ok := oogc.mutation.OrderID(); !ok {
 		return &ValidationError{Name: "order_id", err: errors.New(`ent: missing required field "OutOfGas.order_id"`)}
 	}
@@ -256,12 +264,9 @@ func (oogc *OutOfGasCreate) sqlSave(ctx context.Context) (*OutOfGas, error) {
 		}
 		return nil, err
 	}
-	if _spec.ID.Value != nil {
-		if id, ok := _spec.ID.Value.(*uuid.UUID); ok {
-			_node.ID = *id
-		} else if err := _node.ID.Scan(_spec.ID.Value); err != nil {
-			return nil, err
-		}
+	if _spec.ID.Value != _node.ID {
+		id := _spec.ID.Value.(int64)
+		_node.ID = uint32(id)
 	}
 	return _node, nil
 }
@@ -272,7 +277,7 @@ func (oogc *OutOfGasCreate) createSpec() (*OutOfGas, *sqlgraph.CreateSpec) {
 		_spec = &sqlgraph.CreateSpec{
 			Table: outofgas.Table,
 			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeUUID,
+				Type:   field.TypeUint32,
 				Column: outofgas.FieldID,
 			},
 		}
@@ -280,7 +285,7 @@ func (oogc *OutOfGasCreate) createSpec() (*OutOfGas, *sqlgraph.CreateSpec) {
 	_spec.OnConflict = oogc.conflict
 	if id, ok := oogc.mutation.ID(); ok {
 		_node.ID = id
-		_spec.ID.Value = &id
+		_spec.ID.Value = id
 	}
 	if value, ok := oogc.mutation.CreatedAt(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -305,6 +310,14 @@ func (oogc *OutOfGasCreate) createSpec() (*OutOfGas, *sqlgraph.CreateSpec) {
 			Column: outofgas.FieldDeletedAt,
 		})
 		_node.DeletedAt = value
+	}
+	if value, ok := oogc.mutation.EntID(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Value:  value,
+			Column: outofgas.FieldEntID,
+		})
+		_node.EntID = value
 	}
 	if value, ok := oogc.mutation.OrderID(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -435,6 +448,18 @@ func (u *OutOfGasUpsert) UpdateDeletedAt() *OutOfGasUpsert {
 // AddDeletedAt adds v to the "deleted_at" field.
 func (u *OutOfGasUpsert) AddDeletedAt(v uint32) *OutOfGasUpsert {
 	u.Add(outofgas.FieldDeletedAt, v)
+	return u
+}
+
+// SetEntID sets the "ent_id" field.
+func (u *OutOfGasUpsert) SetEntID(v uuid.UUID) *OutOfGasUpsert {
+	u.Set(outofgas.FieldEntID, v)
+	return u
+}
+
+// UpdateEntID sets the "ent_id" field to the value that was provided on create.
+func (u *OutOfGasUpsert) UpdateEntID() *OutOfGasUpsert {
+	u.SetExcluded(outofgas.FieldEntID)
 	return u
 }
 
@@ -611,6 +636,20 @@ func (u *OutOfGasUpsertOne) UpdateDeletedAt() *OutOfGasUpsertOne {
 	})
 }
 
+// SetEntID sets the "ent_id" field.
+func (u *OutOfGasUpsertOne) SetEntID(v uuid.UUID) *OutOfGasUpsertOne {
+	return u.Update(func(s *OutOfGasUpsert) {
+		s.SetEntID(v)
+	})
+}
+
+// UpdateEntID sets the "ent_id" field to the value that was provided on create.
+func (u *OutOfGasUpsertOne) UpdateEntID() *OutOfGasUpsertOne {
+	return u.Update(func(s *OutOfGasUpsert) {
+		s.UpdateEntID()
+	})
+}
+
 // SetOrderID sets the "order_id" field.
 func (u *OutOfGasUpsertOne) SetOrderID(v uuid.UUID) *OutOfGasUpsertOne {
 	return u.Update(func(s *OutOfGasUpsert) {
@@ -697,12 +736,7 @@ func (u *OutOfGasUpsertOne) ExecX(ctx context.Context) {
 }
 
 // Exec executes the UPSERT query and returns the inserted/updated ID.
-func (u *OutOfGasUpsertOne) ID(ctx context.Context) (id uuid.UUID, err error) {
-	if u.create.driver.Dialect() == dialect.MySQL {
-		// In case of "ON CONFLICT", there is no way to get back non-numeric ID
-		// fields from the database since MySQL does not support the RETURNING clause.
-		return id, errors.New("ent: OutOfGasUpsertOne.ID is not supported by MySQL driver. Use OutOfGasUpsertOne.Exec instead")
-	}
+func (u *OutOfGasUpsertOne) ID(ctx context.Context) (id uint32, err error) {
 	node, err := u.create.Save(ctx)
 	if err != nil {
 		return id, err
@@ -711,7 +745,7 @@ func (u *OutOfGasUpsertOne) ID(ctx context.Context) (id uuid.UUID, err error) {
 }
 
 // IDX is like ID, but panics if an error occurs.
-func (u *OutOfGasUpsertOne) IDX(ctx context.Context) uuid.UUID {
+func (u *OutOfGasUpsertOne) IDX(ctx context.Context) uint32 {
 	id, err := u.ID(ctx)
 	if err != nil {
 		panic(err)
@@ -762,6 +796,10 @@ func (oogcb *OutOfGasCreateBulk) Save(ctx context.Context) ([]*OutOfGas, error) 
 					return nil, err
 				}
 				mutation.id = &nodes[i].ID
+				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
+					id := specs[i].ID.Value.(int64)
+					nodes[i].ID = uint32(id)
+				}
 				mutation.done = true
 				return nodes[i], nil
 			})
@@ -957,6 +995,20 @@ func (u *OutOfGasUpsertBulk) AddDeletedAt(v uint32) *OutOfGasUpsertBulk {
 func (u *OutOfGasUpsertBulk) UpdateDeletedAt() *OutOfGasUpsertBulk {
 	return u.Update(func(s *OutOfGasUpsert) {
 		s.UpdateDeletedAt()
+	})
+}
+
+// SetEntID sets the "ent_id" field.
+func (u *OutOfGasUpsertBulk) SetEntID(v uuid.UUID) *OutOfGasUpsertBulk {
+	return u.Update(func(s *OutOfGasUpsert) {
+		s.SetEntID(v)
+	})
+}
+
+// UpdateEntID sets the "ent_id" field to the value that was provided on create.
+func (u *OutOfGasUpsertBulk) UpdateEntID() *OutOfGasUpsertBulk {
+	return u.Update(func(s *OutOfGasUpsert) {
+		s.UpdateEntID()
 	})
 }
 

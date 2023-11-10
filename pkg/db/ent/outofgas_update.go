@@ -84,6 +84,20 @@ func (oogu *OutOfGasUpdate) AddDeletedAt(u int32) *OutOfGasUpdate {
 	return oogu
 }
 
+// SetEntID sets the "ent_id" field.
+func (oogu *OutOfGasUpdate) SetEntID(u uuid.UUID) *OutOfGasUpdate {
+	oogu.mutation.SetEntID(u)
+	return oogu
+}
+
+// SetNillableEntID sets the "ent_id" field if the given value is not nil.
+func (oogu *OutOfGasUpdate) SetNillableEntID(u *uuid.UUID) *OutOfGasUpdate {
+	if u != nil {
+		oogu.SetEntID(*u)
+	}
+	return oogu
+}
+
 // SetOrderID sets the "order_id" field.
 func (oogu *OutOfGasUpdate) SetOrderID(u uuid.UUID) *OutOfGasUpdate {
 	oogu.mutation.SetOrderID(u)
@@ -230,7 +244,7 @@ func (oogu *OutOfGasUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Table:   outofgas.Table,
 			Columns: outofgas.Columns,
 			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeUUID,
+				Type:   field.TypeUint32,
 				Column: outofgas.FieldID,
 			},
 		},
@@ -282,6 +296,13 @@ func (oogu *OutOfGasUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Type:   field.TypeUint32,
 			Value:  value,
 			Column: outofgas.FieldDeletedAt,
+		})
+	}
+	if value, ok := oogu.mutation.EntID(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Value:  value,
+			Column: outofgas.FieldEntID,
 		})
 	}
 	if value, ok := oogu.mutation.OrderID(); ok {
@@ -404,6 +425,20 @@ func (ooguo *OutOfGasUpdateOne) SetNillableDeletedAt(u *uint32) *OutOfGasUpdateO
 // AddDeletedAt adds u to the "deleted_at" field.
 func (ooguo *OutOfGasUpdateOne) AddDeletedAt(u int32) *OutOfGasUpdateOne {
 	ooguo.mutation.AddDeletedAt(u)
+	return ooguo
+}
+
+// SetEntID sets the "ent_id" field.
+func (ooguo *OutOfGasUpdateOne) SetEntID(u uuid.UUID) *OutOfGasUpdateOne {
+	ooguo.mutation.SetEntID(u)
+	return ooguo
+}
+
+// SetNillableEntID sets the "ent_id" field if the given value is not nil.
+func (ooguo *OutOfGasUpdateOne) SetNillableEntID(u *uuid.UUID) *OutOfGasUpdateOne {
+	if u != nil {
+		ooguo.SetEntID(*u)
+	}
 	return ooguo
 }
 
@@ -566,7 +601,7 @@ func (ooguo *OutOfGasUpdateOne) sqlSave(ctx context.Context) (_node *OutOfGas, e
 			Table:   outofgas.Table,
 			Columns: outofgas.Columns,
 			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeUUID,
+				Type:   field.TypeUint32,
 				Column: outofgas.FieldID,
 			},
 		},
@@ -635,6 +670,13 @@ func (ooguo *OutOfGasUpdateOne) sqlSave(ctx context.Context) (_node *OutOfGas, e
 			Type:   field.TypeUint32,
 			Value:  value,
 			Column: outofgas.FieldDeletedAt,
+		})
+	}
+	if value, ok := ooguo.mutation.EntID(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Value:  value,
+			Column: outofgas.FieldEntID,
 		})
 	}
 	if value, ok := ooguo.mutation.OrderID(); ok {

@@ -7,7 +7,6 @@ import (
 	"errors"
 	"fmt"
 
-	"entgo.io/ent/dialect"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
@@ -61,6 +60,20 @@ func (cc *CompensateCreate) SetDeletedAt(u uint32) *CompensateCreate {
 func (cc *CompensateCreate) SetNillableDeletedAt(u *uint32) *CompensateCreate {
 	if u != nil {
 		cc.SetDeletedAt(*u)
+	}
+	return cc
+}
+
+// SetEntID sets the "ent_id" field.
+func (cc *CompensateCreate) SetEntID(u uuid.UUID) *CompensateCreate {
+	cc.mutation.SetEntID(u)
+	return cc
+}
+
+// SetNillableEntID sets the "ent_id" field if the given value is not nil.
+func (cc *CompensateCreate) SetNillableEntID(u *uuid.UUID) *CompensateCreate {
+	if u != nil {
+		cc.SetEntID(*u)
 	}
 	return cc
 }
@@ -142,16 +155,8 @@ func (cc *CompensateCreate) SetNillableMessage(s *string) *CompensateCreate {
 }
 
 // SetID sets the "id" field.
-func (cc *CompensateCreate) SetID(u uuid.UUID) *CompensateCreate {
+func (cc *CompensateCreate) SetID(u uint32) *CompensateCreate {
 	cc.mutation.SetID(u)
-	return cc
-}
-
-// SetNillableID sets the "id" field if the given value is not nil.
-func (cc *CompensateCreate) SetNillableID(u *uuid.UUID) *CompensateCreate {
-	if u != nil {
-		cc.SetID(*u)
-	}
 	return cc
 }
 
@@ -255,6 +260,13 @@ func (cc *CompensateCreate) defaults() error {
 		v := compensate.DefaultDeletedAt()
 		cc.mutation.SetDeletedAt(v)
 	}
+	if _, ok := cc.mutation.EntID(); !ok {
+		if compensate.DefaultEntID == nil {
+			return fmt.Errorf("ent: uninitialized compensate.DefaultEntID (forgotten import ent/runtime?)")
+		}
+		v := compensate.DefaultEntID()
+		cc.mutation.SetEntID(v)
+	}
 	if _, ok := cc.mutation.StartAt(); !ok {
 		v := compensate.DefaultStartAt
 		cc.mutation.SetStartAt(v)
@@ -275,13 +287,6 @@ func (cc *CompensateCreate) defaults() error {
 		v := compensate.DefaultMessage
 		cc.mutation.SetMessage(v)
 	}
-	if _, ok := cc.mutation.ID(); !ok {
-		if compensate.DefaultID == nil {
-			return fmt.Errorf("ent: uninitialized compensate.DefaultID (forgotten import ent/runtime?)")
-		}
-		v := compensate.DefaultID()
-		cc.mutation.SetID(v)
-	}
 	return nil
 }
 
@@ -295,6 +300,9 @@ func (cc *CompensateCreate) check() error {
 	}
 	if _, ok := cc.mutation.DeletedAt(); !ok {
 		return &ValidationError{Name: "deleted_at", err: errors.New(`ent: missing required field "Compensate.deleted_at"`)}
+	}
+	if _, ok := cc.mutation.EntID(); !ok {
+		return &ValidationError{Name: "ent_id", err: errors.New(`ent: missing required field "Compensate.ent_id"`)}
 	}
 	if _, ok := cc.mutation.OrderID(); !ok {
 		return &ValidationError{Name: "order_id", err: errors.New(`ent: missing required field "Compensate.order_id"`)}
@@ -310,12 +318,9 @@ func (cc *CompensateCreate) sqlSave(ctx context.Context) (*Compensate, error) {
 		}
 		return nil, err
 	}
-	if _spec.ID.Value != nil {
-		if id, ok := _spec.ID.Value.(*uuid.UUID); ok {
-			_node.ID = *id
-		} else if err := _node.ID.Scan(_spec.ID.Value); err != nil {
-			return nil, err
-		}
+	if _spec.ID.Value != _node.ID {
+		id := _spec.ID.Value.(int64)
+		_node.ID = uint32(id)
 	}
 	return _node, nil
 }
@@ -326,7 +331,7 @@ func (cc *CompensateCreate) createSpec() (*Compensate, *sqlgraph.CreateSpec) {
 		_spec = &sqlgraph.CreateSpec{
 			Table: compensate.Table,
 			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeUUID,
+				Type:   field.TypeUint32,
 				Column: compensate.FieldID,
 			},
 		}
@@ -334,7 +339,7 @@ func (cc *CompensateCreate) createSpec() (*Compensate, *sqlgraph.CreateSpec) {
 	_spec.OnConflict = cc.conflict
 	if id, ok := cc.mutation.ID(); ok {
 		_node.ID = id
-		_spec.ID.Value = &id
+		_spec.ID.Value = id
 	}
 	if value, ok := cc.mutation.CreatedAt(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -359,6 +364,14 @@ func (cc *CompensateCreate) createSpec() (*Compensate, *sqlgraph.CreateSpec) {
 			Column: compensate.FieldDeletedAt,
 		})
 		_node.DeletedAt = value
+	}
+	if value, ok := cc.mutation.EntID(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Value:  value,
+			Column: compensate.FieldEntID,
+		})
+		_node.EntID = value
 	}
 	if value, ok := cc.mutation.OrderID(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -513,6 +526,18 @@ func (u *CompensateUpsert) UpdateDeletedAt() *CompensateUpsert {
 // AddDeletedAt adds v to the "deleted_at" field.
 func (u *CompensateUpsert) AddDeletedAt(v uint32) *CompensateUpsert {
 	u.Add(compensate.FieldDeletedAt, v)
+	return u
+}
+
+// SetEntID sets the "ent_id" field.
+func (u *CompensateUpsert) SetEntID(v uuid.UUID) *CompensateUpsert {
+	u.Set(compensate.FieldEntID, v)
+	return u
+}
+
+// UpdateEntID sets the "ent_id" field to the value that was provided on create.
+func (u *CompensateUpsert) UpdateEntID() *CompensateUpsert {
+	u.SetExcluded(compensate.FieldEntID)
 	return u
 }
 
@@ -743,6 +768,20 @@ func (u *CompensateUpsertOne) UpdateDeletedAt() *CompensateUpsertOne {
 	})
 }
 
+// SetEntID sets the "ent_id" field.
+func (u *CompensateUpsertOne) SetEntID(v uuid.UUID) *CompensateUpsertOne {
+	return u.Update(func(s *CompensateUpsert) {
+		s.SetEntID(v)
+	})
+}
+
+// UpdateEntID sets the "ent_id" field to the value that was provided on create.
+func (u *CompensateUpsertOne) UpdateEntID() *CompensateUpsertOne {
+	return u.Update(func(s *CompensateUpsert) {
+		s.UpdateEntID()
+	})
+}
+
 // SetOrderID sets the "order_id" field.
 func (u *CompensateUpsertOne) SetOrderID(v uuid.UUID) *CompensateUpsertOne {
 	return u.Update(func(s *CompensateUpsert) {
@@ -892,12 +931,7 @@ func (u *CompensateUpsertOne) ExecX(ctx context.Context) {
 }
 
 // Exec executes the UPSERT query and returns the inserted/updated ID.
-func (u *CompensateUpsertOne) ID(ctx context.Context) (id uuid.UUID, err error) {
-	if u.create.driver.Dialect() == dialect.MySQL {
-		// In case of "ON CONFLICT", there is no way to get back non-numeric ID
-		// fields from the database since MySQL does not support the RETURNING clause.
-		return id, errors.New("ent: CompensateUpsertOne.ID is not supported by MySQL driver. Use CompensateUpsertOne.Exec instead")
-	}
+func (u *CompensateUpsertOne) ID(ctx context.Context) (id uint32, err error) {
 	node, err := u.create.Save(ctx)
 	if err != nil {
 		return id, err
@@ -906,7 +940,7 @@ func (u *CompensateUpsertOne) ID(ctx context.Context) (id uuid.UUID, err error) 
 }
 
 // IDX is like ID, but panics if an error occurs.
-func (u *CompensateUpsertOne) IDX(ctx context.Context) uuid.UUID {
+func (u *CompensateUpsertOne) IDX(ctx context.Context) uint32 {
 	id, err := u.ID(ctx)
 	if err != nil {
 		panic(err)
@@ -957,6 +991,10 @@ func (ccb *CompensateCreateBulk) Save(ctx context.Context) ([]*Compensate, error
 					return nil, err
 				}
 				mutation.id = &nodes[i].ID
+				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
+					id := specs[i].ID.Value.(int64)
+					nodes[i].ID = uint32(id)
+				}
 				mutation.done = true
 				return nodes[i], nil
 			})
@@ -1152,6 +1190,20 @@ func (u *CompensateUpsertBulk) AddDeletedAt(v uint32) *CompensateUpsertBulk {
 func (u *CompensateUpsertBulk) UpdateDeletedAt() *CompensateUpsertBulk {
 	return u.Update(func(s *CompensateUpsert) {
 		s.UpdateDeletedAt()
+	})
+}
+
+// SetEntID sets the "ent_id" field.
+func (u *CompensateUpsertBulk) SetEntID(v uuid.UUID) *CompensateUpsertBulk {
+	return u.Update(func(s *CompensateUpsert) {
+		s.SetEntID(v)
+	})
+}
+
+// UpdateEntID sets the "ent_id" field to the value that was provided on create.
+func (u *CompensateUpsertBulk) UpdateEntID() *CompensateUpsertBulk {
+	return u.Update(func(s *CompensateUpsert) {
+		s.UpdateEntID()
 	})
 }
 

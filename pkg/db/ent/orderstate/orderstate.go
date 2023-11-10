@@ -19,6 +19,8 @@ const (
 	FieldUpdatedAt = "updated_at"
 	// FieldDeletedAt holds the string denoting the deleted_at field in the database.
 	FieldDeletedAt = "deleted_at"
+	// FieldEntID holds the string denoting the ent_id field in the database.
+	FieldEntID = "ent_id"
 	// FieldOrderID holds the string denoting the order_id field in the database.
 	FieldOrderID = "order_id"
 	// FieldOrderState holds the string denoting the order_state field in the database.
@@ -63,6 +65,7 @@ var Columns = []string{
 	FieldCreatedAt,
 	FieldUpdatedAt,
 	FieldDeletedAt,
+	FieldEntID,
 	FieldOrderID,
 	FieldOrderState,
 	FieldCancelState,
@@ -109,6 +112,8 @@ var (
 	UpdateDefaultUpdatedAt func() uint32
 	// DefaultDeletedAt holds the default value on creation for the "deleted_at" field.
 	DefaultDeletedAt func() uint32
+	// DefaultEntID holds the default value on creation for the "ent_id" field.
+	DefaultEntID func() uuid.UUID
 	// DefaultOrderState holds the default value on creation for the "order_state" field.
 	DefaultOrderState string
 	// DefaultCancelState holds the default value on creation for the "cancel_state" field.
@@ -141,6 +146,4 @@ var (
 	DefaultOutofgasHours uint32
 	// DefaultCompensateHours holds the default value on creation for the "compensate_hours" field.
 	DefaultCompensateHours uint32
-	// DefaultID holds the default value on creation for the "id" field.
-	DefaultID func() uuid.UUID
 )

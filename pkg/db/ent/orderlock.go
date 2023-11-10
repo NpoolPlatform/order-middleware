@@ -15,13 +15,15 @@ import (
 type OrderLock struct {
 	config `json:"-"`
 	// ID of the ent.
-	ID uuid.UUID `json:"id,omitempty"`
+	ID uint32 `json:"id,omitempty"`
 	// CreatedAt holds the value of the "created_at" field.
 	CreatedAt uint32 `json:"created_at,omitempty"`
 	// UpdatedAt holds the value of the "updated_at" field.
 	UpdatedAt uint32 `json:"updated_at,omitempty"`
 	// DeletedAt holds the value of the "deleted_at" field.
 	DeletedAt uint32 `json:"deleted_at,omitempty"`
+	// EntID holds the value of the "ent_id" field.
+	EntID uuid.UUID `json:"ent_id,omitempty"`
 	// AppID holds the value of the "app_id" field.
 	AppID uuid.UUID `json:"app_id,omitempty"`
 	// UserID holds the value of the "user_id" field.
@@ -37,11 +39,11 @@ func (*OrderLock) scanValues(columns []string) ([]interface{}, error) {
 	values := make([]interface{}, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case orderlock.FieldCreatedAt, orderlock.FieldUpdatedAt, orderlock.FieldDeletedAt:
+		case orderlock.FieldID, orderlock.FieldCreatedAt, orderlock.FieldUpdatedAt, orderlock.FieldDeletedAt:
 			values[i] = new(sql.NullInt64)
 		case orderlock.FieldLockType:
 			values[i] = new(sql.NullString)
-		case orderlock.FieldID, orderlock.FieldAppID, orderlock.FieldUserID, orderlock.FieldOrderID:
+		case orderlock.FieldEntID, orderlock.FieldAppID, orderlock.FieldUserID, orderlock.FieldOrderID:
 			values[i] = new(uuid.UUID)
 		default:
 			return nil, fmt.Errorf("unexpected column %q for type OrderLock", columns[i])
@@ -59,11 +61,11 @@ func (ol *OrderLock) assignValues(columns []string, values []interface{}) error 
 	for i := range columns {
 		switch columns[i] {
 		case orderlock.FieldID:
-			if value, ok := values[i].(*uuid.UUID); !ok {
-				return fmt.Errorf("unexpected type %T for field id", values[i])
-			} else if value != nil {
-				ol.ID = *value
+			value, ok := values[i].(*sql.NullInt64)
+			if !ok {
+				return fmt.Errorf("unexpected type %T for field id", value)
 			}
+			ol.ID = uint32(value.Int64)
 		case orderlock.FieldCreatedAt:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field created_at", values[i])
@@ -81,6 +83,12 @@ func (ol *OrderLock) assignValues(columns []string, values []interface{}) error 
 				return fmt.Errorf("unexpected type %T for field deleted_at", values[i])
 			} else if value.Valid {
 				ol.DeletedAt = uint32(value.Int64)
+			}
+		case orderlock.FieldEntID:
+			if value, ok := values[i].(*uuid.UUID); !ok {
+				return fmt.Errorf("unexpected type %T for field ent_id", values[i])
+			} else if value != nil {
+				ol.EntID = *value
 			}
 		case orderlock.FieldAppID:
 			if value, ok := values[i].(*uuid.UUID); !ok {
@@ -142,6 +150,9 @@ func (ol *OrderLock) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("deleted_at=")
 	builder.WriteString(fmt.Sprintf("%v", ol.DeletedAt))
+	builder.WriteString(", ")
+	builder.WriteString("ent_id=")
+	builder.WriteString(fmt.Sprintf("%v", ol.EntID))
 	builder.WriteString(", ")
 	builder.WriteString("app_id=")
 	builder.WriteString(fmt.Sprintf("%v", ol.AppID))

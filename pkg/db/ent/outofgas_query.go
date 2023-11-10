@@ -14,7 +14,6 @@ import (
 	"entgo.io/ent/schema/field"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/outofgas"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/predicate"
-	"github.com/google/uuid"
 )
 
 // OutOfGasQuery is the builder for querying OutOfGas entities.
@@ -87,8 +86,8 @@ func (oogq *OutOfGasQuery) FirstX(ctx context.Context) *OutOfGas {
 
 // FirstID returns the first OutOfGas ID from the query.
 // Returns a *NotFoundError when no OutOfGas ID was found.
-func (oogq *OutOfGasQuery) FirstID(ctx context.Context) (id uuid.UUID, err error) {
-	var ids []uuid.UUID
+func (oogq *OutOfGasQuery) FirstID(ctx context.Context) (id uint32, err error) {
+	var ids []uint32
 	if ids, err = oogq.Limit(1).IDs(ctx); err != nil {
 		return
 	}
@@ -100,7 +99,7 @@ func (oogq *OutOfGasQuery) FirstID(ctx context.Context) (id uuid.UUID, err error
 }
 
 // FirstIDX is like FirstID, but panics if an error occurs.
-func (oogq *OutOfGasQuery) FirstIDX(ctx context.Context) uuid.UUID {
+func (oogq *OutOfGasQuery) FirstIDX(ctx context.Context) uint32 {
 	id, err := oogq.FirstID(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)
@@ -138,8 +137,8 @@ func (oogq *OutOfGasQuery) OnlyX(ctx context.Context) *OutOfGas {
 // OnlyID is like Only, but returns the only OutOfGas ID in the query.
 // Returns a *NotSingularError when more than one OutOfGas ID is found.
 // Returns a *NotFoundError when no entities are found.
-func (oogq *OutOfGasQuery) OnlyID(ctx context.Context) (id uuid.UUID, err error) {
-	var ids []uuid.UUID
+func (oogq *OutOfGasQuery) OnlyID(ctx context.Context) (id uint32, err error) {
+	var ids []uint32
 	if ids, err = oogq.Limit(2).IDs(ctx); err != nil {
 		return
 	}
@@ -155,7 +154,7 @@ func (oogq *OutOfGasQuery) OnlyID(ctx context.Context) (id uuid.UUID, err error)
 }
 
 // OnlyIDX is like OnlyID, but panics if an error occurs.
-func (oogq *OutOfGasQuery) OnlyIDX(ctx context.Context) uuid.UUID {
+func (oogq *OutOfGasQuery) OnlyIDX(ctx context.Context) uint32 {
 	id, err := oogq.OnlyID(ctx)
 	if err != nil {
 		panic(err)
@@ -181,8 +180,8 @@ func (oogq *OutOfGasQuery) AllX(ctx context.Context) []*OutOfGas {
 }
 
 // IDs executes the query and returns a list of OutOfGas IDs.
-func (oogq *OutOfGasQuery) IDs(ctx context.Context) ([]uuid.UUID, error) {
-	var ids []uuid.UUID
+func (oogq *OutOfGasQuery) IDs(ctx context.Context) ([]uint32, error) {
+	var ids []uint32
 	if err := oogq.Select(outofgas.FieldID).Scan(ctx, &ids); err != nil {
 		return nil, err
 	}
@@ -190,7 +189,7 @@ func (oogq *OutOfGasQuery) IDs(ctx context.Context) ([]uuid.UUID, error) {
 }
 
 // IDsX is like IDs, but panics if an error occurs.
-func (oogq *OutOfGasQuery) IDsX(ctx context.Context) []uuid.UUID {
+func (oogq *OutOfGasQuery) IDsX(ctx context.Context) []uint32 {
 	ids, err := oogq.IDs(ctx)
 	if err != nil {
 		panic(err)
@@ -377,7 +376,7 @@ func (oogq *OutOfGasQuery) querySpec() *sqlgraph.QuerySpec {
 			Table:   outofgas.Table,
 			Columns: outofgas.Columns,
 			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeUUID,
+				Type:   field.TypeUint32,
 				Column: outofgas.FieldID,
 			},
 		},

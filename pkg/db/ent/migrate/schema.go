@@ -10,10 +10,11 @@ import (
 var (
 	// CompensatesColumns holds the columns for the "compensates" table.
 	CompensatesColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeUUID, Unique: true},
+		{Name: "id", Type: field.TypeUint32, Increment: true},
 		{Name: "created_at", Type: field.TypeUint32},
 		{Name: "updated_at", Type: field.TypeUint32},
 		{Name: "deleted_at", Type: field.TypeUint32},
+		{Name: "ent_id", Type: field.TypeUUID, Unique: true},
 		{Name: "order_id", Type: field.TypeUUID},
 		{Name: "start_at", Type: field.TypeUint32, Nullable: true, Default: 0},
 		{Name: "end_at", Type: field.TypeUint32, Nullable: true, Default: 0},
@@ -28,18 +29,24 @@ var (
 		PrimaryKey: []*schema.Column{CompensatesColumns[0]},
 		Indexes: []*schema.Index{
 			{
+				Name:    "compensate_ent_id",
+				Unique:  true,
+				Columns: []*schema.Column{CompensatesColumns[4]},
+			},
+			{
 				Name:    "compensate_order_id",
 				Unique:  false,
-				Columns: []*schema.Column{CompensatesColumns[4]},
+				Columns: []*schema.Column{CompensatesColumns[5]},
 			},
 		},
 	}
 	// OrdersColumns holds the columns for the "orders" table.
 	OrdersColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeUUID, Unique: true},
+		{Name: "id", Type: field.TypeUint32, Increment: true},
 		{Name: "created_at", Type: field.TypeUint32},
 		{Name: "updated_at", Type: field.TypeUint32},
 		{Name: "deleted_at", Type: field.TypeUint32},
+		{Name: "ent_id", Type: field.TypeUUID, Unique: true},
 		{Name: "app_id", Type: field.TypeUUID},
 		{Name: "user_id", Type: field.TypeUUID},
 		{Name: "good_id", Type: field.TypeUUID},
@@ -72,18 +79,24 @@ var (
 		PrimaryKey: []*schema.Column{OrdersColumns[0]},
 		Indexes: []*schema.Index{
 			{
+				Name:    "order_ent_id",
+				Unique:  true,
+				Columns: []*schema.Column{OrdersColumns[4]},
+			},
+			{
 				Name:    "order_app_id_user_id_good_id_app_good_id",
 				Unique:  false,
-				Columns: []*schema.Column{OrdersColumns[4], OrdersColumns[5], OrdersColumns[6], OrdersColumns[7]},
+				Columns: []*schema.Column{OrdersColumns[5], OrdersColumns[6], OrdersColumns[7], OrdersColumns[8]},
 			},
 		},
 	}
 	// OrderLocksColumns holds the columns for the "order_locks" table.
 	OrderLocksColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeUUID, Unique: true},
+		{Name: "id", Type: field.TypeUint32, Increment: true},
 		{Name: "created_at", Type: field.TypeUint32},
 		{Name: "updated_at", Type: field.TypeUint32},
 		{Name: "deleted_at", Type: field.TypeUint32},
+		{Name: "ent_id", Type: field.TypeUUID, Unique: true},
 		{Name: "app_id", Type: field.TypeUUID},
 		{Name: "user_id", Type: field.TypeUUID},
 		{Name: "order_id", Type: field.TypeUUID},
@@ -96,18 +109,24 @@ var (
 		PrimaryKey: []*schema.Column{OrderLocksColumns[0]},
 		Indexes: []*schema.Index{
 			{
+				Name:    "orderlock_ent_id",
+				Unique:  true,
+				Columns: []*schema.Column{OrderLocksColumns[4]},
+			},
+			{
 				Name:    "orderlock_order_id",
 				Unique:  false,
-				Columns: []*schema.Column{OrderLocksColumns[6]},
+				Columns: []*schema.Column{OrderLocksColumns[7]},
 			},
 		},
 	}
 	// OrderStatesColumns holds the columns for the "order_states" table.
 	OrderStatesColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeUUID, Unique: true},
+		{Name: "id", Type: field.TypeUint32, Increment: true},
 		{Name: "created_at", Type: field.TypeUint32},
 		{Name: "updated_at", Type: field.TypeUint32},
 		{Name: "deleted_at", Type: field.TypeUint32},
+		{Name: "ent_id", Type: field.TypeUUID, Unique: true},
 		{Name: "order_id", Type: field.TypeUUID},
 		{Name: "order_state", Type: field.TypeString, Nullable: true, Default: "OrderStateCreated"},
 		{Name: "cancel_state", Type: field.TypeString, Nullable: true, Default: "DefaultOrderState"},
@@ -133,18 +152,24 @@ var (
 		PrimaryKey: []*schema.Column{OrderStatesColumns[0]},
 		Indexes: []*schema.Index{
 			{
+				Name:    "orderstate_ent_id",
+				Unique:  true,
+				Columns: []*schema.Column{OrderStatesColumns[4]},
+			},
+			{
 				Name:    "orderstate_order_id",
 				Unique:  false,
-				Columns: []*schema.Column{OrderStatesColumns[4]},
+				Columns: []*schema.Column{OrderStatesColumns[5]},
 			},
 		},
 	}
 	// OutOfGasColumns holds the columns for the "out_of_gas" table.
 	OutOfGasColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeUUID, Unique: true},
+		{Name: "id", Type: field.TypeUint32, Increment: true},
 		{Name: "created_at", Type: field.TypeUint32},
 		{Name: "updated_at", Type: field.TypeUint32},
 		{Name: "deleted_at", Type: field.TypeUint32},
+		{Name: "ent_id", Type: field.TypeUUID, Unique: true},
 		{Name: "order_id", Type: field.TypeUUID},
 		{Name: "start_at", Type: field.TypeUint32, Nullable: true, Default: 0},
 		{Name: "end_at", Type: field.TypeUint32, Nullable: true, Default: 0},
@@ -154,13 +179,21 @@ var (
 		Name:       "out_of_gas",
 		Columns:    OutOfGasColumns,
 		PrimaryKey: []*schema.Column{OutOfGasColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "outofgas_ent_id",
+				Unique:  true,
+				Columns: []*schema.Column{OutOfGasColumns[4]},
+			},
+		},
 	}
 	// PaymentsColumns holds the columns for the "payments" table.
 	PaymentsColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeUUID, Unique: true},
+		{Name: "id", Type: field.TypeUint32, Increment: true},
 		{Name: "created_at", Type: field.TypeUint32},
 		{Name: "updated_at", Type: field.TypeUint32},
 		{Name: "deleted_at", Type: field.TypeUint32},
+		{Name: "ent_id", Type: field.TypeUUID, Unique: true},
 		{Name: "app_id", Type: field.TypeUUID},
 		{Name: "user_id", Type: field.TypeUUID},
 		{Name: "good_id", Type: field.TypeUUID},
@@ -177,9 +210,14 @@ var (
 		PrimaryKey: []*schema.Column{PaymentsColumns[0]},
 		Indexes: []*schema.Index{
 			{
+				Name:    "payment_ent_id",
+				Unique:  true,
+				Columns: []*schema.Column{PaymentsColumns[4]},
+			},
+			{
 				Name:    "payment_order_id",
 				Unique:  false,
-				Columns: []*schema.Column{PaymentsColumns[7]},
+				Columns: []*schema.Column{PaymentsColumns[8]},
 			},
 		},
 	}

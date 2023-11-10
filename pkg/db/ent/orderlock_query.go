@@ -14,7 +14,6 @@ import (
 	"entgo.io/ent/schema/field"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/orderlock"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/predicate"
-	"github.com/google/uuid"
 )
 
 // OrderLockQuery is the builder for querying OrderLock entities.
@@ -87,8 +86,8 @@ func (olq *OrderLockQuery) FirstX(ctx context.Context) *OrderLock {
 
 // FirstID returns the first OrderLock ID from the query.
 // Returns a *NotFoundError when no OrderLock ID was found.
-func (olq *OrderLockQuery) FirstID(ctx context.Context) (id uuid.UUID, err error) {
-	var ids []uuid.UUID
+func (olq *OrderLockQuery) FirstID(ctx context.Context) (id uint32, err error) {
+	var ids []uint32
 	if ids, err = olq.Limit(1).IDs(ctx); err != nil {
 		return
 	}
@@ -100,7 +99,7 @@ func (olq *OrderLockQuery) FirstID(ctx context.Context) (id uuid.UUID, err error
 }
 
 // FirstIDX is like FirstID, but panics if an error occurs.
-func (olq *OrderLockQuery) FirstIDX(ctx context.Context) uuid.UUID {
+func (olq *OrderLockQuery) FirstIDX(ctx context.Context) uint32 {
 	id, err := olq.FirstID(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)
@@ -138,8 +137,8 @@ func (olq *OrderLockQuery) OnlyX(ctx context.Context) *OrderLock {
 // OnlyID is like Only, but returns the only OrderLock ID in the query.
 // Returns a *NotSingularError when more than one OrderLock ID is found.
 // Returns a *NotFoundError when no entities are found.
-func (olq *OrderLockQuery) OnlyID(ctx context.Context) (id uuid.UUID, err error) {
-	var ids []uuid.UUID
+func (olq *OrderLockQuery) OnlyID(ctx context.Context) (id uint32, err error) {
+	var ids []uint32
 	if ids, err = olq.Limit(2).IDs(ctx); err != nil {
 		return
 	}
@@ -155,7 +154,7 @@ func (olq *OrderLockQuery) OnlyID(ctx context.Context) (id uuid.UUID, err error)
 }
 
 // OnlyIDX is like OnlyID, but panics if an error occurs.
-func (olq *OrderLockQuery) OnlyIDX(ctx context.Context) uuid.UUID {
+func (olq *OrderLockQuery) OnlyIDX(ctx context.Context) uint32 {
 	id, err := olq.OnlyID(ctx)
 	if err != nil {
 		panic(err)
@@ -181,8 +180,8 @@ func (olq *OrderLockQuery) AllX(ctx context.Context) []*OrderLock {
 }
 
 // IDs executes the query and returns a list of OrderLock IDs.
-func (olq *OrderLockQuery) IDs(ctx context.Context) ([]uuid.UUID, error) {
-	var ids []uuid.UUID
+func (olq *OrderLockQuery) IDs(ctx context.Context) ([]uint32, error) {
+	var ids []uint32
 	if err := olq.Select(orderlock.FieldID).Scan(ctx, &ids); err != nil {
 		return nil, err
 	}
@@ -190,7 +189,7 @@ func (olq *OrderLockQuery) IDs(ctx context.Context) ([]uuid.UUID, error) {
 }
 
 // IDsX is like IDs, but panics if an error occurs.
-func (olq *OrderLockQuery) IDsX(ctx context.Context) []uuid.UUID {
+func (olq *OrderLockQuery) IDsX(ctx context.Context) []uint32 {
 	ids, err := olq.IDs(ctx)
 	if err != nil {
 		panic(err)
@@ -377,7 +376,7 @@ func (olq *OrderLockQuery) querySpec() *sqlgraph.QuerySpec {
 			Table:   orderlock.Table,
 			Columns: orderlock.Columns,
 			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeUUID,
+				Type:   field.TypeUint32,
 				Column: orderlock.FieldID,
 			},
 		},

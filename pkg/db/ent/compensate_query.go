@@ -14,7 +14,6 @@ import (
 	"entgo.io/ent/schema/field"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/compensate"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/predicate"
-	"github.com/google/uuid"
 )
 
 // CompensateQuery is the builder for querying Compensate entities.
@@ -87,8 +86,8 @@ func (cq *CompensateQuery) FirstX(ctx context.Context) *Compensate {
 
 // FirstID returns the first Compensate ID from the query.
 // Returns a *NotFoundError when no Compensate ID was found.
-func (cq *CompensateQuery) FirstID(ctx context.Context) (id uuid.UUID, err error) {
-	var ids []uuid.UUID
+func (cq *CompensateQuery) FirstID(ctx context.Context) (id uint32, err error) {
+	var ids []uint32
 	if ids, err = cq.Limit(1).IDs(ctx); err != nil {
 		return
 	}
@@ -100,7 +99,7 @@ func (cq *CompensateQuery) FirstID(ctx context.Context) (id uuid.UUID, err error
 }
 
 // FirstIDX is like FirstID, but panics if an error occurs.
-func (cq *CompensateQuery) FirstIDX(ctx context.Context) uuid.UUID {
+func (cq *CompensateQuery) FirstIDX(ctx context.Context) uint32 {
 	id, err := cq.FirstID(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)
@@ -138,8 +137,8 @@ func (cq *CompensateQuery) OnlyX(ctx context.Context) *Compensate {
 // OnlyID is like Only, but returns the only Compensate ID in the query.
 // Returns a *NotSingularError when more than one Compensate ID is found.
 // Returns a *NotFoundError when no entities are found.
-func (cq *CompensateQuery) OnlyID(ctx context.Context) (id uuid.UUID, err error) {
-	var ids []uuid.UUID
+func (cq *CompensateQuery) OnlyID(ctx context.Context) (id uint32, err error) {
+	var ids []uint32
 	if ids, err = cq.Limit(2).IDs(ctx); err != nil {
 		return
 	}
@@ -155,7 +154,7 @@ func (cq *CompensateQuery) OnlyID(ctx context.Context) (id uuid.UUID, err error)
 }
 
 // OnlyIDX is like OnlyID, but panics if an error occurs.
-func (cq *CompensateQuery) OnlyIDX(ctx context.Context) uuid.UUID {
+func (cq *CompensateQuery) OnlyIDX(ctx context.Context) uint32 {
 	id, err := cq.OnlyID(ctx)
 	if err != nil {
 		panic(err)
@@ -181,8 +180,8 @@ func (cq *CompensateQuery) AllX(ctx context.Context) []*Compensate {
 }
 
 // IDs executes the query and returns a list of Compensate IDs.
-func (cq *CompensateQuery) IDs(ctx context.Context) ([]uuid.UUID, error) {
-	var ids []uuid.UUID
+func (cq *CompensateQuery) IDs(ctx context.Context) ([]uint32, error) {
+	var ids []uint32
 	if err := cq.Select(compensate.FieldID).Scan(ctx, &ids); err != nil {
 		return nil, err
 	}
@@ -190,7 +189,7 @@ func (cq *CompensateQuery) IDs(ctx context.Context) ([]uuid.UUID, error) {
 }
 
 // IDsX is like IDs, but panics if an error occurs.
-func (cq *CompensateQuery) IDsX(ctx context.Context) []uuid.UUID {
+func (cq *CompensateQuery) IDsX(ctx context.Context) []uint32 {
 	ids, err := cq.IDs(ctx)
 	if err != nil {
 		panic(err)
@@ -377,7 +376,7 @@ func (cq *CompensateQuery) querySpec() *sqlgraph.QuerySpec {
 			Table:   compensate.Table,
 			Columns: compensate.Columns,
 			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeUUID,
+				Type:   field.TypeUint32,
 				Column: compensate.FieldID,
 			},
 		},

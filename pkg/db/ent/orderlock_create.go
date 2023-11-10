@@ -7,7 +7,6 @@ import (
 	"errors"
 	"fmt"
 
-	"entgo.io/ent/dialect"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
@@ -65,6 +64,20 @@ func (olc *OrderLockCreate) SetNillableDeletedAt(u *uint32) *OrderLockCreate {
 	return olc
 }
 
+// SetEntID sets the "ent_id" field.
+func (olc *OrderLockCreate) SetEntID(u uuid.UUID) *OrderLockCreate {
+	olc.mutation.SetEntID(u)
+	return olc
+}
+
+// SetNillableEntID sets the "ent_id" field if the given value is not nil.
+func (olc *OrderLockCreate) SetNillableEntID(u *uuid.UUID) *OrderLockCreate {
+	if u != nil {
+		olc.SetEntID(*u)
+	}
+	return olc
+}
+
 // SetAppID sets the "app_id" field.
 func (olc *OrderLockCreate) SetAppID(u uuid.UUID) *OrderLockCreate {
 	olc.mutation.SetAppID(u)
@@ -98,16 +111,8 @@ func (olc *OrderLockCreate) SetNillableLockType(s *string) *OrderLockCreate {
 }
 
 // SetID sets the "id" field.
-func (olc *OrderLockCreate) SetID(u uuid.UUID) *OrderLockCreate {
+func (olc *OrderLockCreate) SetID(u uint32) *OrderLockCreate {
 	olc.mutation.SetID(u)
-	return olc
-}
-
-// SetNillableID sets the "id" field if the given value is not nil.
-func (olc *OrderLockCreate) SetNillableID(u *uuid.UUID) *OrderLockCreate {
-	if u != nil {
-		olc.SetID(*u)
-	}
 	return olc
 }
 
@@ -211,16 +216,16 @@ func (olc *OrderLockCreate) defaults() error {
 		v := orderlock.DefaultDeletedAt()
 		olc.mutation.SetDeletedAt(v)
 	}
+	if _, ok := olc.mutation.EntID(); !ok {
+		if orderlock.DefaultEntID == nil {
+			return fmt.Errorf("ent: uninitialized orderlock.DefaultEntID (forgotten import ent/runtime?)")
+		}
+		v := orderlock.DefaultEntID()
+		olc.mutation.SetEntID(v)
+	}
 	if _, ok := olc.mutation.LockType(); !ok {
 		v := orderlock.DefaultLockType
 		olc.mutation.SetLockType(v)
-	}
-	if _, ok := olc.mutation.ID(); !ok {
-		if orderlock.DefaultID == nil {
-			return fmt.Errorf("ent: uninitialized orderlock.DefaultID (forgotten import ent/runtime?)")
-		}
-		v := orderlock.DefaultID()
-		olc.mutation.SetID(v)
 	}
 	return nil
 }
@@ -235,6 +240,9 @@ func (olc *OrderLockCreate) check() error {
 	}
 	if _, ok := olc.mutation.DeletedAt(); !ok {
 		return &ValidationError{Name: "deleted_at", err: errors.New(`ent: missing required field "OrderLock.deleted_at"`)}
+	}
+	if _, ok := olc.mutation.EntID(); !ok {
+		return &ValidationError{Name: "ent_id", err: errors.New(`ent: missing required field "OrderLock.ent_id"`)}
 	}
 	if _, ok := olc.mutation.AppID(); !ok {
 		return &ValidationError{Name: "app_id", err: errors.New(`ent: missing required field "OrderLock.app_id"`)}
@@ -256,12 +264,9 @@ func (olc *OrderLockCreate) sqlSave(ctx context.Context) (*OrderLock, error) {
 		}
 		return nil, err
 	}
-	if _spec.ID.Value != nil {
-		if id, ok := _spec.ID.Value.(*uuid.UUID); ok {
-			_node.ID = *id
-		} else if err := _node.ID.Scan(_spec.ID.Value); err != nil {
-			return nil, err
-		}
+	if _spec.ID.Value != _node.ID {
+		id := _spec.ID.Value.(int64)
+		_node.ID = uint32(id)
 	}
 	return _node, nil
 }
@@ -272,7 +277,7 @@ func (olc *OrderLockCreate) createSpec() (*OrderLock, *sqlgraph.CreateSpec) {
 		_spec = &sqlgraph.CreateSpec{
 			Table: orderlock.Table,
 			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeUUID,
+				Type:   field.TypeUint32,
 				Column: orderlock.FieldID,
 			},
 		}
@@ -280,7 +285,7 @@ func (olc *OrderLockCreate) createSpec() (*OrderLock, *sqlgraph.CreateSpec) {
 	_spec.OnConflict = olc.conflict
 	if id, ok := olc.mutation.ID(); ok {
 		_node.ID = id
-		_spec.ID.Value = &id
+		_spec.ID.Value = id
 	}
 	if value, ok := olc.mutation.CreatedAt(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -305,6 +310,14 @@ func (olc *OrderLockCreate) createSpec() (*OrderLock, *sqlgraph.CreateSpec) {
 			Column: orderlock.FieldDeletedAt,
 		})
 		_node.DeletedAt = value
+	}
+	if value, ok := olc.mutation.EntID(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Value:  value,
+			Column: orderlock.FieldEntID,
+		})
+		_node.EntID = value
 	}
 	if value, ok := olc.mutation.AppID(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -443,6 +456,18 @@ func (u *OrderLockUpsert) UpdateDeletedAt() *OrderLockUpsert {
 // AddDeletedAt adds v to the "deleted_at" field.
 func (u *OrderLockUpsert) AddDeletedAt(v uint32) *OrderLockUpsert {
 	u.Add(orderlock.FieldDeletedAt, v)
+	return u
+}
+
+// SetEntID sets the "ent_id" field.
+func (u *OrderLockUpsert) SetEntID(v uuid.UUID) *OrderLockUpsert {
+	u.Set(orderlock.FieldEntID, v)
+	return u
+}
+
+// UpdateEntID sets the "ent_id" field to the value that was provided on create.
+func (u *OrderLockUpsert) UpdateEntID() *OrderLockUpsert {
+	u.SetExcluded(orderlock.FieldEntID)
 	return u
 }
 
@@ -613,6 +638,20 @@ func (u *OrderLockUpsertOne) UpdateDeletedAt() *OrderLockUpsertOne {
 	})
 }
 
+// SetEntID sets the "ent_id" field.
+func (u *OrderLockUpsertOne) SetEntID(v uuid.UUID) *OrderLockUpsertOne {
+	return u.Update(func(s *OrderLockUpsert) {
+		s.SetEntID(v)
+	})
+}
+
+// UpdateEntID sets the "ent_id" field to the value that was provided on create.
+func (u *OrderLockUpsertOne) UpdateEntID() *OrderLockUpsertOne {
+	return u.Update(func(s *OrderLockUpsert) {
+		s.UpdateEntID()
+	})
+}
+
 // SetAppID sets the "app_id" field.
 func (u *OrderLockUpsertOne) SetAppID(v uuid.UUID) *OrderLockUpsertOne {
 	return u.Update(func(s *OrderLockUpsert) {
@@ -692,12 +731,7 @@ func (u *OrderLockUpsertOne) ExecX(ctx context.Context) {
 }
 
 // Exec executes the UPSERT query and returns the inserted/updated ID.
-func (u *OrderLockUpsertOne) ID(ctx context.Context) (id uuid.UUID, err error) {
-	if u.create.driver.Dialect() == dialect.MySQL {
-		// In case of "ON CONFLICT", there is no way to get back non-numeric ID
-		// fields from the database since MySQL does not support the RETURNING clause.
-		return id, errors.New("ent: OrderLockUpsertOne.ID is not supported by MySQL driver. Use OrderLockUpsertOne.Exec instead")
-	}
+func (u *OrderLockUpsertOne) ID(ctx context.Context) (id uint32, err error) {
 	node, err := u.create.Save(ctx)
 	if err != nil {
 		return id, err
@@ -706,7 +740,7 @@ func (u *OrderLockUpsertOne) ID(ctx context.Context) (id uuid.UUID, err error) {
 }
 
 // IDX is like ID, but panics if an error occurs.
-func (u *OrderLockUpsertOne) IDX(ctx context.Context) uuid.UUID {
+func (u *OrderLockUpsertOne) IDX(ctx context.Context) uint32 {
 	id, err := u.ID(ctx)
 	if err != nil {
 		panic(err)
@@ -757,6 +791,10 @@ func (olcb *OrderLockCreateBulk) Save(ctx context.Context) ([]*OrderLock, error)
 					return nil, err
 				}
 				mutation.id = &nodes[i].ID
+				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
+					id := specs[i].ID.Value.(int64)
+					nodes[i].ID = uint32(id)
+				}
 				mutation.done = true
 				return nodes[i], nil
 			})
@@ -952,6 +990,20 @@ func (u *OrderLockUpsertBulk) AddDeletedAt(v uint32) *OrderLockUpsertBulk {
 func (u *OrderLockUpsertBulk) UpdateDeletedAt() *OrderLockUpsertBulk {
 	return u.Update(func(s *OrderLockUpsert) {
 		s.UpdateDeletedAt()
+	})
+}
+
+// SetEntID sets the "ent_id" field.
+func (u *OrderLockUpsertBulk) SetEntID(v uuid.UUID) *OrderLockUpsertBulk {
+	return u.Update(func(s *OrderLockUpsert) {
+		s.SetEntID(v)
+	})
+}
+
+// UpdateEntID sets the "ent_id" field to the value that was provided on create.
+func (u *OrderLockUpsertBulk) UpdateEntID() *OrderLockUpsertBulk {
+	return u.Update(func(s *OrderLockUpsert) {
+		s.UpdateEntID()
 	})
 }
 
