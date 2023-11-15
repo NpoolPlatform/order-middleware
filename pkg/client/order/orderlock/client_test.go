@@ -43,7 +43,7 @@ const seconds = 1
 var (
 	now   = uint32(time.Now().Unix())
 	order = ordermwpb.Order{
-		ID:                   uuid.NewString(),
+		EntID:                uuid.NewString(),
 		AppID:                uuid.NewString(),
 		UserID:               uuid.NewString(),
 		GoodID:               uuid.NewString(),
@@ -94,17 +94,17 @@ var (
 		LedgerLockID:         uuid.NewString(),
 	}
 	ret = npool.OrderLock{
-		ID:          uuid.NewString(),
+		EntID:       uuid.NewString(),
 		AppID:       order.AppID,
 		UserID:      order.UserID,
-		OrderID:     order.ID,
+		OrderID:     order.EntID,
 		LockTypeStr: ordertypes.OrderLockType_LockCommission.String(),
 		LockType:    ordertypes.OrderLockType_LockCommission,
 	}
 
 	reqs = []*npool.OrderLockReq{
 		{
-			ID:       &ret.ID,
+			EntID:    &ret.EntID,
 			AppID:    &ret.AppID,
 			UserID:   &ret.UserID,
 			OrderID:  &ret.OrderID,
@@ -114,8 +114,8 @@ var (
 )
 
 func setup(t *testing.T) func(*testing.T) {
-	_, err := order1.CreateOrder(context.Background(), &ordermwpb.OrderReq{
-		ID:                   &order.ID,
+	info, err := order1.CreateOrder(context.Background(), &ordermwpb.OrderReq{
+		EntID:                &order.EntID,
 		AppID:                &order.AppID,
 		UserID:               &order.UserID,
 		GoodID:               &order.GoodID,
@@ -147,6 +147,7 @@ func setup(t *testing.T) func(*testing.T) {
 		LedgerLockID:         &order.LedgerLockID,
 	})
 	assert.Nil(t, err)
+	order.ID = info.ID
 
 	return func(*testing.T) {
 		_, _ = order1.DeleteOrder(context.Background(), &ordermwpb.OrderReq{
@@ -161,13 +162,14 @@ func creates(t *testing.T) {
 	if assert.Nil(t, err) {
 		ret.CreatedAt = infos[0].CreatedAt
 		ret.UpdatedAt = infos[0].UpdatedAt
+		ret.ID = infos[0].ID
 		assert.Equal(t, infos[0], &ret)
 	}
 }
 
 func getOrderLock(t *testing.T) {
 	var err error
-	info, err := GetOrderLock(context.Background(), ret.ID)
+	info, err := GetOrderLock(context.Background(), ret.EntID)
 	if assert.Nil(t, err) {
 		assert.Equal(t, info.String(), ret.String())
 	}
@@ -175,9 +177,9 @@ func getOrderLock(t *testing.T) {
 
 func getOrderLocks(t *testing.T) {
 	infos, _, err := GetOrderLocks(context.Background(), &npool.Conds{
-		ID: &basetypes.StringVal{
+		EntID: &basetypes.StringVal{
 			Op:    cruder.EQ,
-			Value: ret.ID,
+			Value: ret.EntID,
 		},
 	}, 0, 1)
 	if assert.Nil(t, err) {
@@ -187,12 +189,13 @@ func getOrderLocks(t *testing.T) {
 
 func deleteOrderLocks(t *testing.T) {
 	var err error
+	reqs[0].ID = &ret.ID
 	infos, err := DeleteOrderLocks(context.Background(), reqs)
 	if assert.Nil(t, err) {
 		assert.Equal(t, len(infos), 1)
 	}
 
-	info, err := GetOrderLock(context.Background(), ret.ID)
+	info, err := GetOrderLock(context.Background(), ret.EntID)
 	assert.Nil(t, err)
 	assert.Nil(t, info)
 }

@@ -36,7 +36,7 @@ const seconds = 1
 var (
 	now   = uint32(time.Now().Unix())
 	order = ordermwpb.Order{
-		ID:                   uuid.NewString(),
+		EntID:                uuid.NewString(),
 		AppID:                uuid.NewString(),
 		UserID:               uuid.NewString(),
 		GoodID:               uuid.NewString(),
@@ -69,7 +69,7 @@ var (
 		OrderState:           ordertypes.OrderState_OrderStateWaitPayment,
 		StartModeStr:         ordertypes.OrderStartMode_OrderStartConfirmed.String(),
 		StartMode:            ordertypes.OrderStartMode_OrderStartConfirmed,
-		StartAt:              now + 5*seconds,
+		StartAt:              now + 10*seconds,
 		EndAt:                now + 5*secondsPerDay,
 		LastBenefitAt:        0,
 		BenefitStateStr:      ordertypes.BenefitState_BenefitWait.String(),
@@ -88,8 +88,8 @@ var (
 	}
 	rets = []npool.OrderLock{
 		{
-			ID:          uuid.NewString(),
-			OrderID:     order.ID,
+			EntID:       uuid.NewString(),
+			OrderID:     order.EntID,
 			AppID:       order.AppID,
 			UserID:      order.UserID,
 			LockType:    ordertypes.OrderLockType_LockCommission,
@@ -101,7 +101,7 @@ var (
 func setup(t *testing.T) func(*testing.T) {
 	h1, err := order1.NewHandler(
 		context.Background(),
-		order1.WithID(&order.ID, false),
+		order1.WithEntID(&order.EntID, false),
 		order1.WithAppID(&order.AppID, true),
 		order1.WithUserID(&order.UserID, true),
 		order1.WithGoodID(&order.GoodID, true),
@@ -135,8 +135,10 @@ func setup(t *testing.T) func(*testing.T) {
 	)
 	assert.Nil(t, err)
 
-	_, err = h1.CreateOrder(context.Background())
+	info, err := h1.CreateOrder(context.Background())
 	assert.Nil(t, err)
+	order.ID = info.ID
+	h1.ID = &info.ID
 
 	return func(*testing.T) {
 		_, _ = h1.DeleteOrder(context.Background())
@@ -147,7 +149,7 @@ func createOrderLocks(t *testing.T) {
 	retsReq := []*npool.OrderLockReq{}
 	for key := range rets {
 		retReq := npool.OrderLockReq{
-			ID:       &rets[key].ID,
+			EntID:    &rets[key].EntID,
 			AppID:    &rets[key].AppID,
 			UserID:   &rets[key].UserID,
 			OrderID:  &rets[key].OrderID,
@@ -162,6 +164,7 @@ func createOrderLocks(t *testing.T) {
 	if assert.Nil(t, err) {
 		infos, err := handler.CreateOrderLocks(context.Background())
 		if assert.Nil(t, err) {
+			rets[0].ID = infos[0].ID
 			rets[0].CreatedAt = infos[0].CreatedAt
 			rets[0].UpdatedAt = infos[0].UpdatedAt
 			assert.Equal(t, len(rets), len(infos))
@@ -186,7 +189,7 @@ func getOrderLocks(t *testing.T) {
 	handler, err := NewHandler(
 		context.Background(),
 		WithConds(&npool.Conds{
-			ID: &basetypes.StringVal{Op: cruder.EQ, Value: rets[0].ID},
+			EntID: &basetypes.StringVal{Op: cruder.EQ, Value: rets[0].EntID},
 		}),
 		WithOffset(0),
 		WithLimit(0),

@@ -11,8 +11,6 @@ import (
 	"github.com/NpoolPlatform/order-middleware/pkg/db"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent"
 	entorderlock "github.com/NpoolPlatform/order-middleware/pkg/db/ent/orderlock"
-
-	"github.com/google/uuid"
 )
 
 type deleteHandler struct {
@@ -20,7 +18,7 @@ type deleteHandler struct {
 	deletedAt uint32
 }
 
-func (h *deleteHandler) deleteOrderLock(ctx context.Context, tx *ent.Tx, id uuid.UUID) error {
+func (h *deleteHandler) deleteOrderLock(ctx context.Context, tx *ent.Tx, id uint32) error {
 	orderlock, err := tx.OrderLock.
 		Query().
 		Where(
@@ -44,7 +42,7 @@ func (h *deleteHandler) deleteOrderLock(ctx context.Context, tx *ent.Tx, id uuid
 }
 
 func (h *Handler) DeleteOrderLocks(ctx context.Context) ([]*npool.OrderLock, error) {
-	ids := []uuid.UUID{}
+	ids := []uint32{}
 	for _, req := range h.Reqs {
 		if req.ID == nil {
 			return nil, fmt.Errorf("invalid id")
