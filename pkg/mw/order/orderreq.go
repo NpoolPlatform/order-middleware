@@ -31,6 +31,10 @@ func (h *Handler) ToOrderReq(ctx context.Context, newOrder bool) (*OrderReq, err
 		if info == nil {
 			return nil, fmt.Errorf("invalid order")
 		}
+		if h.EntID == nil {
+			id := uuid.MustParse(info.EntID)
+			h.EntID = &id
+		}
 		if h.StartAt == nil {
 			h.StartAt = &info.StartAt
 		}
@@ -50,6 +54,7 @@ func (h *Handler) ToOrderReq(ctx context.Context, newOrder bool) (*OrderReq, err
 	req := &OrderReq{
 		Req: &ordercrud.Req{
 			ID:                   h.ID,
+			EntID:                h.EntID,
 			AppID:                h.AppID,
 			UserID:               h.UserID,
 			GoodID:               h.GoodID,
@@ -75,7 +80,7 @@ func (h *Handler) ToOrderReq(ctx context.Context, newOrder bool) (*OrderReq, err
 			LiveCoinUSDCurrency:  h.LiveCoinUSDCurrency,
 		},
 		OrderStateReq: &orderstatecrud.Req{
-			OrderID:              h.ID,
+			OrderID:              h.EntID,
 			OrderState:           h.OrderState,
 			StartMode:            h.StartMode,
 			PaymentState:         h.PaymentState,
@@ -95,19 +100,19 @@ func (h *Handler) ToOrderReq(ctx context.Context, newOrder bool) (*OrderReq, err
 
 	if h.AppGoodStockLockID != nil {
 		req.StockLockReq = &orderlockcrud.Req{
-			ID:       h.AppGoodStockLockID,
+			EntID:    h.AppGoodStockLockID,
 			AppID:    h.AppID,
 			UserID:   h.UserID,
-			OrderID:  h.ID,
+			OrderID:  h.EntID,
 			LockType: basetypes.OrderLockType_LockStock.Enum(),
 		}
 	}
 	if h.BalanceAmount != nil && h.BalanceAmount.Cmp(decimal.NewFromInt(0)) > 0 {
 		req.BalanceLockReq = &orderlockcrud.Req{
-			ID:       h.LedgerLockID,
+			EntID:    h.LedgerLockID,
 			AppID:    h.AppID,
 			UserID:   h.UserID,
-			OrderID:  h.ID,
+			OrderID:  h.EntID,
 			LockType: basetypes.OrderLockType_LockBalance.Enum(),
 		}
 	}
@@ -131,8 +136,8 @@ func (h *Handler) ToOrderReq(ctx context.Context, newOrder bool) (*OrderReq, err
 	paymentID := uuid.New()
 	req.Req.PaymentID = &paymentID
 	req.PaymentReq = &paymentcrud.Req{
-		ID:          &paymentID,
-		OrderID:     h.ID,
+		EntID:       &paymentID,
+		OrderID:     h.EntID,
 		AppID:       h.AppID,
 		UserID:      h.UserID,
 		GoodID:      h.GoodID,

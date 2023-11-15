@@ -40,7 +40,7 @@ const secondsPerDay = 24 * 60 * 60
 var (
 	now = uint32(time.Now().Unix())
 	ret = npool.Order{
-		ID:                   uuid.NewString(),
+		EntID:                uuid.NewString(),
 		AppID:                uuid.NewString(),
 		UserID:               uuid.NewString(),
 		GoodID:               uuid.NewString(),
@@ -93,7 +93,7 @@ var (
 	}
 
 	req = npool.OrderReq{
-		ID:                   &ret.ID,
+		EntID:                &ret.EntID,
 		AppID:                &ret.AppID,
 		UserID:               &ret.UserID,
 		GoodID:               &ret.GoodID,
@@ -147,6 +147,7 @@ func create(t *testing.T) {
 		ret.CouponIDsStr = info.CouponIDsStr
 		ret.PaymentID = info.PaymentID
 		ret.ParentOrderID = info.ParentOrderID
+		ret.ID = info.ID
 		assert.Equal(t, info, &ret)
 	}
 }
@@ -166,7 +167,7 @@ func update(t *testing.T) {
 }
 func getOrder(t *testing.T) {
 	var err error
-	info, err = GetOrder(context.Background(), ret.ID)
+	info, err = GetOrder(context.Background(), ret.EntID)
 	if assert.Nil(t, err) {
 		assert.Equal(t, info.String(), ret.String())
 	}
@@ -174,9 +175,9 @@ func getOrder(t *testing.T) {
 
 func getOrders(t *testing.T) {
 	infos, _, err := GetOrders(context.Background(), &npool.Conds{
-		ID: &basetypes.StringVal{
+		EntID: &basetypes.StringVal{
 			Op:    cruder.EQ,
-			Value: ret.ID,
+			Value: ret.EntID,
 		},
 	}, 0, 1)
 	if assert.Nil(t, err) {
@@ -194,7 +195,7 @@ func deleteOrder(t *testing.T) {
 		assert.Equal(t, info.String(), ret.String())
 	}
 
-	info, err = GetOrder(context.Background(), ret.ID)
+	info, err = GetOrder(context.Background(), ret.EntID)
 	assert.Nil(t, err)
 	assert.Nil(t, info)
 }

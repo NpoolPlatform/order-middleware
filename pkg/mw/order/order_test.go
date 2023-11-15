@@ -33,7 +33,7 @@ const secondsPerDay = 24 * 60 * 60
 var (
 	now = uint32(time.Now().Unix())
 	ret = npool.Order{
-		ID:                   uuid.NewString(),
+		EntID:                uuid.NewString(),
 		AppID:                uuid.NewString(),
 		UserID:               uuid.NewString(),
 		GoodID:               uuid.NewString(),
@@ -91,7 +91,7 @@ var (
 	parentOrderID = uuid.NewString()
 	rets          = []npool.Order{
 		{
-			ID:                   parentOrderID,
+			EntID:                parentOrderID,
 			AppID:                appID,
 			UserID:               userID,
 			GoodID:               uuid.NewString(),
@@ -145,7 +145,7 @@ var (
 			LedgerLockID:         uuid.NewString(),
 		},
 		{
-			ID:                   uuid.NewString(),
+			EntID:                uuid.NewString(),
 			AppID:                appID,
 			UserID:               userID,
 			GoodID:               uuid.NewString(),
@@ -199,7 +199,7 @@ var (
 func createOrder(t *testing.T) {
 	handler, err := NewHandler(
 		context.Background(),
-		WithID(&ret.ID, false),
+		WithEntID(&ret.EntID, false),
 		WithAppID(&ret.AppID, true),
 		WithUserID(&ret.UserID, true),
 		WithGoodID(&ret.GoodID, true),
@@ -240,6 +240,7 @@ func createOrder(t *testing.T) {
 			ret.PaymentID = info.PaymentID
 			ret.CreatedAt = info.CreatedAt
 			ret.UpdatedAt = info.UpdatedAt
+			ret.ID = info.ID
 			assert.Equal(t, &ret, info)
 		}
 	}
@@ -249,7 +250,7 @@ func createOrders(t *testing.T) {
 	retsReq := []*npool.OrderReq{}
 	for key := range rets {
 		retReq := npool.OrderReq{
-			ID:                   &rets[key].ID,
+			EntID:                &rets[key].EntID,
 			AppID:                &rets[key].AppID,
 			UserID:               &rets[key].UserID,
 			GoodID:               &rets[key].GoodID,
@@ -305,6 +306,13 @@ func createOrders(t *testing.T) {
 		infos, err := handler.CreateOrders(context.Background())
 		if assert.Nil(t, err) {
 			assert.Equal(t, len(rets), len(infos))
+			for key1 := range rets {
+				for key2 := range infos {
+					if rets[key1].EntID == infos[key2].EntID {
+						rets[key1].ID = infos[key2].ID
+					}
+				}
+			}
 		}
 	}
 }

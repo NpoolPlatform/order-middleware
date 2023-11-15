@@ -23,15 +23,19 @@ type queryHandler struct {
 	total     uint32
 }
 
-func (h *queryHandler) queryOrder(cli *ent.Client) {
-	h.stmSelect = h.SelectOrder(
-		cli.Order.
-			Query().
-			Where(
-				entorder.ID(*h.ID),
-				entorder.DeletedAt(0),
-			),
-	)
+func (h *queryHandler) queryOrder(cli *ent.Client) error {
+	if h.ID == nil && h.EntID == nil {
+		return fmt.Errorf("invalid id")
+	}
+	stm := cli.Order.Query().Where(entorder.DeletedAt(0))
+	if h.ID != nil {
+		stm.Where(entorder.ID(*h.ID))
+	}
+	if h.EntID != nil {
+		stm.Where(entorder.EntID(*h.EntID))
+	}
+	h.stmSelect = h.SelectOrder(stm)
+	return nil
 }
 
 func (h *queryHandler) queryJoin() error {
@@ -164,7 +168,9 @@ func (h *Handler) GetOrder(ctx context.Context) (*npool.Order, error) {
 	}
 
 	err := db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
-		handler.queryOrder(cli)
+		if err := handler.queryOrder(cli); err != nil {
+			return err
+		}
 		if err := handler.queryJoin(); err != nil {
 			return err
 		}

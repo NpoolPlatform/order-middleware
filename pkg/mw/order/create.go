@@ -46,13 +46,13 @@ func (h *createHandler) paymentState(req *ordercrud.Req) *types.PaymentState {
 func (h *createHandler) createOrderLocks(ctx context.Context, tx *ent.Tx, stockLockReq, balanceLockReq *orderlockcrud.Req) error {
 	reqs := []*ent.OrderLockCreate{}
 	if stockLockReq != nil {
-		if stockLockReq.ID == nil {
+		if stockLockReq.EntID == nil {
 			return fmt.Errorf("invalid stocklockid")
 		}
 		reqs = append(reqs, orderlockcrud.CreateSet(tx.OrderLock.Create(), stockLockReq))
 	}
 	if balanceLockReq != nil {
-		if balanceLockReq.ID == nil {
+		if balanceLockReq.EntID == nil {
 			return fmt.Errorf("invalid balancelockid")
 		}
 		reqs = append(reqs, orderlockcrud.CreateSet(tx.OrderLock.Create(), balanceLockReq))
@@ -142,8 +142,8 @@ func (h *createHandler) createOrder(ctx context.Context, tx *ent.Tx, req *orderc
 
 func (h *Handler) CreateOrder(ctx context.Context) (*npool.Order, error) {
 	id := uuid.New()
-	if h.ID == nil {
-		h.ID = &id
+	if h.EntID == nil {
+		h.EntID = &id
 	}
 
 	handler := &createHandler{
@@ -171,10 +171,10 @@ func (h *Handler) CreateOrder(ctx context.Context) (*npool.Order, error) {
 			return err
 		}
 		if req.BalanceLockReq != nil {
-			req.BalanceLockReq.OrderID = req.Req.ID
+			req.BalanceLockReq.OrderID = req.Req.EntID
 		}
 		if req.StockLockReq != nil {
-			req.StockLockReq.OrderID = req.Req.ID
+			req.StockLockReq.OrderID = req.Req.EntID
 		}
 		if err := handler.createOrderLocks(ctx, tx, req.StockLockReq, req.BalanceLockReq); err != nil {
 			return err
@@ -189,7 +189,7 @@ func (h *Handler) CreateOrder(ctx context.Context) (*npool.Order, error) {
 	})
 	logger.Sugar().Infow(
 		"CreateOrder",
-		"ID", *h.ID,
+		"EntID", *h.EntID,
 		"CallID", callID,
 		"Elapsed", time.Since(start),
 		"Error", err,
@@ -203,7 +203,7 @@ func (h *Handler) CreateOrder(ctx context.Context) (*npool.Order, error) {
 		logger.Sugar().Warnw(
 			"CreateOrders",
 			"CallID", callID,
-			"ID", *h.ID,
+			"EntID", *h.EntID,
 			"Error", err,
 		)
 	}
@@ -213,7 +213,7 @@ func (h *Handler) CreateOrder(ctx context.Context) (*npool.Order, error) {
 func (h *createHandler) checkBatchParentOrder(ctx context.Context) error {
 	for _, req := range h.Reqs {
 		if req.ParentOrderID == nil {
-			h.parentOrderID = *req.ID
+			h.parentOrderID = *req.EntID
 			h.createParent = true
 			continue
 		}
@@ -233,7 +233,7 @@ func (h *createHandler) checkBatchParentOrder(ctx context.Context) error {
 			Order.
 			Query().
 			Where(
-				entorder.ID(h.parentOrderID),
+				entorder.EntID(h.parentOrderID),
 				entorder.DeletedAt(0),
 			).
 			Exist(_ctx)
@@ -264,9 +264,9 @@ func (h *Handler) CreateOrders(ctx context.Context) ([]*npool.Order, error) {
 	err := db.WithTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {
 		for _, req := range h.Reqs {
 			req.OrderStateReq.PaymentState = handler.paymentState(req.Req)
-			if req.Req.ID == nil {
+			if req.Req.EntID == nil {
 				id := uuid.New()
-				req.Req.ID = &id
+				req.Req.EntID = &id
 				req.OrderStateReq.OrderID = &id
 			}
 			if req.PaymentReq != nil {
@@ -283,21 +283,21 @@ func (h *Handler) CreateOrders(ctx context.Context) ([]*npool.Order, error) {
 				return err
 			}
 			if req.BalanceLockReq != nil {
-				req.BalanceLockReq.OrderID = req.Req.ID
+				req.BalanceLockReq.OrderID = req.Req.EntID
 			}
 			if req.StockLockReq != nil {
-				req.StockLockReq.OrderID = req.Req.ID
+				req.StockLockReq.OrderID = req.Req.EntID
 			}
 			if err := handler.createOrderLocks(ctx, tx, req.StockLockReq, req.BalanceLockReq); err != nil {
 				return err
 			}
-			ids = append(ids, *req.Req.ID)
+			ids = append(ids, *req.Req.EntID)
 
 			if req.PaymentReq == nil {
 				continue
 			}
-			req.PaymentReq.OrderID = req.Req.ID
-			req.PaymentReq.ID = req.Req.PaymentID
+			req.PaymentReq.OrderID = req.Req.EntID
+			req.PaymentReq.EntID = req.Req.PaymentID
 			if err := handler.createPayment(ctx, tx, req.PaymentReq); err != nil {
 				return err
 			}
@@ -318,7 +318,7 @@ func (h *Handler) CreateOrders(ctx context.Context) ([]*npool.Order, error) {
 	}
 
 	h.Conds = &ordercrud.Conds{
-		IDs: &cruder.Cond{Op: cruder.IN, Val: ids},
+		EntIDs: &cruder.Cond{Op: cruder.IN, Val: ids},
 	}
 	h.Offset = 0
 	h.Limit = int32(len(ids))

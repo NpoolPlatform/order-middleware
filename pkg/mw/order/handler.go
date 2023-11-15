@@ -21,7 +21,8 @@ import (
 )
 
 type Handler struct {
-	ID                   *uuid.UUID
+	ID                   *uint32
+	EntID                *uuid.UUID
 	AppID                *uuid.UUID
 	UserID               *uuid.UUID
 	GoodID               *uuid.UUID
@@ -80,11 +81,24 @@ func NewHandler(ctx context.Context, options ...func(context.Context, *Handler) 
 	return handler, nil
 }
 
-func WithID(id *string, must bool) func(context.Context, *Handler) error {
+func WithID(u *uint32, must bool) func(context.Context, *Handler) error {
+	return func(ctx context.Context, h *Handler) error {
+		if u == nil {
+			if must {
+				return fmt.Errorf("invalid id")
+			}
+			return nil
+		}
+		h.ID = u
+		return nil
+	}
+}
+
+func WithEntID(id *string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if id == nil {
 			if must {
-				return fmt.Errorf("invalid id")
+				return fmt.Errorf("invalid entid")
 			}
 			return nil
 		}
@@ -92,7 +106,7 @@ func WithID(id *string, must bool) func(context.Context, *Handler) error {
 		if err != nil {
 			return err
 		}
-		h.ID = &_id
+		h.EntID = &_id
 		return nil
 	}
 }
@@ -175,7 +189,7 @@ func WithParentOrderID(id *string, must bool) func(context.Context, *Handler) er
 		}
 		handler, err := NewHandler(
 			ctx,
-			WithID(id, true),
+			WithEntID(id, true),
 		)
 		if err != nil {
 			return err
@@ -187,7 +201,7 @@ func WithParentOrderID(id *string, must bool) func(context.Context, *Handler) er
 		if !exist {
 			return fmt.Errorf("invalid parentorderid")
 		}
-		h.ParentOrderID = handler.ID
+		h.ParentOrderID = handler.EntID
 		return nil
 	}
 }
@@ -889,11 +903,32 @@ func WithConds(conds *npool.Conds) func(context.Context, *Handler) error {
 			return nil
 		}
 		if conds.ID != nil {
-			id, err := uuid.Parse(conds.GetID().GetValue())
+			h.Conds.ID = &cruder.Cond{
+				Op: conds.GetID().GetOp(), Val: conds.GetID().GetValue(),
+			}
+		}
+		if conds.EntID != nil {
+			id, err := uuid.Parse(conds.GetEntID().GetValue())
 			if err != nil {
 				return err
 			}
-			h.Conds.ID = &cruder.Cond{Op: conds.GetID().GetOp(), Val: id}
+			h.Conds.EntID = &cruder.Cond{
+				Op: conds.GetEntID().GetOp(), Val: id,
+			}
+		}
+		if conds.IDs != nil {
+			h.Conds.IDs = &cruder.Cond{Op: conds.GetIDs().GetOp(), Val: conds.GetIDs().GetValue()}
+		}
+		if conds.EntIDs != nil {
+			ids := []uuid.UUID{}
+			for _, id := range conds.GetEntIDs().GetValue() {
+				_id, err := uuid.Parse(id)
+				if err != nil {
+					return err
+				}
+				ids = append(ids, _id)
+			}
+			h.Conds.EntIDs = &cruder.Cond{Op: conds.GetEntIDs().GetOp(), Val: ids}
 		}
 		if conds.AppID != nil {
 			id, err := uuid.Parse(conds.GetAppID().GetValue())
@@ -1090,17 +1125,6 @@ func WithConds(conds *npool.Conds) func(context.Context, *Handler) error {
 			_state := conds.GetPaymentState().GetValue()
 			h.Conds.PaymentState = &cruder.Cond{Op: conds.GetPaymentState().GetOp(), Val: basetypes.PaymentState(_state)}
 		}
-		if conds.IDs != nil {
-			ids := []uuid.UUID{}
-			for _, id := range conds.GetIDs().GetValue() {
-				_id, err := uuid.Parse(id)
-				if err != nil {
-					return err
-				}
-				ids = append(ids, _id)
-			}
-			h.Conds.IDs = &cruder.Cond{Op: conds.GetIDs().GetOp(), Val: ids}
-		}
 		if conds.CouponID != nil {
 			id, err := uuid.Parse(conds.GetCouponID().GetValue())
 			if err != nil {
@@ -1196,11 +1220,14 @@ func WithReqs(reqs []*npool.OrderReq, must bool) func(context.Context, *Handler)
 				}
 			}
 			if req.ID != nil {
-				id, err := uuid.Parse(*req.ID)
+				_req.ID = req.ID
+			}
+			if req.EntID != nil {
+				id, err := uuid.Parse(*req.EntID)
 				if err != nil {
 					return err
 				}
-				_req.ID = &id
+				_req.EntID = &id
 				_req.OrderStateReq.OrderID = &id
 			}
 			if req.AppID != nil {
@@ -1433,10 +1460,10 @@ func WithReqs(reqs []*npool.OrderReq, must bool) func(context.Context, *Handler)
 					return err
 				}
 				_req.StockLockReq = &orderlockcrud.Req{}
-				_req.StockLockReq.ID = &id
+				_req.StockLockReq.EntID = &id
 				_req.StockLockReq.AppID = _req.AppID
 				_req.StockLockReq.UserID = _req.UserID
-				_req.StockLockReq.OrderID = _req.ID
+				_req.StockLockReq.OrderID = _req.EntID
 				_req.StockLockReq.LockType = basetypes.OrderLockType_LockStock.Enum()
 			}
 			if req.StartMode != nil {
@@ -1521,10 +1548,10 @@ func WithReqs(reqs []*npool.OrderReq, must bool) func(context.Context, *Handler)
 					return err
 				}
 				_req.BalanceLockReq = &orderlockcrud.Req{
-					ID:       &id,
+					EntID:    &id,
 					AppID:    _req.AppID,
 					UserID:   _req.UserID,
-					OrderID:  _req.ID,
+					OrderID:  _req.EntID,
 					LockType: basetypes.OrderLockType_LockBalance.Enum(),
 				}
 			}
@@ -1550,7 +1577,7 @@ func WithReqs(reqs []*npool.OrderReq, must bool) func(context.Context, *Handler)
 			}
 
 			_req.PaymentReq = &paymentcrud.Req{
-				OrderID: _req.ID,
+				OrderID: _req.EntID,
 				AppID:   _req.AppID,
 				GoodID:  _req.GoodID,
 				UserID:  _req.UserID,

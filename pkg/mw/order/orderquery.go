@@ -34,6 +34,7 @@ func (h *baseQueryHandler) QueryJoinMyself(s *sql.Selector) {
 	t := sql.Table(entorder.Table)
 	s.AppendSelect(
 		t.C(entorder.FieldID),
+		t.C(entorder.FieldEntID),
 		t.C(entorder.FieldAppID),
 		t.C(entorder.FieldUserID),
 		t.C(entorder.FieldGoodID),
@@ -67,7 +68,7 @@ func (h *baseQueryHandler) QueryJoinPayment(s *sql.Selector) error {
 	t := sql.Table(entpayment.Table)
 	s.LeftJoin(t).
 		On(
-			s.C(entorder.FieldID),
+			s.C(entorder.FieldEntID),
 			t.C(entpayment.FieldOrderID),
 		).
 		OnP(
@@ -86,7 +87,7 @@ func (h *baseQueryHandler) QueryJoinOrderState(s *sql.Selector) error {
 	t := sql.Table(entorderstate.Table)
 	s.LeftJoin(t).
 		On(
-			s.C(entorder.FieldID),
+			s.C(entorder.FieldEntID),
 			t.C(entorderstate.FieldOrderID),
 		).
 		OnP(
@@ -243,7 +244,7 @@ func (h *baseQueryHandler) QueryJoinStockLock(s *sql.Selector) {
 	lockType := basetypes.OrderLockType_LockStock
 	s.LeftJoin(t).
 		On(
-			s.C(entorder.FieldID),
+			s.C(entorder.FieldEntID),
 			t.C(entorderlock.FieldOrderID),
 		).
 		OnP(
@@ -254,7 +255,7 @@ func (h *baseQueryHandler) QueryJoinStockLock(s *sql.Selector) {
 		)
 
 	s.AppendSelect(
-		sql.As(t.C(entorderlock.FieldID), "app_good_stock_lock_id"),
+		sql.As(t.C(entorderlock.FieldEntID), "app_good_stock_lock_id"),
 	)
 }
 
@@ -264,7 +265,7 @@ func (h *baseQueryHandler) QueryJoinBalanceLock(s *sql.Selector) {
 	lockType := basetypes.OrderLockType_LockBalance
 	s.LeftJoin(t).
 		On(
-			s.C(entorder.FieldID),
+			s.C(entorder.FieldEntID),
 			t.C(entorderlock.FieldOrderID),
 		).
 		OnP(
@@ -275,6 +276,6 @@ func (h *baseQueryHandler) QueryJoinBalanceLock(s *sql.Selector) {
 		)
 
 	s.AppendSelect(
-		sql.As(t.C(entorderlock.FieldID), "ledger_lock_id"),
+		sql.As(t.C(entorderlock.FieldEntID), "ledger_lock_id"),
 	)
 }

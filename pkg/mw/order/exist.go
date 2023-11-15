@@ -20,7 +20,7 @@ func (h *existHandler) queryOrder(cli *ent.Client) {
 		cli.Order.
 			Query().
 			Where(
-				entorder.ID(*h.ID),
+				entorder.EntID(*h.EntID),
 				entorder.DeletedAt(0),
 			),
 	)
