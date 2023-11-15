@@ -10,7 +10,7 @@ import (
 )
 
 type Req struct {
-	ID        *uuid.UUID
+	EntID     *uuid.UUID
 	OrderID   *uuid.UUID
 	StartAt   *uint32
 	EndAt     *uint32
@@ -19,8 +19,8 @@ type Req struct {
 }
 
 func CreateSet(c *ent.OutOfGasCreate, req *Req) *ent.OutOfGasCreate {
-	if req.ID != nil {
-		c.SetID(*req.ID)
+	if req.EntID != nil {
+		c.SetEntID(*req.EntID)
 	}
 	if req.OrderID != nil {
 		c.SetOrderID(*req.OrderID)
@@ -51,6 +51,8 @@ func UpdateSet(u *ent.OutOfGasUpdateOne, req *Req) *ent.OutOfGasUpdateOne {
 }
 
 type Conds struct {
+	EntID    *cruder.Cond
+	EntIDs   *cruder.Cond
 	ID       *cruder.Cond
 	IDs      *cruder.Cond
 	OrderID  *cruder.Cond
@@ -65,8 +67,36 @@ func SetQueryConds(q *ent.OutOfGasQuery, conds *Conds) (*ent.OutOfGasQuery, erro
 	if conds == nil {
 		return q, nil
 	}
+	if conds.EntID != nil {
+		id, ok := conds.EntID.Val.(uuid.UUID)
+		if !ok {
+			return nil, fmt.Errorf("invalid entid")
+		}
+		switch conds.EntID.Op {
+		case cruder.EQ:
+			q.Where(entoutofgas.EntID(id))
+		case cruder.NEQ:
+			q.Where(entoutofgas.EntIDNEQ(id))
+		default:
+			return nil, fmt.Errorf("invalid outofgas field")
+		}
+	}
+	if conds.EntIDs != nil {
+		ids, ok := conds.EntIDs.Val.([]uuid.UUID)
+		if !ok {
+			return nil, fmt.Errorf("invalid entids")
+		}
+		if len(ids) > 0 {
+			switch conds.EntIDs.Op {
+			case cruder.IN:
+				q.Where(entoutofgas.EntIDIn(ids...))
+			default:
+				return nil, fmt.Errorf("invalid outofgas field")
+			}
+		}
+	}
 	if conds.ID != nil {
-		id, ok := conds.ID.Val.(uuid.UUID)
+		id, ok := conds.ID.Val.(uint32)
 		if !ok {
 			return nil, fmt.Errorf("invalid id")
 		}
@@ -80,7 +110,7 @@ func SetQueryConds(q *ent.OutOfGasQuery, conds *Conds) (*ent.OutOfGasQuery, erro
 		}
 	}
 	if conds.IDs != nil {
-		ids, ok := conds.IDs.Val.([]uuid.UUID)
+		ids, ok := conds.IDs.Val.([]uint32)
 		if !ok {
 			return nil, fmt.Errorf("invalid ids")
 		}

@@ -45,7 +45,7 @@ const seconds = 1
 var (
 	now   = uint32(time.Now().Unix())
 	order = ordermwpb.Order{
-		ID:                   uuid.NewString(),
+		EntID:                uuid.NewString(),
 		AppID:                uuid.NewString(),
 		UserID:               uuid.NewString(),
 		GoodID:               uuid.NewString(),
@@ -97,8 +97,8 @@ var (
 	}
 	id  = uuid.NewString()
 	ret = npool.OutOfGas{
-		ID:      id,
-		OrderID: order.ID,
+		EntID:   id,
+		OrderID: order.EntID,
 		StartAt: now + 6*seconds,
 		EndAt:   now + 7*seconds,
 	}
@@ -106,8 +106,8 @@ var (
 
 //nolint:funlen
 func setup(t *testing.T) func(*testing.T) {
-	_, err := order1.CreateOrder(context.Background(), &ordermwpb.OrderReq{
-		ID:                   &order.ID,
+	info, err := order1.CreateOrder(context.Background(), &ordermwpb.OrderReq{
+		EntID:                &order.EntID,
 		AppID:                &order.AppID,
 		UserID:               &order.UserID,
 		GoodID:               &order.GoodID,
@@ -139,6 +139,7 @@ func setup(t *testing.T) func(*testing.T) {
 		LedgerLockID:         &order.LedgerLockID,
 	})
 	assert.Nil(t, err)
+	order.ID = info.ID
 
 	order.OrderState = ordertypes.OrderState_OrderStateWaitPayment
 	_, err = order1.UpdateOrder(context.Background(), &ordermwpb.OrderReq{
@@ -241,7 +242,7 @@ func setup(t *testing.T) func(*testing.T) {
 func createOutOfGas(t *testing.T) {
 	var (
 		req = npool.OutOfGasReq{
-			ID:      &ret.ID,
+			EntID:   &ret.EntID,
 			OrderID: &ret.OrderID,
 			StartAt: &ret.StartAt,
 			EndAt:   &ret.EndAt,
@@ -250,17 +251,18 @@ func createOutOfGas(t *testing.T) {
 
 	info, err := CreateOutOfGas(context.Background(), &req)
 	if assert.Nil(t, err) {
-		if id != info.ID {
-			ret.ID = info.ID
+		if id != info.EntID {
+			ret.EntID = info.EntID
 		}
 		ret.CreatedAt = info.CreatedAt
 		ret.UpdatedAt = info.UpdatedAt
+		ret.ID = info.ID
 		assert.Equal(t, info, &ret)
 	}
 }
 
 func updateOutOfGas(t *testing.T) {
-	if ret.ID == id {
+	if ret.EntID == id {
 		var (
 			startAt = now + 7*seconds
 			endAt   = now + 8*seconds
@@ -282,7 +284,7 @@ func updateOutOfGas(t *testing.T) {
 }
 
 func getOutOfGas(t *testing.T) {
-	info, err := GetOutOfGas(context.Background(), ret.ID)
+	info, err := GetOutOfGas(context.Background(), ret.EntID)
 	if assert.Nil(t, err) {
 		assert.Equal(t, info, &ret)
 	}
@@ -298,7 +300,7 @@ func getOutOfGases(t *testing.T) {
 }
 
 func deleteOutOfGas(t *testing.T) {
-	if ret.ID == id {
+	if ret.EntID == id {
 		info, err := DeleteOutOfGas(context.Background(), &npool.OutOfGasReq{
 			ID: &ret.ID,
 		})
@@ -306,7 +308,7 @@ func deleteOutOfGas(t *testing.T) {
 			assert.Equal(t, info, &ret)
 		}
 
-		info, err = GetOutOfGas(context.Background(), ret.ID)
+		info, err = GetOutOfGas(context.Background(), ret.EntID)
 		assert.Nil(t, err)
 		assert.Nil(t, info)
 	}

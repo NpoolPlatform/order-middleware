@@ -68,7 +68,7 @@ func UpdateOutOfGas(ctx context.Context, in *npool.OutOfGasReq) (*npool.OutOfGas
 func GetOutOfGas(ctx context.Context, id string) (*npool.OutOfGas, error) {
 	info, err := do(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
 		resp, err := cli.GetOutOfGas(ctx, &npool.GetOutOfGasRequest{
-			ID: id,
+			EntID: id,
 		})
 		if err != nil {
 			return nil, err
@@ -151,7 +151,7 @@ func DeleteOutOfGas(ctx context.Context, in *npool.OutOfGasReq) (*npool.OutOfGas
 func ExistOutOfGas(ctx context.Context, id string) (bool, error) {
 	exist, err := do(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
 		resp, err := cli.ExistOutOfGas(ctx, &npool.ExistOutOfGasRequest{
-			ID: id,
+			EntID: id,
 		})
 		if err != nil {
 			return false, err

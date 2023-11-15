@@ -28,7 +28,7 @@ func (h *createHandler) createOutOfGas(ctx context.Context, tx *ent.Tx) error {
 	if _, err := outofgascrud.CreateSet(
 		tx.OutOfGas.Create(),
 		&outofgascrud.Req{
-			ID:      h.ID,
+			EntID:   h.EntID,
 			OrderID: h.OrderID,
 			StartAt: h.StartAt,
 			EndAt:   h.EndAt,
@@ -76,8 +76,8 @@ func (h *Handler) CreateOutOfGas(ctx context.Context) (*npool.OutOfGas, error) {
 	}
 
 	id := uuid.New()
-	if h.ID == nil {
-		h.ID = &id
+	if h.EntID == nil {
+		h.EntID = &id
 	}
 
 	handler := &createHandler{
