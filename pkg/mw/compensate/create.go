@@ -27,7 +27,7 @@ func (h *createHandler) createCompensate(ctx context.Context, tx *ent.Tx) error 
 	if _, err := compensatecrud.CreateSet(
 		tx.Compensate.Create(),
 		&compensatecrud.Req{
-			ID:      h.ID,
+			EntID:   h.EntID,
 			OrderID: h.OrderID,
 			StartAt: h.StartAt,
 			EndAt:   h.EndAt,
@@ -80,8 +80,8 @@ func (h *Handler) CreateCompensate(ctx context.Context) (*npool.Compensate, erro
 	}
 
 	id := uuid.New()
-	if h.ID == nil {
-		h.ID = &id
+	if h.EntID == nil {
+		h.EntID = &id
 	}
 
 	handler := &createHandler{

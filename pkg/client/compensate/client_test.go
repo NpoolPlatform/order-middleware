@@ -45,7 +45,7 @@ const seconds = 1
 var (
 	now   = uint32(time.Now().Unix())
 	order = ordermwpb.Order{
-		ID:                   uuid.NewString(),
+		EntID:                uuid.NewString(),
 		AppID:                uuid.NewString(),
 		UserID:               uuid.NewString(),
 		GoodID:               uuid.NewString(),
@@ -97,8 +97,8 @@ var (
 	}
 	id  = uuid.NewString()
 	ret = npool.Compensate{
-		ID:           id,
-		OrderID:      order.ID,
+		EntID:        id,
+		OrderID:      order.EntID,
 		AppID:        order.AppID,
 		UserID:       order.UserID,
 		GoodID:       order.GoodID,
@@ -115,8 +115,8 @@ var (
 
 //nolint:funlen
 func setup(t *testing.T) func(*testing.T) {
-	_, err := order1.CreateOrder(context.Background(), &ordermwpb.OrderReq{
-		ID:                   &order.ID,
+	info, err := order1.CreateOrder(context.Background(), &ordermwpb.OrderReq{
+		EntID:                &order.EntID,
 		AppID:                &order.AppID,
 		UserID:               &order.UserID,
 		GoodID:               &order.GoodID,
@@ -148,6 +148,7 @@ func setup(t *testing.T) func(*testing.T) {
 		LedgerLockID:         &order.LedgerLockID,
 	})
 	assert.Nil(t, err)
+	order.ID = info.ID
 
 	order.OrderState = ordertypes.OrderState_OrderStateWaitPayment
 	_, err = order1.UpdateOrder(context.Background(), &ordermwpb.OrderReq{
@@ -261,18 +262,19 @@ func createCompensate(t *testing.T) {
 
 	info, err := CreateCompensate(context.Background(), &req)
 	if assert.Nil(t, err) {
-		if id != info.ID {
-			ret.ID = info.ID
+		if id != info.EntID {
+			ret.EntID = info.EntID
 		}
 		ret.OrderEndAt = info.OrderEndAt
 		ret.CreatedAt = info.CreatedAt
 		ret.UpdatedAt = info.UpdatedAt
+		ret.ID = info.ID
 		assert.Equal(t, info, &ret)
 	}
 }
 
 func updateCompensate(t *testing.T) {
-	if ret.ID == id {
+	if ret.EntID == id {
 		var (
 			startAt = now + 7*seconds
 			endAt   = now + 8*seconds
@@ -298,7 +300,7 @@ func updateCompensate(t *testing.T) {
 }
 
 func getCompensate(t *testing.T) {
-	info, err := GetCompensate(context.Background(), ret.ID)
+	info, err := GetCompensate(context.Background(), ret.EntID)
 	if assert.Nil(t, err) {
 		assert.Equal(t, info, &ret)
 	}
@@ -314,7 +316,7 @@ func getCompensates(t *testing.T) {
 }
 
 func deleteCompensate(t *testing.T) {
-	if ret.ID == id {
+	if ret.EntID == id {
 		info, err := DeleteCompensate(context.Background(), &npool.CompensateReq{
 			ID: &ret.ID,
 		})
@@ -323,7 +325,7 @@ func deleteCompensate(t *testing.T) {
 			assert.Equal(t, info, &ret)
 		}
 
-		info, err = GetCompensate(context.Background(), ret.ID)
+		info, err = GetCompensate(context.Background(), ret.EntID)
 		assert.Nil(t, err)
 		assert.Nil(t, info)
 	}

@@ -19,7 +19,7 @@ func (h *Handler) ExistCompensate(ctx context.Context) (bool, error) {
 			Compensate.
 			Query().
 			Where(
-				entcompensate.ID(*h.ID),
+				entcompensate.EntID(*h.EntID),
 				entcompensate.DeletedAt(0),
 			).
 			Exist(_ctx)

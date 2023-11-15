@@ -68,7 +68,7 @@ func UpdateCompensate(ctx context.Context, in *npool.CompensateReq) (*npool.Comp
 func GetCompensate(ctx context.Context, id string) (*npool.Compensate, error) {
 	info, err := do(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
 		resp, err := cli.GetCompensate(ctx, &npool.GetCompensateRequest{
-			ID: id,
+			EntID: id,
 		})
 		if err != nil {
 			return nil, err
@@ -151,7 +151,7 @@ func DeleteCompensate(ctx context.Context, in *npool.CompensateReq) (*npool.Comp
 func ExistCompensate(ctx context.Context, id string) (bool, error) {
 	exist, err := do(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
 		resp, err := cli.ExistCompensate(ctx, &npool.ExistCompensateRequest{
-			ID: id,
+			EntID: id,
 		})
 		if err != nil {
 			return false, err
