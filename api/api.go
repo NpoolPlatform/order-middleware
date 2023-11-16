@@ -29,5 +29,11 @@ func RegisterGateway(mux *runtime.ServeMux, endpoint string, opts []grpc.DialOpt
 	if err := order.RegisterMiddlewareHandlerFromEndpoint(context.Background(), mux, endpoint, opts); err != nil {
 		return err
 	}
+	if err := compensate.RegisterGateway(mux, endpoint, opts); err != nil {
+		return err
+	}
+	if err := outofgas.RegisterGateway(mux, endpoint, opts); err != nil {
+		return err
+	}
 	return nil
 }
