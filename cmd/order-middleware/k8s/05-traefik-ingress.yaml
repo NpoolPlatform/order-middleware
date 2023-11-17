@@ -52,6 +52,10 @@ spec:
             backend:
               serviceName: order-middleware
               servicePort: 50440
+          - path: /api/ordermw/v1/order_UpdateOrder
+            backend:
+              serviceName: order-middleware
+              servicePort: 50440
     - host: api.procyon.vip
       http: *http_rules
     - host: api.xpool.top

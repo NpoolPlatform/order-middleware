@@ -35,5 +35,8 @@ func RegisterGateway(mux *runtime.ServeMux, endpoint string, opts []grpc.DialOpt
 	if err := outofgas.RegisterGateway(mux, endpoint, opts); err != nil {
 		return err
 	}
+	if err := order1.RegisterGateway(mux, endpoint, opts); err != nil {
+		return err
+	}
 	return nil
 }
