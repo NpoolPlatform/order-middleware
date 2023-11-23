@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
 	types "github.com/NpoolPlatform/message/npool/basetypes/order/v1"
 	npool "github.com/NpoolPlatform/message/npool/order/mw/v1/order"
 	ordercrud "github.com/NpoolPlatform/order-middleware/pkg/crud/order"
@@ -23,6 +22,40 @@ import (
 type deleteHandler struct {
 	*Handler
 	deletedAt uint32
+}
+
+func (h *deleteHandler) checkDeleteOrders(ctx context.Context) ([]*npool.Order, error) {
+	infos := []*npool.Order{}
+	reqs := []*OrderReq{}
+	for _, req := range h.Reqs {
+		if req.ID == nil && req.EntID == nil {
+			return nil, fmt.Errorf("invalid id")
+		}
+		orderHandler, err := NewHandler(ctx)
+		if err != nil {
+			return nil, err
+		}
+		orderHandler.ID = req.ID
+		orderHandler.EntID = req.EntID
+		info, err := orderHandler.GetOrder(ctx)
+		if err != nil {
+			return nil, err
+		}
+		if info == nil {
+			continue
+		}
+		if info.OrderState != types.OrderState_OrderStateCreated {
+			return nil, fmt.Errorf("permission denied")
+		}
+		infos = append(infos, info)
+		_req := req
+		_req.ID = &info.ID
+		entID := uuid.MustParse(info.EntID)
+		_req.EntID = &entID
+		reqs = append(reqs, _req)
+	}
+	h.Reqs = reqs
+	return infos, nil
 }
 
 func (h *deleteHandler) deleteOrder(ctx context.Context, tx *ent.Tx, id uint32) error {
@@ -111,6 +144,7 @@ func (h *Handler) DeleteOrder(ctx context.Context) (*npool.Order, error) {
 	}
 	entID := uuid.MustParse(info.EntID)
 	h.EntID = &entID
+	h.ID = &info.ID
 
 	handler := &deleteHandler{
 		Handler:   h,
@@ -144,28 +178,13 @@ func (h *Handler) DeleteOrders(ctx context.Context) ([]*npool.Order, error) {
 		deletedAt: uint32(time.Now().Unix()),
 	}
 
-	ids := []uint32{}
-	for _, req := range h.Reqs {
-		if req.ID == nil {
-			return nil, fmt.Errorf("invalid id")
-		}
-		ids = append(ids, *req.ID)
-	}
-	h.Conds = &ordercrud.Conds{
-		IDs: &cruder.Cond{Op: cruder.IN, Val: ids},
-	}
-	infos, _, err := h.GetOrders(ctx)
+	infos, err := handler.checkDeleteOrders(ctx)
 	if err != nil {
 		return nil, err
 	}
+
 	if len(infos) == 0 {
 		return nil, nil
-	}
-
-	for _, info := range infos {
-		if info.OrderState != types.OrderState_OrderStateCreated {
-			return nil, fmt.Errorf("permission denied")
-		}
 	}
 
 	err = db.WithTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {
