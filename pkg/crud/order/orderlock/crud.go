@@ -155,11 +155,8 @@ func SetQueryConds(q *ent.OrderLockQuery, conds *Conds) (*ent.OrderLockQuery, er
 		}
 	}
 	if conds.IDs != nil {
-		fmt.Println("ids: ", conds.IDs.Val)
 		ids, ok := conds.IDs.Val.([]uint32)
 		if !ok {
-			fmt.Println("ok: ", ok)
-			fmt.Println("ids: ", ids)
 			return nil, fmt.Errorf("invalid ids")
 		}
 		if len(ids) > 0 {
