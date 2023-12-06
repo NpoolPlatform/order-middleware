@@ -42,6 +42,7 @@ func (h *deleteHandler) deleteOrderLock(ctx context.Context, tx *ent.Tx, id uint
 	return nil
 }
 
+//nolint:gocyclo
 func (h *Handler) DeleteOrderLocks(ctx context.Context) ([]*npool.OrderLock, error) {
 	ids := []uint32{}
 	entIDs := []uuid.UUID{}
