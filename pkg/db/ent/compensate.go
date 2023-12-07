@@ -15,13 +15,15 @@ import (
 type Compensate struct {
 	config `json:"-"`
 	// ID of the ent.
-	ID uuid.UUID `json:"id,omitempty"`
+	ID uint32 `json:"id,omitempty"`
 	// CreatedAt holds the value of the "created_at" field.
 	CreatedAt uint32 `json:"created_at,omitempty"`
 	// UpdatedAt holds the value of the "updated_at" field.
 	UpdatedAt uint32 `json:"updated_at,omitempty"`
 	// DeletedAt holds the value of the "deleted_at" field.
 	DeletedAt uint32 `json:"deleted_at,omitempty"`
+	// EntID holds the value of the "ent_id" field.
+	EntID uuid.UUID `json:"ent_id,omitempty"`
 	// OrderID holds the value of the "order_id" field.
 	OrderID uuid.UUID `json:"order_id,omitempty"`
 	// StartAt holds the value of the "start_at" field.
@@ -41,11 +43,11 @@ func (*Compensate) scanValues(columns []string) ([]interface{}, error) {
 	values := make([]interface{}, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case compensate.FieldCreatedAt, compensate.FieldUpdatedAt, compensate.FieldDeletedAt, compensate.FieldStartAt, compensate.FieldEndAt:
+		case compensate.FieldID, compensate.FieldCreatedAt, compensate.FieldUpdatedAt, compensate.FieldDeletedAt, compensate.FieldStartAt, compensate.FieldEndAt:
 			values[i] = new(sql.NullInt64)
 		case compensate.FieldCompensateType, compensate.FieldTitle, compensate.FieldMessage:
 			values[i] = new(sql.NullString)
-		case compensate.FieldID, compensate.FieldOrderID:
+		case compensate.FieldEntID, compensate.FieldOrderID:
 			values[i] = new(uuid.UUID)
 		default:
 			return nil, fmt.Errorf("unexpected column %q for type Compensate", columns[i])
@@ -63,11 +65,11 @@ func (c *Compensate) assignValues(columns []string, values []interface{}) error 
 	for i := range columns {
 		switch columns[i] {
 		case compensate.FieldID:
-			if value, ok := values[i].(*uuid.UUID); !ok {
-				return fmt.Errorf("unexpected type %T for field id", values[i])
-			} else if value != nil {
-				c.ID = *value
+			value, ok := values[i].(*sql.NullInt64)
+			if !ok {
+				return fmt.Errorf("unexpected type %T for field id", value)
 			}
+			c.ID = uint32(value.Int64)
 		case compensate.FieldCreatedAt:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field created_at", values[i])
@@ -85,6 +87,12 @@ func (c *Compensate) assignValues(columns []string, values []interface{}) error 
 				return fmt.Errorf("unexpected type %T for field deleted_at", values[i])
 			} else if value.Valid {
 				c.DeletedAt = uint32(value.Int64)
+			}
+		case compensate.FieldEntID:
+			if value, ok := values[i].(*uuid.UUID); !ok {
+				return fmt.Errorf("unexpected type %T for field ent_id", values[i])
+			} else if value != nil {
+				c.EntID = *value
 			}
 		case compensate.FieldOrderID:
 			if value, ok := values[i].(*uuid.UUID); !ok {
@@ -158,6 +166,9 @@ func (c *Compensate) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("deleted_at=")
 	builder.WriteString(fmt.Sprintf("%v", c.DeletedAt))
+	builder.WriteString(", ")
+	builder.WriteString("ent_id=")
+	builder.WriteString(fmt.Sprintf("%v", c.EntID))
 	builder.WriteString(", ")
 	builder.WriteString("order_id=")
 	builder.WriteString(fmt.Sprintf("%v", c.OrderID))

@@ -23,7 +23,8 @@ func (s *Server) DeleteOrder(ctx context.Context, in *npool.DeleteOrderRequest) 
 	}
 	handler, err := order1.NewHandler(
 		ctx,
-		order1.WithID(req.ID, true),
+		order1.WithID(req.ID, false),
+		order1.WithEntID(req.EntID, false),
 	)
 	if err != nil {
 		logger.Sugar().Errorw(

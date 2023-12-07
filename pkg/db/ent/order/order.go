@@ -19,6 +19,8 @@ const (
 	FieldUpdatedAt = "updated_at"
 	// FieldDeletedAt holds the string denoting the deleted_at field in the database.
 	FieldDeletedAt = "deleted_at"
+	// FieldEntID holds the string denoting the ent_id field in the database.
+	FieldEntID = "ent_id"
 	// FieldAppID holds the string denoting the app_id field in the database.
 	FieldAppID = "app_id"
 	// FieldUserID holds the string denoting the user_id field in the database.
@@ -77,6 +79,7 @@ var Columns = []string{
 	FieldCreatedAt,
 	FieldUpdatedAt,
 	FieldDeletedAt,
+	FieldEntID,
 	FieldAppID,
 	FieldUserID,
 	FieldGoodID,
@@ -130,6 +133,8 @@ var (
 	UpdateDefaultUpdatedAt func() uint32
 	// DefaultDeletedAt holds the default value on creation for the "deleted_at" field.
 	DefaultDeletedAt func() uint32
+	// DefaultEntID holds the default value on creation for the "ent_id" field.
+	DefaultEntID func() uuid.UUID
 	// DefaultPaymentID holds the default value on creation for the "payment_id" field.
 	DefaultPaymentID func() uuid.UUID
 	// DefaultParentOrderID holds the default value on creation for the "parent_order_id" field.
@@ -168,6 +173,4 @@ var (
 	DefaultLocalCoinUsdCurrency decimal.Decimal
 	// DefaultLiveCoinUsdCurrency holds the default value on creation for the "live_coin_usd_currency" field.
 	DefaultLiveCoinUsdCurrency decimal.Decimal
-	// DefaultID holds the default value on creation for the "id" field.
-	DefaultID func() uuid.UUID
 )

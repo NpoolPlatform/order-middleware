@@ -14,7 +14,6 @@ import (
 	"entgo.io/ent/schema/field"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/orderstate"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/predicate"
-	"github.com/google/uuid"
 )
 
 // OrderStateQuery is the builder for querying OrderState entities.
@@ -87,8 +86,8 @@ func (osq *OrderStateQuery) FirstX(ctx context.Context) *OrderState {
 
 // FirstID returns the first OrderState ID from the query.
 // Returns a *NotFoundError when no OrderState ID was found.
-func (osq *OrderStateQuery) FirstID(ctx context.Context) (id uuid.UUID, err error) {
-	var ids []uuid.UUID
+func (osq *OrderStateQuery) FirstID(ctx context.Context) (id uint32, err error) {
+	var ids []uint32
 	if ids, err = osq.Limit(1).IDs(ctx); err != nil {
 		return
 	}
@@ -100,7 +99,7 @@ func (osq *OrderStateQuery) FirstID(ctx context.Context) (id uuid.UUID, err erro
 }
 
 // FirstIDX is like FirstID, but panics if an error occurs.
-func (osq *OrderStateQuery) FirstIDX(ctx context.Context) uuid.UUID {
+func (osq *OrderStateQuery) FirstIDX(ctx context.Context) uint32 {
 	id, err := osq.FirstID(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)
@@ -138,8 +137,8 @@ func (osq *OrderStateQuery) OnlyX(ctx context.Context) *OrderState {
 // OnlyID is like Only, but returns the only OrderState ID in the query.
 // Returns a *NotSingularError when more than one OrderState ID is found.
 // Returns a *NotFoundError when no entities are found.
-func (osq *OrderStateQuery) OnlyID(ctx context.Context) (id uuid.UUID, err error) {
-	var ids []uuid.UUID
+func (osq *OrderStateQuery) OnlyID(ctx context.Context) (id uint32, err error) {
+	var ids []uint32
 	if ids, err = osq.Limit(2).IDs(ctx); err != nil {
 		return
 	}
@@ -155,7 +154,7 @@ func (osq *OrderStateQuery) OnlyID(ctx context.Context) (id uuid.UUID, err error
 }
 
 // OnlyIDX is like OnlyID, but panics if an error occurs.
-func (osq *OrderStateQuery) OnlyIDX(ctx context.Context) uuid.UUID {
+func (osq *OrderStateQuery) OnlyIDX(ctx context.Context) uint32 {
 	id, err := osq.OnlyID(ctx)
 	if err != nil {
 		panic(err)
@@ -181,8 +180,8 @@ func (osq *OrderStateQuery) AllX(ctx context.Context) []*OrderState {
 }
 
 // IDs executes the query and returns a list of OrderState IDs.
-func (osq *OrderStateQuery) IDs(ctx context.Context) ([]uuid.UUID, error) {
-	var ids []uuid.UUID
+func (osq *OrderStateQuery) IDs(ctx context.Context) ([]uint32, error) {
+	var ids []uint32
 	if err := osq.Select(orderstate.FieldID).Scan(ctx, &ids); err != nil {
 		return nil, err
 	}
@@ -190,7 +189,7 @@ func (osq *OrderStateQuery) IDs(ctx context.Context) ([]uuid.UUID, error) {
 }
 
 // IDsX is like IDs, but panics if an error occurs.
-func (osq *OrderStateQuery) IDsX(ctx context.Context) []uuid.UUID {
+func (osq *OrderStateQuery) IDsX(ctx context.Context) []uint32 {
 	ids, err := osq.IDs(ctx)
 	if err != nil {
 		panic(err)
@@ -377,7 +376,7 @@ func (osq *OrderStateQuery) querySpec() *sqlgraph.QuerySpec {
 			Table:   orderstate.Table,
 			Columns: orderstate.Columns,
 			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeUUID,
+				Type:   field.TypeUint32,
 				Column: orderstate.FieldID,
 			},
 		},

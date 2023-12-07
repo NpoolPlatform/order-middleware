@@ -85,6 +85,20 @@ func (osu *OrderStateUpdate) AddDeletedAt(u int32) *OrderStateUpdate {
 	return osu
 }
 
+// SetEntID sets the "ent_id" field.
+func (osu *OrderStateUpdate) SetEntID(u uuid.UUID) *OrderStateUpdate {
+	osu.mutation.SetEntID(u)
+	return osu
+}
+
+// SetNillableEntID sets the "ent_id" field if the given value is not nil.
+func (osu *OrderStateUpdate) SetNillableEntID(u *uuid.UUID) *OrderStateUpdate {
+	if u != nil {
+		osu.SetEntID(*u)
+	}
+	return osu
+}
+
 // SetOrderID sets the "order_id" field.
 func (osu *OrderStateUpdate) SetOrderID(u uuid.UUID) *OrderStateUpdate {
 	osu.mutation.SetOrderID(u)
@@ -539,7 +553,7 @@ func (osu *OrderStateUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Table:   orderstate.Table,
 			Columns: orderstate.Columns,
 			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeUUID,
+				Type:   field.TypeUint32,
 				Column: orderstate.FieldID,
 			},
 		},
@@ -591,6 +605,13 @@ func (osu *OrderStateUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Type:   field.TypeUint32,
 			Value:  value,
 			Column: orderstate.FieldDeletedAt,
+		})
+	}
+	if value, ok := osu.mutation.EntID(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Value:  value,
+			Column: orderstate.FieldEntID,
 		})
 	}
 	if value, ok := osu.mutation.OrderID(); ok {
@@ -923,6 +944,20 @@ func (osuo *OrderStateUpdateOne) SetNillableDeletedAt(u *uint32) *OrderStateUpda
 // AddDeletedAt adds u to the "deleted_at" field.
 func (osuo *OrderStateUpdateOne) AddDeletedAt(u int32) *OrderStateUpdateOne {
 	osuo.mutation.AddDeletedAt(u)
+	return osuo
+}
+
+// SetEntID sets the "ent_id" field.
+func (osuo *OrderStateUpdateOne) SetEntID(u uuid.UUID) *OrderStateUpdateOne {
+	osuo.mutation.SetEntID(u)
+	return osuo
+}
+
+// SetNillableEntID sets the "ent_id" field if the given value is not nil.
+func (osuo *OrderStateUpdateOne) SetNillableEntID(u *uuid.UUID) *OrderStateUpdateOne {
+	if u != nil {
+		osuo.SetEntID(*u)
+	}
 	return osuo
 }
 
@@ -1393,7 +1428,7 @@ func (osuo *OrderStateUpdateOne) sqlSave(ctx context.Context) (_node *OrderState
 			Table:   orderstate.Table,
 			Columns: orderstate.Columns,
 			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeUUID,
+				Type:   field.TypeUint32,
 				Column: orderstate.FieldID,
 			},
 		},
@@ -1462,6 +1497,13 @@ func (osuo *OrderStateUpdateOne) sqlSave(ctx context.Context) (_node *OrderState
 			Type:   field.TypeUint32,
 			Value:  value,
 			Column: orderstate.FieldDeletedAt,
+		})
+	}
+	if value, ok := osuo.mutation.EntID(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Value:  value,
+			Column: orderstate.FieldEntID,
 		})
 	}
 	if value, ok := osuo.mutation.OrderID(); ok {

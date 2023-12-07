@@ -85,6 +85,20 @@ func (ou *OrderUpdate) AddDeletedAt(u int32) *OrderUpdate {
 	return ou
 }
 
+// SetEntID sets the "ent_id" field.
+func (ou *OrderUpdate) SetEntID(u uuid.UUID) *OrderUpdate {
+	ou.mutation.SetEntID(u)
+	return ou
+}
+
+// SetNillableEntID sets the "ent_id" field if the given value is not nil.
+func (ou *OrderUpdate) SetNillableEntID(u *uuid.UUID) *OrderUpdate {
+	if u != nil {
+		ou.SetEntID(*u)
+	}
+	return ou
+}
+
 // SetAppID sets the "app_id" field.
 func (ou *OrderUpdate) SetAppID(u uuid.UUID) *OrderUpdate {
 	ou.mutation.SetAppID(u)
@@ -580,7 +594,7 @@ func (ou *OrderUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Table:   order.Table,
 			Columns: order.Columns,
 			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeUUID,
+				Type:   field.TypeUint32,
 				Column: order.FieldID,
 			},
 		},
@@ -632,6 +646,13 @@ func (ou *OrderUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Type:   field.TypeUint32,
 			Value:  value,
 			Column: order.FieldDeletedAt,
+		})
+	}
+	if value, ok := ou.mutation.EntID(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Value:  value,
+			Column: order.FieldEntID,
 		})
 	}
 	if value, ok := ou.mutation.AppID(); ok {
@@ -996,6 +1017,20 @@ func (ouo *OrderUpdateOne) SetNillableDeletedAt(u *uint32) *OrderUpdateOne {
 // AddDeletedAt adds u to the "deleted_at" field.
 func (ouo *OrderUpdateOne) AddDeletedAt(u int32) *OrderUpdateOne {
 	ouo.mutation.AddDeletedAt(u)
+	return ouo
+}
+
+// SetEntID sets the "ent_id" field.
+func (ouo *OrderUpdateOne) SetEntID(u uuid.UUID) *OrderUpdateOne {
+	ouo.mutation.SetEntID(u)
+	return ouo
+}
+
+// SetNillableEntID sets the "ent_id" field if the given value is not nil.
+func (ouo *OrderUpdateOne) SetNillableEntID(u *uuid.UUID) *OrderUpdateOne {
+	if u != nil {
+		ouo.SetEntID(*u)
+	}
 	return ouo
 }
 
@@ -1507,7 +1542,7 @@ func (ouo *OrderUpdateOne) sqlSave(ctx context.Context) (_node *Order, err error
 			Table:   order.Table,
 			Columns: order.Columns,
 			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeUUID,
+				Type:   field.TypeUint32,
 				Column: order.FieldID,
 			},
 		},
@@ -1576,6 +1611,13 @@ func (ouo *OrderUpdateOne) sqlSave(ctx context.Context) (_node *Order, err error
 			Type:   field.TypeUint32,
 			Value:  value,
 			Column: order.FieldDeletedAt,
+		})
+	}
+	if value, ok := ouo.mutation.EntID(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Value:  value,
+			Column: order.FieldEntID,
 		})
 	}
 	if value, ok := ouo.mutation.AppID(); ok {

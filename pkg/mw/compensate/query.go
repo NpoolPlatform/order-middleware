@@ -28,15 +28,19 @@ func (h *queryHandler) selectCompensate(stm *ent.CompensateQuery) *ent.Compensat
 	return stm.Select(entcompensate.FieldID)
 }
 
-func (h *queryHandler) queryCompensate(cli *ent.Client) {
-	h.stmSelect = h.selectCompensate(
-		cli.Compensate.
-			Query().
-			Where(
-				entcompensate.ID(*h.ID),
-				entcompensate.DeletedAt(0),
-			),
-	)
+func (h *queryHandler) queryCompensate(cli *ent.Client) error {
+	if h.ID == nil && h.EntID == nil {
+		return fmt.Errorf("invalid id")
+	}
+	stm := cli.Compensate.Query().Where(entcompensate.DeletedAt(0))
+	if h.ID != nil {
+		stm.Where(entcompensate.ID(*h.ID))
+	}
+	if h.EntID != nil {
+		stm.Where(entcompensate.EntID(*h.EntID))
+	}
+	h.stmSelect = h.selectCompensate(stm)
+	return nil
 }
 
 func (h *queryHandler) queryCompensates(cli *ent.Client) (*ent.CompensateSelect, error) {
@@ -51,6 +55,7 @@ func (h *queryHandler) queryJoinMyself(s *sql.Selector) {
 	t := sql.Table(entcompensate.Table)
 	s.AppendSelect(
 		t.C(entcompensate.FieldID),
+		t.C(entcompensate.FieldEntID),
 		t.C(entcompensate.FieldOrderID),
 		t.C(entcompensate.FieldStartAt),
 		t.C(entcompensate.FieldEndAt),
@@ -66,7 +71,7 @@ func (h *queryHandler) queryJoinOrder(s *sql.Selector) error { //nolint
 	s.LeftJoin(t).
 		On(
 			s.C(entcompensate.FieldOrderID),
-			t.C(entorder.FieldID),
+			t.C(entorder.FieldEntID),
 		).
 		OnP(
 			sql.EQ(t.C(entorder.FieldDeletedAt), 0),
@@ -141,7 +146,9 @@ func (h *Handler) GetCompensate(ctx context.Context) (*npool.Compensate, error) 
 	}
 
 	err := db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
-		handler.queryCompensate(cli)
+		if err := handler.queryCompensate(cli); err != nil {
+			return err
+		}
 		if err := handler.queryJoin(); err != nil {
 			return err
 		}

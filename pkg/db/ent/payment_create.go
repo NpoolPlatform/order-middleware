@@ -7,7 +7,6 @@ import (
 	"errors"
 	"fmt"
 
-	"entgo.io/ent/dialect"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
@@ -62,6 +61,20 @@ func (pc *PaymentCreate) SetDeletedAt(u uint32) *PaymentCreate {
 func (pc *PaymentCreate) SetNillableDeletedAt(u *uint32) *PaymentCreate {
 	if u != nil {
 		pc.SetDeletedAt(*u)
+	}
+	return pc
+}
+
+// SetEntID sets the "ent_id" field.
+func (pc *PaymentCreate) SetEntID(u uuid.UUID) *PaymentCreate {
+	pc.mutation.SetEntID(u)
+	return pc
+}
+
+// SetNillableEntID sets the "ent_id" field if the given value is not nil.
+func (pc *PaymentCreate) SetNillableEntID(u *uuid.UUID) *PaymentCreate {
+	if u != nil {
+		pc.SetEntID(*u)
 	}
 	return pc
 }
@@ -139,16 +152,8 @@ func (pc *PaymentCreate) SetNillableStartAmount(d *decimal.Decimal) *PaymentCrea
 }
 
 // SetID sets the "id" field.
-func (pc *PaymentCreate) SetID(u uuid.UUID) *PaymentCreate {
+func (pc *PaymentCreate) SetID(u uint32) *PaymentCreate {
 	pc.mutation.SetID(u)
-	return pc
-}
-
-// SetNillableID sets the "id" field if the given value is not nil.
-func (pc *PaymentCreate) SetNillableID(u *uuid.UUID) *PaymentCreate {
-	if u != nil {
-		pc.SetID(*u)
-	}
 	return pc
 }
 
@@ -252,16 +257,16 @@ func (pc *PaymentCreate) defaults() error {
 		v := payment.DefaultDeletedAt()
 		pc.mutation.SetDeletedAt(v)
 	}
+	if _, ok := pc.mutation.EntID(); !ok {
+		if payment.DefaultEntID == nil {
+			return fmt.Errorf("ent: uninitialized payment.DefaultEntID (forgotten import ent/runtime?)")
+		}
+		v := payment.DefaultEntID()
+		pc.mutation.SetEntID(v)
+	}
 	if _, ok := pc.mutation.StartAmount(); !ok {
 		v := payment.DefaultStartAmount
 		pc.mutation.SetStartAmount(v)
-	}
-	if _, ok := pc.mutation.ID(); !ok {
-		if payment.DefaultID == nil {
-			return fmt.Errorf("ent: uninitialized payment.DefaultID (forgotten import ent/runtime?)")
-		}
-		v := payment.DefaultID()
-		pc.mutation.SetID(v)
 	}
 	return nil
 }
@@ -276,6 +281,9 @@ func (pc *PaymentCreate) check() error {
 	}
 	if _, ok := pc.mutation.DeletedAt(); !ok {
 		return &ValidationError{Name: "deleted_at", err: errors.New(`ent: missing required field "Payment.deleted_at"`)}
+	}
+	if _, ok := pc.mutation.EntID(); !ok {
+		return &ValidationError{Name: "ent_id", err: errors.New(`ent: missing required field "Payment.ent_id"`)}
 	}
 	if _, ok := pc.mutation.AppID(); !ok {
 		return &ValidationError{Name: "app_id", err: errors.New(`ent: missing required field "Payment.app_id"`)}
@@ -303,12 +311,9 @@ func (pc *PaymentCreate) sqlSave(ctx context.Context) (*Payment, error) {
 		}
 		return nil, err
 	}
-	if _spec.ID.Value != nil {
-		if id, ok := _spec.ID.Value.(*uuid.UUID); ok {
-			_node.ID = *id
-		} else if err := _node.ID.Scan(_spec.ID.Value); err != nil {
-			return nil, err
-		}
+	if _spec.ID.Value != _node.ID {
+		id := _spec.ID.Value.(int64)
+		_node.ID = uint32(id)
 	}
 	return _node, nil
 }
@@ -319,7 +324,7 @@ func (pc *PaymentCreate) createSpec() (*Payment, *sqlgraph.CreateSpec) {
 		_spec = &sqlgraph.CreateSpec{
 			Table: payment.Table,
 			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeUUID,
+				Type:   field.TypeUint32,
 				Column: payment.FieldID,
 			},
 		}
@@ -327,7 +332,7 @@ func (pc *PaymentCreate) createSpec() (*Payment, *sqlgraph.CreateSpec) {
 	_spec.OnConflict = pc.conflict
 	if id, ok := pc.mutation.ID(); ok {
 		_node.ID = id
-		_spec.ID.Value = &id
+		_spec.ID.Value = id
 	}
 	if value, ok := pc.mutation.CreatedAt(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -352,6 +357,14 @@ func (pc *PaymentCreate) createSpec() (*Payment, *sqlgraph.CreateSpec) {
 			Column: payment.FieldDeletedAt,
 		})
 		_node.DeletedAt = value
+	}
+	if value, ok := pc.mutation.EntID(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Value:  value,
+			Column: payment.FieldEntID,
+		})
+		_node.EntID = value
 	}
 	if value, ok := pc.mutation.AppID(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -522,6 +535,18 @@ func (u *PaymentUpsert) UpdateDeletedAt() *PaymentUpsert {
 // AddDeletedAt adds v to the "deleted_at" field.
 func (u *PaymentUpsert) AddDeletedAt(v uint32) *PaymentUpsert {
 	u.Add(payment.FieldDeletedAt, v)
+	return u
+}
+
+// SetEntID sets the "ent_id" field.
+func (u *PaymentUpsert) SetEntID(v uuid.UUID) *PaymentUpsert {
+	u.Set(payment.FieldEntID, v)
+	return u
+}
+
+// UpdateEntID sets the "ent_id" field to the value that was provided on create.
+func (u *PaymentUpsert) UpdateEntID() *PaymentUpsert {
+	u.SetExcluded(payment.FieldEntID)
 	return u
 }
 
@@ -752,6 +777,20 @@ func (u *PaymentUpsertOne) UpdateDeletedAt() *PaymentUpsertOne {
 	})
 }
 
+// SetEntID sets the "ent_id" field.
+func (u *PaymentUpsertOne) SetEntID(v uuid.UUID) *PaymentUpsertOne {
+	return u.Update(func(s *PaymentUpsert) {
+		s.SetEntID(v)
+	})
+}
+
+// UpdateEntID sets the "ent_id" field to the value that was provided on create.
+func (u *PaymentUpsertOne) UpdateEntID() *PaymentUpsertOne {
+	return u.Update(func(s *PaymentUpsert) {
+		s.UpdateEntID()
+	})
+}
+
 // SetAppID sets the "app_id" field.
 func (u *PaymentUpsertOne) SetAppID(v uuid.UUID) *PaymentUpsertOne {
 	return u.Update(func(s *PaymentUpsert) {
@@ -901,12 +940,7 @@ func (u *PaymentUpsertOne) ExecX(ctx context.Context) {
 }
 
 // Exec executes the UPSERT query and returns the inserted/updated ID.
-func (u *PaymentUpsertOne) ID(ctx context.Context) (id uuid.UUID, err error) {
-	if u.create.driver.Dialect() == dialect.MySQL {
-		// In case of "ON CONFLICT", there is no way to get back non-numeric ID
-		// fields from the database since MySQL does not support the RETURNING clause.
-		return id, errors.New("ent: PaymentUpsertOne.ID is not supported by MySQL driver. Use PaymentUpsertOne.Exec instead")
-	}
+func (u *PaymentUpsertOne) ID(ctx context.Context) (id uint32, err error) {
 	node, err := u.create.Save(ctx)
 	if err != nil {
 		return id, err
@@ -915,7 +949,7 @@ func (u *PaymentUpsertOne) ID(ctx context.Context) (id uuid.UUID, err error) {
 }
 
 // IDX is like ID, but panics if an error occurs.
-func (u *PaymentUpsertOne) IDX(ctx context.Context) uuid.UUID {
+func (u *PaymentUpsertOne) IDX(ctx context.Context) uint32 {
 	id, err := u.ID(ctx)
 	if err != nil {
 		panic(err)
@@ -966,6 +1000,10 @@ func (pcb *PaymentCreateBulk) Save(ctx context.Context) ([]*Payment, error) {
 					return nil, err
 				}
 				mutation.id = &nodes[i].ID
+				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
+					id := specs[i].ID.Value.(int64)
+					nodes[i].ID = uint32(id)
+				}
 				mutation.done = true
 				return nodes[i], nil
 			})
@@ -1161,6 +1199,20 @@ func (u *PaymentUpsertBulk) AddDeletedAt(v uint32) *PaymentUpsertBulk {
 func (u *PaymentUpsertBulk) UpdateDeletedAt() *PaymentUpsertBulk {
 	return u.Update(func(s *PaymentUpsert) {
 		s.UpdateDeletedAt()
+	})
+}
+
+// SetEntID sets the "ent_id" field.
+func (u *PaymentUpsertBulk) SetEntID(v uuid.UUID) *PaymentUpsertBulk {
+	return u.Update(func(s *PaymentUpsert) {
+		s.SetEntID(v)
+	})
+}
+
+// UpdateEntID sets the "ent_id" field to the value that was provided on create.
+func (u *PaymentUpsertBulk) UpdateEntID() *PaymentUpsertBulk {
+	return u.Update(func(s *PaymentUpsert) {
+		s.UpdateEntID()
 	})
 }
 

@@ -1,6 +1,8 @@
 package outofgas
 
 import (
+	"context"
+
 	"github.com/NpoolPlatform/message/npool/order/mw/v1/outofgas"
 
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
@@ -16,5 +18,5 @@ func Register(server grpc.ServiceRegistrar) {
 }
 
 func RegisterGateway(mux *runtime.ServeMux, endpoint string, opts []grpc.DialOption) error {
-	return nil
+	return outofgas.RegisterMiddlewareHandlerFromEndpoint(context.Background(), mux, endpoint, opts)
 }

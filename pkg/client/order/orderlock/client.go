@@ -52,7 +52,7 @@ func CreateOrderLocks(ctx context.Context, in []*npool.OrderLockReq) ([]*npool.O
 func GetOrderLock(ctx context.Context, id string) (*npool.OrderLock, error) {
 	info, err := do(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
 		resp, err := cli.GetOrderLock(ctx, &npool.GetOrderLockRequest{
-			ID: id,
+			EntID: id,
 		})
 		if err != nil {
 			return nil, err

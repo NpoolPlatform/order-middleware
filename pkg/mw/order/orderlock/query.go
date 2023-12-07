@@ -23,6 +23,7 @@ type queryHandler struct {
 func (h *queryHandler) selectOrderLock(stm *ent.OrderLockQuery) {
 	h.stm = stm.Select(
 		entorderlock.FieldID,
+		entorderlock.FieldEntID,
 		entorderlock.FieldAppID,
 		entorderlock.FieldUserID,
 		entorderlock.FieldOrderID,
@@ -32,15 +33,19 @@ func (h *queryHandler) selectOrderLock(stm *ent.OrderLockQuery) {
 	)
 }
 
-func (h *queryHandler) queryOrderLock(cli *ent.Client) {
-	h.selectOrderLock(
-		cli.OrderLock.
-			Query().
-			Where(
-				entorderlock.ID(*h.ID),
-				entorderlock.DeletedAt(0),
-			),
-	)
+func (h *queryHandler) queryOrderLock(cli *ent.Client) error {
+	if h.ID == nil && h.EntID == nil {
+		return fmt.Errorf("invalid id")
+	}
+	stm := cli.OrderLock.Query().Where(entorderlock.DeletedAt(0))
+	if h.ID != nil {
+		stm.Where(entorderlock.ID(*h.ID))
+	}
+	if h.EntID != nil {
+		stm.Where(entorderlock.EntID(*h.EntID))
+	}
+	h.selectOrderLock(stm)
+	return nil
 }
 
 func (h *queryHandler) queryOrderLocks(ctx context.Context, cli *ent.Client) error {
@@ -75,7 +80,9 @@ func (h *Handler) GetOrderLock(ctx context.Context) (*npool.OrderLock, error) {
 	}
 
 	err := db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
-		handler.queryOrderLock(cli)
+		if err := handler.queryOrderLock(cli); err != nil {
+			return err
+		}
 		return handler.scan(_ctx)
 	})
 	if err != nil {

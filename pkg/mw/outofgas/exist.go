@@ -19,7 +19,7 @@ func (h *Handler) ExistOutOfGas(ctx context.Context) (bool, error) {
 			OutOfGas.
 			Query().
 			Where(
-				entoutofgas.ID(*h.ID),
+				entoutofgas.EntID(*h.EntID),
 				entoutofgas.DeletedAt(0),
 			).
 			Exist(_ctx)

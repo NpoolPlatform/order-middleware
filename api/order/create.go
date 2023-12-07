@@ -24,7 +24,7 @@ func (s *Server) CreateOrder(ctx context.Context, in *npool.CreateOrderRequest) 
 	}
 	handler, err := order1.NewHandler(
 		ctx,
-		order1.WithID(req.ID, false),
+		order1.WithEntID(req.EntID, false),
 		order1.WithAppID(req.AppID, true),
 		order1.WithUserID(req.UserID, true),
 		order1.WithGoodID(req.GoodID, true),

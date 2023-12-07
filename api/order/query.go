@@ -16,7 +16,7 @@ import (
 func (s *Server) GetOrder(ctx context.Context, in *npool.GetOrderRequest) (*npool.GetOrderResponse, error) {
 	handler, err := order1.NewHandler(
 		ctx,
-		order1.WithID(&in.ID, true),
+		order1.WithEntID(&in.EntID, true),
 	)
 	if err != nil {
 		logger.Sugar().Errorw(

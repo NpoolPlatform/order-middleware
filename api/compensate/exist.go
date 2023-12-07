@@ -16,7 +16,7 @@ import (
 func (s *Server) ExistCompensate(ctx context.Context, in *npool.ExistCompensateRequest) (*npool.ExistCompensateResponse, error) {
 	handler, err := compensate1.NewHandler(
 		ctx,
-		compensate1.WithID(&in.ID, true),
+		compensate1.WithEntID(&in.EntID, true),
 	)
 	if err != nil {
 		logger.Sugar().Errorw(

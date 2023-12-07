@@ -36,7 +36,7 @@ const seconds = 1
 var (
 	now   = uint32(time.Now().Unix())
 	order = ordermwpb.Order{
-		ID:                   uuid.NewString(),
+		EntID:                uuid.NewString(),
 		AppID:                uuid.NewString(),
 		UserID:               uuid.NewString(),
 		GoodID:               uuid.NewString(),
@@ -87,8 +87,8 @@ var (
 		LedgerLockID:         uuid.NewString(),
 	}
 	ret = npool.Compensate{
-		ID:           uuid.NewString(),
-		OrderID:      order.ID,
+		EntID:        uuid.NewString(),
+		OrderID:      order.EntID,
 		AppID:        order.AppID,
 		UserID:       order.UserID,
 		GoodID:       order.GoodID,
@@ -107,7 +107,7 @@ var (
 func setup(t *testing.T) func(*testing.T) {
 	h1, err := order1.NewHandler(
 		context.Background(),
-		order1.WithID(&order.ID, false),
+		order1.WithEntID(&order.EntID, false),
 		order1.WithAppID(&order.AppID, true),
 		order1.WithUserID(&order.UserID, true),
 		order1.WithGoodID(&order.GoodID, true),
@@ -141,8 +141,9 @@ func setup(t *testing.T) func(*testing.T) {
 	)
 	assert.Nil(t, err)
 
-	_, err = h1.CreateOrder(context.Background())
+	info, err := h1.CreateOrder(context.Background())
 	assert.Nil(t, err)
+	order.ID = info.ID
 
 	order.OrderState = ordertypes.OrderState_OrderStateWaitPayment
 	h2, err := order1.NewHandler(
@@ -282,7 +283,7 @@ func setup(t *testing.T) func(*testing.T) {
 func createCompensate(t *testing.T) {
 	handler, err := NewHandler(
 		context.Background(),
-		WithID(&ret.ID, true),
+		WithEntID(&ret.EntID, true),
 		WithOrderID(&ret.OrderID, true),
 		WithStartAt(&ret.StartAt, true),
 		WithEndAt(&ret.EndAt, true),
@@ -295,6 +296,7 @@ func createCompensate(t *testing.T) {
 			ret.OrderEndAt = info.OrderEndAt
 			ret.CreatedAt = info.CreatedAt
 			ret.UpdatedAt = info.UpdatedAt
+			ret.ID = info.ID
 			assert.Equal(t, &ret, info)
 		}
 	}
@@ -325,7 +327,7 @@ func updateCompensate(t *testing.T) {
 func getCompensate(t *testing.T) {
 	handler, err := NewHandler(
 		context.Background(),
-		WithID(&ret.ID, true),
+		WithEntID(&ret.EntID, true),
 	)
 	if assert.Nil(t, err) {
 		info, err := handler.GetCompensate(context.Background())

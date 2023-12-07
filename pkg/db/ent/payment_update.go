@@ -85,6 +85,20 @@ func (pu *PaymentUpdate) AddDeletedAt(u int32) *PaymentUpdate {
 	return pu
 }
 
+// SetEntID sets the "ent_id" field.
+func (pu *PaymentUpdate) SetEntID(u uuid.UUID) *PaymentUpdate {
+	pu.mutation.SetEntID(u)
+	return pu
+}
+
+// SetNillableEntID sets the "ent_id" field if the given value is not nil.
+func (pu *PaymentUpdate) SetNillableEntID(u *uuid.UUID) *PaymentUpdate {
+	if u != nil {
+		pu.SetEntID(*u)
+	}
+	return pu
+}
+
 // SetAppID sets the "app_id" field.
 func (pu *PaymentUpdate) SetAppID(u uuid.UUID) *PaymentUpdate {
 	pu.mutation.SetAppID(u)
@@ -261,7 +275,7 @@ func (pu *PaymentUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Table:   payment.Table,
 			Columns: payment.Columns,
 			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeUUID,
+				Type:   field.TypeUint32,
 				Column: payment.FieldID,
 			},
 		},
@@ -313,6 +327,13 @@ func (pu *PaymentUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Type:   field.TypeUint32,
 			Value:  value,
 			Column: payment.FieldDeletedAt,
+		})
+	}
+	if value, ok := pu.mutation.EntID(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Value:  value,
+			Column: payment.FieldEntID,
 		})
 	}
 	if value, ok := pu.mutation.AppID(); ok {
@@ -462,6 +483,20 @@ func (puo *PaymentUpdateOne) SetNillableDeletedAt(u *uint32) *PaymentUpdateOne {
 // AddDeletedAt adds u to the "deleted_at" field.
 func (puo *PaymentUpdateOne) AddDeletedAt(u int32) *PaymentUpdateOne {
 	puo.mutation.AddDeletedAt(u)
+	return puo
+}
+
+// SetEntID sets the "ent_id" field.
+func (puo *PaymentUpdateOne) SetEntID(u uuid.UUID) *PaymentUpdateOne {
+	puo.mutation.SetEntID(u)
+	return puo
+}
+
+// SetNillableEntID sets the "ent_id" field if the given value is not nil.
+func (puo *PaymentUpdateOne) SetNillableEntID(u *uuid.UUID) *PaymentUpdateOne {
+	if u != nil {
+		puo.SetEntID(*u)
+	}
 	return puo
 }
 
@@ -654,7 +689,7 @@ func (puo *PaymentUpdateOne) sqlSave(ctx context.Context) (_node *Payment, err e
 			Table:   payment.Table,
 			Columns: payment.Columns,
 			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeUUID,
+				Type:   field.TypeUint32,
 				Column: payment.FieldID,
 			},
 		},
@@ -723,6 +758,13 @@ func (puo *PaymentUpdateOne) sqlSave(ctx context.Context) (_node *Payment, err e
 			Type:   field.TypeUint32,
 			Value:  value,
 			Column: payment.FieldDeletedAt,
+		})
+	}
+	if value, ok := puo.mutation.EntID(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Value:  value,
+			Column: payment.FieldEntID,
 		})
 	}
 	if value, ok := puo.mutation.AppID(); ok {

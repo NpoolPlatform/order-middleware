@@ -137,7 +137,7 @@ func (h *updateHandler) updateOrderState(ctx context.Context, tx *ent.Tx, req *o
 	order, err := tx.Order.
 		Query().
 		Where(
-			entorder.ID(*req.OrderID),
+			entorder.EntID(*req.OrderID),
 			entorder.DeletedAt(0),
 		).
 		Only(ctx)
@@ -332,11 +332,40 @@ func (h *Handler) UpdateOrder(ctx context.Context) (*npool.Order, error) {
 	return info, nil
 }
 
+func (h *updateHandler) checkOrders(ctx context.Context) error {
+	reqs := []*OrderReq{}
+	for _, req := range h.Reqs {
+		if req.ID == nil {
+			return fmt.Errorf("invalid id")
+		}
+
+		handler, err := NewHandler(ctx)
+		if err != nil {
+			return err
+		}
+		handler.ID = req.ID
+		info, err := handler.GetOrder(ctx)
+		if err != nil {
+			return err
+		}
+		if info == nil {
+			return fmt.Errorf("invalid order")
+		}
+		// reset req
+		orderID := uuid.MustParse(info.EntID)
+		req.EntID = &orderID
+		req.OrderStateReq.OrderID = &orderID
+		reqs = append(reqs, req)
+	}
+	h.Reqs = reqs
+	return nil
+}
+
 //nolint
 func (h *updateHandler) checkChildOrderStates(ctx context.Context) error {
-	orderIDs := []uuid.UUID{}
+	orderIDs := []uint32{}
 	updateState := false
-	orderMap := map[string]*npool.Order{}
+	orderMap := map[uint32]*npool.Order{}
 
 	for _, req := range h.Reqs {
 		orderIDs = append(orderIDs, *req.ID)
@@ -369,10 +398,10 @@ func (h *updateHandler) checkChildOrderStates(ctx context.Context) error {
 		if order.ParentOrderID != uuid.Nil.String() {
 			continue
 		}
-		if order.ID != uuid.Nil.String() && parentOrderID2 != uuid.Nil.String() {
+		if order.EntID != uuid.Nil.String() && parentOrderID2 != uuid.Nil.String() {
 			return fmt.Errorf("invalid parentorderid")
 		}
-		parentOrderID2 = order.ID
+		parentOrderID2 = order.EntID
 		parentOrder = order
 	}
 	for _, order := range orders {
@@ -392,7 +421,7 @@ func (h *updateHandler) checkChildOrderStates(ctx context.Context) error {
 	}
 	if parentOrder == nil {
 		id := uuid.MustParse(parentOrderID1)
-		h.ID = &id
+		h.EntID = &id
 		parentOrder, err = h.GetOrder(ctx)
 		if err != nil {
 			return err
@@ -403,7 +432,7 @@ func (h *updateHandler) checkChildOrderStates(ctx context.Context) error {
 	}
 	parentOrderState := parentOrder.OrderState
 	for _, req := range h.Reqs {
-		if req.ID.String() == parentOrderID1 {
+		if req.EntID.String() == parentOrderID1 {
 			if req.OrderStateReq.OrderState == nil {
 				break
 			}
@@ -412,10 +441,10 @@ func (h *updateHandler) checkChildOrderStates(ctx context.Context) error {
 		}
 	}
 	for _, req := range h.Reqs {
-		if req.ID.String() == parentOrderID1 {
+		if req.EntID.String() == parentOrderID1 {
 			continue
 		}
-		order, ok := orderMap[req.ID.String()]
+		order, ok := orderMap[*req.ID]
 		if !ok {
 			return fmt.Errorf("invalid order")
 		}
@@ -437,12 +466,15 @@ func (h *Handler) UpdateOrders(ctx context.Context) ([]*npool.Order, error) {
 	handler := &updateHandler{
 		Handler: h,
 	}
+	if err := handler.checkOrders(ctx); err != nil {
+		return nil, err
+	}
 
 	if err := handler.checkChildOrderStates(ctx); err != nil {
 		return nil, err
 	}
 
-	ids := []uuid.UUID{}
+	ids := []uint32{}
 	err := db.WithTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {
 		for _, req := range h.Reqs {
 			if req.OrderStateReq.OrderID == nil {

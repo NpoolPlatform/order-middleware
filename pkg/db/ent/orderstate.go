@@ -16,13 +16,15 @@ import (
 type OrderState struct {
 	config `json:"-"`
 	// ID of the ent.
-	ID uuid.UUID `json:"id,omitempty"`
+	ID uint32 `json:"id,omitempty"`
 	// CreatedAt holds the value of the "created_at" field.
 	CreatedAt uint32 `json:"created_at,omitempty"`
 	// UpdatedAt holds the value of the "updated_at" field.
 	UpdatedAt uint32 `json:"updated_at,omitempty"`
 	// DeletedAt holds the value of the "deleted_at" field.
 	DeletedAt uint32 `json:"deleted_at,omitempty"`
+	// EntID holds the value of the "ent_id" field.
+	EntID uuid.UUID `json:"ent_id,omitempty"`
 	// OrderID holds the value of the "order_id" field.
 	OrderID uuid.UUID `json:"order_id,omitempty"`
 	// OrderState holds the value of the "order_state" field.
@@ -68,11 +70,11 @@ func (*OrderState) scanValues(columns []string) ([]interface{}, error) {
 			values[i] = new(decimal.Decimal)
 		case orderstate.FieldUserSetPaid, orderstate.FieldUserSetCanceled, orderstate.FieldAdminSetCanceled:
 			values[i] = new(sql.NullBool)
-		case orderstate.FieldCreatedAt, orderstate.FieldUpdatedAt, orderstate.FieldDeletedAt, orderstate.FieldStartAt, orderstate.FieldEndAt, orderstate.FieldPaidAt, orderstate.FieldLastBenefitAt, orderstate.FieldOutofgasHours, orderstate.FieldCompensateHours:
+		case orderstate.FieldID, orderstate.FieldCreatedAt, orderstate.FieldUpdatedAt, orderstate.FieldDeletedAt, orderstate.FieldStartAt, orderstate.FieldEndAt, orderstate.FieldPaidAt, orderstate.FieldLastBenefitAt, orderstate.FieldOutofgasHours, orderstate.FieldCompensateHours:
 			values[i] = new(sql.NullInt64)
 		case orderstate.FieldOrderState, orderstate.FieldCancelState, orderstate.FieldStartMode, orderstate.FieldBenefitState, orderstate.FieldPaymentTransactionID, orderstate.FieldPaymentState:
 			values[i] = new(sql.NullString)
-		case orderstate.FieldID, orderstate.FieldOrderID:
+		case orderstate.FieldEntID, orderstate.FieldOrderID:
 			values[i] = new(uuid.UUID)
 		default:
 			return nil, fmt.Errorf("unexpected column %q for type OrderState", columns[i])
@@ -90,11 +92,11 @@ func (os *OrderState) assignValues(columns []string, values []interface{}) error
 	for i := range columns {
 		switch columns[i] {
 		case orderstate.FieldID:
-			if value, ok := values[i].(*uuid.UUID); !ok {
-				return fmt.Errorf("unexpected type %T for field id", values[i])
-			} else if value != nil {
-				os.ID = *value
+			value, ok := values[i].(*sql.NullInt64)
+			if !ok {
+				return fmt.Errorf("unexpected type %T for field id", value)
 			}
+			os.ID = uint32(value.Int64)
 		case orderstate.FieldCreatedAt:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field created_at", values[i])
@@ -112,6 +114,12 @@ func (os *OrderState) assignValues(columns []string, values []interface{}) error
 				return fmt.Errorf("unexpected type %T for field deleted_at", values[i])
 			} else if value.Valid {
 				os.DeletedAt = uint32(value.Int64)
+			}
+		case orderstate.FieldEntID:
+			if value, ok := values[i].(*uuid.UUID); !ok {
+				return fmt.Errorf("unexpected type %T for field ent_id", values[i])
+			} else if value != nil {
+				os.EntID = *value
 			}
 		case orderstate.FieldOrderID:
 			if value, ok := values[i].(*uuid.UUID); !ok {
@@ -251,6 +259,9 @@ func (os *OrderState) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("deleted_at=")
 	builder.WriteString(fmt.Sprintf("%v", os.DeletedAt))
+	builder.WriteString(", ")
+	builder.WriteString("ent_id=")
+	builder.WriteString(fmt.Sprintf("%v", os.EntID))
 	builder.WriteString(", ")
 	builder.WriteString("order_id=")
 	builder.WriteString(fmt.Sprintf("%v", os.OrderID))

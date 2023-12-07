@@ -24,7 +24,7 @@ func (h *createHandler) checkOrderExist(ctx context.Context, tx *ent.Tx, req *or
 	exist, err := tx.Order.
 		Query().
 		Where(
-			entorder.ID(*req.OrderID),
+			entorder.EntID(*req.OrderID),
 			entorder.DeletedAt(0),
 		).
 		Exist(ctx)
@@ -64,7 +64,7 @@ func (h *createHandler) createOrderLock(ctx context.Context, tx *ent.Tx, req *or
 	if _, err := orderlockcrud.CreateSet(
 		tx.OrderLock.Create(),
 		&orderlockcrud.Req{
-			ID:       req.ID,
+			EntID:    req.EntID,
 			AppID:    req.AppID,
 			UserID:   req.UserID,
 			OrderID:  req.OrderID,
@@ -84,8 +84,8 @@ func (h *Handler) CreateOrderLocks(ctx context.Context) ([]*npool.OrderLock, err
 	err := db.WithTx(ctx, func(ctx context.Context, tx *ent.Tx) error {
 		for _, req := range h.Reqs {
 			id := uuid.New()
-			if req.ID == nil {
-				req.ID = &id
+			if req.EntID == nil {
+				req.EntID = &id
 			}
 			if err := handler.checkOrderExist(ctx, tx, req); err != nil {
 				return err
@@ -96,7 +96,7 @@ func (h *Handler) CreateOrderLocks(ctx context.Context) ([]*npool.OrderLock, err
 			if err := handler.createOrderLock(ctx, tx, req); err != nil {
 				return err
 			}
-			ids = append(ids, *req.ID)
+			ids = append(ids, *req.EntID)
 		}
 		return nil
 	})
@@ -105,7 +105,7 @@ func (h *Handler) CreateOrderLocks(ctx context.Context) ([]*npool.OrderLock, err
 	}
 
 	h.Conds = &orderlockcrud.Conds{
-		IDs: &cruder.Cond{Op: cruder.IN, Val: ids},
+		EntIDs: &cruder.Cond{Op: cruder.IN, Val: ids},
 	}
 	h.Offset = 0
 	h.Limit = int32(len(ids))

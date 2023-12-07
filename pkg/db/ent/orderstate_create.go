@@ -7,7 +7,6 @@ import (
 	"errors"
 	"fmt"
 
-	"entgo.io/ent/dialect"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
@@ -62,6 +61,20 @@ func (osc *OrderStateCreate) SetDeletedAt(u uint32) *OrderStateCreate {
 func (osc *OrderStateCreate) SetNillableDeletedAt(u *uint32) *OrderStateCreate {
 	if u != nil {
 		osc.SetDeletedAt(*u)
+	}
+	return osc
+}
+
+// SetEntID sets the "ent_id" field.
+func (osc *OrderStateCreate) SetEntID(u uuid.UUID) *OrderStateCreate {
+	osc.mutation.SetEntID(u)
+	return osc
+}
+
+// SetNillableEntID sets the "ent_id" field if the given value is not nil.
+func (osc *OrderStateCreate) SetNillableEntID(u *uuid.UUID) *OrderStateCreate {
+	if u != nil {
+		osc.SetEntID(*u)
 	}
 	return osc
 }
@@ -297,16 +310,8 @@ func (osc *OrderStateCreate) SetNillableCompensateHours(u *uint32) *OrderStateCr
 }
 
 // SetID sets the "id" field.
-func (osc *OrderStateCreate) SetID(u uuid.UUID) *OrderStateCreate {
+func (osc *OrderStateCreate) SetID(u uint32) *OrderStateCreate {
 	osc.mutation.SetID(u)
-	return osc
-}
-
-// SetNillableID sets the "id" field if the given value is not nil.
-func (osc *OrderStateCreate) SetNillableID(u *uuid.UUID) *OrderStateCreate {
-	if u != nil {
-		osc.SetID(*u)
-	}
 	return osc
 }
 
@@ -410,6 +415,13 @@ func (osc *OrderStateCreate) defaults() error {
 		v := orderstate.DefaultDeletedAt()
 		osc.mutation.SetDeletedAt(v)
 	}
+	if _, ok := osc.mutation.EntID(); !ok {
+		if orderstate.DefaultEntID == nil {
+			return fmt.Errorf("ent: uninitialized orderstate.DefaultEntID (forgotten import ent/runtime?)")
+		}
+		v := orderstate.DefaultEntID()
+		osc.mutation.SetEntID(v)
+	}
 	if _, ok := osc.mutation.OrderState(); !ok {
 		v := orderstate.DefaultOrderState
 		osc.mutation.SetOrderState(v)
@@ -474,13 +486,6 @@ func (osc *OrderStateCreate) defaults() error {
 		v := orderstate.DefaultCompensateHours
 		osc.mutation.SetCompensateHours(v)
 	}
-	if _, ok := osc.mutation.ID(); !ok {
-		if orderstate.DefaultID == nil {
-			return fmt.Errorf("ent: uninitialized orderstate.DefaultID (forgotten import ent/runtime?)")
-		}
-		v := orderstate.DefaultID()
-		osc.mutation.SetID(v)
-	}
 	return nil
 }
 
@@ -494,6 +499,9 @@ func (osc *OrderStateCreate) check() error {
 	}
 	if _, ok := osc.mutation.DeletedAt(); !ok {
 		return &ValidationError{Name: "deleted_at", err: errors.New(`ent: missing required field "OrderState.deleted_at"`)}
+	}
+	if _, ok := osc.mutation.EntID(); !ok {
+		return &ValidationError{Name: "ent_id", err: errors.New(`ent: missing required field "OrderState.ent_id"`)}
 	}
 	if _, ok := osc.mutation.OrderID(); !ok {
 		return &ValidationError{Name: "order_id", err: errors.New(`ent: missing required field "OrderState.order_id"`)}
@@ -509,12 +517,9 @@ func (osc *OrderStateCreate) sqlSave(ctx context.Context) (*OrderState, error) {
 		}
 		return nil, err
 	}
-	if _spec.ID.Value != nil {
-		if id, ok := _spec.ID.Value.(*uuid.UUID); ok {
-			_node.ID = *id
-		} else if err := _node.ID.Scan(_spec.ID.Value); err != nil {
-			return nil, err
-		}
+	if _spec.ID.Value != _node.ID {
+		id := _spec.ID.Value.(int64)
+		_node.ID = uint32(id)
 	}
 	return _node, nil
 }
@@ -525,7 +530,7 @@ func (osc *OrderStateCreate) createSpec() (*OrderState, *sqlgraph.CreateSpec) {
 		_spec = &sqlgraph.CreateSpec{
 			Table: orderstate.Table,
 			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeUUID,
+				Type:   field.TypeUint32,
 				Column: orderstate.FieldID,
 			},
 		}
@@ -533,7 +538,7 @@ func (osc *OrderStateCreate) createSpec() (*OrderState, *sqlgraph.CreateSpec) {
 	_spec.OnConflict = osc.conflict
 	if id, ok := osc.mutation.ID(); ok {
 		_node.ID = id
-		_spec.ID.Value = &id
+		_spec.ID.Value = id
 	}
 	if value, ok := osc.mutation.CreatedAt(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -558,6 +563,14 @@ func (osc *OrderStateCreate) createSpec() (*OrderState, *sqlgraph.CreateSpec) {
 			Column: orderstate.FieldDeletedAt,
 		})
 		_node.DeletedAt = value
+	}
+	if value, ok := osc.mutation.EntID(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Value:  value,
+			Column: orderstate.FieldEntID,
+		})
+		_node.EntID = value
 	}
 	if value, ok := osc.mutation.OrderID(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -800,6 +813,18 @@ func (u *OrderStateUpsert) UpdateDeletedAt() *OrderStateUpsert {
 // AddDeletedAt adds v to the "deleted_at" field.
 func (u *OrderStateUpsert) AddDeletedAt(v uint32) *OrderStateUpsert {
 	u.Add(orderstate.FieldDeletedAt, v)
+	return u
+}
+
+// SetEntID sets the "ent_id" field.
+func (u *OrderStateUpsert) SetEntID(v uuid.UUID) *OrderStateUpsert {
+	u.Set(orderstate.FieldEntID, v)
+	return u
+}
+
+// UpdateEntID sets the "ent_id" field to the value that was provided on create.
+func (u *OrderStateUpsert) UpdateEntID() *OrderStateUpsert {
+	u.SetExcluded(orderstate.FieldEntID)
 	return u
 }
 
@@ -1252,6 +1277,20 @@ func (u *OrderStateUpsertOne) UpdateDeletedAt() *OrderStateUpsertOne {
 	})
 }
 
+// SetEntID sets the "ent_id" field.
+func (u *OrderStateUpsertOne) SetEntID(v uuid.UUID) *OrderStateUpsertOne {
+	return u.Update(func(s *OrderStateUpsert) {
+		s.SetEntID(v)
+	})
+}
+
+// UpdateEntID sets the "ent_id" field to the value that was provided on create.
+func (u *OrderStateUpsertOne) UpdateEntID() *OrderStateUpsertOne {
+	return u.Update(func(s *OrderStateUpsert) {
+		s.UpdateEntID()
+	})
+}
+
 // SetOrderID sets the "order_id" field.
 func (u *OrderStateUpsertOne) SetOrderID(v uuid.UUID) *OrderStateUpsertOne {
 	return u.Update(func(s *OrderStateUpsert) {
@@ -1660,12 +1699,7 @@ func (u *OrderStateUpsertOne) ExecX(ctx context.Context) {
 }
 
 // Exec executes the UPSERT query and returns the inserted/updated ID.
-func (u *OrderStateUpsertOne) ID(ctx context.Context) (id uuid.UUID, err error) {
-	if u.create.driver.Dialect() == dialect.MySQL {
-		// In case of "ON CONFLICT", there is no way to get back non-numeric ID
-		// fields from the database since MySQL does not support the RETURNING clause.
-		return id, errors.New("ent: OrderStateUpsertOne.ID is not supported by MySQL driver. Use OrderStateUpsertOne.Exec instead")
-	}
+func (u *OrderStateUpsertOne) ID(ctx context.Context) (id uint32, err error) {
 	node, err := u.create.Save(ctx)
 	if err != nil {
 		return id, err
@@ -1674,7 +1708,7 @@ func (u *OrderStateUpsertOne) ID(ctx context.Context) (id uuid.UUID, err error) 
 }
 
 // IDX is like ID, but panics if an error occurs.
-func (u *OrderStateUpsertOne) IDX(ctx context.Context) uuid.UUID {
+func (u *OrderStateUpsertOne) IDX(ctx context.Context) uint32 {
 	id, err := u.ID(ctx)
 	if err != nil {
 		panic(err)
@@ -1725,6 +1759,10 @@ func (oscb *OrderStateCreateBulk) Save(ctx context.Context) ([]*OrderState, erro
 					return nil, err
 				}
 				mutation.id = &nodes[i].ID
+				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
+					id := specs[i].ID.Value.(int64)
+					nodes[i].ID = uint32(id)
+				}
 				mutation.done = true
 				return nodes[i], nil
 			})
@@ -1920,6 +1958,20 @@ func (u *OrderStateUpsertBulk) AddDeletedAt(v uint32) *OrderStateUpsertBulk {
 func (u *OrderStateUpsertBulk) UpdateDeletedAt() *OrderStateUpsertBulk {
 	return u.Update(func(s *OrderStateUpsert) {
 		s.UpdateDeletedAt()
+	})
+}
+
+// SetEntID sets the "ent_id" field.
+func (u *OrderStateUpsertBulk) SetEntID(v uuid.UUID) *OrderStateUpsertBulk {
+	return u.Update(func(s *OrderStateUpsert) {
+		s.SetEntID(v)
+	})
+}
+
+// UpdateEntID sets the "ent_id" field to the value that was provided on create.
+func (u *OrderStateUpsertBulk) UpdateEntID() *OrderStateUpsertBulk {
+	return u.Update(func(s *OrderStateUpsert) {
+		s.UpdateEntID()
 	})
 }
 

@@ -15,7 +15,8 @@ import (
 )
 
 type Req struct {
-	ID                   *uuid.UUID
+	ID                   *uint32
+	EntID                *uuid.UUID
 	AppID                *uuid.UUID
 	UserID               *uuid.UUID
 	GoodID               *uuid.UUID
@@ -46,8 +47,8 @@ type Req struct {
 
 //nolint:funlen,gocyclo
 func CreateSet(c *ent.OrderCreate, req *Req) *ent.OrderCreate {
-	if req.ID != nil {
-		c.SetID(*req.ID)
+	if req.EntID != nil {
+		c.SetEntID(*req.EntID)
 	}
 	if req.AppID != nil {
 		c.SetAppID(*req.AppID)
@@ -139,6 +140,8 @@ func UpdateSet(u *ent.OrderUpdateOne, req *Req) *ent.OrderUpdateOne {
 
 type Conds struct {
 	orderstatecrud.Conds
+	EntID             *cruder.Cond
+	EntIDs            *cruder.Cond
 	ID                *cruder.Cond
 	AppID             *cruder.Cond
 	UserID            *cruder.Cond
@@ -167,8 +170,36 @@ func SetQueryConds(q *ent.OrderQuery, conds *Conds) (*ent.OrderQuery, error) {
 	if conds == nil {
 		return q, nil
 	}
+	if conds.EntID != nil {
+		id, ok := conds.EntID.Val.(uuid.UUID)
+		if !ok {
+			return nil, fmt.Errorf("invalid entid")
+		}
+		switch conds.EntID.Op {
+		case cruder.EQ:
+			q.Where(entorder.EntID(id))
+		case cruder.NEQ:
+			q.Where(entorder.EntIDNEQ(id))
+		default:
+			return nil, fmt.Errorf("invalid order field")
+		}
+	}
+	if conds.EntIDs != nil {
+		ids, ok := conds.EntIDs.Val.([]uuid.UUID)
+		if !ok {
+			return nil, fmt.Errorf("invalid entids")
+		}
+		if len(ids) > 0 {
+			switch conds.EntIDs.Op {
+			case cruder.IN:
+				q.Where(entorder.EntIDIn(ids...))
+			default:
+				return nil, fmt.Errorf("invalid order field")
+			}
+		}
+	}
 	if conds.ID != nil {
-		id, ok := conds.ID.Val.(uuid.UUID)
+		id, ok := conds.ID.Val.(uint32)
 		if !ok {
 			return nil, fmt.Errorf("invalid id")
 		}
@@ -330,7 +361,7 @@ func SetQueryConds(q *ent.OrderQuery, conds *Conds) (*ent.OrderQuery, error) {
 		}
 	}
 	if conds.IDs != nil {
-		ids, ok := conds.IDs.Val.([]uuid.UUID)
+		ids, ok := conds.IDs.Val.([]uint32)
 		if !ok {
 			return nil, fmt.Errorf("invalid ids")
 		}

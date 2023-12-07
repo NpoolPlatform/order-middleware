@@ -100,7 +100,7 @@ func UpdateOrders(ctx context.Context, in []*npool.OrderReq) ([]*npool.Order, er
 func GetOrder(ctx context.Context, id string) (*npool.Order, error) {
 	info, err := do(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
 		resp, err := cli.GetOrder(ctx, &npool.GetOrderRequest{
-			ID: id,
+			EntID: id,
 		})
 		if err != nil {
 			return nil, err
@@ -183,7 +183,7 @@ func SumOrderUnits(ctx context.Context, conds *npool.Conds) (string, error) {
 func ExistOrder(ctx context.Context, id string) (bool, error) {
 	exist, err := do(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
 		resp, err := cli.ExistOrder(ctx, &npool.ExistOrderRequest{
-			ID: id,
+			EntID: id,
 		})
 		if err != nil {
 			return false, err

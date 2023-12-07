@@ -22,6 +22,7 @@ type queryHandler struct {
 func (h *queryHandler) selectOutOfGas(stm *ent.OutOfGasQuery) {
 	h.stm = stm.Select(
 		entoutofgas.FieldID,
+		entoutofgas.FieldEntID,
 		entoutofgas.FieldOrderID,
 		entoutofgas.FieldStartAt,
 		entoutofgas.FieldEndAt,
@@ -30,15 +31,19 @@ func (h *queryHandler) selectOutOfGas(stm *ent.OutOfGasQuery) {
 	)
 }
 
-func (h *queryHandler) queryOutOfGas(cli *ent.Client) {
-	h.selectOutOfGas(
-		cli.OutOfGas.
-			Query().
-			Where(
-				entoutofgas.ID(*h.ID),
-				entoutofgas.DeletedAt(0),
-			),
-	)
+func (h *queryHandler) queryOutOfGas(cli *ent.Client) error {
+	if h.ID == nil && h.EntID == nil {
+		return fmt.Errorf("invalid id")
+	}
+	stm := cli.OutOfGas.Query().Where(entoutofgas.DeletedAt(0))
+	if h.ID != nil {
+		stm.Where(entoutofgas.ID(*h.ID))
+	}
+	if h.EntID != nil {
+		stm.Where(entoutofgas.EntID(*h.EntID))
+	}
+	h.selectOutOfGas(stm)
+	return nil
 }
 
 func (h *queryHandler) queryOutOfGases(ctx context.Context, cli *ent.Client) error {
@@ -67,7 +72,9 @@ func (h *Handler) GetOutOfGas(ctx context.Context) (*npool.OutOfGas, error) {
 	}
 
 	err := db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
-		handler.queryOutOfGas(cli)
+		if err := handler.queryOutOfGas(cli); err != nil {
+			return err
+		}
 		return handler.scan(_ctx)
 	})
 	if err != nil {

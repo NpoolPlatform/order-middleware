@@ -84,6 +84,20 @@ func (olu *OrderLockUpdate) AddDeletedAt(u int32) *OrderLockUpdate {
 	return olu
 }
 
+// SetEntID sets the "ent_id" field.
+func (olu *OrderLockUpdate) SetEntID(u uuid.UUID) *OrderLockUpdate {
+	olu.mutation.SetEntID(u)
+	return olu
+}
+
+// SetNillableEntID sets the "ent_id" field if the given value is not nil.
+func (olu *OrderLockUpdate) SetNillableEntID(u *uuid.UUID) *OrderLockUpdate {
+	if u != nil {
+		olu.SetEntID(*u)
+	}
+	return olu
+}
+
 // SetAppID sets the "app_id" field.
 func (olu *OrderLockUpdate) SetAppID(u uuid.UUID) *OrderLockUpdate {
 	olu.mutation.SetAppID(u)
@@ -208,7 +222,7 @@ func (olu *OrderLockUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Table:   orderlock.Table,
 			Columns: orderlock.Columns,
 			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeUUID,
+				Type:   field.TypeUint32,
 				Column: orderlock.FieldID,
 			},
 		},
@@ -260,6 +274,13 @@ func (olu *OrderLockUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Type:   field.TypeUint32,
 			Value:  value,
 			Column: orderlock.FieldDeletedAt,
+		})
+	}
+	if value, ok := olu.mutation.EntID(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Value:  value,
+			Column: orderlock.FieldEntID,
 		})
 	}
 	if value, ok := olu.mutation.AppID(); ok {
@@ -369,6 +390,20 @@ func (oluo *OrderLockUpdateOne) SetNillableDeletedAt(u *uint32) *OrderLockUpdate
 // AddDeletedAt adds u to the "deleted_at" field.
 func (oluo *OrderLockUpdateOne) AddDeletedAt(u int32) *OrderLockUpdateOne {
 	oluo.mutation.AddDeletedAt(u)
+	return oluo
+}
+
+// SetEntID sets the "ent_id" field.
+func (oluo *OrderLockUpdateOne) SetEntID(u uuid.UUID) *OrderLockUpdateOne {
+	oluo.mutation.SetEntID(u)
+	return oluo
+}
+
+// SetNillableEntID sets the "ent_id" field if the given value is not nil.
+func (oluo *OrderLockUpdateOne) SetNillableEntID(u *uuid.UUID) *OrderLockUpdateOne {
+	if u != nil {
+		oluo.SetEntID(*u)
+	}
 	return oluo
 }
 
@@ -509,7 +544,7 @@ func (oluo *OrderLockUpdateOne) sqlSave(ctx context.Context) (_node *OrderLock, 
 			Table:   orderlock.Table,
 			Columns: orderlock.Columns,
 			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeUUID,
+				Type:   field.TypeUint32,
 				Column: orderlock.FieldID,
 			},
 		},
@@ -578,6 +613,13 @@ func (oluo *OrderLockUpdateOne) sqlSave(ctx context.Context) (_node *OrderLock, 
 			Type:   field.TypeUint32,
 			Value:  value,
 			Column: orderlock.FieldDeletedAt,
+		})
+	}
+	if value, ok := oluo.mutation.EntID(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Value:  value,
+			Column: orderlock.FieldEntID,
 		})
 	}
 	if value, ok := oluo.mutation.AppID(); ok {

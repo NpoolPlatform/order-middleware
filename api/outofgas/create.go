@@ -24,7 +24,7 @@ func (s *Server) CreateOutOfGas(ctx context.Context, in *npool.CreateOutOfGasReq
 	}
 	handler, err := outofgas1.NewHandler(
 		ctx,
-		outofgas1.WithID(req.ID, false),
+		outofgas1.WithEntID(req.EntID, false),
 		outofgas1.WithOrderID(req.OrderID, true),
 		outofgas1.WithStartAt(req.StartAt, true),
 		outofgas1.WithEndAt(req.EndAt, true),

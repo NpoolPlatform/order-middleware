@@ -15,7 +15,7 @@ import (
 func (s *Server) GetOrderLock(ctx context.Context, in *npool.GetOrderLockRequest) (*npool.GetOrderLockResponse, error) {
 	handler, err := orderlock1.NewHandler(
 		ctx,
-		orderlock1.WithID(&in.ID, true),
+		orderlock1.WithEntID(&in.EntID, true),
 	)
 	if err != nil {
 		logger.Sugar().Errorw(
