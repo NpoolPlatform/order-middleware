@@ -45,8 +45,8 @@ const (
 	FieldDiscountAmount = "discount_amount"
 	// FieldPromotionID holds the string denoting the promotion_id field in the database.
 	FieldPromotionID = "promotion_id"
-	// FieldDurationDays holds the string denoting the duration_days field in the database.
-	FieldDurationDays = "duration_days"
+	// FieldDuration holds the string denoting the duration field in the database.
+	FieldDuration = "duration"
 	// FieldOrderType holds the string denoting the order_type field in the database.
 	FieldOrderType = "order_type"
 	// FieldInvestmentType holds the string denoting the investment_type field in the database.
@@ -92,7 +92,7 @@ var Columns = []string{
 	FieldPaymentAmount,
 	FieldDiscountAmount,
 	FieldPromotionID,
-	FieldDurationDays,
+	FieldDuration,
 	FieldOrderType,
 	FieldInvestmentType,
 	FieldCouponIds,
@@ -151,8 +151,8 @@ var (
 	DefaultDiscountAmount decimal.Decimal
 	// DefaultPromotionID holds the default value on creation for the "promotion_id" field.
 	DefaultPromotionID func() uuid.UUID
-	// DefaultDurationDays holds the default value on creation for the "duration_days" field.
-	DefaultDurationDays uint32
+	// DefaultDuration holds the default value on creation for the "duration" field.
+	DefaultDuration uint32
 	// DefaultOrderType holds the default value on creation for the "order_type" field.
 	DefaultOrderType string
 	// DefaultInvestmentType holds the default value on creation for the "investment_type" field.

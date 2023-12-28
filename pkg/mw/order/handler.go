@@ -34,7 +34,7 @@ type Handler struct {
 	PaymentAmount        *decimal.Decimal
 	DiscountAmount       *decimal.Decimal
 	PromotionID          *uuid.UUID
-	DurationDays         *uint32
+	Duration             *uint32
 	OrderType            *basetypes.OrderType
 	InvestmentType       *basetypes.InvestmentType
 	CouponIDs            []uuid.UUID
@@ -323,15 +323,15 @@ func WithPromotionID(id *string, must bool) func(context.Context, *Handler) erro
 	}
 }
 
-func WithDurationDays(durationDays *uint32, must bool) func(context.Context, *Handler) error {
+func WithDuration(duration *uint32, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
-		if durationDays == nil {
+		if duration == nil {
 			if must {
-				return fmt.Errorf("invalid durationdays")
+				return fmt.Errorf("invalid duration")
 			}
 			return nil
 		}
-		h.DurationDays = durationDays
+		h.Duration = duration
 		return nil
 	}
 }
@@ -1191,8 +1191,8 @@ func WithReqs(reqs []*npool.OrderReq, must bool) func(context.Context, *Handler)
 				if req.GoodValueUSD == nil {
 					return fmt.Errorf("invalid goodvalueusd")
 				}
-				if req.DurationDays == nil {
-					return fmt.Errorf("invalid durationdays")
+				if req.Duration == nil {
+					return fmt.Errorf("invalid duration")
 				}
 				if req.OrderType == nil {
 					return fmt.Errorf("invalid ordertype")
@@ -1322,8 +1322,8 @@ func WithReqs(reqs []*npool.OrderReq, must bool) func(context.Context, *Handler)
 				}
 				_req.PromotionID = &id
 			}
-			if req.DurationDays != nil {
-				_req.DurationDays = req.DurationDays
+			if req.Duration != nil {
+				_req.Duration = req.Duration
 			}
 			if req.OrderType != nil {
 				switch *req.OrderType {

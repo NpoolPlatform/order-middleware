@@ -66,7 +66,7 @@ func (h *Handler) ToOrderReq(ctx context.Context, newOrder bool) (*OrderReq, err
 			PaymentAmount:        h.PaymentAmount,
 			DiscountAmount:       h.DiscountAmount,
 			PromotionID:          h.PromotionID,
-			DurationDays:         h.DurationDays,
+			Duration:             h.Duration,
 			OrderType:            h.OrderType,
 			InvestmentType:       h.InvestmentType,
 			CouponIDs:            h.CouponIDs,

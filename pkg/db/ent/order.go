@@ -50,8 +50,8 @@ type Order struct {
 	DiscountAmount decimal.Decimal `json:"discount_amount,omitempty"`
 	// PromotionID holds the value of the "promotion_id" field.
 	PromotionID uuid.UUID `json:"promotion_id,omitempty"`
-	// DurationDays holds the value of the "duration_days" field.
-	DurationDays uint32 `json:"duration_days,omitempty"`
+	// Duration holds the value of the "duration" field.
+	Duration uint32 `json:"duration,omitempty"`
 	// OrderType holds the value of the "order_type" field.
 	OrderType string `json:"order_type,omitempty"`
 	// InvestmentType holds the value of the "investment_type" field.
@@ -85,7 +85,7 @@ func (*Order) scanValues(columns []string) ([]interface{}, error) {
 			values[i] = new([]byte)
 		case order.FieldUnitsV1, order.FieldGoodValue, order.FieldGoodValueUsd, order.FieldPaymentAmount, order.FieldDiscountAmount, order.FieldTransferAmount, order.FieldBalanceAmount, order.FieldCoinUsdCurrency, order.FieldLocalCoinUsdCurrency, order.FieldLiveCoinUsdCurrency:
 			values[i] = new(decimal.Decimal)
-		case order.FieldID, order.FieldCreatedAt, order.FieldUpdatedAt, order.FieldDeletedAt, order.FieldDurationDays:
+		case order.FieldID, order.FieldCreatedAt, order.FieldUpdatedAt, order.FieldDeletedAt, order.FieldDuration:
 			values[i] = new(sql.NullInt64)
 		case order.FieldOrderType, order.FieldInvestmentType, order.FieldPaymentType:
 			values[i] = new(sql.NullString)
@@ -208,11 +208,11 @@ func (o *Order) assignValues(columns []string, values []interface{}) error {
 			} else if value != nil {
 				o.PromotionID = *value
 			}
-		case order.FieldDurationDays:
+		case order.FieldDuration:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for field duration_days", values[i])
+				return fmt.Errorf("unexpected type %T for field duration", values[i])
 			} else if value.Valid {
-				o.DurationDays = uint32(value.Int64)
+				o.Duration = uint32(value.Int64)
 			}
 		case order.FieldOrderType:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -358,8 +358,8 @@ func (o *Order) String() string {
 	builder.WriteString("promotion_id=")
 	builder.WriteString(fmt.Sprintf("%v", o.PromotionID))
 	builder.WriteString(", ")
-	builder.WriteString("duration_days=")
-	builder.WriteString(fmt.Sprintf("%v", o.DurationDays))
+	builder.WriteString("duration=")
+	builder.WriteString(fmt.Sprintf("%v", o.Duration))
 	builder.WriteString(", ")
 	builder.WriteString("order_type=")
 	builder.WriteString(o.OrderType)
