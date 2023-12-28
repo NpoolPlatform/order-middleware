@@ -657,6 +657,9 @@ func WithStartMode(startMode *basetypes.OrderStartMode, must bool) func(context.
 		switch *startMode {
 		case basetypes.OrderStartMode_OrderStartConfirmed:
 		case basetypes.OrderStartMode_OrderStartTBD:
+		case basetypes.OrderStartMode_OrderStartInstantly:
+		case basetypes.OrderStartMode_OrderStartNextDay:
+		case basetypes.OrderStartMode_OrderStartPreset:
 		default:
 			return fmt.Errorf("invalid startmode")
 		}
