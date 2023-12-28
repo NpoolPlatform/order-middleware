@@ -283,30 +283,30 @@ func (ou *OrderUpdate) ClearPromotionID() *OrderUpdate {
 	return ou
 }
 
-// SetDurationDays sets the "duration_days" field.
-func (ou *OrderUpdate) SetDurationDays(u uint32) *OrderUpdate {
-	ou.mutation.ResetDurationDays()
-	ou.mutation.SetDurationDays(u)
+// SetDuration sets the "duration" field.
+func (ou *OrderUpdate) SetDuration(u uint32) *OrderUpdate {
+	ou.mutation.ResetDuration()
+	ou.mutation.SetDuration(u)
 	return ou
 }
 
-// SetNillableDurationDays sets the "duration_days" field if the given value is not nil.
-func (ou *OrderUpdate) SetNillableDurationDays(u *uint32) *OrderUpdate {
+// SetNillableDuration sets the "duration" field if the given value is not nil.
+func (ou *OrderUpdate) SetNillableDuration(u *uint32) *OrderUpdate {
 	if u != nil {
-		ou.SetDurationDays(*u)
+		ou.SetDuration(*u)
 	}
 	return ou
 }
 
-// AddDurationDays adds u to the "duration_days" field.
-func (ou *OrderUpdate) AddDurationDays(u int32) *OrderUpdate {
-	ou.mutation.AddDurationDays(u)
+// AddDuration adds u to the "duration" field.
+func (ou *OrderUpdate) AddDuration(u int32) *OrderUpdate {
+	ou.mutation.AddDuration(u)
 	return ou
 }
 
-// ClearDurationDays clears the value of the "duration_days" field.
-func (ou *OrderUpdate) ClearDurationDays() *OrderUpdate {
-	ou.mutation.ClearDurationDays()
+// ClearDuration clears the value of the "duration" field.
+func (ou *OrderUpdate) ClearDuration() *OrderUpdate {
+	ou.mutation.ClearDuration()
 	return ou
 }
 
@@ -787,24 +787,24 @@ func (ou *OrderUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: order.FieldPromotionID,
 		})
 	}
-	if value, ok := ou.mutation.DurationDays(); ok {
+	if value, ok := ou.mutation.Duration(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeUint32,
 			Value:  value,
-			Column: order.FieldDurationDays,
+			Column: order.FieldDuration,
 		})
 	}
-	if value, ok := ou.mutation.AddedDurationDays(); ok {
+	if value, ok := ou.mutation.AddedDuration(); ok {
 		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
 			Type:   field.TypeUint32,
 			Value:  value,
-			Column: order.FieldDurationDays,
+			Column: order.FieldDuration,
 		})
 	}
-	if ou.mutation.DurationDaysCleared() {
+	if ou.mutation.DurationCleared() {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeUint32,
-			Column: order.FieldDurationDays,
+			Column: order.FieldDuration,
 		})
 	}
 	if value, ok := ou.mutation.OrderType(); ok {
@@ -1218,30 +1218,30 @@ func (ouo *OrderUpdateOne) ClearPromotionID() *OrderUpdateOne {
 	return ouo
 }
 
-// SetDurationDays sets the "duration_days" field.
-func (ouo *OrderUpdateOne) SetDurationDays(u uint32) *OrderUpdateOne {
-	ouo.mutation.ResetDurationDays()
-	ouo.mutation.SetDurationDays(u)
+// SetDuration sets the "duration" field.
+func (ouo *OrderUpdateOne) SetDuration(u uint32) *OrderUpdateOne {
+	ouo.mutation.ResetDuration()
+	ouo.mutation.SetDuration(u)
 	return ouo
 }
 
-// SetNillableDurationDays sets the "duration_days" field if the given value is not nil.
-func (ouo *OrderUpdateOne) SetNillableDurationDays(u *uint32) *OrderUpdateOne {
+// SetNillableDuration sets the "duration" field if the given value is not nil.
+func (ouo *OrderUpdateOne) SetNillableDuration(u *uint32) *OrderUpdateOne {
 	if u != nil {
-		ouo.SetDurationDays(*u)
+		ouo.SetDuration(*u)
 	}
 	return ouo
 }
 
-// AddDurationDays adds u to the "duration_days" field.
-func (ouo *OrderUpdateOne) AddDurationDays(u int32) *OrderUpdateOne {
-	ouo.mutation.AddDurationDays(u)
+// AddDuration adds u to the "duration" field.
+func (ouo *OrderUpdateOne) AddDuration(u int32) *OrderUpdateOne {
+	ouo.mutation.AddDuration(u)
 	return ouo
 }
 
-// ClearDurationDays clears the value of the "duration_days" field.
-func (ouo *OrderUpdateOne) ClearDurationDays() *OrderUpdateOne {
-	ouo.mutation.ClearDurationDays()
+// ClearDuration clears the value of the "duration" field.
+func (ouo *OrderUpdateOne) ClearDuration() *OrderUpdateOne {
+	ouo.mutation.ClearDuration()
 	return ouo
 }
 
@@ -1752,24 +1752,24 @@ func (ouo *OrderUpdateOne) sqlSave(ctx context.Context) (_node *Order, err error
 			Column: order.FieldPromotionID,
 		})
 	}
-	if value, ok := ouo.mutation.DurationDays(); ok {
+	if value, ok := ouo.mutation.Duration(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeUint32,
 			Value:  value,
-			Column: order.FieldDurationDays,
+			Column: order.FieldDuration,
 		})
 	}
-	if value, ok := ouo.mutation.AddedDurationDays(); ok {
+	if value, ok := ouo.mutation.AddedDuration(); ok {
 		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
 			Type:   field.TypeUint32,
 			Value:  value,
-			Column: order.FieldDurationDays,
+			Column: order.FieldDuration,
 		})
 	}
-	if ouo.mutation.DurationDaysCleared() {
+	if ouo.mutation.DurationCleared() {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeUint32,
-			Column: order.FieldDurationDays,
+			Column: order.FieldDuration,
 		})
 	}
 	if value, ok := ouo.mutation.OrderType(); ok {

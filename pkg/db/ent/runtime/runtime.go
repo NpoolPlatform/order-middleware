@@ -143,10 +143,10 @@ func init() {
 	orderDescPromotionID := orderFields[11].Descriptor()
 	// order.DefaultPromotionID holds the default value on creation for the promotion_id field.
 	order.DefaultPromotionID = orderDescPromotionID.Default.(func() uuid.UUID)
-	// orderDescDurationDays is the schema descriptor for duration_days field.
-	orderDescDurationDays := orderFields[12].Descriptor()
-	// order.DefaultDurationDays holds the default value on creation for the duration_days field.
-	order.DefaultDurationDays = orderDescDurationDays.Default.(uint32)
+	// orderDescDuration is the schema descriptor for duration field.
+	orderDescDuration := orderFields[12].Descriptor()
+	// order.DefaultDuration holds the default value on creation for the duration field.
+	order.DefaultDuration = orderDescDuration.Default.(uint32)
 	// orderDescOrderType is the schema descriptor for order_type field.
 	orderDescOrderType := orderFields[13].Descriptor()
 	// order.DefaultOrderType holds the default value on creation for the order_type field.

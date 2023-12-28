@@ -47,7 +47,7 @@ func (h *baseQueryHandler) QueryJoinMyself(s *sql.Selector) {
 		t.C(entorder.FieldPaymentAmount),
 		t.C(entorder.FieldDiscountAmount),
 		t.C(entorder.FieldPromotionID),
-		t.C(entorder.FieldDurationDays),
+		t.C(entorder.FieldDuration),
 		t.C(entorder.FieldOrderType),
 		t.C(entorder.FieldInvestmentType),
 		t.C(entorder.FieldCouponIds),

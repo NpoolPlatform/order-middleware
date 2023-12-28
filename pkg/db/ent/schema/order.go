@@ -90,7 +90,7 @@ func (Order) Fields() []ent.Field {
 				return uuid.UUID{}
 			}),
 		field.
-			Uint32("duration_days").
+			Uint32("duration").
 			Optional().
 			Default(0),
 		field.

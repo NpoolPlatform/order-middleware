@@ -215,16 +215,16 @@ func (oc *OrderCreate) SetNillablePromotionID(u *uuid.UUID) *OrderCreate {
 	return oc
 }
 
-// SetDurationDays sets the "duration_days" field.
-func (oc *OrderCreate) SetDurationDays(u uint32) *OrderCreate {
-	oc.mutation.SetDurationDays(u)
+// SetDuration sets the "duration" field.
+func (oc *OrderCreate) SetDuration(u uint32) *OrderCreate {
+	oc.mutation.SetDuration(u)
 	return oc
 }
 
-// SetNillableDurationDays sets the "duration_days" field if the given value is not nil.
-func (oc *OrderCreate) SetNillableDurationDays(u *uint32) *OrderCreate {
+// SetNillableDuration sets the "duration" field if the given value is not nil.
+func (oc *OrderCreate) SetNillableDuration(u *uint32) *OrderCreate {
 	if u != nil {
-		oc.SetDurationDays(*u)
+		oc.SetDuration(*u)
 	}
 	return oc
 }
@@ -521,9 +521,9 @@ func (oc *OrderCreate) defaults() error {
 		v := order.DefaultPromotionID()
 		oc.mutation.SetPromotionID(v)
 	}
-	if _, ok := oc.mutation.DurationDays(); !ok {
-		v := order.DefaultDurationDays
-		oc.mutation.SetDurationDays(v)
+	if _, ok := oc.mutation.Duration(); !ok {
+		v := order.DefaultDuration
+		oc.mutation.SetDuration(v)
 	}
 	if _, ok := oc.mutation.OrderType(); !ok {
 		v := order.DefaultOrderType
@@ -765,13 +765,13 @@ func (oc *OrderCreate) createSpec() (*Order, *sqlgraph.CreateSpec) {
 		})
 		_node.PromotionID = value
 	}
-	if value, ok := oc.mutation.DurationDays(); ok {
+	if value, ok := oc.mutation.Duration(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
 			Type:   field.TypeUint32,
 			Value:  value,
-			Column: order.FieldDurationDays,
+			Column: order.FieldDuration,
 		})
-		_node.DurationDays = value
+		_node.Duration = value
 	}
 	if value, ok := oc.mutation.OrderType(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -1173,27 +1173,27 @@ func (u *OrderUpsert) ClearPromotionID() *OrderUpsert {
 	return u
 }
 
-// SetDurationDays sets the "duration_days" field.
-func (u *OrderUpsert) SetDurationDays(v uint32) *OrderUpsert {
-	u.Set(order.FieldDurationDays, v)
+// SetDuration sets the "duration" field.
+func (u *OrderUpsert) SetDuration(v uint32) *OrderUpsert {
+	u.Set(order.FieldDuration, v)
 	return u
 }
 
-// UpdateDurationDays sets the "duration_days" field to the value that was provided on create.
-func (u *OrderUpsert) UpdateDurationDays() *OrderUpsert {
-	u.SetExcluded(order.FieldDurationDays)
+// UpdateDuration sets the "duration" field to the value that was provided on create.
+func (u *OrderUpsert) UpdateDuration() *OrderUpsert {
+	u.SetExcluded(order.FieldDuration)
 	return u
 }
 
-// AddDurationDays adds v to the "duration_days" field.
-func (u *OrderUpsert) AddDurationDays(v uint32) *OrderUpsert {
-	u.Add(order.FieldDurationDays, v)
+// AddDuration adds v to the "duration" field.
+func (u *OrderUpsert) AddDuration(v uint32) *OrderUpsert {
+	u.Add(order.FieldDuration, v)
 	return u
 }
 
-// ClearDurationDays clears the value of the "duration_days" field.
-func (u *OrderUpsert) ClearDurationDays() *OrderUpsert {
-	u.SetNull(order.FieldDurationDays)
+// ClearDuration clears the value of the "duration" field.
+func (u *OrderUpsert) ClearDuration() *OrderUpsert {
+	u.SetNull(order.FieldDuration)
 	return u
 }
 
@@ -1740,31 +1740,31 @@ func (u *OrderUpsertOne) ClearPromotionID() *OrderUpsertOne {
 	})
 }
 
-// SetDurationDays sets the "duration_days" field.
-func (u *OrderUpsertOne) SetDurationDays(v uint32) *OrderUpsertOne {
+// SetDuration sets the "duration" field.
+func (u *OrderUpsertOne) SetDuration(v uint32) *OrderUpsertOne {
 	return u.Update(func(s *OrderUpsert) {
-		s.SetDurationDays(v)
+		s.SetDuration(v)
 	})
 }
 
-// AddDurationDays adds v to the "duration_days" field.
-func (u *OrderUpsertOne) AddDurationDays(v uint32) *OrderUpsertOne {
+// AddDuration adds v to the "duration" field.
+func (u *OrderUpsertOne) AddDuration(v uint32) *OrderUpsertOne {
 	return u.Update(func(s *OrderUpsert) {
-		s.AddDurationDays(v)
+		s.AddDuration(v)
 	})
 }
 
-// UpdateDurationDays sets the "duration_days" field to the value that was provided on create.
-func (u *OrderUpsertOne) UpdateDurationDays() *OrderUpsertOne {
+// UpdateDuration sets the "duration" field to the value that was provided on create.
+func (u *OrderUpsertOne) UpdateDuration() *OrderUpsertOne {
 	return u.Update(func(s *OrderUpsert) {
-		s.UpdateDurationDays()
+		s.UpdateDuration()
 	})
 }
 
-// ClearDurationDays clears the value of the "duration_days" field.
-func (u *OrderUpsertOne) ClearDurationDays() *OrderUpsertOne {
+// ClearDuration clears the value of the "duration" field.
+func (u *OrderUpsertOne) ClearDuration() *OrderUpsertOne {
 	return u.Update(func(s *OrderUpsert) {
-		s.ClearDurationDays()
+		s.ClearDuration()
 	})
 }
 
@@ -2508,31 +2508,31 @@ func (u *OrderUpsertBulk) ClearPromotionID() *OrderUpsertBulk {
 	})
 }
 
-// SetDurationDays sets the "duration_days" field.
-func (u *OrderUpsertBulk) SetDurationDays(v uint32) *OrderUpsertBulk {
+// SetDuration sets the "duration" field.
+func (u *OrderUpsertBulk) SetDuration(v uint32) *OrderUpsertBulk {
 	return u.Update(func(s *OrderUpsert) {
-		s.SetDurationDays(v)
+		s.SetDuration(v)
 	})
 }
 
-// AddDurationDays adds v to the "duration_days" field.
-func (u *OrderUpsertBulk) AddDurationDays(v uint32) *OrderUpsertBulk {
+// AddDuration adds v to the "duration" field.
+func (u *OrderUpsertBulk) AddDuration(v uint32) *OrderUpsertBulk {
 	return u.Update(func(s *OrderUpsert) {
-		s.AddDurationDays(v)
+		s.AddDuration(v)
 	})
 }
 
-// UpdateDurationDays sets the "duration_days" field to the value that was provided on create.
-func (u *OrderUpsertBulk) UpdateDurationDays() *OrderUpsertBulk {
+// UpdateDuration sets the "duration" field to the value that was provided on create.
+func (u *OrderUpsertBulk) UpdateDuration() *OrderUpsertBulk {
 	return u.Update(func(s *OrderUpsert) {
-		s.UpdateDurationDays()
+		s.UpdateDuration()
 	})
 }
 
-// ClearDurationDays clears the value of the "duration_days" field.
-func (u *OrderUpsertBulk) ClearDurationDays() *OrderUpsertBulk {
+// ClearDuration clears the value of the "duration" field.
+func (u *OrderUpsertBulk) ClearDuration() *OrderUpsertBulk {
 	return u.Update(func(s *OrderUpsert) {
-		s.ClearDurationDays()
+		s.ClearDuration()
 	})
 }
 

@@ -69,7 +69,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			order.FieldPaymentAmount:        {Type: field.TypeOther, Column: order.FieldPaymentAmount},
 			order.FieldDiscountAmount:       {Type: field.TypeOther, Column: order.FieldDiscountAmount},
 			order.FieldPromotionID:          {Type: field.TypeUUID, Column: order.FieldPromotionID},
-			order.FieldDurationDays:         {Type: field.TypeUint32, Column: order.FieldDurationDays},
+			order.FieldDuration:             {Type: field.TypeUint32, Column: order.FieldDuration},
 			order.FieldOrderType:            {Type: field.TypeString, Column: order.FieldOrderType},
 			order.FieldInvestmentType:       {Type: field.TypeString, Column: order.FieldInvestmentType},
 			order.FieldCouponIds:            {Type: field.TypeJSON, Column: order.FieldCouponIds},
@@ -402,9 +402,9 @@ func (f *OrderFilter) WherePromotionID(p entql.ValueP) {
 	f.Where(p.Field(order.FieldPromotionID))
 }
 
-// WhereDurationDays applies the entql uint32 predicate on the duration_days field.
-func (f *OrderFilter) WhereDurationDays(p entql.Uint32P) {
-	f.Where(p.Field(order.FieldDurationDays))
+// WhereDuration applies the entql uint32 predicate on the duration field.
+func (f *OrderFilter) WhereDuration(p entql.Uint32P) {
+	f.Where(p.Field(order.FieldDuration))
 }
 
 // WhereOrderType applies the entql string predicate on the order_type field.

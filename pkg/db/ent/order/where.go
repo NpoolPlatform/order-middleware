@@ -192,10 +192,10 @@ func PromotionID(v uuid.UUID) predicate.Order {
 	})
 }
 
-// DurationDays applies equality check predicate on the "duration_days" field. It's identical to DurationDaysEQ.
-func DurationDays(v uint32) predicate.Order {
+// Duration applies equality check predicate on the "duration" field. It's identical to DurationEQ.
+func Duration(v uint32) predicate.Order {
 	return predicate.Order(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldDurationDays), v))
+		s.Where(sql.EQ(s.C(FieldDuration), v))
 	})
 }
 
@@ -1405,81 +1405,81 @@ func PromotionIDNotNil() predicate.Order {
 	})
 }
 
-// DurationDaysEQ applies the EQ predicate on the "duration_days" field.
-func DurationDaysEQ(v uint32) predicate.Order {
+// DurationEQ applies the EQ predicate on the "duration" field.
+func DurationEQ(v uint32) predicate.Order {
 	return predicate.Order(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldDurationDays), v))
+		s.Where(sql.EQ(s.C(FieldDuration), v))
 	})
 }
 
-// DurationDaysNEQ applies the NEQ predicate on the "duration_days" field.
-func DurationDaysNEQ(v uint32) predicate.Order {
+// DurationNEQ applies the NEQ predicate on the "duration" field.
+func DurationNEQ(v uint32) predicate.Order {
 	return predicate.Order(func(s *sql.Selector) {
-		s.Where(sql.NEQ(s.C(FieldDurationDays), v))
+		s.Where(sql.NEQ(s.C(FieldDuration), v))
 	})
 }
 
-// DurationDaysIn applies the In predicate on the "duration_days" field.
-func DurationDaysIn(vs ...uint32) predicate.Order {
+// DurationIn applies the In predicate on the "duration" field.
+func DurationIn(vs ...uint32) predicate.Order {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
 	}
 	return predicate.Order(func(s *sql.Selector) {
-		s.Where(sql.In(s.C(FieldDurationDays), v...))
+		s.Where(sql.In(s.C(FieldDuration), v...))
 	})
 }
 
-// DurationDaysNotIn applies the NotIn predicate on the "duration_days" field.
-func DurationDaysNotIn(vs ...uint32) predicate.Order {
+// DurationNotIn applies the NotIn predicate on the "duration" field.
+func DurationNotIn(vs ...uint32) predicate.Order {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
 	}
 	return predicate.Order(func(s *sql.Selector) {
-		s.Where(sql.NotIn(s.C(FieldDurationDays), v...))
+		s.Where(sql.NotIn(s.C(FieldDuration), v...))
 	})
 }
 
-// DurationDaysGT applies the GT predicate on the "duration_days" field.
-func DurationDaysGT(v uint32) predicate.Order {
+// DurationGT applies the GT predicate on the "duration" field.
+func DurationGT(v uint32) predicate.Order {
 	return predicate.Order(func(s *sql.Selector) {
-		s.Where(sql.GT(s.C(FieldDurationDays), v))
+		s.Where(sql.GT(s.C(FieldDuration), v))
 	})
 }
 
-// DurationDaysGTE applies the GTE predicate on the "duration_days" field.
-func DurationDaysGTE(v uint32) predicate.Order {
+// DurationGTE applies the GTE predicate on the "duration" field.
+func DurationGTE(v uint32) predicate.Order {
 	return predicate.Order(func(s *sql.Selector) {
-		s.Where(sql.GTE(s.C(FieldDurationDays), v))
+		s.Where(sql.GTE(s.C(FieldDuration), v))
 	})
 }
 
-// DurationDaysLT applies the LT predicate on the "duration_days" field.
-func DurationDaysLT(v uint32) predicate.Order {
+// DurationLT applies the LT predicate on the "duration" field.
+func DurationLT(v uint32) predicate.Order {
 	return predicate.Order(func(s *sql.Selector) {
-		s.Where(sql.LT(s.C(FieldDurationDays), v))
+		s.Where(sql.LT(s.C(FieldDuration), v))
 	})
 }
 
-// DurationDaysLTE applies the LTE predicate on the "duration_days" field.
-func DurationDaysLTE(v uint32) predicate.Order {
+// DurationLTE applies the LTE predicate on the "duration" field.
+func DurationLTE(v uint32) predicate.Order {
 	return predicate.Order(func(s *sql.Selector) {
-		s.Where(sql.LTE(s.C(FieldDurationDays), v))
+		s.Where(sql.LTE(s.C(FieldDuration), v))
 	})
 }
 
-// DurationDaysIsNil applies the IsNil predicate on the "duration_days" field.
-func DurationDaysIsNil() predicate.Order {
+// DurationIsNil applies the IsNil predicate on the "duration" field.
+func DurationIsNil() predicate.Order {
 	return predicate.Order(func(s *sql.Selector) {
-		s.Where(sql.IsNull(s.C(FieldDurationDays)))
+		s.Where(sql.IsNull(s.C(FieldDuration)))
 	})
 }
 
-// DurationDaysNotNil applies the NotNil predicate on the "duration_days" field.
-func DurationDaysNotNil() predicate.Order {
+// DurationNotNil applies the NotNil predicate on the "duration" field.
+func DurationNotNil() predicate.Order {
 	return predicate.Order(func(s *sql.Selector) {
-		s.Where(sql.NotNull(s.C(FieldDurationDays)))
+		s.Where(sql.NotNull(s.C(FieldDuration)))
 	})
 }
 

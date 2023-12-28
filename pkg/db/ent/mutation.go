@@ -1134,8 +1134,8 @@ type OrderMutation struct {
 	payment_amount          *decimal.Decimal
 	discount_amount         *decimal.Decimal
 	promotion_id            *uuid.UUID
-	duration_days           *uint32
-	addduration_days        *int32
+	duration                *uint32
+	addduration             *int32
 	order_type              *string
 	investment_type         *string
 	coupon_ids              *[]uuid.UUID
@@ -1997,74 +1997,74 @@ func (m *OrderMutation) ResetPromotionID() {
 	delete(m.clearedFields, order.FieldPromotionID)
 }
 
-// SetDurationDays sets the "duration_days" field.
-func (m *OrderMutation) SetDurationDays(u uint32) {
-	m.duration_days = &u
-	m.addduration_days = nil
+// SetDuration sets the "duration" field.
+func (m *OrderMutation) SetDuration(u uint32) {
+	m.duration = &u
+	m.addduration = nil
 }
 
-// DurationDays returns the value of the "duration_days" field in the mutation.
-func (m *OrderMutation) DurationDays() (r uint32, exists bool) {
-	v := m.duration_days
+// Duration returns the value of the "duration" field in the mutation.
+func (m *OrderMutation) Duration() (r uint32, exists bool) {
+	v := m.duration
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// OldDurationDays returns the old "duration_days" field's value of the Order entity.
+// OldDuration returns the old "duration" field's value of the Order entity.
 // If the Order object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *OrderMutation) OldDurationDays(ctx context.Context) (v uint32, err error) {
+func (m *OrderMutation) OldDuration(ctx context.Context) (v uint32, err error) {
 	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldDurationDays is only allowed on UpdateOne operations")
+		return v, errors.New("OldDuration is only allowed on UpdateOne operations")
 	}
 	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldDurationDays requires an ID field in the mutation")
+		return v, errors.New("OldDuration requires an ID field in the mutation")
 	}
 	oldValue, err := m.oldValue(ctx)
 	if err != nil {
-		return v, fmt.Errorf("querying old value for OldDurationDays: %w", err)
+		return v, fmt.Errorf("querying old value for OldDuration: %w", err)
 	}
-	return oldValue.DurationDays, nil
+	return oldValue.Duration, nil
 }
 
-// AddDurationDays adds u to the "duration_days" field.
-func (m *OrderMutation) AddDurationDays(u int32) {
-	if m.addduration_days != nil {
-		*m.addduration_days += u
+// AddDuration adds u to the "duration" field.
+func (m *OrderMutation) AddDuration(u int32) {
+	if m.addduration != nil {
+		*m.addduration += u
 	} else {
-		m.addduration_days = &u
+		m.addduration = &u
 	}
 }
 
-// AddedDurationDays returns the value that was added to the "duration_days" field in this mutation.
-func (m *OrderMutation) AddedDurationDays() (r int32, exists bool) {
-	v := m.addduration_days
+// AddedDuration returns the value that was added to the "duration" field in this mutation.
+func (m *OrderMutation) AddedDuration() (r int32, exists bool) {
+	v := m.addduration
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// ClearDurationDays clears the value of the "duration_days" field.
-func (m *OrderMutation) ClearDurationDays() {
-	m.duration_days = nil
-	m.addduration_days = nil
-	m.clearedFields[order.FieldDurationDays] = struct{}{}
+// ClearDuration clears the value of the "duration" field.
+func (m *OrderMutation) ClearDuration() {
+	m.duration = nil
+	m.addduration = nil
+	m.clearedFields[order.FieldDuration] = struct{}{}
 }
 
-// DurationDaysCleared returns if the "duration_days" field was cleared in this mutation.
-func (m *OrderMutation) DurationDaysCleared() bool {
-	_, ok := m.clearedFields[order.FieldDurationDays]
+// DurationCleared returns if the "duration" field was cleared in this mutation.
+func (m *OrderMutation) DurationCleared() bool {
+	_, ok := m.clearedFields[order.FieldDuration]
 	return ok
 }
 
-// ResetDurationDays resets all changes to the "duration_days" field.
-func (m *OrderMutation) ResetDurationDays() {
-	m.duration_days = nil
-	m.addduration_days = nil
-	delete(m.clearedFields, order.FieldDurationDays)
+// ResetDuration resets all changes to the "duration" field.
+func (m *OrderMutation) ResetDuration() {
+	m.duration = nil
+	m.addduration = nil
+	delete(m.clearedFields, order.FieldDuration)
 }
 
 // SetOrderType sets the "order_type" field.
@@ -2661,8 +2661,8 @@ func (m *OrderMutation) Fields() []string {
 	if m.promotion_id != nil {
 		fields = append(fields, order.FieldPromotionID)
 	}
-	if m.duration_days != nil {
-		fields = append(fields, order.FieldDurationDays)
+	if m.duration != nil {
+		fields = append(fields, order.FieldDuration)
 	}
 	if m.order_type != nil {
 		fields = append(fields, order.FieldOrderType)
@@ -2737,8 +2737,8 @@ func (m *OrderMutation) Field(name string) (ent.Value, bool) {
 		return m.DiscountAmount()
 	case order.FieldPromotionID:
 		return m.PromotionID()
-	case order.FieldDurationDays:
-		return m.DurationDays()
+	case order.FieldDuration:
+		return m.Duration()
 	case order.FieldOrderType:
 		return m.OrderType()
 	case order.FieldInvestmentType:
@@ -2802,8 +2802,8 @@ func (m *OrderMutation) OldField(ctx context.Context, name string) (ent.Value, e
 		return m.OldDiscountAmount(ctx)
 	case order.FieldPromotionID:
 		return m.OldPromotionID(ctx)
-	case order.FieldDurationDays:
-		return m.OldDurationDays(ctx)
+	case order.FieldDuration:
+		return m.OldDuration(ctx)
 	case order.FieldOrderType:
 		return m.OldOrderType(ctx)
 	case order.FieldInvestmentType:
@@ -2947,12 +2947,12 @@ func (m *OrderMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetPromotionID(v)
 		return nil
-	case order.FieldDurationDays:
+	case order.FieldDuration:
 		v, ok := value.(uint32)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.SetDurationDays(v)
+		m.SetDuration(v)
 		return nil
 	case order.FieldOrderType:
 		v, ok := value.(string)
@@ -3048,8 +3048,8 @@ func (m *OrderMutation) AddedFields() []string {
 	if m.adddeleted_at != nil {
 		fields = append(fields, order.FieldDeletedAt)
 	}
-	if m.addduration_days != nil {
-		fields = append(fields, order.FieldDurationDays)
+	if m.addduration != nil {
+		fields = append(fields, order.FieldDuration)
 	}
 	return fields
 }
@@ -3065,8 +3065,8 @@ func (m *OrderMutation) AddedField(name string) (ent.Value, bool) {
 		return m.AddedUpdatedAt()
 	case order.FieldDeletedAt:
 		return m.AddedDeletedAt()
-	case order.FieldDurationDays:
-		return m.AddedDurationDays()
+	case order.FieldDuration:
+		return m.AddedDuration()
 	}
 	return nil, false
 }
@@ -3097,12 +3097,12 @@ func (m *OrderMutation) AddField(name string, value ent.Value) error {
 		}
 		m.AddDeletedAt(v)
 		return nil
-	case order.FieldDurationDays:
+	case order.FieldDuration:
 		v, ok := value.(int32)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.AddDurationDays(v)
+		m.AddDuration(v)
 		return nil
 	}
 	return fmt.Errorf("unknown Order numeric field %s", name)
@@ -3136,8 +3136,8 @@ func (m *OrderMutation) ClearedFields() []string {
 	if m.FieldCleared(order.FieldPromotionID) {
 		fields = append(fields, order.FieldPromotionID)
 	}
-	if m.FieldCleared(order.FieldDurationDays) {
-		fields = append(fields, order.FieldDurationDays)
+	if m.FieldCleared(order.FieldDuration) {
+		fields = append(fields, order.FieldDuration)
 	}
 	if m.FieldCleared(order.FieldOrderType) {
 		fields = append(fields, order.FieldOrderType)
@@ -3207,8 +3207,8 @@ func (m *OrderMutation) ClearField(name string) error {
 	case order.FieldPromotionID:
 		m.ClearPromotionID()
 		return nil
-	case order.FieldDurationDays:
-		m.ClearDurationDays()
+	case order.FieldDuration:
+		m.ClearDuration()
 		return nil
 	case order.FieldOrderType:
 		m.ClearOrderType()
@@ -3296,8 +3296,8 @@ func (m *OrderMutation) ResetField(name string) error {
 	case order.FieldPromotionID:
 		m.ResetPromotionID()
 		return nil
-	case order.FieldDurationDays:
-		m.ResetDurationDays()
+	case order.FieldDuration:
+		m.ResetDuration()
 		return nil
 	case order.FieldOrderType:
 		m.ResetOrderType()
