@@ -1145,6 +1145,17 @@ func WithConds(conds *npool.Conds) func(context.Context, *Handler) error {
 				h.Conds.OrderStates = &cruder.Cond{Op: conds.GetOrderStates().GetOp(), Val: states}
 			}
 		}
+		if conds.ParentOrderIDs != nil {
+			ids := []uuid.UUID{}
+			for _, id := range conds.GetParentOrderIDs().GetValue() {
+				_id, err := uuid.Parse(id)
+				if err != nil {
+					return err
+				}
+				ids = append(ids, _id)
+			}
+			h.Conds.ParentOrderIDs = &cruder.Cond{Op: conds.GetParentOrderIDs().GetOp(), Val: ids}
+		}
 		return nil
 	}
 }
