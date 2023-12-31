@@ -162,6 +162,7 @@ type Conds struct {
 	UpdatedAt         *cruder.Cond
 	AdminSetCanceled  *cruder.Cond
 	UserSetCanceled   *cruder.Cond
+	ParentOrderIDs    *cruder.Cond
 }
 
 //nolint
@@ -440,6 +441,20 @@ func SetQueryConds(q *ent.OrderQuery, conds *Conds) (*ent.OrderQuery, error) {
 			q.Where(entorder.UpdatedAtGTE(at))
 		default:
 			return nil, fmt.Errorf("invalid order field")
+		}
+	}
+	if conds.ParentOrderIDs != nil {
+		ids, ok := conds.ParentOrderIDs.Val.([]uuid.UUID)
+		if !ok {
+			return nil, fmt.Errorf("invalid parentorderids")
+		}
+		if len(ids) > 0 {
+			switch conds.ParentOrderIDs.Op {
+			case cruder.IN:
+				q.Where(entorder.ParentOrderIDIn(ids...))
+			default:
+				return nil, fmt.Errorf("invalid order field")
+			}
 		}
 	}
 	return q, nil
