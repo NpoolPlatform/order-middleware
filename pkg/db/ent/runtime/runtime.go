@@ -323,6 +323,10 @@ func init() {
 	orderstateDescCompensateHours := orderstateFields[16].Descriptor()
 	// orderstate.DefaultCompensateHours holds the default value on creation for the compensate_hours field.
 	orderstate.DefaultCompensateHours = orderstateDescCompensateHours.Default.(uint32)
+	// orderstateDescRenewState is the schema descriptor for renew_state field.
+	orderstateDescRenewState := orderstateFields[17].Descriptor()
+	// orderstate.DefaultRenewState holds the default value on creation for the renew_state field.
+	orderstate.DefaultRenewState = orderstateDescRenewState.Default.(string)
 	outofgasMixin := schema.OutOfGas{}.Mixin()
 	outofgas.Policy = privacy.NewPolicies(outofgasMixin[0], schema.OutOfGas{})
 	outofgas.Hooks[0] = func(next ent.Mutator) ent.Mutator {

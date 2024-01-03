@@ -144,6 +144,7 @@ var (
 		{Name: "payment_state", Type: field.TypeString, Nullable: true, Default: "PaymentStateWait"},
 		{Name: "outofgas_hours", Type: field.TypeUint32, Nullable: true, Default: 0},
 		{Name: "compensate_hours", Type: field.TypeUint32, Nullable: true, Default: 0},
+		{Name: "renew_state", Type: field.TypeString, Nullable: true, Default: "OrderRenewIdle"},
 	}
 	// OrderStatesTable holds the schema information for the "order_states" table.
 	OrderStatesTable = &schema.Table{

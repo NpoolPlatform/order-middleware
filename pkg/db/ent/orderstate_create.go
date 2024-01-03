@@ -309,6 +309,20 @@ func (osc *OrderStateCreate) SetNillableCompensateHours(u *uint32) *OrderStateCr
 	return osc
 }
 
+// SetRenewState sets the "renew_state" field.
+func (osc *OrderStateCreate) SetRenewState(s string) *OrderStateCreate {
+	osc.mutation.SetRenewState(s)
+	return osc
+}
+
+// SetNillableRenewState sets the "renew_state" field if the given value is not nil.
+func (osc *OrderStateCreate) SetNillableRenewState(s *string) *OrderStateCreate {
+	if s != nil {
+		osc.SetRenewState(*s)
+	}
+	return osc
+}
+
 // SetID sets the "id" field.
 func (osc *OrderStateCreate) SetID(u uint32) *OrderStateCreate {
 	osc.mutation.SetID(u)
@@ -485,6 +499,10 @@ func (osc *OrderStateCreate) defaults() error {
 	if _, ok := osc.mutation.CompensateHours(); !ok {
 		v := orderstate.DefaultCompensateHours
 		osc.mutation.SetCompensateHours(v)
+	}
+	if _, ok := osc.mutation.RenewState(); !ok {
+		v := orderstate.DefaultRenewState
+		osc.mutation.SetRenewState(v)
 	}
 	return nil
 }
@@ -707,6 +725,14 @@ func (osc *OrderStateCreate) createSpec() (*OrderState, *sqlgraph.CreateSpec) {
 			Column: orderstate.FieldCompensateHours,
 		})
 		_node.CompensateHours = value
+	}
+	if value, ok := osc.mutation.RenewState(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: orderstate.FieldRenewState,
+		})
+		_node.RenewState = value
 	}
 	return _node, _spec
 }
@@ -1161,6 +1187,24 @@ func (u *OrderStateUpsert) AddCompensateHours(v uint32) *OrderStateUpsert {
 // ClearCompensateHours clears the value of the "compensate_hours" field.
 func (u *OrderStateUpsert) ClearCompensateHours() *OrderStateUpsert {
 	u.SetNull(orderstate.FieldCompensateHours)
+	return u
+}
+
+// SetRenewState sets the "renew_state" field.
+func (u *OrderStateUpsert) SetRenewState(v string) *OrderStateUpsert {
+	u.Set(orderstate.FieldRenewState, v)
+	return u
+}
+
+// UpdateRenewState sets the "renew_state" field to the value that was provided on create.
+func (u *OrderStateUpsert) UpdateRenewState() *OrderStateUpsert {
+	u.SetExcluded(orderstate.FieldRenewState)
+	return u
+}
+
+// ClearRenewState clears the value of the "renew_state" field.
+func (u *OrderStateUpsert) ClearRenewState() *OrderStateUpsert {
+	u.SetNull(orderstate.FieldRenewState)
 	return u
 }
 
@@ -1680,6 +1724,27 @@ func (u *OrderStateUpsertOne) UpdateCompensateHours() *OrderStateUpsertOne {
 func (u *OrderStateUpsertOne) ClearCompensateHours() *OrderStateUpsertOne {
 	return u.Update(func(s *OrderStateUpsert) {
 		s.ClearCompensateHours()
+	})
+}
+
+// SetRenewState sets the "renew_state" field.
+func (u *OrderStateUpsertOne) SetRenewState(v string) *OrderStateUpsertOne {
+	return u.Update(func(s *OrderStateUpsert) {
+		s.SetRenewState(v)
+	})
+}
+
+// UpdateRenewState sets the "renew_state" field to the value that was provided on create.
+func (u *OrderStateUpsertOne) UpdateRenewState() *OrderStateUpsertOne {
+	return u.Update(func(s *OrderStateUpsert) {
+		s.UpdateRenewState()
+	})
+}
+
+// ClearRenewState clears the value of the "renew_state" field.
+func (u *OrderStateUpsertOne) ClearRenewState() *OrderStateUpsertOne {
+	return u.Update(func(s *OrderStateUpsert) {
+		s.ClearRenewState()
 	})
 }
 
@@ -2364,6 +2429,27 @@ func (u *OrderStateUpsertBulk) UpdateCompensateHours() *OrderStateUpsertBulk {
 func (u *OrderStateUpsertBulk) ClearCompensateHours() *OrderStateUpsertBulk {
 	return u.Update(func(s *OrderStateUpsert) {
 		s.ClearCompensateHours()
+	})
+}
+
+// SetRenewState sets the "renew_state" field.
+func (u *OrderStateUpsertBulk) SetRenewState(v string) *OrderStateUpsertBulk {
+	return u.Update(func(s *OrderStateUpsert) {
+		s.SetRenewState(v)
+	})
+}
+
+// UpdateRenewState sets the "renew_state" field to the value that was provided on create.
+func (u *OrderStateUpsertBulk) UpdateRenewState() *OrderStateUpsertBulk {
+	return u.Update(func(s *OrderStateUpsert) {
+		s.UpdateRenewState()
+	})
+}
+
+// ClearRenewState clears the value of the "renew_state" field.
+func (u *OrderStateUpsertBulk) ClearRenewState() *OrderStateUpsertBulk {
+	return u.Update(func(s *OrderStateUpsert) {
+		s.ClearRenewState()
 	})
 }
 

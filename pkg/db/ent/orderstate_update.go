@@ -467,6 +467,26 @@ func (osu *OrderStateUpdate) ClearCompensateHours() *OrderStateUpdate {
 	return osu
 }
 
+// SetRenewState sets the "renew_state" field.
+func (osu *OrderStateUpdate) SetRenewState(s string) *OrderStateUpdate {
+	osu.mutation.SetRenewState(s)
+	return osu
+}
+
+// SetNillableRenewState sets the "renew_state" field if the given value is not nil.
+func (osu *OrderStateUpdate) SetNillableRenewState(s *string) *OrderStateUpdate {
+	if s != nil {
+		osu.SetRenewState(*s)
+	}
+	return osu
+}
+
+// ClearRenewState clears the value of the "renew_state" field.
+func (osu *OrderStateUpdate) ClearRenewState() *OrderStateUpdate {
+	osu.mutation.ClearRenewState()
+	return osu
+}
+
 // Mutation returns the OrderStateMutation object of the builder.
 func (osu *OrderStateUpdate) Mutation() *OrderStateMutation {
 	return osu.mutation
@@ -869,6 +889,19 @@ func (osu *OrderStateUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeUint32,
 			Column: orderstate.FieldCompensateHours,
+		})
+	}
+	if value, ok := osu.mutation.RenewState(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: orderstate.FieldRenewState,
+		})
+	}
+	if osu.mutation.RenewStateCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Column: orderstate.FieldRenewState,
 		})
 	}
 	_spec.Modifiers = osu.modifiers
@@ -1329,6 +1362,26 @@ func (osuo *OrderStateUpdateOne) ClearCompensateHours() *OrderStateUpdateOne {
 	return osuo
 }
 
+// SetRenewState sets the "renew_state" field.
+func (osuo *OrderStateUpdateOne) SetRenewState(s string) *OrderStateUpdateOne {
+	osuo.mutation.SetRenewState(s)
+	return osuo
+}
+
+// SetNillableRenewState sets the "renew_state" field if the given value is not nil.
+func (osuo *OrderStateUpdateOne) SetNillableRenewState(s *string) *OrderStateUpdateOne {
+	if s != nil {
+		osuo.SetRenewState(*s)
+	}
+	return osuo
+}
+
+// ClearRenewState clears the value of the "renew_state" field.
+func (osuo *OrderStateUpdateOne) ClearRenewState() *OrderStateUpdateOne {
+	osuo.mutation.ClearRenewState()
+	return osuo
+}
+
 // Mutation returns the OrderStateMutation object of the builder.
 func (osuo *OrderStateUpdateOne) Mutation() *OrderStateMutation {
 	return osuo.mutation
@@ -1761,6 +1814,19 @@ func (osuo *OrderStateUpdateOne) sqlSave(ctx context.Context) (_node *OrderState
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeUint32,
 			Column: orderstate.FieldCompensateHours,
+		})
+	}
+	if value, ok := osuo.mutation.RenewState(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: orderstate.FieldRenewState,
+		})
+	}
+	if osuo.mutation.RenewStateCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Column: orderstate.FieldRenewState,
 		})
 	}
 	_spec.Modifiers = osuo.modifiers
