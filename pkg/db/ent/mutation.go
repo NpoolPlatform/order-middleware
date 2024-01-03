@@ -4239,6 +4239,7 @@ type OrderStateMutation struct {
 	addoutofgas_hours      *int32
 	compensate_hours       *uint32
 	addcompensate_hours    *int32
+	renew_state            *string
 	clearedFields          map[string]struct{}
 	done                   bool
 	oldValue               func(context.Context) (*OrderState, error)
@@ -5499,6 +5500,55 @@ func (m *OrderStateMutation) ResetCompensateHours() {
 	delete(m.clearedFields, orderstate.FieldCompensateHours)
 }
 
+// SetRenewState sets the "renew_state" field.
+func (m *OrderStateMutation) SetRenewState(s string) {
+	m.renew_state = &s
+}
+
+// RenewState returns the value of the "renew_state" field in the mutation.
+func (m *OrderStateMutation) RenewState() (r string, exists bool) {
+	v := m.renew_state
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldRenewState returns the old "renew_state" field's value of the OrderState entity.
+// If the OrderState object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *OrderStateMutation) OldRenewState(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldRenewState is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldRenewState requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldRenewState: %w", err)
+	}
+	return oldValue.RenewState, nil
+}
+
+// ClearRenewState clears the value of the "renew_state" field.
+func (m *OrderStateMutation) ClearRenewState() {
+	m.renew_state = nil
+	m.clearedFields[orderstate.FieldRenewState] = struct{}{}
+}
+
+// RenewStateCleared returns if the "renew_state" field was cleared in this mutation.
+func (m *OrderStateMutation) RenewStateCleared() bool {
+	_, ok := m.clearedFields[orderstate.FieldRenewState]
+	return ok
+}
+
+// ResetRenewState resets all changes to the "renew_state" field.
+func (m *OrderStateMutation) ResetRenewState() {
+	m.renew_state = nil
+	delete(m.clearedFields, orderstate.FieldRenewState)
+}
+
 // Where appends a list predicates to the OrderStateMutation builder.
 func (m *OrderStateMutation) Where(ps ...predicate.OrderState) {
 	m.predicates = append(m.predicates, ps...)
@@ -5518,7 +5568,7 @@ func (m *OrderStateMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *OrderStateMutation) Fields() []string {
-	fields := make([]string, 0, 21)
+	fields := make([]string, 0, 22)
 	if m.created_at != nil {
 		fields = append(fields, orderstate.FieldCreatedAt)
 	}
@@ -5582,6 +5632,9 @@ func (m *OrderStateMutation) Fields() []string {
 	if m.compensate_hours != nil {
 		fields = append(fields, orderstate.FieldCompensateHours)
 	}
+	if m.renew_state != nil {
+		fields = append(fields, orderstate.FieldRenewState)
+	}
 	return fields
 }
 
@@ -5632,6 +5685,8 @@ func (m *OrderStateMutation) Field(name string) (ent.Value, bool) {
 		return m.OutofgasHours()
 	case orderstate.FieldCompensateHours:
 		return m.CompensateHours()
+	case orderstate.FieldRenewState:
+		return m.RenewState()
 	}
 	return nil, false
 }
@@ -5683,6 +5738,8 @@ func (m *OrderStateMutation) OldField(ctx context.Context, name string) (ent.Val
 		return m.OldOutofgasHours(ctx)
 	case orderstate.FieldCompensateHours:
 		return m.OldCompensateHours(ctx)
+	case orderstate.FieldRenewState:
+		return m.OldRenewState(ctx)
 	}
 	return nil, fmt.Errorf("unknown OrderState field %s", name)
 }
@@ -5838,6 +5895,13 @@ func (m *OrderStateMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetCompensateHours(v)
+		return nil
+	case orderstate.FieldRenewState:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetRenewState(v)
 		return nil
 	}
 	return fmt.Errorf("unknown OrderState field %s", name)
@@ -6028,6 +6092,9 @@ func (m *OrderStateMutation) ClearedFields() []string {
 	if m.FieldCleared(orderstate.FieldCompensateHours) {
 		fields = append(fields, orderstate.FieldCompensateHours)
 	}
+	if m.FieldCleared(orderstate.FieldRenewState) {
+		fields = append(fields, orderstate.FieldRenewState)
+	}
 	return fields
 }
 
@@ -6089,6 +6156,9 @@ func (m *OrderStateMutation) ClearField(name string) error {
 		return nil
 	case orderstate.FieldCompensateHours:
 		m.ClearCompensateHours()
+		return nil
+	case orderstate.FieldRenewState:
+		m.ClearRenewState()
 		return nil
 	}
 	return fmt.Errorf("unknown OrderState nullable field %s", name)
@@ -6160,6 +6230,9 @@ func (m *OrderStateMutation) ResetField(name string) error {
 		return nil
 	case orderstate.FieldCompensateHours:
 		m.ResetCompensateHours()
+		return nil
+	case orderstate.FieldRenewState:
+		m.ResetRenewState()
 		return nil
 	}
 	return fmt.Errorf("unknown OrderState field %s", name)

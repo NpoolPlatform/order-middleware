@@ -59,6 +59,8 @@ type OrderState struct {
 	OutofgasHours uint32 `json:"outofgas_hours,omitempty"`
 	// CompensateHours holds the value of the "compensate_hours" field.
 	CompensateHours uint32 `json:"compensate_hours,omitempty"`
+	// RenewState holds the value of the "renew_state" field.
+	RenewState string `json:"renew_state,omitempty"`
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -72,7 +74,7 @@ func (*OrderState) scanValues(columns []string) ([]interface{}, error) {
 			values[i] = new(sql.NullBool)
 		case orderstate.FieldID, orderstate.FieldCreatedAt, orderstate.FieldUpdatedAt, orderstate.FieldDeletedAt, orderstate.FieldStartAt, orderstate.FieldEndAt, orderstate.FieldPaidAt, orderstate.FieldLastBenefitAt, orderstate.FieldOutofgasHours, orderstate.FieldCompensateHours:
 			values[i] = new(sql.NullInt64)
-		case orderstate.FieldOrderState, orderstate.FieldCancelState, orderstate.FieldStartMode, orderstate.FieldBenefitState, orderstate.FieldPaymentTransactionID, orderstate.FieldPaymentState:
+		case orderstate.FieldOrderState, orderstate.FieldCancelState, orderstate.FieldStartMode, orderstate.FieldBenefitState, orderstate.FieldPaymentTransactionID, orderstate.FieldPaymentState, orderstate.FieldRenewState:
 			values[i] = new(sql.NullString)
 		case orderstate.FieldEntID, orderstate.FieldOrderID:
 			values[i] = new(uuid.UUID)
@@ -223,6 +225,12 @@ func (os *OrderState) assignValues(columns []string, values []interface{}) error
 			} else if value.Valid {
 				os.CompensateHours = uint32(value.Int64)
 			}
+		case orderstate.FieldRenewState:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field renew_state", values[i])
+			} else if value.Valid {
+				os.RenewState = value.String
+			}
 		}
 	}
 	return nil
@@ -313,6 +321,9 @@ func (os *OrderState) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("compensate_hours=")
 	builder.WriteString(fmt.Sprintf("%v", os.CompensateHours))
+	builder.WriteString(", ")
+	builder.WriteString("renew_state=")
+	builder.WriteString(os.RenewState)
 	builder.WriteByte(')')
 	return builder.String()
 }

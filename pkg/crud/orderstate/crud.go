@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
-	basetypes "github.com/NpoolPlatform/message/npool/basetypes/order/v1"
+	types "github.com/NpoolPlatform/message/npool/basetypes/order/v1"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent"
 	entorderstate "github.com/NpoolPlatform/order-middleware/pkg/db/ent/orderstate"
 	"github.com/google/uuid"
@@ -14,22 +14,23 @@ import (
 type Req struct {
 	EntID                *uuid.UUID
 	OrderID              *uuid.UUID
-	OrderState           *basetypes.OrderState
-	CancelState          *basetypes.OrderState
-	StartMode            *basetypes.OrderStartMode
+	OrderState           *types.OrderState
+	CancelState          *types.OrderState
+	StartMode            *types.OrderStartMode
 	StartAt              *uint32
 	EndAt                *uint32
 	PaidAt               *uint32
 	LastBenefitAt        *uint32
-	BenefitState         *basetypes.BenefitState
+	BenefitState         *types.BenefitState
 	UserSetPaid          *bool
 	UserSetCanceled      *bool
 	AdminSetCanceled     *bool
 	PaymentTransactionID *string
 	PaymentFinishAmount  *decimal.Decimal
-	PaymentState         *basetypes.PaymentState
+	PaymentState         *types.PaymentState
 	OutOfGasHours        *uint32
 	CompensateHours      *uint32
+	RenewState           *types.OrderRenewState
 	CreatedAt            *uint32
 	DeletedAt            *uint32
 }
@@ -86,6 +87,9 @@ func CreateSet(c *ent.OrderStateCreate, req *Req) *ent.OrderStateCreate {
 	}
 	if req.CompensateHours != nil {
 		c.SetCompensateHours(*req.CompensateHours)
+	}
+	if req.RenewState != nil {
+		c.SetRenewState(req.RenewState.String())
 	}
 	if req.CreatedAt != nil {
 		c.SetCreatedAt(*req.CreatedAt)
@@ -144,6 +148,9 @@ func UpdateSet(u *ent.OrderStateUpdateOne, req *Req) *ent.OrderStateUpdateOne {
 	if req.CompensateHours != nil {
 		u.SetCompensateHours(*req.CompensateHours)
 	}
+	if req.RenewState != nil {
+		u.SetRenewState(req.RenewState.String())
+	}
 	if req.DeletedAt != nil {
 		u.SetDeletedAt(*req.DeletedAt)
 	}
@@ -163,6 +170,7 @@ type Conds struct {
 	PaymentTransactionID *cruder.Cond
 	PaymentState         *cruder.Cond
 	OrderStates          *cruder.Cond
+	RenewState           *cruder.Cond
 }
 
 //nolint
@@ -238,7 +246,7 @@ func SetQueryConds(q *ent.OrderStateQuery, conds *Conds) (*ent.OrderStateQuery, 
 		}
 	}
 	if conds.OrderState != nil {
-		state, ok := conds.OrderState.Val.(basetypes.OrderState)
+		state, ok := conds.OrderState.Val.(types.OrderState)
 		if !ok {
 			return nil, fmt.Errorf("invalid orderstate")
 		}
@@ -250,7 +258,7 @@ func SetQueryConds(q *ent.OrderStateQuery, conds *Conds) (*ent.OrderStateQuery, 
 		}
 	}
 	if conds.StartMode != nil {
-		startmode, ok := conds.StartMode.Val.(basetypes.OrderStartMode)
+		startmode, ok := conds.StartMode.Val.(types.OrderStartMode)
 		if !ok {
 			return nil, fmt.Errorf("invalid startmode")
 		}
@@ -262,7 +270,7 @@ func SetQueryConds(q *ent.OrderStateQuery, conds *Conds) (*ent.OrderStateQuery, 
 		}
 	}
 	if conds.BenefitState != nil {
-		state, ok := conds.BenefitState.Val.(basetypes.BenefitState)
+		state, ok := conds.BenefitState.Val.(types.BenefitState)
 		if !ok {
 			return nil, fmt.Errorf("invalid benefitstate")
 		}
@@ -274,7 +282,7 @@ func SetQueryConds(q *ent.OrderStateQuery, conds *Conds) (*ent.OrderStateQuery, 
 		}
 	}
 	if conds.PaymentState != nil {
-		state, ok := conds.PaymentState.Val.(basetypes.PaymentState)
+		state, ok := conds.PaymentState.Val.(types.PaymentState)
 		if !ok {
 			return nil, fmt.Errorf("invalid paymentstate")
 		}
@@ -321,6 +329,18 @@ func SetQueryConds(q *ent.OrderStateQuery, conds *Conds) (*ent.OrderStateQuery, 
 			default:
 				return nil, fmt.Errorf("invalid order field")
 			}
+		}
+	}
+	if conds.RenewState != nil {
+		state, ok := conds.RenewState.Val.(types.OrderRenewState)
+		if !ok {
+			return nil, fmt.Errorf("invalid renewstate")
+		}
+		switch conds.RenewState.Op {
+		case cruder.EQ:
+			q.Where(entorderstate.RenewState(state.String()))
+		default:
+			return nil, fmt.Errorf("invalid order field")
 		}
 	}
 	return q, nil

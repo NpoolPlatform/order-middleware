@@ -95,6 +95,7 @@ func (h *Handler) ToOrderReq(ctx context.Context, newOrder bool) (*OrderReq, err
 			PaymentFinishAmount:  h.PaymentFinishAmount,
 			OutOfGasHours:        h.OutOfGasHours,
 			CompensateHours:      h.CompensateHours,
+			RenewState:           h.RenewState,
 		},
 	}
 
