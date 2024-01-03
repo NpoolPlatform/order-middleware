@@ -90,6 +90,8 @@ var (
 		OutOfGasHours:        0,
 		CompensateHours:      0,
 		AppGoodStockLockID:   uuid.NewString(),
+		RenewStateStr:        ordertypes.OrderRenewState_OrderRenewWait.String(),
+		RenewState:           ordertypes.OrderRenewState_OrderRenewWait,
 	}
 
 	req = npool.OrderReq{

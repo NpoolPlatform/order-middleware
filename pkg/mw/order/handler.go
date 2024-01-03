@@ -912,9 +912,10 @@ func WithRenewState(e *types.OrderRenewState, must bool) func(context.Context, *
 			return nil
 		}
 		switch *e {
-		case types.OrderRenewState_OrderRenewIdle:
+		case types.OrderRenewState_OrderRenewWait:
 		case types.OrderRenewState_OrderRenewCheck:
 		case types.OrderRenewState_OrderRenewExecute:
+		case types.OrderRenewState_OrderRenewFail:
 		default:
 			return fmt.Errorf("invalid renewstate")
 		}
