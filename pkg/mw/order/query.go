@@ -6,7 +6,7 @@ import (
 	"fmt"
 
 	"entgo.io/ent/dialect/sql"
-	basetypes "github.com/NpoolPlatform/message/npool/basetypes/order/v1"
+	types "github.com/NpoolPlatform/message/npool/basetypes/order/v1"
 	"github.com/NpoolPlatform/order-middleware/pkg/db"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent"
 	entorder "github.com/NpoolPlatform/order-middleware/pkg/db/ent/order"
@@ -76,14 +76,15 @@ func (h *queryHandler) scan(ctx context.Context) error {
 
 func (h *queryHandler) formalize() {
 	for _, info := range h.infos {
-		info.OrderType = basetypes.OrderType(basetypes.OrderType_value[info.OrderTypeStr])
-		info.OrderState = basetypes.OrderState(basetypes.OrderState_value[info.OrderStateStr])
-		info.CancelState = basetypes.OrderState(basetypes.OrderState_value[info.CancelStateStr])
-		info.PaymentState = basetypes.PaymentState(basetypes.PaymentState_value[info.PaymentStateStr])
-		info.PaymentType = basetypes.PaymentType(basetypes.PaymentType_value[info.PaymentTypeStr])
-		info.InvestmentType = basetypes.InvestmentType(basetypes.InvestmentType_value[info.InvestmentTypeStr])
-		info.StartMode = basetypes.OrderStartMode(basetypes.OrderStartMode_value[info.StartModeStr])
-		info.BenefitState = basetypes.BenefitState(basetypes.BenefitState_value[info.BenefitStateStr])
+		info.OrderType = types.OrderType(types.OrderType_value[info.OrderTypeStr])
+		info.OrderState = types.OrderState(types.OrderState_value[info.OrderStateStr])
+		info.CancelState = types.OrderState(types.OrderState_value[info.CancelStateStr])
+		info.PaymentState = types.PaymentState(types.PaymentState_value[info.PaymentStateStr])
+		info.PaymentType = types.PaymentType(types.PaymentType_value[info.PaymentTypeStr])
+		info.InvestmentType = types.InvestmentType(types.InvestmentType_value[info.InvestmentTypeStr])
+		info.StartMode = types.OrderStartMode(types.OrderStartMode_value[info.StartModeStr])
+		info.BenefitState = types.BenefitState(types.BenefitState_value[info.BenefitStateStr])
+		info.RenewState = types.OrderRenewState(types.OrderRenewState_value[info.RenewStateStr])
 		_ = json.Unmarshal([]byte(info.CouponIDsStr), &info.CouponIDs)
 		amount, err := decimal.NewFromString(info.Units)
 		if err != nil {

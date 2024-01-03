@@ -146,7 +146,9 @@ type Conds struct {
 	AppID             *cruder.Cond
 	UserID            *cruder.Cond
 	GoodID            *cruder.Cond
+	GoodIDs           *cruder.Cond
 	AppGoodID         *cruder.Cond
+	AppGoodIDs        *cruder.Cond
 	ParentOrderID     *cruder.Cond
 	PaymentAmount     *cruder.Cond
 	OrderType         *cruder.Cond
@@ -247,6 +249,20 @@ func SetQueryConds(q *ent.OrderQuery, conds *Conds) (*ent.OrderQuery, error) {
 			return nil, fmt.Errorf("invalid order field")
 		}
 	}
+	if conds.GoodIDs != nil {
+		ids, ok := conds.GoodIDs.Val.([]uuid.UUID)
+		if !ok {
+			return nil, fmt.Errorf("invalid goodids")
+		}
+		if len(ids) > 0 {
+			switch conds.GoodIDs.Op {
+			case cruder.IN:
+				q.Where(entorder.GoodIDIn(ids...))
+			default:
+				return nil, fmt.Errorf("invalid order field")
+			}
+		}
+	}
 	if conds.AppGoodID != nil {
 		id, ok := conds.AppGoodID.Val.(uuid.UUID)
 		if !ok {
@@ -257,6 +273,20 @@ func SetQueryConds(q *ent.OrderQuery, conds *Conds) (*ent.OrderQuery, error) {
 			q.Where(entorder.AppGoodID(id))
 		default:
 			return nil, fmt.Errorf("invalid order field")
+		}
+	}
+	if conds.AppGoodIDs != nil {
+		ids, ok := conds.AppGoodIDs.Val.([]uuid.UUID)
+		if !ok {
+			return nil, fmt.Errorf("invalid appgoodids")
+		}
+		if len(ids) > 0 {
+			switch conds.AppGoodIDs.Op {
+			case cruder.IN:
+				q.Where(entorder.AppGoodIDIn(ids...))
+			default:
+				return nil, fmt.Errorf("invalid order field")
+			}
 		}
 	}
 	if conds.ParentOrderID != nil {
