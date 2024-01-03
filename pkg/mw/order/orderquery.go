@@ -245,6 +245,8 @@ func (h *baseQueryHandler) QueryJoinOrderState(s *sql.Selector) error {
 			s.Where(
 				sql.EQ(t.C(entorderstate.FieldRenewState), state.String()),
 			)
+		default:
+			return fmt.Errorf("invalid orderrenewstate")
 		}
 	}
 	return nil
