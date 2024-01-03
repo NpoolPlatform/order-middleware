@@ -99,7 +99,7 @@ func (OrderState) Fields() []ent.Field {
 		field.
 			String("renew_state").
 			Optional().
-			Default(types.OrderRenewState_OrderRenewIdle.String()),
+			Default(types.OrderRenewState_OrderRenewWait.String()),
 	}
 }
 

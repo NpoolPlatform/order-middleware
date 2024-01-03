@@ -84,6 +84,8 @@ var (
 		CompensateHours:      0,
 		AppGoodStockLockID:   uuid.NewString(),
 		LedgerLockID:         uuid.NewString(),
+		RenewStateStr:        ordertypes.OrderRenewState_OrderRenewWait.String(),
+		RenewState:           ordertypes.OrderRenewState_OrderRenewWait,
 	}
 
 	appID         = uuid.NewString()
@@ -143,6 +145,8 @@ var (
 			CouponIDs:            []string{uuid.NewString(), uuid.NewString()},
 			AppGoodStockLockID:   uuid.NewString(),
 			LedgerLockID:         uuid.NewString(),
+			RenewStateStr:        ordertypes.OrderRenewState_OrderRenewWait.String(),
+			RenewState:           ordertypes.OrderRenewState_OrderRenewWait,
 		},
 		{
 			EntID:                uuid.NewString(),
@@ -192,6 +196,8 @@ var (
 			OutOfGasHours:        0,
 			CompensateHours:      0,
 			AppGoodStockLockID:   uuid.NewString(),
+			RenewStateStr:        ordertypes.OrderRenewState_OrderRenewWait.String(),
+			RenewState:           ordertypes.OrderRenewState_OrderRenewWait,
 		},
 	}
 )
