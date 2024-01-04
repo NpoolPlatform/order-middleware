@@ -85,6 +85,29 @@ func (s *Server) SumOrderUnits(ctx context.Context, in *npool.SumOrderUnitsReque
 	}, nil
 }
 
+func (s *Server) SumOrderPaymentAmounts(ctx context.Context, in *npool.SumOrderPaymentAmountsRequest) (*npool.SumOrderPaymentAmountsResponse, error) {
+	handler, err := order1.NewHandler(
+		ctx,
+		order1.WithConds(in.GetConds()),
+	)
+	if err != nil {
+		logger.Sugar().Errorw(
+			"SumOrderPaymentAmounts",
+			"In", in,
+			"error", err,
+		)
+		return &npool.SumOrderPaymentAmountsResponse{}, status.Error(codes.InvalidArgument, err.Error())
+	}
+	amounts, err := handler.SumOrderPaymentAmounts(ctx)
+	if err != nil {
+		return &npool.SumOrderPaymentAmountsResponse{}, status.Error(codes.Internal, err.Error())
+	}
+
+	return &npool.SumOrderPaymentAmountsResponse{
+		Info: amounts,
+	}, nil
+}
+
 func (s *Server) CountOrders(ctx context.Context, in *npool.CountOrdersRequest) (*npool.CountOrdersResponse, error) {
 	handler, err := order1.NewHandler(
 		ctx,
