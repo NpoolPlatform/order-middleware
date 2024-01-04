@@ -22,10 +22,12 @@ type sumPaymentAmountsHandler struct {
 func (h *sumPaymentAmountsHandler) queryJoin() error {
 	var err error
 	h.stmCount.Modify(func(s *sql.Selector) {
+		h.QueryJoinMyself(s)
 		err = h.QueryJoinPayment(s)
 		err = h.QueryJoinOrderState(s)
 	})
 	h.stmSelect.Modify(func(s *sql.Selector) {
+		h.QueryJoinMyself(s)
 		err = h.QueryJoinPayment(s)
 		err = h.QueryJoinOrderState(s)
 	})
@@ -60,11 +62,11 @@ func (h *Handler) SumOrderPaymentAmounts(ctx context.Context) (string, error) {
 	}
 	var err error
 	err = db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
-		handler.stmCount, err = handler.QueryOrders(cli)
+		handler.stmSelect, err = handler.QueryOrders(cli)
 		if err != nil {
 			return err
 		}
-		handler.stmSelect, err = handler.QueryOrders(cli)
+		handler.stmCount, err = handler.QueryOrders(cli)
 		if err != nil {
 			return err
 		}
