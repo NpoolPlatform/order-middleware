@@ -13,10 +13,10 @@ import (
 
 type sumPaymentAmountsHandler struct {
 	*baseQueryHandler
-	stmCount *ent.OrderSelect
-	stmSum   *ent.OrderSelect
-	infos    []*npool.Order
-	amount   *decimal.Decimal
+	stmCount  *ent.OrderSelect
+	stmSelect *ent.OrderSelect
+	infos     []*npool.Order
+	amount    *decimal.Decimal
 }
 
 func (h *sumPaymentAmountsHandler) queryJoin() error {
@@ -25,7 +25,7 @@ func (h *sumPaymentAmountsHandler) queryJoin() error {
 		err = h.QueryJoinPayment(s)
 		err = h.QueryJoinOrderState(s)
 	})
-	h.stmSum.Modify(func(s *sql.Selector) {
+	h.stmSelect.Modify(func(s *sql.Selector) {
 		err = h.QueryJoinPayment(s)
 		err = h.QueryJoinOrderState(s)
 	})
@@ -33,7 +33,7 @@ func (h *sumPaymentAmountsHandler) queryJoin() error {
 }
 
 func (h *sumPaymentAmountsHandler) scan(ctx context.Context) error {
-	return h.stmSum.Scan(ctx, &h.infos)
+	return h.stmSelect.Scan(ctx, &h.infos)
 }
 
 func (h *sumPaymentAmountsHandler) formalize() {
@@ -64,7 +64,7 @@ func (h *Handler) SumOrderPaymentAmounts(ctx context.Context) (string, error) {
 		if err != nil {
 			return err
 		}
-		handler.stmSum, err = handler.QueryOrders(cli)
+		handler.stmSelect, err = handler.QueryOrders(cli)
 		if err != nil {
 			return err
 		}
@@ -72,7 +72,7 @@ func (h *Handler) SumOrderPaymentAmounts(ctx context.Context) (string, error) {
 			return err
 		}
 
-		handler.stmSum.Order(ent.Desc(entorder.FieldCreatedAt))
+		handler.stmSelect.Order(ent.Desc(entorder.FieldCreatedAt))
 		return handler.scan(_ctx)
 	})
 	if err != nil {
