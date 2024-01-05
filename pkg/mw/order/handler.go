@@ -1060,6 +1060,9 @@ func WithConds(conds *npool.Conds) func(context.Context, *Handler) error {
 			switch conds.GetStartMode().GetValue() {
 			case uint32(basetypes.OrderStartMode_OrderStartConfirmed):
 			case uint32(basetypes.OrderStartMode_OrderStartTBD):
+			case uint32(basetypes.OrderStartMode_OrderStartInstantly):
+			case uint32(basetypes.OrderStartMode_OrderStartNextDay):
+			case uint32(basetypes.OrderStartMode_OrderStartPreset):
 			default:
 				return fmt.Errorf("invalid startmode")
 			}
@@ -1484,6 +1487,9 @@ func WithReqs(reqs []*npool.OrderReq, must bool) func(context.Context, *Handler)
 				switch *req.StartMode {
 				case basetypes.OrderStartMode_OrderStartConfirmed:
 				case basetypes.OrderStartMode_OrderStartTBD:
+				case basetypes.OrderStartMode_OrderStartInstantly:
+				case basetypes.OrderStartMode_OrderStartNextDay:
+				case basetypes.OrderStartMode_OrderStartPreset:
 				default:
 					return fmt.Errorf("invalid startmode")
 				}
