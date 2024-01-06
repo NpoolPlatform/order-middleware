@@ -462,9 +462,6 @@ func (h *updateHandler) checkChildOrderStates(ctx context.Context) error {
 		if req.OrderStateReq.OrderState == nil {
 			continue
 		}
-		if *req.OrderStateReq.OrderState != parentOrderState {
-			return fmt.Errorf("invalid orderstate")
-		}
 	}
 
 	return nil
