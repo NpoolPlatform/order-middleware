@@ -438,7 +438,6 @@ func (h *updateHandler) checkChildOrderStates(ctx context.Context) error {
 			return fmt.Errorf("invalid order")
 		}
 	}
-	parentOrderState := parentOrder.OrderState
 	for _, req := range h.Reqs {
 		if req.EntID.String() == parentOrderID1 {
 			if req.OrderStateReq.OrderState == nil {
