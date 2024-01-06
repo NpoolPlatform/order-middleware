@@ -20,6 +20,7 @@ import (
 
 type updateHandler struct {
 	*Handler
+	parentCanceled bool
 }
 
 var stateAllowMap = map[types.OrderState][]types.OrderState{
@@ -211,8 +212,10 @@ func (h *updateHandler) updateOrderState(ctx context.Context, tx *ent.Tx, req *o
 	}
 
 	if req.AdminSetCanceled != nil && *req.AdminSetCanceled {
-		if order.PaymentType == types.PaymentType_PayWithParentOrder.String() {
-			return fmt.Errorf("permission denied")
+		if !h.parentCanceled {
+			if order.PaymentType == types.PaymentType_PayWithParentOrder.String() {
+				return fmt.Errorf("permission denied")
+			}
 		}
 		if req.OrderState != nil {
 			return fmt.Errorf("permission denied")
@@ -437,6 +440,7 @@ func (h *updateHandler) checkChildOrderStates(ctx context.Context) error {
 		if parentOrder == nil {
 			return fmt.Errorf("invalid order")
 		}
+		parentCanceled = true
 	}
 	for _, req := range h.Reqs {
 		if req.EntID.String() == parentOrderID1 {
