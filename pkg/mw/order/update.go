@@ -216,9 +216,11 @@ func (h *updateHandler) updateOrderState(ctx context.Context, tx *ent.Tx, req *o
 			if order.PaymentType == types.PaymentType_PayWithParentOrder.String() {
 				return fmt.Errorf("permission denied")
 			}
-		}
-		if req.OrderState != nil {
-			return fmt.Errorf("permission denied")
+			if req.OrderState != nil {
+				return fmt.Errorf("permission denied")
+			}
+		} else {
+			req.CancelState = &_orderState
 		}
 		switch _orderType {
 		case types.OrderType_Offline:
@@ -440,8 +442,8 @@ func (h *updateHandler) checkChildOrderStates(ctx context.Context) error {
 		if parentOrder == nil {
 			return fmt.Errorf("invalid order")
 		}
-		h.parentCanceled = parentOrder.AdminSetCanceled || parentOrder.UserSetCanceled
 	}
+	h.parentCanceled = parentOrder.AdminSetCanceled || parentOrder.UserSetCanceled
 	for _, req := range h.Reqs {
 		if req.EntID.String() == parentOrderID1 {
 			continue
