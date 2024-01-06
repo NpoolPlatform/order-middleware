@@ -440,15 +440,6 @@ func (h *updateHandler) checkChildOrderStates(ctx context.Context) error {
 	}
 	for _, req := range h.Reqs {
 		if req.EntID.String() == parentOrderID1 {
-			if req.OrderStateReq.OrderState == nil {
-				break
-			}
-			parentOrderState = *req.OrderStateReq.OrderState
-			break
-		}
-	}
-	for _, req := range h.Reqs {
-		if req.EntID.String() == parentOrderID1 {
 			continue
 		}
 		order, ok := orderMap[*req.ID]
