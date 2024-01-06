@@ -229,11 +229,13 @@ func (h *updateHandler) updateOrderState(ctx context.Context, tx *ent.Tx, req *o
 		default:
 			return fmt.Errorf("permission denied")
 		}
-		switch _orderState {
-		case types.OrderState_OrderStatePaid:
-		case types.OrderState_OrderStateInService:
-		default:
-			return fmt.Errorf("invalid cancelstate")
+		if !h.parentCanceled {
+			switch _orderState {
+			case types.OrderState_OrderStatePaid:
+			case types.OrderState_OrderStateInService:
+			default:
+				return fmt.Errorf("invalid cancelstate")
+			}
 		}
 	}
 
