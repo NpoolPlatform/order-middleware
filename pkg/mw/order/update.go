@@ -440,7 +440,7 @@ func (h *updateHandler) checkChildOrderStates(ctx context.Context) error {
 		if parentOrder == nil {
 			return fmt.Errorf("invalid order")
 		}
-		parentCanceled = true
+		h.parentCanceled = true
 	}
 	for _, req := range h.Reqs {
 		if req.EntID.String() == parentOrderID1 {
