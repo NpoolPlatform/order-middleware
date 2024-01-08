@@ -258,8 +258,8 @@ func WithGoodValueUSD(value *string, must bool) func(context.Context, *Handler) 
 		if err != nil {
 			return err
 		}
-		if amount.Cmp(decimal.NewFromInt(0)) <= 0 {
-			return fmt.Errorf("goodvalueusd is less than or equal to 0")
+		if amount.Cmp(decimal.NewFromInt(0)) < 0 {
+			return fmt.Errorf("goodvalueusd is less than 0")
 		}
 		h.GoodValueUSD = &amount
 		return nil
@@ -1301,8 +1301,8 @@ func WithReqs(reqs []*npool.OrderReq, must bool) func(context.Context, *Handler)
 				if err != nil {
 					return err
 				}
-				if amount.Cmp(decimal.NewFromInt(0)) <= 0 {
-					return fmt.Errorf("goodvalue is less than or equal to 0")
+				if amount.Cmp(decimal.NewFromInt(0)) < 0 {
+					return fmt.Errorf("goodvalue is less than 0")
 				}
 				_req.GoodValue = &amount
 			}
@@ -1311,8 +1311,8 @@ func WithReqs(reqs []*npool.OrderReq, must bool) func(context.Context, *Handler)
 				if err != nil {
 					return err
 				}
-				if amount.Cmp(decimal.NewFromInt(0)) <= 0 {
-					return fmt.Errorf("goodvalueusd is less than or equal to 0")
+				if amount.Cmp(decimal.NewFromInt(0)) < 0 {
+					return fmt.Errorf("goodvalueusd is less than 0")
 				}
 				_req.GoodValueUSD = &amount
 			}
