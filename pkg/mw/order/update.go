@@ -20,7 +20,8 @@ import (
 
 type updateHandler struct {
 	*Handler
-	parentCanceled bool
+	parentCanceled    bool
+	parentCancelState types.OrderState
 }
 
 var stateAllowMap = map[types.OrderState][]types.OrderState{
@@ -212,7 +213,7 @@ func (h *updateHandler) updateOrderState(ctx context.Context, tx *ent.Tx, req *o
 	}
 
 	if req.AdminSetCanceled != nil && *req.AdminSetCanceled {
-		if !h.parentCanceled {
+		if !h.parentCanceled && h.parentCancelState != types.OrderState_OrderStatePaymentTimeout {
 			if order.PaymentType == types.PaymentType_PayWithParentOrder.String() {
 				return fmt.Errorf("permission denied")
 			}
@@ -220,7 +221,11 @@ func (h *updateHandler) updateOrderState(ctx context.Context, tx *ent.Tx, req *o
 				return fmt.Errorf("permission denied")
 			}
 		} else {
-			req.CancelState = &_orderState
+			if order.PaymentType == types.PaymentType_PayWithParentOrder.String() {
+				req.CancelState = &h.parentCancelState
+			} else {
+				req.CancelState = &_orderState
+			}
 		}
 		switch _orderType {
 		case types.OrderType_Offline:
@@ -229,7 +234,7 @@ func (h *updateHandler) updateOrderState(ctx context.Context, tx *ent.Tx, req *o
 		default:
 			return fmt.Errorf("permission denied")
 		}
-		if !h.parentCanceled {
+		if !h.parentCanceled && h.parentCancelState != types.OrderState_OrderStatePaymentTimeout {
 			switch _orderState {
 			case types.OrderState_OrderStatePaid:
 			case types.OrderState_OrderStateInService:
@@ -446,6 +451,7 @@ func (h *updateHandler) checkChildOrderStates(ctx context.Context) error {
 		}
 	}
 	h.parentCanceled = parentOrder.AdminSetCanceled || parentOrder.UserSetCanceled
+	h.parentCancelState = parentOrder.CancelState
 	for _, req := range h.Reqs {
 		if req.EntID.String() == parentOrderID1 {
 			continue
@@ -503,7 +509,7 @@ func (h *Handler) UpdateOrders(ctx context.Context) ([]*npool.Order, error) {
 	infos, _, err := h.GetOrders(ctx)
 	if err != nil {
 		logger.Sugar().Warnw(
-			"CreateOrders",
+			"GetOrders",
 			"IDs", ids,
 			"Error", err,
 		)
