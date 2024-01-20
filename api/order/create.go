@@ -36,7 +36,7 @@ func (s *Server) CreateOrder(ctx context.Context, in *npool.CreateOrderRequest) 
 		order1.WithPaymentAmount(req.PaymentAmount, false),
 		order1.WithDiscountAmount(req.DiscountAmount, false),
 		order1.WithPromotionID(req.PromotionID, false),
-		order1.WithDurationDays(req.DurationDays, true),
+		order1.WithDuration(req.Duration, true),
 		order1.WithOrderType(req.OrderType, true),
 		order1.WithInvestmentType(req.InvestmentType, true),
 		order1.WithCouponIDs(req.CouponIDs, false),

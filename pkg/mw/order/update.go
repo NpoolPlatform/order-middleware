@@ -20,6 +20,8 @@ import (
 
 type updateHandler struct {
 	*Handler
+	parentCanceled    bool
+	parentCancelState types.OrderState
 }
 
 var stateAllowMap = map[types.OrderState][]types.OrderState{
@@ -36,14 +38,17 @@ var stateAllowMap = map[types.OrderState][]types.OrderState{
 	types.OrderState_OrderStateAddCommission:               {types.OrderState_OrderStateAchievementBookKeeping},
 	types.OrderState_OrderStateAchievementBookKeeping:      {types.OrderState_OrderStatePaymentUnlockAccount},
 	types.OrderState_OrderStatePaymentUnlockAccount:        {types.OrderState_OrderStateUpdatePaidChilds},
-	types.OrderState_OrderStateUpdatePaidChilds:            {types.OrderState_OrderStatePaid},
+	types.OrderState_OrderStateUpdatePaidChilds:            {types.OrderState_OrderStateChildPaidByParent, types.OrderState_OrderStatePaid},
+	types.OrderState_OrderStateChildPaidByParent:           {types.OrderState_OrderStatePaid},
 	types.OrderState_OrderStatePaid:                        {types.OrderState_OrderStateTransferGoodStockWaitStart, types.OrderState_OrderStatePreCancel},
 	types.OrderState_OrderStateTransferGoodStockWaitStart:  {types.OrderState_OrderStateUpdateInServiceChilds},
-	types.OrderState_OrderStateUpdateInServiceChilds:       {types.OrderState_OrderStateInService},
+	types.OrderState_OrderStateUpdateInServiceChilds:       {types.OrderState_OrderStateChildInServiceByParent, types.OrderState_OrderStateInService},
+	types.OrderState_OrderStateChildInServiceByParent:      {types.OrderState_OrderStateInService},
 	types.OrderState_OrderStateInService:                   {types.OrderState_OrderStatePreExpired, types.OrderState_OrderStatePreCancel},
 	types.OrderState_OrderStatePreExpired:                  {types.OrderState_OrderStateRestoreExpiredStock},
 	types.OrderState_OrderStateRestoreExpiredStock:         {types.OrderState_OrderStateUpdateExpiredChilds},
-	types.OrderState_OrderStateUpdateExpiredChilds:         {types.OrderState_OrderStateExpired},
+	types.OrderState_OrderStateUpdateExpiredChilds:         {types.OrderState_OrderStateChildExpiredByParent, types.OrderState_OrderStateExpired},
+	types.OrderState_OrderStateChildExpiredByParent:        {types.OrderState_OrderStateExpired},
 	types.OrderState_OrderStateExpired:                     {},
 	types.OrderState_OrderStatePreCancel:                   {types.OrderState_OrderStateRestoreCanceledStock},
 	types.OrderState_OrderStateRestoreCanceledStock:        {types.OrderState_OrderStateDeductLockedCommission},
@@ -52,7 +57,8 @@ var stateAllowMap = map[types.OrderState][]types.OrderState{
 	types.OrderState_OrderStateReturnCanceledBalance:       {types.OrderState_OrderStateCanceledTransferBookKeeping},
 	types.OrderState_OrderStateCanceledTransferBookKeeping: {types.OrderState_OrderStateCancelUnlockPaymentAccount},
 	types.OrderState_OrderStateCancelUnlockPaymentAccount:  {types.OrderState_OrderStateUpdateCanceledChilds},
-	types.OrderState_OrderStateUpdateCanceledChilds:        {types.OrderState_OrderStateCanceled},
+	types.OrderState_OrderStateUpdateCanceledChilds:        {types.OrderState_OrderStateChildCanceledByParent, types.OrderState_OrderStateCanceled},
+	types.OrderState_OrderStateChildCanceledByParent:       {types.OrderState_OrderStateCanceled},
 	types.OrderState_OrderStateCanceled:                    {},
 	types.OrderState_OrderStatePaymentTimeout:              {types.OrderState_OrderStatePreCancel},
 }
@@ -64,19 +70,23 @@ var stateRollbackMap = map[types.OrderState]*types.OrderState{
 	types.OrderState_OrderStateAchievementBookKeeping:      types.OrderState_OrderStateAddCommission.Enum(),
 	types.OrderState_OrderStatePaymentUnlockAccount:        types.OrderState_OrderStateAchievementBookKeeping.Enum(),
 	types.OrderState_OrderStateUpdatePaidChilds:            types.OrderState_OrderStatePaymentUnlockAccount.Enum(),
-	types.OrderState_OrderStatePaid:                        types.OrderState_OrderStateUpdatePaidChilds.Enum(),
+	types.OrderState_OrderStateChildPaidByParent:           types.OrderState_OrderStateUpdatePaidChilds.Enum(),
+	types.OrderState_OrderStatePaid:                        types.OrderState_OrderStateChildPaidByParent.Enum(),
 	types.OrderState_OrderStateUpdateInServiceChilds:       types.OrderState_OrderStateTransferGoodStockWaitStart.Enum(),
-	types.OrderState_OrderStateInService:                   types.OrderState_OrderStateUpdateInServiceChilds.Enum(),
+	types.OrderState_OrderStateChildInServiceByParent:      types.OrderState_OrderStateUpdateInServiceChilds.Enum(),
+	types.OrderState_OrderStateInService:                   types.OrderState_OrderStateChildInServiceByParent.Enum(),
 	types.OrderState_OrderStateRestoreExpiredStock:         types.OrderState_OrderStatePreExpired.Enum(),
 	types.OrderState_OrderStateUpdateExpiredChilds:         types.OrderState_OrderStateRestoreExpiredStock.Enum(),
-	types.OrderState_OrderStateExpired:                     types.OrderState_OrderStateUpdateExpiredChilds.Enum(),
+	types.OrderState_OrderStateChildExpiredByParent:        types.OrderState_OrderStateUpdateExpiredChilds.Enum(),
+	types.OrderState_OrderStateExpired:                     types.OrderState_OrderStateChildExpiredByParent.Enum(),
 	types.OrderState_OrderStateDeductLockedCommission:      types.OrderState_OrderStateRestoreCanceledStock.Enum(),
 	types.OrderState_OrderStateCancelAchievement:           types.OrderState_OrderStateDeductLockedCommission.Enum(),
 	types.OrderState_OrderStateReturnCanceledBalance:       types.OrderState_OrderStateCancelAchievement.Enum(),
 	types.OrderState_OrderStateCanceledTransferBookKeeping: types.OrderState_OrderStateReturnCanceledBalance.Enum(),
 	types.OrderState_OrderStateCancelUnlockPaymentAccount:  types.OrderState_OrderStateCanceledTransferBookKeeping.Enum(),
 	types.OrderState_OrderStateUpdateCanceledChilds:        types.OrderState_OrderStateCancelUnlockPaymentAccount.Enum(),
-	types.OrderState_OrderStateCanceled:                    types.OrderState_OrderStateUpdateCanceledChilds.Enum(),
+	types.OrderState_OrderStateChildCanceledByParent:       types.OrderState_OrderStateUpdateCanceledChilds.Enum(),
+	types.OrderState_OrderStateCanceled:                    types.OrderState_OrderStateChildCanceledByParent.Enum(),
 }
 
 func (h *updateHandler) checkOrderState(oldState types.OrderState, req *orderstatecrud.Req) error {
@@ -203,11 +213,19 @@ func (h *updateHandler) updateOrderState(ctx context.Context, tx *ent.Tx, req *o
 	}
 
 	if req.AdminSetCanceled != nil && *req.AdminSetCanceled {
-		if order.PaymentType == types.PaymentType_PayWithParentOrder.String() {
-			return fmt.Errorf("permission denied")
-		}
-		if req.OrderState != nil {
-			return fmt.Errorf("permission denied")
+		if !h.parentCanceled && h.parentCancelState != types.OrderState_OrderStatePaymentTimeout {
+			if order.PaymentType == types.PaymentType_PayWithParentOrder.String() {
+				return fmt.Errorf("permission denied")
+			}
+			if req.OrderState != nil {
+				return fmt.Errorf("permission denied")
+			}
+		} else {
+			if order.PaymentType == types.PaymentType_PayWithParentOrder.String() {
+				req.CancelState = &h.parentCancelState
+			} else {
+				req.CancelState = &_orderState
+			}
 		}
 		switch _orderType {
 		case types.OrderType_Offline:
@@ -216,11 +234,13 @@ func (h *updateHandler) updateOrderState(ctx context.Context, tx *ent.Tx, req *o
 		default:
 			return fmt.Errorf("permission denied")
 		}
-		switch _orderState {
-		case types.OrderState_OrderStatePaid:
-		case types.OrderState_OrderStateInService:
-		default:
-			return fmt.Errorf("invalid cancelstate")
+		if !h.parentCanceled && h.parentCancelState != types.OrderState_OrderStatePaymentTimeout {
+			switch _orderState {
+			case types.OrderState_OrderStatePaid:
+			case types.OrderState_OrderStateInService:
+			default:
+				return fmt.Errorf("invalid cancelstate")
+			}
 		}
 	}
 
@@ -430,16 +450,8 @@ func (h *updateHandler) checkChildOrderStates(ctx context.Context) error {
 			return fmt.Errorf("invalid order")
 		}
 	}
-	parentOrderState := parentOrder.OrderState
-	for _, req := range h.Reqs {
-		if req.EntID.String() == parentOrderID1 {
-			if req.OrderStateReq.OrderState == nil {
-				break
-			}
-			parentOrderState = *req.OrderStateReq.OrderState
-			break
-		}
-	}
+	h.parentCanceled = parentOrder.AdminSetCanceled || parentOrder.UserSetCanceled
+	h.parentCancelState = parentOrder.CancelState
 	for _, req := range h.Reqs {
 		if req.EntID.String() == parentOrderID1 {
 			continue
@@ -453,9 +465,6 @@ func (h *updateHandler) checkChildOrderStates(ctx context.Context) error {
 		}
 		if req.OrderStateReq.OrderState == nil {
 			continue
-		}
-		if *req.OrderStateReq.OrderState != parentOrderState {
-			return fmt.Errorf("invalid orderstate")
 		}
 	}
 
@@ -500,7 +509,7 @@ func (h *Handler) UpdateOrders(ctx context.Context) ([]*npool.Order, error) {
 	infos, _, err := h.GetOrders(ctx)
 	if err != nil {
 		logger.Sugar().Warnw(
-			"CreateOrders",
+			"GetOrders",
 			"IDs", ids,
 			"Error", err,
 		)

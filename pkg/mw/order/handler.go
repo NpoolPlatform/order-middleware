@@ -34,7 +34,7 @@ type Handler struct {
 	PaymentAmount        *decimal.Decimal
 	DiscountAmount       *decimal.Decimal
 	PromotionID          *uuid.UUID
-	DurationDays         *uint32
+	Duration             *uint32
 	OrderType            *basetypes.OrderType
 	InvestmentType       *basetypes.InvestmentType
 	CouponIDs            []uuid.UUID
@@ -258,8 +258,8 @@ func WithGoodValueUSD(value *string, must bool) func(context.Context, *Handler) 
 		if err != nil {
 			return err
 		}
-		if amount.Cmp(decimal.NewFromInt(0)) <= 0 {
-			return fmt.Errorf("goodvalueusd is less than or equal to 0")
+		if amount.Cmp(decimal.NewFromInt(0)) < 0 {
+			return fmt.Errorf("goodvalueusd is less than 0")
 		}
 		h.GoodValueUSD = &amount
 		return nil
@@ -323,15 +323,15 @@ func WithPromotionID(id *string, must bool) func(context.Context, *Handler) erro
 	}
 }
 
-func WithDurationDays(durationDays *uint32, must bool) func(context.Context, *Handler) error {
+func WithDuration(duration *uint32, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
-		if durationDays == nil {
+		if duration == nil {
 			if must {
-				return fmt.Errorf("invalid durationdays")
+				return fmt.Errorf("invalid duration")
 			}
 			return nil
 		}
-		h.DurationDays = durationDays
+		h.Duration = duration
 		return nil
 	}
 }
@@ -619,21 +619,25 @@ func WithOrderState(state *basetypes.OrderState, must bool) func(context.Context
 		case basetypes.OrderState_OrderStateAddCommission:
 		case basetypes.OrderState_OrderStateAchievementBookKeeping:
 		case basetypes.OrderState_OrderStateUpdatePaidChilds:
+		case basetypes.OrderState_OrderStateChildPaidByParent:
 		case basetypes.OrderState_OrderStatePaymentUnlockAccount:
 		case basetypes.OrderState_OrderStatePaid:
 		case basetypes.OrderState_OrderStateTransferGoodStockWaitStart:
 		case basetypes.OrderState_OrderStateUpdateInServiceChilds:
+		case basetypes.OrderState_OrderStateChildInServiceByParent:
 		case basetypes.OrderState_OrderStateInService:
 		case basetypes.OrderState_OrderStatePaymentTimeout:
 		case basetypes.OrderState_OrderStatePreCancel:
 		case basetypes.OrderState_OrderStatePreExpired:
 		case basetypes.OrderState_OrderStateRestoreExpiredStock:
 		case basetypes.OrderState_OrderStateUpdateExpiredChilds:
+		case basetypes.OrderState_OrderStateChildExpiredByParent:
 		case basetypes.OrderState_OrderStateRestoreCanceledStock:
 		case basetypes.OrderState_OrderStateCancelAchievement:
 		case basetypes.OrderState_OrderStateDeductLockedCommission:
 		case basetypes.OrderState_OrderStateReturnCanceledBalance:
 		case basetypes.OrderState_OrderStateUpdateCanceledChilds:
+		case basetypes.OrderState_OrderStateChildCanceledByParent:
 		case basetypes.OrderState_OrderStateCanceledTransferBookKeeping:
 		case basetypes.OrderState_OrderStateCancelUnlockPaymentAccount:
 		case basetypes.OrderState_OrderStateCanceled:
@@ -657,6 +661,9 @@ func WithStartMode(startMode *basetypes.OrderStartMode, must bool) func(context.
 		switch *startMode {
 		case basetypes.OrderStartMode_OrderStartConfirmed:
 		case basetypes.OrderStartMode_OrderStartTBD:
+		case basetypes.OrderStartMode_OrderStartInstantly:
+		case basetypes.OrderStartMode_OrderStartNextDay:
+		case basetypes.OrderStartMode_OrderStartPreset:
 		default:
 			return fmt.Errorf("invalid startmode")
 		}
@@ -1057,6 +1064,9 @@ func WithConds(conds *npool.Conds) func(context.Context, *Handler) error {
 			switch conds.GetStartMode().GetValue() {
 			case uint32(basetypes.OrderStartMode_OrderStartConfirmed):
 			case uint32(basetypes.OrderStartMode_OrderStartTBD):
+			case uint32(basetypes.OrderStartMode_OrderStartInstantly):
+			case uint32(basetypes.OrderStartMode_OrderStartNextDay):
+			case uint32(basetypes.OrderStartMode_OrderStartPreset):
 			default:
 				return fmt.Errorf("invalid startmode")
 			}
@@ -1142,6 +1152,17 @@ func WithConds(conds *npool.Conds) func(context.Context, *Handler) error {
 				h.Conds.OrderStates = &cruder.Cond{Op: conds.GetOrderStates().GetOp(), Val: states}
 			}
 		}
+		if conds.ParentOrderIDs != nil {
+			ids := []uuid.UUID{}
+			for _, id := range conds.GetParentOrderIDs().GetValue() {
+				_id, err := uuid.Parse(id)
+				if err != nil {
+					return err
+				}
+				ids = append(ids, _id)
+			}
+			h.Conds.ParentOrderIDs = &cruder.Cond{Op: conds.GetParentOrderIDs().GetOp(), Val: ids}
+		}
 		return nil
 	}
 }
@@ -1191,8 +1212,8 @@ func WithReqs(reqs []*npool.OrderReq, must bool) func(context.Context, *Handler)
 				if req.GoodValueUSD == nil {
 					return fmt.Errorf("invalid goodvalueusd")
 				}
-				if req.DurationDays == nil {
-					return fmt.Errorf("invalid durationdays")
+				if req.Duration == nil {
+					return fmt.Errorf("invalid duration")
 				}
 				if req.OrderType == nil {
 					return fmt.Errorf("invalid ordertype")
@@ -1280,8 +1301,8 @@ func WithReqs(reqs []*npool.OrderReq, must bool) func(context.Context, *Handler)
 				if err != nil {
 					return err
 				}
-				if amount.Cmp(decimal.NewFromInt(0)) <= 0 {
-					return fmt.Errorf("goodvalue is less than or equal to 0")
+				if amount.Cmp(decimal.NewFromInt(0)) < 0 {
+					return fmt.Errorf("goodvalue is less than 0")
 				}
 				_req.GoodValue = &amount
 			}
@@ -1290,8 +1311,8 @@ func WithReqs(reqs []*npool.OrderReq, must bool) func(context.Context, *Handler)
 				if err != nil {
 					return err
 				}
-				if amount.Cmp(decimal.NewFromInt(0)) <= 0 {
-					return fmt.Errorf("goodvalueusd is less than or equal to 0")
+				if amount.Cmp(decimal.NewFromInt(0)) < 0 {
+					return fmt.Errorf("goodvalueusd is less than 0")
 				}
 				_req.GoodValueUSD = &amount
 			}
@@ -1322,8 +1343,8 @@ func WithReqs(reqs []*npool.OrderReq, must bool) func(context.Context, *Handler)
 				}
 				_req.PromotionID = &id
 			}
-			if req.DurationDays != nil {
-				_req.DurationDays = req.DurationDays
+			if req.Duration != nil {
+				_req.Duration = req.Duration
 			}
 			if req.OrderType != nil {
 				switch *req.OrderType {
@@ -1430,21 +1451,25 @@ func WithReqs(reqs []*npool.OrderReq, must bool) func(context.Context, *Handler)
 				case basetypes.OrderState_OrderStateAddCommission:
 				case basetypes.OrderState_OrderStateAchievementBookKeeping:
 				case basetypes.OrderState_OrderStateUpdatePaidChilds:
+				case basetypes.OrderState_OrderStateChildPaidByParent:
 				case basetypes.OrderState_OrderStatePaymentUnlockAccount:
 				case basetypes.OrderState_OrderStatePaid:
 				case basetypes.OrderState_OrderStateTransferGoodStockWaitStart:
 				case basetypes.OrderState_OrderStateUpdateInServiceChilds:
+				case basetypes.OrderState_OrderStateChildInServiceByParent:
 				case basetypes.OrderState_OrderStateInService:
 				case basetypes.OrderState_OrderStatePaymentTimeout:
 				case basetypes.OrderState_OrderStatePreCancel:
 				case basetypes.OrderState_OrderStatePreExpired:
 				case basetypes.OrderState_OrderStateRestoreExpiredStock:
 				case basetypes.OrderState_OrderStateUpdateExpiredChilds:
+				case basetypes.OrderState_OrderStateChildExpiredByParent:
 				case basetypes.OrderState_OrderStateRestoreCanceledStock:
 				case basetypes.OrderState_OrderStateCancelAchievement:
 				case basetypes.OrderState_OrderStateDeductLockedCommission:
 				case basetypes.OrderState_OrderStateReturnCanceledBalance:
 				case basetypes.OrderState_OrderStateUpdateCanceledChilds:
+				case basetypes.OrderState_OrderStateChildCanceledByParent:
 				case basetypes.OrderState_OrderStateCanceledTransferBookKeeping:
 				case basetypes.OrderState_OrderStateCancelUnlockPaymentAccount:
 				case basetypes.OrderState_OrderStateCanceled:
@@ -1470,6 +1495,9 @@ func WithReqs(reqs []*npool.OrderReq, must bool) func(context.Context, *Handler)
 				switch *req.StartMode {
 				case basetypes.OrderStartMode_OrderStartConfirmed:
 				case basetypes.OrderStartMode_OrderStartTBD:
+				case basetypes.OrderStartMode_OrderStartInstantly:
+				case basetypes.OrderStartMode_OrderStartNextDay:
+				case basetypes.OrderStartMode_OrderStartPreset:
 				default:
 					return fmt.Errorf("invalid startmode")
 				}
