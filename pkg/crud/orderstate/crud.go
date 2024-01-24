@@ -31,7 +31,10 @@ type Req struct {
 	OutOfGasHours        *uint32
 	CompensateHours      *uint32
 	RenewState           *types.OrderRenewState
+<<<<<<< HEAD
 	RenewNotifyAt        *uint32
+=======
+>>>>>>> 59a0a4c30e4643dbf170a41598e2a5b246a9f496
 	CreatedAt            *uint32
 	DeletedAt            *uint32
 }
@@ -92,9 +95,12 @@ func CreateSet(c *ent.OrderStateCreate, req *Req) *ent.OrderStateCreate {
 	if req.RenewState != nil {
 		c.SetRenewState(req.RenewState.String())
 	}
+<<<<<<< HEAD
 	if req.RenewNotifyAt != nil {
 		c.SetRenewNotifyAt(*req.RenewNotifyAt)
 	}
+=======
+>>>>>>> 59a0a4c30e4643dbf170a41598e2a5b246a9f496
 	if req.CreatedAt != nil {
 		c.SetCreatedAt(*req.CreatedAt)
 	}
@@ -155,9 +161,12 @@ func UpdateSet(u *ent.OrderStateUpdateOne, req *Req) *ent.OrderStateUpdateOne {
 	if req.RenewState != nil {
 		u.SetRenewState(req.RenewState.String())
 	}
+<<<<<<< HEAD
 	if req.RenewNotifyAt != nil {
 		u.SetRenewNotifyAt(*req.RenewNotifyAt)
 	}
+=======
+>>>>>>> 59a0a4c30e4643dbf170a41598e2a5b246a9f496
 	if req.DeletedAt != nil {
 		u.SetDeletedAt(*req.DeletedAt)
 	}
@@ -178,7 +187,10 @@ type Conds struct {
 	PaymentState         *cruder.Cond
 	OrderStates          *cruder.Cond
 	RenewState           *cruder.Cond
+<<<<<<< HEAD
 	RenewNotifyAt        *cruder.Cond
+=======
+>>>>>>> 59a0a4c30e4643dbf170a41598e2a5b246a9f496
 }
 
 //nolint
@@ -351,6 +363,7 @@ func SetQueryConds(q *ent.OrderStateQuery, conds *Conds) (*ent.OrderStateQuery, 
 			return nil, fmt.Errorf("invalid order field")
 		}
 	}
+<<<<<<< HEAD
 	if conds.RenewNotifyAt != nil {
 		at, ok := conds.RenewNotifyAt.Val.(uint32)
 		if !ok {
@@ -371,5 +384,7 @@ func SetQueryConds(q *ent.OrderStateQuery, conds *Conds) (*ent.OrderStateQuery, 
 			return nil, fmt.Errorf("invalid order field")
 		}
 	}
+=======
+>>>>>>> 59a0a4c30e4643dbf170a41598e2a5b246a9f496
 	return q, nil
 }
