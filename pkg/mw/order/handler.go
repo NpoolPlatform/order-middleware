@@ -66,6 +66,7 @@ type Handler struct {
 	LedgerLockID         *uuid.UUID
 	Rollback             *bool
 	RenewState           *types.OrderRenewState
+	RenewNotifyAt        *uint32
 	Reqs                 []*OrderReq
 	Conds                *ordercrud.Conds
 	Offset               int32
@@ -611,38 +612,38 @@ func WithOrderState(state *types.OrderState, must bool) func(context.Context, *H
 			return nil
 		}
 		switch *state {
-		case basetypes.OrderState_OrderStateCreated:
-		case basetypes.OrderState_OrderStateWaitPayment:
-		case basetypes.OrderState_OrderStatePaymentTransferReceived:
-		case basetypes.OrderState_OrderStatePaymentTransferBookKeeping:
-		case basetypes.OrderState_OrderStatePaymentSpendBalance:
-		case basetypes.OrderState_OrderStateTransferGoodStockLocked:
-		case basetypes.OrderState_OrderStateAddCommission:
-		case basetypes.OrderState_OrderStateAchievementBookKeeping:
-		case basetypes.OrderState_OrderStateUpdatePaidChilds:
-		case basetypes.OrderState_OrderStateChildPaidByParent:
-		case basetypes.OrderState_OrderStatePaymentUnlockAccount:
-		case basetypes.OrderState_OrderStatePaid:
-		case basetypes.OrderState_OrderStateTransferGoodStockWaitStart:
-		case basetypes.OrderState_OrderStateUpdateInServiceChilds:
-		case basetypes.OrderState_OrderStateChildInServiceByParent:
-		case basetypes.OrderState_OrderStateInService:
-		case basetypes.OrderState_OrderStatePaymentTimeout:
-		case basetypes.OrderState_OrderStatePreCancel:
-		case basetypes.OrderState_OrderStatePreExpired:
-		case basetypes.OrderState_OrderStateRestoreExpiredStock:
-		case basetypes.OrderState_OrderStateUpdateExpiredChilds:
-		case basetypes.OrderState_OrderStateChildExpiredByParent:
-		case basetypes.OrderState_OrderStateRestoreCanceledStock:
-		case basetypes.OrderState_OrderStateCancelAchievement:
-		case basetypes.OrderState_OrderStateDeductLockedCommission:
-		case basetypes.OrderState_OrderStateReturnCanceledBalance:
-		case basetypes.OrderState_OrderStateUpdateCanceledChilds:
-		case basetypes.OrderState_OrderStateChildCanceledByParent:
-		case basetypes.OrderState_OrderStateCanceledTransferBookKeeping:
-		case basetypes.OrderState_OrderStateCancelUnlockPaymentAccount:
-		case basetypes.OrderState_OrderStateCanceled:
-		case basetypes.OrderState_OrderStateExpired:
+		case types.OrderState_OrderStateCreated:
+		case types.OrderState_OrderStateWaitPayment:
+		case types.OrderState_OrderStatePaymentTransferReceived:
+		case types.OrderState_OrderStatePaymentTransferBookKeeping:
+		case types.OrderState_OrderStatePaymentSpendBalance:
+		case types.OrderState_OrderStateTransferGoodStockLocked:
+		case types.OrderState_OrderStateAddCommission:
+		case types.OrderState_OrderStateAchievementBookKeeping:
+		case types.OrderState_OrderStateUpdatePaidChilds:
+		case types.OrderState_OrderStateChildPaidByParent:
+		case types.OrderState_OrderStatePaymentUnlockAccount:
+		case types.OrderState_OrderStatePaid:
+		case types.OrderState_OrderStateTransferGoodStockWaitStart:
+		case types.OrderState_OrderStateUpdateInServiceChilds:
+		case types.OrderState_OrderStateChildInServiceByParent:
+		case types.OrderState_OrderStateInService:
+		case types.OrderState_OrderStatePaymentTimeout:
+		case types.OrderState_OrderStatePreCancel:
+		case types.OrderState_OrderStatePreExpired:
+		case types.OrderState_OrderStateRestoreExpiredStock:
+		case types.OrderState_OrderStateUpdateExpiredChilds:
+		case types.OrderState_OrderStateChildExpiredByParent:
+		case types.OrderState_OrderStateRestoreCanceledStock:
+		case types.OrderState_OrderStateCancelAchievement:
+		case types.OrderState_OrderStateDeductLockedCommission:
+		case types.OrderState_OrderStateReturnCanceledBalance:
+		case types.OrderState_OrderStateUpdateCanceledChilds:
+		case types.OrderState_OrderStateChildCanceledByParent:
+		case types.OrderState_OrderStateCanceledTransferBookKeeping:
+		case types.OrderState_OrderStateCancelUnlockPaymentAccount:
+		case types.OrderState_OrderStateCanceled:
+		case types.OrderState_OrderStateExpired:
 		default:
 			return fmt.Errorf("invalid orderstate")
 		}
@@ -914,12 +915,20 @@ func WithRenewState(e *types.OrderRenewState, must bool) func(context.Context, *
 		switch *e {
 		case types.OrderRenewState_OrderRenewWait:
 		case types.OrderRenewState_OrderRenewCheck:
+		case types.OrderRenewState_OrderRenewNotify:
 		case types.OrderRenewState_OrderRenewExecute:
 		case types.OrderRenewState_OrderRenewFail:
 		default:
 			return fmt.Errorf("invalid renewstate")
 		}
 		h.RenewState = e
+		return nil
+	}
+}
+
+func WithRenewNotifyAt(n *uint32, must bool) func(context.Context, *Handler) error {
+	return func(ctx context.Context, h *Handler) error {
+		h.RenewNotifyAt = n
 		return nil
 	}
 }
@@ -1106,11 +1115,11 @@ func WithConds(conds *npool.Conds) func(context.Context, *Handler) error {
 		}
 		if conds.StartMode != nil {
 			switch conds.GetStartMode().GetValue() {
-			case uint32(basetypes.OrderStartMode_OrderStartConfirmed):
-			case uint32(basetypes.OrderStartMode_OrderStartTBD):
-			case uint32(basetypes.OrderStartMode_OrderStartInstantly):
-			case uint32(basetypes.OrderStartMode_OrderStartNextDay):
-			case uint32(basetypes.OrderStartMode_OrderStartPreset):
+			case uint32(types.OrderStartMode_OrderStartConfirmed):
+			case uint32(types.OrderStartMode_OrderStartTBD):
+			case uint32(types.OrderStartMode_OrderStartInstantly):
+			case uint32(types.OrderStartMode_OrderStartNextDay):
+			case uint32(types.OrderStartMode_OrderStartPreset):
 			default:
 				return fmt.Errorf("invalid startmode")
 			}
@@ -1206,6 +1215,18 @@ func WithConds(conds *npool.Conds) func(context.Context, *Handler) error {
 				ids = append(ids, _id)
 			}
 			h.Conds.ParentOrderIDs = &cruder.Cond{Op: conds.GetParentOrderIDs().GetOp(), Val: ids}
+		}
+		if conds.RenewState != nil {
+			h.Conds.RenewState = &cruder.Cond{
+				Op:  conds.GetRenewState().GetOp(),
+				Val: types.OrderRenewState(conds.GetRenewState().GetValue()),
+			}
+		}
+		if conds.RenewNotifyAt != nil {
+			h.Conds.RenewNotifyAt = &cruder.Cond{
+				Op:  conds.GetRenewNotifyAt().GetOp(),
+				Val: conds.GetRenewNotifyAt().GetValue(),
+			}
 		}
 		return nil
 	}
@@ -1486,38 +1507,38 @@ func WithReqs(reqs []*npool.OrderReq, must bool) func(context.Context, *Handler)
 			}
 			if req.OrderState != nil {
 				switch *req.OrderState {
-				case basetypes.OrderState_OrderStateCreated:
-				case basetypes.OrderState_OrderStateWaitPayment:
-				case basetypes.OrderState_OrderStatePaymentTransferReceived:
-				case basetypes.OrderState_OrderStatePaymentTransferBookKeeping:
-				case basetypes.OrderState_OrderStatePaymentSpendBalance:
-				case basetypes.OrderState_OrderStateTransferGoodStockLocked:
-				case basetypes.OrderState_OrderStateAddCommission:
-				case basetypes.OrderState_OrderStateAchievementBookKeeping:
-				case basetypes.OrderState_OrderStateUpdatePaidChilds:
-				case basetypes.OrderState_OrderStateChildPaidByParent:
-				case basetypes.OrderState_OrderStatePaymentUnlockAccount:
-				case basetypes.OrderState_OrderStatePaid:
-				case basetypes.OrderState_OrderStateTransferGoodStockWaitStart:
-				case basetypes.OrderState_OrderStateUpdateInServiceChilds:
-				case basetypes.OrderState_OrderStateChildInServiceByParent:
-				case basetypes.OrderState_OrderStateInService:
-				case basetypes.OrderState_OrderStatePaymentTimeout:
-				case basetypes.OrderState_OrderStatePreCancel:
-				case basetypes.OrderState_OrderStatePreExpired:
-				case basetypes.OrderState_OrderStateRestoreExpiredStock:
-				case basetypes.OrderState_OrderStateUpdateExpiredChilds:
-				case basetypes.OrderState_OrderStateChildExpiredByParent:
-				case basetypes.OrderState_OrderStateRestoreCanceledStock:
-				case basetypes.OrderState_OrderStateCancelAchievement:
-				case basetypes.OrderState_OrderStateDeductLockedCommission:
-				case basetypes.OrderState_OrderStateReturnCanceledBalance:
-				case basetypes.OrderState_OrderStateUpdateCanceledChilds:
-				case basetypes.OrderState_OrderStateChildCanceledByParent:
-				case basetypes.OrderState_OrderStateCanceledTransferBookKeeping:
-				case basetypes.OrderState_OrderStateCancelUnlockPaymentAccount:
-				case basetypes.OrderState_OrderStateCanceled:
-				case basetypes.OrderState_OrderStateExpired:
+				case types.OrderState_OrderStateCreated:
+				case types.OrderState_OrderStateWaitPayment:
+				case types.OrderState_OrderStatePaymentTransferReceived:
+				case types.OrderState_OrderStatePaymentTransferBookKeeping:
+				case types.OrderState_OrderStatePaymentSpendBalance:
+				case types.OrderState_OrderStateTransferGoodStockLocked:
+				case types.OrderState_OrderStateAddCommission:
+				case types.OrderState_OrderStateAchievementBookKeeping:
+				case types.OrderState_OrderStateUpdatePaidChilds:
+				case types.OrderState_OrderStateChildPaidByParent:
+				case types.OrderState_OrderStatePaymentUnlockAccount:
+				case types.OrderState_OrderStatePaid:
+				case types.OrderState_OrderStateTransferGoodStockWaitStart:
+				case types.OrderState_OrderStateUpdateInServiceChilds:
+				case types.OrderState_OrderStateChildInServiceByParent:
+				case types.OrderState_OrderStateInService:
+				case types.OrderState_OrderStatePaymentTimeout:
+				case types.OrderState_OrderStatePreCancel:
+				case types.OrderState_OrderStatePreExpired:
+				case types.OrderState_OrderStateRestoreExpiredStock:
+				case types.OrderState_OrderStateUpdateExpiredChilds:
+				case types.OrderState_OrderStateChildExpiredByParent:
+				case types.OrderState_OrderStateRestoreCanceledStock:
+				case types.OrderState_OrderStateCancelAchievement:
+				case types.OrderState_OrderStateDeductLockedCommission:
+				case types.OrderState_OrderStateReturnCanceledBalance:
+				case types.OrderState_OrderStateUpdateCanceledChilds:
+				case types.OrderState_OrderStateChildCanceledByParent:
+				case types.OrderState_OrderStateCanceledTransferBookKeeping:
+				case types.OrderState_OrderStateCancelUnlockPaymentAccount:
+				case types.OrderState_OrderStateCanceled:
+				case types.OrderState_OrderStateExpired:
 				default:
 					return fmt.Errorf("invalid orderstate")
 				}
@@ -1537,11 +1558,11 @@ func WithReqs(reqs []*npool.OrderReq, must bool) func(context.Context, *Handler)
 			}
 			if req.StartMode != nil {
 				switch *req.StartMode {
-				case basetypes.OrderStartMode_OrderStartConfirmed:
-				case basetypes.OrderStartMode_OrderStartTBD:
-				case basetypes.OrderStartMode_OrderStartInstantly:
-				case basetypes.OrderStartMode_OrderStartNextDay:
-				case basetypes.OrderStartMode_OrderStartPreset:
+				case types.OrderStartMode_OrderStartConfirmed:
+				case types.OrderStartMode_OrderStartTBD:
+				case types.OrderStartMode_OrderStartInstantly:
+				case types.OrderStartMode_OrderStartNextDay:
+				case types.OrderStartMode_OrderStartPreset:
 				default:
 					return fmt.Errorf("invalid startmode")
 				}

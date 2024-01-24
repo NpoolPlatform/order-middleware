@@ -145,6 +145,7 @@ var (
 		{Name: "outofgas_hours", Type: field.TypeUint32, Nullable: true, Default: 0},
 		{Name: "compensate_hours", Type: field.TypeUint32, Nullable: true, Default: 0},
 		{Name: "renew_state", Type: field.TypeString, Nullable: true, Default: "OrderRenewWait"},
+		{Name: "renew_notify_at", Type: field.TypeUint32, Nullable: true, Default: 0},
 	}
 	// OrderStatesTable holds the schema information for the "order_states" table.
 	OrderStatesTable = &schema.Table{

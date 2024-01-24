@@ -4240,6 +4240,8 @@ type OrderStateMutation struct {
 	compensate_hours       *uint32
 	addcompensate_hours    *int32
 	renew_state            *string
+	renew_notify_at        *uint32
+	addrenew_notify_at     *int32
 	clearedFields          map[string]struct{}
 	done                   bool
 	oldValue               func(context.Context) (*OrderState, error)
@@ -5549,6 +5551,76 @@ func (m *OrderStateMutation) ResetRenewState() {
 	delete(m.clearedFields, orderstate.FieldRenewState)
 }
 
+// SetRenewNotifyAt sets the "renew_notify_at" field.
+func (m *OrderStateMutation) SetRenewNotifyAt(u uint32) {
+	m.renew_notify_at = &u
+	m.addrenew_notify_at = nil
+}
+
+// RenewNotifyAt returns the value of the "renew_notify_at" field in the mutation.
+func (m *OrderStateMutation) RenewNotifyAt() (r uint32, exists bool) {
+	v := m.renew_notify_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldRenewNotifyAt returns the old "renew_notify_at" field's value of the OrderState entity.
+// If the OrderState object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *OrderStateMutation) OldRenewNotifyAt(ctx context.Context) (v uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldRenewNotifyAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldRenewNotifyAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldRenewNotifyAt: %w", err)
+	}
+	return oldValue.RenewNotifyAt, nil
+}
+
+// AddRenewNotifyAt adds u to the "renew_notify_at" field.
+func (m *OrderStateMutation) AddRenewNotifyAt(u int32) {
+	if m.addrenew_notify_at != nil {
+		*m.addrenew_notify_at += u
+	} else {
+		m.addrenew_notify_at = &u
+	}
+}
+
+// AddedRenewNotifyAt returns the value that was added to the "renew_notify_at" field in this mutation.
+func (m *OrderStateMutation) AddedRenewNotifyAt() (r int32, exists bool) {
+	v := m.addrenew_notify_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearRenewNotifyAt clears the value of the "renew_notify_at" field.
+func (m *OrderStateMutation) ClearRenewNotifyAt() {
+	m.renew_notify_at = nil
+	m.addrenew_notify_at = nil
+	m.clearedFields[orderstate.FieldRenewNotifyAt] = struct{}{}
+}
+
+// RenewNotifyAtCleared returns if the "renew_notify_at" field was cleared in this mutation.
+func (m *OrderStateMutation) RenewNotifyAtCleared() bool {
+	_, ok := m.clearedFields[orderstate.FieldRenewNotifyAt]
+	return ok
+}
+
+// ResetRenewNotifyAt resets all changes to the "renew_notify_at" field.
+func (m *OrderStateMutation) ResetRenewNotifyAt() {
+	m.renew_notify_at = nil
+	m.addrenew_notify_at = nil
+	delete(m.clearedFields, orderstate.FieldRenewNotifyAt)
+}
+
 // Where appends a list predicates to the OrderStateMutation builder.
 func (m *OrderStateMutation) Where(ps ...predicate.OrderState) {
 	m.predicates = append(m.predicates, ps...)
@@ -5568,7 +5640,7 @@ func (m *OrderStateMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *OrderStateMutation) Fields() []string {
-	fields := make([]string, 0, 22)
+	fields := make([]string, 0, 23)
 	if m.created_at != nil {
 		fields = append(fields, orderstate.FieldCreatedAt)
 	}
@@ -5635,6 +5707,9 @@ func (m *OrderStateMutation) Fields() []string {
 	if m.renew_state != nil {
 		fields = append(fields, orderstate.FieldRenewState)
 	}
+	if m.renew_notify_at != nil {
+		fields = append(fields, orderstate.FieldRenewNotifyAt)
+	}
 	return fields
 }
 
@@ -5687,6 +5762,8 @@ func (m *OrderStateMutation) Field(name string) (ent.Value, bool) {
 		return m.CompensateHours()
 	case orderstate.FieldRenewState:
 		return m.RenewState()
+	case orderstate.FieldRenewNotifyAt:
+		return m.RenewNotifyAt()
 	}
 	return nil, false
 }
@@ -5740,6 +5817,8 @@ func (m *OrderStateMutation) OldField(ctx context.Context, name string) (ent.Val
 		return m.OldCompensateHours(ctx)
 	case orderstate.FieldRenewState:
 		return m.OldRenewState(ctx)
+	case orderstate.FieldRenewNotifyAt:
+		return m.OldRenewNotifyAt(ctx)
 	}
 	return nil, fmt.Errorf("unknown OrderState field %s", name)
 }
@@ -5903,6 +5982,13 @@ func (m *OrderStateMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetRenewState(v)
 		return nil
+	case orderstate.FieldRenewNotifyAt:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetRenewNotifyAt(v)
+		return nil
 	}
 	return fmt.Errorf("unknown OrderState field %s", name)
 }
@@ -5938,6 +6024,9 @@ func (m *OrderStateMutation) AddedFields() []string {
 	if m.addcompensate_hours != nil {
 		fields = append(fields, orderstate.FieldCompensateHours)
 	}
+	if m.addrenew_notify_at != nil {
+		fields = append(fields, orderstate.FieldRenewNotifyAt)
+	}
 	return fields
 }
 
@@ -5964,6 +6053,8 @@ func (m *OrderStateMutation) AddedField(name string) (ent.Value, bool) {
 		return m.AddedOutofgasHours()
 	case orderstate.FieldCompensateHours:
 		return m.AddedCompensateHours()
+	case orderstate.FieldRenewNotifyAt:
+		return m.AddedRenewNotifyAt()
 	}
 	return nil, false
 }
@@ -6036,6 +6127,13 @@ func (m *OrderStateMutation) AddField(name string, value ent.Value) error {
 		}
 		m.AddCompensateHours(v)
 		return nil
+	case orderstate.FieldRenewNotifyAt:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddRenewNotifyAt(v)
+		return nil
 	}
 	return fmt.Errorf("unknown OrderState numeric field %s", name)
 }
@@ -6094,6 +6192,9 @@ func (m *OrderStateMutation) ClearedFields() []string {
 	}
 	if m.FieldCleared(orderstate.FieldRenewState) {
 		fields = append(fields, orderstate.FieldRenewState)
+	}
+	if m.FieldCleared(orderstate.FieldRenewNotifyAt) {
+		fields = append(fields, orderstate.FieldRenewNotifyAt)
 	}
 	return fields
 }
@@ -6159,6 +6260,9 @@ func (m *OrderStateMutation) ClearField(name string) error {
 		return nil
 	case orderstate.FieldRenewState:
 		m.ClearRenewState()
+		return nil
+	case orderstate.FieldRenewNotifyAt:
+		m.ClearRenewNotifyAt()
 		return nil
 	}
 	return fmt.Errorf("unknown OrderState nullable field %s", name)
@@ -6233,6 +6337,9 @@ func (m *OrderStateMutation) ResetField(name string) error {
 		return nil
 	case orderstate.FieldRenewState:
 		m.ResetRenewState()
+		return nil
+	case orderstate.FieldRenewNotifyAt:
+		m.ResetRenewNotifyAt()
 		return nil
 	}
 	return fmt.Errorf("unknown OrderState field %s", name)

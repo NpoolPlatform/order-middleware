@@ -137,6 +137,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			orderstate.FieldOutofgasHours:        {Type: field.TypeUint32, Column: orderstate.FieldOutofgasHours},
 			orderstate.FieldCompensateHours:      {Type: field.TypeUint32, Column: orderstate.FieldCompensateHours},
 			orderstate.FieldRenewState:           {Type: field.TypeString, Column: orderstate.FieldRenewState},
+			orderstate.FieldRenewNotifyAt:        {Type: field.TypeUint32, Column: orderstate.FieldRenewNotifyAt},
 		},
 	}
 	graph.Nodes[4] = &sqlgraph.Node{
@@ -691,6 +692,11 @@ func (f *OrderStateFilter) WhereCompensateHours(p entql.Uint32P) {
 // WhereRenewState applies the entql string predicate on the renew_state field.
 func (f *OrderStateFilter) WhereRenewState(p entql.StringP) {
 	f.Where(p.Field(orderstate.FieldRenewState))
+}
+
+// WhereRenewNotifyAt applies the entql uint32 predicate on the renew_notify_at field.
+func (f *OrderStateFilter) WhereRenewNotifyAt(p entql.Uint32P) {
+	f.Where(p.Field(orderstate.FieldRenewNotifyAt))
 }
 
 // addPredicate implements the predicateAdder interface.

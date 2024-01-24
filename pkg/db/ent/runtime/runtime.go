@@ -327,6 +327,10 @@ func init() {
 	orderstateDescRenewState := orderstateFields[17].Descriptor()
 	// orderstate.DefaultRenewState holds the default value on creation for the renew_state field.
 	orderstate.DefaultRenewState = orderstateDescRenewState.Default.(string)
+	// orderstateDescRenewNotifyAt is the schema descriptor for renew_notify_at field.
+	orderstateDescRenewNotifyAt := orderstateFields[18].Descriptor()
+	// orderstate.DefaultRenewNotifyAt holds the default value on creation for the renew_notify_at field.
+	orderstate.DefaultRenewNotifyAt = orderstateDescRenewNotifyAt.Default.(uint32)
 	outofgasMixin := schema.OutOfGas{}.Mixin()
 	outofgas.Policy = privacy.NewPolicies(outofgasMixin[0], schema.OutOfGas{})
 	outofgas.Hooks[0] = func(next ent.Mutator) ent.Mutator {

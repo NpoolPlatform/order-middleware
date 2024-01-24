@@ -57,6 +57,8 @@ const (
 	FieldCompensateHours = "compensate_hours"
 	// FieldRenewState holds the string denoting the renew_state field in the database.
 	FieldRenewState = "renew_state"
+	// FieldRenewNotifyAt holds the string denoting the renew_notify_at field in the database.
+	FieldRenewNotifyAt = "renew_notify_at"
 	// Table holds the table name of the orderstate in the database.
 	Table = "order_states"
 )
@@ -86,6 +88,7 @@ var Columns = []string{
 	FieldOutofgasHours,
 	FieldCompensateHours,
 	FieldRenewState,
+	FieldRenewNotifyAt,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -151,4 +154,6 @@ var (
 	DefaultCompensateHours uint32
 	// DefaultRenewState holds the default value on creation for the "renew_state" field.
 	DefaultRenewState string
+	// DefaultRenewNotifyAt holds the default value on creation for the "renew_notify_at" field.
+	DefaultRenewNotifyAt uint32
 )

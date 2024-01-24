@@ -31,6 +31,7 @@ type Req struct {
 	OutOfGasHours        *uint32
 	CompensateHours      *uint32
 	RenewState           *types.OrderRenewState
+	RenewNotifyAt        *uint32
 	CreatedAt            *uint32
 	DeletedAt            *uint32
 }
@@ -90,6 +91,9 @@ func CreateSet(c *ent.OrderStateCreate, req *Req) *ent.OrderStateCreate {
 	}
 	if req.RenewState != nil {
 		c.SetRenewState(req.RenewState.String())
+	}
+	if req.RenewNotifyAt != nil {
+		c.SetRenewNotifyAt(*req.RenewNotifyAt)
 	}
 	if req.CreatedAt != nil {
 		c.SetCreatedAt(*req.CreatedAt)
@@ -151,6 +155,9 @@ func UpdateSet(u *ent.OrderStateUpdateOne, req *Req) *ent.OrderStateUpdateOne {
 	if req.RenewState != nil {
 		u.SetRenewState(req.RenewState.String())
 	}
+	if req.RenewNotifyAt != nil {
+		u.SetRenewNotifyAt(*req.RenewNotifyAt)
+	}
 	if req.DeletedAt != nil {
 		u.SetDeletedAt(*req.DeletedAt)
 	}
@@ -171,6 +178,7 @@ type Conds struct {
 	PaymentState         *cruder.Cond
 	OrderStates          *cruder.Cond
 	RenewState           *cruder.Cond
+	RenewNotifyAt        *cruder.Cond
 }
 
 //nolint
@@ -339,6 +347,26 @@ func SetQueryConds(q *ent.OrderStateQuery, conds *Conds) (*ent.OrderStateQuery, 
 		switch conds.RenewState.Op {
 		case cruder.EQ:
 			q.Where(entorderstate.RenewState(state.String()))
+		default:
+			return nil, fmt.Errorf("invalid order field")
+		}
+	}
+	if conds.RenewNotifyAt != nil {
+		at, ok := conds.RenewNotifyAt.Val.(uint32)
+		if !ok {
+			return nil, fmt.Errorf("invalid renewnotifyat")
+		}
+		switch conds.RenewNotifyAt.Op {
+		case cruder.EQ:
+			q.Where(entorderstate.RenewNotifyAt(at))
+		case cruder.LT:
+			q.Where(entorderstate.RenewNotifyAtLT(at))
+		case cruder.LTE:
+			q.Where(entorderstate.RenewNotifyAtLTE(at))
+		case cruder.GT:
+			q.Where(entorderstate.RenewNotifyAtGT(at))
+		case cruder.GTE:
+			q.Where(entorderstate.RenewNotifyAtGTE(at))
 		default:
 			return nil, fmt.Errorf("invalid order field")
 		}
