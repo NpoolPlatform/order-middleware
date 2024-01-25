@@ -59,6 +59,7 @@ func (h *baseQueryHandler) QueryJoinMyself(s *sql.Selector) {
 		t.C(entorder.FieldCoinUsdCurrency),
 		t.C(entorder.FieldLocalCoinUsdCurrency),
 		t.C(entorder.FieldLiveCoinUsdCurrency),
+		t.C(entorder.FieldCreateMethod),
 		t.C(entorder.FieldCreatedAt),
 		t.C(entorder.FieldUpdatedAt),
 	)
@@ -78,6 +79,8 @@ func (h *baseQueryHandler) QueryJoinPayment(s *sql.Selector) error {
 	s.AppendSelect(
 		sql.As(t.C(entpayment.FieldAccountID), "payment_account_id"),
 		sql.As(t.C(entpayment.FieldStartAmount), "payment_start_amount"),
+		sql.As(t.C(entpayment.FieldMultiPaymentCoins), "multi_payment_coins"),
+		sql.As(t.C(entpayment.FieldPaymentAmounts), "payment_amounts"),
 	)
 	return nil
 }

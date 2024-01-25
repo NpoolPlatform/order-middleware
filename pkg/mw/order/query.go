@@ -85,7 +85,11 @@ func (h *queryHandler) formalize() {
 		info.StartMode = types.OrderStartMode(types.OrderStartMode_value[info.StartModeStr])
 		info.BenefitState = types.BenefitState(types.BenefitState_value[info.BenefitStateStr])
 		info.RenewState = types.OrderRenewState(types.OrderRenewState_value[info.RenewStateStr])
+		info.CreateMethod = types.OrderCreateMethod(types.OrderCreateMethod_value[info.CreateMethodStr])
 		_ = json.Unmarshal([]byte(info.CouponIDsStr), &info.CouponIDs)
+		if info.MultiPaymentCoins {
+			_ = json.Unmarshal([]byte(info.PaymentAmountsStr), &info.PaymentAmounts)
+		}
 		amount, err := decimal.NewFromString(info.Units)
 		if err != nil {
 			info.Units = decimal.NewFromInt(0).String()

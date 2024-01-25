@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
+	npool "github.com/NpoolPlatform/message/npool/order/mw/v1/order"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent"
 	entpayment "github.com/NpoolPlatform/order-middleware/pkg/db/ent/payment"
 	"github.com/google/uuid"
@@ -11,15 +12,17 @@ import (
 )
 
 type Req struct {
-	EntID       *uuid.UUID
-	AppID       *uuid.UUID
-	UserID      *uuid.UUID
-	GoodID      *uuid.UUID
-	OrderID     *uuid.UUID
-	AccountID   *uuid.UUID
-	StartAmount *decimal.Decimal
-	CreatedAt   *uint32
-	DeletedAt   *uint32
+	EntID             *uuid.UUID
+	AppID             *uuid.UUID
+	UserID            *uuid.UUID
+	GoodID            *uuid.UUID
+	OrderID           *uuid.UUID
+	AccountID         *uuid.UUID
+	StartAmount       *decimal.Decimal
+	MultiPaymentCoins *bool
+	PaymentAmounts    []*npool.PaymentAmount
+	CreatedAt         *uint32
+	DeletedAt         *uint32
 }
 
 func CreateSet(c *ent.PaymentCreate, req *Req) *ent.PaymentCreate {
@@ -43,6 +46,16 @@ func CreateSet(c *ent.PaymentCreate, req *Req) *ent.PaymentCreate {
 	}
 	if req.StartAmount != nil {
 		c.SetStartAmount(*req.StartAmount)
+	}
+	if req.MultiPaymentCoins != nil {
+		c.SetMultiPaymentCoins(*req.MultiPaymentCoins)
+	}
+	if len(req.PaymentAmounts) > 0 {
+		amounts := []npool.PaymentAmount{}
+		for _, amount := range req.PaymentAmounts {
+			amounts = append(amounts, *amount)
+		}
+		c.SetPaymentAmounts(amounts)
 	}
 	if req.CreatedAt != nil {
 		c.SetCreatedAt(*req.CreatedAt)

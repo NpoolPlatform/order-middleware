@@ -67,6 +67,9 @@ type Handler struct {
 	Rollback             *bool
 	RenewState           *types.OrderRenewState
 	RenewNotifyAt        *uint32
+	CreateMethod         *types.OrderCreateMethod
+	MultiPaymentCoins    *bool
+	PaymentAmounts       []*npool.PaymentAmount
 	Reqs                 []*OrderReq
 	Conds                *ordercrud.Conds
 	Offset               int32
@@ -926,9 +929,59 @@ func WithRenewState(e *types.OrderRenewState, must bool) func(context.Context, *
 	}
 }
 
+func WithCreateMethod(e *types.OrderCreateMethod, must bool) func(context.Context, *Handler) error {
+	return func(ctx context.Context, h *Handler) error {
+		if e == nil {
+			if must {
+				return fmt.Errorf("invalid createmethod")
+			}
+			return nil
+		}
+		switch *e {
+		case types.OrderCreateMethod_OrderCreatedByPurchase:
+		case types.OrderCreateMethod_OrderCreatedByAdmin:
+		case types.OrderCreateMethod_OrderCreatedByRenew:
+		default:
+			return fmt.Errorf("invalid createmethod")
+		}
+		h.CreateMethod = e
+		return nil
+	}
+}
+
 func WithRenewNotifyAt(n *uint32, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		h.RenewNotifyAt = n
+		return nil
+	}
+}
+
+func WithMultiPaymentCoins(b *bool, must bool) func(context.Context, *Handler) error {
+	return func(ctx context.Context, h *Handler) error {
+		h.MultiPaymentCoins = b
+		return nil
+	}
+}
+
+func WithPaymentAmounts(amounts []*npool.PaymentAmount, must bool) func(context.Context, *Handler) error {
+	return func(ctx context.Context, h *Handler) error {
+		for _, amount := range amounts {
+			_amount, err := decimal.NewFromString(amount.USDCurrency)
+			if err != nil {
+				return err
+			}
+			if _amount.Cmp(decimal.NewFromInt(0)) <= 0 {
+				return fmt.Errorf("invalid coincurrency")
+			}
+			_amount, err = decimal.NewFromString(amount.Amount)
+			if err != nil {
+				return err
+			}
+			if _amount.Cmp(decimal.NewFromInt(0)) <= 0 {
+				return fmt.Errorf("invalid coincurrency")
+			}
+		}
+		h.PaymentAmounts = amounts
 		return nil
 	}
 }
@@ -1505,6 +1558,16 @@ func WithReqs(reqs []*npool.OrderReq, must bool) func(context.Context, *Handler)
 				}
 				_req.CouponIDs = _ids
 			}
+			if req.CreateMethod != nil {
+				switch *req.CreateMethod {
+				case types.OrderCreateMethod_OrderCreatedByPurchase:
+				case types.OrderCreateMethod_OrderCreatedByAdmin:
+				case types.OrderCreateMethod_OrderCreatedByRenew:
+				default:
+					return fmt.Errorf("invalid createmethod")
+				}
+				_req.CreateMethod = req.CreateMethod
+			}
 			if req.OrderState != nil {
 				switch *req.OrderState {
 				case types.OrderState_OrderStateCreated:
@@ -1649,6 +1712,8 @@ func WithReqs(reqs []*npool.OrderReq, must bool) func(context.Context, *Handler)
 				}
 			}
 
+			// TODO: process multi payment coins
+
 			if req.PaymentType != nil {
 				_req.PaymentType = req.PaymentType
 				if must {
@@ -1670,10 +1735,12 @@ func WithReqs(reqs []*npool.OrderReq, must bool) func(context.Context, *Handler)
 			}
 
 			_req.PaymentReq = &paymentcrud.Req{
-				OrderID: _req.EntID,
-				AppID:   _req.AppID,
-				GoodID:  _req.GoodID,
-				UserID:  _req.UserID,
+				OrderID:           _req.EntID,
+				AppID:             _req.AppID,
+				GoodID:            _req.GoodID,
+				UserID:            _req.UserID,
+				MultiPaymentCoins: req.MultiPaymentCoins,
+				PaymentAmounts:    req.PaymentAmounts,
 			}
 			if req.PaymentAccountID != nil {
 				id, err := uuid.Parse(*req.PaymentAccountID)

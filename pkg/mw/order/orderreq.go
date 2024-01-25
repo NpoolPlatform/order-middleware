@@ -78,6 +78,7 @@ func (h *Handler) ToOrderReq(ctx context.Context, newOrder bool) (*OrderReq, err
 			CoinUSDCurrency:      h.CoinUSDCurrency,
 			LocalCoinUSDCurrency: h.LocalCoinUSDCurrency,
 			LiveCoinUSDCurrency:  h.LiveCoinUSDCurrency,
+			CreateMethod:         h.CreateMethod,
 		},
 		OrderStateReq: &orderstatecrud.Req{
 			OrderID:              h.EntID,
@@ -109,6 +110,8 @@ func (h *Handler) ToOrderReq(ctx context.Context, newOrder bool) (*OrderReq, err
 			LockType: basetypes.OrderLockType_LockStock.Enum(),
 		}
 	}
+
+	// TODO: process multi payment amounts
 	if h.BalanceAmount != nil && h.BalanceAmount.Cmp(decimal.NewFromInt(0)) > 0 {
 		req.BalanceLockReq = &orderlockcrud.Req{
 			EntID:    h.LedgerLockID,
@@ -138,13 +141,15 @@ func (h *Handler) ToOrderReq(ctx context.Context, newOrder bool) (*OrderReq, err
 	paymentID := uuid.New()
 	req.Req.PaymentID = &paymentID
 	req.PaymentReq = &paymentcrud.Req{
-		EntID:       &paymentID,
-		OrderID:     h.EntID,
-		AppID:       h.AppID,
-		UserID:      h.UserID,
-		GoodID:      h.GoodID,
-		AccountID:   h.PaymentAccountID,
-		StartAmount: h.PaymentStartAmount,
+		EntID:             &paymentID,
+		OrderID:           h.EntID,
+		AppID:             h.AppID,
+		UserID:            h.UserID,
+		GoodID:            h.GoodID,
+		AccountID:         h.PaymentAccountID,
+		StartAmount:       h.PaymentStartAmount,
+		MultiPaymentCoins: h.MultiPaymentCoins,
+		PaymentAmounts:    h.PaymentAmounts,
 	}
 	return req, nil
 }

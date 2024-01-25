@@ -41,6 +41,7 @@ type Req struct {
 	CoinUSDCurrency      *decimal.Decimal
 	LocalCoinUSDCurrency *decimal.Decimal
 	LiveCoinUSDCurrency  *decimal.Decimal
+	CreateMethod         *basetypes.OrderCreateMethod
 	CreatedAt            *uint32
 	DeletedAt            *uint32
 }
@@ -123,6 +124,9 @@ func CreateSet(c *ent.OrderCreate, req *Req) *ent.OrderCreate {
 	}
 	if req.LiveCoinUSDCurrency != nil {
 		c.SetLiveCoinUsdCurrency(*req.LiveCoinUSDCurrency)
+	}
+	if req.CreateMethod != nil {
+		c.SetCreateMethod(req.CreateMethod.String())
 	}
 	if req.CreatedAt != nil {
 		c.SetCreatedAt(*req.CreatedAt)
