@@ -6,6 +6,7 @@ import (
 	"entgo.io/ent/schema/field"
 	"entgo.io/ent/schema/index"
 	crudermixin "github.com/NpoolPlatform/libent-cruder/pkg/mixin"
+	ordermwpb "github.com/NpoolPlatform/message/npool/order/mw/v1/order"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/mixin"
 	"github.com/google/uuid"
 	"github.com/shopspring/decimal"
@@ -49,6 +50,14 @@ func (Payment) Fields() []ent.Field {
 			}).
 			Optional().
 			Default(decimal.Decimal{}),
+		field.
+			Bool("multi_payment_coins").
+			Optional().
+			Default(false),
+		field.
+			JSON("payment_amounts", []ordermwpb.PaymentAmount{}).
+			Optional().
+			Default([]ordermwpb.PaymentAmount{}),
 	}
 }
 

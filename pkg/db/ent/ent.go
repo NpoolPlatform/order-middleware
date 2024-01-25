@@ -11,7 +11,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/compensate"
-	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/order"
+	entorder "github.com/NpoolPlatform/order-middleware/pkg/db/ent/order"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/orderlock"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/orderstate"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/outofgas"
@@ -37,7 +37,7 @@ type OrderFunc func(*sql.Selector)
 func columnChecker(table string) func(string) error {
 	checks := map[string]func(string) bool{
 		compensate.Table: compensate.ValidColumn,
-		order.Table:      order.ValidColumn,
+		entorder.Table:   entorder.ValidColumn,
 		orderlock.Table:  orderlock.ValidColumn,
 		orderstate.Table: orderstate.ValidColumn,
 		outofgas.Table:   outofgas.ValidColumn,

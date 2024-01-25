@@ -10,10 +10,11 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/order"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/predicate"
 	"github.com/google/uuid"
 	"github.com/shopspring/decimal"
+
+	entorder "github.com/NpoolPlatform/order-middleware/pkg/db/ent/order"
 )
 
 // OrderUpdate is the builder for updating Order entities.
@@ -508,6 +509,26 @@ func (ou *OrderUpdate) ClearLiveCoinUsdCurrency() *OrderUpdate {
 	return ou
 }
 
+// SetCreateMethod sets the "create_method" field.
+func (ou *OrderUpdate) SetCreateMethod(s string) *OrderUpdate {
+	ou.mutation.SetCreateMethod(s)
+	return ou
+}
+
+// SetNillableCreateMethod sets the "create_method" field if the given value is not nil.
+func (ou *OrderUpdate) SetNillableCreateMethod(s *string) *OrderUpdate {
+	if s != nil {
+		ou.SetCreateMethod(*s)
+	}
+	return ou
+}
+
+// ClearCreateMethod clears the value of the "create_method" field.
+func (ou *OrderUpdate) ClearCreateMethod() *OrderUpdate {
+	ou.mutation.ClearCreateMethod()
+	return ou
+}
+
 // Mutation returns the OrderMutation object of the builder.
 func (ou *OrderUpdate) Mutation() *OrderMutation {
 	return ou.mutation
@@ -573,10 +594,10 @@ func (ou *OrderUpdate) ExecX(ctx context.Context) {
 // defaults sets the default values of the builder before save.
 func (ou *OrderUpdate) defaults() error {
 	if _, ok := ou.mutation.UpdatedAt(); !ok {
-		if order.UpdateDefaultUpdatedAt == nil {
-			return fmt.Errorf("ent: uninitialized order.UpdateDefaultUpdatedAt (forgotten import ent/runtime?)")
+		if entorder.UpdateDefaultUpdatedAt == nil {
+			return fmt.Errorf("ent: uninitialized entorder.UpdateDefaultUpdatedAt (forgotten import ent/runtime?)")
 		}
-		v := order.UpdateDefaultUpdatedAt()
+		v := entorder.UpdateDefaultUpdatedAt()
 		ou.mutation.SetUpdatedAt(v)
 	}
 	return nil
@@ -591,11 +612,11 @@ func (ou *OrderUpdate) Modify(modifiers ...func(u *sql.UpdateBuilder)) *OrderUpd
 func (ou *OrderUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	_spec := &sqlgraph.UpdateSpec{
 		Node: &sqlgraph.NodeSpec{
-			Table:   order.Table,
-			Columns: order.Columns,
+			Table:   entorder.Table,
+			Columns: entorder.Columns,
 			ID: &sqlgraph.FieldSpec{
 				Type:   field.TypeUint32,
-				Column: order.FieldID,
+				Column: entorder.FieldID,
 			},
 		},
 	}
@@ -610,344 +631,357 @@ func (ou *OrderUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeUint32,
 			Value:  value,
-			Column: order.FieldCreatedAt,
+			Column: entorder.FieldCreatedAt,
 		})
 	}
 	if value, ok := ou.mutation.AddedCreatedAt(); ok {
 		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
 			Type:   field.TypeUint32,
 			Value:  value,
-			Column: order.FieldCreatedAt,
+			Column: entorder.FieldCreatedAt,
 		})
 	}
 	if value, ok := ou.mutation.UpdatedAt(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeUint32,
 			Value:  value,
-			Column: order.FieldUpdatedAt,
+			Column: entorder.FieldUpdatedAt,
 		})
 	}
 	if value, ok := ou.mutation.AddedUpdatedAt(); ok {
 		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
 			Type:   field.TypeUint32,
 			Value:  value,
-			Column: order.FieldUpdatedAt,
+			Column: entorder.FieldUpdatedAt,
 		})
 	}
 	if value, ok := ou.mutation.DeletedAt(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeUint32,
 			Value:  value,
-			Column: order.FieldDeletedAt,
+			Column: entorder.FieldDeletedAt,
 		})
 	}
 	if value, ok := ou.mutation.AddedDeletedAt(); ok {
 		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
 			Type:   field.TypeUint32,
 			Value:  value,
-			Column: order.FieldDeletedAt,
+			Column: entorder.FieldDeletedAt,
 		})
 	}
 	if value, ok := ou.mutation.EntID(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeUUID,
 			Value:  value,
-			Column: order.FieldEntID,
+			Column: entorder.FieldEntID,
 		})
 	}
 	if value, ok := ou.mutation.AppID(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeUUID,
 			Value:  value,
-			Column: order.FieldAppID,
+			Column: entorder.FieldAppID,
 		})
 	}
 	if value, ok := ou.mutation.UserID(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeUUID,
 			Value:  value,
-			Column: order.FieldUserID,
+			Column: entorder.FieldUserID,
 		})
 	}
 	if value, ok := ou.mutation.GoodID(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeUUID,
 			Value:  value,
-			Column: order.FieldGoodID,
+			Column: entorder.FieldGoodID,
 		})
 	}
 	if value, ok := ou.mutation.AppGoodID(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeUUID,
 			Value:  value,
-			Column: order.FieldAppGoodID,
+			Column: entorder.FieldAppGoodID,
 		})
 	}
 	if value, ok := ou.mutation.PaymentID(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeUUID,
 			Value:  value,
-			Column: order.FieldPaymentID,
+			Column: entorder.FieldPaymentID,
 		})
 	}
 	if ou.mutation.PaymentIDCleared() {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeUUID,
-			Column: order.FieldPaymentID,
+			Column: entorder.FieldPaymentID,
 		})
 	}
 	if value, ok := ou.mutation.ParentOrderID(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeUUID,
 			Value:  value,
-			Column: order.FieldParentOrderID,
+			Column: entorder.FieldParentOrderID,
 		})
 	}
 	if ou.mutation.ParentOrderIDCleared() {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeUUID,
-			Column: order.FieldParentOrderID,
+			Column: entorder.FieldParentOrderID,
 		})
 	}
 	if value, ok := ou.mutation.UnitsV1(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeOther,
 			Value:  value,
-			Column: order.FieldUnitsV1,
+			Column: entorder.FieldUnitsV1,
 		})
 	}
 	if ou.mutation.UnitsV1Cleared() {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeOther,
-			Column: order.FieldUnitsV1,
+			Column: entorder.FieldUnitsV1,
 		})
 	}
 	if value, ok := ou.mutation.GoodValue(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeOther,
 			Value:  value,
-			Column: order.FieldGoodValue,
+			Column: entorder.FieldGoodValue,
 		})
 	}
 	if ou.mutation.GoodValueCleared() {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeOther,
-			Column: order.FieldGoodValue,
+			Column: entorder.FieldGoodValue,
 		})
 	}
 	if value, ok := ou.mutation.GoodValueUsd(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeOther,
 			Value:  value,
-			Column: order.FieldGoodValueUsd,
+			Column: entorder.FieldGoodValueUsd,
 		})
 	}
 	if ou.mutation.GoodValueUsdCleared() {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeOther,
-			Column: order.FieldGoodValueUsd,
+			Column: entorder.FieldGoodValueUsd,
 		})
 	}
 	if value, ok := ou.mutation.PaymentAmount(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeOther,
 			Value:  value,
-			Column: order.FieldPaymentAmount,
+			Column: entorder.FieldPaymentAmount,
 		})
 	}
 	if ou.mutation.PaymentAmountCleared() {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeOther,
-			Column: order.FieldPaymentAmount,
+			Column: entorder.FieldPaymentAmount,
 		})
 	}
 	if value, ok := ou.mutation.DiscountAmount(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeOther,
 			Value:  value,
-			Column: order.FieldDiscountAmount,
+			Column: entorder.FieldDiscountAmount,
 		})
 	}
 	if ou.mutation.DiscountAmountCleared() {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeOther,
-			Column: order.FieldDiscountAmount,
+			Column: entorder.FieldDiscountAmount,
 		})
 	}
 	if value, ok := ou.mutation.PromotionID(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeUUID,
 			Value:  value,
-			Column: order.FieldPromotionID,
+			Column: entorder.FieldPromotionID,
 		})
 	}
 	if ou.mutation.PromotionIDCleared() {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeUUID,
-			Column: order.FieldPromotionID,
+			Column: entorder.FieldPromotionID,
 		})
 	}
 	if value, ok := ou.mutation.Duration(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeUint32,
 			Value:  value,
-			Column: order.FieldDuration,
+			Column: entorder.FieldDuration,
 		})
 	}
 	if value, ok := ou.mutation.AddedDuration(); ok {
 		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
 			Type:   field.TypeUint32,
 			Value:  value,
-			Column: order.FieldDuration,
+			Column: entorder.FieldDuration,
 		})
 	}
 	if ou.mutation.DurationCleared() {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeUint32,
-			Column: order.FieldDuration,
+			Column: entorder.FieldDuration,
 		})
 	}
 	if value, ok := ou.mutation.OrderType(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
 			Value:  value,
-			Column: order.FieldOrderType,
+			Column: entorder.FieldOrderType,
 		})
 	}
 	if ou.mutation.OrderTypeCleared() {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
-			Column: order.FieldOrderType,
+			Column: entorder.FieldOrderType,
 		})
 	}
 	if value, ok := ou.mutation.InvestmentType(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
 			Value:  value,
-			Column: order.FieldInvestmentType,
+			Column: entorder.FieldInvestmentType,
 		})
 	}
 	if ou.mutation.InvestmentTypeCleared() {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
-			Column: order.FieldInvestmentType,
+			Column: entorder.FieldInvestmentType,
 		})
 	}
 	if value, ok := ou.mutation.CouponIds(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeJSON,
 			Value:  value,
-			Column: order.FieldCouponIds,
+			Column: entorder.FieldCouponIds,
 		})
 	}
 	if ou.mutation.CouponIdsCleared() {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeJSON,
-			Column: order.FieldCouponIds,
+			Column: entorder.FieldCouponIds,
 		})
 	}
 	if value, ok := ou.mutation.PaymentType(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
 			Value:  value,
-			Column: order.FieldPaymentType,
+			Column: entorder.FieldPaymentType,
 		})
 	}
 	if ou.mutation.PaymentTypeCleared() {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
-			Column: order.FieldPaymentType,
+			Column: entorder.FieldPaymentType,
 		})
 	}
 	if value, ok := ou.mutation.CoinTypeID(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeUUID,
 			Value:  value,
-			Column: order.FieldCoinTypeID,
+			Column: entorder.FieldCoinTypeID,
 		})
 	}
 	if value, ok := ou.mutation.PaymentCoinTypeID(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeUUID,
 			Value:  value,
-			Column: order.FieldPaymentCoinTypeID,
+			Column: entorder.FieldPaymentCoinTypeID,
 		})
 	}
 	if ou.mutation.PaymentCoinTypeIDCleared() {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeUUID,
-			Column: order.FieldPaymentCoinTypeID,
+			Column: entorder.FieldPaymentCoinTypeID,
 		})
 	}
 	if value, ok := ou.mutation.TransferAmount(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeOther,
 			Value:  value,
-			Column: order.FieldTransferAmount,
+			Column: entorder.FieldTransferAmount,
 		})
 	}
 	if ou.mutation.TransferAmountCleared() {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeOther,
-			Column: order.FieldTransferAmount,
+			Column: entorder.FieldTransferAmount,
 		})
 	}
 	if value, ok := ou.mutation.BalanceAmount(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeOther,
 			Value:  value,
-			Column: order.FieldBalanceAmount,
+			Column: entorder.FieldBalanceAmount,
 		})
 	}
 	if ou.mutation.BalanceAmountCleared() {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeOther,
-			Column: order.FieldBalanceAmount,
+			Column: entorder.FieldBalanceAmount,
 		})
 	}
 	if value, ok := ou.mutation.CoinUsdCurrency(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeOther,
 			Value:  value,
-			Column: order.FieldCoinUsdCurrency,
+			Column: entorder.FieldCoinUsdCurrency,
 		})
 	}
 	if ou.mutation.CoinUsdCurrencyCleared() {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeOther,
-			Column: order.FieldCoinUsdCurrency,
+			Column: entorder.FieldCoinUsdCurrency,
 		})
 	}
 	if value, ok := ou.mutation.LocalCoinUsdCurrency(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeOther,
 			Value:  value,
-			Column: order.FieldLocalCoinUsdCurrency,
+			Column: entorder.FieldLocalCoinUsdCurrency,
 		})
 	}
 	if ou.mutation.LocalCoinUsdCurrencyCleared() {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeOther,
-			Column: order.FieldLocalCoinUsdCurrency,
+			Column: entorder.FieldLocalCoinUsdCurrency,
 		})
 	}
 	if value, ok := ou.mutation.LiveCoinUsdCurrency(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeOther,
 			Value:  value,
-			Column: order.FieldLiveCoinUsdCurrency,
+			Column: entorder.FieldLiveCoinUsdCurrency,
 		})
 	}
 	if ou.mutation.LiveCoinUsdCurrencyCleared() {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeOther,
-			Column: order.FieldLiveCoinUsdCurrency,
+			Column: entorder.FieldLiveCoinUsdCurrency,
+		})
+	}
+	if value, ok := ou.mutation.CreateMethod(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: entorder.FieldCreateMethod,
+		})
+	}
+	if ou.mutation.CreateMethodCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Column: entorder.FieldCreateMethod,
 		})
 	}
 	_spec.Modifiers = ou.modifiers
 	if n, err = sqlgraph.UpdateNodes(ctx, ou.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
-			err = &NotFoundError{order.Label}
+			err = &NotFoundError{entorder.Label}
 		} else if sqlgraph.IsConstraintError(err) {
 			err = &ConstraintError{msg: err.Error(), wrap: err}
 		}
@@ -1443,6 +1477,26 @@ func (ouo *OrderUpdateOne) ClearLiveCoinUsdCurrency() *OrderUpdateOne {
 	return ouo
 }
 
+// SetCreateMethod sets the "create_method" field.
+func (ouo *OrderUpdateOne) SetCreateMethod(s string) *OrderUpdateOne {
+	ouo.mutation.SetCreateMethod(s)
+	return ouo
+}
+
+// SetNillableCreateMethod sets the "create_method" field if the given value is not nil.
+func (ouo *OrderUpdateOne) SetNillableCreateMethod(s *string) *OrderUpdateOne {
+	if s != nil {
+		ouo.SetCreateMethod(*s)
+	}
+	return ouo
+}
+
+// ClearCreateMethod clears the value of the "create_method" field.
+func (ouo *OrderUpdateOne) ClearCreateMethod() *OrderUpdateOne {
+	ouo.mutation.ClearCreateMethod()
+	return ouo
+}
+
 // Mutation returns the OrderMutation object of the builder.
 func (ouo *OrderUpdateOne) Mutation() *OrderMutation {
 	return ouo.mutation
@@ -1521,10 +1575,10 @@ func (ouo *OrderUpdateOne) ExecX(ctx context.Context) {
 // defaults sets the default values of the builder before save.
 func (ouo *OrderUpdateOne) defaults() error {
 	if _, ok := ouo.mutation.UpdatedAt(); !ok {
-		if order.UpdateDefaultUpdatedAt == nil {
-			return fmt.Errorf("ent: uninitialized order.UpdateDefaultUpdatedAt (forgotten import ent/runtime?)")
+		if entorder.UpdateDefaultUpdatedAt == nil {
+			return fmt.Errorf("ent: uninitialized entorder.UpdateDefaultUpdatedAt (forgotten import ent/runtime?)")
 		}
-		v := order.UpdateDefaultUpdatedAt()
+		v := entorder.UpdateDefaultUpdatedAt()
 		ouo.mutation.SetUpdatedAt(v)
 	}
 	return nil
@@ -1539,11 +1593,11 @@ func (ouo *OrderUpdateOne) Modify(modifiers ...func(u *sql.UpdateBuilder)) *Orde
 func (ouo *OrderUpdateOne) sqlSave(ctx context.Context) (_node *Order, err error) {
 	_spec := &sqlgraph.UpdateSpec{
 		Node: &sqlgraph.NodeSpec{
-			Table:   order.Table,
-			Columns: order.Columns,
+			Table:   entorder.Table,
+			Columns: entorder.Columns,
 			ID: &sqlgraph.FieldSpec{
 				Type:   field.TypeUint32,
-				Column: order.FieldID,
+				Column: entorder.FieldID,
 			},
 		},
 	}
@@ -1554,12 +1608,12 @@ func (ouo *OrderUpdateOne) sqlSave(ctx context.Context) (_node *Order, err error
 	_spec.Node.ID.Value = id
 	if fields := ouo.fields; len(fields) > 0 {
 		_spec.Node.Columns = make([]string, 0, len(fields))
-		_spec.Node.Columns = append(_spec.Node.Columns, order.FieldID)
+		_spec.Node.Columns = append(_spec.Node.Columns, entorder.FieldID)
 		for _, f := range fields {
-			if !order.ValidColumn(f) {
+			if !entorder.ValidColumn(f) {
 				return nil, &ValidationError{Name: f, err: fmt.Errorf("ent: invalid field %q for query", f)}
 			}
-			if f != order.FieldID {
+			if f != entorder.FieldID {
 				_spec.Node.Columns = append(_spec.Node.Columns, f)
 			}
 		}
@@ -1575,338 +1629,351 @@ func (ouo *OrderUpdateOne) sqlSave(ctx context.Context) (_node *Order, err error
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeUint32,
 			Value:  value,
-			Column: order.FieldCreatedAt,
+			Column: entorder.FieldCreatedAt,
 		})
 	}
 	if value, ok := ouo.mutation.AddedCreatedAt(); ok {
 		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
 			Type:   field.TypeUint32,
 			Value:  value,
-			Column: order.FieldCreatedAt,
+			Column: entorder.FieldCreatedAt,
 		})
 	}
 	if value, ok := ouo.mutation.UpdatedAt(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeUint32,
 			Value:  value,
-			Column: order.FieldUpdatedAt,
+			Column: entorder.FieldUpdatedAt,
 		})
 	}
 	if value, ok := ouo.mutation.AddedUpdatedAt(); ok {
 		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
 			Type:   field.TypeUint32,
 			Value:  value,
-			Column: order.FieldUpdatedAt,
+			Column: entorder.FieldUpdatedAt,
 		})
 	}
 	if value, ok := ouo.mutation.DeletedAt(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeUint32,
 			Value:  value,
-			Column: order.FieldDeletedAt,
+			Column: entorder.FieldDeletedAt,
 		})
 	}
 	if value, ok := ouo.mutation.AddedDeletedAt(); ok {
 		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
 			Type:   field.TypeUint32,
 			Value:  value,
-			Column: order.FieldDeletedAt,
+			Column: entorder.FieldDeletedAt,
 		})
 	}
 	if value, ok := ouo.mutation.EntID(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeUUID,
 			Value:  value,
-			Column: order.FieldEntID,
+			Column: entorder.FieldEntID,
 		})
 	}
 	if value, ok := ouo.mutation.AppID(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeUUID,
 			Value:  value,
-			Column: order.FieldAppID,
+			Column: entorder.FieldAppID,
 		})
 	}
 	if value, ok := ouo.mutation.UserID(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeUUID,
 			Value:  value,
-			Column: order.FieldUserID,
+			Column: entorder.FieldUserID,
 		})
 	}
 	if value, ok := ouo.mutation.GoodID(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeUUID,
 			Value:  value,
-			Column: order.FieldGoodID,
+			Column: entorder.FieldGoodID,
 		})
 	}
 	if value, ok := ouo.mutation.AppGoodID(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeUUID,
 			Value:  value,
-			Column: order.FieldAppGoodID,
+			Column: entorder.FieldAppGoodID,
 		})
 	}
 	if value, ok := ouo.mutation.PaymentID(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeUUID,
 			Value:  value,
-			Column: order.FieldPaymentID,
+			Column: entorder.FieldPaymentID,
 		})
 	}
 	if ouo.mutation.PaymentIDCleared() {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeUUID,
-			Column: order.FieldPaymentID,
+			Column: entorder.FieldPaymentID,
 		})
 	}
 	if value, ok := ouo.mutation.ParentOrderID(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeUUID,
 			Value:  value,
-			Column: order.FieldParentOrderID,
+			Column: entorder.FieldParentOrderID,
 		})
 	}
 	if ouo.mutation.ParentOrderIDCleared() {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeUUID,
-			Column: order.FieldParentOrderID,
+			Column: entorder.FieldParentOrderID,
 		})
 	}
 	if value, ok := ouo.mutation.UnitsV1(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeOther,
 			Value:  value,
-			Column: order.FieldUnitsV1,
+			Column: entorder.FieldUnitsV1,
 		})
 	}
 	if ouo.mutation.UnitsV1Cleared() {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeOther,
-			Column: order.FieldUnitsV1,
+			Column: entorder.FieldUnitsV1,
 		})
 	}
 	if value, ok := ouo.mutation.GoodValue(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeOther,
 			Value:  value,
-			Column: order.FieldGoodValue,
+			Column: entorder.FieldGoodValue,
 		})
 	}
 	if ouo.mutation.GoodValueCleared() {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeOther,
-			Column: order.FieldGoodValue,
+			Column: entorder.FieldGoodValue,
 		})
 	}
 	if value, ok := ouo.mutation.GoodValueUsd(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeOther,
 			Value:  value,
-			Column: order.FieldGoodValueUsd,
+			Column: entorder.FieldGoodValueUsd,
 		})
 	}
 	if ouo.mutation.GoodValueUsdCleared() {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeOther,
-			Column: order.FieldGoodValueUsd,
+			Column: entorder.FieldGoodValueUsd,
 		})
 	}
 	if value, ok := ouo.mutation.PaymentAmount(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeOther,
 			Value:  value,
-			Column: order.FieldPaymentAmount,
+			Column: entorder.FieldPaymentAmount,
 		})
 	}
 	if ouo.mutation.PaymentAmountCleared() {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeOther,
-			Column: order.FieldPaymentAmount,
+			Column: entorder.FieldPaymentAmount,
 		})
 	}
 	if value, ok := ouo.mutation.DiscountAmount(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeOther,
 			Value:  value,
-			Column: order.FieldDiscountAmount,
+			Column: entorder.FieldDiscountAmount,
 		})
 	}
 	if ouo.mutation.DiscountAmountCleared() {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeOther,
-			Column: order.FieldDiscountAmount,
+			Column: entorder.FieldDiscountAmount,
 		})
 	}
 	if value, ok := ouo.mutation.PromotionID(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeUUID,
 			Value:  value,
-			Column: order.FieldPromotionID,
+			Column: entorder.FieldPromotionID,
 		})
 	}
 	if ouo.mutation.PromotionIDCleared() {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeUUID,
-			Column: order.FieldPromotionID,
+			Column: entorder.FieldPromotionID,
 		})
 	}
 	if value, ok := ouo.mutation.Duration(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeUint32,
 			Value:  value,
-			Column: order.FieldDuration,
+			Column: entorder.FieldDuration,
 		})
 	}
 	if value, ok := ouo.mutation.AddedDuration(); ok {
 		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
 			Type:   field.TypeUint32,
 			Value:  value,
-			Column: order.FieldDuration,
+			Column: entorder.FieldDuration,
 		})
 	}
 	if ouo.mutation.DurationCleared() {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeUint32,
-			Column: order.FieldDuration,
+			Column: entorder.FieldDuration,
 		})
 	}
 	if value, ok := ouo.mutation.OrderType(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
 			Value:  value,
-			Column: order.FieldOrderType,
+			Column: entorder.FieldOrderType,
 		})
 	}
 	if ouo.mutation.OrderTypeCleared() {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
-			Column: order.FieldOrderType,
+			Column: entorder.FieldOrderType,
 		})
 	}
 	if value, ok := ouo.mutation.InvestmentType(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
 			Value:  value,
-			Column: order.FieldInvestmentType,
+			Column: entorder.FieldInvestmentType,
 		})
 	}
 	if ouo.mutation.InvestmentTypeCleared() {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
-			Column: order.FieldInvestmentType,
+			Column: entorder.FieldInvestmentType,
 		})
 	}
 	if value, ok := ouo.mutation.CouponIds(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeJSON,
 			Value:  value,
-			Column: order.FieldCouponIds,
+			Column: entorder.FieldCouponIds,
 		})
 	}
 	if ouo.mutation.CouponIdsCleared() {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeJSON,
-			Column: order.FieldCouponIds,
+			Column: entorder.FieldCouponIds,
 		})
 	}
 	if value, ok := ouo.mutation.PaymentType(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
 			Value:  value,
-			Column: order.FieldPaymentType,
+			Column: entorder.FieldPaymentType,
 		})
 	}
 	if ouo.mutation.PaymentTypeCleared() {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
-			Column: order.FieldPaymentType,
+			Column: entorder.FieldPaymentType,
 		})
 	}
 	if value, ok := ouo.mutation.CoinTypeID(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeUUID,
 			Value:  value,
-			Column: order.FieldCoinTypeID,
+			Column: entorder.FieldCoinTypeID,
 		})
 	}
 	if value, ok := ouo.mutation.PaymentCoinTypeID(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeUUID,
 			Value:  value,
-			Column: order.FieldPaymentCoinTypeID,
+			Column: entorder.FieldPaymentCoinTypeID,
 		})
 	}
 	if ouo.mutation.PaymentCoinTypeIDCleared() {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeUUID,
-			Column: order.FieldPaymentCoinTypeID,
+			Column: entorder.FieldPaymentCoinTypeID,
 		})
 	}
 	if value, ok := ouo.mutation.TransferAmount(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeOther,
 			Value:  value,
-			Column: order.FieldTransferAmount,
+			Column: entorder.FieldTransferAmount,
 		})
 	}
 	if ouo.mutation.TransferAmountCleared() {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeOther,
-			Column: order.FieldTransferAmount,
+			Column: entorder.FieldTransferAmount,
 		})
 	}
 	if value, ok := ouo.mutation.BalanceAmount(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeOther,
 			Value:  value,
-			Column: order.FieldBalanceAmount,
+			Column: entorder.FieldBalanceAmount,
 		})
 	}
 	if ouo.mutation.BalanceAmountCleared() {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeOther,
-			Column: order.FieldBalanceAmount,
+			Column: entorder.FieldBalanceAmount,
 		})
 	}
 	if value, ok := ouo.mutation.CoinUsdCurrency(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeOther,
 			Value:  value,
-			Column: order.FieldCoinUsdCurrency,
+			Column: entorder.FieldCoinUsdCurrency,
 		})
 	}
 	if ouo.mutation.CoinUsdCurrencyCleared() {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeOther,
-			Column: order.FieldCoinUsdCurrency,
+			Column: entorder.FieldCoinUsdCurrency,
 		})
 	}
 	if value, ok := ouo.mutation.LocalCoinUsdCurrency(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeOther,
 			Value:  value,
-			Column: order.FieldLocalCoinUsdCurrency,
+			Column: entorder.FieldLocalCoinUsdCurrency,
 		})
 	}
 	if ouo.mutation.LocalCoinUsdCurrencyCleared() {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeOther,
-			Column: order.FieldLocalCoinUsdCurrency,
+			Column: entorder.FieldLocalCoinUsdCurrency,
 		})
 	}
 	if value, ok := ouo.mutation.LiveCoinUsdCurrency(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeOther,
 			Value:  value,
-			Column: order.FieldLiveCoinUsdCurrency,
+			Column: entorder.FieldLiveCoinUsdCurrency,
 		})
 	}
 	if ouo.mutation.LiveCoinUsdCurrencyCleared() {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeOther,
-			Column: order.FieldLiveCoinUsdCurrency,
+			Column: entorder.FieldLiveCoinUsdCurrency,
+		})
+	}
+	if value, ok := ouo.mutation.CreateMethod(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: entorder.FieldCreateMethod,
+		})
+	}
+	if ouo.mutation.CreateMethodCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Column: entorder.FieldCreateMethod,
 		})
 	}
 	_spec.Modifiers = ouo.modifiers
@@ -1915,7 +1982,7 @@ func (ouo *OrderUpdateOne) sqlSave(ctx context.Context) (_node *Order, err error
 	_spec.ScanValues = _node.scanValues
 	if err = sqlgraph.UpdateNode(ctx, ouo.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
-			err = &NotFoundError{order.Label}
+			err = &NotFoundError{entorder.Label}
 		} else if sqlgraph.IsConstraintError(err) {
 			err = &ConstraintError{msg: err.Error(), wrap: err}
 		}

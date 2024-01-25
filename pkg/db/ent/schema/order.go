@@ -154,6 +154,10 @@ func (Order) Fields() []ent.Field {
 			}).
 			Optional().
 			Default(decimal.Decimal{}),
+		field.
+			String("create_method").
+			Optional().
+			Default(types.OrderCreateMethod_OrderCreatedByPurchase.String()),
 	}
 }
 

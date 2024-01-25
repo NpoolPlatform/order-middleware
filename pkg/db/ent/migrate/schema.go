@@ -71,6 +71,7 @@ var (
 		{Name: "coin_usd_currency", Type: field.TypeOther, Nullable: true, SchemaType: map[string]string{"mysql": "decimal(37, 18)"}},
 		{Name: "local_coin_usd_currency", Type: field.TypeOther, Nullable: true, SchemaType: map[string]string{"mysql": "decimal(37, 18)"}},
 		{Name: "live_coin_usd_currency", Type: field.TypeOther, Nullable: true, SchemaType: map[string]string{"mysql": "decimal(37, 18)"}},
+		{Name: "create_method", Type: field.TypeString, Nullable: true, Default: "OrderCreatedByPurchase"},
 	}
 	// OrdersTable holds the schema information for the "orders" table.
 	OrdersTable = &schema.Table{
@@ -204,6 +205,8 @@ var (
 		{Name: "coin_type_id", Type: field.TypeUUID, Nullable: true},
 		{Name: "coin_info_id", Type: field.TypeUUID, Nullable: true},
 		{Name: "start_amount", Type: field.TypeOther, Nullable: true, SchemaType: map[string]string{"mysql": "decimal(37,18)"}},
+		{Name: "multi_payment_coins", Type: field.TypeBool, Nullable: true, Default: false},
+		{Name: "payment_amounts", Type: field.TypeJSON, Nullable: true},
 	}
 	// PaymentsTable holds the schema information for the "payments" table.
 	PaymentsTable = &schema.Table{

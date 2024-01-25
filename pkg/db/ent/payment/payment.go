@@ -4,6 +4,7 @@ package payment
 
 import (
 	"entgo.io/ent"
+	"github.com/NpoolPlatform/message/npool/order/mw/v1/order"
 	"github.com/google/uuid"
 	"github.com/shopspring/decimal"
 )
@@ -37,6 +38,10 @@ const (
 	FieldCoinInfoID = "coin_info_id"
 	// FieldStartAmount holds the string denoting the start_amount field in the database.
 	FieldStartAmount = "start_amount"
+	// FieldMultiPaymentCoins holds the string denoting the multi_payment_coins field in the database.
+	FieldMultiPaymentCoins = "multi_payment_coins"
+	// FieldPaymentAmounts holds the string denoting the payment_amounts field in the database.
+	FieldPaymentAmounts = "payment_amounts"
 	// Table holds the table name of the payment in the database.
 	Table = "payments"
 )
@@ -56,6 +61,8 @@ var Columns = []string{
 	FieldCoinTypeID,
 	FieldCoinInfoID,
 	FieldStartAmount,
+	FieldMultiPaymentCoins,
+	FieldPaymentAmounts,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -89,4 +96,8 @@ var (
 	DefaultEntID func() uuid.UUID
 	// DefaultStartAmount holds the default value on creation for the "start_amount" field.
 	DefaultStartAmount decimal.Decimal
+	// DefaultMultiPaymentCoins holds the default value on creation for the "multi_payment_coins" field.
+	DefaultMultiPaymentCoins bool
+	// DefaultPaymentAmounts holds the default value on creation for the "payment_amounts" field.
+	DefaultPaymentAmounts []order.PaymentAmount
 )

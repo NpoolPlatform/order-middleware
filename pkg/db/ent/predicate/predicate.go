@@ -9,7 +9,7 @@ import (
 // Compensate is the predicate function for compensate builders.
 type Compensate func(*sql.Selector)
 
-// Order is the predicate function for order builders.
+// Order is the predicate function for entorder builders.
 type Order func(*sql.Selector)
 
 // OrderLock is the predicate function for orderlock builders.
