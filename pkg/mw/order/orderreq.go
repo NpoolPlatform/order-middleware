@@ -111,8 +111,8 @@ func (h *Handler) ToOrderReq(ctx context.Context, newOrder bool) (*OrderReq, err
 		}
 	}
 
-	// TODO: process multi payment amounts
-	if h.BalanceAmount != nil && h.BalanceAmount.Cmp(decimal.NewFromInt(0)) > 0 {
+	if (h.BalanceAmount != nil && h.BalanceAmount.Cmp(decimal.NewFromInt(0)) > 0) ||
+		len(h.PaymentAmounts) > 0 { // In this case one ledger lock will relevant to multiple statements
 		req.BalanceLockReq = &orderlockcrud.Req{
 			EntID:    h.LedgerLockID,
 			AppID:    h.AppID,

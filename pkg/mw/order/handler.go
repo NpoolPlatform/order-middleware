@@ -1695,7 +1695,8 @@ func WithReqs(reqs []*npool.OrderReq, must bool) func(context.Context, *Handler)
 				_req.OrderStateReq.CompensateHours = req.CompensateHours
 			}
 
-			if req.BalanceAmount != nil && _req.BalanceAmount.Cmp(decimal.NewFromInt(0)) > 0 {
+			if (req.BalanceAmount != nil && _req.BalanceAmount.Cmp(decimal.NewFromInt(0)) > 0) ||
+				len(h.PaymentAmounts) > 0 { // In this case one ledger lock will relevant to multiple statements
 				if req.LedgerLockID == nil {
 					return fmt.Errorf("invalid ledgerlockid")
 				}
@@ -1711,8 +1712,6 @@ func WithReqs(reqs []*npool.OrderReq, must bool) func(context.Context, *Handler)
 					LockType: types.OrderLockType_LockBalance.Enum(),
 				}
 			}
-
-			// TODO: process multi payment coins
 
 			if req.PaymentType != nil {
 				_req.PaymentType = req.PaymentType
