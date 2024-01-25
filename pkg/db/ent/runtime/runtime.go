@@ -12,6 +12,7 @@ import (
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/outofgas"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/payment"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/schema"
+	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/simulateconfig"
 	"github.com/google/uuid"
 	"github.com/shopspring/decimal"
 
@@ -403,6 +404,56 @@ func init() {
 	paymentDescStartAmount := paymentFields[7].Descriptor()
 	// payment.DefaultStartAmount holds the default value on creation for the start_amount field.
 	payment.DefaultStartAmount = paymentDescStartAmount.Default.(decimal.Decimal)
+	simulateconfigMixin := schema.SimulateConfig{}.Mixin()
+	simulateconfig.Policy = privacy.NewPolicies(simulateconfigMixin[0], schema.SimulateConfig{})
+	simulateconfig.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+			if err := simulateconfig.Policy.EvalMutation(ctx, m); err != nil {
+				return nil, err
+			}
+			return next.Mutate(ctx, m)
+		})
+	}
+	simulateconfigMixinFields0 := simulateconfigMixin[0].Fields()
+	_ = simulateconfigMixinFields0
+	simulateconfigMixinFields1 := simulateconfigMixin[1].Fields()
+	_ = simulateconfigMixinFields1
+	simulateconfigFields := schema.SimulateConfig{}.Fields()
+	_ = simulateconfigFields
+	// simulateconfigDescCreatedAt is the schema descriptor for created_at field.
+	simulateconfigDescCreatedAt := simulateconfigMixinFields0[0].Descriptor()
+	// simulateconfig.DefaultCreatedAt holds the default value on creation for the created_at field.
+	simulateconfig.DefaultCreatedAt = simulateconfigDescCreatedAt.Default.(func() uint32)
+	// simulateconfigDescUpdatedAt is the schema descriptor for updated_at field.
+	simulateconfigDescUpdatedAt := simulateconfigMixinFields0[1].Descriptor()
+	// simulateconfig.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	simulateconfig.DefaultUpdatedAt = simulateconfigDescUpdatedAt.Default.(func() uint32)
+	// simulateconfig.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	simulateconfig.UpdateDefaultUpdatedAt = simulateconfigDescUpdatedAt.UpdateDefault.(func() uint32)
+	// simulateconfigDescDeletedAt is the schema descriptor for deleted_at field.
+	simulateconfigDescDeletedAt := simulateconfigMixinFields0[2].Descriptor()
+	// simulateconfig.DefaultDeletedAt holds the default value on creation for the deleted_at field.
+	simulateconfig.DefaultDeletedAt = simulateconfigDescDeletedAt.Default.(func() uint32)
+	// simulateconfigDescEntID is the schema descriptor for ent_id field.
+	simulateconfigDescEntID := simulateconfigMixinFields1[1].Descriptor()
+	// simulateconfig.DefaultEntID holds the default value on creation for the ent_id field.
+	simulateconfig.DefaultEntID = simulateconfigDescEntID.Default.(func() uuid.UUID)
+	// simulateconfigDescUnits is the schema descriptor for units field.
+	simulateconfigDescUnits := simulateconfigFields[1].Descriptor()
+	// simulateconfig.DefaultUnits holds the default value on creation for the units field.
+	simulateconfig.DefaultUnits = simulateconfigDescUnits.Default.(decimal.Decimal)
+	// simulateconfigDescSendCouponMode is the schema descriptor for send_coupon_mode field.
+	simulateconfigDescSendCouponMode := simulateconfigFields[2].Descriptor()
+	// simulateconfig.DefaultSendCouponMode holds the default value on creation for the send_coupon_mode field.
+	simulateconfig.DefaultSendCouponMode = simulateconfigDescSendCouponMode.Default.(string)
+	// simulateconfigDescSendCouponProbability is the schema descriptor for send_coupon_probability field.
+	simulateconfigDescSendCouponProbability := simulateconfigFields[3].Descriptor()
+	// simulateconfig.DefaultSendCouponProbability holds the default value on creation for the send_coupon_probability field.
+	simulateconfig.DefaultSendCouponProbability = simulateconfigDescSendCouponProbability.Default.(decimal.Decimal)
+	// simulateconfigDescEnabled is the schema descriptor for enabled field.
+	simulateconfigDescEnabled := simulateconfigFields[4].Descriptor()
+	// simulateconfig.DefaultEnabled holds the default value on creation for the enabled field.
+	simulateconfig.DefaultEnabled = simulateconfigDescEnabled.Default.(bool)
 }
 
 const (

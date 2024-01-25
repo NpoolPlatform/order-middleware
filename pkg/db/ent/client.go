@@ -16,6 +16,7 @@ import (
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/orderstate"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/outofgas"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/payment"
+	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/simulateconfig"
 
 	"entgo.io/ent/dialect"
 	"entgo.io/ent/dialect/sql"
@@ -38,6 +39,8 @@ type Client struct {
 	OutOfGas *OutOfGasClient
 	// Payment is the client for interacting with the Payment builders.
 	Payment *PaymentClient
+	// SimulateConfig is the client for interacting with the SimulateConfig builders.
+	SimulateConfig *SimulateConfigClient
 }
 
 // NewClient creates a new client configured with the given options.
@@ -57,6 +60,7 @@ func (c *Client) init() {
 	c.OrderState = NewOrderStateClient(c.config)
 	c.OutOfGas = NewOutOfGasClient(c.config)
 	c.Payment = NewPaymentClient(c.config)
+	c.SimulateConfig = NewSimulateConfigClient(c.config)
 }
 
 // Open opens a database/sql.DB specified by the driver name and
@@ -88,14 +92,15 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 	cfg := c.config
 	cfg.driver = tx
 	return &Tx{
-		ctx:        ctx,
-		config:     cfg,
-		Compensate: NewCompensateClient(cfg),
-		Order:      NewOrderClient(cfg),
-		OrderLock:  NewOrderLockClient(cfg),
-		OrderState: NewOrderStateClient(cfg),
-		OutOfGas:   NewOutOfGasClient(cfg),
-		Payment:    NewPaymentClient(cfg),
+		ctx:            ctx,
+		config:         cfg,
+		Compensate:     NewCompensateClient(cfg),
+		Order:          NewOrderClient(cfg),
+		OrderLock:      NewOrderLockClient(cfg),
+		OrderState:     NewOrderStateClient(cfg),
+		OutOfGas:       NewOutOfGasClient(cfg),
+		Payment:        NewPaymentClient(cfg),
+		SimulateConfig: NewSimulateConfigClient(cfg),
 	}, nil
 }
 
@@ -113,14 +118,15 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 	cfg := c.config
 	cfg.driver = &txDriver{tx: tx, drv: c.driver}
 	return &Tx{
-		ctx:        ctx,
-		config:     cfg,
-		Compensate: NewCompensateClient(cfg),
-		Order:      NewOrderClient(cfg),
-		OrderLock:  NewOrderLockClient(cfg),
-		OrderState: NewOrderStateClient(cfg),
-		OutOfGas:   NewOutOfGasClient(cfg),
-		Payment:    NewPaymentClient(cfg),
+		ctx:            ctx,
+		config:         cfg,
+		Compensate:     NewCompensateClient(cfg),
+		Order:          NewOrderClient(cfg),
+		OrderLock:      NewOrderLockClient(cfg),
+		OrderState:     NewOrderStateClient(cfg),
+		OutOfGas:       NewOutOfGasClient(cfg),
+		Payment:        NewPaymentClient(cfg),
+		SimulateConfig: NewSimulateConfigClient(cfg),
 	}, nil
 }
 
@@ -156,6 +162,7 @@ func (c *Client) Use(hooks ...Hook) {
 	c.OrderState.Use(hooks...)
 	c.OutOfGas.Use(hooks...)
 	c.Payment.Use(hooks...)
+	c.SimulateConfig.Use(hooks...)
 }
 
 // CompensateClient is a client for the Compensate schema.
@@ -702,4 +709,95 @@ func (c *PaymentClient) GetX(ctx context.Context, id uint32) *Payment {
 func (c *PaymentClient) Hooks() []Hook {
 	hooks := c.hooks.Payment
 	return append(hooks[:len(hooks):len(hooks)], payment.Hooks[:]...)
+}
+
+// SimulateConfigClient is a client for the SimulateConfig schema.
+type SimulateConfigClient struct {
+	config
+}
+
+// NewSimulateConfigClient returns a client for the SimulateConfig from the given config.
+func NewSimulateConfigClient(c config) *SimulateConfigClient {
+	return &SimulateConfigClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `simulateconfig.Hooks(f(g(h())))`.
+func (c *SimulateConfigClient) Use(hooks ...Hook) {
+	c.hooks.SimulateConfig = append(c.hooks.SimulateConfig, hooks...)
+}
+
+// Create returns a builder for creating a SimulateConfig entity.
+func (c *SimulateConfigClient) Create() *SimulateConfigCreate {
+	mutation := newSimulateConfigMutation(c.config, OpCreate)
+	return &SimulateConfigCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of SimulateConfig entities.
+func (c *SimulateConfigClient) CreateBulk(builders ...*SimulateConfigCreate) *SimulateConfigCreateBulk {
+	return &SimulateConfigCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for SimulateConfig.
+func (c *SimulateConfigClient) Update() *SimulateConfigUpdate {
+	mutation := newSimulateConfigMutation(c.config, OpUpdate)
+	return &SimulateConfigUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *SimulateConfigClient) UpdateOne(sc *SimulateConfig) *SimulateConfigUpdateOne {
+	mutation := newSimulateConfigMutation(c.config, OpUpdateOne, withSimulateConfig(sc))
+	return &SimulateConfigUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *SimulateConfigClient) UpdateOneID(id uint32) *SimulateConfigUpdateOne {
+	mutation := newSimulateConfigMutation(c.config, OpUpdateOne, withSimulateConfigID(id))
+	return &SimulateConfigUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for SimulateConfig.
+func (c *SimulateConfigClient) Delete() *SimulateConfigDelete {
+	mutation := newSimulateConfigMutation(c.config, OpDelete)
+	return &SimulateConfigDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *SimulateConfigClient) DeleteOne(sc *SimulateConfig) *SimulateConfigDeleteOne {
+	return c.DeleteOneID(sc.ID)
+}
+
+// DeleteOne returns a builder for deleting the given entity by its id.
+func (c *SimulateConfigClient) DeleteOneID(id uint32) *SimulateConfigDeleteOne {
+	builder := c.Delete().Where(simulateconfig.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &SimulateConfigDeleteOne{builder}
+}
+
+// Query returns a query builder for SimulateConfig.
+func (c *SimulateConfigClient) Query() *SimulateConfigQuery {
+	return &SimulateConfigQuery{
+		config: c.config,
+	}
+}
+
+// Get returns a SimulateConfig entity by its id.
+func (c *SimulateConfigClient) Get(ctx context.Context, id uint32) (*SimulateConfig, error) {
+	return c.Query().Where(simulateconfig.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *SimulateConfigClient) GetX(ctx context.Context, id uint32) *SimulateConfig {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *SimulateConfigClient) Hooks() []Hook {
+	hooks := c.hooks.SimulateConfig
+	return append(hooks[:len(hooks):len(hooks)], simulateconfig.Hooks[:]...)
 }

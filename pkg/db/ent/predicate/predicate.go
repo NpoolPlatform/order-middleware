@@ -23,3 +23,6 @@ type OutOfGas func(*sql.Selector)
 
 // Payment is the predicate function for payment builders.
 type Payment func(*sql.Selector)
+
+// SimulateConfig is the predicate function for simulateconfig builders.
+type SimulateConfig func(*sql.Selector)

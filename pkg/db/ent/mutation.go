@@ -15,6 +15,7 @@ import (
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/outofgas"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/payment"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/predicate"
+	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/simulateconfig"
 	"github.com/google/uuid"
 	"github.com/shopspring/decimal"
 
@@ -30,12 +31,13 @@ const (
 	OpUpdateOne = ent.OpUpdateOne
 
 	// Node types.
-	TypeCompensate = "Compensate"
-	TypeOrder      = "Order"
-	TypeOrderLock  = "OrderLock"
-	TypeOrderState = "OrderState"
-	TypeOutOfGas   = "OutOfGas"
-	TypePayment    = "Payment"
+	TypeCompensate     = "Compensate"
+	TypeOrder          = "Order"
+	TypeOrderLock      = "OrderLock"
+	TypeOrderState     = "OrderState"
+	TypeOutOfGas       = "OutOfGas"
+	TypePayment        = "Payment"
+	TypeSimulateConfig = "SimulateConfig"
 )
 
 // CompensateMutation represents an operation that mutates the Compensate nodes in the graph.
@@ -8136,4 +8138,934 @@ func (m *PaymentMutation) ClearEdge(name string) error {
 // It returns an error if the edge is not defined in the schema.
 func (m *PaymentMutation) ResetEdge(name string) error {
 	return fmt.Errorf("unknown Payment edge %s", name)
+}
+
+// SimulateConfigMutation represents an operation that mutates the SimulateConfig nodes in the graph.
+type SimulateConfigMutation struct {
+	config
+	op                      Op
+	typ                     string
+	id                      *uint32
+	created_at              *uint32
+	addcreated_at           *int32
+	updated_at              *uint32
+	addupdated_at           *int32
+	deleted_at              *uint32
+	adddeleted_at           *int32
+	ent_id                  *uuid.UUID
+	app_id                  *uuid.UUID
+	units                   *decimal.Decimal
+	send_coupon_mode        *string
+	send_coupon_probability *decimal.Decimal
+	enabled                 *bool
+	clearedFields           map[string]struct{}
+	done                    bool
+	oldValue                func(context.Context) (*SimulateConfig, error)
+	predicates              []predicate.SimulateConfig
+}
+
+var _ ent.Mutation = (*SimulateConfigMutation)(nil)
+
+// simulateconfigOption allows management of the mutation configuration using functional options.
+type simulateconfigOption func(*SimulateConfigMutation)
+
+// newSimulateConfigMutation creates new mutation for the SimulateConfig entity.
+func newSimulateConfigMutation(c config, op Op, opts ...simulateconfigOption) *SimulateConfigMutation {
+	m := &SimulateConfigMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeSimulateConfig,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withSimulateConfigID sets the ID field of the mutation.
+func withSimulateConfigID(id uint32) simulateconfigOption {
+	return func(m *SimulateConfigMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *SimulateConfig
+		)
+		m.oldValue = func(ctx context.Context) (*SimulateConfig, error) {
+			once.Do(func() {
+				if m.done {
+					err = errors.New("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().SimulateConfig.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withSimulateConfig sets the old SimulateConfig of the mutation.
+func withSimulateConfig(node *SimulateConfig) simulateconfigOption {
+	return func(m *SimulateConfigMutation) {
+		m.oldValue = func(context.Context) (*SimulateConfig, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m SimulateConfigMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m SimulateConfigMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, errors.New("ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// SetID sets the value of the id field. Note that this
+// operation is only accepted on creation of SimulateConfig entities.
+func (m *SimulateConfigMutation) SetID(id uint32) {
+	m.id = &id
+}
+
+// ID returns the ID value in the mutation. Note that the ID is only available
+// if it was provided to the builder or after it was returned from the database.
+func (m *SimulateConfigMutation) ID() (id uint32, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// IDs queries the database and returns the entity ids that match the mutation's predicate.
+// That means, if the mutation is applied within a transaction with an isolation level such
+// as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
+// or updated by the mutation.
+func (m *SimulateConfigMutation) IDs(ctx context.Context) ([]uint32, error) {
+	switch {
+	case m.op.Is(OpUpdateOne | OpDeleteOne):
+		id, exists := m.ID()
+		if exists {
+			return []uint32{id}, nil
+		}
+		fallthrough
+	case m.op.Is(OpUpdate | OpDelete):
+		return m.Client().SimulateConfig.Query().Where(m.predicates...).IDs(ctx)
+	default:
+		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
+	}
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (m *SimulateConfigMutation) SetCreatedAt(u uint32) {
+	m.created_at = &u
+	m.addcreated_at = nil
+}
+
+// CreatedAt returns the value of the "created_at" field in the mutation.
+func (m *SimulateConfigMutation) CreatedAt() (r uint32, exists bool) {
+	v := m.created_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedAt returns the old "created_at" field's value of the SimulateConfig entity.
+// If the SimulateConfig object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SimulateConfigMutation) OldCreatedAt(ctx context.Context) (v uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedAt: %w", err)
+	}
+	return oldValue.CreatedAt, nil
+}
+
+// AddCreatedAt adds u to the "created_at" field.
+func (m *SimulateConfigMutation) AddCreatedAt(u int32) {
+	if m.addcreated_at != nil {
+		*m.addcreated_at += u
+	} else {
+		m.addcreated_at = &u
+	}
+}
+
+// AddedCreatedAt returns the value that was added to the "created_at" field in this mutation.
+func (m *SimulateConfigMutation) AddedCreatedAt() (r int32, exists bool) {
+	v := m.addcreated_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetCreatedAt resets all changes to the "created_at" field.
+func (m *SimulateConfigMutation) ResetCreatedAt() {
+	m.created_at = nil
+	m.addcreated_at = nil
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (m *SimulateConfigMutation) SetUpdatedAt(u uint32) {
+	m.updated_at = &u
+	m.addupdated_at = nil
+}
+
+// UpdatedAt returns the value of the "updated_at" field in the mutation.
+func (m *SimulateConfigMutation) UpdatedAt() (r uint32, exists bool) {
+	v := m.updated_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedAt returns the old "updated_at" field's value of the SimulateConfig entity.
+// If the SimulateConfig object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SimulateConfigMutation) OldUpdatedAt(ctx context.Context) (v uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedAt: %w", err)
+	}
+	return oldValue.UpdatedAt, nil
+}
+
+// AddUpdatedAt adds u to the "updated_at" field.
+func (m *SimulateConfigMutation) AddUpdatedAt(u int32) {
+	if m.addupdated_at != nil {
+		*m.addupdated_at += u
+	} else {
+		m.addupdated_at = &u
+	}
+}
+
+// AddedUpdatedAt returns the value that was added to the "updated_at" field in this mutation.
+func (m *SimulateConfigMutation) AddedUpdatedAt() (r int32, exists bool) {
+	v := m.addupdated_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetUpdatedAt resets all changes to the "updated_at" field.
+func (m *SimulateConfigMutation) ResetUpdatedAt() {
+	m.updated_at = nil
+	m.addupdated_at = nil
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (m *SimulateConfigMutation) SetDeletedAt(u uint32) {
+	m.deleted_at = &u
+	m.adddeleted_at = nil
+}
+
+// DeletedAt returns the value of the "deleted_at" field in the mutation.
+func (m *SimulateConfigMutation) DeletedAt() (r uint32, exists bool) {
+	v := m.deleted_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDeletedAt returns the old "deleted_at" field's value of the SimulateConfig entity.
+// If the SimulateConfig object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SimulateConfigMutation) OldDeletedAt(ctx context.Context) (v uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDeletedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDeletedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDeletedAt: %w", err)
+	}
+	return oldValue.DeletedAt, nil
+}
+
+// AddDeletedAt adds u to the "deleted_at" field.
+func (m *SimulateConfigMutation) AddDeletedAt(u int32) {
+	if m.adddeleted_at != nil {
+		*m.adddeleted_at += u
+	} else {
+		m.adddeleted_at = &u
+	}
+}
+
+// AddedDeletedAt returns the value that was added to the "deleted_at" field in this mutation.
+func (m *SimulateConfigMutation) AddedDeletedAt() (r int32, exists bool) {
+	v := m.adddeleted_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetDeletedAt resets all changes to the "deleted_at" field.
+func (m *SimulateConfigMutation) ResetDeletedAt() {
+	m.deleted_at = nil
+	m.adddeleted_at = nil
+}
+
+// SetEntID sets the "ent_id" field.
+func (m *SimulateConfigMutation) SetEntID(u uuid.UUID) {
+	m.ent_id = &u
+}
+
+// EntID returns the value of the "ent_id" field in the mutation.
+func (m *SimulateConfigMutation) EntID() (r uuid.UUID, exists bool) {
+	v := m.ent_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldEntID returns the old "ent_id" field's value of the SimulateConfig entity.
+// If the SimulateConfig object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SimulateConfigMutation) OldEntID(ctx context.Context) (v uuid.UUID, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldEntID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldEntID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldEntID: %w", err)
+	}
+	return oldValue.EntID, nil
+}
+
+// ResetEntID resets all changes to the "ent_id" field.
+func (m *SimulateConfigMutation) ResetEntID() {
+	m.ent_id = nil
+}
+
+// SetAppID sets the "app_id" field.
+func (m *SimulateConfigMutation) SetAppID(u uuid.UUID) {
+	m.app_id = &u
+}
+
+// AppID returns the value of the "app_id" field in the mutation.
+func (m *SimulateConfigMutation) AppID() (r uuid.UUID, exists bool) {
+	v := m.app_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldAppID returns the old "app_id" field's value of the SimulateConfig entity.
+// If the SimulateConfig object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SimulateConfigMutation) OldAppID(ctx context.Context) (v uuid.UUID, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldAppID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldAppID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldAppID: %w", err)
+	}
+	return oldValue.AppID, nil
+}
+
+// ResetAppID resets all changes to the "app_id" field.
+func (m *SimulateConfigMutation) ResetAppID() {
+	m.app_id = nil
+}
+
+// SetUnits sets the "units" field.
+func (m *SimulateConfigMutation) SetUnits(d decimal.Decimal) {
+	m.units = &d
+}
+
+// Units returns the value of the "units" field in the mutation.
+func (m *SimulateConfigMutation) Units() (r decimal.Decimal, exists bool) {
+	v := m.units
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUnits returns the old "units" field's value of the SimulateConfig entity.
+// If the SimulateConfig object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SimulateConfigMutation) OldUnits(ctx context.Context) (v decimal.Decimal, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUnits is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUnits requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUnits: %w", err)
+	}
+	return oldValue.Units, nil
+}
+
+// ClearUnits clears the value of the "units" field.
+func (m *SimulateConfigMutation) ClearUnits() {
+	m.units = nil
+	m.clearedFields[simulateconfig.FieldUnits] = struct{}{}
+}
+
+// UnitsCleared returns if the "units" field was cleared in this mutation.
+func (m *SimulateConfigMutation) UnitsCleared() bool {
+	_, ok := m.clearedFields[simulateconfig.FieldUnits]
+	return ok
+}
+
+// ResetUnits resets all changes to the "units" field.
+func (m *SimulateConfigMutation) ResetUnits() {
+	m.units = nil
+	delete(m.clearedFields, simulateconfig.FieldUnits)
+}
+
+// SetSendCouponMode sets the "send_coupon_mode" field.
+func (m *SimulateConfigMutation) SetSendCouponMode(s string) {
+	m.send_coupon_mode = &s
+}
+
+// SendCouponMode returns the value of the "send_coupon_mode" field in the mutation.
+func (m *SimulateConfigMutation) SendCouponMode() (r string, exists bool) {
+	v := m.send_coupon_mode
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldSendCouponMode returns the old "send_coupon_mode" field's value of the SimulateConfig entity.
+// If the SimulateConfig object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SimulateConfigMutation) OldSendCouponMode(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldSendCouponMode is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldSendCouponMode requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldSendCouponMode: %w", err)
+	}
+	return oldValue.SendCouponMode, nil
+}
+
+// ClearSendCouponMode clears the value of the "send_coupon_mode" field.
+func (m *SimulateConfigMutation) ClearSendCouponMode() {
+	m.send_coupon_mode = nil
+	m.clearedFields[simulateconfig.FieldSendCouponMode] = struct{}{}
+}
+
+// SendCouponModeCleared returns if the "send_coupon_mode" field was cleared in this mutation.
+func (m *SimulateConfigMutation) SendCouponModeCleared() bool {
+	_, ok := m.clearedFields[simulateconfig.FieldSendCouponMode]
+	return ok
+}
+
+// ResetSendCouponMode resets all changes to the "send_coupon_mode" field.
+func (m *SimulateConfigMutation) ResetSendCouponMode() {
+	m.send_coupon_mode = nil
+	delete(m.clearedFields, simulateconfig.FieldSendCouponMode)
+}
+
+// SetSendCouponProbability sets the "send_coupon_probability" field.
+func (m *SimulateConfigMutation) SetSendCouponProbability(d decimal.Decimal) {
+	m.send_coupon_probability = &d
+}
+
+// SendCouponProbability returns the value of the "send_coupon_probability" field in the mutation.
+func (m *SimulateConfigMutation) SendCouponProbability() (r decimal.Decimal, exists bool) {
+	v := m.send_coupon_probability
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldSendCouponProbability returns the old "send_coupon_probability" field's value of the SimulateConfig entity.
+// If the SimulateConfig object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SimulateConfigMutation) OldSendCouponProbability(ctx context.Context) (v decimal.Decimal, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldSendCouponProbability is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldSendCouponProbability requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldSendCouponProbability: %w", err)
+	}
+	return oldValue.SendCouponProbability, nil
+}
+
+// ClearSendCouponProbability clears the value of the "send_coupon_probability" field.
+func (m *SimulateConfigMutation) ClearSendCouponProbability() {
+	m.send_coupon_probability = nil
+	m.clearedFields[simulateconfig.FieldSendCouponProbability] = struct{}{}
+}
+
+// SendCouponProbabilityCleared returns if the "send_coupon_probability" field was cleared in this mutation.
+func (m *SimulateConfigMutation) SendCouponProbabilityCleared() bool {
+	_, ok := m.clearedFields[simulateconfig.FieldSendCouponProbability]
+	return ok
+}
+
+// ResetSendCouponProbability resets all changes to the "send_coupon_probability" field.
+func (m *SimulateConfigMutation) ResetSendCouponProbability() {
+	m.send_coupon_probability = nil
+	delete(m.clearedFields, simulateconfig.FieldSendCouponProbability)
+}
+
+// SetEnabled sets the "enabled" field.
+func (m *SimulateConfigMutation) SetEnabled(b bool) {
+	m.enabled = &b
+}
+
+// Enabled returns the value of the "enabled" field in the mutation.
+func (m *SimulateConfigMutation) Enabled() (r bool, exists bool) {
+	v := m.enabled
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldEnabled returns the old "enabled" field's value of the SimulateConfig entity.
+// If the SimulateConfig object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SimulateConfigMutation) OldEnabled(ctx context.Context) (v bool, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldEnabled is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldEnabled requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldEnabled: %w", err)
+	}
+	return oldValue.Enabled, nil
+}
+
+// ClearEnabled clears the value of the "enabled" field.
+func (m *SimulateConfigMutation) ClearEnabled() {
+	m.enabled = nil
+	m.clearedFields[simulateconfig.FieldEnabled] = struct{}{}
+}
+
+// EnabledCleared returns if the "enabled" field was cleared in this mutation.
+func (m *SimulateConfigMutation) EnabledCleared() bool {
+	_, ok := m.clearedFields[simulateconfig.FieldEnabled]
+	return ok
+}
+
+// ResetEnabled resets all changes to the "enabled" field.
+func (m *SimulateConfigMutation) ResetEnabled() {
+	m.enabled = nil
+	delete(m.clearedFields, simulateconfig.FieldEnabled)
+}
+
+// Where appends a list predicates to the SimulateConfigMutation builder.
+func (m *SimulateConfigMutation) Where(ps ...predicate.SimulateConfig) {
+	m.predicates = append(m.predicates, ps...)
+}
+
+// Op returns the operation name.
+func (m *SimulateConfigMutation) Op() Op {
+	return m.op
+}
+
+// Type returns the node type of this mutation (SimulateConfig).
+func (m *SimulateConfigMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *SimulateConfigMutation) Fields() []string {
+	fields := make([]string, 0, 9)
+	if m.created_at != nil {
+		fields = append(fields, simulateconfig.FieldCreatedAt)
+	}
+	if m.updated_at != nil {
+		fields = append(fields, simulateconfig.FieldUpdatedAt)
+	}
+	if m.deleted_at != nil {
+		fields = append(fields, simulateconfig.FieldDeletedAt)
+	}
+	if m.ent_id != nil {
+		fields = append(fields, simulateconfig.FieldEntID)
+	}
+	if m.app_id != nil {
+		fields = append(fields, simulateconfig.FieldAppID)
+	}
+	if m.units != nil {
+		fields = append(fields, simulateconfig.FieldUnits)
+	}
+	if m.send_coupon_mode != nil {
+		fields = append(fields, simulateconfig.FieldSendCouponMode)
+	}
+	if m.send_coupon_probability != nil {
+		fields = append(fields, simulateconfig.FieldSendCouponProbability)
+	}
+	if m.enabled != nil {
+		fields = append(fields, simulateconfig.FieldEnabled)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *SimulateConfigMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case simulateconfig.FieldCreatedAt:
+		return m.CreatedAt()
+	case simulateconfig.FieldUpdatedAt:
+		return m.UpdatedAt()
+	case simulateconfig.FieldDeletedAt:
+		return m.DeletedAt()
+	case simulateconfig.FieldEntID:
+		return m.EntID()
+	case simulateconfig.FieldAppID:
+		return m.AppID()
+	case simulateconfig.FieldUnits:
+		return m.Units()
+	case simulateconfig.FieldSendCouponMode:
+		return m.SendCouponMode()
+	case simulateconfig.FieldSendCouponProbability:
+		return m.SendCouponProbability()
+	case simulateconfig.FieldEnabled:
+		return m.Enabled()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *SimulateConfigMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case simulateconfig.FieldCreatedAt:
+		return m.OldCreatedAt(ctx)
+	case simulateconfig.FieldUpdatedAt:
+		return m.OldUpdatedAt(ctx)
+	case simulateconfig.FieldDeletedAt:
+		return m.OldDeletedAt(ctx)
+	case simulateconfig.FieldEntID:
+		return m.OldEntID(ctx)
+	case simulateconfig.FieldAppID:
+		return m.OldAppID(ctx)
+	case simulateconfig.FieldUnits:
+		return m.OldUnits(ctx)
+	case simulateconfig.FieldSendCouponMode:
+		return m.OldSendCouponMode(ctx)
+	case simulateconfig.FieldSendCouponProbability:
+		return m.OldSendCouponProbability(ctx)
+	case simulateconfig.FieldEnabled:
+		return m.OldEnabled(ctx)
+	}
+	return nil, fmt.Errorf("unknown SimulateConfig field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *SimulateConfigMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case simulateconfig.FieldCreatedAt:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedAt(v)
+		return nil
+	case simulateconfig.FieldUpdatedAt:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedAt(v)
+		return nil
+	case simulateconfig.FieldDeletedAt:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDeletedAt(v)
+		return nil
+	case simulateconfig.FieldEntID:
+		v, ok := value.(uuid.UUID)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetEntID(v)
+		return nil
+	case simulateconfig.FieldAppID:
+		v, ok := value.(uuid.UUID)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetAppID(v)
+		return nil
+	case simulateconfig.FieldUnits:
+		v, ok := value.(decimal.Decimal)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUnits(v)
+		return nil
+	case simulateconfig.FieldSendCouponMode:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetSendCouponMode(v)
+		return nil
+	case simulateconfig.FieldSendCouponProbability:
+		v, ok := value.(decimal.Decimal)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetSendCouponProbability(v)
+		return nil
+	case simulateconfig.FieldEnabled:
+		v, ok := value.(bool)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetEnabled(v)
+		return nil
+	}
+	return fmt.Errorf("unknown SimulateConfig field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *SimulateConfigMutation) AddedFields() []string {
+	var fields []string
+	if m.addcreated_at != nil {
+		fields = append(fields, simulateconfig.FieldCreatedAt)
+	}
+	if m.addupdated_at != nil {
+		fields = append(fields, simulateconfig.FieldUpdatedAt)
+	}
+	if m.adddeleted_at != nil {
+		fields = append(fields, simulateconfig.FieldDeletedAt)
+	}
+	return fields
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *SimulateConfigMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	case simulateconfig.FieldCreatedAt:
+		return m.AddedCreatedAt()
+	case simulateconfig.FieldUpdatedAt:
+		return m.AddedUpdatedAt()
+	case simulateconfig.FieldDeletedAt:
+		return m.AddedDeletedAt()
+	}
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *SimulateConfigMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	case simulateconfig.FieldCreatedAt:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddCreatedAt(v)
+		return nil
+	case simulateconfig.FieldUpdatedAt:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddUpdatedAt(v)
+		return nil
+	case simulateconfig.FieldDeletedAt:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddDeletedAt(v)
+		return nil
+	}
+	return fmt.Errorf("unknown SimulateConfig numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *SimulateConfigMutation) ClearedFields() []string {
+	var fields []string
+	if m.FieldCleared(simulateconfig.FieldUnits) {
+		fields = append(fields, simulateconfig.FieldUnits)
+	}
+	if m.FieldCleared(simulateconfig.FieldSendCouponMode) {
+		fields = append(fields, simulateconfig.FieldSendCouponMode)
+	}
+	if m.FieldCleared(simulateconfig.FieldSendCouponProbability) {
+		fields = append(fields, simulateconfig.FieldSendCouponProbability)
+	}
+	if m.FieldCleared(simulateconfig.FieldEnabled) {
+		fields = append(fields, simulateconfig.FieldEnabled)
+	}
+	return fields
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *SimulateConfigMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *SimulateConfigMutation) ClearField(name string) error {
+	switch name {
+	case simulateconfig.FieldUnits:
+		m.ClearUnits()
+		return nil
+	case simulateconfig.FieldSendCouponMode:
+		m.ClearSendCouponMode()
+		return nil
+	case simulateconfig.FieldSendCouponProbability:
+		m.ClearSendCouponProbability()
+		return nil
+	case simulateconfig.FieldEnabled:
+		m.ClearEnabled()
+		return nil
+	}
+	return fmt.Errorf("unknown SimulateConfig nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *SimulateConfigMutation) ResetField(name string) error {
+	switch name {
+	case simulateconfig.FieldCreatedAt:
+		m.ResetCreatedAt()
+		return nil
+	case simulateconfig.FieldUpdatedAt:
+		m.ResetUpdatedAt()
+		return nil
+	case simulateconfig.FieldDeletedAt:
+		m.ResetDeletedAt()
+		return nil
+	case simulateconfig.FieldEntID:
+		m.ResetEntID()
+		return nil
+	case simulateconfig.FieldAppID:
+		m.ResetAppID()
+		return nil
+	case simulateconfig.FieldUnits:
+		m.ResetUnits()
+		return nil
+	case simulateconfig.FieldSendCouponMode:
+		m.ResetSendCouponMode()
+		return nil
+	case simulateconfig.FieldSendCouponProbability:
+		m.ResetSendCouponProbability()
+		return nil
+	case simulateconfig.FieldEnabled:
+		m.ResetEnabled()
+		return nil
+	}
+	return fmt.Errorf("unknown SimulateConfig field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *SimulateConfigMutation) AddedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *SimulateConfigMutation) AddedIDs(name string) []ent.Value {
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *SimulateConfigMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *SimulateConfigMutation) RemovedIDs(name string) []ent.Value {
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *SimulateConfigMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *SimulateConfigMutation) EdgeCleared(name string) bool {
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *SimulateConfigMutation) ClearEdge(name string) error {
+	return fmt.Errorf("unknown SimulateConfig unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *SimulateConfigMutation) ResetEdge(name string) error {
+	return fmt.Errorf("unknown SimulateConfig edge %s", name)
 }

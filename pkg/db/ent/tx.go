@@ -26,6 +26,8 @@ type Tx struct {
 	OutOfGas *OutOfGasClient
 	// Payment is the client for interacting with the Payment builders.
 	Payment *PaymentClient
+	// SimulateConfig is the client for interacting with the SimulateConfig builders.
+	SimulateConfig *SimulateConfigClient
 
 	// lazily loaded.
 	client     *Client
@@ -167,6 +169,7 @@ func (tx *Tx) init() {
 	tx.OrderState = NewOrderStateClient(tx.config)
 	tx.OutOfGas = NewOutOfGasClient(tx.config)
 	tx.Payment = NewPaymentClient(tx.config)
+	tx.SimulateConfig = NewSimulateConfigClient(tx.config)
 }
 
 // txDriver wraps the given dialect.Tx with a nop dialect.Driver implementation.

@@ -221,6 +221,32 @@ var (
 			},
 		},
 	}
+	// SimulateConfigsColumns holds the columns for the "simulate_configs" table.
+	SimulateConfigsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true},
+		{Name: "created_at", Type: field.TypeUint32},
+		{Name: "updated_at", Type: field.TypeUint32},
+		{Name: "deleted_at", Type: field.TypeUint32},
+		{Name: "ent_id", Type: field.TypeUUID, Unique: true},
+		{Name: "app_id", Type: field.TypeUUID},
+		{Name: "units", Type: field.TypeOther, Nullable: true, SchemaType: map[string]string{"mysql": "decimal(37,18)"}},
+		{Name: "send_coupon_mode", Type: field.TypeString, Nullable: true, Default: "WithoutCoupon"},
+		{Name: "send_coupon_probability", Type: field.TypeOther, Nullable: true, SchemaType: map[string]string{"mysql": "decimal(37,18)"}},
+		{Name: "enabled", Type: field.TypeBool, Nullable: true, Default: false},
+	}
+	// SimulateConfigsTable holds the schema information for the "simulate_configs" table.
+	SimulateConfigsTable = &schema.Table{
+		Name:       "simulate_configs",
+		Columns:    SimulateConfigsColumns,
+		PrimaryKey: []*schema.Column{SimulateConfigsColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "simulateconfig_ent_id",
+				Unique:  true,
+				Columns: []*schema.Column{SimulateConfigsColumns[4]},
+			},
+		},
+	}
 	// Tables holds all the tables in the schema.
 	Tables = []*schema.Table{
 		CompensatesTable,
@@ -229,6 +255,7 @@ var (
 		OrderStatesTable,
 		OutOfGasTable,
 		PaymentsTable,
+		SimulateConfigsTable,
 	}
 )
 
