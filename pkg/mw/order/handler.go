@@ -978,7 +978,7 @@ func WithPaymentAmounts(amounts []*npool.PaymentAmount, must bool) func(context.
 				return err
 			}
 			if _amount.Cmp(decimal.NewFromInt(0)) <= 0 {
-				return fmt.Errorf("invalid coincurrency")
+				return fmt.Errorf("invalid paymentamount")
 			}
 		}
 		h.PaymentAmounts = amounts
