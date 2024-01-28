@@ -3,12 +3,10 @@
 package ent
 
 import (
-	"encoding/json"
 	"fmt"
 	"strings"
 
 	"entgo.io/ent/dialect/sql"
-	"github.com/NpoolPlatform/message/npool/order/mw/v1/order"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/payment"
 	"github.com/google/uuid"
 	"github.com/shopspring/decimal"
@@ -43,10 +41,6 @@ type Payment struct {
 	CoinInfoID uuid.UUID `json:"coin_info_id,omitempty"`
 	// StartAmount holds the value of the "start_amount" field.
 	StartAmount decimal.Decimal `json:"start_amount,omitempty"`
-	// MultiPaymentCoins holds the value of the "multi_payment_coins" field.
-	MultiPaymentCoins bool `json:"multi_payment_coins,omitempty"`
-	// PaymentAmounts holds the value of the "payment_amounts" field.
-	PaymentAmounts []order.PaymentAmount `json:"payment_amounts,omitempty"`
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -54,12 +48,8 @@ func (*Payment) scanValues(columns []string) ([]interface{}, error) {
 	values := make([]interface{}, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case payment.FieldPaymentAmounts:
-			values[i] = new([]byte)
 		case payment.FieldStartAmount:
 			values[i] = new(decimal.Decimal)
-		case payment.FieldMultiPaymentCoins:
-			values[i] = new(sql.NullBool)
 		case payment.FieldID, payment.FieldCreatedAt, payment.FieldUpdatedAt, payment.FieldDeletedAt:
 			values[i] = new(sql.NullInt64)
 		case payment.FieldEntID, payment.FieldAppID, payment.FieldUserID, payment.FieldGoodID, payment.FieldOrderID, payment.FieldAccountID, payment.FieldCoinTypeID, payment.FieldCoinInfoID:
@@ -157,20 +147,6 @@ func (pa *Payment) assignValues(columns []string, values []interface{}) error {
 			} else if value != nil {
 				pa.StartAmount = *value
 			}
-		case payment.FieldMultiPaymentCoins:
-			if value, ok := values[i].(*sql.NullBool); !ok {
-				return fmt.Errorf("unexpected type %T for field multi_payment_coins", values[i])
-			} else if value.Valid {
-				pa.MultiPaymentCoins = value.Bool
-			}
-		case payment.FieldPaymentAmounts:
-			if value, ok := values[i].(*[]byte); !ok {
-				return fmt.Errorf("unexpected type %T for field payment_amounts", values[i])
-			} else if value != nil && len(*value) > 0 {
-				if err := json.Unmarshal(*value, &pa.PaymentAmounts); err != nil {
-					return fmt.Errorf("unmarshal field payment_amounts: %w", err)
-				}
-			}
 		}
 	}
 	return nil
@@ -234,12 +210,6 @@ func (pa *Payment) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("start_amount=")
 	builder.WriteString(fmt.Sprintf("%v", pa.StartAmount))
-	builder.WriteString(", ")
-	builder.WriteString("multi_payment_coins=")
-	builder.WriteString(fmt.Sprintf("%v", pa.MultiPaymentCoins))
-	builder.WriteString(", ")
-	builder.WriteString("payment_amounts=")
-	builder.WriteString(fmt.Sprintf("%v", pa.PaymentAmounts))
 	builder.WriteByte(')')
 	return builder.String()
 }

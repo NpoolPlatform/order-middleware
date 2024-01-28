@@ -82,6 +82,8 @@ var schemaGraph = func() *sqlgraph.Schema {
 			entorder.FieldLocalCoinUsdCurrency: {Type: field.TypeOther, Column: entorder.FieldLocalCoinUsdCurrency},
 			entorder.FieldLiveCoinUsdCurrency:  {Type: field.TypeOther, Column: entorder.FieldLiveCoinUsdCurrency},
 			entorder.FieldCreateMethod:         {Type: field.TypeString, Column: entorder.FieldCreateMethod},
+			entorder.FieldMultiPaymentCoins:    {Type: field.TypeBool, Column: entorder.FieldMultiPaymentCoins},
+			entorder.FieldPaymentAmounts:       {Type: field.TypeJSON, Column: entorder.FieldPaymentAmounts},
 		},
 	}
 	graph.Nodes[2] = &sqlgraph.Node{
@@ -172,20 +174,18 @@ var schemaGraph = func() *sqlgraph.Schema {
 		},
 		Type: "Payment",
 		Fields: map[string]*sqlgraph.FieldSpec{
-			payment.FieldCreatedAt:         {Type: field.TypeUint32, Column: payment.FieldCreatedAt},
-			payment.FieldUpdatedAt:         {Type: field.TypeUint32, Column: payment.FieldUpdatedAt},
-			payment.FieldDeletedAt:         {Type: field.TypeUint32, Column: payment.FieldDeletedAt},
-			payment.FieldEntID:             {Type: field.TypeUUID, Column: payment.FieldEntID},
-			payment.FieldAppID:             {Type: field.TypeUUID, Column: payment.FieldAppID},
-			payment.FieldUserID:            {Type: field.TypeUUID, Column: payment.FieldUserID},
-			payment.FieldGoodID:            {Type: field.TypeUUID, Column: payment.FieldGoodID},
-			payment.FieldOrderID:           {Type: field.TypeUUID, Column: payment.FieldOrderID},
-			payment.FieldAccountID:         {Type: field.TypeUUID, Column: payment.FieldAccountID},
-			payment.FieldCoinTypeID:        {Type: field.TypeUUID, Column: payment.FieldCoinTypeID},
-			payment.FieldCoinInfoID:        {Type: field.TypeUUID, Column: payment.FieldCoinInfoID},
-			payment.FieldStartAmount:       {Type: field.TypeOther, Column: payment.FieldStartAmount},
-			payment.FieldMultiPaymentCoins: {Type: field.TypeBool, Column: payment.FieldMultiPaymentCoins},
-			payment.FieldPaymentAmounts:    {Type: field.TypeJSON, Column: payment.FieldPaymentAmounts},
+			payment.FieldCreatedAt:   {Type: field.TypeUint32, Column: payment.FieldCreatedAt},
+			payment.FieldUpdatedAt:   {Type: field.TypeUint32, Column: payment.FieldUpdatedAt},
+			payment.FieldDeletedAt:   {Type: field.TypeUint32, Column: payment.FieldDeletedAt},
+			payment.FieldEntID:       {Type: field.TypeUUID, Column: payment.FieldEntID},
+			payment.FieldAppID:       {Type: field.TypeUUID, Column: payment.FieldAppID},
+			payment.FieldUserID:      {Type: field.TypeUUID, Column: payment.FieldUserID},
+			payment.FieldGoodID:      {Type: field.TypeUUID, Column: payment.FieldGoodID},
+			payment.FieldOrderID:     {Type: field.TypeUUID, Column: payment.FieldOrderID},
+			payment.FieldAccountID:   {Type: field.TypeUUID, Column: payment.FieldAccountID},
+			payment.FieldCoinTypeID:  {Type: field.TypeUUID, Column: payment.FieldCoinTypeID},
+			payment.FieldCoinInfoID:  {Type: field.TypeUUID, Column: payment.FieldCoinInfoID},
+			payment.FieldStartAmount: {Type: field.TypeOther, Column: payment.FieldStartAmount},
 		},
 	}
 	return graph
@@ -470,6 +470,16 @@ func (f *OrderFilter) WhereLiveCoinUsdCurrency(p entql.OtherP) {
 // WhereCreateMethod applies the entql string predicate on the create_method field.
 func (f *OrderFilter) WhereCreateMethod(p entql.StringP) {
 	f.Where(p.Field(entorder.FieldCreateMethod))
+}
+
+// WhereMultiPaymentCoins applies the entql bool predicate on the multi_payment_coins field.
+func (f *OrderFilter) WhereMultiPaymentCoins(p entql.BoolP) {
+	f.Where(p.Field(entorder.FieldMultiPaymentCoins))
+}
+
+// WherePaymentAmounts applies the entql json.RawMessage predicate on the payment_amounts field.
+func (f *OrderFilter) WherePaymentAmounts(p entql.BytesP) {
+	f.Where(p.Field(entorder.FieldPaymentAmounts))
 }
 
 // addPredicate implements the predicateAdder interface.
@@ -880,14 +890,4 @@ func (f *PaymentFilter) WhereCoinInfoID(p entql.ValueP) {
 // WhereStartAmount applies the entql other predicate on the start_amount field.
 func (f *PaymentFilter) WhereStartAmount(p entql.OtherP) {
 	f.Where(p.Field(payment.FieldStartAmount))
-}
-
-// WhereMultiPaymentCoins applies the entql bool predicate on the multi_payment_coins field.
-func (f *PaymentFilter) WhereMultiPaymentCoins(p entql.BoolP) {
-	f.Where(p.Field(payment.FieldMultiPaymentCoins))
-}
-
-// WherePaymentAmounts applies the entql json.RawMessage predicate on the payment_amounts field.
-func (f *PaymentFilter) WherePaymentAmounts(p entql.BytesP) {
-	f.Where(p.Field(payment.FieldPaymentAmounts))
 }

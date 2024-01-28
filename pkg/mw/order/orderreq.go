@@ -79,6 +79,8 @@ func (h *Handler) ToOrderReq(ctx context.Context, newOrder bool) (*OrderReq, err
 			LocalCoinUSDCurrency: h.LocalCoinUSDCurrency,
 			LiveCoinUSDCurrency:  h.LiveCoinUSDCurrency,
 			CreateMethod:         h.CreateMethod,
+			MultiPaymentCoins:    h.MultiPaymentCoins,
+			PaymentAmounts:       h.PaymentAmounts,
 		},
 		OrderStateReq: &orderstatecrud.Req{
 			OrderID:              h.EntID,
@@ -141,15 +143,13 @@ func (h *Handler) ToOrderReq(ctx context.Context, newOrder bool) (*OrderReq, err
 	paymentID := uuid.New()
 	req.Req.PaymentID = &paymentID
 	req.PaymentReq = &paymentcrud.Req{
-		EntID:             &paymentID,
-		OrderID:           h.EntID,
-		AppID:             h.AppID,
-		UserID:            h.UserID,
-		GoodID:            h.GoodID,
-		AccountID:         h.PaymentAccountID,
-		StartAmount:       h.PaymentStartAmount,
-		MultiPaymentCoins: h.MultiPaymentCoins,
-		PaymentAmounts:    h.PaymentAmounts,
+		EntID:       &paymentID,
+		OrderID:     h.EntID,
+		AppID:       h.AppID,
+		UserID:      h.UserID,
+		GoodID:      h.GoodID,
+		AccountID:   h.PaymentAccountID,
+		StartAmount: h.PaymentStartAmount,
 	}
 	return req, nil
 }

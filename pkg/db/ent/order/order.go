@@ -4,6 +4,7 @@ package entorder
 
 import (
 	"entgo.io/ent"
+	"github.com/NpoolPlatform/message/npool/order/mw/v1/order"
 	"github.com/google/uuid"
 	"github.com/shopspring/decimal"
 )
@@ -71,6 +72,10 @@ const (
 	FieldLiveCoinUsdCurrency = "live_coin_usd_currency"
 	// FieldCreateMethod holds the string denoting the create_method field in the database.
 	FieldCreateMethod = "create_method"
+	// FieldMultiPaymentCoins holds the string denoting the multi_payment_coins field in the database.
+	FieldMultiPaymentCoins = "multi_payment_coins"
+	// FieldPaymentAmounts holds the string denoting the payment_amounts field in the database.
+	FieldPaymentAmounts = "payment_amounts"
 	// Table holds the table name of the order in the database.
 	Table = "orders"
 )
@@ -107,6 +112,8 @@ var Columns = []string{
 	FieldLocalCoinUsdCurrency,
 	FieldLiveCoinUsdCurrency,
 	FieldCreateMethod,
+	FieldMultiPaymentCoins,
+	FieldPaymentAmounts,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -178,4 +185,8 @@ var (
 	DefaultLiveCoinUsdCurrency decimal.Decimal
 	// DefaultCreateMethod holds the default value on creation for the "create_method" field.
 	DefaultCreateMethod string
+	// DefaultMultiPaymentCoins holds the default value on creation for the "multi_payment_coins" field.
+	DefaultMultiPaymentCoins bool
+	// DefaultPaymentAmounts holds the default value on creation for the "payment_amounts" field.
+	DefaultPaymentAmounts []order.PaymentAmount
 )

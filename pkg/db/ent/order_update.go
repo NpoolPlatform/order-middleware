@@ -10,6 +10,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/NpoolPlatform/message/npool/order/mw/v1/order"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/predicate"
 	"github.com/google/uuid"
 	"github.com/shopspring/decimal"
@@ -529,6 +530,38 @@ func (ou *OrderUpdate) ClearCreateMethod() *OrderUpdate {
 	return ou
 }
 
+// SetMultiPaymentCoins sets the "multi_payment_coins" field.
+func (ou *OrderUpdate) SetMultiPaymentCoins(b bool) *OrderUpdate {
+	ou.mutation.SetMultiPaymentCoins(b)
+	return ou
+}
+
+// SetNillableMultiPaymentCoins sets the "multi_payment_coins" field if the given value is not nil.
+func (ou *OrderUpdate) SetNillableMultiPaymentCoins(b *bool) *OrderUpdate {
+	if b != nil {
+		ou.SetMultiPaymentCoins(*b)
+	}
+	return ou
+}
+
+// ClearMultiPaymentCoins clears the value of the "multi_payment_coins" field.
+func (ou *OrderUpdate) ClearMultiPaymentCoins() *OrderUpdate {
+	ou.mutation.ClearMultiPaymentCoins()
+	return ou
+}
+
+// SetPaymentAmounts sets the "payment_amounts" field.
+func (ou *OrderUpdate) SetPaymentAmounts(oa []order.PaymentAmount) *OrderUpdate {
+	ou.mutation.SetPaymentAmounts(oa)
+	return ou
+}
+
+// ClearPaymentAmounts clears the value of the "payment_amounts" field.
+func (ou *OrderUpdate) ClearPaymentAmounts() *OrderUpdate {
+	ou.mutation.ClearPaymentAmounts()
+	return ou
+}
+
 // Mutation returns the OrderMutation object of the builder.
 func (ou *OrderUpdate) Mutation() *OrderMutation {
 	return ou.mutation
@@ -976,6 +1009,32 @@ func (ou *OrderUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
 			Column: entorder.FieldCreateMethod,
+		})
+	}
+	if value, ok := ou.mutation.MultiPaymentCoins(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Value:  value,
+			Column: entorder.FieldMultiPaymentCoins,
+		})
+	}
+	if ou.mutation.MultiPaymentCoinsCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Column: entorder.FieldMultiPaymentCoins,
+		})
+	}
+	if value, ok := ou.mutation.PaymentAmounts(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeJSON,
+			Value:  value,
+			Column: entorder.FieldPaymentAmounts,
+		})
+	}
+	if ou.mutation.PaymentAmountsCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeJSON,
+			Column: entorder.FieldPaymentAmounts,
 		})
 	}
 	_spec.Modifiers = ou.modifiers
@@ -1497,6 +1556,38 @@ func (ouo *OrderUpdateOne) ClearCreateMethod() *OrderUpdateOne {
 	return ouo
 }
 
+// SetMultiPaymentCoins sets the "multi_payment_coins" field.
+func (ouo *OrderUpdateOne) SetMultiPaymentCoins(b bool) *OrderUpdateOne {
+	ouo.mutation.SetMultiPaymentCoins(b)
+	return ouo
+}
+
+// SetNillableMultiPaymentCoins sets the "multi_payment_coins" field if the given value is not nil.
+func (ouo *OrderUpdateOne) SetNillableMultiPaymentCoins(b *bool) *OrderUpdateOne {
+	if b != nil {
+		ouo.SetMultiPaymentCoins(*b)
+	}
+	return ouo
+}
+
+// ClearMultiPaymentCoins clears the value of the "multi_payment_coins" field.
+func (ouo *OrderUpdateOne) ClearMultiPaymentCoins() *OrderUpdateOne {
+	ouo.mutation.ClearMultiPaymentCoins()
+	return ouo
+}
+
+// SetPaymentAmounts sets the "payment_amounts" field.
+func (ouo *OrderUpdateOne) SetPaymentAmounts(oa []order.PaymentAmount) *OrderUpdateOne {
+	ouo.mutation.SetPaymentAmounts(oa)
+	return ouo
+}
+
+// ClearPaymentAmounts clears the value of the "payment_amounts" field.
+func (ouo *OrderUpdateOne) ClearPaymentAmounts() *OrderUpdateOne {
+	ouo.mutation.ClearPaymentAmounts()
+	return ouo
+}
+
 // Mutation returns the OrderMutation object of the builder.
 func (ouo *OrderUpdateOne) Mutation() *OrderMutation {
 	return ouo.mutation
@@ -1974,6 +2065,32 @@ func (ouo *OrderUpdateOne) sqlSave(ctx context.Context) (_node *Order, err error
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
 			Column: entorder.FieldCreateMethod,
+		})
+	}
+	if value, ok := ouo.mutation.MultiPaymentCoins(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Value:  value,
+			Column: entorder.FieldMultiPaymentCoins,
+		})
+	}
+	if ouo.mutation.MultiPaymentCoinsCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Column: entorder.FieldMultiPaymentCoins,
+		})
+	}
+	if value, ok := ouo.mutation.PaymentAmounts(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeJSON,
+			Value:  value,
+			Column: entorder.FieldPaymentAmounts,
+		})
+	}
+	if ouo.mutation.PaymentAmountsCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeJSON,
+			Column: entorder.FieldPaymentAmounts,
 		})
 	}
 	_spec.Modifiers = ouo.modifiers

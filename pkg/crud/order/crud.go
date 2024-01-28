@@ -7,6 +7,7 @@ import (
 	"entgo.io/ent/dialect/sql/sqljson"
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
 	basetypes "github.com/NpoolPlatform/message/npool/basetypes/order/v1"
+	npool "github.com/NpoolPlatform/message/npool/order/mw/v1/order"
 	orderstatecrud "github.com/NpoolPlatform/order-middleware/pkg/crud/orderstate"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent"
 	entorder "github.com/NpoolPlatform/order-middleware/pkg/db/ent/order"
@@ -42,6 +43,8 @@ type Req struct {
 	LocalCoinUSDCurrency *decimal.Decimal
 	LiveCoinUSDCurrency  *decimal.Decimal
 	CreateMethod         *basetypes.OrderCreateMethod
+	MultiPaymentCoins    *bool
+	PaymentAmounts       []*npool.PaymentAmount
 	CreatedAt            *uint32
 	DeletedAt            *uint32
 }
@@ -127,6 +130,20 @@ func CreateSet(c *ent.OrderCreate, req *Req) *ent.OrderCreate {
 	}
 	if req.CreateMethod != nil {
 		c.SetCreateMethod(req.CreateMethod.String())
+	}
+	if req.MultiPaymentCoins != nil {
+		c.SetMultiPaymentCoins(*req.MultiPaymentCoins)
+	}
+	if len(req.PaymentAmounts) > 0 {
+		amounts := []npool.PaymentAmount{}
+		for _, amount := range req.PaymentAmounts {
+			amounts = append(amounts, npool.PaymentAmount{
+				CoinTypeID:  amount.CoinTypeID,
+				USDCurrency: amount.USDCurrency,
+				Amount:      amount.Amount,
+			})
+		}
+		c.SetPaymentAmounts(amounts)
 	}
 	if req.CreatedAt != nil {
 		c.SetCreatedAt(*req.CreatedAt)

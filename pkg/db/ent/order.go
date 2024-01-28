@@ -8,6 +8,7 @@ import (
 	"strings"
 
 	"entgo.io/ent/dialect/sql"
+	"github.com/NpoolPlatform/message/npool/order/mw/v1/order"
 	"github.com/google/uuid"
 	"github.com/shopspring/decimal"
 
@@ -77,6 +78,10 @@ type Order struct {
 	LiveCoinUsdCurrency decimal.Decimal `json:"live_coin_usd_currency,omitempty"`
 	// CreateMethod holds the value of the "create_method" field.
 	CreateMethod string `json:"create_method,omitempty"`
+	// MultiPaymentCoins holds the value of the "multi_payment_coins" field.
+	MultiPaymentCoins bool `json:"multi_payment_coins,omitempty"`
+	// PaymentAmounts holds the value of the "payment_amounts" field.
+	PaymentAmounts []order.PaymentAmount `json:"payment_amounts,omitempty"`
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -84,10 +89,12 @@ func (*Order) scanValues(columns []string) ([]interface{}, error) {
 	values := make([]interface{}, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case entorder.FieldCouponIds:
+		case entorder.FieldCouponIds, entorder.FieldPaymentAmounts:
 			values[i] = new([]byte)
 		case entorder.FieldUnitsV1, entorder.FieldGoodValue, entorder.FieldGoodValueUsd, entorder.FieldPaymentAmount, entorder.FieldDiscountAmount, entorder.FieldTransferAmount, entorder.FieldBalanceAmount, entorder.FieldCoinUsdCurrency, entorder.FieldLocalCoinUsdCurrency, entorder.FieldLiveCoinUsdCurrency:
 			values[i] = new(decimal.Decimal)
+		case entorder.FieldMultiPaymentCoins:
+			values[i] = new(sql.NullBool)
 		case entorder.FieldID, entorder.FieldCreatedAt, entorder.FieldUpdatedAt, entorder.FieldDeletedAt, entorder.FieldDuration:
 			values[i] = new(sql.NullInt64)
 		case entorder.FieldOrderType, entorder.FieldInvestmentType, entorder.FieldPaymentType, entorder.FieldCreateMethod:
@@ -291,6 +298,20 @@ func (o *Order) assignValues(columns []string, values []interface{}) error {
 			} else if value.Valid {
 				o.CreateMethod = value.String
 			}
+		case entorder.FieldMultiPaymentCoins:
+			if value, ok := values[i].(*sql.NullBool); !ok {
+				return fmt.Errorf("unexpected type %T for field multi_payment_coins", values[i])
+			} else if value.Valid {
+				o.MultiPaymentCoins = value.Bool
+			}
+		case entorder.FieldPaymentAmounts:
+			if value, ok := values[i].(*[]byte); !ok {
+				return fmt.Errorf("unexpected type %T for field payment_amounts", values[i])
+			} else if value != nil && len(*value) > 0 {
+				if err := json.Unmarshal(*value, &o.PaymentAmounts); err != nil {
+					return fmt.Errorf("unmarshal field payment_amounts: %w", err)
+				}
+			}
 		}
 	}
 	return nil
@@ -405,6 +426,12 @@ func (o *Order) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("create_method=")
 	builder.WriteString(o.CreateMethod)
+	builder.WriteString(", ")
+	builder.WriteString("multi_payment_coins=")
+	builder.WriteString(fmt.Sprintf("%v", o.MultiPaymentCoins))
+	builder.WriteString(", ")
+	builder.WriteString("payment_amounts=")
+	builder.WriteString(fmt.Sprintf("%v", o.PaymentAmounts))
 	builder.WriteByte(')')
 	return builder.String()
 }

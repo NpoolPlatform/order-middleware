@@ -10,7 +10,6 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"github.com/NpoolPlatform/message/npool/order/mw/v1/order"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/payment"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/predicate"
 	"github.com/google/uuid"
@@ -187,38 +186,6 @@ func (pu *PaymentUpdate) SetNillableStartAmount(d *decimal.Decimal) *PaymentUpda
 // ClearStartAmount clears the value of the "start_amount" field.
 func (pu *PaymentUpdate) ClearStartAmount() *PaymentUpdate {
 	pu.mutation.ClearStartAmount()
-	return pu
-}
-
-// SetMultiPaymentCoins sets the "multi_payment_coins" field.
-func (pu *PaymentUpdate) SetMultiPaymentCoins(b bool) *PaymentUpdate {
-	pu.mutation.SetMultiPaymentCoins(b)
-	return pu
-}
-
-// SetNillableMultiPaymentCoins sets the "multi_payment_coins" field if the given value is not nil.
-func (pu *PaymentUpdate) SetNillableMultiPaymentCoins(b *bool) *PaymentUpdate {
-	if b != nil {
-		pu.SetMultiPaymentCoins(*b)
-	}
-	return pu
-}
-
-// ClearMultiPaymentCoins clears the value of the "multi_payment_coins" field.
-func (pu *PaymentUpdate) ClearMultiPaymentCoins() *PaymentUpdate {
-	pu.mutation.ClearMultiPaymentCoins()
-	return pu
-}
-
-// SetPaymentAmounts sets the "payment_amounts" field.
-func (pu *PaymentUpdate) SetPaymentAmounts(oa []order.PaymentAmount) *PaymentUpdate {
-	pu.mutation.SetPaymentAmounts(oa)
-	return pu
-}
-
-// ClearPaymentAmounts clears the value of the "payment_amounts" field.
-func (pu *PaymentUpdate) ClearPaymentAmounts() *PaymentUpdate {
-	pu.mutation.ClearPaymentAmounts()
 	return pu
 }
 
@@ -443,32 +410,6 @@ func (pu *PaymentUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: payment.FieldStartAmount,
 		})
 	}
-	if value, ok := pu.mutation.MultiPaymentCoins(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeBool,
-			Value:  value,
-			Column: payment.FieldMultiPaymentCoins,
-		})
-	}
-	if pu.mutation.MultiPaymentCoinsCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeBool,
-			Column: payment.FieldMultiPaymentCoins,
-		})
-	}
-	if value, ok := pu.mutation.PaymentAmounts(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeJSON,
-			Value:  value,
-			Column: payment.FieldPaymentAmounts,
-		})
-	}
-	if pu.mutation.PaymentAmountsCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeJSON,
-			Column: payment.FieldPaymentAmounts,
-		})
-	}
 	_spec.Modifiers = pu.modifiers
 	if n, err = sqlgraph.UpdateNodes(ctx, pu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
@@ -646,38 +587,6 @@ func (puo *PaymentUpdateOne) SetNillableStartAmount(d *decimal.Decimal) *Payment
 // ClearStartAmount clears the value of the "start_amount" field.
 func (puo *PaymentUpdateOne) ClearStartAmount() *PaymentUpdateOne {
 	puo.mutation.ClearStartAmount()
-	return puo
-}
-
-// SetMultiPaymentCoins sets the "multi_payment_coins" field.
-func (puo *PaymentUpdateOne) SetMultiPaymentCoins(b bool) *PaymentUpdateOne {
-	puo.mutation.SetMultiPaymentCoins(b)
-	return puo
-}
-
-// SetNillableMultiPaymentCoins sets the "multi_payment_coins" field if the given value is not nil.
-func (puo *PaymentUpdateOne) SetNillableMultiPaymentCoins(b *bool) *PaymentUpdateOne {
-	if b != nil {
-		puo.SetMultiPaymentCoins(*b)
-	}
-	return puo
-}
-
-// ClearMultiPaymentCoins clears the value of the "multi_payment_coins" field.
-func (puo *PaymentUpdateOne) ClearMultiPaymentCoins() *PaymentUpdateOne {
-	puo.mutation.ClearMultiPaymentCoins()
-	return puo
-}
-
-// SetPaymentAmounts sets the "payment_amounts" field.
-func (puo *PaymentUpdateOne) SetPaymentAmounts(oa []order.PaymentAmount) *PaymentUpdateOne {
-	puo.mutation.SetPaymentAmounts(oa)
-	return puo
-}
-
-// ClearPaymentAmounts clears the value of the "payment_amounts" field.
-func (puo *PaymentUpdateOne) ClearPaymentAmounts() *PaymentUpdateOne {
-	puo.mutation.ClearPaymentAmounts()
 	return puo
 }
 
@@ -930,32 +839,6 @@ func (puo *PaymentUpdateOne) sqlSave(ctx context.Context) (_node *Payment, err e
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeOther,
 			Column: payment.FieldStartAmount,
-		})
-	}
-	if value, ok := puo.mutation.MultiPaymentCoins(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeBool,
-			Value:  value,
-			Column: payment.FieldMultiPaymentCoins,
-		})
-	}
-	if puo.mutation.MultiPaymentCoinsCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeBool,
-			Column: payment.FieldMultiPaymentCoins,
-		})
-	}
-	if value, ok := puo.mutation.PaymentAmounts(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeJSON,
-			Value:  value,
-			Column: payment.FieldPaymentAmounts,
-		})
-	}
-	if puo.mutation.PaymentAmountsCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeJSON,
-			Column: payment.FieldPaymentAmounts,
 		})
 	}
 	_spec.Modifiers = puo.modifiers

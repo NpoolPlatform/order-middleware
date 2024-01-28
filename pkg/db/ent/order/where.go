@@ -276,6 +276,13 @@ func CreateMethod(v string) predicate.Order {
 	})
 }
 
+// MultiPaymentCoins applies equality check predicate on the "multi_payment_coins" field. It's identical to MultiPaymentCoinsEQ.
+func MultiPaymentCoins(v bool) predicate.Order {
+	return predicate.Order(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldMultiPaymentCoins), v))
+	})
+}
+
 // CreatedAtEQ applies the EQ predicate on the "created_at" field.
 func CreatedAtEQ(v uint32) predicate.Order {
 	return predicate.Order(func(s *sql.Selector) {
@@ -2485,6 +2492,48 @@ func CreateMethodEqualFold(v string) predicate.Order {
 func CreateMethodContainsFold(v string) predicate.Order {
 	return predicate.Order(func(s *sql.Selector) {
 		s.Where(sql.ContainsFold(s.C(FieldCreateMethod), v))
+	})
+}
+
+// MultiPaymentCoinsEQ applies the EQ predicate on the "multi_payment_coins" field.
+func MultiPaymentCoinsEQ(v bool) predicate.Order {
+	return predicate.Order(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldMultiPaymentCoins), v))
+	})
+}
+
+// MultiPaymentCoinsNEQ applies the NEQ predicate on the "multi_payment_coins" field.
+func MultiPaymentCoinsNEQ(v bool) predicate.Order {
+	return predicate.Order(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldMultiPaymentCoins), v))
+	})
+}
+
+// MultiPaymentCoinsIsNil applies the IsNil predicate on the "multi_payment_coins" field.
+func MultiPaymentCoinsIsNil() predicate.Order {
+	return predicate.Order(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldMultiPaymentCoins)))
+	})
+}
+
+// MultiPaymentCoinsNotNil applies the NotNil predicate on the "multi_payment_coins" field.
+func MultiPaymentCoinsNotNil() predicate.Order {
+	return predicate.Order(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldMultiPaymentCoins)))
+	})
+}
+
+// PaymentAmountsIsNil applies the IsNil predicate on the "payment_amounts" field.
+func PaymentAmountsIsNil() predicate.Order {
+	return predicate.Order(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldPaymentAmounts)))
+	})
+}
+
+// PaymentAmountsNotNil applies the NotNil predicate on the "payment_amounts" field.
+func PaymentAmountsNotNil() predicate.Order {
+	return predicate.Order(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldPaymentAmounts)))
 	})
 }
 

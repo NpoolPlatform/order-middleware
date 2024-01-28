@@ -10,6 +10,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/NpoolPlatform/message/npool/order/mw/v1/order"
 	"github.com/google/uuid"
 	"github.com/shopspring/decimal"
 
@@ -382,6 +383,26 @@ func (oc *OrderCreate) SetNillableCreateMethod(s *string) *OrderCreate {
 	return oc
 }
 
+// SetMultiPaymentCoins sets the "multi_payment_coins" field.
+func (oc *OrderCreate) SetMultiPaymentCoins(b bool) *OrderCreate {
+	oc.mutation.SetMultiPaymentCoins(b)
+	return oc
+}
+
+// SetNillableMultiPaymentCoins sets the "multi_payment_coins" field if the given value is not nil.
+func (oc *OrderCreate) SetNillableMultiPaymentCoins(b *bool) *OrderCreate {
+	if b != nil {
+		oc.SetMultiPaymentCoins(*b)
+	}
+	return oc
+}
+
+// SetPaymentAmounts sets the "payment_amounts" field.
+func (oc *OrderCreate) SetPaymentAmounts(oa []order.PaymentAmount) *OrderCreate {
+	oc.mutation.SetPaymentAmounts(oa)
+	return oc
+}
+
 // SetID sets the "id" field.
 func (oc *OrderCreate) SetID(u uint32) *OrderCreate {
 	oc.mutation.SetID(u)
@@ -589,6 +610,14 @@ func (oc *OrderCreate) defaults() error {
 	if _, ok := oc.mutation.CreateMethod(); !ok {
 		v := entorder.DefaultCreateMethod
 		oc.mutation.SetCreateMethod(v)
+	}
+	if _, ok := oc.mutation.MultiPaymentCoins(); !ok {
+		v := entorder.DefaultMultiPaymentCoins
+		oc.mutation.SetMultiPaymentCoins(v)
+	}
+	if _, ok := oc.mutation.PaymentAmounts(); !ok {
+		v := entorder.DefaultPaymentAmounts
+		oc.mutation.SetPaymentAmounts(v)
 	}
 	return nil
 }
@@ -887,6 +916,22 @@ func (oc *OrderCreate) createSpec() (*Order, *sqlgraph.CreateSpec) {
 			Column: entorder.FieldCreateMethod,
 		})
 		_node.CreateMethod = value
+	}
+	if value, ok := oc.mutation.MultiPaymentCoins(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Value:  value,
+			Column: entorder.FieldMultiPaymentCoins,
+		})
+		_node.MultiPaymentCoins = value
+	}
+	if value, ok := oc.mutation.PaymentAmounts(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeJSON,
+			Value:  value,
+			Column: entorder.FieldPaymentAmounts,
+		})
+		_node.PaymentAmounts = value
 	}
 	return _node, _spec
 }
@@ -1431,6 +1476,42 @@ func (u *OrderUpsert) UpdateCreateMethod() *OrderUpsert {
 // ClearCreateMethod clears the value of the "create_method" field.
 func (u *OrderUpsert) ClearCreateMethod() *OrderUpsert {
 	u.SetNull(entorder.FieldCreateMethod)
+	return u
+}
+
+// SetMultiPaymentCoins sets the "multi_payment_coins" field.
+func (u *OrderUpsert) SetMultiPaymentCoins(v bool) *OrderUpsert {
+	u.Set(entorder.FieldMultiPaymentCoins, v)
+	return u
+}
+
+// UpdateMultiPaymentCoins sets the "multi_payment_coins" field to the value that was provided on create.
+func (u *OrderUpsert) UpdateMultiPaymentCoins() *OrderUpsert {
+	u.SetExcluded(entorder.FieldMultiPaymentCoins)
+	return u
+}
+
+// ClearMultiPaymentCoins clears the value of the "multi_payment_coins" field.
+func (u *OrderUpsert) ClearMultiPaymentCoins() *OrderUpsert {
+	u.SetNull(entorder.FieldMultiPaymentCoins)
+	return u
+}
+
+// SetPaymentAmounts sets the "payment_amounts" field.
+func (u *OrderUpsert) SetPaymentAmounts(v []order.PaymentAmount) *OrderUpsert {
+	u.Set(entorder.FieldPaymentAmounts, v)
+	return u
+}
+
+// UpdatePaymentAmounts sets the "payment_amounts" field to the value that was provided on create.
+func (u *OrderUpsert) UpdatePaymentAmounts() *OrderUpsert {
+	u.SetExcluded(entorder.FieldPaymentAmounts)
+	return u
+}
+
+// ClearPaymentAmounts clears the value of the "payment_amounts" field.
+func (u *OrderUpsert) ClearPaymentAmounts() *OrderUpsert {
+	u.SetNull(entorder.FieldPaymentAmounts)
 	return u
 }
 
@@ -2055,6 +2136,48 @@ func (u *OrderUpsertOne) UpdateCreateMethod() *OrderUpsertOne {
 func (u *OrderUpsertOne) ClearCreateMethod() *OrderUpsertOne {
 	return u.Update(func(s *OrderUpsert) {
 		s.ClearCreateMethod()
+	})
+}
+
+// SetMultiPaymentCoins sets the "multi_payment_coins" field.
+func (u *OrderUpsertOne) SetMultiPaymentCoins(v bool) *OrderUpsertOne {
+	return u.Update(func(s *OrderUpsert) {
+		s.SetMultiPaymentCoins(v)
+	})
+}
+
+// UpdateMultiPaymentCoins sets the "multi_payment_coins" field to the value that was provided on create.
+func (u *OrderUpsertOne) UpdateMultiPaymentCoins() *OrderUpsertOne {
+	return u.Update(func(s *OrderUpsert) {
+		s.UpdateMultiPaymentCoins()
+	})
+}
+
+// ClearMultiPaymentCoins clears the value of the "multi_payment_coins" field.
+func (u *OrderUpsertOne) ClearMultiPaymentCoins() *OrderUpsertOne {
+	return u.Update(func(s *OrderUpsert) {
+		s.ClearMultiPaymentCoins()
+	})
+}
+
+// SetPaymentAmounts sets the "payment_amounts" field.
+func (u *OrderUpsertOne) SetPaymentAmounts(v []order.PaymentAmount) *OrderUpsertOne {
+	return u.Update(func(s *OrderUpsert) {
+		s.SetPaymentAmounts(v)
+	})
+}
+
+// UpdatePaymentAmounts sets the "payment_amounts" field to the value that was provided on create.
+func (u *OrderUpsertOne) UpdatePaymentAmounts() *OrderUpsertOne {
+	return u.Update(func(s *OrderUpsert) {
+		s.UpdatePaymentAmounts()
+	})
+}
+
+// ClearPaymentAmounts clears the value of the "payment_amounts" field.
+func (u *OrderUpsertOne) ClearPaymentAmounts() *OrderUpsertOne {
+	return u.Update(func(s *OrderUpsert) {
+		s.ClearPaymentAmounts()
 	})
 }
 
@@ -2844,6 +2967,48 @@ func (u *OrderUpsertBulk) UpdateCreateMethod() *OrderUpsertBulk {
 func (u *OrderUpsertBulk) ClearCreateMethod() *OrderUpsertBulk {
 	return u.Update(func(s *OrderUpsert) {
 		s.ClearCreateMethod()
+	})
+}
+
+// SetMultiPaymentCoins sets the "multi_payment_coins" field.
+func (u *OrderUpsertBulk) SetMultiPaymentCoins(v bool) *OrderUpsertBulk {
+	return u.Update(func(s *OrderUpsert) {
+		s.SetMultiPaymentCoins(v)
+	})
+}
+
+// UpdateMultiPaymentCoins sets the "multi_payment_coins" field to the value that was provided on create.
+func (u *OrderUpsertBulk) UpdateMultiPaymentCoins() *OrderUpsertBulk {
+	return u.Update(func(s *OrderUpsert) {
+		s.UpdateMultiPaymentCoins()
+	})
+}
+
+// ClearMultiPaymentCoins clears the value of the "multi_payment_coins" field.
+func (u *OrderUpsertBulk) ClearMultiPaymentCoins() *OrderUpsertBulk {
+	return u.Update(func(s *OrderUpsert) {
+		s.ClearMultiPaymentCoins()
+	})
+}
+
+// SetPaymentAmounts sets the "payment_amounts" field.
+func (u *OrderUpsertBulk) SetPaymentAmounts(v []order.PaymentAmount) *OrderUpsertBulk {
+	return u.Update(func(s *OrderUpsert) {
+		s.SetPaymentAmounts(v)
+	})
+}
+
+// UpdatePaymentAmounts sets the "payment_amounts" field to the value that was provided on create.
+func (u *OrderUpsertBulk) UpdatePaymentAmounts() *OrderUpsertBulk {
+	return u.Update(func(s *OrderUpsert) {
+		s.UpdatePaymentAmounts()
+	})
+}
+
+// ClearPaymentAmounts clears the value of the "payment_amounts" field.
+func (u *OrderUpsertBulk) ClearPaymentAmounts() *OrderUpsertBulk {
+	return u.Update(func(s *OrderUpsert) {
+		s.ClearPaymentAmounts()
 	})
 }
 

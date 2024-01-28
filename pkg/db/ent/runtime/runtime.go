@@ -192,6 +192,14 @@ func init() {
 	entorderDescCreateMethod := entorderFields[24].Descriptor()
 	// entorder.DefaultCreateMethod holds the default value on creation for the create_method field.
 	entorder.DefaultCreateMethod = entorderDescCreateMethod.Default.(string)
+	// entorderDescMultiPaymentCoins is the schema descriptor for multi_payment_coins field.
+	entorderDescMultiPaymentCoins := entorderFields[25].Descriptor()
+	// entorder.DefaultMultiPaymentCoins holds the default value on creation for the multi_payment_coins field.
+	entorder.DefaultMultiPaymentCoins = entorderDescMultiPaymentCoins.Default.(bool)
+	// entorderDescPaymentAmounts is the schema descriptor for payment_amounts field.
+	entorderDescPaymentAmounts := entorderFields[26].Descriptor()
+	// entorder.DefaultPaymentAmounts holds the default value on creation for the payment_amounts field.
+	entorder.DefaultPaymentAmounts = entorderDescPaymentAmounts.Default.([]order.PaymentAmount)
 	orderlockMixin := schema.OrderLock{}.Mixin()
 	orderlock.Policy = privacy.NewPolicies(orderlockMixin[0], schema.OrderLock{})
 	orderlock.Hooks[0] = func(next ent.Mutator) ent.Mutator {
@@ -416,14 +424,6 @@ func init() {
 	paymentDescStartAmount := paymentFields[7].Descriptor()
 	// payment.DefaultStartAmount holds the default value on creation for the start_amount field.
 	payment.DefaultStartAmount = paymentDescStartAmount.Default.(decimal.Decimal)
-	// paymentDescMultiPaymentCoins is the schema descriptor for multi_payment_coins field.
-	paymentDescMultiPaymentCoins := paymentFields[8].Descriptor()
-	// payment.DefaultMultiPaymentCoins holds the default value on creation for the multi_payment_coins field.
-	payment.DefaultMultiPaymentCoins = paymentDescMultiPaymentCoins.Default.(bool)
-	// paymentDescPaymentAmounts is the schema descriptor for payment_amounts field.
-	paymentDescPaymentAmounts := paymentFields[9].Descriptor()
-	// payment.DefaultPaymentAmounts holds the default value on creation for the payment_amounts field.
-	payment.DefaultPaymentAmounts = paymentDescPaymentAmounts.Default.([]order.PaymentAmount)
 }
 
 const (

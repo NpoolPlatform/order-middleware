@@ -1308,7 +1308,10 @@ func WithReqs(reqs []*npool.OrderReq, must bool) func(context.Context, *Handler)
 		_reqs := []*OrderReq{}
 		for _, req := range reqs {
 			_req := &OrderReq{
-				Req:           &ordercrud.Req{},
+				Req: &ordercrud.Req{
+					MultiPaymentCoins: req.MultiPaymentCoins,
+					PaymentAmounts:    req.PaymentAmounts,
+				},
 				OrderStateReq: &orderstatecrud.Req{},
 			}
 			if must {
@@ -1734,12 +1737,10 @@ func WithReqs(reqs []*npool.OrderReq, must bool) func(context.Context, *Handler)
 			}
 
 			_req.PaymentReq = &paymentcrud.Req{
-				OrderID:           _req.EntID,
-				AppID:             _req.AppID,
-				GoodID:            _req.GoodID,
-				UserID:            _req.UserID,
-				MultiPaymentCoins: req.MultiPaymentCoins,
-				PaymentAmounts:    req.PaymentAmounts,
+				OrderID: _req.EntID,
+				AppID:   _req.AppID,
+				GoodID:  _req.GoodID,
+				UserID:  _req.UserID,
 			}
 			if req.PaymentAccountID != nil {
 				id, err := uuid.Parse(*req.PaymentAccountID)
