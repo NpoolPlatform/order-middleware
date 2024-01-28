@@ -53,7 +53,11 @@ func CreateSet(c *ent.PaymentCreate, req *Req) *ent.PaymentCreate {
 	if len(req.PaymentAmounts) > 0 {
 		amounts := []npool.PaymentAmount{}
 		for _, amount := range req.PaymentAmounts {
-			amounts = append(amounts, *amount)
+			amounts = append(amounts, npool.PaymentAmount{
+				CoinTypeID:  amount.CoinTypeID,
+				USDCurrency: amount.USDCurrency,
+				Amount:      amount.Amount,
+			})
 		}
 		c.SetPaymentAmounts(amounts)
 	}
