@@ -56,6 +56,7 @@ func (s *Server) CreateOrder(ctx context.Context, in *npool.CreateOrderRequest) 
 		order1.WithPaymentState(req.PaymentState, false),
 		order1.WithAppGoodStockLockID(req.AppGoodStockLockID, false),
 		order1.WithLedgerLockID(req.LedgerLockID, false),
+		order1.WithSimulate(req.Simulate, false),
 	)
 	if err != nil {
 		logger.Sugar().Errorw(

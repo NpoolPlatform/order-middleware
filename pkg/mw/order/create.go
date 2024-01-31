@@ -170,6 +170,10 @@ func (h *Handler) CreateOrder(ctx context.Context) (*npool.Order, error) {
 		if err := handler.createOrderState(ctx, tx, req.OrderStateReq); err != nil {
 			return err
 		}
+		if h.Simulate != nil && *h.Simulate {
+			fmt.Println("*h.Simulate: ", *h.Simulate)
+			return nil
+		}
 		if req.BalanceLockReq != nil {
 			req.BalanceLockReq.OrderID = req.Req.EntID
 		}
@@ -185,6 +189,7 @@ func (h *Handler) CreateOrder(ctx context.Context) (*npool.Order, error) {
 		if err := handler.createPayment(ctx, tx, req.PaymentReq); err != nil {
 			return err
 		}
+
 		return nil
 	})
 	logger.Sugar().Infow(

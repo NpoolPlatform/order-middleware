@@ -367,6 +367,20 @@ func (oc *OrderCreate) SetNillableLiveCoinUsdCurrency(d *decimal.Decimal) *Order
 	return oc
 }
 
+// SetSimulate sets the "simulate" field.
+func (oc *OrderCreate) SetSimulate(b bool) *OrderCreate {
+	oc.mutation.SetSimulate(b)
+	return oc
+}
+
+// SetNillableSimulate sets the "simulate" field if the given value is not nil.
+func (oc *OrderCreate) SetNillableSimulate(b *bool) *OrderCreate {
+	if b != nil {
+		oc.SetSimulate(*b)
+	}
+	return oc
+}
+
 // SetID sets the "id" field.
 func (oc *OrderCreate) SetID(u uint32) *OrderCreate {
 	oc.mutation.SetID(u)
@@ -570,6 +584,10 @@ func (oc *OrderCreate) defaults() error {
 	if _, ok := oc.mutation.LiveCoinUsdCurrency(); !ok {
 		v := order.DefaultLiveCoinUsdCurrency
 		oc.mutation.SetLiveCoinUsdCurrency(v)
+	}
+	if _, ok := oc.mutation.Simulate(); !ok {
+		v := order.DefaultSimulate
+		oc.mutation.SetSimulate(v)
 	}
 	return nil
 }
@@ -860,6 +878,14 @@ func (oc *OrderCreate) createSpec() (*Order, *sqlgraph.CreateSpec) {
 			Column: order.FieldLiveCoinUsdCurrency,
 		})
 		_node.LiveCoinUsdCurrency = value
+	}
+	if value, ok := oc.mutation.Simulate(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Value:  value,
+			Column: order.FieldSimulate,
+		})
+		_node.Simulate = value
 	}
 	return _node, _spec
 }
@@ -1386,6 +1412,24 @@ func (u *OrderUpsert) UpdateLiveCoinUsdCurrency() *OrderUpsert {
 // ClearLiveCoinUsdCurrency clears the value of the "live_coin_usd_currency" field.
 func (u *OrderUpsert) ClearLiveCoinUsdCurrency() *OrderUpsert {
 	u.SetNull(order.FieldLiveCoinUsdCurrency)
+	return u
+}
+
+// SetSimulate sets the "simulate" field.
+func (u *OrderUpsert) SetSimulate(v bool) *OrderUpsert {
+	u.Set(order.FieldSimulate, v)
+	return u
+}
+
+// UpdateSimulate sets the "simulate" field to the value that was provided on create.
+func (u *OrderUpsert) UpdateSimulate() *OrderUpsert {
+	u.SetExcluded(order.FieldSimulate)
+	return u
+}
+
+// ClearSimulate clears the value of the "simulate" field.
+func (u *OrderUpsert) ClearSimulate() *OrderUpsert {
+	u.SetNull(order.FieldSimulate)
 	return u
 }
 
@@ -1989,6 +2033,27 @@ func (u *OrderUpsertOne) UpdateLiveCoinUsdCurrency() *OrderUpsertOne {
 func (u *OrderUpsertOne) ClearLiveCoinUsdCurrency() *OrderUpsertOne {
 	return u.Update(func(s *OrderUpsert) {
 		s.ClearLiveCoinUsdCurrency()
+	})
+}
+
+// SetSimulate sets the "simulate" field.
+func (u *OrderUpsertOne) SetSimulate(v bool) *OrderUpsertOne {
+	return u.Update(func(s *OrderUpsert) {
+		s.SetSimulate(v)
+	})
+}
+
+// UpdateSimulate sets the "simulate" field to the value that was provided on create.
+func (u *OrderUpsertOne) UpdateSimulate() *OrderUpsertOne {
+	return u.Update(func(s *OrderUpsert) {
+		s.UpdateSimulate()
+	})
+}
+
+// ClearSimulate clears the value of the "simulate" field.
+func (u *OrderUpsertOne) ClearSimulate() *OrderUpsertOne {
+	return u.Update(func(s *OrderUpsert) {
+		s.ClearSimulate()
 	})
 }
 
@@ -2757,6 +2822,27 @@ func (u *OrderUpsertBulk) UpdateLiveCoinUsdCurrency() *OrderUpsertBulk {
 func (u *OrderUpsertBulk) ClearLiveCoinUsdCurrency() *OrderUpsertBulk {
 	return u.Update(func(s *OrderUpsert) {
 		s.ClearLiveCoinUsdCurrency()
+	})
+}
+
+// SetSimulate sets the "simulate" field.
+func (u *OrderUpsertBulk) SetSimulate(v bool) *OrderUpsertBulk {
+	return u.Update(func(s *OrderUpsert) {
+		s.SetSimulate(v)
+	})
+}
+
+// UpdateSimulate sets the "simulate" field to the value that was provided on create.
+func (u *OrderUpsertBulk) UpdateSimulate() *OrderUpsertBulk {
+	return u.Update(func(s *OrderUpsert) {
+		s.UpdateSimulate()
+	})
+}
+
+// ClearSimulate clears the value of the "simulate" field.
+func (u *OrderUpsertBulk) ClearSimulate() *OrderUpsertBulk {
+	return u.Update(func(s *OrderUpsert) {
+		s.ClearSimulate()
 	})
 }
 

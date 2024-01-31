@@ -84,6 +84,7 @@ var (
 		CompensateHours:      0,
 		AppGoodStockLockID:   uuid.NewString(),
 		LedgerLockID:         uuid.NewString(),
+		Simulate:             false,
 	}
 
 	appID         = uuid.NewString()
@@ -143,6 +144,7 @@ var (
 			CouponIDs:            []string{uuid.NewString(), uuid.NewString()},
 			AppGoodStockLockID:   uuid.NewString(),
 			LedgerLockID:         uuid.NewString(),
+			Simulate:             false,
 		},
 		{
 			EntID:                uuid.NewString(),
@@ -192,6 +194,7 @@ var (
 			OutOfGasHours:        0,
 			CompensateHours:      0,
 			AppGoodStockLockID:   uuid.NewString(),
+			Simulate:             false,
 		},
 	}
 )
@@ -230,6 +233,7 @@ func createOrder(t *testing.T) {
 		WithPaymentState(&ret.PaymentState, false),
 		WithAppGoodStockLockID(&ret.AppGoodStockLockID, true),
 		WithLedgerLockID(&ret.LedgerLockID, true),
+		WithSimulate(&ret.Simulate, true),
 	)
 	if assert.Nil(t, err) {
 		info, err := handler.CreateOrder(context.Background())
@@ -288,6 +292,7 @@ func createOrders(t *testing.T) {
 			LocalCoinUSDCurrency: &rets[key].LocalCoinUSDCurrency,
 			LiveCoinUSDCurrency:  &rets[key].LiveCoinUSDCurrency,
 			AppGoodStockLockID:   &rets[key].AppGoodStockLockID,
+			Simulate:             &rets[key].Simulate,
 		}
 		if rets[key].PaymentType != ordertypes.PaymentType_PayWithParentOrder {
 			retReq.PaymentAccountID = &rets[key].PaymentAccountID

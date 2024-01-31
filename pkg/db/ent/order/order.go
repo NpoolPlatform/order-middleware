@@ -69,6 +69,8 @@ const (
 	FieldLocalCoinUsdCurrency = "local_coin_usd_currency"
 	// FieldLiveCoinUsdCurrency holds the string denoting the live_coin_usd_currency field in the database.
 	FieldLiveCoinUsdCurrency = "live_coin_usd_currency"
+	// FieldSimulate holds the string denoting the simulate field in the database.
+	FieldSimulate = "simulate"
 	// Table holds the table name of the order in the database.
 	Table = "orders"
 )
@@ -104,6 +106,7 @@ var Columns = []string{
 	FieldCoinUsdCurrency,
 	FieldLocalCoinUsdCurrency,
 	FieldLiveCoinUsdCurrency,
+	FieldSimulate,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -173,4 +176,6 @@ var (
 	DefaultLocalCoinUsdCurrency decimal.Decimal
 	// DefaultLiveCoinUsdCurrency holds the default value on creation for the "live_coin_usd_currency" field.
 	DefaultLiveCoinUsdCurrency decimal.Decimal
+	// DefaultSimulate holds the default value on creation for the "simulate" field.
+	DefaultSimulate bool
 )

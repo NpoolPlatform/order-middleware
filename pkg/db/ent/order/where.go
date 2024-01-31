@@ -269,6 +269,13 @@ func LiveCoinUsdCurrency(v decimal.Decimal) predicate.Order {
 	})
 }
 
+// Simulate applies equality check predicate on the "simulate" field. It's identical to SimulateEQ.
+func Simulate(v bool) predicate.Order {
+	return predicate.Order(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldSimulate), v))
+	})
+}
+
 // CreatedAtEQ applies the EQ predicate on the "created_at" field.
 func CreatedAtEQ(v uint32) predicate.Order {
 	return predicate.Order(func(s *sql.Selector) {
@@ -2365,6 +2372,34 @@ func LiveCoinUsdCurrencyIsNil() predicate.Order {
 func LiveCoinUsdCurrencyNotNil() predicate.Order {
 	return predicate.Order(func(s *sql.Selector) {
 		s.Where(sql.NotNull(s.C(FieldLiveCoinUsdCurrency)))
+	})
+}
+
+// SimulateEQ applies the EQ predicate on the "simulate" field.
+func SimulateEQ(v bool) predicate.Order {
+	return predicate.Order(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldSimulate), v))
+	})
+}
+
+// SimulateNEQ applies the NEQ predicate on the "simulate" field.
+func SimulateNEQ(v bool) predicate.Order {
+	return predicate.Order(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldSimulate), v))
+	})
+}
+
+// SimulateIsNil applies the IsNil predicate on the "simulate" field.
+func SimulateIsNil() predicate.Order {
+	return predicate.Order(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldSimulate)))
+	})
+}
+
+// SimulateNotNil applies the NotNil predicate on the "simulate" field.
+func SimulateNotNil() predicate.Order {
+	return predicate.Order(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldSimulate)))
 	})
 }
 

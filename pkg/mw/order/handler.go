@@ -65,6 +65,7 @@ type Handler struct {
 	AppGoodStockLockID   *uuid.UUID
 	LedgerLockID         *uuid.UUID
 	Rollback             *bool
+	Simulate             *bool
 	Reqs                 []*OrderReq
 	Conds                *ordercrud.Conds
 	Offset               int32
@@ -898,6 +899,19 @@ func WithRollback(rollback *bool, must bool) func(context.Context, *Handler) err
 			return nil
 		}
 		h.Rollback = rollback
+		return nil
+	}
+}
+
+func WithSimulate(value *bool, must bool) func(context.Context, *Handler) error {
+	return func(ctx context.Context, h *Handler) error {
+		if value == nil {
+			if must {
+				return fmt.Errorf("invalid simulate")
+			}
+			return nil
+		}
+		h.Simulate = value
 		return nil
 	}
 }

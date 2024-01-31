@@ -78,6 +78,7 @@ func (h *Handler) ToOrderReq(ctx context.Context, newOrder bool) (*OrderReq, err
 			CoinUSDCurrency:      h.CoinUSDCurrency,
 			LocalCoinUSDCurrency: h.LocalCoinUSDCurrency,
 			LiveCoinUSDCurrency:  h.LiveCoinUSDCurrency,
+			Simulate:             h.Simulate,
 		},
 		OrderStateReq: &orderstatecrud.Req{
 			OrderID:              h.EntID,

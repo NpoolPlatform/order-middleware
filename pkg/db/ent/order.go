@@ -74,6 +74,8 @@ type Order struct {
 	LocalCoinUsdCurrency decimal.Decimal `json:"local_coin_usd_currency,omitempty"`
 	// LiveCoinUsdCurrency holds the value of the "live_coin_usd_currency" field.
 	LiveCoinUsdCurrency decimal.Decimal `json:"live_coin_usd_currency,omitempty"`
+	// Simulate holds the value of the "simulate" field.
+	Simulate bool `json:"simulate,omitempty"`
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -85,6 +87,8 @@ func (*Order) scanValues(columns []string) ([]interface{}, error) {
 			values[i] = new([]byte)
 		case order.FieldUnitsV1, order.FieldGoodValue, order.FieldGoodValueUsd, order.FieldPaymentAmount, order.FieldDiscountAmount, order.FieldTransferAmount, order.FieldBalanceAmount, order.FieldCoinUsdCurrency, order.FieldLocalCoinUsdCurrency, order.FieldLiveCoinUsdCurrency:
 			values[i] = new(decimal.Decimal)
+		case order.FieldSimulate:
+			values[i] = new(sql.NullBool)
 		case order.FieldID, order.FieldCreatedAt, order.FieldUpdatedAt, order.FieldDeletedAt, order.FieldDuration:
 			values[i] = new(sql.NullInt64)
 		case order.FieldOrderType, order.FieldInvestmentType, order.FieldPaymentType:
@@ -282,6 +286,12 @@ func (o *Order) assignValues(columns []string, values []interface{}) error {
 			} else if value != nil {
 				o.LiveCoinUsdCurrency = *value
 			}
+		case order.FieldSimulate:
+			if value, ok := values[i].(*sql.NullBool); !ok {
+				return fmt.Errorf("unexpected type %T for field simulate", values[i])
+			} else if value.Valid {
+				o.Simulate = value.Bool
+			}
 		}
 	}
 	return nil
@@ -393,6 +403,9 @@ func (o *Order) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("live_coin_usd_currency=")
 	builder.WriteString(fmt.Sprintf("%v", o.LiveCoinUsdCurrency))
+	builder.WriteString(", ")
+	builder.WriteString("simulate=")
+	builder.WriteString(fmt.Sprintf("%v", o.Simulate))
 	builder.WriteByte(')')
 	return builder.String()
 }

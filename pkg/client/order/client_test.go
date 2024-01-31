@@ -90,6 +90,7 @@ var (
 		OutOfGasHours:        0,
 		CompensateHours:      0,
 		AppGoodStockLockID:   uuid.NewString(),
+		Simulate:             false,
 	}
 
 	req = npool.OrderReq{
@@ -132,6 +133,7 @@ var (
 		OutOfGasHours:        &ret.OutOfGasHours,
 		CompensateHours:      &ret.CompensateHours,
 		AppGoodStockLockID:   &ret.AppGoodStockLockID,
+		Simulate:             &ret.Simulate,
 	}
 )
 

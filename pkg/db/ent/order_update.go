@@ -508,6 +508,26 @@ func (ou *OrderUpdate) ClearLiveCoinUsdCurrency() *OrderUpdate {
 	return ou
 }
 
+// SetSimulate sets the "simulate" field.
+func (ou *OrderUpdate) SetSimulate(b bool) *OrderUpdate {
+	ou.mutation.SetSimulate(b)
+	return ou
+}
+
+// SetNillableSimulate sets the "simulate" field if the given value is not nil.
+func (ou *OrderUpdate) SetNillableSimulate(b *bool) *OrderUpdate {
+	if b != nil {
+		ou.SetSimulate(*b)
+	}
+	return ou
+}
+
+// ClearSimulate clears the value of the "simulate" field.
+func (ou *OrderUpdate) ClearSimulate() *OrderUpdate {
+	ou.mutation.ClearSimulate()
+	return ou
+}
+
 // Mutation returns the OrderMutation object of the builder.
 func (ou *OrderUpdate) Mutation() *OrderMutation {
 	return ou.mutation
@@ -942,6 +962,19 @@ func (ou *OrderUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeOther,
 			Column: order.FieldLiveCoinUsdCurrency,
+		})
+	}
+	if value, ok := ou.mutation.Simulate(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Value:  value,
+			Column: order.FieldSimulate,
+		})
+	}
+	if ou.mutation.SimulateCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Column: order.FieldSimulate,
 		})
 	}
 	_spec.Modifiers = ou.modifiers
@@ -1443,6 +1476,26 @@ func (ouo *OrderUpdateOne) ClearLiveCoinUsdCurrency() *OrderUpdateOne {
 	return ouo
 }
 
+// SetSimulate sets the "simulate" field.
+func (ouo *OrderUpdateOne) SetSimulate(b bool) *OrderUpdateOne {
+	ouo.mutation.SetSimulate(b)
+	return ouo
+}
+
+// SetNillableSimulate sets the "simulate" field if the given value is not nil.
+func (ouo *OrderUpdateOne) SetNillableSimulate(b *bool) *OrderUpdateOne {
+	if b != nil {
+		ouo.SetSimulate(*b)
+	}
+	return ouo
+}
+
+// ClearSimulate clears the value of the "simulate" field.
+func (ouo *OrderUpdateOne) ClearSimulate() *OrderUpdateOne {
+	ouo.mutation.ClearSimulate()
+	return ouo
+}
+
 // Mutation returns the OrderMutation object of the builder.
 func (ouo *OrderUpdateOne) Mutation() *OrderMutation {
 	return ouo.mutation
@@ -1907,6 +1960,19 @@ func (ouo *OrderUpdateOne) sqlSave(ctx context.Context) (_node *Order, err error
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeOther,
 			Column: order.FieldLiveCoinUsdCurrency,
+		})
+	}
+	if value, ok := ouo.mutation.Simulate(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Value:  value,
+			Column: order.FieldSimulate,
+		})
+	}
+	if ouo.mutation.SimulateCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Column: order.FieldSimulate,
 		})
 	}
 	_spec.Modifiers = ouo.modifiers
