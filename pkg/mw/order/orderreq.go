@@ -156,6 +156,10 @@ func (r *OrderReq) CheckOrderType() error {
 		case basetypes.PaymentType_PayWithTransferAndBalance:
 		case basetypes.PaymentType_PayWithBalanceOnly:
 		case basetypes.PaymentType_PayWithParentOrder:
+		case basetypes.PaymentType_PayWithNoPayment:
+			if r.Simulate == nil || !*r.Simulate {
+				return fmt.Errorf("invalid paymenttype")
+			}
 		default:
 			return fmt.Errorf("invalid paymenttype")
 		}
