@@ -253,6 +253,36 @@ func (h *baseQueryHandler) QueryJoinOrderState(s *sql.Selector) error {
 			return fmt.Errorf("invalid orderrenewstate")
 		}
 	}
+	if h.Conds != nil && h.Conds.RenewNotifyAt != nil {
+		at, ok := h.Conds.RenewNotifyAt.Val.(uint32)
+		if !ok {
+			return fmt.Errorf("invalid orderrenewnotifyat")
+		}
+		switch h.Conds.RenewNotifyAt.Op {
+		case cruder.EQ:
+			s.Where(
+				sql.EQ(t.C(entorderstate.FieldRenewNotifyAt), at),
+			)
+		case cruder.LT:
+			s.Where(
+				sql.LT(t.C(entorderstate.FieldRenewNotifyAt), at),
+			)
+		case cruder.LTE:
+			s.Where(
+				sql.LTE(t.C(entorderstate.FieldRenewNotifyAt), at),
+			)
+		case cruder.GT:
+			s.Where(
+				sql.GT(t.C(entorderstate.FieldRenewNotifyAt), at),
+			)
+		case cruder.GTE:
+			s.Where(
+				sql.GTE(t.C(entorderstate.FieldRenewNotifyAt), at),
+			)
+		default:
+			return fmt.Errorf("invalid orderrenewstate")
+		}
+	}
 	return nil
 }
 
