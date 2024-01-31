@@ -18,6 +18,7 @@ func (h *updateHandler) updateSimulateConfig(ctx context.Context, tx *ent.Tx) er
 		tx.SimulateConfig.UpdateOneID(*h.ID),
 		&configcrud.Req{
 			Units:                 h.Units,
+			Duration:              h.Duration,
 			SendCouponMode:        h.SendCouponMode,
 			SendCouponProbability: h.SendCouponProbability,
 			Enabled:               h.Enabled,

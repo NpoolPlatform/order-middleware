@@ -29,6 +29,8 @@ type SimulateConfig struct {
 	AppID uuid.UUID `json:"app_id,omitempty"`
 	// Units holds the value of the "units" field.
 	Units decimal.Decimal `json:"units,omitempty"`
+	// Duration holds the value of the "duration" field.
+	Duration uint32 `json:"duration,omitempty"`
 	// SendCouponMode holds the value of the "send_coupon_mode" field.
 	SendCouponMode string `json:"send_coupon_mode,omitempty"`
 	// SendCouponProbability holds the value of the "send_coupon_probability" field.
@@ -46,7 +48,7 @@ func (*SimulateConfig) scanValues(columns []string) ([]interface{}, error) {
 			values[i] = new(decimal.Decimal)
 		case simulateconfig.FieldEnabled:
 			values[i] = new(sql.NullBool)
-		case simulateconfig.FieldID, simulateconfig.FieldCreatedAt, simulateconfig.FieldUpdatedAt, simulateconfig.FieldDeletedAt:
+		case simulateconfig.FieldID, simulateconfig.FieldCreatedAt, simulateconfig.FieldUpdatedAt, simulateconfig.FieldDeletedAt, simulateconfig.FieldDuration:
 			values[i] = new(sql.NullInt64)
 		case simulateconfig.FieldSendCouponMode:
 			values[i] = new(sql.NullString)
@@ -108,6 +110,12 @@ func (sc *SimulateConfig) assignValues(columns []string, values []interface{}) e
 				return fmt.Errorf("unexpected type %T for field units", values[i])
 			} else if value != nil {
 				sc.Units = *value
+			}
+		case simulateconfig.FieldDuration:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field duration", values[i])
+			} else if value.Valid {
+				sc.Duration = uint32(value.Int64)
 			}
 		case simulateconfig.FieldSendCouponMode:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -172,6 +180,9 @@ func (sc *SimulateConfig) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("units=")
 	builder.WriteString(fmt.Sprintf("%v", sc.Units))
+	builder.WriteString(", ")
+	builder.WriteString("duration=")
+	builder.WriteString(fmt.Sprintf("%v", sc.Duration))
 	builder.WriteString(", ")
 	builder.WriteString("send_coupon_mode=")
 	builder.WriteString(sc.SendCouponMode)

@@ -154,6 +154,10 @@ func (Order) Fields() []ent.Field {
 			}).
 			Optional().
 			Default(decimal.Decimal{}),
+		field.
+			Bool("simulate").
+			Optional().
+			Default(false),
 	}
 }
 

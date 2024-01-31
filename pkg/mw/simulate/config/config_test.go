@@ -33,6 +33,7 @@ var (
 		EntID:                 uuid.NewString(),
 		AppID:                 uuid.NewString(),
 		Units:                 "10",
+		Duration:              100,
 		SendCouponModeStr:     ordertypes.SendCouponMode_WithoutCoupon.String(),
 		SendCouponMode:        ordertypes.SendCouponMode_WithoutCoupon,
 		SendCouponProbability: "1",
@@ -50,6 +51,7 @@ func createSimulateConfig(t *testing.T) {
 		WithEntID(&ret.EntID, true),
 		WithAppID(&ret.AppID, true),
 		WithUnits(&ret.Units, true),
+		WithDuration(&ret.Duration, true),
 		WithSendCouponMode(&ret.SendCouponMode, true),
 		WithSendCouponProbability(&ret.SendCouponProbability, true),
 		WithEnabled(&ret.Enabled, true),
@@ -67,6 +69,7 @@ func createSimulateConfig(t *testing.T) {
 
 func updateSimulateConfig(t *testing.T) {
 	ret.Units = "20"
+	ret.Duration = 200
 	ret.SendCouponMode = ordertypes.SendCouponMode_RandomBenifit
 	ret.SendCouponModeStr = ordertypes.SendCouponMode_RandomBenifit.String()
 	ret.SendCouponProbability = "10"
@@ -74,6 +77,7 @@ func updateSimulateConfig(t *testing.T) {
 		context.Background(),
 		WithID(&ret.ID, true),
 		WithUnits(&ret.Units, true),
+		WithDuration(&ret.Duration, true),
 		WithSendCouponMode(&ret.SendCouponMode, true),
 		WithSendCouponProbability(&ret.SendCouponProbability, true),
 	)

@@ -188,6 +188,10 @@ func init() {
 	orderDescLiveCoinUsdCurrency := orderFields[23].Descriptor()
 	// order.DefaultLiveCoinUsdCurrency holds the default value on creation for the live_coin_usd_currency field.
 	order.DefaultLiveCoinUsdCurrency = orderDescLiveCoinUsdCurrency.Default.(decimal.Decimal)
+	// orderDescSimulate is the schema descriptor for simulate field.
+	orderDescSimulate := orderFields[24].Descriptor()
+	// order.DefaultSimulate holds the default value on creation for the simulate field.
+	order.DefaultSimulate = orderDescSimulate.Default.(bool)
 	orderlockMixin := schema.OrderLock{}.Mixin()
 	orderlock.Policy = privacy.NewPolicies(orderlockMixin[0], schema.OrderLock{})
 	orderlock.Hooks[0] = func(next ent.Mutator) ent.Mutator {
@@ -442,16 +446,20 @@ func init() {
 	simulateconfigDescUnits := simulateconfigFields[1].Descriptor()
 	// simulateconfig.DefaultUnits holds the default value on creation for the units field.
 	simulateconfig.DefaultUnits = simulateconfigDescUnits.Default.(decimal.Decimal)
+	// simulateconfigDescDuration is the schema descriptor for duration field.
+	simulateconfigDescDuration := simulateconfigFields[2].Descriptor()
+	// simulateconfig.DefaultDuration holds the default value on creation for the duration field.
+	simulateconfig.DefaultDuration = simulateconfigDescDuration.Default.(uint32)
 	// simulateconfigDescSendCouponMode is the schema descriptor for send_coupon_mode field.
-	simulateconfigDescSendCouponMode := simulateconfigFields[2].Descriptor()
+	simulateconfigDescSendCouponMode := simulateconfigFields[3].Descriptor()
 	// simulateconfig.DefaultSendCouponMode holds the default value on creation for the send_coupon_mode field.
 	simulateconfig.DefaultSendCouponMode = simulateconfigDescSendCouponMode.Default.(string)
 	// simulateconfigDescSendCouponProbability is the schema descriptor for send_coupon_probability field.
-	simulateconfigDescSendCouponProbability := simulateconfigFields[3].Descriptor()
+	simulateconfigDescSendCouponProbability := simulateconfigFields[4].Descriptor()
 	// simulateconfig.DefaultSendCouponProbability holds the default value on creation for the send_coupon_probability field.
 	simulateconfig.DefaultSendCouponProbability = simulateconfigDescSendCouponProbability.Default.(decimal.Decimal)
 	// simulateconfigDescEnabled is the schema descriptor for enabled field.
-	simulateconfigDescEnabled := simulateconfigFields[4].Descriptor()
+	simulateconfigDescEnabled := simulateconfigFields[5].Descriptor()
 	// simulateconfig.DefaultEnabled holds the default value on creation for the enabled field.
 	simulateconfig.DefaultEnabled = simulateconfigDescEnabled.Default.(bool)
 }

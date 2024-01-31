@@ -82,6 +82,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			order.FieldCoinUsdCurrency:      {Type: field.TypeOther, Column: order.FieldCoinUsdCurrency},
 			order.FieldLocalCoinUsdCurrency: {Type: field.TypeOther, Column: order.FieldLocalCoinUsdCurrency},
 			order.FieldLiveCoinUsdCurrency:  {Type: field.TypeOther, Column: order.FieldLiveCoinUsdCurrency},
+			order.FieldSimulate:             {Type: field.TypeBool, Column: order.FieldSimulate},
 		},
 	}
 	graph.Nodes[2] = &sqlgraph.Node{
@@ -201,6 +202,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			simulateconfig.FieldEntID:                 {Type: field.TypeUUID, Column: simulateconfig.FieldEntID},
 			simulateconfig.FieldAppID:                 {Type: field.TypeUUID, Column: simulateconfig.FieldAppID},
 			simulateconfig.FieldUnits:                 {Type: field.TypeOther, Column: simulateconfig.FieldUnits},
+			simulateconfig.FieldDuration:              {Type: field.TypeUint32, Column: simulateconfig.FieldDuration},
 			simulateconfig.FieldSendCouponMode:        {Type: field.TypeString, Column: simulateconfig.FieldSendCouponMode},
 			simulateconfig.FieldSendCouponProbability: {Type: field.TypeOther, Column: simulateconfig.FieldSendCouponProbability},
 			simulateconfig.FieldEnabled:               {Type: field.TypeBool, Column: simulateconfig.FieldEnabled},
@@ -483,6 +485,11 @@ func (f *OrderFilter) WhereLocalCoinUsdCurrency(p entql.OtherP) {
 // WhereLiveCoinUsdCurrency applies the entql other predicate on the live_coin_usd_currency field.
 func (f *OrderFilter) WhereLiveCoinUsdCurrency(p entql.OtherP) {
 	f.Where(p.Field(order.FieldLiveCoinUsdCurrency))
+}
+
+// WhereSimulate applies the entql bool predicate on the simulate field.
+func (f *OrderFilter) WhereSimulate(p entql.BoolP) {
+	f.Where(p.Field(order.FieldSimulate))
 }
 
 // addPredicate implements the predicateAdder interface.
@@ -953,6 +960,11 @@ func (f *SimulateConfigFilter) WhereAppID(p entql.ValueP) {
 // WhereUnits applies the entql other predicate on the units field.
 func (f *SimulateConfigFilter) WhereUnits(p entql.OtherP) {
 	f.Where(p.Field(simulateconfig.FieldUnits))
+}
+
+// WhereDuration applies the entql uint32 predicate on the duration field.
+func (f *SimulateConfigFilter) WhereDuration(p entql.Uint32P) {
+	f.Where(p.Field(simulateconfig.FieldDuration))
 }
 
 // WhereSendCouponMode applies the entql string predicate on the send_coupon_mode field.

@@ -132,10 +132,12 @@ func GetSimulateConfigOnly(ctx context.Context, conds *npool.Conds) (*npool.Simu
 	return infos.([]*npool.SimulateConfig)[0], nil
 }
 
-func DeleteSimulateConfig(ctx context.Context, in *npool.SimulateConfigReq) (*npool.SimulateConfig, error) {
+func DeleteSimulateConfig(ctx context.Context, id uint32) (*npool.SimulateConfig, error) {
 	info, err := do(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
 		resp, err := cli.DeleteSimulateConfig(ctx, &npool.DeleteSimulateConfigRequest{
-			Info: in,
+			Info: &npool.SimulateConfigReq{
+				ID: &id,
+			},
 		})
 		if err != nil {
 			return nil, err

@@ -125,6 +125,33 @@ func (scu *SimulateConfigUpdate) ClearUnits() *SimulateConfigUpdate {
 	return scu
 }
 
+// SetDuration sets the "duration" field.
+func (scu *SimulateConfigUpdate) SetDuration(u uint32) *SimulateConfigUpdate {
+	scu.mutation.ResetDuration()
+	scu.mutation.SetDuration(u)
+	return scu
+}
+
+// SetNillableDuration sets the "duration" field if the given value is not nil.
+func (scu *SimulateConfigUpdate) SetNillableDuration(u *uint32) *SimulateConfigUpdate {
+	if u != nil {
+		scu.SetDuration(*u)
+	}
+	return scu
+}
+
+// AddDuration adds u to the "duration" field.
+func (scu *SimulateConfigUpdate) AddDuration(u int32) *SimulateConfigUpdate {
+	scu.mutation.AddDuration(u)
+	return scu
+}
+
+// ClearDuration clears the value of the "duration" field.
+func (scu *SimulateConfigUpdate) ClearDuration() *SimulateConfigUpdate {
+	scu.mutation.ClearDuration()
+	return scu
+}
+
 // SetSendCouponMode sets the "send_coupon_mode" field.
 func (scu *SimulateConfigUpdate) SetSendCouponMode(s string) *SimulateConfigUpdate {
 	scu.mutation.SetSendCouponMode(s)
@@ -352,6 +379,26 @@ func (scu *SimulateConfigUpdate) sqlSave(ctx context.Context) (n int, err error)
 			Column: simulateconfig.FieldUnits,
 		})
 	}
+	if value, ok := scu.mutation.Duration(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeUint32,
+			Value:  value,
+			Column: simulateconfig.FieldDuration,
+		})
+	}
+	if value, ok := scu.mutation.AddedDuration(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeUint32,
+			Value:  value,
+			Column: simulateconfig.FieldDuration,
+		})
+	}
+	if scu.mutation.DurationCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeUint32,
+			Column: simulateconfig.FieldDuration,
+		})
+	}
 	if value, ok := scu.mutation.SendCouponMode(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
@@ -504,6 +551,33 @@ func (scuo *SimulateConfigUpdateOne) SetNillableUnits(d *decimal.Decimal) *Simul
 // ClearUnits clears the value of the "units" field.
 func (scuo *SimulateConfigUpdateOne) ClearUnits() *SimulateConfigUpdateOne {
 	scuo.mutation.ClearUnits()
+	return scuo
+}
+
+// SetDuration sets the "duration" field.
+func (scuo *SimulateConfigUpdateOne) SetDuration(u uint32) *SimulateConfigUpdateOne {
+	scuo.mutation.ResetDuration()
+	scuo.mutation.SetDuration(u)
+	return scuo
+}
+
+// SetNillableDuration sets the "duration" field if the given value is not nil.
+func (scuo *SimulateConfigUpdateOne) SetNillableDuration(u *uint32) *SimulateConfigUpdateOne {
+	if u != nil {
+		scuo.SetDuration(*u)
+	}
+	return scuo
+}
+
+// AddDuration adds u to the "duration" field.
+func (scuo *SimulateConfigUpdateOne) AddDuration(u int32) *SimulateConfigUpdateOne {
+	scuo.mutation.AddDuration(u)
+	return scuo
+}
+
+// ClearDuration clears the value of the "duration" field.
+func (scuo *SimulateConfigUpdateOne) ClearDuration() *SimulateConfigUpdateOne {
+	scuo.mutation.ClearDuration()
 	return scuo
 }
 
@@ -762,6 +836,26 @@ func (scuo *SimulateConfigUpdateOne) sqlSave(ctx context.Context) (_node *Simula
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeOther,
 			Column: simulateconfig.FieldUnits,
+		})
+	}
+	if value, ok := scuo.mutation.Duration(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeUint32,
+			Value:  value,
+			Column: simulateconfig.FieldDuration,
+		})
+	}
+	if value, ok := scuo.mutation.AddedDuration(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeUint32,
+			Value:  value,
+			Column: simulateconfig.FieldDuration,
+		})
+	}
+	if scuo.mutation.DurationCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeUint32,
+			Column: simulateconfig.FieldDuration,
 		})
 	}
 	if value, ok := scuo.mutation.SendCouponMode(); ok {

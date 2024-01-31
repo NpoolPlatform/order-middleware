@@ -36,6 +36,10 @@ func (SimulateConfig) Fields() []ent.Field {
 			Optional().
 			Default(decimal.Decimal{}),
 		field.
+			Uint32("duration").
+			Optional().
+			Default(0),
+		field.
 			String("send_coupon_mode").
 			Optional().
 			Default(types.SendCouponMode_WithoutCoupon.String()),

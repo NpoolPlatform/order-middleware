@@ -21,6 +21,7 @@ type Handler struct {
 	EntID                 *uuid.UUID
 	AppID                 *uuid.UUID
 	Units                 *decimal.Decimal
+	Duration              *uint32
 	SendCouponMode        *basetypes.SendCouponMode
 	SendCouponProbability *decimal.Decimal
 	Enabled               *bool
@@ -103,6 +104,19 @@ func WithUnits(value *string, must bool) func(context.Context, *Handler) error {
 			return fmt.Errorf("units is less than or equal to 0")
 		}
 		h.Units = &amount
+		return nil
+	}
+}
+
+func WithDuration(duration *uint32, must bool) func(context.Context, *Handler) error {
+	return func(ctx context.Context, h *Handler) error {
+		if duration == nil {
+			if must {
+				return fmt.Errorf("invalid duration")
+			}
+			return nil
+		}
+		h.Duration = duration
 		return nil
 	}
 }

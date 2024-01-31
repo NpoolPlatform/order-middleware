@@ -42,6 +42,7 @@ func (h *createHandler) createSimulateConfig(ctx context.Context, tx *ent.Tx) er
 			EntID:                 h.EntID,
 			AppID:                 h.AppID,
 			Units:                 h.Units,
+			Duration:              h.Duration,
 			SendCouponMode:        h.SendCouponMode,
 			SendCouponProbability: h.SendCouponProbability,
 			Enabled:               h.Enabled,

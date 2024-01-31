@@ -1149,6 +1149,7 @@ type OrderMutation struct {
 	coin_usd_currency       *decimal.Decimal
 	local_coin_usd_currency *decimal.Decimal
 	live_coin_usd_currency  *decimal.Decimal
+	simulate                *bool
 	clearedFields           map[string]struct{}
 	done                    bool
 	oldValue                func(context.Context) (*Order, error)
@@ -2595,6 +2596,55 @@ func (m *OrderMutation) ResetLiveCoinUsdCurrency() {
 	delete(m.clearedFields, order.FieldLiveCoinUsdCurrency)
 }
 
+// SetSimulate sets the "simulate" field.
+func (m *OrderMutation) SetSimulate(b bool) {
+	m.simulate = &b
+}
+
+// Simulate returns the value of the "simulate" field in the mutation.
+func (m *OrderMutation) Simulate() (r bool, exists bool) {
+	v := m.simulate
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldSimulate returns the old "simulate" field's value of the Order entity.
+// If the Order object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *OrderMutation) OldSimulate(ctx context.Context) (v bool, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldSimulate is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldSimulate requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldSimulate: %w", err)
+	}
+	return oldValue.Simulate, nil
+}
+
+// ClearSimulate clears the value of the "simulate" field.
+func (m *OrderMutation) ClearSimulate() {
+	m.simulate = nil
+	m.clearedFields[order.FieldSimulate] = struct{}{}
+}
+
+// SimulateCleared returns if the "simulate" field was cleared in this mutation.
+func (m *OrderMutation) SimulateCleared() bool {
+	_, ok := m.clearedFields[order.FieldSimulate]
+	return ok
+}
+
+// ResetSimulate resets all changes to the "simulate" field.
+func (m *OrderMutation) ResetSimulate() {
+	m.simulate = nil
+	delete(m.clearedFields, order.FieldSimulate)
+}
+
 // Where appends a list predicates to the OrderMutation builder.
 func (m *OrderMutation) Where(ps ...predicate.Order) {
 	m.predicates = append(m.predicates, ps...)
@@ -2614,7 +2664,7 @@ func (m *OrderMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *OrderMutation) Fields() []string {
-	fields := make([]string, 0, 28)
+	fields := make([]string, 0, 29)
 	if m.created_at != nil {
 		fields = append(fields, order.FieldCreatedAt)
 	}
@@ -2699,6 +2749,9 @@ func (m *OrderMutation) Fields() []string {
 	if m.live_coin_usd_currency != nil {
 		fields = append(fields, order.FieldLiveCoinUsdCurrency)
 	}
+	if m.simulate != nil {
+		fields = append(fields, order.FieldSimulate)
+	}
 	return fields
 }
 
@@ -2763,6 +2816,8 @@ func (m *OrderMutation) Field(name string) (ent.Value, bool) {
 		return m.LocalCoinUsdCurrency()
 	case order.FieldLiveCoinUsdCurrency:
 		return m.LiveCoinUsdCurrency()
+	case order.FieldSimulate:
+		return m.Simulate()
 	}
 	return nil, false
 }
@@ -2828,6 +2883,8 @@ func (m *OrderMutation) OldField(ctx context.Context, name string) (ent.Value, e
 		return m.OldLocalCoinUsdCurrency(ctx)
 	case order.FieldLiveCoinUsdCurrency:
 		return m.OldLiveCoinUsdCurrency(ctx)
+	case order.FieldSimulate:
+		return m.OldSimulate(ctx)
 	}
 	return nil, fmt.Errorf("unknown Order field %s", name)
 }
@@ -3033,6 +3090,13 @@ func (m *OrderMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetLiveCoinUsdCurrency(v)
 		return nil
+	case order.FieldSimulate:
+		v, ok := value.(bool)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetSimulate(v)
+		return nil
 	}
 	return fmt.Errorf("unknown Order field %s", name)
 }
@@ -3171,6 +3235,9 @@ func (m *OrderMutation) ClearedFields() []string {
 	if m.FieldCleared(order.FieldLiveCoinUsdCurrency) {
 		fields = append(fields, order.FieldLiveCoinUsdCurrency)
 	}
+	if m.FieldCleared(order.FieldSimulate) {
+		fields = append(fields, order.FieldSimulate)
+	}
 	return fields
 }
 
@@ -3241,6 +3308,9 @@ func (m *OrderMutation) ClearField(name string) error {
 		return nil
 	case order.FieldLiveCoinUsdCurrency:
 		m.ClearLiveCoinUsdCurrency()
+		return nil
+	case order.FieldSimulate:
+		m.ClearSimulate()
 		return nil
 	}
 	return fmt.Errorf("unknown Order nullable field %s", name)
@@ -3333,6 +3403,9 @@ func (m *OrderMutation) ResetField(name string) error {
 		return nil
 	case order.FieldLiveCoinUsdCurrency:
 		m.ResetLiveCoinUsdCurrency()
+		return nil
+	case order.FieldSimulate:
+		m.ResetSimulate()
 		return nil
 	}
 	return fmt.Errorf("unknown Order field %s", name)
@@ -8155,6 +8228,8 @@ type SimulateConfigMutation struct {
 	ent_id                  *uuid.UUID
 	app_id                  *uuid.UUID
 	units                   *decimal.Decimal
+	duration                *uint32
+	addduration             *int32
 	send_coupon_mode        *string
 	send_coupon_probability *decimal.Decimal
 	enabled                 *bool
@@ -8557,6 +8632,76 @@ func (m *SimulateConfigMutation) ResetUnits() {
 	delete(m.clearedFields, simulateconfig.FieldUnits)
 }
 
+// SetDuration sets the "duration" field.
+func (m *SimulateConfigMutation) SetDuration(u uint32) {
+	m.duration = &u
+	m.addduration = nil
+}
+
+// Duration returns the value of the "duration" field in the mutation.
+func (m *SimulateConfigMutation) Duration() (r uint32, exists bool) {
+	v := m.duration
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDuration returns the old "duration" field's value of the SimulateConfig entity.
+// If the SimulateConfig object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SimulateConfigMutation) OldDuration(ctx context.Context) (v uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDuration is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDuration requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDuration: %w", err)
+	}
+	return oldValue.Duration, nil
+}
+
+// AddDuration adds u to the "duration" field.
+func (m *SimulateConfigMutation) AddDuration(u int32) {
+	if m.addduration != nil {
+		*m.addduration += u
+	} else {
+		m.addduration = &u
+	}
+}
+
+// AddedDuration returns the value that was added to the "duration" field in this mutation.
+func (m *SimulateConfigMutation) AddedDuration() (r int32, exists bool) {
+	v := m.addduration
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearDuration clears the value of the "duration" field.
+func (m *SimulateConfigMutation) ClearDuration() {
+	m.duration = nil
+	m.addduration = nil
+	m.clearedFields[simulateconfig.FieldDuration] = struct{}{}
+}
+
+// DurationCleared returns if the "duration" field was cleared in this mutation.
+func (m *SimulateConfigMutation) DurationCleared() bool {
+	_, ok := m.clearedFields[simulateconfig.FieldDuration]
+	return ok
+}
+
+// ResetDuration resets all changes to the "duration" field.
+func (m *SimulateConfigMutation) ResetDuration() {
+	m.duration = nil
+	m.addduration = nil
+	delete(m.clearedFields, simulateconfig.FieldDuration)
+}
+
 // SetSendCouponMode sets the "send_coupon_mode" field.
 func (m *SimulateConfigMutation) SetSendCouponMode(s string) {
 	m.send_coupon_mode = &s
@@ -8723,7 +8868,7 @@ func (m *SimulateConfigMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *SimulateConfigMutation) Fields() []string {
-	fields := make([]string, 0, 9)
+	fields := make([]string, 0, 10)
 	if m.created_at != nil {
 		fields = append(fields, simulateconfig.FieldCreatedAt)
 	}
@@ -8741,6 +8886,9 @@ func (m *SimulateConfigMutation) Fields() []string {
 	}
 	if m.units != nil {
 		fields = append(fields, simulateconfig.FieldUnits)
+	}
+	if m.duration != nil {
+		fields = append(fields, simulateconfig.FieldDuration)
 	}
 	if m.send_coupon_mode != nil {
 		fields = append(fields, simulateconfig.FieldSendCouponMode)
@@ -8771,6 +8919,8 @@ func (m *SimulateConfigMutation) Field(name string) (ent.Value, bool) {
 		return m.AppID()
 	case simulateconfig.FieldUnits:
 		return m.Units()
+	case simulateconfig.FieldDuration:
+		return m.Duration()
 	case simulateconfig.FieldSendCouponMode:
 		return m.SendCouponMode()
 	case simulateconfig.FieldSendCouponProbability:
@@ -8798,6 +8948,8 @@ func (m *SimulateConfigMutation) OldField(ctx context.Context, name string) (ent
 		return m.OldAppID(ctx)
 	case simulateconfig.FieldUnits:
 		return m.OldUnits(ctx)
+	case simulateconfig.FieldDuration:
+		return m.OldDuration(ctx)
 	case simulateconfig.FieldSendCouponMode:
 		return m.OldSendCouponMode(ctx)
 	case simulateconfig.FieldSendCouponProbability:
@@ -8855,6 +9007,13 @@ func (m *SimulateConfigMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetUnits(v)
 		return nil
+	case simulateconfig.FieldDuration:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDuration(v)
+		return nil
 	case simulateconfig.FieldSendCouponMode:
 		v, ok := value.(string)
 		if !ok {
@@ -8893,6 +9052,9 @@ func (m *SimulateConfigMutation) AddedFields() []string {
 	if m.adddeleted_at != nil {
 		fields = append(fields, simulateconfig.FieldDeletedAt)
 	}
+	if m.addduration != nil {
+		fields = append(fields, simulateconfig.FieldDuration)
+	}
 	return fields
 }
 
@@ -8907,6 +9069,8 @@ func (m *SimulateConfigMutation) AddedField(name string) (ent.Value, bool) {
 		return m.AddedUpdatedAt()
 	case simulateconfig.FieldDeletedAt:
 		return m.AddedDeletedAt()
+	case simulateconfig.FieldDuration:
+		return m.AddedDuration()
 	}
 	return nil, false
 }
@@ -8937,6 +9101,13 @@ func (m *SimulateConfigMutation) AddField(name string, value ent.Value) error {
 		}
 		m.AddDeletedAt(v)
 		return nil
+	case simulateconfig.FieldDuration:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddDuration(v)
+		return nil
 	}
 	return fmt.Errorf("unknown SimulateConfig numeric field %s", name)
 }
@@ -8947,6 +9118,9 @@ func (m *SimulateConfigMutation) ClearedFields() []string {
 	var fields []string
 	if m.FieldCleared(simulateconfig.FieldUnits) {
 		fields = append(fields, simulateconfig.FieldUnits)
+	}
+	if m.FieldCleared(simulateconfig.FieldDuration) {
+		fields = append(fields, simulateconfig.FieldDuration)
 	}
 	if m.FieldCleared(simulateconfig.FieldSendCouponMode) {
 		fields = append(fields, simulateconfig.FieldSendCouponMode)
@@ -8973,6 +9147,9 @@ func (m *SimulateConfigMutation) ClearField(name string) error {
 	switch name {
 	case simulateconfig.FieldUnits:
 		m.ClearUnits()
+		return nil
+	case simulateconfig.FieldDuration:
+		m.ClearDuration()
 		return nil
 	case simulateconfig.FieldSendCouponMode:
 		m.ClearSendCouponMode()
@@ -9008,6 +9185,9 @@ func (m *SimulateConfigMutation) ResetField(name string) error {
 		return nil
 	case simulateconfig.FieldUnits:
 		m.ResetUnits()
+		return nil
+	case simulateconfig.FieldDuration:
+		m.ResetDuration()
 		return nil
 	case simulateconfig.FieldSendCouponMode:
 		m.ResetSendCouponMode()

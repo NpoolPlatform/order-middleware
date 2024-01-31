@@ -25,6 +25,8 @@ const (
 	FieldAppID = "app_id"
 	// FieldUnits holds the string denoting the units field in the database.
 	FieldUnits = "units"
+	// FieldDuration holds the string denoting the duration field in the database.
+	FieldDuration = "duration"
 	// FieldSendCouponMode holds the string denoting the send_coupon_mode field in the database.
 	FieldSendCouponMode = "send_coupon_mode"
 	// FieldSendCouponProbability holds the string denoting the send_coupon_probability field in the database.
@@ -44,6 +46,7 @@ var Columns = []string{
 	FieldEntID,
 	FieldAppID,
 	FieldUnits,
+	FieldDuration,
 	FieldSendCouponMode,
 	FieldSendCouponProbability,
 	FieldEnabled,
@@ -80,6 +83,8 @@ var (
 	DefaultEntID func() uuid.UUID
 	// DefaultUnits holds the default value on creation for the "units" field.
 	DefaultUnits decimal.Decimal
+	// DefaultDuration holds the default value on creation for the "duration" field.
+	DefaultDuration uint32
 	// DefaultSendCouponMode holds the default value on creation for the "send_coupon_mode" field.
 	DefaultSendCouponMode string
 	// DefaultSendCouponProbability holds the default value on creation for the "send_coupon_probability" field.

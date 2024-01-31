@@ -41,6 +41,7 @@ var (
 		EntID:                 uuid.NewString(),
 		AppID:                 uuid.NewString(),
 		Units:                 "10",
+		Duration:              100,
 		SendCouponModeStr:     ordertypes.SendCouponMode_WithoutCoupon.String(),
 		SendCouponMode:        ordertypes.SendCouponMode_WithoutCoupon,
 		SendCouponProbability: "1",
@@ -58,6 +59,7 @@ func createSimulateConfig(t *testing.T) {
 			EntID:                 &ret.EntID,
 			AppID:                 &ret.AppID,
 			Units:                 &ret.Units,
+			Duration:              &ret.Duration,
 			SendCouponMode:        &ret.SendCouponMode,
 			SendCouponProbability: &ret.SendCouponProbability,
 			Enabled:               &ret.Enabled,
@@ -75,6 +77,7 @@ func createSimulateConfig(t *testing.T) {
 
 func updateSimulateConfig(t *testing.T) {
 	ret.Units = "20"
+	ret.Duration = 300
 	ret.SendCouponMode = ordertypes.SendCouponMode_RandomBenifit
 	ret.SendCouponModeStr = ordertypes.SendCouponMode_RandomBenifit.String()
 	ret.SendCouponProbability = "10"
@@ -82,6 +85,7 @@ func updateSimulateConfig(t *testing.T) {
 		req = npool.SimulateConfigReq{
 			ID:                    &ret.ID,
 			Units:                 &ret.Units,
+			Duration:              &ret.Duration,
 			SendCouponMode:        &ret.SendCouponMode,
 			SendCouponProbability: &ret.SendCouponProbability,
 		}
@@ -114,9 +118,7 @@ func getSimulateConfigs(t *testing.T) {
 }
 
 func deleteSimulateConfig(t *testing.T) {
-	info, err := DeleteSimulateConfig(context.Background(), &npool.SimulateConfigReq{
-		ID: &ret.ID,
-	})
+	info, err := DeleteSimulateConfig(context.Background(), ret.ID)
 	if assert.Nil(t, err) {
 		assert.Equal(t, info, &ret)
 	}

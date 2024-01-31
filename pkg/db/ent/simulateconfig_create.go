@@ -99,6 +99,20 @@ func (scc *SimulateConfigCreate) SetNillableUnits(d *decimal.Decimal) *SimulateC
 	return scc
 }
 
+// SetDuration sets the "duration" field.
+func (scc *SimulateConfigCreate) SetDuration(u uint32) *SimulateConfigCreate {
+	scc.mutation.SetDuration(u)
+	return scc
+}
+
+// SetNillableDuration sets the "duration" field if the given value is not nil.
+func (scc *SimulateConfigCreate) SetNillableDuration(u *uint32) *SimulateConfigCreate {
+	if u != nil {
+		scc.SetDuration(*u)
+	}
+	return scc
+}
+
 // SetSendCouponMode sets the "send_coupon_mode" field.
 func (scc *SimulateConfigCreate) SetSendCouponMode(s string) *SimulateConfigCreate {
 	scc.mutation.SetSendCouponMode(s)
@@ -258,6 +272,10 @@ func (scc *SimulateConfigCreate) defaults() error {
 		v := simulateconfig.DefaultUnits
 		scc.mutation.SetUnits(v)
 	}
+	if _, ok := scc.mutation.Duration(); !ok {
+		v := simulateconfig.DefaultDuration
+		scc.mutation.SetDuration(v)
+	}
 	if _, ok := scc.mutation.SendCouponMode(); !ok {
 		v := simulateconfig.DefaultSendCouponMode
 		scc.mutation.SetSendCouponMode(v)
@@ -371,6 +389,14 @@ func (scc *SimulateConfigCreate) createSpec() (*SimulateConfig, *sqlgraph.Create
 			Column: simulateconfig.FieldUnits,
 		})
 		_node.Units = value
+	}
+	if value, ok := scc.mutation.Duration(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeUint32,
+			Value:  value,
+			Column: simulateconfig.FieldDuration,
+		})
+		_node.Duration = value
 	}
 	if value, ok := scc.mutation.SendCouponMode(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -543,6 +569,30 @@ func (u *SimulateConfigUpsert) UpdateUnits() *SimulateConfigUpsert {
 // ClearUnits clears the value of the "units" field.
 func (u *SimulateConfigUpsert) ClearUnits() *SimulateConfigUpsert {
 	u.SetNull(simulateconfig.FieldUnits)
+	return u
+}
+
+// SetDuration sets the "duration" field.
+func (u *SimulateConfigUpsert) SetDuration(v uint32) *SimulateConfigUpsert {
+	u.Set(simulateconfig.FieldDuration, v)
+	return u
+}
+
+// UpdateDuration sets the "duration" field to the value that was provided on create.
+func (u *SimulateConfigUpsert) UpdateDuration() *SimulateConfigUpsert {
+	u.SetExcluded(simulateconfig.FieldDuration)
+	return u
+}
+
+// AddDuration adds v to the "duration" field.
+func (u *SimulateConfigUpsert) AddDuration(v uint32) *SimulateConfigUpsert {
+	u.Add(simulateconfig.FieldDuration, v)
+	return u
+}
+
+// ClearDuration clears the value of the "duration" field.
+func (u *SimulateConfigUpsert) ClearDuration() *SimulateConfigUpsert {
+	u.SetNull(simulateconfig.FieldDuration)
 	return u
 }
 
@@ -759,6 +809,34 @@ func (u *SimulateConfigUpsertOne) UpdateUnits() *SimulateConfigUpsertOne {
 func (u *SimulateConfigUpsertOne) ClearUnits() *SimulateConfigUpsertOne {
 	return u.Update(func(s *SimulateConfigUpsert) {
 		s.ClearUnits()
+	})
+}
+
+// SetDuration sets the "duration" field.
+func (u *SimulateConfigUpsertOne) SetDuration(v uint32) *SimulateConfigUpsertOne {
+	return u.Update(func(s *SimulateConfigUpsert) {
+		s.SetDuration(v)
+	})
+}
+
+// AddDuration adds v to the "duration" field.
+func (u *SimulateConfigUpsertOne) AddDuration(v uint32) *SimulateConfigUpsertOne {
+	return u.Update(func(s *SimulateConfigUpsert) {
+		s.AddDuration(v)
+	})
+}
+
+// UpdateDuration sets the "duration" field to the value that was provided on create.
+func (u *SimulateConfigUpsertOne) UpdateDuration() *SimulateConfigUpsertOne {
+	return u.Update(func(s *SimulateConfigUpsert) {
+		s.UpdateDuration()
+	})
+}
+
+// ClearDuration clears the value of the "duration" field.
+func (u *SimulateConfigUpsertOne) ClearDuration() *SimulateConfigUpsertOne {
+	return u.Update(func(s *SimulateConfigUpsert) {
+		s.ClearDuration()
 	})
 }
 
@@ -1149,6 +1227,34 @@ func (u *SimulateConfigUpsertBulk) UpdateUnits() *SimulateConfigUpsertBulk {
 func (u *SimulateConfigUpsertBulk) ClearUnits() *SimulateConfigUpsertBulk {
 	return u.Update(func(s *SimulateConfigUpsert) {
 		s.ClearUnits()
+	})
+}
+
+// SetDuration sets the "duration" field.
+func (u *SimulateConfigUpsertBulk) SetDuration(v uint32) *SimulateConfigUpsertBulk {
+	return u.Update(func(s *SimulateConfigUpsert) {
+		s.SetDuration(v)
+	})
+}
+
+// AddDuration adds v to the "duration" field.
+func (u *SimulateConfigUpsertBulk) AddDuration(v uint32) *SimulateConfigUpsertBulk {
+	return u.Update(func(s *SimulateConfigUpsert) {
+		s.AddDuration(v)
+	})
+}
+
+// UpdateDuration sets the "duration" field to the value that was provided on create.
+func (u *SimulateConfigUpsertBulk) UpdateDuration() *SimulateConfigUpsertBulk {
+	return u.Update(func(s *SimulateConfigUpsert) {
+		s.UpdateDuration()
+	})
+}
+
+// ClearDuration clears the value of the "duration" field.
+func (u *SimulateConfigUpsertBulk) ClearDuration() *SimulateConfigUpsertBulk {
+	return u.Update(func(s *SimulateConfigUpsert) {
+		s.ClearDuration()
 	})
 }
 

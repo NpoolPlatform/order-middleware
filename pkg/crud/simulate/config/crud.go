@@ -15,6 +15,7 @@ type Req struct {
 	EntID                 *uuid.UUID
 	AppID                 *uuid.UUID
 	Units                 *decimal.Decimal
+	Duration              *uint32
 	SendCouponMode        *basetypes.SendCouponMode
 	SendCouponProbability *decimal.Decimal
 	Enabled               *bool
@@ -31,6 +32,9 @@ func CreateSet(c *ent.SimulateConfigCreate, req *Req) *ent.SimulateConfigCreate 
 	}
 	if req.Units != nil {
 		c.SetUnits(*req.Units)
+	}
+	if req.Duration != nil {
+		c.SetDuration(*req.Duration)
 	}
 	if req.SendCouponMode != nil {
 		c.SetSendCouponMode(req.SendCouponMode.String())
@@ -50,6 +54,9 @@ func CreateSet(c *ent.SimulateConfigCreate, req *Req) *ent.SimulateConfigCreate 
 func UpdateSet(u *ent.SimulateConfigUpdateOne, req *Req) *ent.SimulateConfigUpdateOne {
 	if req.Units != nil {
 		u.SetUnits(*req.Units)
+	}
+	if req.Duration != nil {
+		u.SetDuration(*req.Duration)
 	}
 	if req.SendCouponMode != nil {
 		u.SetSendCouponMode(req.SendCouponMode.String())

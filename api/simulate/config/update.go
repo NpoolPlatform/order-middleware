@@ -25,6 +25,7 @@ func (s *Server) UpdateSimulateConfig(ctx context.Context, in *npool.UpdateSimul
 		ctx,
 		config1.WithID(req.ID, true),
 		config1.WithUnits(req.Units, false),
+		config1.WithDuration(req.Duration, false),
 		config1.WithSendCouponMode(req.SendCouponMode, false),
 		config1.WithSendCouponProbability(req.SendCouponProbability, false),
 		config1.WithEnabled(req.Enabled, false),

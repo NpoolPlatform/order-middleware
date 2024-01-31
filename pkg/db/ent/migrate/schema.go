@@ -71,6 +71,7 @@ var (
 		{Name: "coin_usd_currency", Type: field.TypeOther, Nullable: true, SchemaType: map[string]string{"mysql": "decimal(37, 18)"}},
 		{Name: "local_coin_usd_currency", Type: field.TypeOther, Nullable: true, SchemaType: map[string]string{"mysql": "decimal(37, 18)"}},
 		{Name: "live_coin_usd_currency", Type: field.TypeOther, Nullable: true, SchemaType: map[string]string{"mysql": "decimal(37, 18)"}},
+		{Name: "simulate", Type: field.TypeBool, Nullable: true, Default: false},
 	}
 	// OrdersTable holds the schema information for the "orders" table.
 	OrdersTable = &schema.Table{
@@ -230,6 +231,7 @@ var (
 		{Name: "ent_id", Type: field.TypeUUID, Unique: true},
 		{Name: "app_id", Type: field.TypeUUID},
 		{Name: "units", Type: field.TypeOther, Nullable: true, SchemaType: map[string]string{"mysql": "decimal(37,18)"}},
+		{Name: "duration", Type: field.TypeUint32, Nullable: true, Default: 0},
 		{Name: "send_coupon_mode", Type: field.TypeString, Nullable: true, Default: "WithoutCoupon"},
 		{Name: "send_coupon_probability", Type: field.TypeOther, Nullable: true, SchemaType: map[string]string{"mysql": "decimal(37,18)"}},
 		{Name: "enabled", Type: field.TypeBool, Nullable: true, Default: false},
