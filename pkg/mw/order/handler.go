@@ -1454,6 +1454,9 @@ func WithReqs(reqs []*npool.OrderReq, must bool) func(context.Context, *Handler)
 				}
 				_req.CouponIDs = _ids
 			}
+			if req.Simulate != nil {
+				_req.Simulate = req.Simulate
+			}
 			if req.OrderState != nil {
 				switch *req.OrderState {
 				case basetypes.OrderState_OrderStateCreated:

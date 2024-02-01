@@ -301,6 +301,10 @@ func (h *Handler) CreateOrders(ctx context.Context) ([]*npool.Order, error) {
 			if req.PaymentReq == nil {
 				continue
 			}
+			if req.Simulate != nil && *req.Simulate {
+				fmt.Println("*req.Simulate: ", *req.Simulate)
+				continue
+			}
 			req.PaymentReq.OrderID = req.Req.EntID
 			req.PaymentReq.EntID = req.Req.PaymentID
 			if err := handler.createPayment(ctx, tx, req.PaymentReq); err != nil {
