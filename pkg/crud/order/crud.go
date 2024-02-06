@@ -7,6 +7,7 @@ import (
 	"entgo.io/ent/dialect/sql/sqljson"
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
 	basetypes "github.com/NpoolPlatform/message/npool/basetypes/order/v1"
+	npool "github.com/NpoolPlatform/message/npool/order/mw/v1/order"
 	orderstatecrud "github.com/NpoolPlatform/order-middleware/pkg/crud/orderstate"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent"
 	entorder "github.com/NpoolPlatform/order-middleware/pkg/db/ent/order"
@@ -41,6 +42,9 @@ type Req struct {
 	CoinUSDCurrency      *decimal.Decimal
 	LocalCoinUSDCurrency *decimal.Decimal
 	LiveCoinUSDCurrency  *decimal.Decimal
+	CreateMethod         *basetypes.OrderCreateMethod
+	MultiPaymentCoins    *bool
+	PaymentAmounts       []*npool.PaymentAmount
 	CreatedAt            *uint32
 	DeletedAt            *uint32
 }
@@ -124,6 +128,23 @@ func CreateSet(c *ent.OrderCreate, req *Req) *ent.OrderCreate {
 	if req.LiveCoinUSDCurrency != nil {
 		c.SetLiveCoinUsdCurrency(*req.LiveCoinUSDCurrency)
 	}
+	if req.CreateMethod != nil {
+		c.SetCreateMethod(req.CreateMethod.String())
+	}
+	if req.MultiPaymentCoins != nil {
+		c.SetMultiPaymentCoins(*req.MultiPaymentCoins)
+	}
+	if len(req.PaymentAmounts) > 0 {
+		amounts := []npool.PaymentAmount{}
+		for _, amount := range req.PaymentAmounts {
+			amounts = append(amounts, npool.PaymentAmount{
+				CoinTypeID:  amount.CoinTypeID,
+				USDCurrency: amount.USDCurrency,
+				Amount:      amount.Amount,
+			})
+		}
+		c.SetPaymentAmounts(amounts)
+	}
 	if req.CreatedAt != nil {
 		c.SetCreatedAt(*req.CreatedAt)
 	}
@@ -146,7 +167,9 @@ type Conds struct {
 	AppID             *cruder.Cond
 	UserID            *cruder.Cond
 	GoodID            *cruder.Cond
+	GoodIDs           *cruder.Cond
 	AppGoodID         *cruder.Cond
+	AppGoodIDs        *cruder.Cond
 	ParentOrderID     *cruder.Cond
 	PaymentAmount     *cruder.Cond
 	OrderType         *cruder.Cond
@@ -247,6 +270,20 @@ func SetQueryConds(q *ent.OrderQuery, conds *Conds) (*ent.OrderQuery, error) {
 			return nil, fmt.Errorf("invalid order field")
 		}
 	}
+	if conds.GoodIDs != nil {
+		ids, ok := conds.GoodIDs.Val.([]uuid.UUID)
+		if !ok {
+			return nil, fmt.Errorf("invalid goodids")
+		}
+		if len(ids) > 0 {
+			switch conds.GoodIDs.Op {
+			case cruder.IN:
+				q.Where(entorder.GoodIDIn(ids...))
+			default:
+				return nil, fmt.Errorf("invalid order field")
+			}
+		}
+	}
 	if conds.AppGoodID != nil {
 		id, ok := conds.AppGoodID.Val.(uuid.UUID)
 		if !ok {
@@ -257,6 +294,20 @@ func SetQueryConds(q *ent.OrderQuery, conds *Conds) (*ent.OrderQuery, error) {
 			q.Where(entorder.AppGoodID(id))
 		default:
 			return nil, fmt.Errorf("invalid order field")
+		}
+	}
+	if conds.AppGoodIDs != nil {
+		ids, ok := conds.AppGoodIDs.Val.([]uuid.UUID)
+		if !ok {
+			return nil, fmt.Errorf("invalid appgoodids")
+		}
+		if len(ids) > 0 {
+			switch conds.AppGoodIDs.Op {
+			case cruder.IN:
+				q.Where(entorder.AppGoodIDIn(ids...))
+			default:
+				return nil, fmt.Errorf("invalid order field")
+			}
 		}
 	}
 	if conds.ParentOrderID != nil {

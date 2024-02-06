@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"time"
 
-	basetypes "github.com/NpoolPlatform/message/npool/basetypes/order/v1"
+	types "github.com/NpoolPlatform/message/npool/basetypes/order/v1"
 	npool "github.com/NpoolPlatform/message/npool/order/mw/v1/order"
 	constant "github.com/NpoolPlatform/order-middleware/pkg/const"
 	ordercrud "github.com/NpoolPlatform/order-middleware/pkg/crud/order"
@@ -35,10 +35,10 @@ type Handler struct {
 	DiscountAmount       *decimal.Decimal
 	PromotionID          *uuid.UUID
 	Duration             *uint32
-	OrderType            *basetypes.OrderType
-	InvestmentType       *basetypes.InvestmentType
+	OrderType            *types.OrderType
+	InvestmentType       *types.InvestmentType
 	CouponIDs            []uuid.UUID
-	PaymentType          *basetypes.PaymentType
+	PaymentType          *types.PaymentType
 	CoinTypeID           *uuid.UUID
 	PaymentCoinTypeID    *uuid.UUID
 	TransferAmount       *decimal.Decimal
@@ -48,23 +48,28 @@ type Handler struct {
 	LiveCoinUSDCurrency  *decimal.Decimal
 	PaymentAccountID     *uuid.UUID
 	PaymentStartAmount   *decimal.Decimal
-	OrderState           *basetypes.OrderState
-	StartMode            *basetypes.OrderStartMode
+	OrderState           *types.OrderState
+	StartMode            *types.OrderStartMode
 	StartAt              *uint32
 	EndAt                *uint32
 	LastBenefitAt        *uint32
-	BenefitState         *basetypes.BenefitState
+	BenefitState         *types.BenefitState
 	UserSetPaid          *bool
 	UserSetCanceled      *bool
 	AdminSetCanceled     *bool
 	PaymentTransactionID *string
 	PaymentFinishAmount  *decimal.Decimal
-	PaymentState         *basetypes.PaymentState
+	PaymentState         *types.PaymentState
 	OutOfGasHours        *uint32
 	CompensateHours      *uint32
 	AppGoodStockLockID   *uuid.UUID
 	LedgerLockID         *uuid.UUID
 	Rollback             *bool
+	RenewState           *types.OrderRenewState
+	RenewNotifyAt        *uint32
+	CreateMethod         *types.OrderCreateMethod
+	MultiPaymentCoins    *bool
+	PaymentAmounts       []*npool.PaymentAmount
 	Reqs                 []*OrderReq
 	Conds                *ordercrud.Conds
 	Offset               int32
@@ -336,7 +341,7 @@ func WithDuration(duration *uint32, must bool) func(context.Context, *Handler) e
 	}
 }
 
-func WithOrderType(orderType *basetypes.OrderType, must bool) func(context.Context, *Handler) error {
+func WithOrderType(orderType *types.OrderType, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if orderType == nil {
 			if must {
@@ -345,9 +350,9 @@ func WithOrderType(orderType *basetypes.OrderType, must bool) func(context.Conte
 			return nil
 		}
 		switch *orderType {
-		case basetypes.OrderType_Airdrop:
-		case basetypes.OrderType_Offline:
-		case basetypes.OrderType_Normal:
+		case types.OrderType_Airdrop:
+		case types.OrderType_Offline:
+		case types.OrderType_Normal:
 		default:
 			return fmt.Errorf("invalid ordertype")
 		}
@@ -356,7 +361,7 @@ func WithOrderType(orderType *basetypes.OrderType, must bool) func(context.Conte
 	}
 }
 
-func WithInvestmentType(_type *basetypes.InvestmentType, must bool) func(context.Context, *Handler) error {
+func WithInvestmentType(_type *types.InvestmentType, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if _type == nil {
 			if must {
@@ -365,8 +370,8 @@ func WithInvestmentType(_type *basetypes.InvestmentType, must bool) func(context
 			return nil
 		}
 		switch *_type {
-		case basetypes.InvestmentType_FullPayment:
-		case basetypes.InvestmentType_UnionMining:
+		case types.InvestmentType_FullPayment:
+		case types.InvestmentType_UnionMining:
 		default:
 			return fmt.Errorf("invalid investmenttype")
 		}
@@ -401,7 +406,7 @@ func WithCouponIDs(ids []string, must bool) func(context.Context, *Handler) erro
 	}
 }
 
-func WithPaymentType(paymentType *basetypes.PaymentType, must bool) func(context.Context, *Handler) error {
+func WithPaymentType(paymentType *types.PaymentType, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if paymentType == nil {
 			if must {
@@ -410,12 +415,12 @@ func WithPaymentType(paymentType *basetypes.PaymentType, must bool) func(context
 			return nil
 		}
 		switch *paymentType {
-		case basetypes.PaymentType_PayWithBalanceOnly:
-		case basetypes.PaymentType_PayWithTransferOnly:
-		case basetypes.PaymentType_PayWithTransferAndBalance:
-		case basetypes.PaymentType_PayWithParentOrder:
-		case basetypes.PaymentType_PayWithOffline:
-		case basetypes.PaymentType_PayWithNoPayment:
+		case types.PaymentType_PayWithBalanceOnly:
+		case types.PaymentType_PayWithTransferOnly:
+		case types.PaymentType_PayWithTransferAndBalance:
+		case types.PaymentType_PayWithParentOrder:
+		case types.PaymentType_PayWithOffline:
+		case types.PaymentType_PayWithNoPayment:
 		default:
 			return fmt.Errorf("invalid paymentType")
 		}
@@ -601,7 +606,7 @@ func WithLiveCoinUSDCurrency(value *string, must bool) func(context.Context, *Ha
 }
 
 //nolint:gocyclo
-func WithOrderState(state *basetypes.OrderState, must bool) func(context.Context, *Handler) error {
+func WithOrderState(state *types.OrderState, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if state == nil {
 			if must {
@@ -610,38 +615,38 @@ func WithOrderState(state *basetypes.OrderState, must bool) func(context.Context
 			return nil
 		}
 		switch *state {
-		case basetypes.OrderState_OrderStateCreated:
-		case basetypes.OrderState_OrderStateWaitPayment:
-		case basetypes.OrderState_OrderStatePaymentTransferReceived:
-		case basetypes.OrderState_OrderStatePaymentTransferBookKeeping:
-		case basetypes.OrderState_OrderStatePaymentSpendBalance:
-		case basetypes.OrderState_OrderStateTransferGoodStockLocked:
-		case basetypes.OrderState_OrderStateAddCommission:
-		case basetypes.OrderState_OrderStateAchievementBookKeeping:
-		case basetypes.OrderState_OrderStateUpdatePaidChilds:
-		case basetypes.OrderState_OrderStateChildPaidByParent:
-		case basetypes.OrderState_OrderStatePaymentUnlockAccount:
-		case basetypes.OrderState_OrderStatePaid:
-		case basetypes.OrderState_OrderStateTransferGoodStockWaitStart:
-		case basetypes.OrderState_OrderStateUpdateInServiceChilds:
-		case basetypes.OrderState_OrderStateChildInServiceByParent:
-		case basetypes.OrderState_OrderStateInService:
-		case basetypes.OrderState_OrderStatePaymentTimeout:
-		case basetypes.OrderState_OrderStatePreCancel:
-		case basetypes.OrderState_OrderStatePreExpired:
-		case basetypes.OrderState_OrderStateRestoreExpiredStock:
-		case basetypes.OrderState_OrderStateUpdateExpiredChilds:
-		case basetypes.OrderState_OrderStateChildExpiredByParent:
-		case basetypes.OrderState_OrderStateRestoreCanceledStock:
-		case basetypes.OrderState_OrderStateCancelAchievement:
-		case basetypes.OrderState_OrderStateDeductLockedCommission:
-		case basetypes.OrderState_OrderStateReturnCanceledBalance:
-		case basetypes.OrderState_OrderStateUpdateCanceledChilds:
-		case basetypes.OrderState_OrderStateChildCanceledByParent:
-		case basetypes.OrderState_OrderStateCanceledTransferBookKeeping:
-		case basetypes.OrderState_OrderStateCancelUnlockPaymentAccount:
-		case basetypes.OrderState_OrderStateCanceled:
-		case basetypes.OrderState_OrderStateExpired:
+		case types.OrderState_OrderStateCreated:
+		case types.OrderState_OrderStateWaitPayment:
+		case types.OrderState_OrderStatePaymentTransferReceived:
+		case types.OrderState_OrderStatePaymentTransferBookKeeping:
+		case types.OrderState_OrderStatePaymentSpendBalance:
+		case types.OrderState_OrderStateTransferGoodStockLocked:
+		case types.OrderState_OrderStateAddCommission:
+		case types.OrderState_OrderStateAchievementBookKeeping:
+		case types.OrderState_OrderStateUpdatePaidChilds:
+		case types.OrderState_OrderStateChildPaidByParent:
+		case types.OrderState_OrderStatePaymentUnlockAccount:
+		case types.OrderState_OrderStatePaid:
+		case types.OrderState_OrderStateTransferGoodStockWaitStart:
+		case types.OrderState_OrderStateUpdateInServiceChilds:
+		case types.OrderState_OrderStateChildInServiceByParent:
+		case types.OrderState_OrderStateInService:
+		case types.OrderState_OrderStatePaymentTimeout:
+		case types.OrderState_OrderStatePreCancel:
+		case types.OrderState_OrderStatePreExpired:
+		case types.OrderState_OrderStateRestoreExpiredStock:
+		case types.OrderState_OrderStateUpdateExpiredChilds:
+		case types.OrderState_OrderStateChildExpiredByParent:
+		case types.OrderState_OrderStateRestoreCanceledStock:
+		case types.OrderState_OrderStateCancelAchievement:
+		case types.OrderState_OrderStateDeductLockedCommission:
+		case types.OrderState_OrderStateReturnCanceledBalance:
+		case types.OrderState_OrderStateUpdateCanceledChilds:
+		case types.OrderState_OrderStateChildCanceledByParent:
+		case types.OrderState_OrderStateCanceledTransferBookKeeping:
+		case types.OrderState_OrderStateCancelUnlockPaymentAccount:
+		case types.OrderState_OrderStateCanceled:
+		case types.OrderState_OrderStateExpired:
 		default:
 			return fmt.Errorf("invalid orderstate")
 		}
@@ -650,7 +655,7 @@ func WithOrderState(state *basetypes.OrderState, must bool) func(context.Context
 	}
 }
 
-func WithStartMode(startMode *basetypes.OrderStartMode, must bool) func(context.Context, *Handler) error {
+func WithStartMode(startMode *types.OrderStartMode, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if startMode == nil {
 			if must {
@@ -659,11 +664,11 @@ func WithStartMode(startMode *basetypes.OrderStartMode, must bool) func(context.
 			return nil
 		}
 		switch *startMode {
-		case basetypes.OrderStartMode_OrderStartConfirmed:
-		case basetypes.OrderStartMode_OrderStartTBD:
-		case basetypes.OrderStartMode_OrderStartInstantly:
-		case basetypes.OrderStartMode_OrderStartNextDay:
-		case basetypes.OrderStartMode_OrderStartPreset:
+		case types.OrderStartMode_OrderStartConfirmed:
+		case types.OrderStartMode_OrderStartTBD:
+		case types.OrderStartMode_OrderStartInstantly:
+		case types.OrderStartMode_OrderStartNextDay:
+		case types.OrderStartMode_OrderStartPreset:
 		default:
 			return fmt.Errorf("invalid startmode")
 		}
@@ -715,7 +720,7 @@ func WithLastBenefitAt(lastBenefitAt *uint32, must bool) func(context.Context, *
 	}
 }
 
-func WithBenefitState(benefitState *basetypes.BenefitState, must bool) func(context.Context, *Handler) error {
+func WithBenefitState(benefitState *types.BenefitState, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if benefitState == nil {
 			if must {
@@ -724,9 +729,9 @@ func WithBenefitState(benefitState *basetypes.BenefitState, must bool) func(cont
 			return nil
 		}
 		switch *benefitState {
-		case basetypes.BenefitState_BenefitWait:
-		case basetypes.BenefitState_BenefitCalculated:
-		case basetypes.BenefitState_BenefitBookKept:
+		case types.BenefitState_BenefitWait:
+		case types.BenefitState_BenefitCalculated:
+		case types.BenefitState_BenefitBookKept:
 		default:
 			return fmt.Errorf("invalid benefitstate")
 		}
@@ -807,7 +812,7 @@ func WithPaymentFinishAmount(value *string, must bool) func(context.Context, *Ha
 	}
 }
 
-func WithPaymentState(state *basetypes.PaymentState, must bool) func(context.Context, *Handler) error {
+func WithPaymentState(state *types.PaymentState, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if state == nil {
 			if must {
@@ -816,11 +821,11 @@ func WithPaymentState(state *basetypes.PaymentState, must bool) func(context.Con
 			return nil
 		}
 		switch *state {
-		case basetypes.PaymentState_PaymentStateWait:
-		case basetypes.PaymentState_PaymentStateCanceled:
-		case basetypes.PaymentState_PaymentStateTimeout:
-		case basetypes.PaymentState_PaymentStateDone:
-		case basetypes.PaymentState_PaymentStateNoPayment:
+		case types.PaymentState_PaymentStateWait:
+		case types.PaymentState_PaymentStateCanceled:
+		case types.PaymentState_PaymentStateTimeout:
+		case types.PaymentState_PaymentStateDone:
+		case types.PaymentState_PaymentStateNoPayment:
 		default:
 			return fmt.Errorf("invalid paymentstate")
 		}
@@ -902,6 +907,85 @@ func WithRollback(rollback *bool, must bool) func(context.Context, *Handler) err
 	}
 }
 
+func WithRenewState(e *types.OrderRenewState, must bool) func(context.Context, *Handler) error {
+	return func(ctx context.Context, h *Handler) error {
+		if e == nil {
+			if must {
+				return fmt.Errorf("invalid renewstate")
+			}
+			return nil
+		}
+		switch *e {
+		case types.OrderRenewState_OrderRenewWait:
+		case types.OrderRenewState_OrderRenewCheck:
+		case types.OrderRenewState_OrderRenewNotify:
+		case types.OrderRenewState_OrderRenewExecute:
+		case types.OrderRenewState_OrderRenewFail:
+		default:
+			return fmt.Errorf("invalid renewstate")
+		}
+		h.RenewState = e
+		return nil
+	}
+}
+
+func WithCreateMethod(e *types.OrderCreateMethod, must bool) func(context.Context, *Handler) error {
+	return func(ctx context.Context, h *Handler) error {
+		if e == nil {
+			if must {
+				return fmt.Errorf("invalid createmethod")
+			}
+			return nil
+		}
+		switch *e {
+		case types.OrderCreateMethod_OrderCreatedByPurchase:
+		case types.OrderCreateMethod_OrderCreatedByAdmin:
+		case types.OrderCreateMethod_OrderCreatedByRenew:
+		default:
+			return fmt.Errorf("invalid createmethod")
+		}
+		h.CreateMethod = e
+		return nil
+	}
+}
+
+func WithRenewNotifyAt(n *uint32, must bool) func(context.Context, *Handler) error {
+	return func(ctx context.Context, h *Handler) error {
+		h.RenewNotifyAt = n
+		return nil
+	}
+}
+
+func WithMultiPaymentCoins(b *bool, must bool) func(context.Context, *Handler) error {
+	return func(ctx context.Context, h *Handler) error {
+		h.MultiPaymentCoins = b
+		return nil
+	}
+}
+
+func WithPaymentAmounts(amounts []*npool.PaymentAmount, must bool) func(context.Context, *Handler) error {
+	return func(ctx context.Context, h *Handler) error {
+		for _, amount := range amounts {
+			_amount, err := decimal.NewFromString(amount.USDCurrency)
+			if err != nil {
+				return err
+			}
+			if _amount.Cmp(decimal.NewFromInt(0)) <= 0 {
+				return fmt.Errorf("invalid coincurrency")
+			}
+			_amount, err = decimal.NewFromString(amount.Amount)
+			if err != nil {
+				return err
+			}
+			if _amount.Cmp(decimal.NewFromInt(0)) <= 0 {
+				return fmt.Errorf("invalid paymentamount")
+			}
+		}
+		h.PaymentAmounts = amounts
+		return nil
+	}
+}
+
 //nolint:funlen,gocyclo
 func WithConds(conds *npool.Conds) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
@@ -958,12 +1042,34 @@ func WithConds(conds *npool.Conds) func(context.Context, *Handler) error {
 			}
 			h.Conds.GoodID = &cruder.Cond{Op: conds.GetGoodID().GetOp(), Val: id}
 		}
+		if conds.GoodIDs != nil {
+			ids := []uuid.UUID{}
+			for _, id := range conds.GetGoodIDs().GetValue() {
+				_id, err := uuid.Parse(id)
+				if err != nil {
+					return err
+				}
+				ids = append(ids, _id)
+			}
+			h.Conds.GoodIDs = &cruder.Cond{Op: conds.GetGoodIDs().GetOp(), Val: ids}
+		}
 		if conds.AppGoodID != nil {
 			id, err := uuid.Parse(conds.GetAppGoodID().GetValue())
 			if err != nil {
 				return err
 			}
 			h.Conds.AppGoodID = &cruder.Cond{Op: conds.GetAppGoodID().GetOp(), Val: id}
+		}
+		if conds.AppGoodIDs != nil {
+			ids := []uuid.UUID{}
+			for _, id := range conds.GetAppGoodIDs().GetValue() {
+				_id, err := uuid.Parse(id)
+				if err != nil {
+					return err
+				}
+				ids = append(ids, _id)
+			}
+			h.Conds.AppGoodIDs = &cruder.Cond{Op: conds.GetAppGoodIDs().GetOp(), Val: ids}
 		}
 		if conds.ParentOrderID != nil {
 			id, err := uuid.Parse(conds.GetParentOrderID().GetValue())
@@ -981,24 +1087,24 @@ func WithConds(conds *npool.Conds) func(context.Context, *Handler) error {
 		}
 		if conds.OrderType != nil {
 			switch conds.GetOrderType().GetValue() {
-			case uint32(basetypes.OrderType_Airdrop):
-			case uint32(basetypes.OrderType_Normal):
-			case uint32(basetypes.OrderType_Offline):
+			case uint32(types.OrderType_Airdrop):
+			case uint32(types.OrderType_Normal):
+			case uint32(types.OrderType_Offline):
 			default:
 				return fmt.Errorf("invalid ordertype")
 			}
 			_type := conds.GetOrderType().GetValue()
-			h.Conds.OrderType = &cruder.Cond{Op: conds.GetOrderType().GetOp(), Val: basetypes.OrderType(_type)}
+			h.Conds.OrderType = &cruder.Cond{Op: conds.GetOrderType().GetOp(), Val: types.OrderType(_type)}
 		}
 		if conds.InvestmentType != nil {
 			switch conds.GetInvestmentType().GetValue() {
-			case uint32(basetypes.InvestmentType_FullPayment):
-			case uint32(basetypes.InvestmentType_UnionMining):
+			case uint32(types.InvestmentType_FullPayment):
+			case uint32(types.InvestmentType_UnionMining):
 			default:
 				return fmt.Errorf("invalid investmenttype")
 			}
 			_type := conds.GetInvestmentType().GetValue()
-			h.Conds.InvestmentType = &cruder.Cond{Op: conds.GetInvestmentType().GetOp(), Val: basetypes.InvestmentType(_type)}
+			h.Conds.InvestmentType = &cruder.Cond{Op: conds.GetInvestmentType().GetOp(), Val: types.InvestmentType(_type)}
 		}
 		if conds.CouponIDs != nil {
 			ids := []uuid.UUID{}
@@ -1013,32 +1119,32 @@ func WithConds(conds *npool.Conds) func(context.Context, *Handler) error {
 		}
 		if conds.PaymentType != nil {
 			switch conds.GetPaymentType().GetValue() {
-			case uint32(basetypes.PaymentType_PayWithBalanceOnly):
-			case uint32(basetypes.PaymentType_PayWithTransferOnly):
-			case uint32(basetypes.PaymentType_PayWithTransferAndBalance):
-			case uint32(basetypes.PaymentType_PayWithParentOrder):
-			case uint32(basetypes.PaymentType_PayWithOffline):
-			case uint32(basetypes.PaymentType_PayWithNoPayment):
+			case uint32(types.PaymentType_PayWithBalanceOnly):
+			case uint32(types.PaymentType_PayWithTransferOnly):
+			case uint32(types.PaymentType_PayWithTransferAndBalance):
+			case uint32(types.PaymentType_PayWithParentOrder):
+			case uint32(types.PaymentType_PayWithOffline):
+			case uint32(types.PaymentType_PayWithNoPayment):
 			default:
 				return fmt.Errorf("invalid paymenttype")
 			}
 			_type := conds.GetPaymentType().GetValue()
-			h.Conds.PaymentType = &cruder.Cond{Op: conds.GetPaymentType().GetOp(), Val: basetypes.PaymentType(_type)}
+			h.Conds.PaymentType = &cruder.Cond{Op: conds.GetPaymentType().GetOp(), Val: types.PaymentType(_type)}
 		}
 		if conds.PaymentTypes != nil {
-			_types := []basetypes.PaymentType{}
+			_types := []types.PaymentType{}
 			for _, _type := range conds.GetPaymentTypes().GetValue() {
 				switch _type {
-				case uint32(basetypes.PaymentType_PayWithBalanceOnly):
-				case uint32(basetypes.PaymentType_PayWithTransferOnly):
-				case uint32(basetypes.PaymentType_PayWithTransferAndBalance):
-				case uint32(basetypes.PaymentType_PayWithParentOrder):
-				case uint32(basetypes.PaymentType_PayWithOffline):
-				case uint32(basetypes.PaymentType_PayWithNoPayment):
+				case uint32(types.PaymentType_PayWithBalanceOnly):
+				case uint32(types.PaymentType_PayWithTransferOnly):
+				case uint32(types.PaymentType_PayWithTransferAndBalance):
+				case uint32(types.PaymentType_PayWithParentOrder):
+				case uint32(types.PaymentType_PayWithOffline):
+				case uint32(types.PaymentType_PayWithNoPayment):
 				default:
 					return fmt.Errorf("invalid paymenttype")
 				}
-				_types = append(_types, basetypes.PaymentType(_type))
+				_types = append(_types, types.PaymentType(_type))
 			}
 			h.Conds.PaymentTypes = &cruder.Cond{Op: conds.GetPaymentTypes().GetOp(), Val: _types}
 		}
@@ -1058,20 +1164,20 @@ func WithConds(conds *npool.Conds) func(context.Context, *Handler) error {
 		}
 		if conds.OrderState != nil {
 			_state := conds.GetOrderState().GetValue()
-			h.Conds.OrderState = &cruder.Cond{Op: conds.GetOrderState().GetOp(), Val: basetypes.OrderState(_state)}
+			h.Conds.OrderState = &cruder.Cond{Op: conds.GetOrderState().GetOp(), Val: types.OrderState(_state)}
 		}
 		if conds.StartMode != nil {
 			switch conds.GetStartMode().GetValue() {
-			case uint32(basetypes.OrderStartMode_OrderStartConfirmed):
-			case uint32(basetypes.OrderStartMode_OrderStartTBD):
-			case uint32(basetypes.OrderStartMode_OrderStartInstantly):
-			case uint32(basetypes.OrderStartMode_OrderStartNextDay):
-			case uint32(basetypes.OrderStartMode_OrderStartPreset):
+			case uint32(types.OrderStartMode_OrderStartConfirmed):
+			case uint32(types.OrderStartMode_OrderStartTBD):
+			case uint32(types.OrderStartMode_OrderStartInstantly):
+			case uint32(types.OrderStartMode_OrderStartNextDay):
+			case uint32(types.OrderStartMode_OrderStartPreset):
 			default:
 				return fmt.Errorf("invalid startmode")
 			}
 			_state := conds.GetStartMode().GetValue()
-			h.Conds.StartMode = &cruder.Cond{Op: conds.GetStartMode().GetOp(), Val: basetypes.OrderStartMode(_state)}
+			h.Conds.StartMode = &cruder.Cond{Op: conds.GetStartMode().GetOp(), Val: types.OrderStartMode(_state)}
 		}
 		if conds.LastBenefitAt != nil {
 			h.Conds.LastBenefitAt = &cruder.Cond{Op: conds.GetLastBenefitAt().GetOp(), Val: conds.GetLastBenefitAt().GetValue()}
@@ -1079,16 +1185,16 @@ func WithConds(conds *npool.Conds) func(context.Context, *Handler) error {
 
 		if conds.BenefitState != nil {
 			switch conds.GetBenefitState().GetValue() {
-			case uint32(basetypes.BenefitState_BenefitWait):
-			case uint32(basetypes.BenefitState_BenefitCalculated):
-			case uint32(basetypes.BenefitState_BenefitBookKept):
+			case uint32(types.BenefitState_BenefitWait):
+			case uint32(types.BenefitState_BenefitCalculated):
+			case uint32(types.BenefitState_BenefitBookKept):
 			default:
 				return fmt.Errorf("invalid benefitstate")
 			}
 			_state := conds.GetBenefitState().GetValue()
 			h.Conds.BenefitState = &cruder.Cond{
 				Op:  conds.GetBenefitState().GetOp(),
-				Val: basetypes.BenefitState(_state),
+				Val: types.BenefitState(_state),
 			}
 		}
 		if conds.PaymentTransactionID != nil {
@@ -1124,16 +1230,16 @@ func WithConds(conds *npool.Conds) func(context.Context, *Handler) error {
 
 		if conds.PaymentState != nil {
 			switch conds.GetPaymentState().GetValue() {
-			case uint32(basetypes.PaymentState_PaymentStateWait):
-			case uint32(basetypes.PaymentState_PaymentStateCanceled):
-			case uint32(basetypes.PaymentState_PaymentStateTimeout):
-			case uint32(basetypes.PaymentState_PaymentStateDone):
-			case uint32(basetypes.PaymentState_PaymentStateNoPayment):
+			case uint32(types.PaymentState_PaymentStateWait):
+			case uint32(types.PaymentState_PaymentStateCanceled):
+			case uint32(types.PaymentState_PaymentStateTimeout):
+			case uint32(types.PaymentState_PaymentStateDone):
+			case uint32(types.PaymentState_PaymentStateNoPayment):
 			default:
 				return fmt.Errorf("invalid paymentstate")
 			}
 			_state := conds.GetPaymentState().GetValue()
-			h.Conds.PaymentState = &cruder.Cond{Op: conds.GetPaymentState().GetOp(), Val: basetypes.PaymentState(_state)}
+			h.Conds.PaymentState = &cruder.Cond{Op: conds.GetPaymentState().GetOp(), Val: types.PaymentState(_state)}
 		}
 		if conds.CouponID != nil {
 			id, err := uuid.Parse(conds.GetCouponID().GetValue())
@@ -1145,7 +1251,7 @@ func WithConds(conds *npool.Conds) func(context.Context, *Handler) error {
 		if conds.OrderStates != nil {
 			states := []string{}
 			for _, state := range conds.GetOrderStates().GetValue() {
-				_state := basetypes.OrderState(state)
+				_state := types.OrderState(state)
 				states = append(states, _state.String())
 			}
 			if len(states) > 0 {
@@ -1162,6 +1268,18 @@ func WithConds(conds *npool.Conds) func(context.Context, *Handler) error {
 				ids = append(ids, _id)
 			}
 			h.Conds.ParentOrderIDs = &cruder.Cond{Op: conds.GetParentOrderIDs().GetOp(), Val: ids}
+		}
+		if conds.RenewState != nil {
+			h.Conds.RenewState = &cruder.Cond{
+				Op:  conds.GetRenewState().GetOp(),
+				Val: types.OrderRenewState(conds.GetRenewState().GetValue()),
+			}
+		}
+		if conds.RenewNotifyAt != nil {
+			h.Conds.RenewNotifyAt = &cruder.Cond{
+				Op:  conds.GetRenewNotifyAt().GetOp(),
+				Val: conds.GetRenewNotifyAt().GetValue(),
+			}
 		}
 		return nil
 	}
@@ -1190,7 +1308,10 @@ func WithReqs(reqs []*npool.OrderReq, must bool) func(context.Context, *Handler)
 		_reqs := []*OrderReq{}
 		for _, req := range reqs {
 			_req := &OrderReq{
-				Req:           &ordercrud.Req{},
+				Req: &ordercrud.Req{
+					MultiPaymentCoins: req.MultiPaymentCoins,
+					PaymentAmounts:    req.PaymentAmounts,
+				},
 				OrderStateReq: &orderstatecrud.Req{},
 			}
 			if must {
@@ -1348,9 +1469,9 @@ func WithReqs(reqs []*npool.OrderReq, must bool) func(context.Context, *Handler)
 			}
 			if req.OrderType != nil {
 				switch *req.OrderType {
-				case basetypes.OrderType_Airdrop:
-				case basetypes.OrderType_Offline:
-				case basetypes.OrderType_Normal:
+				case types.OrderType_Airdrop:
+				case types.OrderType_Offline:
+				case types.OrderType_Normal:
 				default:
 					return fmt.Errorf("invalid ordertype")
 				}
@@ -1422,8 +1543,8 @@ func WithReqs(reqs []*npool.OrderReq, must bool) func(context.Context, *Handler)
 			}
 			if req.InvestmentType != nil {
 				switch *req.InvestmentType {
-				case basetypes.InvestmentType_FullPayment:
-				case basetypes.InvestmentType_UnionMining:
+				case types.InvestmentType_FullPayment:
+				case types.InvestmentType_UnionMining:
 				default:
 					return fmt.Errorf("invalid investmenttype")
 				}
@@ -1440,40 +1561,50 @@ func WithReqs(reqs []*npool.OrderReq, must bool) func(context.Context, *Handler)
 				}
 				_req.CouponIDs = _ids
 			}
+			if req.CreateMethod != nil {
+				switch *req.CreateMethod {
+				case types.OrderCreateMethod_OrderCreatedByPurchase:
+				case types.OrderCreateMethod_OrderCreatedByAdmin:
+				case types.OrderCreateMethod_OrderCreatedByRenew:
+				default:
+					return fmt.Errorf("invalid createmethod")
+				}
+				_req.CreateMethod = req.CreateMethod
+			}
 			if req.OrderState != nil {
 				switch *req.OrderState {
-				case basetypes.OrderState_OrderStateCreated:
-				case basetypes.OrderState_OrderStateWaitPayment:
-				case basetypes.OrderState_OrderStatePaymentTransferReceived:
-				case basetypes.OrderState_OrderStatePaymentTransferBookKeeping:
-				case basetypes.OrderState_OrderStatePaymentSpendBalance:
-				case basetypes.OrderState_OrderStateTransferGoodStockLocked:
-				case basetypes.OrderState_OrderStateAddCommission:
-				case basetypes.OrderState_OrderStateAchievementBookKeeping:
-				case basetypes.OrderState_OrderStateUpdatePaidChilds:
-				case basetypes.OrderState_OrderStateChildPaidByParent:
-				case basetypes.OrderState_OrderStatePaymentUnlockAccount:
-				case basetypes.OrderState_OrderStatePaid:
-				case basetypes.OrderState_OrderStateTransferGoodStockWaitStart:
-				case basetypes.OrderState_OrderStateUpdateInServiceChilds:
-				case basetypes.OrderState_OrderStateChildInServiceByParent:
-				case basetypes.OrderState_OrderStateInService:
-				case basetypes.OrderState_OrderStatePaymentTimeout:
-				case basetypes.OrderState_OrderStatePreCancel:
-				case basetypes.OrderState_OrderStatePreExpired:
-				case basetypes.OrderState_OrderStateRestoreExpiredStock:
-				case basetypes.OrderState_OrderStateUpdateExpiredChilds:
-				case basetypes.OrderState_OrderStateChildExpiredByParent:
-				case basetypes.OrderState_OrderStateRestoreCanceledStock:
-				case basetypes.OrderState_OrderStateCancelAchievement:
-				case basetypes.OrderState_OrderStateDeductLockedCommission:
-				case basetypes.OrderState_OrderStateReturnCanceledBalance:
-				case basetypes.OrderState_OrderStateUpdateCanceledChilds:
-				case basetypes.OrderState_OrderStateChildCanceledByParent:
-				case basetypes.OrderState_OrderStateCanceledTransferBookKeeping:
-				case basetypes.OrderState_OrderStateCancelUnlockPaymentAccount:
-				case basetypes.OrderState_OrderStateCanceled:
-				case basetypes.OrderState_OrderStateExpired:
+				case types.OrderState_OrderStateCreated:
+				case types.OrderState_OrderStateWaitPayment:
+				case types.OrderState_OrderStatePaymentTransferReceived:
+				case types.OrderState_OrderStatePaymentTransferBookKeeping:
+				case types.OrderState_OrderStatePaymentSpendBalance:
+				case types.OrderState_OrderStateTransferGoodStockLocked:
+				case types.OrderState_OrderStateAddCommission:
+				case types.OrderState_OrderStateAchievementBookKeeping:
+				case types.OrderState_OrderStateUpdatePaidChilds:
+				case types.OrderState_OrderStateChildPaidByParent:
+				case types.OrderState_OrderStatePaymentUnlockAccount:
+				case types.OrderState_OrderStatePaid:
+				case types.OrderState_OrderStateTransferGoodStockWaitStart:
+				case types.OrderState_OrderStateUpdateInServiceChilds:
+				case types.OrderState_OrderStateChildInServiceByParent:
+				case types.OrderState_OrderStateInService:
+				case types.OrderState_OrderStatePaymentTimeout:
+				case types.OrderState_OrderStatePreCancel:
+				case types.OrderState_OrderStatePreExpired:
+				case types.OrderState_OrderStateRestoreExpiredStock:
+				case types.OrderState_OrderStateUpdateExpiredChilds:
+				case types.OrderState_OrderStateChildExpiredByParent:
+				case types.OrderState_OrderStateRestoreCanceledStock:
+				case types.OrderState_OrderStateCancelAchievement:
+				case types.OrderState_OrderStateDeductLockedCommission:
+				case types.OrderState_OrderStateReturnCanceledBalance:
+				case types.OrderState_OrderStateUpdateCanceledChilds:
+				case types.OrderState_OrderStateChildCanceledByParent:
+				case types.OrderState_OrderStateCanceledTransferBookKeeping:
+				case types.OrderState_OrderStateCancelUnlockPaymentAccount:
+				case types.OrderState_OrderStateCanceled:
+				case types.OrderState_OrderStateExpired:
 				default:
 					return fmt.Errorf("invalid orderstate")
 				}
@@ -1489,15 +1620,15 @@ func WithReqs(reqs []*npool.OrderReq, must bool) func(context.Context, *Handler)
 				_req.StockLockReq.AppID = _req.AppID
 				_req.StockLockReq.UserID = _req.UserID
 				_req.StockLockReq.OrderID = _req.EntID
-				_req.StockLockReq.LockType = basetypes.OrderLockType_LockStock.Enum()
+				_req.StockLockReq.LockType = types.OrderLockType_LockStock.Enum()
 			}
 			if req.StartMode != nil {
 				switch *req.StartMode {
-				case basetypes.OrderStartMode_OrderStartConfirmed:
-				case basetypes.OrderStartMode_OrderStartTBD:
-				case basetypes.OrderStartMode_OrderStartInstantly:
-				case basetypes.OrderStartMode_OrderStartNextDay:
-				case basetypes.OrderStartMode_OrderStartPreset:
+				case types.OrderStartMode_OrderStartConfirmed:
+				case types.OrderStartMode_OrderStartTBD:
+				case types.OrderStartMode_OrderStartInstantly:
+				case types.OrderStartMode_OrderStartNextDay:
+				case types.OrderStartMode_OrderStartPreset:
 				default:
 					return fmt.Errorf("invalid startmode")
 				}
@@ -1518,9 +1649,9 @@ func WithReqs(reqs []*npool.OrderReq, must bool) func(context.Context, *Handler)
 			}
 			if req.BenefitState != nil {
 				switch *req.BenefitState {
-				case basetypes.BenefitState_BenefitWait:
-				case basetypes.BenefitState_BenefitCalculated:
-				case basetypes.BenefitState_BenefitBookKept:
+				case types.BenefitState_BenefitWait:
+				case types.BenefitState_BenefitCalculated:
+				case types.BenefitState_BenefitBookKept:
 				default:
 					return fmt.Errorf("invalid benefitstate")
 				}
@@ -1550,11 +1681,11 @@ func WithReqs(reqs []*npool.OrderReq, must bool) func(context.Context, *Handler)
 			}
 			if req.PaymentState != nil {
 				switch *req.PaymentState {
-				case basetypes.PaymentState_PaymentStateWait:
-				case basetypes.PaymentState_PaymentStateDone:
-				case basetypes.PaymentState_PaymentStateCanceled:
-				case basetypes.PaymentState_PaymentStateTimeout:
-				case basetypes.PaymentState_PaymentStateNoPayment:
+				case types.PaymentState_PaymentStateWait:
+				case types.PaymentState_PaymentStateDone:
+				case types.PaymentState_PaymentStateCanceled:
+				case types.PaymentState_PaymentStateTimeout:
+				case types.PaymentState_PaymentStateNoPayment:
 				default:
 					return fmt.Errorf("invalid paymentstate")
 				}
@@ -1567,7 +1698,8 @@ func WithReqs(reqs []*npool.OrderReq, must bool) func(context.Context, *Handler)
 				_req.OrderStateReq.CompensateHours = req.CompensateHours
 			}
 
-			if req.BalanceAmount != nil && _req.BalanceAmount.Cmp(decimal.NewFromInt(0)) > 0 {
+			if (req.BalanceAmount != nil && _req.BalanceAmount.Cmp(decimal.NewFromInt(0)) > 0) ||
+				len(h.PaymentAmounts) > 0 { // In this case one ledger lock will relevant to multiple statements
 				if req.LedgerLockID == nil {
 					return fmt.Errorf("invalid ledgerlockid")
 				}
@@ -1580,7 +1712,7 @@ func WithReqs(reqs []*npool.OrderReq, must bool) func(context.Context, *Handler)
 					AppID:    _req.AppID,
 					UserID:   _req.UserID,
 					OrderID:  _req.EntID,
-					LockType: basetypes.OrderLockType_LockBalance.Enum(),
+					LockType: types.OrderLockType_LockBalance.Enum(),
 				}
 			}
 

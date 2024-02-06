@@ -8,8 +8,9 @@ import (
 	"fmt"
 	"sync"
 
+	"github.com/NpoolPlatform/message/npool/order/mw/v1/order"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/compensate"
-	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/order"
+	entorder "github.com/NpoolPlatform/order-middleware/pkg/db/ent/order"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/orderlock"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/orderstate"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/outofgas"
@@ -1147,6 +1148,9 @@ type OrderMutation struct {
 	coin_usd_currency       *decimal.Decimal
 	local_coin_usd_currency *decimal.Decimal
 	live_coin_usd_currency  *decimal.Decimal
+	create_method           *string
+	multi_payment_coins     *bool
+	payment_amounts         *[]order.PaymentAmount
 	clearedFields           map[string]struct{}
 	done                    bool
 	oldValue                func(context.Context) (*Order, error)
@@ -1639,19 +1643,19 @@ func (m *OrderMutation) OldPaymentID(ctx context.Context) (v uuid.UUID, err erro
 // ClearPaymentID clears the value of the "payment_id" field.
 func (m *OrderMutation) ClearPaymentID() {
 	m.payment_id = nil
-	m.clearedFields[order.FieldPaymentID] = struct{}{}
+	m.clearedFields[entorder.FieldPaymentID] = struct{}{}
 }
 
 // PaymentIDCleared returns if the "payment_id" field was cleared in this mutation.
 func (m *OrderMutation) PaymentIDCleared() bool {
-	_, ok := m.clearedFields[order.FieldPaymentID]
+	_, ok := m.clearedFields[entorder.FieldPaymentID]
 	return ok
 }
 
 // ResetPaymentID resets all changes to the "payment_id" field.
 func (m *OrderMutation) ResetPaymentID() {
 	m.payment_id = nil
-	delete(m.clearedFields, order.FieldPaymentID)
+	delete(m.clearedFields, entorder.FieldPaymentID)
 }
 
 // SetParentOrderID sets the "parent_order_id" field.
@@ -1688,19 +1692,19 @@ func (m *OrderMutation) OldParentOrderID(ctx context.Context) (v uuid.UUID, err 
 // ClearParentOrderID clears the value of the "parent_order_id" field.
 func (m *OrderMutation) ClearParentOrderID() {
 	m.parent_order_id = nil
-	m.clearedFields[order.FieldParentOrderID] = struct{}{}
+	m.clearedFields[entorder.FieldParentOrderID] = struct{}{}
 }
 
 // ParentOrderIDCleared returns if the "parent_order_id" field was cleared in this mutation.
 func (m *OrderMutation) ParentOrderIDCleared() bool {
-	_, ok := m.clearedFields[order.FieldParentOrderID]
+	_, ok := m.clearedFields[entorder.FieldParentOrderID]
 	return ok
 }
 
 // ResetParentOrderID resets all changes to the "parent_order_id" field.
 func (m *OrderMutation) ResetParentOrderID() {
 	m.parent_order_id = nil
-	delete(m.clearedFields, order.FieldParentOrderID)
+	delete(m.clearedFields, entorder.FieldParentOrderID)
 }
 
 // SetUnitsV1 sets the "units_v1" field.
@@ -1737,19 +1741,19 @@ func (m *OrderMutation) OldUnitsV1(ctx context.Context) (v decimal.Decimal, err 
 // ClearUnitsV1 clears the value of the "units_v1" field.
 func (m *OrderMutation) ClearUnitsV1() {
 	m.units_v1 = nil
-	m.clearedFields[order.FieldUnitsV1] = struct{}{}
+	m.clearedFields[entorder.FieldUnitsV1] = struct{}{}
 }
 
 // UnitsV1Cleared returns if the "units_v1" field was cleared in this mutation.
 func (m *OrderMutation) UnitsV1Cleared() bool {
-	_, ok := m.clearedFields[order.FieldUnitsV1]
+	_, ok := m.clearedFields[entorder.FieldUnitsV1]
 	return ok
 }
 
 // ResetUnitsV1 resets all changes to the "units_v1" field.
 func (m *OrderMutation) ResetUnitsV1() {
 	m.units_v1 = nil
-	delete(m.clearedFields, order.FieldUnitsV1)
+	delete(m.clearedFields, entorder.FieldUnitsV1)
 }
 
 // SetGoodValue sets the "good_value" field.
@@ -1786,19 +1790,19 @@ func (m *OrderMutation) OldGoodValue(ctx context.Context) (v decimal.Decimal, er
 // ClearGoodValue clears the value of the "good_value" field.
 func (m *OrderMutation) ClearGoodValue() {
 	m.good_value = nil
-	m.clearedFields[order.FieldGoodValue] = struct{}{}
+	m.clearedFields[entorder.FieldGoodValue] = struct{}{}
 }
 
 // GoodValueCleared returns if the "good_value" field was cleared in this mutation.
 func (m *OrderMutation) GoodValueCleared() bool {
-	_, ok := m.clearedFields[order.FieldGoodValue]
+	_, ok := m.clearedFields[entorder.FieldGoodValue]
 	return ok
 }
 
 // ResetGoodValue resets all changes to the "good_value" field.
 func (m *OrderMutation) ResetGoodValue() {
 	m.good_value = nil
-	delete(m.clearedFields, order.FieldGoodValue)
+	delete(m.clearedFields, entorder.FieldGoodValue)
 }
 
 // SetGoodValueUsd sets the "good_value_usd" field.
@@ -1835,19 +1839,19 @@ func (m *OrderMutation) OldGoodValueUsd(ctx context.Context) (v decimal.Decimal,
 // ClearGoodValueUsd clears the value of the "good_value_usd" field.
 func (m *OrderMutation) ClearGoodValueUsd() {
 	m.good_value_usd = nil
-	m.clearedFields[order.FieldGoodValueUsd] = struct{}{}
+	m.clearedFields[entorder.FieldGoodValueUsd] = struct{}{}
 }
 
 // GoodValueUsdCleared returns if the "good_value_usd" field was cleared in this mutation.
 func (m *OrderMutation) GoodValueUsdCleared() bool {
-	_, ok := m.clearedFields[order.FieldGoodValueUsd]
+	_, ok := m.clearedFields[entorder.FieldGoodValueUsd]
 	return ok
 }
 
 // ResetGoodValueUsd resets all changes to the "good_value_usd" field.
 func (m *OrderMutation) ResetGoodValueUsd() {
 	m.good_value_usd = nil
-	delete(m.clearedFields, order.FieldGoodValueUsd)
+	delete(m.clearedFields, entorder.FieldGoodValueUsd)
 }
 
 // SetPaymentAmount sets the "payment_amount" field.
@@ -1884,19 +1888,19 @@ func (m *OrderMutation) OldPaymentAmount(ctx context.Context) (v decimal.Decimal
 // ClearPaymentAmount clears the value of the "payment_amount" field.
 func (m *OrderMutation) ClearPaymentAmount() {
 	m.payment_amount = nil
-	m.clearedFields[order.FieldPaymentAmount] = struct{}{}
+	m.clearedFields[entorder.FieldPaymentAmount] = struct{}{}
 }
 
 // PaymentAmountCleared returns if the "payment_amount" field was cleared in this mutation.
 func (m *OrderMutation) PaymentAmountCleared() bool {
-	_, ok := m.clearedFields[order.FieldPaymentAmount]
+	_, ok := m.clearedFields[entorder.FieldPaymentAmount]
 	return ok
 }
 
 // ResetPaymentAmount resets all changes to the "payment_amount" field.
 func (m *OrderMutation) ResetPaymentAmount() {
 	m.payment_amount = nil
-	delete(m.clearedFields, order.FieldPaymentAmount)
+	delete(m.clearedFields, entorder.FieldPaymentAmount)
 }
 
 // SetDiscountAmount sets the "discount_amount" field.
@@ -1933,19 +1937,19 @@ func (m *OrderMutation) OldDiscountAmount(ctx context.Context) (v decimal.Decima
 // ClearDiscountAmount clears the value of the "discount_amount" field.
 func (m *OrderMutation) ClearDiscountAmount() {
 	m.discount_amount = nil
-	m.clearedFields[order.FieldDiscountAmount] = struct{}{}
+	m.clearedFields[entorder.FieldDiscountAmount] = struct{}{}
 }
 
 // DiscountAmountCleared returns if the "discount_amount" field was cleared in this mutation.
 func (m *OrderMutation) DiscountAmountCleared() bool {
-	_, ok := m.clearedFields[order.FieldDiscountAmount]
+	_, ok := m.clearedFields[entorder.FieldDiscountAmount]
 	return ok
 }
 
 // ResetDiscountAmount resets all changes to the "discount_amount" field.
 func (m *OrderMutation) ResetDiscountAmount() {
 	m.discount_amount = nil
-	delete(m.clearedFields, order.FieldDiscountAmount)
+	delete(m.clearedFields, entorder.FieldDiscountAmount)
 }
 
 // SetPromotionID sets the "promotion_id" field.
@@ -1982,19 +1986,19 @@ func (m *OrderMutation) OldPromotionID(ctx context.Context) (v uuid.UUID, err er
 // ClearPromotionID clears the value of the "promotion_id" field.
 func (m *OrderMutation) ClearPromotionID() {
 	m.promotion_id = nil
-	m.clearedFields[order.FieldPromotionID] = struct{}{}
+	m.clearedFields[entorder.FieldPromotionID] = struct{}{}
 }
 
 // PromotionIDCleared returns if the "promotion_id" field was cleared in this mutation.
 func (m *OrderMutation) PromotionIDCleared() bool {
-	_, ok := m.clearedFields[order.FieldPromotionID]
+	_, ok := m.clearedFields[entorder.FieldPromotionID]
 	return ok
 }
 
 // ResetPromotionID resets all changes to the "promotion_id" field.
 func (m *OrderMutation) ResetPromotionID() {
 	m.promotion_id = nil
-	delete(m.clearedFields, order.FieldPromotionID)
+	delete(m.clearedFields, entorder.FieldPromotionID)
 }
 
 // SetDuration sets the "duration" field.
@@ -2051,12 +2055,12 @@ func (m *OrderMutation) AddedDuration() (r int32, exists bool) {
 func (m *OrderMutation) ClearDuration() {
 	m.duration = nil
 	m.addduration = nil
-	m.clearedFields[order.FieldDuration] = struct{}{}
+	m.clearedFields[entorder.FieldDuration] = struct{}{}
 }
 
 // DurationCleared returns if the "duration" field was cleared in this mutation.
 func (m *OrderMutation) DurationCleared() bool {
-	_, ok := m.clearedFields[order.FieldDuration]
+	_, ok := m.clearedFields[entorder.FieldDuration]
 	return ok
 }
 
@@ -2064,7 +2068,7 @@ func (m *OrderMutation) DurationCleared() bool {
 func (m *OrderMutation) ResetDuration() {
 	m.duration = nil
 	m.addduration = nil
-	delete(m.clearedFields, order.FieldDuration)
+	delete(m.clearedFields, entorder.FieldDuration)
 }
 
 // SetOrderType sets the "order_type" field.
@@ -2101,19 +2105,19 @@ func (m *OrderMutation) OldOrderType(ctx context.Context) (v string, err error) 
 // ClearOrderType clears the value of the "order_type" field.
 func (m *OrderMutation) ClearOrderType() {
 	m.order_type = nil
-	m.clearedFields[order.FieldOrderType] = struct{}{}
+	m.clearedFields[entorder.FieldOrderType] = struct{}{}
 }
 
 // OrderTypeCleared returns if the "order_type" field was cleared in this mutation.
 func (m *OrderMutation) OrderTypeCleared() bool {
-	_, ok := m.clearedFields[order.FieldOrderType]
+	_, ok := m.clearedFields[entorder.FieldOrderType]
 	return ok
 }
 
 // ResetOrderType resets all changes to the "order_type" field.
 func (m *OrderMutation) ResetOrderType() {
 	m.order_type = nil
-	delete(m.clearedFields, order.FieldOrderType)
+	delete(m.clearedFields, entorder.FieldOrderType)
 }
 
 // SetInvestmentType sets the "investment_type" field.
@@ -2150,19 +2154,19 @@ func (m *OrderMutation) OldInvestmentType(ctx context.Context) (v string, err er
 // ClearInvestmentType clears the value of the "investment_type" field.
 func (m *OrderMutation) ClearInvestmentType() {
 	m.investment_type = nil
-	m.clearedFields[order.FieldInvestmentType] = struct{}{}
+	m.clearedFields[entorder.FieldInvestmentType] = struct{}{}
 }
 
 // InvestmentTypeCleared returns if the "investment_type" field was cleared in this mutation.
 func (m *OrderMutation) InvestmentTypeCleared() bool {
-	_, ok := m.clearedFields[order.FieldInvestmentType]
+	_, ok := m.clearedFields[entorder.FieldInvestmentType]
 	return ok
 }
 
 // ResetInvestmentType resets all changes to the "investment_type" field.
 func (m *OrderMutation) ResetInvestmentType() {
 	m.investment_type = nil
-	delete(m.clearedFields, order.FieldInvestmentType)
+	delete(m.clearedFields, entorder.FieldInvestmentType)
 }
 
 // SetCouponIds sets the "coupon_ids" field.
@@ -2199,19 +2203,19 @@ func (m *OrderMutation) OldCouponIds(ctx context.Context) (v []uuid.UUID, err er
 // ClearCouponIds clears the value of the "coupon_ids" field.
 func (m *OrderMutation) ClearCouponIds() {
 	m.coupon_ids = nil
-	m.clearedFields[order.FieldCouponIds] = struct{}{}
+	m.clearedFields[entorder.FieldCouponIds] = struct{}{}
 }
 
 // CouponIdsCleared returns if the "coupon_ids" field was cleared in this mutation.
 func (m *OrderMutation) CouponIdsCleared() bool {
-	_, ok := m.clearedFields[order.FieldCouponIds]
+	_, ok := m.clearedFields[entorder.FieldCouponIds]
 	return ok
 }
 
 // ResetCouponIds resets all changes to the "coupon_ids" field.
 func (m *OrderMutation) ResetCouponIds() {
 	m.coupon_ids = nil
-	delete(m.clearedFields, order.FieldCouponIds)
+	delete(m.clearedFields, entorder.FieldCouponIds)
 }
 
 // SetPaymentType sets the "payment_type" field.
@@ -2248,19 +2252,19 @@ func (m *OrderMutation) OldPaymentType(ctx context.Context) (v string, err error
 // ClearPaymentType clears the value of the "payment_type" field.
 func (m *OrderMutation) ClearPaymentType() {
 	m.payment_type = nil
-	m.clearedFields[order.FieldPaymentType] = struct{}{}
+	m.clearedFields[entorder.FieldPaymentType] = struct{}{}
 }
 
 // PaymentTypeCleared returns if the "payment_type" field was cleared in this mutation.
 func (m *OrderMutation) PaymentTypeCleared() bool {
-	_, ok := m.clearedFields[order.FieldPaymentType]
+	_, ok := m.clearedFields[entorder.FieldPaymentType]
 	return ok
 }
 
 // ResetPaymentType resets all changes to the "payment_type" field.
 func (m *OrderMutation) ResetPaymentType() {
 	m.payment_type = nil
-	delete(m.clearedFields, order.FieldPaymentType)
+	delete(m.clearedFields, entorder.FieldPaymentType)
 }
 
 // SetCoinTypeID sets the "coin_type_id" field.
@@ -2333,19 +2337,19 @@ func (m *OrderMutation) OldPaymentCoinTypeID(ctx context.Context) (v uuid.UUID, 
 // ClearPaymentCoinTypeID clears the value of the "payment_coin_type_id" field.
 func (m *OrderMutation) ClearPaymentCoinTypeID() {
 	m.payment_coin_type_id = nil
-	m.clearedFields[order.FieldPaymentCoinTypeID] = struct{}{}
+	m.clearedFields[entorder.FieldPaymentCoinTypeID] = struct{}{}
 }
 
 // PaymentCoinTypeIDCleared returns if the "payment_coin_type_id" field was cleared in this mutation.
 func (m *OrderMutation) PaymentCoinTypeIDCleared() bool {
-	_, ok := m.clearedFields[order.FieldPaymentCoinTypeID]
+	_, ok := m.clearedFields[entorder.FieldPaymentCoinTypeID]
 	return ok
 }
 
 // ResetPaymentCoinTypeID resets all changes to the "payment_coin_type_id" field.
 func (m *OrderMutation) ResetPaymentCoinTypeID() {
 	m.payment_coin_type_id = nil
-	delete(m.clearedFields, order.FieldPaymentCoinTypeID)
+	delete(m.clearedFields, entorder.FieldPaymentCoinTypeID)
 }
 
 // SetTransferAmount sets the "transfer_amount" field.
@@ -2382,19 +2386,19 @@ func (m *OrderMutation) OldTransferAmount(ctx context.Context) (v decimal.Decima
 // ClearTransferAmount clears the value of the "transfer_amount" field.
 func (m *OrderMutation) ClearTransferAmount() {
 	m.transfer_amount = nil
-	m.clearedFields[order.FieldTransferAmount] = struct{}{}
+	m.clearedFields[entorder.FieldTransferAmount] = struct{}{}
 }
 
 // TransferAmountCleared returns if the "transfer_amount" field was cleared in this mutation.
 func (m *OrderMutation) TransferAmountCleared() bool {
-	_, ok := m.clearedFields[order.FieldTransferAmount]
+	_, ok := m.clearedFields[entorder.FieldTransferAmount]
 	return ok
 }
 
 // ResetTransferAmount resets all changes to the "transfer_amount" field.
 func (m *OrderMutation) ResetTransferAmount() {
 	m.transfer_amount = nil
-	delete(m.clearedFields, order.FieldTransferAmount)
+	delete(m.clearedFields, entorder.FieldTransferAmount)
 }
 
 // SetBalanceAmount sets the "balance_amount" field.
@@ -2431,19 +2435,19 @@ func (m *OrderMutation) OldBalanceAmount(ctx context.Context) (v decimal.Decimal
 // ClearBalanceAmount clears the value of the "balance_amount" field.
 func (m *OrderMutation) ClearBalanceAmount() {
 	m.balance_amount = nil
-	m.clearedFields[order.FieldBalanceAmount] = struct{}{}
+	m.clearedFields[entorder.FieldBalanceAmount] = struct{}{}
 }
 
 // BalanceAmountCleared returns if the "balance_amount" field was cleared in this mutation.
 func (m *OrderMutation) BalanceAmountCleared() bool {
-	_, ok := m.clearedFields[order.FieldBalanceAmount]
+	_, ok := m.clearedFields[entorder.FieldBalanceAmount]
 	return ok
 }
 
 // ResetBalanceAmount resets all changes to the "balance_amount" field.
 func (m *OrderMutation) ResetBalanceAmount() {
 	m.balance_amount = nil
-	delete(m.clearedFields, order.FieldBalanceAmount)
+	delete(m.clearedFields, entorder.FieldBalanceAmount)
 }
 
 // SetCoinUsdCurrency sets the "coin_usd_currency" field.
@@ -2480,19 +2484,19 @@ func (m *OrderMutation) OldCoinUsdCurrency(ctx context.Context) (v decimal.Decim
 // ClearCoinUsdCurrency clears the value of the "coin_usd_currency" field.
 func (m *OrderMutation) ClearCoinUsdCurrency() {
 	m.coin_usd_currency = nil
-	m.clearedFields[order.FieldCoinUsdCurrency] = struct{}{}
+	m.clearedFields[entorder.FieldCoinUsdCurrency] = struct{}{}
 }
 
 // CoinUsdCurrencyCleared returns if the "coin_usd_currency" field was cleared in this mutation.
 func (m *OrderMutation) CoinUsdCurrencyCleared() bool {
-	_, ok := m.clearedFields[order.FieldCoinUsdCurrency]
+	_, ok := m.clearedFields[entorder.FieldCoinUsdCurrency]
 	return ok
 }
 
 // ResetCoinUsdCurrency resets all changes to the "coin_usd_currency" field.
 func (m *OrderMutation) ResetCoinUsdCurrency() {
 	m.coin_usd_currency = nil
-	delete(m.clearedFields, order.FieldCoinUsdCurrency)
+	delete(m.clearedFields, entorder.FieldCoinUsdCurrency)
 }
 
 // SetLocalCoinUsdCurrency sets the "local_coin_usd_currency" field.
@@ -2529,19 +2533,19 @@ func (m *OrderMutation) OldLocalCoinUsdCurrency(ctx context.Context) (v decimal.
 // ClearLocalCoinUsdCurrency clears the value of the "local_coin_usd_currency" field.
 func (m *OrderMutation) ClearLocalCoinUsdCurrency() {
 	m.local_coin_usd_currency = nil
-	m.clearedFields[order.FieldLocalCoinUsdCurrency] = struct{}{}
+	m.clearedFields[entorder.FieldLocalCoinUsdCurrency] = struct{}{}
 }
 
 // LocalCoinUsdCurrencyCleared returns if the "local_coin_usd_currency" field was cleared in this mutation.
 func (m *OrderMutation) LocalCoinUsdCurrencyCleared() bool {
-	_, ok := m.clearedFields[order.FieldLocalCoinUsdCurrency]
+	_, ok := m.clearedFields[entorder.FieldLocalCoinUsdCurrency]
 	return ok
 }
 
 // ResetLocalCoinUsdCurrency resets all changes to the "local_coin_usd_currency" field.
 func (m *OrderMutation) ResetLocalCoinUsdCurrency() {
 	m.local_coin_usd_currency = nil
-	delete(m.clearedFields, order.FieldLocalCoinUsdCurrency)
+	delete(m.clearedFields, entorder.FieldLocalCoinUsdCurrency)
 }
 
 // SetLiveCoinUsdCurrency sets the "live_coin_usd_currency" field.
@@ -2578,19 +2582,166 @@ func (m *OrderMutation) OldLiveCoinUsdCurrency(ctx context.Context) (v decimal.D
 // ClearLiveCoinUsdCurrency clears the value of the "live_coin_usd_currency" field.
 func (m *OrderMutation) ClearLiveCoinUsdCurrency() {
 	m.live_coin_usd_currency = nil
-	m.clearedFields[order.FieldLiveCoinUsdCurrency] = struct{}{}
+	m.clearedFields[entorder.FieldLiveCoinUsdCurrency] = struct{}{}
 }
 
 // LiveCoinUsdCurrencyCleared returns if the "live_coin_usd_currency" field was cleared in this mutation.
 func (m *OrderMutation) LiveCoinUsdCurrencyCleared() bool {
-	_, ok := m.clearedFields[order.FieldLiveCoinUsdCurrency]
+	_, ok := m.clearedFields[entorder.FieldLiveCoinUsdCurrency]
 	return ok
 }
 
 // ResetLiveCoinUsdCurrency resets all changes to the "live_coin_usd_currency" field.
 func (m *OrderMutation) ResetLiveCoinUsdCurrency() {
 	m.live_coin_usd_currency = nil
-	delete(m.clearedFields, order.FieldLiveCoinUsdCurrency)
+	delete(m.clearedFields, entorder.FieldLiveCoinUsdCurrency)
+}
+
+// SetCreateMethod sets the "create_method" field.
+func (m *OrderMutation) SetCreateMethod(s string) {
+	m.create_method = &s
+}
+
+// CreateMethod returns the value of the "create_method" field in the mutation.
+func (m *OrderMutation) CreateMethod() (r string, exists bool) {
+	v := m.create_method
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreateMethod returns the old "create_method" field's value of the Order entity.
+// If the Order object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *OrderMutation) OldCreateMethod(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreateMethod is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreateMethod requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreateMethod: %w", err)
+	}
+	return oldValue.CreateMethod, nil
+}
+
+// ClearCreateMethod clears the value of the "create_method" field.
+func (m *OrderMutation) ClearCreateMethod() {
+	m.create_method = nil
+	m.clearedFields[entorder.FieldCreateMethod] = struct{}{}
+}
+
+// CreateMethodCleared returns if the "create_method" field was cleared in this mutation.
+func (m *OrderMutation) CreateMethodCleared() bool {
+	_, ok := m.clearedFields[entorder.FieldCreateMethod]
+	return ok
+}
+
+// ResetCreateMethod resets all changes to the "create_method" field.
+func (m *OrderMutation) ResetCreateMethod() {
+	m.create_method = nil
+	delete(m.clearedFields, entorder.FieldCreateMethod)
+}
+
+// SetMultiPaymentCoins sets the "multi_payment_coins" field.
+func (m *OrderMutation) SetMultiPaymentCoins(b bool) {
+	m.multi_payment_coins = &b
+}
+
+// MultiPaymentCoins returns the value of the "multi_payment_coins" field in the mutation.
+func (m *OrderMutation) MultiPaymentCoins() (r bool, exists bool) {
+	v := m.multi_payment_coins
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldMultiPaymentCoins returns the old "multi_payment_coins" field's value of the Order entity.
+// If the Order object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *OrderMutation) OldMultiPaymentCoins(ctx context.Context) (v bool, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldMultiPaymentCoins is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldMultiPaymentCoins requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldMultiPaymentCoins: %w", err)
+	}
+	return oldValue.MultiPaymentCoins, nil
+}
+
+// ClearMultiPaymentCoins clears the value of the "multi_payment_coins" field.
+func (m *OrderMutation) ClearMultiPaymentCoins() {
+	m.multi_payment_coins = nil
+	m.clearedFields[entorder.FieldMultiPaymentCoins] = struct{}{}
+}
+
+// MultiPaymentCoinsCleared returns if the "multi_payment_coins" field was cleared in this mutation.
+func (m *OrderMutation) MultiPaymentCoinsCleared() bool {
+	_, ok := m.clearedFields[entorder.FieldMultiPaymentCoins]
+	return ok
+}
+
+// ResetMultiPaymentCoins resets all changes to the "multi_payment_coins" field.
+func (m *OrderMutation) ResetMultiPaymentCoins() {
+	m.multi_payment_coins = nil
+	delete(m.clearedFields, entorder.FieldMultiPaymentCoins)
+}
+
+// SetPaymentAmounts sets the "payment_amounts" field.
+func (m *OrderMutation) SetPaymentAmounts(oa []order.PaymentAmount) {
+	m.payment_amounts = &oa
+}
+
+// PaymentAmounts returns the value of the "payment_amounts" field in the mutation.
+func (m *OrderMutation) PaymentAmounts() (r []order.PaymentAmount, exists bool) {
+	v := m.payment_amounts
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldPaymentAmounts returns the old "payment_amounts" field's value of the Order entity.
+// If the Order object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *OrderMutation) OldPaymentAmounts(ctx context.Context) (v []order.PaymentAmount, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldPaymentAmounts is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldPaymentAmounts requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldPaymentAmounts: %w", err)
+	}
+	return oldValue.PaymentAmounts, nil
+}
+
+// ClearPaymentAmounts clears the value of the "payment_amounts" field.
+func (m *OrderMutation) ClearPaymentAmounts() {
+	m.payment_amounts = nil
+	m.clearedFields[entorder.FieldPaymentAmounts] = struct{}{}
+}
+
+// PaymentAmountsCleared returns if the "payment_amounts" field was cleared in this mutation.
+func (m *OrderMutation) PaymentAmountsCleared() bool {
+	_, ok := m.clearedFields[entorder.FieldPaymentAmounts]
+	return ok
+}
+
+// ResetPaymentAmounts resets all changes to the "payment_amounts" field.
+func (m *OrderMutation) ResetPaymentAmounts() {
+	m.payment_amounts = nil
+	delete(m.clearedFields, entorder.FieldPaymentAmounts)
 }
 
 // Where appends a list predicates to the OrderMutation builder.
@@ -2612,90 +2763,99 @@ func (m *OrderMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *OrderMutation) Fields() []string {
-	fields := make([]string, 0, 28)
+	fields := make([]string, 0, 31)
 	if m.created_at != nil {
-		fields = append(fields, order.FieldCreatedAt)
+		fields = append(fields, entorder.FieldCreatedAt)
 	}
 	if m.updated_at != nil {
-		fields = append(fields, order.FieldUpdatedAt)
+		fields = append(fields, entorder.FieldUpdatedAt)
 	}
 	if m.deleted_at != nil {
-		fields = append(fields, order.FieldDeletedAt)
+		fields = append(fields, entorder.FieldDeletedAt)
 	}
 	if m.ent_id != nil {
-		fields = append(fields, order.FieldEntID)
+		fields = append(fields, entorder.FieldEntID)
 	}
 	if m.app_id != nil {
-		fields = append(fields, order.FieldAppID)
+		fields = append(fields, entorder.FieldAppID)
 	}
 	if m.user_id != nil {
-		fields = append(fields, order.FieldUserID)
+		fields = append(fields, entorder.FieldUserID)
 	}
 	if m.good_id != nil {
-		fields = append(fields, order.FieldGoodID)
+		fields = append(fields, entorder.FieldGoodID)
 	}
 	if m.app_good_id != nil {
-		fields = append(fields, order.FieldAppGoodID)
+		fields = append(fields, entorder.FieldAppGoodID)
 	}
 	if m.payment_id != nil {
-		fields = append(fields, order.FieldPaymentID)
+		fields = append(fields, entorder.FieldPaymentID)
 	}
 	if m.parent_order_id != nil {
-		fields = append(fields, order.FieldParentOrderID)
+		fields = append(fields, entorder.FieldParentOrderID)
 	}
 	if m.units_v1 != nil {
-		fields = append(fields, order.FieldUnitsV1)
+		fields = append(fields, entorder.FieldUnitsV1)
 	}
 	if m.good_value != nil {
-		fields = append(fields, order.FieldGoodValue)
+		fields = append(fields, entorder.FieldGoodValue)
 	}
 	if m.good_value_usd != nil {
-		fields = append(fields, order.FieldGoodValueUsd)
+		fields = append(fields, entorder.FieldGoodValueUsd)
 	}
 	if m.payment_amount != nil {
-		fields = append(fields, order.FieldPaymentAmount)
+		fields = append(fields, entorder.FieldPaymentAmount)
 	}
 	if m.discount_amount != nil {
-		fields = append(fields, order.FieldDiscountAmount)
+		fields = append(fields, entorder.FieldDiscountAmount)
 	}
 	if m.promotion_id != nil {
-		fields = append(fields, order.FieldPromotionID)
+		fields = append(fields, entorder.FieldPromotionID)
 	}
 	if m.duration != nil {
-		fields = append(fields, order.FieldDuration)
+		fields = append(fields, entorder.FieldDuration)
 	}
 	if m.order_type != nil {
-		fields = append(fields, order.FieldOrderType)
+		fields = append(fields, entorder.FieldOrderType)
 	}
 	if m.investment_type != nil {
-		fields = append(fields, order.FieldInvestmentType)
+		fields = append(fields, entorder.FieldInvestmentType)
 	}
 	if m.coupon_ids != nil {
-		fields = append(fields, order.FieldCouponIds)
+		fields = append(fields, entorder.FieldCouponIds)
 	}
 	if m.payment_type != nil {
-		fields = append(fields, order.FieldPaymentType)
+		fields = append(fields, entorder.FieldPaymentType)
 	}
 	if m.coin_type_id != nil {
-		fields = append(fields, order.FieldCoinTypeID)
+		fields = append(fields, entorder.FieldCoinTypeID)
 	}
 	if m.payment_coin_type_id != nil {
-		fields = append(fields, order.FieldPaymentCoinTypeID)
+		fields = append(fields, entorder.FieldPaymentCoinTypeID)
 	}
 	if m.transfer_amount != nil {
-		fields = append(fields, order.FieldTransferAmount)
+		fields = append(fields, entorder.FieldTransferAmount)
 	}
 	if m.balance_amount != nil {
-		fields = append(fields, order.FieldBalanceAmount)
+		fields = append(fields, entorder.FieldBalanceAmount)
 	}
 	if m.coin_usd_currency != nil {
-		fields = append(fields, order.FieldCoinUsdCurrency)
+		fields = append(fields, entorder.FieldCoinUsdCurrency)
 	}
 	if m.local_coin_usd_currency != nil {
-		fields = append(fields, order.FieldLocalCoinUsdCurrency)
+		fields = append(fields, entorder.FieldLocalCoinUsdCurrency)
 	}
 	if m.live_coin_usd_currency != nil {
-		fields = append(fields, order.FieldLiveCoinUsdCurrency)
+		fields = append(fields, entorder.FieldLiveCoinUsdCurrency)
+	}
+	if m.create_method != nil {
+		fields = append(fields, entorder.FieldCreateMethod)
+	}
+	if m.multi_payment_coins != nil {
+		fields = append(fields, entorder.FieldMultiPaymentCoins)
+	}
+	if m.payment_amounts != nil {
+		fields = append(fields, entorder.FieldPaymentAmounts)
 	}
 	return fields
 }
@@ -2705,62 +2865,68 @@ func (m *OrderMutation) Fields() []string {
 // schema.
 func (m *OrderMutation) Field(name string) (ent.Value, bool) {
 	switch name {
-	case order.FieldCreatedAt:
+	case entorder.FieldCreatedAt:
 		return m.CreatedAt()
-	case order.FieldUpdatedAt:
+	case entorder.FieldUpdatedAt:
 		return m.UpdatedAt()
-	case order.FieldDeletedAt:
+	case entorder.FieldDeletedAt:
 		return m.DeletedAt()
-	case order.FieldEntID:
+	case entorder.FieldEntID:
 		return m.EntID()
-	case order.FieldAppID:
+	case entorder.FieldAppID:
 		return m.AppID()
-	case order.FieldUserID:
+	case entorder.FieldUserID:
 		return m.UserID()
-	case order.FieldGoodID:
+	case entorder.FieldGoodID:
 		return m.GoodID()
-	case order.FieldAppGoodID:
+	case entorder.FieldAppGoodID:
 		return m.AppGoodID()
-	case order.FieldPaymentID:
+	case entorder.FieldPaymentID:
 		return m.PaymentID()
-	case order.FieldParentOrderID:
+	case entorder.FieldParentOrderID:
 		return m.ParentOrderID()
-	case order.FieldUnitsV1:
+	case entorder.FieldUnitsV1:
 		return m.UnitsV1()
-	case order.FieldGoodValue:
+	case entorder.FieldGoodValue:
 		return m.GoodValue()
-	case order.FieldGoodValueUsd:
+	case entorder.FieldGoodValueUsd:
 		return m.GoodValueUsd()
-	case order.FieldPaymentAmount:
+	case entorder.FieldPaymentAmount:
 		return m.PaymentAmount()
-	case order.FieldDiscountAmount:
+	case entorder.FieldDiscountAmount:
 		return m.DiscountAmount()
-	case order.FieldPromotionID:
+	case entorder.FieldPromotionID:
 		return m.PromotionID()
-	case order.FieldDuration:
+	case entorder.FieldDuration:
 		return m.Duration()
-	case order.FieldOrderType:
+	case entorder.FieldOrderType:
 		return m.OrderType()
-	case order.FieldInvestmentType:
+	case entorder.FieldInvestmentType:
 		return m.InvestmentType()
-	case order.FieldCouponIds:
+	case entorder.FieldCouponIds:
 		return m.CouponIds()
-	case order.FieldPaymentType:
+	case entorder.FieldPaymentType:
 		return m.PaymentType()
-	case order.FieldCoinTypeID:
+	case entorder.FieldCoinTypeID:
 		return m.CoinTypeID()
-	case order.FieldPaymentCoinTypeID:
+	case entorder.FieldPaymentCoinTypeID:
 		return m.PaymentCoinTypeID()
-	case order.FieldTransferAmount:
+	case entorder.FieldTransferAmount:
 		return m.TransferAmount()
-	case order.FieldBalanceAmount:
+	case entorder.FieldBalanceAmount:
 		return m.BalanceAmount()
-	case order.FieldCoinUsdCurrency:
+	case entorder.FieldCoinUsdCurrency:
 		return m.CoinUsdCurrency()
-	case order.FieldLocalCoinUsdCurrency:
+	case entorder.FieldLocalCoinUsdCurrency:
 		return m.LocalCoinUsdCurrency()
-	case order.FieldLiveCoinUsdCurrency:
+	case entorder.FieldLiveCoinUsdCurrency:
 		return m.LiveCoinUsdCurrency()
+	case entorder.FieldCreateMethod:
+		return m.CreateMethod()
+	case entorder.FieldMultiPaymentCoins:
+		return m.MultiPaymentCoins()
+	case entorder.FieldPaymentAmounts:
+		return m.PaymentAmounts()
 	}
 	return nil, false
 }
@@ -2770,62 +2936,68 @@ func (m *OrderMutation) Field(name string) (ent.Value, bool) {
 // database failed.
 func (m *OrderMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
 	switch name {
-	case order.FieldCreatedAt:
+	case entorder.FieldCreatedAt:
 		return m.OldCreatedAt(ctx)
-	case order.FieldUpdatedAt:
+	case entorder.FieldUpdatedAt:
 		return m.OldUpdatedAt(ctx)
-	case order.FieldDeletedAt:
+	case entorder.FieldDeletedAt:
 		return m.OldDeletedAt(ctx)
-	case order.FieldEntID:
+	case entorder.FieldEntID:
 		return m.OldEntID(ctx)
-	case order.FieldAppID:
+	case entorder.FieldAppID:
 		return m.OldAppID(ctx)
-	case order.FieldUserID:
+	case entorder.FieldUserID:
 		return m.OldUserID(ctx)
-	case order.FieldGoodID:
+	case entorder.FieldGoodID:
 		return m.OldGoodID(ctx)
-	case order.FieldAppGoodID:
+	case entorder.FieldAppGoodID:
 		return m.OldAppGoodID(ctx)
-	case order.FieldPaymentID:
+	case entorder.FieldPaymentID:
 		return m.OldPaymentID(ctx)
-	case order.FieldParentOrderID:
+	case entorder.FieldParentOrderID:
 		return m.OldParentOrderID(ctx)
-	case order.FieldUnitsV1:
+	case entorder.FieldUnitsV1:
 		return m.OldUnitsV1(ctx)
-	case order.FieldGoodValue:
+	case entorder.FieldGoodValue:
 		return m.OldGoodValue(ctx)
-	case order.FieldGoodValueUsd:
+	case entorder.FieldGoodValueUsd:
 		return m.OldGoodValueUsd(ctx)
-	case order.FieldPaymentAmount:
+	case entorder.FieldPaymentAmount:
 		return m.OldPaymentAmount(ctx)
-	case order.FieldDiscountAmount:
+	case entorder.FieldDiscountAmount:
 		return m.OldDiscountAmount(ctx)
-	case order.FieldPromotionID:
+	case entorder.FieldPromotionID:
 		return m.OldPromotionID(ctx)
-	case order.FieldDuration:
+	case entorder.FieldDuration:
 		return m.OldDuration(ctx)
-	case order.FieldOrderType:
+	case entorder.FieldOrderType:
 		return m.OldOrderType(ctx)
-	case order.FieldInvestmentType:
+	case entorder.FieldInvestmentType:
 		return m.OldInvestmentType(ctx)
-	case order.FieldCouponIds:
+	case entorder.FieldCouponIds:
 		return m.OldCouponIds(ctx)
-	case order.FieldPaymentType:
+	case entorder.FieldPaymentType:
 		return m.OldPaymentType(ctx)
-	case order.FieldCoinTypeID:
+	case entorder.FieldCoinTypeID:
 		return m.OldCoinTypeID(ctx)
-	case order.FieldPaymentCoinTypeID:
+	case entorder.FieldPaymentCoinTypeID:
 		return m.OldPaymentCoinTypeID(ctx)
-	case order.FieldTransferAmount:
+	case entorder.FieldTransferAmount:
 		return m.OldTransferAmount(ctx)
-	case order.FieldBalanceAmount:
+	case entorder.FieldBalanceAmount:
 		return m.OldBalanceAmount(ctx)
-	case order.FieldCoinUsdCurrency:
+	case entorder.FieldCoinUsdCurrency:
 		return m.OldCoinUsdCurrency(ctx)
-	case order.FieldLocalCoinUsdCurrency:
+	case entorder.FieldLocalCoinUsdCurrency:
 		return m.OldLocalCoinUsdCurrency(ctx)
-	case order.FieldLiveCoinUsdCurrency:
+	case entorder.FieldLiveCoinUsdCurrency:
 		return m.OldLiveCoinUsdCurrency(ctx)
+	case entorder.FieldCreateMethod:
+		return m.OldCreateMethod(ctx)
+	case entorder.FieldMultiPaymentCoins:
+		return m.OldMultiPaymentCoins(ctx)
+	case entorder.FieldPaymentAmounts:
+		return m.OldPaymentAmounts(ctx)
 	}
 	return nil, fmt.Errorf("unknown Order field %s", name)
 }
@@ -2835,201 +3007,222 @@ func (m *OrderMutation) OldField(ctx context.Context, name string) (ent.Value, e
 // type.
 func (m *OrderMutation) SetField(name string, value ent.Value) error {
 	switch name {
-	case order.FieldCreatedAt:
+	case entorder.FieldCreatedAt:
 		v, ok := value.(uint32)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetCreatedAt(v)
 		return nil
-	case order.FieldUpdatedAt:
+	case entorder.FieldUpdatedAt:
 		v, ok := value.(uint32)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetUpdatedAt(v)
 		return nil
-	case order.FieldDeletedAt:
+	case entorder.FieldDeletedAt:
 		v, ok := value.(uint32)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetDeletedAt(v)
 		return nil
-	case order.FieldEntID:
+	case entorder.FieldEntID:
 		v, ok := value.(uuid.UUID)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetEntID(v)
 		return nil
-	case order.FieldAppID:
+	case entorder.FieldAppID:
 		v, ok := value.(uuid.UUID)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetAppID(v)
 		return nil
-	case order.FieldUserID:
+	case entorder.FieldUserID:
 		v, ok := value.(uuid.UUID)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetUserID(v)
 		return nil
-	case order.FieldGoodID:
+	case entorder.FieldGoodID:
 		v, ok := value.(uuid.UUID)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetGoodID(v)
 		return nil
-	case order.FieldAppGoodID:
+	case entorder.FieldAppGoodID:
 		v, ok := value.(uuid.UUID)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetAppGoodID(v)
 		return nil
-	case order.FieldPaymentID:
+	case entorder.FieldPaymentID:
 		v, ok := value.(uuid.UUID)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetPaymentID(v)
 		return nil
-	case order.FieldParentOrderID:
+	case entorder.FieldParentOrderID:
 		v, ok := value.(uuid.UUID)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetParentOrderID(v)
 		return nil
-	case order.FieldUnitsV1:
+	case entorder.FieldUnitsV1:
 		v, ok := value.(decimal.Decimal)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetUnitsV1(v)
 		return nil
-	case order.FieldGoodValue:
+	case entorder.FieldGoodValue:
 		v, ok := value.(decimal.Decimal)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetGoodValue(v)
 		return nil
-	case order.FieldGoodValueUsd:
+	case entorder.FieldGoodValueUsd:
 		v, ok := value.(decimal.Decimal)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetGoodValueUsd(v)
 		return nil
-	case order.FieldPaymentAmount:
+	case entorder.FieldPaymentAmount:
 		v, ok := value.(decimal.Decimal)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetPaymentAmount(v)
 		return nil
-	case order.FieldDiscountAmount:
+	case entorder.FieldDiscountAmount:
 		v, ok := value.(decimal.Decimal)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetDiscountAmount(v)
 		return nil
-	case order.FieldPromotionID:
+	case entorder.FieldPromotionID:
 		v, ok := value.(uuid.UUID)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetPromotionID(v)
 		return nil
-	case order.FieldDuration:
+	case entorder.FieldDuration:
 		v, ok := value.(uint32)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetDuration(v)
 		return nil
-	case order.FieldOrderType:
+	case entorder.FieldOrderType:
 		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetOrderType(v)
 		return nil
-	case order.FieldInvestmentType:
+	case entorder.FieldInvestmentType:
 		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetInvestmentType(v)
 		return nil
-	case order.FieldCouponIds:
+	case entorder.FieldCouponIds:
 		v, ok := value.([]uuid.UUID)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetCouponIds(v)
 		return nil
-	case order.FieldPaymentType:
+	case entorder.FieldPaymentType:
 		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetPaymentType(v)
 		return nil
-	case order.FieldCoinTypeID:
+	case entorder.FieldCoinTypeID:
 		v, ok := value.(uuid.UUID)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetCoinTypeID(v)
 		return nil
-	case order.FieldPaymentCoinTypeID:
+	case entorder.FieldPaymentCoinTypeID:
 		v, ok := value.(uuid.UUID)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetPaymentCoinTypeID(v)
 		return nil
-	case order.FieldTransferAmount:
+	case entorder.FieldTransferAmount:
 		v, ok := value.(decimal.Decimal)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetTransferAmount(v)
 		return nil
-	case order.FieldBalanceAmount:
+	case entorder.FieldBalanceAmount:
 		v, ok := value.(decimal.Decimal)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetBalanceAmount(v)
 		return nil
-	case order.FieldCoinUsdCurrency:
+	case entorder.FieldCoinUsdCurrency:
 		v, ok := value.(decimal.Decimal)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetCoinUsdCurrency(v)
 		return nil
-	case order.FieldLocalCoinUsdCurrency:
+	case entorder.FieldLocalCoinUsdCurrency:
 		v, ok := value.(decimal.Decimal)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetLocalCoinUsdCurrency(v)
 		return nil
-	case order.FieldLiveCoinUsdCurrency:
+	case entorder.FieldLiveCoinUsdCurrency:
 		v, ok := value.(decimal.Decimal)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetLiveCoinUsdCurrency(v)
+		return nil
+	case entorder.FieldCreateMethod:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreateMethod(v)
+		return nil
+	case entorder.FieldMultiPaymentCoins:
+		v, ok := value.(bool)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetMultiPaymentCoins(v)
+		return nil
+	case entorder.FieldPaymentAmounts:
+		v, ok := value.([]order.PaymentAmount)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetPaymentAmounts(v)
 		return nil
 	}
 	return fmt.Errorf("unknown Order field %s", name)
@@ -3040,16 +3233,16 @@ func (m *OrderMutation) SetField(name string, value ent.Value) error {
 func (m *OrderMutation) AddedFields() []string {
 	var fields []string
 	if m.addcreated_at != nil {
-		fields = append(fields, order.FieldCreatedAt)
+		fields = append(fields, entorder.FieldCreatedAt)
 	}
 	if m.addupdated_at != nil {
-		fields = append(fields, order.FieldUpdatedAt)
+		fields = append(fields, entorder.FieldUpdatedAt)
 	}
 	if m.adddeleted_at != nil {
-		fields = append(fields, order.FieldDeletedAt)
+		fields = append(fields, entorder.FieldDeletedAt)
 	}
 	if m.addduration != nil {
-		fields = append(fields, order.FieldDuration)
+		fields = append(fields, entorder.FieldDuration)
 	}
 	return fields
 }
@@ -3059,13 +3252,13 @@ func (m *OrderMutation) AddedFields() []string {
 // was not set, or was not defined in the schema.
 func (m *OrderMutation) AddedField(name string) (ent.Value, bool) {
 	switch name {
-	case order.FieldCreatedAt:
+	case entorder.FieldCreatedAt:
 		return m.AddedCreatedAt()
-	case order.FieldUpdatedAt:
+	case entorder.FieldUpdatedAt:
 		return m.AddedUpdatedAt()
-	case order.FieldDeletedAt:
+	case entorder.FieldDeletedAt:
 		return m.AddedDeletedAt()
-	case order.FieldDuration:
+	case entorder.FieldDuration:
 		return m.AddedDuration()
 	}
 	return nil, false
@@ -3076,28 +3269,28 @@ func (m *OrderMutation) AddedField(name string) (ent.Value, bool) {
 // type.
 func (m *OrderMutation) AddField(name string, value ent.Value) error {
 	switch name {
-	case order.FieldCreatedAt:
+	case entorder.FieldCreatedAt:
 		v, ok := value.(int32)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.AddCreatedAt(v)
 		return nil
-	case order.FieldUpdatedAt:
+	case entorder.FieldUpdatedAt:
 		v, ok := value.(int32)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.AddUpdatedAt(v)
 		return nil
-	case order.FieldDeletedAt:
+	case entorder.FieldDeletedAt:
 		v, ok := value.(int32)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.AddDeletedAt(v)
 		return nil
-	case order.FieldDuration:
+	case entorder.FieldDuration:
 		v, ok := value.(int32)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
@@ -3112,62 +3305,71 @@ func (m *OrderMutation) AddField(name string, value ent.Value) error {
 // mutation.
 func (m *OrderMutation) ClearedFields() []string {
 	var fields []string
-	if m.FieldCleared(order.FieldPaymentID) {
-		fields = append(fields, order.FieldPaymentID)
+	if m.FieldCleared(entorder.FieldPaymentID) {
+		fields = append(fields, entorder.FieldPaymentID)
 	}
-	if m.FieldCleared(order.FieldParentOrderID) {
-		fields = append(fields, order.FieldParentOrderID)
+	if m.FieldCleared(entorder.FieldParentOrderID) {
+		fields = append(fields, entorder.FieldParentOrderID)
 	}
-	if m.FieldCleared(order.FieldUnitsV1) {
-		fields = append(fields, order.FieldUnitsV1)
+	if m.FieldCleared(entorder.FieldUnitsV1) {
+		fields = append(fields, entorder.FieldUnitsV1)
 	}
-	if m.FieldCleared(order.FieldGoodValue) {
-		fields = append(fields, order.FieldGoodValue)
+	if m.FieldCleared(entorder.FieldGoodValue) {
+		fields = append(fields, entorder.FieldGoodValue)
 	}
-	if m.FieldCleared(order.FieldGoodValueUsd) {
-		fields = append(fields, order.FieldGoodValueUsd)
+	if m.FieldCleared(entorder.FieldGoodValueUsd) {
+		fields = append(fields, entorder.FieldGoodValueUsd)
 	}
-	if m.FieldCleared(order.FieldPaymentAmount) {
-		fields = append(fields, order.FieldPaymentAmount)
+	if m.FieldCleared(entorder.FieldPaymentAmount) {
+		fields = append(fields, entorder.FieldPaymentAmount)
 	}
-	if m.FieldCleared(order.FieldDiscountAmount) {
-		fields = append(fields, order.FieldDiscountAmount)
+	if m.FieldCleared(entorder.FieldDiscountAmount) {
+		fields = append(fields, entorder.FieldDiscountAmount)
 	}
-	if m.FieldCleared(order.FieldPromotionID) {
-		fields = append(fields, order.FieldPromotionID)
+	if m.FieldCleared(entorder.FieldPromotionID) {
+		fields = append(fields, entorder.FieldPromotionID)
 	}
-	if m.FieldCleared(order.FieldDuration) {
-		fields = append(fields, order.FieldDuration)
+	if m.FieldCleared(entorder.FieldDuration) {
+		fields = append(fields, entorder.FieldDuration)
 	}
-	if m.FieldCleared(order.FieldOrderType) {
-		fields = append(fields, order.FieldOrderType)
+	if m.FieldCleared(entorder.FieldOrderType) {
+		fields = append(fields, entorder.FieldOrderType)
 	}
-	if m.FieldCleared(order.FieldInvestmentType) {
-		fields = append(fields, order.FieldInvestmentType)
+	if m.FieldCleared(entorder.FieldInvestmentType) {
+		fields = append(fields, entorder.FieldInvestmentType)
 	}
-	if m.FieldCleared(order.FieldCouponIds) {
-		fields = append(fields, order.FieldCouponIds)
+	if m.FieldCleared(entorder.FieldCouponIds) {
+		fields = append(fields, entorder.FieldCouponIds)
 	}
-	if m.FieldCleared(order.FieldPaymentType) {
-		fields = append(fields, order.FieldPaymentType)
+	if m.FieldCleared(entorder.FieldPaymentType) {
+		fields = append(fields, entorder.FieldPaymentType)
 	}
-	if m.FieldCleared(order.FieldPaymentCoinTypeID) {
-		fields = append(fields, order.FieldPaymentCoinTypeID)
+	if m.FieldCleared(entorder.FieldPaymentCoinTypeID) {
+		fields = append(fields, entorder.FieldPaymentCoinTypeID)
 	}
-	if m.FieldCleared(order.FieldTransferAmount) {
-		fields = append(fields, order.FieldTransferAmount)
+	if m.FieldCleared(entorder.FieldTransferAmount) {
+		fields = append(fields, entorder.FieldTransferAmount)
 	}
-	if m.FieldCleared(order.FieldBalanceAmount) {
-		fields = append(fields, order.FieldBalanceAmount)
+	if m.FieldCleared(entorder.FieldBalanceAmount) {
+		fields = append(fields, entorder.FieldBalanceAmount)
 	}
-	if m.FieldCleared(order.FieldCoinUsdCurrency) {
-		fields = append(fields, order.FieldCoinUsdCurrency)
+	if m.FieldCleared(entorder.FieldCoinUsdCurrency) {
+		fields = append(fields, entorder.FieldCoinUsdCurrency)
 	}
-	if m.FieldCleared(order.FieldLocalCoinUsdCurrency) {
-		fields = append(fields, order.FieldLocalCoinUsdCurrency)
+	if m.FieldCleared(entorder.FieldLocalCoinUsdCurrency) {
+		fields = append(fields, entorder.FieldLocalCoinUsdCurrency)
 	}
-	if m.FieldCleared(order.FieldLiveCoinUsdCurrency) {
-		fields = append(fields, order.FieldLiveCoinUsdCurrency)
+	if m.FieldCleared(entorder.FieldLiveCoinUsdCurrency) {
+		fields = append(fields, entorder.FieldLiveCoinUsdCurrency)
+	}
+	if m.FieldCleared(entorder.FieldCreateMethod) {
+		fields = append(fields, entorder.FieldCreateMethod)
+	}
+	if m.FieldCleared(entorder.FieldMultiPaymentCoins) {
+		fields = append(fields, entorder.FieldMultiPaymentCoins)
+	}
+	if m.FieldCleared(entorder.FieldPaymentAmounts) {
+		fields = append(fields, entorder.FieldPaymentAmounts)
 	}
 	return fields
 }
@@ -3183,62 +3385,71 @@ func (m *OrderMutation) FieldCleared(name string) bool {
 // error if the field is not defined in the schema.
 func (m *OrderMutation) ClearField(name string) error {
 	switch name {
-	case order.FieldPaymentID:
+	case entorder.FieldPaymentID:
 		m.ClearPaymentID()
 		return nil
-	case order.FieldParentOrderID:
+	case entorder.FieldParentOrderID:
 		m.ClearParentOrderID()
 		return nil
-	case order.FieldUnitsV1:
+	case entorder.FieldUnitsV1:
 		m.ClearUnitsV1()
 		return nil
-	case order.FieldGoodValue:
+	case entorder.FieldGoodValue:
 		m.ClearGoodValue()
 		return nil
-	case order.FieldGoodValueUsd:
+	case entorder.FieldGoodValueUsd:
 		m.ClearGoodValueUsd()
 		return nil
-	case order.FieldPaymentAmount:
+	case entorder.FieldPaymentAmount:
 		m.ClearPaymentAmount()
 		return nil
-	case order.FieldDiscountAmount:
+	case entorder.FieldDiscountAmount:
 		m.ClearDiscountAmount()
 		return nil
-	case order.FieldPromotionID:
+	case entorder.FieldPromotionID:
 		m.ClearPromotionID()
 		return nil
-	case order.FieldDuration:
+	case entorder.FieldDuration:
 		m.ClearDuration()
 		return nil
-	case order.FieldOrderType:
+	case entorder.FieldOrderType:
 		m.ClearOrderType()
 		return nil
-	case order.FieldInvestmentType:
+	case entorder.FieldInvestmentType:
 		m.ClearInvestmentType()
 		return nil
-	case order.FieldCouponIds:
+	case entorder.FieldCouponIds:
 		m.ClearCouponIds()
 		return nil
-	case order.FieldPaymentType:
+	case entorder.FieldPaymentType:
 		m.ClearPaymentType()
 		return nil
-	case order.FieldPaymentCoinTypeID:
+	case entorder.FieldPaymentCoinTypeID:
 		m.ClearPaymentCoinTypeID()
 		return nil
-	case order.FieldTransferAmount:
+	case entorder.FieldTransferAmount:
 		m.ClearTransferAmount()
 		return nil
-	case order.FieldBalanceAmount:
+	case entorder.FieldBalanceAmount:
 		m.ClearBalanceAmount()
 		return nil
-	case order.FieldCoinUsdCurrency:
+	case entorder.FieldCoinUsdCurrency:
 		m.ClearCoinUsdCurrency()
 		return nil
-	case order.FieldLocalCoinUsdCurrency:
+	case entorder.FieldLocalCoinUsdCurrency:
 		m.ClearLocalCoinUsdCurrency()
 		return nil
-	case order.FieldLiveCoinUsdCurrency:
+	case entorder.FieldLiveCoinUsdCurrency:
 		m.ClearLiveCoinUsdCurrency()
+		return nil
+	case entorder.FieldCreateMethod:
+		m.ClearCreateMethod()
+		return nil
+	case entorder.FieldMultiPaymentCoins:
+		m.ClearMultiPaymentCoins()
+		return nil
+	case entorder.FieldPaymentAmounts:
+		m.ClearPaymentAmounts()
 		return nil
 	}
 	return fmt.Errorf("unknown Order nullable field %s", name)
@@ -3248,89 +3459,98 @@ func (m *OrderMutation) ClearField(name string) error {
 // It returns an error if the field is not defined in the schema.
 func (m *OrderMutation) ResetField(name string) error {
 	switch name {
-	case order.FieldCreatedAt:
+	case entorder.FieldCreatedAt:
 		m.ResetCreatedAt()
 		return nil
-	case order.FieldUpdatedAt:
+	case entorder.FieldUpdatedAt:
 		m.ResetUpdatedAt()
 		return nil
-	case order.FieldDeletedAt:
+	case entorder.FieldDeletedAt:
 		m.ResetDeletedAt()
 		return nil
-	case order.FieldEntID:
+	case entorder.FieldEntID:
 		m.ResetEntID()
 		return nil
-	case order.FieldAppID:
+	case entorder.FieldAppID:
 		m.ResetAppID()
 		return nil
-	case order.FieldUserID:
+	case entorder.FieldUserID:
 		m.ResetUserID()
 		return nil
-	case order.FieldGoodID:
+	case entorder.FieldGoodID:
 		m.ResetGoodID()
 		return nil
-	case order.FieldAppGoodID:
+	case entorder.FieldAppGoodID:
 		m.ResetAppGoodID()
 		return nil
-	case order.FieldPaymentID:
+	case entorder.FieldPaymentID:
 		m.ResetPaymentID()
 		return nil
-	case order.FieldParentOrderID:
+	case entorder.FieldParentOrderID:
 		m.ResetParentOrderID()
 		return nil
-	case order.FieldUnitsV1:
+	case entorder.FieldUnitsV1:
 		m.ResetUnitsV1()
 		return nil
-	case order.FieldGoodValue:
+	case entorder.FieldGoodValue:
 		m.ResetGoodValue()
 		return nil
-	case order.FieldGoodValueUsd:
+	case entorder.FieldGoodValueUsd:
 		m.ResetGoodValueUsd()
 		return nil
-	case order.FieldPaymentAmount:
+	case entorder.FieldPaymentAmount:
 		m.ResetPaymentAmount()
 		return nil
-	case order.FieldDiscountAmount:
+	case entorder.FieldDiscountAmount:
 		m.ResetDiscountAmount()
 		return nil
-	case order.FieldPromotionID:
+	case entorder.FieldPromotionID:
 		m.ResetPromotionID()
 		return nil
-	case order.FieldDuration:
+	case entorder.FieldDuration:
 		m.ResetDuration()
 		return nil
-	case order.FieldOrderType:
+	case entorder.FieldOrderType:
 		m.ResetOrderType()
 		return nil
-	case order.FieldInvestmentType:
+	case entorder.FieldInvestmentType:
 		m.ResetInvestmentType()
 		return nil
-	case order.FieldCouponIds:
+	case entorder.FieldCouponIds:
 		m.ResetCouponIds()
 		return nil
-	case order.FieldPaymentType:
+	case entorder.FieldPaymentType:
 		m.ResetPaymentType()
 		return nil
-	case order.FieldCoinTypeID:
+	case entorder.FieldCoinTypeID:
 		m.ResetCoinTypeID()
 		return nil
-	case order.FieldPaymentCoinTypeID:
+	case entorder.FieldPaymentCoinTypeID:
 		m.ResetPaymentCoinTypeID()
 		return nil
-	case order.FieldTransferAmount:
+	case entorder.FieldTransferAmount:
 		m.ResetTransferAmount()
 		return nil
-	case order.FieldBalanceAmount:
+	case entorder.FieldBalanceAmount:
 		m.ResetBalanceAmount()
 		return nil
-	case order.FieldCoinUsdCurrency:
+	case entorder.FieldCoinUsdCurrency:
 		m.ResetCoinUsdCurrency()
 		return nil
-	case order.FieldLocalCoinUsdCurrency:
+	case entorder.FieldLocalCoinUsdCurrency:
 		m.ResetLocalCoinUsdCurrency()
 		return nil
-	case order.FieldLiveCoinUsdCurrency:
+	case entorder.FieldLiveCoinUsdCurrency:
 		m.ResetLiveCoinUsdCurrency()
+		return nil
+	case entorder.FieldCreateMethod:
+		m.ResetCreateMethod()
+		return nil
+	case entorder.FieldMultiPaymentCoins:
+		m.ResetMultiPaymentCoins()
+		return nil
+	case entorder.FieldPaymentAmounts:
+		m.ResetPaymentAmounts()
 		return nil
 	}
 	return fmt.Errorf("unknown Order field %s", name)
@@ -4239,6 +4459,9 @@ type OrderStateMutation struct {
 	addoutofgas_hours      *int32
 	compensate_hours       *uint32
 	addcompensate_hours    *int32
+	renew_state            *string
+	renew_notify_at        *uint32
+	addrenew_notify_at     *int32
 	clearedFields          map[string]struct{}
 	done                   bool
 	oldValue               func(context.Context) (*OrderState, error)
@@ -5499,6 +5722,125 @@ func (m *OrderStateMutation) ResetCompensateHours() {
 	delete(m.clearedFields, orderstate.FieldCompensateHours)
 }
 
+// SetRenewState sets the "renew_state" field.
+func (m *OrderStateMutation) SetRenewState(s string) {
+	m.renew_state = &s
+}
+
+// RenewState returns the value of the "renew_state" field in the mutation.
+func (m *OrderStateMutation) RenewState() (r string, exists bool) {
+	v := m.renew_state
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldRenewState returns the old "renew_state" field's value of the OrderState entity.
+// If the OrderState object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *OrderStateMutation) OldRenewState(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldRenewState is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldRenewState requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldRenewState: %w", err)
+	}
+	return oldValue.RenewState, nil
+}
+
+// ClearRenewState clears the value of the "renew_state" field.
+func (m *OrderStateMutation) ClearRenewState() {
+	m.renew_state = nil
+	m.clearedFields[orderstate.FieldRenewState] = struct{}{}
+}
+
+// RenewStateCleared returns if the "renew_state" field was cleared in this mutation.
+func (m *OrderStateMutation) RenewStateCleared() bool {
+	_, ok := m.clearedFields[orderstate.FieldRenewState]
+	return ok
+}
+
+// ResetRenewState resets all changes to the "renew_state" field.
+func (m *OrderStateMutation) ResetRenewState() {
+	m.renew_state = nil
+	delete(m.clearedFields, orderstate.FieldRenewState)
+}
+
+// SetRenewNotifyAt sets the "renew_notify_at" field.
+func (m *OrderStateMutation) SetRenewNotifyAt(u uint32) {
+	m.renew_notify_at = &u
+	m.addrenew_notify_at = nil
+}
+
+// RenewNotifyAt returns the value of the "renew_notify_at" field in the mutation.
+func (m *OrderStateMutation) RenewNotifyAt() (r uint32, exists bool) {
+	v := m.renew_notify_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldRenewNotifyAt returns the old "renew_notify_at" field's value of the OrderState entity.
+// If the OrderState object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *OrderStateMutation) OldRenewNotifyAt(ctx context.Context) (v uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldRenewNotifyAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldRenewNotifyAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldRenewNotifyAt: %w", err)
+	}
+	return oldValue.RenewNotifyAt, nil
+}
+
+// AddRenewNotifyAt adds u to the "renew_notify_at" field.
+func (m *OrderStateMutation) AddRenewNotifyAt(u int32) {
+	if m.addrenew_notify_at != nil {
+		*m.addrenew_notify_at += u
+	} else {
+		m.addrenew_notify_at = &u
+	}
+}
+
+// AddedRenewNotifyAt returns the value that was added to the "renew_notify_at" field in this mutation.
+func (m *OrderStateMutation) AddedRenewNotifyAt() (r int32, exists bool) {
+	v := m.addrenew_notify_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearRenewNotifyAt clears the value of the "renew_notify_at" field.
+func (m *OrderStateMutation) ClearRenewNotifyAt() {
+	m.renew_notify_at = nil
+	m.addrenew_notify_at = nil
+	m.clearedFields[orderstate.FieldRenewNotifyAt] = struct{}{}
+}
+
+// RenewNotifyAtCleared returns if the "renew_notify_at" field was cleared in this mutation.
+func (m *OrderStateMutation) RenewNotifyAtCleared() bool {
+	_, ok := m.clearedFields[orderstate.FieldRenewNotifyAt]
+	return ok
+}
+
+// ResetRenewNotifyAt resets all changes to the "renew_notify_at" field.
+func (m *OrderStateMutation) ResetRenewNotifyAt() {
+	m.renew_notify_at = nil
+	m.addrenew_notify_at = nil
+	delete(m.clearedFields, orderstate.FieldRenewNotifyAt)
+}
+
 // Where appends a list predicates to the OrderStateMutation builder.
 func (m *OrderStateMutation) Where(ps ...predicate.OrderState) {
 	m.predicates = append(m.predicates, ps...)
@@ -5518,7 +5860,7 @@ func (m *OrderStateMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *OrderStateMutation) Fields() []string {
-	fields := make([]string, 0, 21)
+	fields := make([]string, 0, 23)
 	if m.created_at != nil {
 		fields = append(fields, orderstate.FieldCreatedAt)
 	}
@@ -5582,6 +5924,12 @@ func (m *OrderStateMutation) Fields() []string {
 	if m.compensate_hours != nil {
 		fields = append(fields, orderstate.FieldCompensateHours)
 	}
+	if m.renew_state != nil {
+		fields = append(fields, orderstate.FieldRenewState)
+	}
+	if m.renew_notify_at != nil {
+		fields = append(fields, orderstate.FieldRenewNotifyAt)
+	}
 	return fields
 }
 
@@ -5632,6 +5980,10 @@ func (m *OrderStateMutation) Field(name string) (ent.Value, bool) {
 		return m.OutofgasHours()
 	case orderstate.FieldCompensateHours:
 		return m.CompensateHours()
+	case orderstate.FieldRenewState:
+		return m.RenewState()
+	case orderstate.FieldRenewNotifyAt:
+		return m.RenewNotifyAt()
 	}
 	return nil, false
 }
@@ -5683,6 +6035,10 @@ func (m *OrderStateMutation) OldField(ctx context.Context, name string) (ent.Val
 		return m.OldOutofgasHours(ctx)
 	case orderstate.FieldCompensateHours:
 		return m.OldCompensateHours(ctx)
+	case orderstate.FieldRenewState:
+		return m.OldRenewState(ctx)
+	case orderstate.FieldRenewNotifyAt:
+		return m.OldRenewNotifyAt(ctx)
 	}
 	return nil, fmt.Errorf("unknown OrderState field %s", name)
 }
@@ -5839,6 +6195,20 @@ func (m *OrderStateMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetCompensateHours(v)
 		return nil
+	case orderstate.FieldRenewState:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetRenewState(v)
+		return nil
+	case orderstate.FieldRenewNotifyAt:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetRenewNotifyAt(v)
+		return nil
 	}
 	return fmt.Errorf("unknown OrderState field %s", name)
 }
@@ -5874,6 +6244,9 @@ func (m *OrderStateMutation) AddedFields() []string {
 	if m.addcompensate_hours != nil {
 		fields = append(fields, orderstate.FieldCompensateHours)
 	}
+	if m.addrenew_notify_at != nil {
+		fields = append(fields, orderstate.FieldRenewNotifyAt)
+	}
 	return fields
 }
 
@@ -5900,6 +6273,8 @@ func (m *OrderStateMutation) AddedField(name string) (ent.Value, bool) {
 		return m.AddedOutofgasHours()
 	case orderstate.FieldCompensateHours:
 		return m.AddedCompensateHours()
+	case orderstate.FieldRenewNotifyAt:
+		return m.AddedRenewNotifyAt()
 	}
 	return nil, false
 }
@@ -5972,6 +6347,13 @@ func (m *OrderStateMutation) AddField(name string, value ent.Value) error {
 		}
 		m.AddCompensateHours(v)
 		return nil
+	case orderstate.FieldRenewNotifyAt:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddRenewNotifyAt(v)
+		return nil
 	}
 	return fmt.Errorf("unknown OrderState numeric field %s", name)
 }
@@ -6027,6 +6409,12 @@ func (m *OrderStateMutation) ClearedFields() []string {
 	}
 	if m.FieldCleared(orderstate.FieldCompensateHours) {
 		fields = append(fields, orderstate.FieldCompensateHours)
+	}
+	if m.FieldCleared(orderstate.FieldRenewState) {
+		fields = append(fields, orderstate.FieldRenewState)
+	}
+	if m.FieldCleared(orderstate.FieldRenewNotifyAt) {
+		fields = append(fields, orderstate.FieldRenewNotifyAt)
 	}
 	return fields
 }
@@ -6089,6 +6477,12 @@ func (m *OrderStateMutation) ClearField(name string) error {
 		return nil
 	case orderstate.FieldCompensateHours:
 		m.ClearCompensateHours()
+		return nil
+	case orderstate.FieldRenewState:
+		m.ClearRenewState()
+		return nil
+	case orderstate.FieldRenewNotifyAt:
+		m.ClearRenewNotifyAt()
 		return nil
 	}
 	return fmt.Errorf("unknown OrderState nullable field %s", name)
@@ -6160,6 +6554,12 @@ func (m *OrderStateMutation) ResetField(name string) error {
 		return nil
 	case orderstate.FieldCompensateHours:
 		m.ResetCompensateHours()
+		return nil
+	case orderstate.FieldRenewState:
+		m.ResetRenewState()
+		return nil
+	case orderstate.FieldRenewNotifyAt:
+		m.ResetRenewNotifyAt()
 		return nil
 	}
 	return fmt.Errorf("unknown OrderState field %s", name)

@@ -10,9 +10,11 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/order"
+	"github.com/NpoolPlatform/message/npool/order/mw/v1/order"
 	"github.com/google/uuid"
 	"github.com/shopspring/decimal"
+
+	entorder "github.com/NpoolPlatform/order-middleware/pkg/db/ent/order"
 )
 
 // OrderCreate is the builder for creating a Order entity.
@@ -367,6 +369,40 @@ func (oc *OrderCreate) SetNillableLiveCoinUsdCurrency(d *decimal.Decimal) *Order
 	return oc
 }
 
+// SetCreateMethod sets the "create_method" field.
+func (oc *OrderCreate) SetCreateMethod(s string) *OrderCreate {
+	oc.mutation.SetCreateMethod(s)
+	return oc
+}
+
+// SetNillableCreateMethod sets the "create_method" field if the given value is not nil.
+func (oc *OrderCreate) SetNillableCreateMethod(s *string) *OrderCreate {
+	if s != nil {
+		oc.SetCreateMethod(*s)
+	}
+	return oc
+}
+
+// SetMultiPaymentCoins sets the "multi_payment_coins" field.
+func (oc *OrderCreate) SetMultiPaymentCoins(b bool) *OrderCreate {
+	oc.mutation.SetMultiPaymentCoins(b)
+	return oc
+}
+
+// SetNillableMultiPaymentCoins sets the "multi_payment_coins" field if the given value is not nil.
+func (oc *OrderCreate) SetNillableMultiPaymentCoins(b *bool) *OrderCreate {
+	if b != nil {
+		oc.SetMultiPaymentCoins(*b)
+	}
+	return oc
+}
+
+// SetPaymentAmounts sets the "payment_amounts" field.
+func (oc *OrderCreate) SetPaymentAmounts(oa []order.PaymentAmount) *OrderCreate {
+	oc.mutation.SetPaymentAmounts(oa)
+	return oc
+}
+
 // SetID sets the "id" field.
 func (oc *OrderCreate) SetID(u uint32) *OrderCreate {
 	oc.mutation.SetID(u)
@@ -453,123 +489,135 @@ func (oc *OrderCreate) ExecX(ctx context.Context) {
 // defaults sets the default values of the builder before save.
 func (oc *OrderCreate) defaults() error {
 	if _, ok := oc.mutation.CreatedAt(); !ok {
-		if order.DefaultCreatedAt == nil {
-			return fmt.Errorf("ent: uninitialized order.DefaultCreatedAt (forgotten import ent/runtime?)")
+		if entorder.DefaultCreatedAt == nil {
+			return fmt.Errorf("ent: uninitialized entorder.DefaultCreatedAt (forgotten import ent/runtime?)")
 		}
-		v := order.DefaultCreatedAt()
+		v := entorder.DefaultCreatedAt()
 		oc.mutation.SetCreatedAt(v)
 	}
 	if _, ok := oc.mutation.UpdatedAt(); !ok {
-		if order.DefaultUpdatedAt == nil {
-			return fmt.Errorf("ent: uninitialized order.DefaultUpdatedAt (forgotten import ent/runtime?)")
+		if entorder.DefaultUpdatedAt == nil {
+			return fmt.Errorf("ent: uninitialized entorder.DefaultUpdatedAt (forgotten import ent/runtime?)")
 		}
-		v := order.DefaultUpdatedAt()
+		v := entorder.DefaultUpdatedAt()
 		oc.mutation.SetUpdatedAt(v)
 	}
 	if _, ok := oc.mutation.DeletedAt(); !ok {
-		if order.DefaultDeletedAt == nil {
-			return fmt.Errorf("ent: uninitialized order.DefaultDeletedAt (forgotten import ent/runtime?)")
+		if entorder.DefaultDeletedAt == nil {
+			return fmt.Errorf("ent: uninitialized entorder.DefaultDeletedAt (forgotten import ent/runtime?)")
 		}
-		v := order.DefaultDeletedAt()
+		v := entorder.DefaultDeletedAt()
 		oc.mutation.SetDeletedAt(v)
 	}
 	if _, ok := oc.mutation.EntID(); !ok {
-		if order.DefaultEntID == nil {
-			return fmt.Errorf("ent: uninitialized order.DefaultEntID (forgotten import ent/runtime?)")
+		if entorder.DefaultEntID == nil {
+			return fmt.Errorf("ent: uninitialized entorder.DefaultEntID (forgotten import ent/runtime?)")
 		}
-		v := order.DefaultEntID()
+		v := entorder.DefaultEntID()
 		oc.mutation.SetEntID(v)
 	}
 	if _, ok := oc.mutation.PaymentID(); !ok {
-		if order.DefaultPaymentID == nil {
-			return fmt.Errorf("ent: uninitialized order.DefaultPaymentID (forgotten import ent/runtime?)")
+		if entorder.DefaultPaymentID == nil {
+			return fmt.Errorf("ent: uninitialized entorder.DefaultPaymentID (forgotten import ent/runtime?)")
 		}
-		v := order.DefaultPaymentID()
+		v := entorder.DefaultPaymentID()
 		oc.mutation.SetPaymentID(v)
 	}
 	if _, ok := oc.mutation.ParentOrderID(); !ok {
-		if order.DefaultParentOrderID == nil {
-			return fmt.Errorf("ent: uninitialized order.DefaultParentOrderID (forgotten import ent/runtime?)")
+		if entorder.DefaultParentOrderID == nil {
+			return fmt.Errorf("ent: uninitialized entorder.DefaultParentOrderID (forgotten import ent/runtime?)")
 		}
-		v := order.DefaultParentOrderID()
+		v := entorder.DefaultParentOrderID()
 		oc.mutation.SetParentOrderID(v)
 	}
 	if _, ok := oc.mutation.UnitsV1(); !ok {
-		v := order.DefaultUnitsV1
+		v := entorder.DefaultUnitsV1
 		oc.mutation.SetUnitsV1(v)
 	}
 	if _, ok := oc.mutation.GoodValue(); !ok {
-		v := order.DefaultGoodValue
+		v := entorder.DefaultGoodValue
 		oc.mutation.SetGoodValue(v)
 	}
 	if _, ok := oc.mutation.GoodValueUsd(); !ok {
-		v := order.DefaultGoodValueUsd
+		v := entorder.DefaultGoodValueUsd
 		oc.mutation.SetGoodValueUsd(v)
 	}
 	if _, ok := oc.mutation.PaymentAmount(); !ok {
-		v := order.DefaultPaymentAmount
+		v := entorder.DefaultPaymentAmount
 		oc.mutation.SetPaymentAmount(v)
 	}
 	if _, ok := oc.mutation.DiscountAmount(); !ok {
-		v := order.DefaultDiscountAmount
+		v := entorder.DefaultDiscountAmount
 		oc.mutation.SetDiscountAmount(v)
 	}
 	if _, ok := oc.mutation.PromotionID(); !ok {
-		if order.DefaultPromotionID == nil {
-			return fmt.Errorf("ent: uninitialized order.DefaultPromotionID (forgotten import ent/runtime?)")
+		if entorder.DefaultPromotionID == nil {
+			return fmt.Errorf("ent: uninitialized entorder.DefaultPromotionID (forgotten import ent/runtime?)")
 		}
-		v := order.DefaultPromotionID()
+		v := entorder.DefaultPromotionID()
 		oc.mutation.SetPromotionID(v)
 	}
 	if _, ok := oc.mutation.Duration(); !ok {
-		v := order.DefaultDuration
+		v := entorder.DefaultDuration
 		oc.mutation.SetDuration(v)
 	}
 	if _, ok := oc.mutation.OrderType(); !ok {
-		v := order.DefaultOrderType
+		v := entorder.DefaultOrderType
 		oc.mutation.SetOrderType(v)
 	}
 	if _, ok := oc.mutation.InvestmentType(); !ok {
-		v := order.DefaultInvestmentType
+		v := entorder.DefaultInvestmentType
 		oc.mutation.SetInvestmentType(v)
 	}
 	if _, ok := oc.mutation.CouponIds(); !ok {
-		if order.DefaultCouponIds == nil {
-			return fmt.Errorf("ent: uninitialized order.DefaultCouponIds (forgotten import ent/runtime?)")
+		if entorder.DefaultCouponIds == nil {
+			return fmt.Errorf("ent: uninitialized entorder.DefaultCouponIds (forgotten import ent/runtime?)")
 		}
-		v := order.DefaultCouponIds()
+		v := entorder.DefaultCouponIds()
 		oc.mutation.SetCouponIds(v)
 	}
 	if _, ok := oc.mutation.PaymentType(); !ok {
-		v := order.DefaultPaymentType
+		v := entorder.DefaultPaymentType
 		oc.mutation.SetPaymentType(v)
 	}
 	if _, ok := oc.mutation.PaymentCoinTypeID(); !ok {
-		if order.DefaultPaymentCoinTypeID == nil {
-			return fmt.Errorf("ent: uninitialized order.DefaultPaymentCoinTypeID (forgotten import ent/runtime?)")
+		if entorder.DefaultPaymentCoinTypeID == nil {
+			return fmt.Errorf("ent: uninitialized entorder.DefaultPaymentCoinTypeID (forgotten import ent/runtime?)")
 		}
-		v := order.DefaultPaymentCoinTypeID()
+		v := entorder.DefaultPaymentCoinTypeID()
 		oc.mutation.SetPaymentCoinTypeID(v)
 	}
 	if _, ok := oc.mutation.TransferAmount(); !ok {
-		v := order.DefaultTransferAmount
+		v := entorder.DefaultTransferAmount
 		oc.mutation.SetTransferAmount(v)
 	}
 	if _, ok := oc.mutation.BalanceAmount(); !ok {
-		v := order.DefaultBalanceAmount
+		v := entorder.DefaultBalanceAmount
 		oc.mutation.SetBalanceAmount(v)
 	}
 	if _, ok := oc.mutation.CoinUsdCurrency(); !ok {
-		v := order.DefaultCoinUsdCurrency
+		v := entorder.DefaultCoinUsdCurrency
 		oc.mutation.SetCoinUsdCurrency(v)
 	}
 	if _, ok := oc.mutation.LocalCoinUsdCurrency(); !ok {
-		v := order.DefaultLocalCoinUsdCurrency
+		v := entorder.DefaultLocalCoinUsdCurrency
 		oc.mutation.SetLocalCoinUsdCurrency(v)
 	}
 	if _, ok := oc.mutation.LiveCoinUsdCurrency(); !ok {
-		v := order.DefaultLiveCoinUsdCurrency
+		v := entorder.DefaultLiveCoinUsdCurrency
 		oc.mutation.SetLiveCoinUsdCurrency(v)
+	}
+	if _, ok := oc.mutation.CreateMethod(); !ok {
+		v := entorder.DefaultCreateMethod
+		oc.mutation.SetCreateMethod(v)
+	}
+	if _, ok := oc.mutation.MultiPaymentCoins(); !ok {
+		v := entorder.DefaultMultiPaymentCoins
+		oc.mutation.SetMultiPaymentCoins(v)
+	}
+	if _, ok := oc.mutation.PaymentAmounts(); !ok {
+		v := entorder.DefaultPaymentAmounts
+		oc.mutation.SetPaymentAmounts(v)
 	}
 	return nil
 }
@@ -625,10 +673,10 @@ func (oc *OrderCreate) createSpec() (*Order, *sqlgraph.CreateSpec) {
 	var (
 		_node = &Order{config: oc.config}
 		_spec = &sqlgraph.CreateSpec{
-			Table: order.Table,
+			Table: entorder.Table,
 			ID: &sqlgraph.FieldSpec{
 				Type:   field.TypeUint32,
-				Column: order.FieldID,
+				Column: entorder.FieldID,
 			},
 		}
 	)
@@ -641,7 +689,7 @@ func (oc *OrderCreate) createSpec() (*Order, *sqlgraph.CreateSpec) {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
 			Type:   field.TypeUint32,
 			Value:  value,
-			Column: order.FieldCreatedAt,
+			Column: entorder.FieldCreatedAt,
 		})
 		_node.CreatedAt = value
 	}
@@ -649,7 +697,7 @@ func (oc *OrderCreate) createSpec() (*Order, *sqlgraph.CreateSpec) {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
 			Type:   field.TypeUint32,
 			Value:  value,
-			Column: order.FieldUpdatedAt,
+			Column: entorder.FieldUpdatedAt,
 		})
 		_node.UpdatedAt = value
 	}
@@ -657,7 +705,7 @@ func (oc *OrderCreate) createSpec() (*Order, *sqlgraph.CreateSpec) {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
 			Type:   field.TypeUint32,
 			Value:  value,
-			Column: order.FieldDeletedAt,
+			Column: entorder.FieldDeletedAt,
 		})
 		_node.DeletedAt = value
 	}
@@ -665,7 +713,7 @@ func (oc *OrderCreate) createSpec() (*Order, *sqlgraph.CreateSpec) {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
 			Type:   field.TypeUUID,
 			Value:  value,
-			Column: order.FieldEntID,
+			Column: entorder.FieldEntID,
 		})
 		_node.EntID = value
 	}
@@ -673,7 +721,7 @@ func (oc *OrderCreate) createSpec() (*Order, *sqlgraph.CreateSpec) {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
 			Type:   field.TypeUUID,
 			Value:  value,
-			Column: order.FieldAppID,
+			Column: entorder.FieldAppID,
 		})
 		_node.AppID = value
 	}
@@ -681,7 +729,7 @@ func (oc *OrderCreate) createSpec() (*Order, *sqlgraph.CreateSpec) {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
 			Type:   field.TypeUUID,
 			Value:  value,
-			Column: order.FieldUserID,
+			Column: entorder.FieldUserID,
 		})
 		_node.UserID = value
 	}
@@ -689,7 +737,7 @@ func (oc *OrderCreate) createSpec() (*Order, *sqlgraph.CreateSpec) {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
 			Type:   field.TypeUUID,
 			Value:  value,
-			Column: order.FieldGoodID,
+			Column: entorder.FieldGoodID,
 		})
 		_node.GoodID = value
 	}
@@ -697,7 +745,7 @@ func (oc *OrderCreate) createSpec() (*Order, *sqlgraph.CreateSpec) {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
 			Type:   field.TypeUUID,
 			Value:  value,
-			Column: order.FieldAppGoodID,
+			Column: entorder.FieldAppGoodID,
 		})
 		_node.AppGoodID = value
 	}
@@ -705,7 +753,7 @@ func (oc *OrderCreate) createSpec() (*Order, *sqlgraph.CreateSpec) {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
 			Type:   field.TypeUUID,
 			Value:  value,
-			Column: order.FieldPaymentID,
+			Column: entorder.FieldPaymentID,
 		})
 		_node.PaymentID = value
 	}
@@ -713,7 +761,7 @@ func (oc *OrderCreate) createSpec() (*Order, *sqlgraph.CreateSpec) {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
 			Type:   field.TypeUUID,
 			Value:  value,
-			Column: order.FieldParentOrderID,
+			Column: entorder.FieldParentOrderID,
 		})
 		_node.ParentOrderID = value
 	}
@@ -721,7 +769,7 @@ func (oc *OrderCreate) createSpec() (*Order, *sqlgraph.CreateSpec) {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
 			Type:   field.TypeOther,
 			Value:  value,
-			Column: order.FieldUnitsV1,
+			Column: entorder.FieldUnitsV1,
 		})
 		_node.UnitsV1 = value
 	}
@@ -729,7 +777,7 @@ func (oc *OrderCreate) createSpec() (*Order, *sqlgraph.CreateSpec) {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
 			Type:   field.TypeOther,
 			Value:  value,
-			Column: order.FieldGoodValue,
+			Column: entorder.FieldGoodValue,
 		})
 		_node.GoodValue = value
 	}
@@ -737,7 +785,7 @@ func (oc *OrderCreate) createSpec() (*Order, *sqlgraph.CreateSpec) {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
 			Type:   field.TypeOther,
 			Value:  value,
-			Column: order.FieldGoodValueUsd,
+			Column: entorder.FieldGoodValueUsd,
 		})
 		_node.GoodValueUsd = value
 	}
@@ -745,7 +793,7 @@ func (oc *OrderCreate) createSpec() (*Order, *sqlgraph.CreateSpec) {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
 			Type:   field.TypeOther,
 			Value:  value,
-			Column: order.FieldPaymentAmount,
+			Column: entorder.FieldPaymentAmount,
 		})
 		_node.PaymentAmount = value
 	}
@@ -753,7 +801,7 @@ func (oc *OrderCreate) createSpec() (*Order, *sqlgraph.CreateSpec) {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
 			Type:   field.TypeOther,
 			Value:  value,
-			Column: order.FieldDiscountAmount,
+			Column: entorder.FieldDiscountAmount,
 		})
 		_node.DiscountAmount = value
 	}
@@ -761,7 +809,7 @@ func (oc *OrderCreate) createSpec() (*Order, *sqlgraph.CreateSpec) {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
 			Type:   field.TypeUUID,
 			Value:  value,
-			Column: order.FieldPromotionID,
+			Column: entorder.FieldPromotionID,
 		})
 		_node.PromotionID = value
 	}
@@ -769,7 +817,7 @@ func (oc *OrderCreate) createSpec() (*Order, *sqlgraph.CreateSpec) {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
 			Type:   field.TypeUint32,
 			Value:  value,
-			Column: order.FieldDuration,
+			Column: entorder.FieldDuration,
 		})
 		_node.Duration = value
 	}
@@ -777,7 +825,7 @@ func (oc *OrderCreate) createSpec() (*Order, *sqlgraph.CreateSpec) {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
 			Value:  value,
-			Column: order.FieldOrderType,
+			Column: entorder.FieldOrderType,
 		})
 		_node.OrderType = value
 	}
@@ -785,7 +833,7 @@ func (oc *OrderCreate) createSpec() (*Order, *sqlgraph.CreateSpec) {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
 			Value:  value,
-			Column: order.FieldInvestmentType,
+			Column: entorder.FieldInvestmentType,
 		})
 		_node.InvestmentType = value
 	}
@@ -793,7 +841,7 @@ func (oc *OrderCreate) createSpec() (*Order, *sqlgraph.CreateSpec) {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
 			Type:   field.TypeJSON,
 			Value:  value,
-			Column: order.FieldCouponIds,
+			Column: entorder.FieldCouponIds,
 		})
 		_node.CouponIds = value
 	}
@@ -801,7 +849,7 @@ func (oc *OrderCreate) createSpec() (*Order, *sqlgraph.CreateSpec) {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
 			Value:  value,
-			Column: order.FieldPaymentType,
+			Column: entorder.FieldPaymentType,
 		})
 		_node.PaymentType = value
 	}
@@ -809,7 +857,7 @@ func (oc *OrderCreate) createSpec() (*Order, *sqlgraph.CreateSpec) {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
 			Type:   field.TypeUUID,
 			Value:  value,
-			Column: order.FieldCoinTypeID,
+			Column: entorder.FieldCoinTypeID,
 		})
 		_node.CoinTypeID = value
 	}
@@ -817,7 +865,7 @@ func (oc *OrderCreate) createSpec() (*Order, *sqlgraph.CreateSpec) {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
 			Type:   field.TypeUUID,
 			Value:  value,
-			Column: order.FieldPaymentCoinTypeID,
+			Column: entorder.FieldPaymentCoinTypeID,
 		})
 		_node.PaymentCoinTypeID = value
 	}
@@ -825,7 +873,7 @@ func (oc *OrderCreate) createSpec() (*Order, *sqlgraph.CreateSpec) {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
 			Type:   field.TypeOther,
 			Value:  value,
-			Column: order.FieldTransferAmount,
+			Column: entorder.FieldTransferAmount,
 		})
 		_node.TransferAmount = value
 	}
@@ -833,7 +881,7 @@ func (oc *OrderCreate) createSpec() (*Order, *sqlgraph.CreateSpec) {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
 			Type:   field.TypeOther,
 			Value:  value,
-			Column: order.FieldBalanceAmount,
+			Column: entorder.FieldBalanceAmount,
 		})
 		_node.BalanceAmount = value
 	}
@@ -841,7 +889,7 @@ func (oc *OrderCreate) createSpec() (*Order, *sqlgraph.CreateSpec) {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
 			Type:   field.TypeOther,
 			Value:  value,
-			Column: order.FieldCoinUsdCurrency,
+			Column: entorder.FieldCoinUsdCurrency,
 		})
 		_node.CoinUsdCurrency = value
 	}
@@ -849,7 +897,7 @@ func (oc *OrderCreate) createSpec() (*Order, *sqlgraph.CreateSpec) {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
 			Type:   field.TypeOther,
 			Value:  value,
-			Column: order.FieldLocalCoinUsdCurrency,
+			Column: entorder.FieldLocalCoinUsdCurrency,
 		})
 		_node.LocalCoinUsdCurrency = value
 	}
@@ -857,9 +905,33 @@ func (oc *OrderCreate) createSpec() (*Order, *sqlgraph.CreateSpec) {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
 			Type:   field.TypeOther,
 			Value:  value,
-			Column: order.FieldLiveCoinUsdCurrency,
+			Column: entorder.FieldLiveCoinUsdCurrency,
 		})
 		_node.LiveCoinUsdCurrency = value
+	}
+	if value, ok := oc.mutation.CreateMethod(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: entorder.FieldCreateMethod,
+		})
+		_node.CreateMethod = value
+	}
+	if value, ok := oc.mutation.MultiPaymentCoins(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Value:  value,
+			Column: entorder.FieldMultiPaymentCoins,
+		})
+		_node.MultiPaymentCoins = value
+	}
+	if value, ok := oc.mutation.PaymentAmounts(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeJSON,
+			Value:  value,
+			Column: entorder.FieldPaymentAmounts,
+		})
+		_node.PaymentAmounts = value
 	}
 	return _node, _spec
 }
@@ -917,475 +989,529 @@ type (
 
 // SetCreatedAt sets the "created_at" field.
 func (u *OrderUpsert) SetCreatedAt(v uint32) *OrderUpsert {
-	u.Set(order.FieldCreatedAt, v)
+	u.Set(entorder.FieldCreatedAt, v)
 	return u
 }
 
 // UpdateCreatedAt sets the "created_at" field to the value that was provided on create.
 func (u *OrderUpsert) UpdateCreatedAt() *OrderUpsert {
-	u.SetExcluded(order.FieldCreatedAt)
+	u.SetExcluded(entorder.FieldCreatedAt)
 	return u
 }
 
 // AddCreatedAt adds v to the "created_at" field.
 func (u *OrderUpsert) AddCreatedAt(v uint32) *OrderUpsert {
-	u.Add(order.FieldCreatedAt, v)
+	u.Add(entorder.FieldCreatedAt, v)
 	return u
 }
 
 // SetUpdatedAt sets the "updated_at" field.
 func (u *OrderUpsert) SetUpdatedAt(v uint32) *OrderUpsert {
-	u.Set(order.FieldUpdatedAt, v)
+	u.Set(entorder.FieldUpdatedAt, v)
 	return u
 }
 
 // UpdateUpdatedAt sets the "updated_at" field to the value that was provided on create.
 func (u *OrderUpsert) UpdateUpdatedAt() *OrderUpsert {
-	u.SetExcluded(order.FieldUpdatedAt)
+	u.SetExcluded(entorder.FieldUpdatedAt)
 	return u
 }
 
 // AddUpdatedAt adds v to the "updated_at" field.
 func (u *OrderUpsert) AddUpdatedAt(v uint32) *OrderUpsert {
-	u.Add(order.FieldUpdatedAt, v)
+	u.Add(entorder.FieldUpdatedAt, v)
 	return u
 }
 
 // SetDeletedAt sets the "deleted_at" field.
 func (u *OrderUpsert) SetDeletedAt(v uint32) *OrderUpsert {
-	u.Set(order.FieldDeletedAt, v)
+	u.Set(entorder.FieldDeletedAt, v)
 	return u
 }
 
 // UpdateDeletedAt sets the "deleted_at" field to the value that was provided on create.
 func (u *OrderUpsert) UpdateDeletedAt() *OrderUpsert {
-	u.SetExcluded(order.FieldDeletedAt)
+	u.SetExcluded(entorder.FieldDeletedAt)
 	return u
 }
 
 // AddDeletedAt adds v to the "deleted_at" field.
 func (u *OrderUpsert) AddDeletedAt(v uint32) *OrderUpsert {
-	u.Add(order.FieldDeletedAt, v)
+	u.Add(entorder.FieldDeletedAt, v)
 	return u
 }
 
 // SetEntID sets the "ent_id" field.
 func (u *OrderUpsert) SetEntID(v uuid.UUID) *OrderUpsert {
-	u.Set(order.FieldEntID, v)
+	u.Set(entorder.FieldEntID, v)
 	return u
 }
 
 // UpdateEntID sets the "ent_id" field to the value that was provided on create.
 func (u *OrderUpsert) UpdateEntID() *OrderUpsert {
-	u.SetExcluded(order.FieldEntID)
+	u.SetExcluded(entorder.FieldEntID)
 	return u
 }
 
 // SetAppID sets the "app_id" field.
 func (u *OrderUpsert) SetAppID(v uuid.UUID) *OrderUpsert {
-	u.Set(order.FieldAppID, v)
+	u.Set(entorder.FieldAppID, v)
 	return u
 }
 
 // UpdateAppID sets the "app_id" field to the value that was provided on create.
 func (u *OrderUpsert) UpdateAppID() *OrderUpsert {
-	u.SetExcluded(order.FieldAppID)
+	u.SetExcluded(entorder.FieldAppID)
 	return u
 }
 
 // SetUserID sets the "user_id" field.
 func (u *OrderUpsert) SetUserID(v uuid.UUID) *OrderUpsert {
-	u.Set(order.FieldUserID, v)
+	u.Set(entorder.FieldUserID, v)
 	return u
 }
 
 // UpdateUserID sets the "user_id" field to the value that was provided on create.
 func (u *OrderUpsert) UpdateUserID() *OrderUpsert {
-	u.SetExcluded(order.FieldUserID)
+	u.SetExcluded(entorder.FieldUserID)
 	return u
 }
 
 // SetGoodID sets the "good_id" field.
 func (u *OrderUpsert) SetGoodID(v uuid.UUID) *OrderUpsert {
-	u.Set(order.FieldGoodID, v)
+	u.Set(entorder.FieldGoodID, v)
 	return u
 }
 
 // UpdateGoodID sets the "good_id" field to the value that was provided on create.
 func (u *OrderUpsert) UpdateGoodID() *OrderUpsert {
-	u.SetExcluded(order.FieldGoodID)
+	u.SetExcluded(entorder.FieldGoodID)
 	return u
 }
 
 // SetAppGoodID sets the "app_good_id" field.
 func (u *OrderUpsert) SetAppGoodID(v uuid.UUID) *OrderUpsert {
-	u.Set(order.FieldAppGoodID, v)
+	u.Set(entorder.FieldAppGoodID, v)
 	return u
 }
 
 // UpdateAppGoodID sets the "app_good_id" field to the value that was provided on create.
 func (u *OrderUpsert) UpdateAppGoodID() *OrderUpsert {
-	u.SetExcluded(order.FieldAppGoodID)
+	u.SetExcluded(entorder.FieldAppGoodID)
 	return u
 }
 
 // SetPaymentID sets the "payment_id" field.
 func (u *OrderUpsert) SetPaymentID(v uuid.UUID) *OrderUpsert {
-	u.Set(order.FieldPaymentID, v)
+	u.Set(entorder.FieldPaymentID, v)
 	return u
 }
 
 // UpdatePaymentID sets the "payment_id" field to the value that was provided on create.
 func (u *OrderUpsert) UpdatePaymentID() *OrderUpsert {
-	u.SetExcluded(order.FieldPaymentID)
+	u.SetExcluded(entorder.FieldPaymentID)
 	return u
 }
 
 // ClearPaymentID clears the value of the "payment_id" field.
 func (u *OrderUpsert) ClearPaymentID() *OrderUpsert {
-	u.SetNull(order.FieldPaymentID)
+	u.SetNull(entorder.FieldPaymentID)
 	return u
 }
 
 // SetParentOrderID sets the "parent_order_id" field.
 func (u *OrderUpsert) SetParentOrderID(v uuid.UUID) *OrderUpsert {
-	u.Set(order.FieldParentOrderID, v)
+	u.Set(entorder.FieldParentOrderID, v)
 	return u
 }
 
 // UpdateParentOrderID sets the "parent_order_id" field to the value that was provided on create.
 func (u *OrderUpsert) UpdateParentOrderID() *OrderUpsert {
-	u.SetExcluded(order.FieldParentOrderID)
+	u.SetExcluded(entorder.FieldParentOrderID)
 	return u
 }
 
 // ClearParentOrderID clears the value of the "parent_order_id" field.
 func (u *OrderUpsert) ClearParentOrderID() *OrderUpsert {
-	u.SetNull(order.FieldParentOrderID)
+	u.SetNull(entorder.FieldParentOrderID)
 	return u
 }
 
 // SetUnitsV1 sets the "units_v1" field.
 func (u *OrderUpsert) SetUnitsV1(v decimal.Decimal) *OrderUpsert {
-	u.Set(order.FieldUnitsV1, v)
+	u.Set(entorder.FieldUnitsV1, v)
 	return u
 }
 
 // UpdateUnitsV1 sets the "units_v1" field to the value that was provided on create.
 func (u *OrderUpsert) UpdateUnitsV1() *OrderUpsert {
-	u.SetExcluded(order.FieldUnitsV1)
+	u.SetExcluded(entorder.FieldUnitsV1)
 	return u
 }
 
 // ClearUnitsV1 clears the value of the "units_v1" field.
 func (u *OrderUpsert) ClearUnitsV1() *OrderUpsert {
-	u.SetNull(order.FieldUnitsV1)
+	u.SetNull(entorder.FieldUnitsV1)
 	return u
 }
 
 // SetGoodValue sets the "good_value" field.
 func (u *OrderUpsert) SetGoodValue(v decimal.Decimal) *OrderUpsert {
-	u.Set(order.FieldGoodValue, v)
+	u.Set(entorder.FieldGoodValue, v)
 	return u
 }
 
 // UpdateGoodValue sets the "good_value" field to the value that was provided on create.
 func (u *OrderUpsert) UpdateGoodValue() *OrderUpsert {
-	u.SetExcluded(order.FieldGoodValue)
+	u.SetExcluded(entorder.FieldGoodValue)
 	return u
 }
 
 // ClearGoodValue clears the value of the "good_value" field.
 func (u *OrderUpsert) ClearGoodValue() *OrderUpsert {
-	u.SetNull(order.FieldGoodValue)
+	u.SetNull(entorder.FieldGoodValue)
 	return u
 }
 
 // SetGoodValueUsd sets the "good_value_usd" field.
 func (u *OrderUpsert) SetGoodValueUsd(v decimal.Decimal) *OrderUpsert {
-	u.Set(order.FieldGoodValueUsd, v)
+	u.Set(entorder.FieldGoodValueUsd, v)
 	return u
 }
 
 // UpdateGoodValueUsd sets the "good_value_usd" field to the value that was provided on create.
 func (u *OrderUpsert) UpdateGoodValueUsd() *OrderUpsert {
-	u.SetExcluded(order.FieldGoodValueUsd)
+	u.SetExcluded(entorder.FieldGoodValueUsd)
 	return u
 }
 
 // ClearGoodValueUsd clears the value of the "good_value_usd" field.
 func (u *OrderUpsert) ClearGoodValueUsd() *OrderUpsert {
-	u.SetNull(order.FieldGoodValueUsd)
+	u.SetNull(entorder.FieldGoodValueUsd)
 	return u
 }
 
 // SetPaymentAmount sets the "payment_amount" field.
 func (u *OrderUpsert) SetPaymentAmount(v decimal.Decimal) *OrderUpsert {
-	u.Set(order.FieldPaymentAmount, v)
+	u.Set(entorder.FieldPaymentAmount, v)
 	return u
 }
 
 // UpdatePaymentAmount sets the "payment_amount" field to the value that was provided on create.
 func (u *OrderUpsert) UpdatePaymentAmount() *OrderUpsert {
-	u.SetExcluded(order.FieldPaymentAmount)
+	u.SetExcluded(entorder.FieldPaymentAmount)
 	return u
 }
 
 // ClearPaymentAmount clears the value of the "payment_amount" field.
 func (u *OrderUpsert) ClearPaymentAmount() *OrderUpsert {
-	u.SetNull(order.FieldPaymentAmount)
+	u.SetNull(entorder.FieldPaymentAmount)
 	return u
 }
 
 // SetDiscountAmount sets the "discount_amount" field.
 func (u *OrderUpsert) SetDiscountAmount(v decimal.Decimal) *OrderUpsert {
-	u.Set(order.FieldDiscountAmount, v)
+	u.Set(entorder.FieldDiscountAmount, v)
 	return u
 }
 
 // UpdateDiscountAmount sets the "discount_amount" field to the value that was provided on create.
 func (u *OrderUpsert) UpdateDiscountAmount() *OrderUpsert {
-	u.SetExcluded(order.FieldDiscountAmount)
+	u.SetExcluded(entorder.FieldDiscountAmount)
 	return u
 }
 
 // ClearDiscountAmount clears the value of the "discount_amount" field.
 func (u *OrderUpsert) ClearDiscountAmount() *OrderUpsert {
-	u.SetNull(order.FieldDiscountAmount)
+	u.SetNull(entorder.FieldDiscountAmount)
 	return u
 }
 
 // SetPromotionID sets the "promotion_id" field.
 func (u *OrderUpsert) SetPromotionID(v uuid.UUID) *OrderUpsert {
-	u.Set(order.FieldPromotionID, v)
+	u.Set(entorder.FieldPromotionID, v)
 	return u
 }
 
 // UpdatePromotionID sets the "promotion_id" field to the value that was provided on create.
 func (u *OrderUpsert) UpdatePromotionID() *OrderUpsert {
-	u.SetExcluded(order.FieldPromotionID)
+	u.SetExcluded(entorder.FieldPromotionID)
 	return u
 }
 
 // ClearPromotionID clears the value of the "promotion_id" field.
 func (u *OrderUpsert) ClearPromotionID() *OrderUpsert {
-	u.SetNull(order.FieldPromotionID)
+	u.SetNull(entorder.FieldPromotionID)
 	return u
 }
 
 // SetDuration sets the "duration" field.
 func (u *OrderUpsert) SetDuration(v uint32) *OrderUpsert {
-	u.Set(order.FieldDuration, v)
+	u.Set(entorder.FieldDuration, v)
 	return u
 }
 
 // UpdateDuration sets the "duration" field to the value that was provided on create.
 func (u *OrderUpsert) UpdateDuration() *OrderUpsert {
-	u.SetExcluded(order.FieldDuration)
+	u.SetExcluded(entorder.FieldDuration)
 	return u
 }
 
 // AddDuration adds v to the "duration" field.
 func (u *OrderUpsert) AddDuration(v uint32) *OrderUpsert {
-	u.Add(order.FieldDuration, v)
+	u.Add(entorder.FieldDuration, v)
 	return u
 }
 
 // ClearDuration clears the value of the "duration" field.
 func (u *OrderUpsert) ClearDuration() *OrderUpsert {
-	u.SetNull(order.FieldDuration)
+	u.SetNull(entorder.FieldDuration)
 	return u
 }
 
 // SetOrderType sets the "order_type" field.
 func (u *OrderUpsert) SetOrderType(v string) *OrderUpsert {
-	u.Set(order.FieldOrderType, v)
+	u.Set(entorder.FieldOrderType, v)
 	return u
 }
 
 // UpdateOrderType sets the "order_type" field to the value that was provided on create.
 func (u *OrderUpsert) UpdateOrderType() *OrderUpsert {
-	u.SetExcluded(order.FieldOrderType)
+	u.SetExcluded(entorder.FieldOrderType)
 	return u
 }
 
 // ClearOrderType clears the value of the "order_type" field.
 func (u *OrderUpsert) ClearOrderType() *OrderUpsert {
-	u.SetNull(order.FieldOrderType)
+	u.SetNull(entorder.FieldOrderType)
 	return u
 }
 
 // SetInvestmentType sets the "investment_type" field.
 func (u *OrderUpsert) SetInvestmentType(v string) *OrderUpsert {
-	u.Set(order.FieldInvestmentType, v)
+	u.Set(entorder.FieldInvestmentType, v)
 	return u
 }
 
 // UpdateInvestmentType sets the "investment_type" field to the value that was provided on create.
 func (u *OrderUpsert) UpdateInvestmentType() *OrderUpsert {
-	u.SetExcluded(order.FieldInvestmentType)
+	u.SetExcluded(entorder.FieldInvestmentType)
 	return u
 }
 
 // ClearInvestmentType clears the value of the "investment_type" field.
 func (u *OrderUpsert) ClearInvestmentType() *OrderUpsert {
-	u.SetNull(order.FieldInvestmentType)
+	u.SetNull(entorder.FieldInvestmentType)
 	return u
 }
 
 // SetCouponIds sets the "coupon_ids" field.
 func (u *OrderUpsert) SetCouponIds(v []uuid.UUID) *OrderUpsert {
-	u.Set(order.FieldCouponIds, v)
+	u.Set(entorder.FieldCouponIds, v)
 	return u
 }
 
 // UpdateCouponIds sets the "coupon_ids" field to the value that was provided on create.
 func (u *OrderUpsert) UpdateCouponIds() *OrderUpsert {
-	u.SetExcluded(order.FieldCouponIds)
+	u.SetExcluded(entorder.FieldCouponIds)
 	return u
 }
 
 // ClearCouponIds clears the value of the "coupon_ids" field.
 func (u *OrderUpsert) ClearCouponIds() *OrderUpsert {
-	u.SetNull(order.FieldCouponIds)
+	u.SetNull(entorder.FieldCouponIds)
 	return u
 }
 
 // SetPaymentType sets the "payment_type" field.
 func (u *OrderUpsert) SetPaymentType(v string) *OrderUpsert {
-	u.Set(order.FieldPaymentType, v)
+	u.Set(entorder.FieldPaymentType, v)
 	return u
 }
 
 // UpdatePaymentType sets the "payment_type" field to the value that was provided on create.
 func (u *OrderUpsert) UpdatePaymentType() *OrderUpsert {
-	u.SetExcluded(order.FieldPaymentType)
+	u.SetExcluded(entorder.FieldPaymentType)
 	return u
 }
 
 // ClearPaymentType clears the value of the "payment_type" field.
 func (u *OrderUpsert) ClearPaymentType() *OrderUpsert {
-	u.SetNull(order.FieldPaymentType)
+	u.SetNull(entorder.FieldPaymentType)
 	return u
 }
 
 // SetCoinTypeID sets the "coin_type_id" field.
 func (u *OrderUpsert) SetCoinTypeID(v uuid.UUID) *OrderUpsert {
-	u.Set(order.FieldCoinTypeID, v)
+	u.Set(entorder.FieldCoinTypeID, v)
 	return u
 }
 
 // UpdateCoinTypeID sets the "coin_type_id" field to the value that was provided on create.
 func (u *OrderUpsert) UpdateCoinTypeID() *OrderUpsert {
-	u.SetExcluded(order.FieldCoinTypeID)
+	u.SetExcluded(entorder.FieldCoinTypeID)
 	return u
 }
 
 // SetPaymentCoinTypeID sets the "payment_coin_type_id" field.
 func (u *OrderUpsert) SetPaymentCoinTypeID(v uuid.UUID) *OrderUpsert {
-	u.Set(order.FieldPaymentCoinTypeID, v)
+	u.Set(entorder.FieldPaymentCoinTypeID, v)
 	return u
 }
 
 // UpdatePaymentCoinTypeID sets the "payment_coin_type_id" field to the value that was provided on create.
 func (u *OrderUpsert) UpdatePaymentCoinTypeID() *OrderUpsert {
-	u.SetExcluded(order.FieldPaymentCoinTypeID)
+	u.SetExcluded(entorder.FieldPaymentCoinTypeID)
 	return u
 }
 
 // ClearPaymentCoinTypeID clears the value of the "payment_coin_type_id" field.
 func (u *OrderUpsert) ClearPaymentCoinTypeID() *OrderUpsert {
-	u.SetNull(order.FieldPaymentCoinTypeID)
+	u.SetNull(entorder.FieldPaymentCoinTypeID)
 	return u
 }
 
 // SetTransferAmount sets the "transfer_amount" field.
 func (u *OrderUpsert) SetTransferAmount(v decimal.Decimal) *OrderUpsert {
-	u.Set(order.FieldTransferAmount, v)
+	u.Set(entorder.FieldTransferAmount, v)
 	return u
 }
 
 // UpdateTransferAmount sets the "transfer_amount" field to the value that was provided on create.
 func (u *OrderUpsert) UpdateTransferAmount() *OrderUpsert {
-	u.SetExcluded(order.FieldTransferAmount)
+	u.SetExcluded(entorder.FieldTransferAmount)
 	return u
 }
 
 // ClearTransferAmount clears the value of the "transfer_amount" field.
 func (u *OrderUpsert) ClearTransferAmount() *OrderUpsert {
-	u.SetNull(order.FieldTransferAmount)
+	u.SetNull(entorder.FieldTransferAmount)
 	return u
 }
 
 // SetBalanceAmount sets the "balance_amount" field.
 func (u *OrderUpsert) SetBalanceAmount(v decimal.Decimal) *OrderUpsert {
-	u.Set(order.FieldBalanceAmount, v)
+	u.Set(entorder.FieldBalanceAmount, v)
 	return u
 }
 
 // UpdateBalanceAmount sets the "balance_amount" field to the value that was provided on create.
 func (u *OrderUpsert) UpdateBalanceAmount() *OrderUpsert {
-	u.SetExcluded(order.FieldBalanceAmount)
+	u.SetExcluded(entorder.FieldBalanceAmount)
 	return u
 }
 
 // ClearBalanceAmount clears the value of the "balance_amount" field.
 func (u *OrderUpsert) ClearBalanceAmount() *OrderUpsert {
-	u.SetNull(order.FieldBalanceAmount)
+	u.SetNull(entorder.FieldBalanceAmount)
 	return u
 }
 
 // SetCoinUsdCurrency sets the "coin_usd_currency" field.
 func (u *OrderUpsert) SetCoinUsdCurrency(v decimal.Decimal) *OrderUpsert {
-	u.Set(order.FieldCoinUsdCurrency, v)
+	u.Set(entorder.FieldCoinUsdCurrency, v)
 	return u
 }
 
 // UpdateCoinUsdCurrency sets the "coin_usd_currency" field to the value that was provided on create.
 func (u *OrderUpsert) UpdateCoinUsdCurrency() *OrderUpsert {
-	u.SetExcluded(order.FieldCoinUsdCurrency)
+	u.SetExcluded(entorder.FieldCoinUsdCurrency)
 	return u
 }
 
 // ClearCoinUsdCurrency clears the value of the "coin_usd_currency" field.
 func (u *OrderUpsert) ClearCoinUsdCurrency() *OrderUpsert {
-	u.SetNull(order.FieldCoinUsdCurrency)
+	u.SetNull(entorder.FieldCoinUsdCurrency)
 	return u
 }
 
 // SetLocalCoinUsdCurrency sets the "local_coin_usd_currency" field.
 func (u *OrderUpsert) SetLocalCoinUsdCurrency(v decimal.Decimal) *OrderUpsert {
-	u.Set(order.FieldLocalCoinUsdCurrency, v)
+	u.Set(entorder.FieldLocalCoinUsdCurrency, v)
 	return u
 }
 
 // UpdateLocalCoinUsdCurrency sets the "local_coin_usd_currency" field to the value that was provided on create.
 func (u *OrderUpsert) UpdateLocalCoinUsdCurrency() *OrderUpsert {
-	u.SetExcluded(order.FieldLocalCoinUsdCurrency)
+	u.SetExcluded(entorder.FieldLocalCoinUsdCurrency)
 	return u
 }
 
 // ClearLocalCoinUsdCurrency clears the value of the "local_coin_usd_currency" field.
 func (u *OrderUpsert) ClearLocalCoinUsdCurrency() *OrderUpsert {
-	u.SetNull(order.FieldLocalCoinUsdCurrency)
+	u.SetNull(entorder.FieldLocalCoinUsdCurrency)
 	return u
 }
 
 // SetLiveCoinUsdCurrency sets the "live_coin_usd_currency" field.
 func (u *OrderUpsert) SetLiveCoinUsdCurrency(v decimal.Decimal) *OrderUpsert {
-	u.Set(order.FieldLiveCoinUsdCurrency, v)
+	u.Set(entorder.FieldLiveCoinUsdCurrency, v)
 	return u
 }
 
 // UpdateLiveCoinUsdCurrency sets the "live_coin_usd_currency" field to the value that was provided on create.
 func (u *OrderUpsert) UpdateLiveCoinUsdCurrency() *OrderUpsert {
-	u.SetExcluded(order.FieldLiveCoinUsdCurrency)
+	u.SetExcluded(entorder.FieldLiveCoinUsdCurrency)
 	return u
 }
 
 // ClearLiveCoinUsdCurrency clears the value of the "live_coin_usd_currency" field.
 func (u *OrderUpsert) ClearLiveCoinUsdCurrency() *OrderUpsert {
-	u.SetNull(order.FieldLiveCoinUsdCurrency)
+	u.SetNull(entorder.FieldLiveCoinUsdCurrency)
+	return u
+}
+
+// SetCreateMethod sets the "create_method" field.
+func (u *OrderUpsert) SetCreateMethod(v string) *OrderUpsert {
+	u.Set(entorder.FieldCreateMethod, v)
+	return u
+}
+
+// UpdateCreateMethod sets the "create_method" field to the value that was provided on create.
+func (u *OrderUpsert) UpdateCreateMethod() *OrderUpsert {
+	u.SetExcluded(entorder.FieldCreateMethod)
+	return u
+}
+
+// ClearCreateMethod clears the value of the "create_method" field.
+func (u *OrderUpsert) ClearCreateMethod() *OrderUpsert {
+	u.SetNull(entorder.FieldCreateMethod)
+	return u
+}
+
+// SetMultiPaymentCoins sets the "multi_payment_coins" field.
+func (u *OrderUpsert) SetMultiPaymentCoins(v bool) *OrderUpsert {
+	u.Set(entorder.FieldMultiPaymentCoins, v)
+	return u
+}
+
+// UpdateMultiPaymentCoins sets the "multi_payment_coins" field to the value that was provided on create.
+func (u *OrderUpsert) UpdateMultiPaymentCoins() *OrderUpsert {
+	u.SetExcluded(entorder.FieldMultiPaymentCoins)
+	return u
+}
+
+// ClearMultiPaymentCoins clears the value of the "multi_payment_coins" field.
+func (u *OrderUpsert) ClearMultiPaymentCoins() *OrderUpsert {
+	u.SetNull(entorder.FieldMultiPaymentCoins)
+	return u
+}
+
+// SetPaymentAmounts sets the "payment_amounts" field.
+func (u *OrderUpsert) SetPaymentAmounts(v []order.PaymentAmount) *OrderUpsert {
+	u.Set(entorder.FieldPaymentAmounts, v)
+	return u
+}
+
+// UpdatePaymentAmounts sets the "payment_amounts" field to the value that was provided on create.
+func (u *OrderUpsert) UpdatePaymentAmounts() *OrderUpsert {
+	u.SetExcluded(entorder.FieldPaymentAmounts)
+	return u
+}
+
+// ClearPaymentAmounts clears the value of the "payment_amounts" field.
+func (u *OrderUpsert) ClearPaymentAmounts() *OrderUpsert {
+	u.SetNull(entorder.FieldPaymentAmounts)
 	return u
 }
 
@@ -1396,7 +1522,7 @@ func (u *OrderUpsert) ClearLiveCoinUsdCurrency() *OrderUpsert {
 //		OnConflict(
 //			sql.ResolveWithNewValues(),
 //			sql.ResolveWith(func(u *sql.UpdateSet) {
-//				u.SetIgnore(order.FieldID)
+//				u.SetIgnore(entorder.FieldID)
 //			}),
 //		).
 //		Exec(ctx)
@@ -1405,7 +1531,7 @@ func (u *OrderUpsertOne) UpdateNewValues() *OrderUpsertOne {
 	u.create.conflict = append(u.create.conflict, sql.ResolveWithNewValues())
 	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(s *sql.UpdateSet) {
 		if _, exists := u.create.mutation.ID(); exists {
-			s.SetIgnore(order.FieldID)
+			s.SetIgnore(entorder.FieldID)
 		}
 	}))
 	return u
@@ -1992,6 +2118,69 @@ func (u *OrderUpsertOne) ClearLiveCoinUsdCurrency() *OrderUpsertOne {
 	})
 }
 
+// SetCreateMethod sets the "create_method" field.
+func (u *OrderUpsertOne) SetCreateMethod(v string) *OrderUpsertOne {
+	return u.Update(func(s *OrderUpsert) {
+		s.SetCreateMethod(v)
+	})
+}
+
+// UpdateCreateMethod sets the "create_method" field to the value that was provided on create.
+func (u *OrderUpsertOne) UpdateCreateMethod() *OrderUpsertOne {
+	return u.Update(func(s *OrderUpsert) {
+		s.UpdateCreateMethod()
+	})
+}
+
+// ClearCreateMethod clears the value of the "create_method" field.
+func (u *OrderUpsertOne) ClearCreateMethod() *OrderUpsertOne {
+	return u.Update(func(s *OrderUpsert) {
+		s.ClearCreateMethod()
+	})
+}
+
+// SetMultiPaymentCoins sets the "multi_payment_coins" field.
+func (u *OrderUpsertOne) SetMultiPaymentCoins(v bool) *OrderUpsertOne {
+	return u.Update(func(s *OrderUpsert) {
+		s.SetMultiPaymentCoins(v)
+	})
+}
+
+// UpdateMultiPaymentCoins sets the "multi_payment_coins" field to the value that was provided on create.
+func (u *OrderUpsertOne) UpdateMultiPaymentCoins() *OrderUpsertOne {
+	return u.Update(func(s *OrderUpsert) {
+		s.UpdateMultiPaymentCoins()
+	})
+}
+
+// ClearMultiPaymentCoins clears the value of the "multi_payment_coins" field.
+func (u *OrderUpsertOne) ClearMultiPaymentCoins() *OrderUpsertOne {
+	return u.Update(func(s *OrderUpsert) {
+		s.ClearMultiPaymentCoins()
+	})
+}
+
+// SetPaymentAmounts sets the "payment_amounts" field.
+func (u *OrderUpsertOne) SetPaymentAmounts(v []order.PaymentAmount) *OrderUpsertOne {
+	return u.Update(func(s *OrderUpsert) {
+		s.SetPaymentAmounts(v)
+	})
+}
+
+// UpdatePaymentAmounts sets the "payment_amounts" field to the value that was provided on create.
+func (u *OrderUpsertOne) UpdatePaymentAmounts() *OrderUpsertOne {
+	return u.Update(func(s *OrderUpsert) {
+		s.UpdatePaymentAmounts()
+	})
+}
+
+// ClearPaymentAmounts clears the value of the "payment_amounts" field.
+func (u *OrderUpsertOne) ClearPaymentAmounts() *OrderUpsertOne {
+	return u.Update(func(s *OrderUpsert) {
+		s.ClearPaymentAmounts()
+	})
+}
+
 // Exec executes the query.
 func (u *OrderUpsertOne) Exec(ctx context.Context) error {
 	if len(u.create.conflict) == 0 {
@@ -2161,7 +2350,7 @@ type OrderUpsertBulk struct {
 //		OnConflict(
 //			sql.ResolveWithNewValues(),
 //			sql.ResolveWith(func(u *sql.UpdateSet) {
-//				u.SetIgnore(order.FieldID)
+//				u.SetIgnore(entorder.FieldID)
 //			}),
 //		).
 //		Exec(ctx)
@@ -2171,7 +2360,7 @@ func (u *OrderUpsertBulk) UpdateNewValues() *OrderUpsertBulk {
 	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(s *sql.UpdateSet) {
 		for _, b := range u.create.builders {
 			if _, exists := b.mutation.ID(); exists {
-				s.SetIgnore(order.FieldID)
+				s.SetIgnore(entorder.FieldID)
 				return
 			}
 		}
@@ -2757,6 +2946,69 @@ func (u *OrderUpsertBulk) UpdateLiveCoinUsdCurrency() *OrderUpsertBulk {
 func (u *OrderUpsertBulk) ClearLiveCoinUsdCurrency() *OrderUpsertBulk {
 	return u.Update(func(s *OrderUpsert) {
 		s.ClearLiveCoinUsdCurrency()
+	})
+}
+
+// SetCreateMethod sets the "create_method" field.
+func (u *OrderUpsertBulk) SetCreateMethod(v string) *OrderUpsertBulk {
+	return u.Update(func(s *OrderUpsert) {
+		s.SetCreateMethod(v)
+	})
+}
+
+// UpdateCreateMethod sets the "create_method" field to the value that was provided on create.
+func (u *OrderUpsertBulk) UpdateCreateMethod() *OrderUpsertBulk {
+	return u.Update(func(s *OrderUpsert) {
+		s.UpdateCreateMethod()
+	})
+}
+
+// ClearCreateMethod clears the value of the "create_method" field.
+func (u *OrderUpsertBulk) ClearCreateMethod() *OrderUpsertBulk {
+	return u.Update(func(s *OrderUpsert) {
+		s.ClearCreateMethod()
+	})
+}
+
+// SetMultiPaymentCoins sets the "multi_payment_coins" field.
+func (u *OrderUpsertBulk) SetMultiPaymentCoins(v bool) *OrderUpsertBulk {
+	return u.Update(func(s *OrderUpsert) {
+		s.SetMultiPaymentCoins(v)
+	})
+}
+
+// UpdateMultiPaymentCoins sets the "multi_payment_coins" field to the value that was provided on create.
+func (u *OrderUpsertBulk) UpdateMultiPaymentCoins() *OrderUpsertBulk {
+	return u.Update(func(s *OrderUpsert) {
+		s.UpdateMultiPaymentCoins()
+	})
+}
+
+// ClearMultiPaymentCoins clears the value of the "multi_payment_coins" field.
+func (u *OrderUpsertBulk) ClearMultiPaymentCoins() *OrderUpsertBulk {
+	return u.Update(func(s *OrderUpsert) {
+		s.ClearMultiPaymentCoins()
+	})
+}
+
+// SetPaymentAmounts sets the "payment_amounts" field.
+func (u *OrderUpsertBulk) SetPaymentAmounts(v []order.PaymentAmount) *OrderUpsertBulk {
+	return u.Update(func(s *OrderUpsert) {
+		s.SetPaymentAmounts(v)
+	})
+}
+
+// UpdatePaymentAmounts sets the "payment_amounts" field to the value that was provided on create.
+func (u *OrderUpsertBulk) UpdatePaymentAmounts() *OrderUpsertBulk {
+	return u.Update(func(s *OrderUpsert) {
+		s.UpdatePaymentAmounts()
+	})
+}
+
+// ClearPaymentAmounts clears the value of the "payment_amounts" field.
+func (u *OrderUpsertBulk) ClearPaymentAmounts() *OrderUpsertBulk {
+	return u.Update(func(s *OrderUpsert) {
+		s.ClearPaymentAmounts()
 	})
 }
 

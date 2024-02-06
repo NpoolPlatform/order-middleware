@@ -5,7 +5,7 @@ import (
 
 	"entgo.io/ent/dialect/sql"
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
-	basetypes "github.com/NpoolPlatform/message/npool/basetypes/order/v1"
+	types "github.com/NpoolPlatform/message/npool/basetypes/order/v1"
 	ordercrud "github.com/NpoolPlatform/order-middleware/pkg/crud/order"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent"
 	entorder "github.com/NpoolPlatform/order-middleware/pkg/db/ent/order"
@@ -59,6 +59,9 @@ func (h *baseQueryHandler) QueryJoinMyself(s *sql.Selector) {
 		t.C(entorder.FieldCoinUsdCurrency),
 		t.C(entorder.FieldLocalCoinUsdCurrency),
 		t.C(entorder.FieldLiveCoinUsdCurrency),
+		t.C(entorder.FieldCreateMethod),
+		t.C(entorder.FieldMultiPaymentCoins),
+		t.C(entorder.FieldPaymentAmounts),
 		t.C(entorder.FieldCreatedAt),
 		t.C(entorder.FieldUpdatedAt),
 	)
@@ -110,10 +113,11 @@ func (h *baseQueryHandler) QueryJoinOrderState(s *sql.Selector) error {
 		sql.As(t.C(entorderstate.FieldPaymentState), "payment_state"),
 		sql.As(t.C(entorderstate.FieldOutofgasHours), "outofgas_hours"),
 		sql.As(t.C(entorderstate.FieldCompensateHours), "compensate_hours"),
+		sql.As(t.C(entorderstate.FieldRenewState), "renew_state"),
 	)
 
 	if h.Conds != nil && h.Conds.OrderState != nil {
-		state, ok := h.Conds.OrderState.Val.(basetypes.OrderState)
+		state, ok := h.Conds.OrderState.Val.(types.OrderState)
 		if !ok {
 			return fmt.Errorf("invalid order orderstate")
 		}
@@ -129,7 +133,7 @@ func (h *baseQueryHandler) QueryJoinOrderState(s *sql.Selector) error {
 		}
 	}
 	if h.Conds != nil && h.Conds.StartMode != nil {
-		startMode, ok := h.Conds.StartMode.Val.(basetypes.OrderStartMode)
+		startMode, ok := h.Conds.StartMode.Val.(types.OrderStartMode)
 		if !ok {
 			return fmt.Errorf("invalid order startmode")
 		}
@@ -138,7 +142,7 @@ func (h *baseQueryHandler) QueryJoinOrderState(s *sql.Selector) error {
 		)
 	}
 	if h.Conds != nil && h.Conds.BenefitState != nil {
-		benefitState, ok := h.Conds.BenefitState.Val.(basetypes.BenefitState)
+		benefitState, ok := h.Conds.BenefitState.Val.(types.BenefitState)
 		if !ok {
 			return fmt.Errorf("invalid order benefitstate")
 		}
@@ -147,7 +151,7 @@ func (h *baseQueryHandler) QueryJoinOrderState(s *sql.Selector) error {
 		)
 	}
 	if h.Conds != nil && h.Conds.PaymentState != nil {
-		paymentState, ok := h.Conds.PaymentState.Val.(basetypes.PaymentState)
+		paymentState, ok := h.Conds.PaymentState.Val.(types.PaymentState)
 		if !ok {
 			return fmt.Errorf("invalid order paymentstate")
 		}
@@ -235,13 +239,57 @@ func (h *baseQueryHandler) QueryJoinOrderState(s *sql.Selector) error {
 			sql.EQ(t.C(entorderstate.FieldUserSetCanceled), b),
 		)
 	}
+	if h.Conds != nil && h.Conds.RenewState != nil {
+		state, ok := h.Conds.RenewState.Val.(types.OrderRenewState)
+		if !ok {
+			return fmt.Errorf("invalid orderrenewstate")
+		}
+		switch h.Conds.RenewState.Op {
+		case cruder.EQ:
+			s.Where(
+				sql.EQ(t.C(entorderstate.FieldRenewState), state.String()),
+			)
+		default:
+			return fmt.Errorf("invalid orderrenewstate")
+		}
+	}
+	if h.Conds != nil && h.Conds.RenewNotifyAt != nil {
+		at, ok := h.Conds.RenewNotifyAt.Val.(uint32)
+		if !ok {
+			return fmt.Errorf("invalid orderrenewnotifyat")
+		}
+		switch h.Conds.RenewNotifyAt.Op {
+		case cruder.EQ:
+			s.Where(
+				sql.EQ(t.C(entorderstate.FieldRenewNotifyAt), at),
+			)
+		case cruder.LT:
+			s.Where(
+				sql.LT(t.C(entorderstate.FieldRenewNotifyAt), at),
+			)
+		case cruder.LTE:
+			s.Where(
+				sql.LTE(t.C(entorderstate.FieldRenewNotifyAt), at),
+			)
+		case cruder.GT:
+			s.Where(
+				sql.GT(t.C(entorderstate.FieldRenewNotifyAt), at),
+			)
+		case cruder.GTE:
+			s.Where(
+				sql.GTE(t.C(entorderstate.FieldRenewNotifyAt), at),
+			)
+		default:
+			return fmt.Errorf("invalid orderrenewstate")
+		}
+	}
 	return nil
 }
 
 //nolint:dupl
 func (h *baseQueryHandler) QueryJoinStockLock(s *sql.Selector) {
 	t := sql.Table(entorderlock.Table)
-	lockType := basetypes.OrderLockType_LockStock
+	lockType := types.OrderLockType_LockStock
 	s.LeftJoin(t).
 		On(
 			s.C(entorder.FieldEntID),
@@ -262,7 +310,7 @@ func (h *baseQueryHandler) QueryJoinStockLock(s *sql.Selector) {
 //nolint:dupl
 func (h *baseQueryHandler) QueryJoinBalanceLock(s *sql.Selector) {
 	t := sql.Table(entorderlock.Table)
-	lockType := basetypes.OrderLockType_LockBalance
+	lockType := types.OrderLockType_LockBalance
 	s.LeftJoin(t).
 		On(
 			s.C(entorder.FieldEntID),

@@ -309,6 +309,34 @@ func (osc *OrderStateCreate) SetNillableCompensateHours(u *uint32) *OrderStateCr
 	return osc
 }
 
+// SetRenewState sets the "renew_state" field.
+func (osc *OrderStateCreate) SetRenewState(s string) *OrderStateCreate {
+	osc.mutation.SetRenewState(s)
+	return osc
+}
+
+// SetNillableRenewState sets the "renew_state" field if the given value is not nil.
+func (osc *OrderStateCreate) SetNillableRenewState(s *string) *OrderStateCreate {
+	if s != nil {
+		osc.SetRenewState(*s)
+	}
+	return osc
+}
+
+// SetRenewNotifyAt sets the "renew_notify_at" field.
+func (osc *OrderStateCreate) SetRenewNotifyAt(u uint32) *OrderStateCreate {
+	osc.mutation.SetRenewNotifyAt(u)
+	return osc
+}
+
+// SetNillableRenewNotifyAt sets the "renew_notify_at" field if the given value is not nil.
+func (osc *OrderStateCreate) SetNillableRenewNotifyAt(u *uint32) *OrderStateCreate {
+	if u != nil {
+		osc.SetRenewNotifyAt(*u)
+	}
+	return osc
+}
+
 // SetID sets the "id" field.
 func (osc *OrderStateCreate) SetID(u uint32) *OrderStateCreate {
 	osc.mutation.SetID(u)
@@ -485,6 +513,14 @@ func (osc *OrderStateCreate) defaults() error {
 	if _, ok := osc.mutation.CompensateHours(); !ok {
 		v := orderstate.DefaultCompensateHours
 		osc.mutation.SetCompensateHours(v)
+	}
+	if _, ok := osc.mutation.RenewState(); !ok {
+		v := orderstate.DefaultRenewState
+		osc.mutation.SetRenewState(v)
+	}
+	if _, ok := osc.mutation.RenewNotifyAt(); !ok {
+		v := orderstate.DefaultRenewNotifyAt
+		osc.mutation.SetRenewNotifyAt(v)
 	}
 	return nil
 }
@@ -707,6 +743,22 @@ func (osc *OrderStateCreate) createSpec() (*OrderState, *sqlgraph.CreateSpec) {
 			Column: orderstate.FieldCompensateHours,
 		})
 		_node.CompensateHours = value
+	}
+	if value, ok := osc.mutation.RenewState(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: orderstate.FieldRenewState,
+		})
+		_node.RenewState = value
+	}
+	if value, ok := osc.mutation.RenewNotifyAt(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeUint32,
+			Value:  value,
+			Column: orderstate.FieldRenewNotifyAt,
+		})
+		_node.RenewNotifyAt = value
 	}
 	return _node, _spec
 }
@@ -1161,6 +1213,48 @@ func (u *OrderStateUpsert) AddCompensateHours(v uint32) *OrderStateUpsert {
 // ClearCompensateHours clears the value of the "compensate_hours" field.
 func (u *OrderStateUpsert) ClearCompensateHours() *OrderStateUpsert {
 	u.SetNull(orderstate.FieldCompensateHours)
+	return u
+}
+
+// SetRenewState sets the "renew_state" field.
+func (u *OrderStateUpsert) SetRenewState(v string) *OrderStateUpsert {
+	u.Set(orderstate.FieldRenewState, v)
+	return u
+}
+
+// UpdateRenewState sets the "renew_state" field to the value that was provided on create.
+func (u *OrderStateUpsert) UpdateRenewState() *OrderStateUpsert {
+	u.SetExcluded(orderstate.FieldRenewState)
+	return u
+}
+
+// ClearRenewState clears the value of the "renew_state" field.
+func (u *OrderStateUpsert) ClearRenewState() *OrderStateUpsert {
+	u.SetNull(orderstate.FieldRenewState)
+	return u
+}
+
+// SetRenewNotifyAt sets the "renew_notify_at" field.
+func (u *OrderStateUpsert) SetRenewNotifyAt(v uint32) *OrderStateUpsert {
+	u.Set(orderstate.FieldRenewNotifyAt, v)
+	return u
+}
+
+// UpdateRenewNotifyAt sets the "renew_notify_at" field to the value that was provided on create.
+func (u *OrderStateUpsert) UpdateRenewNotifyAt() *OrderStateUpsert {
+	u.SetExcluded(orderstate.FieldRenewNotifyAt)
+	return u
+}
+
+// AddRenewNotifyAt adds v to the "renew_notify_at" field.
+func (u *OrderStateUpsert) AddRenewNotifyAt(v uint32) *OrderStateUpsert {
+	u.Add(orderstate.FieldRenewNotifyAt, v)
+	return u
+}
+
+// ClearRenewNotifyAt clears the value of the "renew_notify_at" field.
+func (u *OrderStateUpsert) ClearRenewNotifyAt() *OrderStateUpsert {
+	u.SetNull(orderstate.FieldRenewNotifyAt)
 	return u
 }
 
@@ -1680,6 +1774,55 @@ func (u *OrderStateUpsertOne) UpdateCompensateHours() *OrderStateUpsertOne {
 func (u *OrderStateUpsertOne) ClearCompensateHours() *OrderStateUpsertOne {
 	return u.Update(func(s *OrderStateUpsert) {
 		s.ClearCompensateHours()
+	})
+}
+
+// SetRenewState sets the "renew_state" field.
+func (u *OrderStateUpsertOne) SetRenewState(v string) *OrderStateUpsertOne {
+	return u.Update(func(s *OrderStateUpsert) {
+		s.SetRenewState(v)
+	})
+}
+
+// UpdateRenewState sets the "renew_state" field to the value that was provided on create.
+func (u *OrderStateUpsertOne) UpdateRenewState() *OrderStateUpsertOne {
+	return u.Update(func(s *OrderStateUpsert) {
+		s.UpdateRenewState()
+	})
+}
+
+// ClearRenewState clears the value of the "renew_state" field.
+func (u *OrderStateUpsertOne) ClearRenewState() *OrderStateUpsertOne {
+	return u.Update(func(s *OrderStateUpsert) {
+		s.ClearRenewState()
+	})
+}
+
+// SetRenewNotifyAt sets the "renew_notify_at" field.
+func (u *OrderStateUpsertOne) SetRenewNotifyAt(v uint32) *OrderStateUpsertOne {
+	return u.Update(func(s *OrderStateUpsert) {
+		s.SetRenewNotifyAt(v)
+	})
+}
+
+// AddRenewNotifyAt adds v to the "renew_notify_at" field.
+func (u *OrderStateUpsertOne) AddRenewNotifyAt(v uint32) *OrderStateUpsertOne {
+	return u.Update(func(s *OrderStateUpsert) {
+		s.AddRenewNotifyAt(v)
+	})
+}
+
+// UpdateRenewNotifyAt sets the "renew_notify_at" field to the value that was provided on create.
+func (u *OrderStateUpsertOne) UpdateRenewNotifyAt() *OrderStateUpsertOne {
+	return u.Update(func(s *OrderStateUpsert) {
+		s.UpdateRenewNotifyAt()
+	})
+}
+
+// ClearRenewNotifyAt clears the value of the "renew_notify_at" field.
+func (u *OrderStateUpsertOne) ClearRenewNotifyAt() *OrderStateUpsertOne {
+	return u.Update(func(s *OrderStateUpsert) {
+		s.ClearRenewNotifyAt()
 	})
 }
 
@@ -2364,6 +2507,55 @@ func (u *OrderStateUpsertBulk) UpdateCompensateHours() *OrderStateUpsertBulk {
 func (u *OrderStateUpsertBulk) ClearCompensateHours() *OrderStateUpsertBulk {
 	return u.Update(func(s *OrderStateUpsert) {
 		s.ClearCompensateHours()
+	})
+}
+
+// SetRenewState sets the "renew_state" field.
+func (u *OrderStateUpsertBulk) SetRenewState(v string) *OrderStateUpsertBulk {
+	return u.Update(func(s *OrderStateUpsert) {
+		s.SetRenewState(v)
+	})
+}
+
+// UpdateRenewState sets the "renew_state" field to the value that was provided on create.
+func (u *OrderStateUpsertBulk) UpdateRenewState() *OrderStateUpsertBulk {
+	return u.Update(func(s *OrderStateUpsert) {
+		s.UpdateRenewState()
+	})
+}
+
+// ClearRenewState clears the value of the "renew_state" field.
+func (u *OrderStateUpsertBulk) ClearRenewState() *OrderStateUpsertBulk {
+	return u.Update(func(s *OrderStateUpsert) {
+		s.ClearRenewState()
+	})
+}
+
+// SetRenewNotifyAt sets the "renew_notify_at" field.
+func (u *OrderStateUpsertBulk) SetRenewNotifyAt(v uint32) *OrderStateUpsertBulk {
+	return u.Update(func(s *OrderStateUpsert) {
+		s.SetRenewNotifyAt(v)
+	})
+}
+
+// AddRenewNotifyAt adds v to the "renew_notify_at" field.
+func (u *OrderStateUpsertBulk) AddRenewNotifyAt(v uint32) *OrderStateUpsertBulk {
+	return u.Update(func(s *OrderStateUpsert) {
+		s.AddRenewNotifyAt(v)
+	})
+}
+
+// UpdateRenewNotifyAt sets the "renew_notify_at" field to the value that was provided on create.
+func (u *OrderStateUpsertBulk) UpdateRenewNotifyAt() *OrderStateUpsertBulk {
+	return u.Update(func(s *OrderStateUpsert) {
+		s.UpdateRenewNotifyAt()
+	})
+}
+
+// ClearRenewNotifyAt clears the value of the "renew_notify_at" field.
+func (u *OrderStateUpsertBulk) ClearRenewNotifyAt() *OrderStateUpsertBulk {
+	return u.Update(func(s *OrderStateUpsert) {
+		s.ClearRenewNotifyAt()
 	})
 }
 

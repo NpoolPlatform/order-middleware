@@ -78,6 +78,9 @@ func (h *Handler) ToOrderReq(ctx context.Context, newOrder bool) (*OrderReq, err
 			CoinUSDCurrency:      h.CoinUSDCurrency,
 			LocalCoinUSDCurrency: h.LocalCoinUSDCurrency,
 			LiveCoinUSDCurrency:  h.LiveCoinUSDCurrency,
+			CreateMethod:         h.CreateMethod,
+			MultiPaymentCoins:    h.MultiPaymentCoins,
+			PaymentAmounts:       h.PaymentAmounts,
 		},
 		OrderStateReq: &orderstatecrud.Req{
 			OrderID:              h.EntID,
@@ -95,6 +98,8 @@ func (h *Handler) ToOrderReq(ctx context.Context, newOrder bool) (*OrderReq, err
 			PaymentFinishAmount:  h.PaymentFinishAmount,
 			OutOfGasHours:        h.OutOfGasHours,
 			CompensateHours:      h.CompensateHours,
+			RenewState:           h.RenewState,
+			RenewNotifyAt:        h.RenewNotifyAt,
 		},
 	}
 
@@ -107,7 +112,9 @@ func (h *Handler) ToOrderReq(ctx context.Context, newOrder bool) (*OrderReq, err
 			LockType: basetypes.OrderLockType_LockStock.Enum(),
 		}
 	}
-	if h.BalanceAmount != nil && h.BalanceAmount.Cmp(decimal.NewFromInt(0)) > 0 {
+
+	if (h.BalanceAmount != nil && h.BalanceAmount.Cmp(decimal.NewFromInt(0)) > 0) ||
+		len(h.PaymentAmounts) > 0 { // In this case one ledger lock will relevant to multiple statements
 		req.BalanceLockReq = &orderlockcrud.Req{
 			EntID:    h.LedgerLockID,
 			AppID:    h.AppID,

@@ -467,6 +467,53 @@ func (osu *OrderStateUpdate) ClearCompensateHours() *OrderStateUpdate {
 	return osu
 }
 
+// SetRenewState sets the "renew_state" field.
+func (osu *OrderStateUpdate) SetRenewState(s string) *OrderStateUpdate {
+	osu.mutation.SetRenewState(s)
+	return osu
+}
+
+// SetNillableRenewState sets the "renew_state" field if the given value is not nil.
+func (osu *OrderStateUpdate) SetNillableRenewState(s *string) *OrderStateUpdate {
+	if s != nil {
+		osu.SetRenewState(*s)
+	}
+	return osu
+}
+
+// ClearRenewState clears the value of the "renew_state" field.
+func (osu *OrderStateUpdate) ClearRenewState() *OrderStateUpdate {
+	osu.mutation.ClearRenewState()
+	return osu
+}
+
+// SetRenewNotifyAt sets the "renew_notify_at" field.
+func (osu *OrderStateUpdate) SetRenewNotifyAt(u uint32) *OrderStateUpdate {
+	osu.mutation.ResetRenewNotifyAt()
+	osu.mutation.SetRenewNotifyAt(u)
+	return osu
+}
+
+// SetNillableRenewNotifyAt sets the "renew_notify_at" field if the given value is not nil.
+func (osu *OrderStateUpdate) SetNillableRenewNotifyAt(u *uint32) *OrderStateUpdate {
+	if u != nil {
+		osu.SetRenewNotifyAt(*u)
+	}
+	return osu
+}
+
+// AddRenewNotifyAt adds u to the "renew_notify_at" field.
+func (osu *OrderStateUpdate) AddRenewNotifyAt(u int32) *OrderStateUpdate {
+	osu.mutation.AddRenewNotifyAt(u)
+	return osu
+}
+
+// ClearRenewNotifyAt clears the value of the "renew_notify_at" field.
+func (osu *OrderStateUpdate) ClearRenewNotifyAt() *OrderStateUpdate {
+	osu.mutation.ClearRenewNotifyAt()
+	return osu
+}
+
 // Mutation returns the OrderStateMutation object of the builder.
 func (osu *OrderStateUpdate) Mutation() *OrderStateMutation {
 	return osu.mutation
@@ -869,6 +916,39 @@ func (osu *OrderStateUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeUint32,
 			Column: orderstate.FieldCompensateHours,
+		})
+	}
+	if value, ok := osu.mutation.RenewState(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: orderstate.FieldRenewState,
+		})
+	}
+	if osu.mutation.RenewStateCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Column: orderstate.FieldRenewState,
+		})
+	}
+	if value, ok := osu.mutation.RenewNotifyAt(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeUint32,
+			Value:  value,
+			Column: orderstate.FieldRenewNotifyAt,
+		})
+	}
+	if value, ok := osu.mutation.AddedRenewNotifyAt(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeUint32,
+			Value:  value,
+			Column: orderstate.FieldRenewNotifyAt,
+		})
+	}
+	if osu.mutation.RenewNotifyAtCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeUint32,
+			Column: orderstate.FieldRenewNotifyAt,
 		})
 	}
 	_spec.Modifiers = osu.modifiers
@@ -1329,6 +1409,53 @@ func (osuo *OrderStateUpdateOne) ClearCompensateHours() *OrderStateUpdateOne {
 	return osuo
 }
 
+// SetRenewState sets the "renew_state" field.
+func (osuo *OrderStateUpdateOne) SetRenewState(s string) *OrderStateUpdateOne {
+	osuo.mutation.SetRenewState(s)
+	return osuo
+}
+
+// SetNillableRenewState sets the "renew_state" field if the given value is not nil.
+func (osuo *OrderStateUpdateOne) SetNillableRenewState(s *string) *OrderStateUpdateOne {
+	if s != nil {
+		osuo.SetRenewState(*s)
+	}
+	return osuo
+}
+
+// ClearRenewState clears the value of the "renew_state" field.
+func (osuo *OrderStateUpdateOne) ClearRenewState() *OrderStateUpdateOne {
+	osuo.mutation.ClearRenewState()
+	return osuo
+}
+
+// SetRenewNotifyAt sets the "renew_notify_at" field.
+func (osuo *OrderStateUpdateOne) SetRenewNotifyAt(u uint32) *OrderStateUpdateOne {
+	osuo.mutation.ResetRenewNotifyAt()
+	osuo.mutation.SetRenewNotifyAt(u)
+	return osuo
+}
+
+// SetNillableRenewNotifyAt sets the "renew_notify_at" field if the given value is not nil.
+func (osuo *OrderStateUpdateOne) SetNillableRenewNotifyAt(u *uint32) *OrderStateUpdateOne {
+	if u != nil {
+		osuo.SetRenewNotifyAt(*u)
+	}
+	return osuo
+}
+
+// AddRenewNotifyAt adds u to the "renew_notify_at" field.
+func (osuo *OrderStateUpdateOne) AddRenewNotifyAt(u int32) *OrderStateUpdateOne {
+	osuo.mutation.AddRenewNotifyAt(u)
+	return osuo
+}
+
+// ClearRenewNotifyAt clears the value of the "renew_notify_at" field.
+func (osuo *OrderStateUpdateOne) ClearRenewNotifyAt() *OrderStateUpdateOne {
+	osuo.mutation.ClearRenewNotifyAt()
+	return osuo
+}
+
 // Mutation returns the OrderStateMutation object of the builder.
 func (osuo *OrderStateUpdateOne) Mutation() *OrderStateMutation {
 	return osuo.mutation
@@ -1761,6 +1888,39 @@ func (osuo *OrderStateUpdateOne) sqlSave(ctx context.Context) (_node *OrderState
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeUint32,
 			Column: orderstate.FieldCompensateHours,
+		})
+	}
+	if value, ok := osuo.mutation.RenewState(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: orderstate.FieldRenewState,
+		})
+	}
+	if osuo.mutation.RenewStateCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Column: orderstate.FieldRenewState,
+		})
+	}
+	if value, ok := osuo.mutation.RenewNotifyAt(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeUint32,
+			Value:  value,
+			Column: orderstate.FieldRenewNotifyAt,
+		})
+	}
+	if value, ok := osuo.mutation.AddedRenewNotifyAt(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeUint32,
+			Value:  value,
+			Column: orderstate.FieldRenewNotifyAt,
+		})
+	}
+	if osuo.mutation.RenewNotifyAtCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeUint32,
+			Column: orderstate.FieldRenewNotifyAt,
 		})
 	}
 	_spec.Modifiers = osuo.modifiers
