@@ -114,6 +114,7 @@ func (h *baseQueryHandler) QueryJoinOrderState(s *sql.Selector) error {
 		sql.As(t.C(entorderstate.FieldOutofgasHours), "outofgas_hours"),
 		sql.As(t.C(entorderstate.FieldCompensateHours), "compensate_hours"),
 		sql.As(t.C(entorderstate.FieldRenewState), "renew_state"),
+		sql.As(t.C(entorderstate.FieldPaidAt), "paid_at"),
 	)
 
 	if h.Conds != nil && h.Conds.OrderState != nil {
