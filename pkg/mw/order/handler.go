@@ -1090,6 +1090,9 @@ func WithConds(conds *npool.Conds) func(context.Context, *Handler) error {
 		if conds.LastBenefitAt != nil {
 			h.Conds.LastBenefitAt = &cruder.Cond{Op: conds.GetLastBenefitAt().GetOp(), Val: conds.GetLastBenefitAt().GetValue()}
 		}
+		if conds.Simulate != nil {
+			h.Conds.Simulate = &cruder.Cond{Op: conds.GetSimulate().GetOp(), Val: conds.GetSimulate().GetValue()}
+		}
 
 		if conds.BenefitState != nil {
 			switch conds.GetBenefitState().GetValue() {
