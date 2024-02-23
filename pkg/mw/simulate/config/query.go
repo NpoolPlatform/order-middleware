@@ -56,10 +56,10 @@ func (h *queryHandler) queryJoinMyself(s *sql.Selector) {
 		t.C(entconfig.FieldID),
 		t.C(entconfig.FieldEntID),
 		t.C(entconfig.FieldAppID),
-		t.C(entconfig.FieldUnits),
-		t.C(entconfig.FieldDuration),
 		t.C(entconfig.FieldSendCouponMode),
 		t.C(entconfig.FieldSendCouponProbability),
+		t.C(entconfig.FieldEnabledProfitTx),
+		t.C(entconfig.FieldProfitTxProbability),
 		t.C(entconfig.FieldEnabled),
 		t.C(entconfig.FieldCreatedAt),
 		t.C(entconfig.FieldUpdatedAt),
@@ -87,17 +87,17 @@ func (h *queryHandler) scan(ctx context.Context) error {
 
 func (h *queryHandler) formalize() {
 	for _, info := range h.infos {
-		amount, err := decimal.NewFromString(info.Units)
-		if err != nil {
-			info.Units = decimal.NewFromInt(0).String()
-		} else {
-			info.Units = amount.String()
-		}
 		probability, err := decimal.NewFromString(info.SendCouponProbability)
 		if err != nil {
 			info.SendCouponProbability = decimal.NewFromInt(0).String()
 		} else {
 			info.SendCouponProbability = probability.String()
+		}
+		txProbability, err := decimal.NewFromString(info.ProfitTxProbability)
+		if err != nil {
+			info.ProfitTxProbability = decimal.NewFromInt(0).String()
+		} else {
+			info.ProfitTxProbability = txProbability.String()
 		}
 		info.SendCouponMode = basetypes.SendCouponMode(basetypes.SendCouponMode_value[info.SendCouponModeStr])
 	}

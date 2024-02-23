@@ -18,6 +18,8 @@ type Req struct {
 	Duration              *uint32
 	SendCouponMode        *basetypes.SendCouponMode
 	SendCouponProbability *decimal.Decimal
+	EnabledProfitTx       *bool
+	ProfitTxProbability   *decimal.Decimal
 	Enabled               *bool
 	CreatedAt             *uint32
 	DeletedAt             *uint32
@@ -30,17 +32,17 @@ func CreateSet(c *ent.SimulateConfigCreate, req *Req) *ent.SimulateConfigCreate 
 	if req.AppID != nil {
 		c.SetAppID(*req.AppID)
 	}
-	if req.Units != nil {
-		c.SetUnits(*req.Units)
-	}
-	if req.Duration != nil {
-		c.SetDuration(*req.Duration)
-	}
 	if req.SendCouponMode != nil {
 		c.SetSendCouponMode(req.SendCouponMode.String())
 	}
 	if req.SendCouponProbability != nil {
 		c.SetSendCouponProbability(*req.SendCouponProbability)
+	}
+	if req.EnabledProfitTx != nil {
+		c.SetEnabledProfitTx(*req.EnabledProfitTx)
+	}
+	if req.ProfitTxProbability != nil {
+		c.SetProfitTxProbability(*req.ProfitTxProbability)
 	}
 	if req.Enabled != nil {
 		c.SetEnabled(*req.Enabled)
@@ -52,17 +54,17 @@ func CreateSet(c *ent.SimulateConfigCreate, req *Req) *ent.SimulateConfigCreate 
 }
 
 func UpdateSet(u *ent.SimulateConfigUpdateOne, req *Req) *ent.SimulateConfigUpdateOne {
-	if req.Units != nil {
-		u.SetUnits(*req.Units)
-	}
-	if req.Duration != nil {
-		u.SetDuration(*req.Duration)
-	}
 	if req.SendCouponMode != nil {
 		u.SetSendCouponMode(req.SendCouponMode.String())
 	}
 	if req.SendCouponProbability != nil {
 		u.SetSendCouponProbability(*req.SendCouponProbability)
+	}
+	if req.ProfitTxProbability != nil {
+		u.SetProfitTxProbability(*req.ProfitTxProbability)
+	}
+	if req.EnabledProfitTx != nil {
+		u.SetEnabledProfitTx(*req.EnabledProfitTx)
 	}
 	if req.Enabled != nil {
 		u.SetEnabled(*req.Enabled)
@@ -74,11 +76,12 @@ func UpdateSet(u *ent.SimulateConfigUpdateOne, req *Req) *ent.SimulateConfigUpda
 }
 
 type Conds struct {
-	EntID          *cruder.Cond
-	ID             *cruder.Cond
-	AppID          *cruder.Cond
-	SendCouponMode *cruder.Cond
-	Enabled        *cruder.Cond
+	EntID           *cruder.Cond
+	ID              *cruder.Cond
+	AppID           *cruder.Cond
+	SendCouponMode  *cruder.Cond
+	Enabled         *cruder.Cond
+	EnabledProfitTx *cruder.Cond
 }
 
 //nolint
@@ -149,5 +152,18 @@ func SetQueryConds(q *ent.SimulateConfigQuery, conds *Conds) (*ent.SimulateConfi
 			return nil, fmt.Errorf("invalid simulateconfig field")
 		}
 	}
+	if conds.EnabledProfitTx != nil {
+		enabled, ok := conds.EnabledProfitTx.Val.(bool)
+		if !ok {
+			return nil, fmt.Errorf("invalid enabledprofittx")
+		}
+		switch conds.EnabledProfitTx.Op {
+		case cruder.EQ:
+			q.Where(entconfig.EnabledProfitTx(enabled))
+		default:
+			return nil, fmt.Errorf("invalid simulateconfig field")
+		}
+	}
+
 	return q, nil
 }

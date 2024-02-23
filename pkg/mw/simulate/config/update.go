@@ -17,8 +17,8 @@ func (h *updateHandler) updateSimulateConfig(ctx context.Context, tx *ent.Tx) er
 	if _, err := configcrud.UpdateSet(
 		tx.SimulateConfig.UpdateOneID(*h.ID),
 		&configcrud.Req{
-			Units:                 h.Units,
-			Duration:              h.Duration,
+			EnabledProfitTx:       h.EnabledProfitTx,
+			ProfitTxProbability:   h.ProfitTxProbability,
 			SendCouponMode:        h.SendCouponMode,
 			SendCouponProbability: h.SendCouponProbability,
 			Enabled:               h.Enabled,

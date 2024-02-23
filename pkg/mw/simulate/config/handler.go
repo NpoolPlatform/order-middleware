@@ -20,10 +20,10 @@ type Handler struct {
 	ID                    *uint32
 	EntID                 *uuid.UUID
 	AppID                 *uuid.UUID
-	Units                 *decimal.Decimal
-	Duration              *uint32
 	SendCouponMode        *basetypes.SendCouponMode
 	SendCouponProbability *decimal.Decimal
+	EnabledProfitTx       *bool
+	ProfitTxProbability   *decimal.Decimal
 	Enabled               *bool
 	Reqs                  []*npool.SimulateConfigReq
 	Conds                 *configcrud.Conds
@@ -88,39 +88,6 @@ func WithAppID(id *string, must bool) func(context.Context, *Handler) error {
 	}
 }
 
-func WithUnits(value *string, must bool) func(context.Context, *Handler) error {
-	return func(ctx context.Context, h *Handler) error {
-		if value == nil {
-			if must {
-				return fmt.Errorf("invalid units")
-			}
-			return nil
-		}
-		amount, err := decimal.NewFromString(*value)
-		if err != nil {
-			return err
-		}
-		if amount.Cmp(decimal.NewFromInt(0)) <= 0 {
-			return fmt.Errorf("units is less than or equal to 0")
-		}
-		h.Units = &amount
-		return nil
-	}
-}
-
-func WithDuration(duration *uint32, must bool) func(context.Context, *Handler) error {
-	return func(ctx context.Context, h *Handler) error {
-		if duration == nil {
-			if must {
-				return fmt.Errorf("invalid duration")
-			}
-			return nil
-		}
-		h.Duration = duration
-		return nil
-	}
-}
-
 func WithSendCouponMode(sendcouponmode *basetypes.SendCouponMode, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if sendcouponmode == nil {
@@ -158,6 +125,39 @@ func WithSendCouponProbability(value *string, must bool) func(context.Context, *
 			return fmt.Errorf("sendcouponprobability is less than 0")
 		}
 		h.SendCouponProbability = &amount
+		return nil
+	}
+}
+
+func WithEnabledProfitTx(value *bool, must bool) func(context.Context, *Handler) error {
+	return func(ctx context.Context, h *Handler) error {
+		if value == nil {
+			if must {
+				return fmt.Errorf("invalid enabledprofittx")
+			}
+			return nil
+		}
+		h.EnabledProfitTx = value
+		return nil
+	}
+}
+
+func WithProfitTxProbability(value *string, must bool) func(context.Context, *Handler) error {
+	return func(ctx context.Context, h *Handler) error {
+		if value == nil {
+			if must {
+				return fmt.Errorf("invalid profittxprobability")
+			}
+			return nil
+		}
+		amount, err := decimal.NewFromString(*value)
+		if err != nil {
+			return err
+		}
+		if amount.Cmp(decimal.NewFromInt(0)) < 0 {
+			return fmt.Errorf("profittxprobability is less than 0")
+		}
+		h.ProfitTxProbability = &amount
 		return nil
 	}
 }
@@ -221,6 +221,12 @@ func WithConds(conds *npool.Conds) func(context.Context, *Handler) error {
 			h.Conds.Enabled = &cruder.Cond{
 				Op:  conds.GetEnabled().GetOp(),
 				Val: conds.GetEnabled().GetValue(),
+			}
+		}
+		if conds.EnabledProfitTx != nil {
+			h.Conds.EnabledProfitTx = &cruder.Cond{
+				Op:  conds.GetEnabledProfitTx().GetOp(),
+				Val: conds.GetEnabledProfitTx().GetValue(),
 			}
 		}
 

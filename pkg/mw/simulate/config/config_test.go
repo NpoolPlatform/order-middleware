@@ -32,8 +32,8 @@ var (
 	ret = npool.SimulateConfig{
 		EntID:                 uuid.NewString(),
 		AppID:                 uuid.NewString(),
-		Units:                 "10",
-		Duration:              100,
+		ProfitTxProbability:   "1",
+		EnabledProfitTx:       true,
 		SendCouponModeStr:     ordertypes.SendCouponMode_WithoutCoupon.String(),
 		SendCouponMode:        ordertypes.SendCouponMode_WithoutCoupon,
 		SendCouponProbability: "1",
@@ -50,8 +50,8 @@ func createSimulateConfig(t *testing.T) {
 		context.Background(),
 		WithEntID(&ret.EntID, true),
 		WithAppID(&ret.AppID, true),
-		WithUnits(&ret.Units, true),
-		WithDuration(&ret.Duration, true),
+		WithEnabledProfitTx(&ret.EnabledProfitTx, true),
+		WithProfitTxProbability(&ret.ProfitTxProbability, true),
 		WithSendCouponMode(&ret.SendCouponMode, true),
 		WithSendCouponProbability(&ret.SendCouponProbability, true),
 		WithEnabled(&ret.Enabled, true),
@@ -68,16 +68,16 @@ func createSimulateConfig(t *testing.T) {
 }
 
 func updateSimulateConfig(t *testing.T) {
-	ret.Units = "20"
-	ret.Duration = 200
+	ret.EnabledProfitTx = false
+	ret.ProfitTxProbability = "20"
 	ret.SendCouponMode = ordertypes.SendCouponMode_RandomBenifit
 	ret.SendCouponModeStr = ordertypes.SendCouponMode_RandomBenifit.String()
 	ret.SendCouponProbability = "10"
 	handler, err := NewHandler(
 		context.Background(),
 		WithID(&ret.ID, true),
-		WithUnits(&ret.Units, true),
-		WithDuration(&ret.Duration, true),
+		WithEnabledProfitTx(&ret.EnabledProfitTx, true),
+		WithProfitTxProbability(&ret.ProfitTxProbability, true),
 		WithSendCouponMode(&ret.SendCouponMode, true),
 		WithSendCouponProbability(&ret.SendCouponProbability, true),
 	)

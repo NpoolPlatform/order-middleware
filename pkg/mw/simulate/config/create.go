@@ -41,10 +41,10 @@ func (h *createHandler) createSimulateConfig(ctx context.Context, tx *ent.Tx) er
 		&configcrud.Req{
 			EntID:                 h.EntID,
 			AppID:                 h.AppID,
-			Units:                 h.Units,
-			Duration:              h.Duration,
 			SendCouponMode:        h.SendCouponMode,
 			SendCouponProbability: h.SendCouponProbability,
+			EnabledProfitTx:       h.EnabledProfitTx,
+			ProfitTxProbability:   h.ProfitTxProbability,
 			Enabled:               h.Enabled,
 		},
 	).Save(ctx); err != nil {

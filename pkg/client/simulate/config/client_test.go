@@ -40,8 +40,8 @@ var (
 	ret = npool.SimulateConfig{
 		EntID:                 uuid.NewString(),
 		AppID:                 uuid.NewString(),
-		Units:                 "10",
-		Duration:              100,
+		ProfitTxProbability:   "1",
+		EnabledProfitTx:       true,
 		SendCouponModeStr:     ordertypes.SendCouponMode_WithoutCoupon.String(),
 		SendCouponMode:        ordertypes.SendCouponMode_WithoutCoupon,
 		SendCouponProbability: "1",
@@ -58,8 +58,8 @@ func createSimulateConfig(t *testing.T) {
 		req = npool.SimulateConfigReq{
 			EntID:                 &ret.EntID,
 			AppID:                 &ret.AppID,
-			Units:                 &ret.Units,
-			Duration:              &ret.Duration,
+			ProfitTxProbability:   &ret.ProfitTxProbability,
+			EnabledProfitTx:       &ret.EnabledProfitTx,
 			SendCouponMode:        &ret.SendCouponMode,
 			SendCouponProbability: &ret.SendCouponProbability,
 			Enabled:               &ret.Enabled,
@@ -76,16 +76,16 @@ func createSimulateConfig(t *testing.T) {
 }
 
 func updateSimulateConfig(t *testing.T) {
-	ret.Units = "20"
-	ret.Duration = 300
+	ret.ProfitTxProbability = "10"
+	ret.EnabledProfitTx = false
 	ret.SendCouponMode = ordertypes.SendCouponMode_RandomBenifit
 	ret.SendCouponModeStr = ordertypes.SendCouponMode_RandomBenifit.String()
 	ret.SendCouponProbability = "10"
 	var (
 		req = npool.SimulateConfigReq{
 			ID:                    &ret.ID,
-			Units:                 &ret.Units,
-			Duration:              &ret.Duration,
+			ProfitTxProbability:   &ret.ProfitTxProbability,
+			EnabledProfitTx:       &ret.EnabledProfitTx,
 			SendCouponMode:        &ret.SendCouponMode,
 			SendCouponProbability: &ret.SendCouponProbability,
 		}
