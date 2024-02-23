@@ -8227,11 +8227,10 @@ type SimulateConfigMutation struct {
 	adddeleted_at           *int32
 	ent_id                  *uuid.UUID
 	app_id                  *uuid.UUID
-	units                   *decimal.Decimal
-	duration                *uint32
-	addduration             *int32
 	send_coupon_mode        *string
 	send_coupon_probability *decimal.Decimal
+	enabled_profit_tx       *bool
+	profit_tx_probability   *decimal.Decimal
 	enabled                 *bool
 	clearedFields           map[string]struct{}
 	done                    bool
@@ -8583,125 +8582,6 @@ func (m *SimulateConfigMutation) ResetAppID() {
 	m.app_id = nil
 }
 
-// SetUnits sets the "units" field.
-func (m *SimulateConfigMutation) SetUnits(d decimal.Decimal) {
-	m.units = &d
-}
-
-// Units returns the value of the "units" field in the mutation.
-func (m *SimulateConfigMutation) Units() (r decimal.Decimal, exists bool) {
-	v := m.units
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldUnits returns the old "units" field's value of the SimulateConfig entity.
-// If the SimulateConfig object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *SimulateConfigMutation) OldUnits(ctx context.Context) (v decimal.Decimal, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldUnits is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldUnits requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldUnits: %w", err)
-	}
-	return oldValue.Units, nil
-}
-
-// ClearUnits clears the value of the "units" field.
-func (m *SimulateConfigMutation) ClearUnits() {
-	m.units = nil
-	m.clearedFields[simulateconfig.FieldUnits] = struct{}{}
-}
-
-// UnitsCleared returns if the "units" field was cleared in this mutation.
-func (m *SimulateConfigMutation) UnitsCleared() bool {
-	_, ok := m.clearedFields[simulateconfig.FieldUnits]
-	return ok
-}
-
-// ResetUnits resets all changes to the "units" field.
-func (m *SimulateConfigMutation) ResetUnits() {
-	m.units = nil
-	delete(m.clearedFields, simulateconfig.FieldUnits)
-}
-
-// SetDuration sets the "duration" field.
-func (m *SimulateConfigMutation) SetDuration(u uint32) {
-	m.duration = &u
-	m.addduration = nil
-}
-
-// Duration returns the value of the "duration" field in the mutation.
-func (m *SimulateConfigMutation) Duration() (r uint32, exists bool) {
-	v := m.duration
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldDuration returns the old "duration" field's value of the SimulateConfig entity.
-// If the SimulateConfig object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *SimulateConfigMutation) OldDuration(ctx context.Context) (v uint32, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldDuration is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldDuration requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldDuration: %w", err)
-	}
-	return oldValue.Duration, nil
-}
-
-// AddDuration adds u to the "duration" field.
-func (m *SimulateConfigMutation) AddDuration(u int32) {
-	if m.addduration != nil {
-		*m.addduration += u
-	} else {
-		m.addduration = &u
-	}
-}
-
-// AddedDuration returns the value that was added to the "duration" field in this mutation.
-func (m *SimulateConfigMutation) AddedDuration() (r int32, exists bool) {
-	v := m.addduration
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// ClearDuration clears the value of the "duration" field.
-func (m *SimulateConfigMutation) ClearDuration() {
-	m.duration = nil
-	m.addduration = nil
-	m.clearedFields[simulateconfig.FieldDuration] = struct{}{}
-}
-
-// DurationCleared returns if the "duration" field was cleared in this mutation.
-func (m *SimulateConfigMutation) DurationCleared() bool {
-	_, ok := m.clearedFields[simulateconfig.FieldDuration]
-	return ok
-}
-
-// ResetDuration resets all changes to the "duration" field.
-func (m *SimulateConfigMutation) ResetDuration() {
-	m.duration = nil
-	m.addduration = nil
-	delete(m.clearedFields, simulateconfig.FieldDuration)
-}
-
 // SetSendCouponMode sets the "send_coupon_mode" field.
 func (m *SimulateConfigMutation) SetSendCouponMode(s string) {
 	m.send_coupon_mode = &s
@@ -8800,6 +8680,104 @@ func (m *SimulateConfigMutation) ResetSendCouponProbability() {
 	delete(m.clearedFields, simulateconfig.FieldSendCouponProbability)
 }
 
+// SetEnabledProfitTx sets the "enabled_profit_tx" field.
+func (m *SimulateConfigMutation) SetEnabledProfitTx(b bool) {
+	m.enabled_profit_tx = &b
+}
+
+// EnabledProfitTx returns the value of the "enabled_profit_tx" field in the mutation.
+func (m *SimulateConfigMutation) EnabledProfitTx() (r bool, exists bool) {
+	v := m.enabled_profit_tx
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldEnabledProfitTx returns the old "enabled_profit_tx" field's value of the SimulateConfig entity.
+// If the SimulateConfig object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SimulateConfigMutation) OldEnabledProfitTx(ctx context.Context) (v bool, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldEnabledProfitTx is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldEnabledProfitTx requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldEnabledProfitTx: %w", err)
+	}
+	return oldValue.EnabledProfitTx, nil
+}
+
+// ClearEnabledProfitTx clears the value of the "enabled_profit_tx" field.
+func (m *SimulateConfigMutation) ClearEnabledProfitTx() {
+	m.enabled_profit_tx = nil
+	m.clearedFields[simulateconfig.FieldEnabledProfitTx] = struct{}{}
+}
+
+// EnabledProfitTxCleared returns if the "enabled_profit_tx" field was cleared in this mutation.
+func (m *SimulateConfigMutation) EnabledProfitTxCleared() bool {
+	_, ok := m.clearedFields[simulateconfig.FieldEnabledProfitTx]
+	return ok
+}
+
+// ResetEnabledProfitTx resets all changes to the "enabled_profit_tx" field.
+func (m *SimulateConfigMutation) ResetEnabledProfitTx() {
+	m.enabled_profit_tx = nil
+	delete(m.clearedFields, simulateconfig.FieldEnabledProfitTx)
+}
+
+// SetProfitTxProbability sets the "profit_tx_probability" field.
+func (m *SimulateConfigMutation) SetProfitTxProbability(d decimal.Decimal) {
+	m.profit_tx_probability = &d
+}
+
+// ProfitTxProbability returns the value of the "profit_tx_probability" field in the mutation.
+func (m *SimulateConfigMutation) ProfitTxProbability() (r decimal.Decimal, exists bool) {
+	v := m.profit_tx_probability
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldProfitTxProbability returns the old "profit_tx_probability" field's value of the SimulateConfig entity.
+// If the SimulateConfig object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SimulateConfigMutation) OldProfitTxProbability(ctx context.Context) (v decimal.Decimal, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldProfitTxProbability is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldProfitTxProbability requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldProfitTxProbability: %w", err)
+	}
+	return oldValue.ProfitTxProbability, nil
+}
+
+// ClearProfitTxProbability clears the value of the "profit_tx_probability" field.
+func (m *SimulateConfigMutation) ClearProfitTxProbability() {
+	m.profit_tx_probability = nil
+	m.clearedFields[simulateconfig.FieldProfitTxProbability] = struct{}{}
+}
+
+// ProfitTxProbabilityCleared returns if the "profit_tx_probability" field was cleared in this mutation.
+func (m *SimulateConfigMutation) ProfitTxProbabilityCleared() bool {
+	_, ok := m.clearedFields[simulateconfig.FieldProfitTxProbability]
+	return ok
+}
+
+// ResetProfitTxProbability resets all changes to the "profit_tx_probability" field.
+func (m *SimulateConfigMutation) ResetProfitTxProbability() {
+	m.profit_tx_probability = nil
+	delete(m.clearedFields, simulateconfig.FieldProfitTxProbability)
+}
+
 // SetEnabled sets the "enabled" field.
 func (m *SimulateConfigMutation) SetEnabled(b bool) {
 	m.enabled = &b
@@ -8884,17 +8862,17 @@ func (m *SimulateConfigMutation) Fields() []string {
 	if m.app_id != nil {
 		fields = append(fields, simulateconfig.FieldAppID)
 	}
-	if m.units != nil {
-		fields = append(fields, simulateconfig.FieldUnits)
-	}
-	if m.duration != nil {
-		fields = append(fields, simulateconfig.FieldDuration)
-	}
 	if m.send_coupon_mode != nil {
 		fields = append(fields, simulateconfig.FieldSendCouponMode)
 	}
 	if m.send_coupon_probability != nil {
 		fields = append(fields, simulateconfig.FieldSendCouponProbability)
+	}
+	if m.enabled_profit_tx != nil {
+		fields = append(fields, simulateconfig.FieldEnabledProfitTx)
+	}
+	if m.profit_tx_probability != nil {
+		fields = append(fields, simulateconfig.FieldProfitTxProbability)
 	}
 	if m.enabled != nil {
 		fields = append(fields, simulateconfig.FieldEnabled)
@@ -8917,14 +8895,14 @@ func (m *SimulateConfigMutation) Field(name string) (ent.Value, bool) {
 		return m.EntID()
 	case simulateconfig.FieldAppID:
 		return m.AppID()
-	case simulateconfig.FieldUnits:
-		return m.Units()
-	case simulateconfig.FieldDuration:
-		return m.Duration()
 	case simulateconfig.FieldSendCouponMode:
 		return m.SendCouponMode()
 	case simulateconfig.FieldSendCouponProbability:
 		return m.SendCouponProbability()
+	case simulateconfig.FieldEnabledProfitTx:
+		return m.EnabledProfitTx()
+	case simulateconfig.FieldProfitTxProbability:
+		return m.ProfitTxProbability()
 	case simulateconfig.FieldEnabled:
 		return m.Enabled()
 	}
@@ -8946,14 +8924,14 @@ func (m *SimulateConfigMutation) OldField(ctx context.Context, name string) (ent
 		return m.OldEntID(ctx)
 	case simulateconfig.FieldAppID:
 		return m.OldAppID(ctx)
-	case simulateconfig.FieldUnits:
-		return m.OldUnits(ctx)
-	case simulateconfig.FieldDuration:
-		return m.OldDuration(ctx)
 	case simulateconfig.FieldSendCouponMode:
 		return m.OldSendCouponMode(ctx)
 	case simulateconfig.FieldSendCouponProbability:
 		return m.OldSendCouponProbability(ctx)
+	case simulateconfig.FieldEnabledProfitTx:
+		return m.OldEnabledProfitTx(ctx)
+	case simulateconfig.FieldProfitTxProbability:
+		return m.OldProfitTxProbability(ctx)
 	case simulateconfig.FieldEnabled:
 		return m.OldEnabled(ctx)
 	}
@@ -9000,20 +8978,6 @@ func (m *SimulateConfigMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetAppID(v)
 		return nil
-	case simulateconfig.FieldUnits:
-		v, ok := value.(decimal.Decimal)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetUnits(v)
-		return nil
-	case simulateconfig.FieldDuration:
-		v, ok := value.(uint32)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetDuration(v)
-		return nil
 	case simulateconfig.FieldSendCouponMode:
 		v, ok := value.(string)
 		if !ok {
@@ -9027,6 +8991,20 @@ func (m *SimulateConfigMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetSendCouponProbability(v)
+		return nil
+	case simulateconfig.FieldEnabledProfitTx:
+		v, ok := value.(bool)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetEnabledProfitTx(v)
+		return nil
+	case simulateconfig.FieldProfitTxProbability:
+		v, ok := value.(decimal.Decimal)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetProfitTxProbability(v)
 		return nil
 	case simulateconfig.FieldEnabled:
 		v, ok := value.(bool)
@@ -9052,9 +9030,6 @@ func (m *SimulateConfigMutation) AddedFields() []string {
 	if m.adddeleted_at != nil {
 		fields = append(fields, simulateconfig.FieldDeletedAt)
 	}
-	if m.addduration != nil {
-		fields = append(fields, simulateconfig.FieldDuration)
-	}
 	return fields
 }
 
@@ -9069,8 +9044,6 @@ func (m *SimulateConfigMutation) AddedField(name string) (ent.Value, bool) {
 		return m.AddedUpdatedAt()
 	case simulateconfig.FieldDeletedAt:
 		return m.AddedDeletedAt()
-	case simulateconfig.FieldDuration:
-		return m.AddedDuration()
 	}
 	return nil, false
 }
@@ -9101,13 +9074,6 @@ func (m *SimulateConfigMutation) AddField(name string, value ent.Value) error {
 		}
 		m.AddDeletedAt(v)
 		return nil
-	case simulateconfig.FieldDuration:
-		v, ok := value.(int32)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.AddDuration(v)
-		return nil
 	}
 	return fmt.Errorf("unknown SimulateConfig numeric field %s", name)
 }
@@ -9116,17 +9082,17 @@ func (m *SimulateConfigMutation) AddField(name string, value ent.Value) error {
 // mutation.
 func (m *SimulateConfigMutation) ClearedFields() []string {
 	var fields []string
-	if m.FieldCleared(simulateconfig.FieldUnits) {
-		fields = append(fields, simulateconfig.FieldUnits)
-	}
-	if m.FieldCleared(simulateconfig.FieldDuration) {
-		fields = append(fields, simulateconfig.FieldDuration)
-	}
 	if m.FieldCleared(simulateconfig.FieldSendCouponMode) {
 		fields = append(fields, simulateconfig.FieldSendCouponMode)
 	}
 	if m.FieldCleared(simulateconfig.FieldSendCouponProbability) {
 		fields = append(fields, simulateconfig.FieldSendCouponProbability)
+	}
+	if m.FieldCleared(simulateconfig.FieldEnabledProfitTx) {
+		fields = append(fields, simulateconfig.FieldEnabledProfitTx)
+	}
+	if m.FieldCleared(simulateconfig.FieldProfitTxProbability) {
+		fields = append(fields, simulateconfig.FieldProfitTxProbability)
 	}
 	if m.FieldCleared(simulateconfig.FieldEnabled) {
 		fields = append(fields, simulateconfig.FieldEnabled)
@@ -9145,17 +9111,17 @@ func (m *SimulateConfigMutation) FieldCleared(name string) bool {
 // error if the field is not defined in the schema.
 func (m *SimulateConfigMutation) ClearField(name string) error {
 	switch name {
-	case simulateconfig.FieldUnits:
-		m.ClearUnits()
-		return nil
-	case simulateconfig.FieldDuration:
-		m.ClearDuration()
-		return nil
 	case simulateconfig.FieldSendCouponMode:
 		m.ClearSendCouponMode()
 		return nil
 	case simulateconfig.FieldSendCouponProbability:
 		m.ClearSendCouponProbability()
+		return nil
+	case simulateconfig.FieldEnabledProfitTx:
+		m.ClearEnabledProfitTx()
+		return nil
+	case simulateconfig.FieldProfitTxProbability:
+		m.ClearProfitTxProbability()
 		return nil
 	case simulateconfig.FieldEnabled:
 		m.ClearEnabled()
@@ -9183,17 +9149,17 @@ func (m *SimulateConfigMutation) ResetField(name string) error {
 	case simulateconfig.FieldAppID:
 		m.ResetAppID()
 		return nil
-	case simulateconfig.FieldUnits:
-		m.ResetUnits()
-		return nil
-	case simulateconfig.FieldDuration:
-		m.ResetDuration()
-		return nil
 	case simulateconfig.FieldSendCouponMode:
 		m.ResetSendCouponMode()
 		return nil
 	case simulateconfig.FieldSendCouponProbability:
 		m.ResetSendCouponProbability()
+		return nil
+	case simulateconfig.FieldEnabledProfitTx:
+		m.ResetEnabledProfitTx()
+		return nil
+	case simulateconfig.FieldProfitTxProbability:
+		m.ResetProfitTxProbability()
 		return nil
 	case simulateconfig.FieldEnabled:
 		m.ResetEnabled()

@@ -115,20 +115,6 @@ func AppID(v uuid.UUID) predicate.SimulateConfig {
 	})
 }
 
-// Units applies equality check predicate on the "units" field. It's identical to UnitsEQ.
-func Units(v decimal.Decimal) predicate.SimulateConfig {
-	return predicate.SimulateConfig(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldUnits), v))
-	})
-}
-
-// Duration applies equality check predicate on the "duration" field. It's identical to DurationEQ.
-func Duration(v uint32) predicate.SimulateConfig {
-	return predicate.SimulateConfig(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldDuration), v))
-	})
-}
-
 // SendCouponMode applies equality check predicate on the "send_coupon_mode" field. It's identical to SendCouponModeEQ.
 func SendCouponMode(v string) predicate.SimulateConfig {
 	return predicate.SimulateConfig(func(s *sql.Selector) {
@@ -140,6 +126,20 @@ func SendCouponMode(v string) predicate.SimulateConfig {
 func SendCouponProbability(v decimal.Decimal) predicate.SimulateConfig {
 	return predicate.SimulateConfig(func(s *sql.Selector) {
 		s.Where(sql.EQ(s.C(FieldSendCouponProbability), v))
+	})
+}
+
+// EnabledProfitTx applies equality check predicate on the "enabled_profit_tx" field. It's identical to EnabledProfitTxEQ.
+func EnabledProfitTx(v bool) predicate.SimulateConfig {
+	return predicate.SimulateConfig(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldEnabledProfitTx), v))
+	})
+}
+
+// ProfitTxProbability applies equality check predicate on the "profit_tx_probability" field. It's identical to ProfitTxProbabilityEQ.
+func ProfitTxProbability(v decimal.Decimal) predicate.SimulateConfig {
+	return predicate.SimulateConfig(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldProfitTxProbability), v))
 	})
 }
 
@@ -470,162 +470,6 @@ func AppIDLTE(v uuid.UUID) predicate.SimulateConfig {
 	})
 }
 
-// UnitsEQ applies the EQ predicate on the "units" field.
-func UnitsEQ(v decimal.Decimal) predicate.SimulateConfig {
-	return predicate.SimulateConfig(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldUnits), v))
-	})
-}
-
-// UnitsNEQ applies the NEQ predicate on the "units" field.
-func UnitsNEQ(v decimal.Decimal) predicate.SimulateConfig {
-	return predicate.SimulateConfig(func(s *sql.Selector) {
-		s.Where(sql.NEQ(s.C(FieldUnits), v))
-	})
-}
-
-// UnitsIn applies the In predicate on the "units" field.
-func UnitsIn(vs ...decimal.Decimal) predicate.SimulateConfig {
-	v := make([]interface{}, len(vs))
-	for i := range v {
-		v[i] = vs[i]
-	}
-	return predicate.SimulateConfig(func(s *sql.Selector) {
-		s.Where(sql.In(s.C(FieldUnits), v...))
-	})
-}
-
-// UnitsNotIn applies the NotIn predicate on the "units" field.
-func UnitsNotIn(vs ...decimal.Decimal) predicate.SimulateConfig {
-	v := make([]interface{}, len(vs))
-	for i := range v {
-		v[i] = vs[i]
-	}
-	return predicate.SimulateConfig(func(s *sql.Selector) {
-		s.Where(sql.NotIn(s.C(FieldUnits), v...))
-	})
-}
-
-// UnitsGT applies the GT predicate on the "units" field.
-func UnitsGT(v decimal.Decimal) predicate.SimulateConfig {
-	return predicate.SimulateConfig(func(s *sql.Selector) {
-		s.Where(sql.GT(s.C(FieldUnits), v))
-	})
-}
-
-// UnitsGTE applies the GTE predicate on the "units" field.
-func UnitsGTE(v decimal.Decimal) predicate.SimulateConfig {
-	return predicate.SimulateConfig(func(s *sql.Selector) {
-		s.Where(sql.GTE(s.C(FieldUnits), v))
-	})
-}
-
-// UnitsLT applies the LT predicate on the "units" field.
-func UnitsLT(v decimal.Decimal) predicate.SimulateConfig {
-	return predicate.SimulateConfig(func(s *sql.Selector) {
-		s.Where(sql.LT(s.C(FieldUnits), v))
-	})
-}
-
-// UnitsLTE applies the LTE predicate on the "units" field.
-func UnitsLTE(v decimal.Decimal) predicate.SimulateConfig {
-	return predicate.SimulateConfig(func(s *sql.Selector) {
-		s.Where(sql.LTE(s.C(FieldUnits), v))
-	})
-}
-
-// UnitsIsNil applies the IsNil predicate on the "units" field.
-func UnitsIsNil() predicate.SimulateConfig {
-	return predicate.SimulateConfig(func(s *sql.Selector) {
-		s.Where(sql.IsNull(s.C(FieldUnits)))
-	})
-}
-
-// UnitsNotNil applies the NotNil predicate on the "units" field.
-func UnitsNotNil() predicate.SimulateConfig {
-	return predicate.SimulateConfig(func(s *sql.Selector) {
-		s.Where(sql.NotNull(s.C(FieldUnits)))
-	})
-}
-
-// DurationEQ applies the EQ predicate on the "duration" field.
-func DurationEQ(v uint32) predicate.SimulateConfig {
-	return predicate.SimulateConfig(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldDuration), v))
-	})
-}
-
-// DurationNEQ applies the NEQ predicate on the "duration" field.
-func DurationNEQ(v uint32) predicate.SimulateConfig {
-	return predicate.SimulateConfig(func(s *sql.Selector) {
-		s.Where(sql.NEQ(s.C(FieldDuration), v))
-	})
-}
-
-// DurationIn applies the In predicate on the "duration" field.
-func DurationIn(vs ...uint32) predicate.SimulateConfig {
-	v := make([]interface{}, len(vs))
-	for i := range v {
-		v[i] = vs[i]
-	}
-	return predicate.SimulateConfig(func(s *sql.Selector) {
-		s.Where(sql.In(s.C(FieldDuration), v...))
-	})
-}
-
-// DurationNotIn applies the NotIn predicate on the "duration" field.
-func DurationNotIn(vs ...uint32) predicate.SimulateConfig {
-	v := make([]interface{}, len(vs))
-	for i := range v {
-		v[i] = vs[i]
-	}
-	return predicate.SimulateConfig(func(s *sql.Selector) {
-		s.Where(sql.NotIn(s.C(FieldDuration), v...))
-	})
-}
-
-// DurationGT applies the GT predicate on the "duration" field.
-func DurationGT(v uint32) predicate.SimulateConfig {
-	return predicate.SimulateConfig(func(s *sql.Selector) {
-		s.Where(sql.GT(s.C(FieldDuration), v))
-	})
-}
-
-// DurationGTE applies the GTE predicate on the "duration" field.
-func DurationGTE(v uint32) predicate.SimulateConfig {
-	return predicate.SimulateConfig(func(s *sql.Selector) {
-		s.Where(sql.GTE(s.C(FieldDuration), v))
-	})
-}
-
-// DurationLT applies the LT predicate on the "duration" field.
-func DurationLT(v uint32) predicate.SimulateConfig {
-	return predicate.SimulateConfig(func(s *sql.Selector) {
-		s.Where(sql.LT(s.C(FieldDuration), v))
-	})
-}
-
-// DurationLTE applies the LTE predicate on the "duration" field.
-func DurationLTE(v uint32) predicate.SimulateConfig {
-	return predicate.SimulateConfig(func(s *sql.Selector) {
-		s.Where(sql.LTE(s.C(FieldDuration), v))
-	})
-}
-
-// DurationIsNil applies the IsNil predicate on the "duration" field.
-func DurationIsNil() predicate.SimulateConfig {
-	return predicate.SimulateConfig(func(s *sql.Selector) {
-		s.Where(sql.IsNull(s.C(FieldDuration)))
-	})
-}
-
-// DurationNotNil applies the NotNil predicate on the "duration" field.
-func DurationNotNil() predicate.SimulateConfig {
-	return predicate.SimulateConfig(func(s *sql.Selector) {
-		s.Where(sql.NotNull(s.C(FieldDuration)))
-	})
-}
-
 // SendCouponModeEQ applies the EQ predicate on the "send_coupon_mode" field.
 func SendCouponModeEQ(v string) predicate.SimulateConfig {
 	return predicate.SimulateConfig(func(s *sql.Selector) {
@@ -814,6 +658,112 @@ func SendCouponProbabilityIsNil() predicate.SimulateConfig {
 func SendCouponProbabilityNotNil() predicate.SimulateConfig {
 	return predicate.SimulateConfig(func(s *sql.Selector) {
 		s.Where(sql.NotNull(s.C(FieldSendCouponProbability)))
+	})
+}
+
+// EnabledProfitTxEQ applies the EQ predicate on the "enabled_profit_tx" field.
+func EnabledProfitTxEQ(v bool) predicate.SimulateConfig {
+	return predicate.SimulateConfig(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldEnabledProfitTx), v))
+	})
+}
+
+// EnabledProfitTxNEQ applies the NEQ predicate on the "enabled_profit_tx" field.
+func EnabledProfitTxNEQ(v bool) predicate.SimulateConfig {
+	return predicate.SimulateConfig(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldEnabledProfitTx), v))
+	})
+}
+
+// EnabledProfitTxIsNil applies the IsNil predicate on the "enabled_profit_tx" field.
+func EnabledProfitTxIsNil() predicate.SimulateConfig {
+	return predicate.SimulateConfig(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldEnabledProfitTx)))
+	})
+}
+
+// EnabledProfitTxNotNil applies the NotNil predicate on the "enabled_profit_tx" field.
+func EnabledProfitTxNotNil() predicate.SimulateConfig {
+	return predicate.SimulateConfig(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldEnabledProfitTx)))
+	})
+}
+
+// ProfitTxProbabilityEQ applies the EQ predicate on the "profit_tx_probability" field.
+func ProfitTxProbabilityEQ(v decimal.Decimal) predicate.SimulateConfig {
+	return predicate.SimulateConfig(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldProfitTxProbability), v))
+	})
+}
+
+// ProfitTxProbabilityNEQ applies the NEQ predicate on the "profit_tx_probability" field.
+func ProfitTxProbabilityNEQ(v decimal.Decimal) predicate.SimulateConfig {
+	return predicate.SimulateConfig(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldProfitTxProbability), v))
+	})
+}
+
+// ProfitTxProbabilityIn applies the In predicate on the "profit_tx_probability" field.
+func ProfitTxProbabilityIn(vs ...decimal.Decimal) predicate.SimulateConfig {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.SimulateConfig(func(s *sql.Selector) {
+		s.Where(sql.In(s.C(FieldProfitTxProbability), v...))
+	})
+}
+
+// ProfitTxProbabilityNotIn applies the NotIn predicate on the "profit_tx_probability" field.
+func ProfitTxProbabilityNotIn(vs ...decimal.Decimal) predicate.SimulateConfig {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.SimulateConfig(func(s *sql.Selector) {
+		s.Where(sql.NotIn(s.C(FieldProfitTxProbability), v...))
+	})
+}
+
+// ProfitTxProbabilityGT applies the GT predicate on the "profit_tx_probability" field.
+func ProfitTxProbabilityGT(v decimal.Decimal) predicate.SimulateConfig {
+	return predicate.SimulateConfig(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldProfitTxProbability), v))
+	})
+}
+
+// ProfitTxProbabilityGTE applies the GTE predicate on the "profit_tx_probability" field.
+func ProfitTxProbabilityGTE(v decimal.Decimal) predicate.SimulateConfig {
+	return predicate.SimulateConfig(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldProfitTxProbability), v))
+	})
+}
+
+// ProfitTxProbabilityLT applies the LT predicate on the "profit_tx_probability" field.
+func ProfitTxProbabilityLT(v decimal.Decimal) predicate.SimulateConfig {
+	return predicate.SimulateConfig(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldProfitTxProbability), v))
+	})
+}
+
+// ProfitTxProbabilityLTE applies the LTE predicate on the "profit_tx_probability" field.
+func ProfitTxProbabilityLTE(v decimal.Decimal) predicate.SimulateConfig {
+	return predicate.SimulateConfig(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldProfitTxProbability), v))
+	})
+}
+
+// ProfitTxProbabilityIsNil applies the IsNil predicate on the "profit_tx_probability" field.
+func ProfitTxProbabilityIsNil() predicate.SimulateConfig {
+	return predicate.SimulateConfig(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldProfitTxProbability)))
+	})
+}
+
+// ProfitTxProbabilityNotNil applies the NotNil predicate on the "profit_tx_probability" field.
+func ProfitTxProbabilityNotNil() predicate.SimulateConfig {
+	return predicate.SimulateConfig(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldProfitTxProbability)))
 	})
 }
 

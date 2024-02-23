@@ -29,22 +29,22 @@ func (SimulateConfig) Fields() []ent.Field {
 		field.
 			UUID("app_id", uuid.UUID{}),
 		field.
-			Other("units", decimal.Decimal{}).
+			String("send_coupon_mode").
+			Optional().
+			Default(types.SendCouponMode_WithoutCoupon.String()),
+		field.
+			Other("send_coupon_probability", decimal.Decimal{}).
 			SchemaType(map[string]string{
 				dialect.MySQL: "decimal(37,18)",
 			}).
 			Optional().
 			Default(decimal.Decimal{}),
 		field.
-			Uint32("duration").
+			Bool("enabled_profit_tx").
 			Optional().
-			Default(0),
+			Default(false),
 		field.
-			String("send_coupon_mode").
-			Optional().
-			Default(types.SendCouponMode_WithoutCoupon.String()),
-		field.
-			Other("send_coupon_probability", decimal.Decimal{}).
+			Other("profit_tx_probability", decimal.Decimal{}).
 			SchemaType(map[string]string{
 				dialect.MySQL: "decimal(37,18)",
 			}).

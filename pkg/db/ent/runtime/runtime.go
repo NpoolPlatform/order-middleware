@@ -442,22 +442,22 @@ func init() {
 	simulateconfigDescEntID := simulateconfigMixinFields1[1].Descriptor()
 	// simulateconfig.DefaultEntID holds the default value on creation for the ent_id field.
 	simulateconfig.DefaultEntID = simulateconfigDescEntID.Default.(func() uuid.UUID)
-	// simulateconfigDescUnits is the schema descriptor for units field.
-	simulateconfigDescUnits := simulateconfigFields[1].Descriptor()
-	// simulateconfig.DefaultUnits holds the default value on creation for the units field.
-	simulateconfig.DefaultUnits = simulateconfigDescUnits.Default.(decimal.Decimal)
-	// simulateconfigDescDuration is the schema descriptor for duration field.
-	simulateconfigDescDuration := simulateconfigFields[2].Descriptor()
-	// simulateconfig.DefaultDuration holds the default value on creation for the duration field.
-	simulateconfig.DefaultDuration = simulateconfigDescDuration.Default.(uint32)
 	// simulateconfigDescSendCouponMode is the schema descriptor for send_coupon_mode field.
-	simulateconfigDescSendCouponMode := simulateconfigFields[3].Descriptor()
+	simulateconfigDescSendCouponMode := simulateconfigFields[1].Descriptor()
 	// simulateconfig.DefaultSendCouponMode holds the default value on creation for the send_coupon_mode field.
 	simulateconfig.DefaultSendCouponMode = simulateconfigDescSendCouponMode.Default.(string)
 	// simulateconfigDescSendCouponProbability is the schema descriptor for send_coupon_probability field.
-	simulateconfigDescSendCouponProbability := simulateconfigFields[4].Descriptor()
+	simulateconfigDescSendCouponProbability := simulateconfigFields[2].Descriptor()
 	// simulateconfig.DefaultSendCouponProbability holds the default value on creation for the send_coupon_probability field.
 	simulateconfig.DefaultSendCouponProbability = simulateconfigDescSendCouponProbability.Default.(decimal.Decimal)
+	// simulateconfigDescEnabledProfitTx is the schema descriptor for enabled_profit_tx field.
+	simulateconfigDescEnabledProfitTx := simulateconfigFields[3].Descriptor()
+	// simulateconfig.DefaultEnabledProfitTx holds the default value on creation for the enabled_profit_tx field.
+	simulateconfig.DefaultEnabledProfitTx = simulateconfigDescEnabledProfitTx.Default.(bool)
+	// simulateconfigDescProfitTxProbability is the schema descriptor for profit_tx_probability field.
+	simulateconfigDescProfitTxProbability := simulateconfigFields[4].Descriptor()
+	// simulateconfig.DefaultProfitTxProbability holds the default value on creation for the profit_tx_probability field.
+	simulateconfig.DefaultProfitTxProbability = simulateconfigDescProfitTxProbability.Default.(decimal.Decimal)
 	// simulateconfigDescEnabled is the schema descriptor for enabled field.
 	simulateconfigDescEnabled := simulateconfigFields[5].Descriptor()
 	// simulateconfig.DefaultEnabled holds the default value on creation for the enabled field.

@@ -201,10 +201,10 @@ var schemaGraph = func() *sqlgraph.Schema {
 			simulateconfig.FieldDeletedAt:             {Type: field.TypeUint32, Column: simulateconfig.FieldDeletedAt},
 			simulateconfig.FieldEntID:                 {Type: field.TypeUUID, Column: simulateconfig.FieldEntID},
 			simulateconfig.FieldAppID:                 {Type: field.TypeUUID, Column: simulateconfig.FieldAppID},
-			simulateconfig.FieldUnits:                 {Type: field.TypeOther, Column: simulateconfig.FieldUnits},
-			simulateconfig.FieldDuration:              {Type: field.TypeUint32, Column: simulateconfig.FieldDuration},
 			simulateconfig.FieldSendCouponMode:        {Type: field.TypeString, Column: simulateconfig.FieldSendCouponMode},
 			simulateconfig.FieldSendCouponProbability: {Type: field.TypeOther, Column: simulateconfig.FieldSendCouponProbability},
+			simulateconfig.FieldEnabledProfitTx:       {Type: field.TypeBool, Column: simulateconfig.FieldEnabledProfitTx},
+			simulateconfig.FieldProfitTxProbability:   {Type: field.TypeOther, Column: simulateconfig.FieldProfitTxProbability},
 			simulateconfig.FieldEnabled:               {Type: field.TypeBool, Column: simulateconfig.FieldEnabled},
 		},
 	}
@@ -957,16 +957,6 @@ func (f *SimulateConfigFilter) WhereAppID(p entql.ValueP) {
 	f.Where(p.Field(simulateconfig.FieldAppID))
 }
 
-// WhereUnits applies the entql other predicate on the units field.
-func (f *SimulateConfigFilter) WhereUnits(p entql.OtherP) {
-	f.Where(p.Field(simulateconfig.FieldUnits))
-}
-
-// WhereDuration applies the entql uint32 predicate on the duration field.
-func (f *SimulateConfigFilter) WhereDuration(p entql.Uint32P) {
-	f.Where(p.Field(simulateconfig.FieldDuration))
-}
-
 // WhereSendCouponMode applies the entql string predicate on the send_coupon_mode field.
 func (f *SimulateConfigFilter) WhereSendCouponMode(p entql.StringP) {
 	f.Where(p.Field(simulateconfig.FieldSendCouponMode))
@@ -975,6 +965,16 @@ func (f *SimulateConfigFilter) WhereSendCouponMode(p entql.StringP) {
 // WhereSendCouponProbability applies the entql other predicate on the send_coupon_probability field.
 func (f *SimulateConfigFilter) WhereSendCouponProbability(p entql.OtherP) {
 	f.Where(p.Field(simulateconfig.FieldSendCouponProbability))
+}
+
+// WhereEnabledProfitTx applies the entql bool predicate on the enabled_profit_tx field.
+func (f *SimulateConfigFilter) WhereEnabledProfitTx(p entql.BoolP) {
+	f.Where(p.Field(simulateconfig.FieldEnabledProfitTx))
+}
+
+// WhereProfitTxProbability applies the entql other predicate on the profit_tx_probability field.
+func (f *SimulateConfigFilter) WhereProfitTxProbability(p entql.OtherP) {
+	f.Where(p.Field(simulateconfig.FieldProfitTxProbability))
 }
 
 // WhereEnabled applies the entql bool predicate on the enabled field.

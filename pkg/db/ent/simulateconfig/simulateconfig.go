@@ -23,14 +23,14 @@ const (
 	FieldEntID = "ent_id"
 	// FieldAppID holds the string denoting the app_id field in the database.
 	FieldAppID = "app_id"
-	// FieldUnits holds the string denoting the units field in the database.
-	FieldUnits = "units"
-	// FieldDuration holds the string denoting the duration field in the database.
-	FieldDuration = "duration"
 	// FieldSendCouponMode holds the string denoting the send_coupon_mode field in the database.
 	FieldSendCouponMode = "send_coupon_mode"
 	// FieldSendCouponProbability holds the string denoting the send_coupon_probability field in the database.
 	FieldSendCouponProbability = "send_coupon_probability"
+	// FieldEnabledProfitTx holds the string denoting the enabled_profit_tx field in the database.
+	FieldEnabledProfitTx = "enabled_profit_tx"
+	// FieldProfitTxProbability holds the string denoting the profit_tx_probability field in the database.
+	FieldProfitTxProbability = "profit_tx_probability"
 	// FieldEnabled holds the string denoting the enabled field in the database.
 	FieldEnabled = "enabled"
 	// Table holds the table name of the simulateconfig in the database.
@@ -45,10 +45,10 @@ var Columns = []string{
 	FieldDeletedAt,
 	FieldEntID,
 	FieldAppID,
-	FieldUnits,
-	FieldDuration,
 	FieldSendCouponMode,
 	FieldSendCouponProbability,
+	FieldEnabledProfitTx,
+	FieldProfitTxProbability,
 	FieldEnabled,
 }
 
@@ -81,14 +81,14 @@ var (
 	DefaultDeletedAt func() uint32
 	// DefaultEntID holds the default value on creation for the "ent_id" field.
 	DefaultEntID func() uuid.UUID
-	// DefaultUnits holds the default value on creation for the "units" field.
-	DefaultUnits decimal.Decimal
-	// DefaultDuration holds the default value on creation for the "duration" field.
-	DefaultDuration uint32
 	// DefaultSendCouponMode holds the default value on creation for the "send_coupon_mode" field.
 	DefaultSendCouponMode string
 	// DefaultSendCouponProbability holds the default value on creation for the "send_coupon_probability" field.
 	DefaultSendCouponProbability decimal.Decimal
+	// DefaultEnabledProfitTx holds the default value on creation for the "enabled_profit_tx" field.
+	DefaultEnabledProfitTx bool
+	// DefaultProfitTxProbability holds the default value on creation for the "profit_tx_probability" field.
+	DefaultProfitTxProbability decimal.Decimal
 	// DefaultEnabled holds the default value on creation for the "enabled" field.
 	DefaultEnabled bool
 )

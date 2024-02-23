@@ -85,34 +85,6 @@ func (scc *SimulateConfigCreate) SetAppID(u uuid.UUID) *SimulateConfigCreate {
 	return scc
 }
 
-// SetUnits sets the "units" field.
-func (scc *SimulateConfigCreate) SetUnits(d decimal.Decimal) *SimulateConfigCreate {
-	scc.mutation.SetUnits(d)
-	return scc
-}
-
-// SetNillableUnits sets the "units" field if the given value is not nil.
-func (scc *SimulateConfigCreate) SetNillableUnits(d *decimal.Decimal) *SimulateConfigCreate {
-	if d != nil {
-		scc.SetUnits(*d)
-	}
-	return scc
-}
-
-// SetDuration sets the "duration" field.
-func (scc *SimulateConfigCreate) SetDuration(u uint32) *SimulateConfigCreate {
-	scc.mutation.SetDuration(u)
-	return scc
-}
-
-// SetNillableDuration sets the "duration" field if the given value is not nil.
-func (scc *SimulateConfigCreate) SetNillableDuration(u *uint32) *SimulateConfigCreate {
-	if u != nil {
-		scc.SetDuration(*u)
-	}
-	return scc
-}
-
 // SetSendCouponMode sets the "send_coupon_mode" field.
 func (scc *SimulateConfigCreate) SetSendCouponMode(s string) *SimulateConfigCreate {
 	scc.mutation.SetSendCouponMode(s)
@@ -137,6 +109,34 @@ func (scc *SimulateConfigCreate) SetSendCouponProbability(d decimal.Decimal) *Si
 func (scc *SimulateConfigCreate) SetNillableSendCouponProbability(d *decimal.Decimal) *SimulateConfigCreate {
 	if d != nil {
 		scc.SetSendCouponProbability(*d)
+	}
+	return scc
+}
+
+// SetEnabledProfitTx sets the "enabled_profit_tx" field.
+func (scc *SimulateConfigCreate) SetEnabledProfitTx(b bool) *SimulateConfigCreate {
+	scc.mutation.SetEnabledProfitTx(b)
+	return scc
+}
+
+// SetNillableEnabledProfitTx sets the "enabled_profit_tx" field if the given value is not nil.
+func (scc *SimulateConfigCreate) SetNillableEnabledProfitTx(b *bool) *SimulateConfigCreate {
+	if b != nil {
+		scc.SetEnabledProfitTx(*b)
+	}
+	return scc
+}
+
+// SetProfitTxProbability sets the "profit_tx_probability" field.
+func (scc *SimulateConfigCreate) SetProfitTxProbability(d decimal.Decimal) *SimulateConfigCreate {
+	scc.mutation.SetProfitTxProbability(d)
+	return scc
+}
+
+// SetNillableProfitTxProbability sets the "profit_tx_probability" field if the given value is not nil.
+func (scc *SimulateConfigCreate) SetNillableProfitTxProbability(d *decimal.Decimal) *SimulateConfigCreate {
+	if d != nil {
+		scc.SetProfitTxProbability(*d)
 	}
 	return scc
 }
@@ -268,14 +268,6 @@ func (scc *SimulateConfigCreate) defaults() error {
 		v := simulateconfig.DefaultEntID()
 		scc.mutation.SetEntID(v)
 	}
-	if _, ok := scc.mutation.Units(); !ok {
-		v := simulateconfig.DefaultUnits
-		scc.mutation.SetUnits(v)
-	}
-	if _, ok := scc.mutation.Duration(); !ok {
-		v := simulateconfig.DefaultDuration
-		scc.mutation.SetDuration(v)
-	}
 	if _, ok := scc.mutation.SendCouponMode(); !ok {
 		v := simulateconfig.DefaultSendCouponMode
 		scc.mutation.SetSendCouponMode(v)
@@ -283,6 +275,14 @@ func (scc *SimulateConfigCreate) defaults() error {
 	if _, ok := scc.mutation.SendCouponProbability(); !ok {
 		v := simulateconfig.DefaultSendCouponProbability
 		scc.mutation.SetSendCouponProbability(v)
+	}
+	if _, ok := scc.mutation.EnabledProfitTx(); !ok {
+		v := simulateconfig.DefaultEnabledProfitTx
+		scc.mutation.SetEnabledProfitTx(v)
+	}
+	if _, ok := scc.mutation.ProfitTxProbability(); !ok {
+		v := simulateconfig.DefaultProfitTxProbability
+		scc.mutation.SetProfitTxProbability(v)
 	}
 	if _, ok := scc.mutation.Enabled(); !ok {
 		v := simulateconfig.DefaultEnabled
@@ -382,22 +382,6 @@ func (scc *SimulateConfigCreate) createSpec() (*SimulateConfig, *sqlgraph.Create
 		})
 		_node.AppID = value
 	}
-	if value, ok := scc.mutation.Units(); ok {
-		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
-			Type:   field.TypeOther,
-			Value:  value,
-			Column: simulateconfig.FieldUnits,
-		})
-		_node.Units = value
-	}
-	if value, ok := scc.mutation.Duration(); ok {
-		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
-			Type:   field.TypeUint32,
-			Value:  value,
-			Column: simulateconfig.FieldDuration,
-		})
-		_node.Duration = value
-	}
 	if value, ok := scc.mutation.SendCouponMode(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
@@ -413,6 +397,22 @@ func (scc *SimulateConfigCreate) createSpec() (*SimulateConfig, *sqlgraph.Create
 			Column: simulateconfig.FieldSendCouponProbability,
 		})
 		_node.SendCouponProbability = value
+	}
+	if value, ok := scc.mutation.EnabledProfitTx(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Value:  value,
+			Column: simulateconfig.FieldEnabledProfitTx,
+		})
+		_node.EnabledProfitTx = value
+	}
+	if value, ok := scc.mutation.ProfitTxProbability(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeOther,
+			Value:  value,
+			Column: simulateconfig.FieldProfitTxProbability,
+		})
+		_node.ProfitTxProbability = value
 	}
 	if value, ok := scc.mutation.Enabled(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -554,48 +554,6 @@ func (u *SimulateConfigUpsert) UpdateAppID() *SimulateConfigUpsert {
 	return u
 }
 
-// SetUnits sets the "units" field.
-func (u *SimulateConfigUpsert) SetUnits(v decimal.Decimal) *SimulateConfigUpsert {
-	u.Set(simulateconfig.FieldUnits, v)
-	return u
-}
-
-// UpdateUnits sets the "units" field to the value that was provided on create.
-func (u *SimulateConfigUpsert) UpdateUnits() *SimulateConfigUpsert {
-	u.SetExcluded(simulateconfig.FieldUnits)
-	return u
-}
-
-// ClearUnits clears the value of the "units" field.
-func (u *SimulateConfigUpsert) ClearUnits() *SimulateConfigUpsert {
-	u.SetNull(simulateconfig.FieldUnits)
-	return u
-}
-
-// SetDuration sets the "duration" field.
-func (u *SimulateConfigUpsert) SetDuration(v uint32) *SimulateConfigUpsert {
-	u.Set(simulateconfig.FieldDuration, v)
-	return u
-}
-
-// UpdateDuration sets the "duration" field to the value that was provided on create.
-func (u *SimulateConfigUpsert) UpdateDuration() *SimulateConfigUpsert {
-	u.SetExcluded(simulateconfig.FieldDuration)
-	return u
-}
-
-// AddDuration adds v to the "duration" field.
-func (u *SimulateConfigUpsert) AddDuration(v uint32) *SimulateConfigUpsert {
-	u.Add(simulateconfig.FieldDuration, v)
-	return u
-}
-
-// ClearDuration clears the value of the "duration" field.
-func (u *SimulateConfigUpsert) ClearDuration() *SimulateConfigUpsert {
-	u.SetNull(simulateconfig.FieldDuration)
-	return u
-}
-
 // SetSendCouponMode sets the "send_coupon_mode" field.
 func (u *SimulateConfigUpsert) SetSendCouponMode(v string) *SimulateConfigUpsert {
 	u.Set(simulateconfig.FieldSendCouponMode, v)
@@ -629,6 +587,42 @@ func (u *SimulateConfigUpsert) UpdateSendCouponProbability() *SimulateConfigUpse
 // ClearSendCouponProbability clears the value of the "send_coupon_probability" field.
 func (u *SimulateConfigUpsert) ClearSendCouponProbability() *SimulateConfigUpsert {
 	u.SetNull(simulateconfig.FieldSendCouponProbability)
+	return u
+}
+
+// SetEnabledProfitTx sets the "enabled_profit_tx" field.
+func (u *SimulateConfigUpsert) SetEnabledProfitTx(v bool) *SimulateConfigUpsert {
+	u.Set(simulateconfig.FieldEnabledProfitTx, v)
+	return u
+}
+
+// UpdateEnabledProfitTx sets the "enabled_profit_tx" field to the value that was provided on create.
+func (u *SimulateConfigUpsert) UpdateEnabledProfitTx() *SimulateConfigUpsert {
+	u.SetExcluded(simulateconfig.FieldEnabledProfitTx)
+	return u
+}
+
+// ClearEnabledProfitTx clears the value of the "enabled_profit_tx" field.
+func (u *SimulateConfigUpsert) ClearEnabledProfitTx() *SimulateConfigUpsert {
+	u.SetNull(simulateconfig.FieldEnabledProfitTx)
+	return u
+}
+
+// SetProfitTxProbability sets the "profit_tx_probability" field.
+func (u *SimulateConfigUpsert) SetProfitTxProbability(v decimal.Decimal) *SimulateConfigUpsert {
+	u.Set(simulateconfig.FieldProfitTxProbability, v)
+	return u
+}
+
+// UpdateProfitTxProbability sets the "profit_tx_probability" field to the value that was provided on create.
+func (u *SimulateConfigUpsert) UpdateProfitTxProbability() *SimulateConfigUpsert {
+	u.SetExcluded(simulateconfig.FieldProfitTxProbability)
+	return u
+}
+
+// ClearProfitTxProbability clears the value of the "profit_tx_probability" field.
+func (u *SimulateConfigUpsert) ClearProfitTxProbability() *SimulateConfigUpsert {
+	u.SetNull(simulateconfig.FieldProfitTxProbability)
 	return u
 }
 
@@ -791,55 +785,6 @@ func (u *SimulateConfigUpsertOne) UpdateAppID() *SimulateConfigUpsertOne {
 	})
 }
 
-// SetUnits sets the "units" field.
-func (u *SimulateConfigUpsertOne) SetUnits(v decimal.Decimal) *SimulateConfigUpsertOne {
-	return u.Update(func(s *SimulateConfigUpsert) {
-		s.SetUnits(v)
-	})
-}
-
-// UpdateUnits sets the "units" field to the value that was provided on create.
-func (u *SimulateConfigUpsertOne) UpdateUnits() *SimulateConfigUpsertOne {
-	return u.Update(func(s *SimulateConfigUpsert) {
-		s.UpdateUnits()
-	})
-}
-
-// ClearUnits clears the value of the "units" field.
-func (u *SimulateConfigUpsertOne) ClearUnits() *SimulateConfigUpsertOne {
-	return u.Update(func(s *SimulateConfigUpsert) {
-		s.ClearUnits()
-	})
-}
-
-// SetDuration sets the "duration" field.
-func (u *SimulateConfigUpsertOne) SetDuration(v uint32) *SimulateConfigUpsertOne {
-	return u.Update(func(s *SimulateConfigUpsert) {
-		s.SetDuration(v)
-	})
-}
-
-// AddDuration adds v to the "duration" field.
-func (u *SimulateConfigUpsertOne) AddDuration(v uint32) *SimulateConfigUpsertOne {
-	return u.Update(func(s *SimulateConfigUpsert) {
-		s.AddDuration(v)
-	})
-}
-
-// UpdateDuration sets the "duration" field to the value that was provided on create.
-func (u *SimulateConfigUpsertOne) UpdateDuration() *SimulateConfigUpsertOne {
-	return u.Update(func(s *SimulateConfigUpsert) {
-		s.UpdateDuration()
-	})
-}
-
-// ClearDuration clears the value of the "duration" field.
-func (u *SimulateConfigUpsertOne) ClearDuration() *SimulateConfigUpsertOne {
-	return u.Update(func(s *SimulateConfigUpsert) {
-		s.ClearDuration()
-	})
-}
-
 // SetSendCouponMode sets the "send_coupon_mode" field.
 func (u *SimulateConfigUpsertOne) SetSendCouponMode(v string) *SimulateConfigUpsertOne {
 	return u.Update(func(s *SimulateConfigUpsert) {
@@ -879,6 +824,48 @@ func (u *SimulateConfigUpsertOne) UpdateSendCouponProbability() *SimulateConfigU
 func (u *SimulateConfigUpsertOne) ClearSendCouponProbability() *SimulateConfigUpsertOne {
 	return u.Update(func(s *SimulateConfigUpsert) {
 		s.ClearSendCouponProbability()
+	})
+}
+
+// SetEnabledProfitTx sets the "enabled_profit_tx" field.
+func (u *SimulateConfigUpsertOne) SetEnabledProfitTx(v bool) *SimulateConfigUpsertOne {
+	return u.Update(func(s *SimulateConfigUpsert) {
+		s.SetEnabledProfitTx(v)
+	})
+}
+
+// UpdateEnabledProfitTx sets the "enabled_profit_tx" field to the value that was provided on create.
+func (u *SimulateConfigUpsertOne) UpdateEnabledProfitTx() *SimulateConfigUpsertOne {
+	return u.Update(func(s *SimulateConfigUpsert) {
+		s.UpdateEnabledProfitTx()
+	})
+}
+
+// ClearEnabledProfitTx clears the value of the "enabled_profit_tx" field.
+func (u *SimulateConfigUpsertOne) ClearEnabledProfitTx() *SimulateConfigUpsertOne {
+	return u.Update(func(s *SimulateConfigUpsert) {
+		s.ClearEnabledProfitTx()
+	})
+}
+
+// SetProfitTxProbability sets the "profit_tx_probability" field.
+func (u *SimulateConfigUpsertOne) SetProfitTxProbability(v decimal.Decimal) *SimulateConfigUpsertOne {
+	return u.Update(func(s *SimulateConfigUpsert) {
+		s.SetProfitTxProbability(v)
+	})
+}
+
+// UpdateProfitTxProbability sets the "profit_tx_probability" field to the value that was provided on create.
+func (u *SimulateConfigUpsertOne) UpdateProfitTxProbability() *SimulateConfigUpsertOne {
+	return u.Update(func(s *SimulateConfigUpsert) {
+		s.UpdateProfitTxProbability()
+	})
+}
+
+// ClearProfitTxProbability clears the value of the "profit_tx_probability" field.
+func (u *SimulateConfigUpsertOne) ClearProfitTxProbability() *SimulateConfigUpsertOne {
+	return u.Update(func(s *SimulateConfigUpsert) {
+		s.ClearProfitTxProbability()
 	})
 }
 
@@ -1209,55 +1196,6 @@ func (u *SimulateConfigUpsertBulk) UpdateAppID() *SimulateConfigUpsertBulk {
 	})
 }
 
-// SetUnits sets the "units" field.
-func (u *SimulateConfigUpsertBulk) SetUnits(v decimal.Decimal) *SimulateConfigUpsertBulk {
-	return u.Update(func(s *SimulateConfigUpsert) {
-		s.SetUnits(v)
-	})
-}
-
-// UpdateUnits sets the "units" field to the value that was provided on create.
-func (u *SimulateConfigUpsertBulk) UpdateUnits() *SimulateConfigUpsertBulk {
-	return u.Update(func(s *SimulateConfigUpsert) {
-		s.UpdateUnits()
-	})
-}
-
-// ClearUnits clears the value of the "units" field.
-func (u *SimulateConfigUpsertBulk) ClearUnits() *SimulateConfigUpsertBulk {
-	return u.Update(func(s *SimulateConfigUpsert) {
-		s.ClearUnits()
-	})
-}
-
-// SetDuration sets the "duration" field.
-func (u *SimulateConfigUpsertBulk) SetDuration(v uint32) *SimulateConfigUpsertBulk {
-	return u.Update(func(s *SimulateConfigUpsert) {
-		s.SetDuration(v)
-	})
-}
-
-// AddDuration adds v to the "duration" field.
-func (u *SimulateConfigUpsertBulk) AddDuration(v uint32) *SimulateConfigUpsertBulk {
-	return u.Update(func(s *SimulateConfigUpsert) {
-		s.AddDuration(v)
-	})
-}
-
-// UpdateDuration sets the "duration" field to the value that was provided on create.
-func (u *SimulateConfigUpsertBulk) UpdateDuration() *SimulateConfigUpsertBulk {
-	return u.Update(func(s *SimulateConfigUpsert) {
-		s.UpdateDuration()
-	})
-}
-
-// ClearDuration clears the value of the "duration" field.
-func (u *SimulateConfigUpsertBulk) ClearDuration() *SimulateConfigUpsertBulk {
-	return u.Update(func(s *SimulateConfigUpsert) {
-		s.ClearDuration()
-	})
-}
-
 // SetSendCouponMode sets the "send_coupon_mode" field.
 func (u *SimulateConfigUpsertBulk) SetSendCouponMode(v string) *SimulateConfigUpsertBulk {
 	return u.Update(func(s *SimulateConfigUpsert) {
@@ -1297,6 +1235,48 @@ func (u *SimulateConfigUpsertBulk) UpdateSendCouponProbability() *SimulateConfig
 func (u *SimulateConfigUpsertBulk) ClearSendCouponProbability() *SimulateConfigUpsertBulk {
 	return u.Update(func(s *SimulateConfigUpsert) {
 		s.ClearSendCouponProbability()
+	})
+}
+
+// SetEnabledProfitTx sets the "enabled_profit_tx" field.
+func (u *SimulateConfigUpsertBulk) SetEnabledProfitTx(v bool) *SimulateConfigUpsertBulk {
+	return u.Update(func(s *SimulateConfigUpsert) {
+		s.SetEnabledProfitTx(v)
+	})
+}
+
+// UpdateEnabledProfitTx sets the "enabled_profit_tx" field to the value that was provided on create.
+func (u *SimulateConfigUpsertBulk) UpdateEnabledProfitTx() *SimulateConfigUpsertBulk {
+	return u.Update(func(s *SimulateConfigUpsert) {
+		s.UpdateEnabledProfitTx()
+	})
+}
+
+// ClearEnabledProfitTx clears the value of the "enabled_profit_tx" field.
+func (u *SimulateConfigUpsertBulk) ClearEnabledProfitTx() *SimulateConfigUpsertBulk {
+	return u.Update(func(s *SimulateConfigUpsert) {
+		s.ClearEnabledProfitTx()
+	})
+}
+
+// SetProfitTxProbability sets the "profit_tx_probability" field.
+func (u *SimulateConfigUpsertBulk) SetProfitTxProbability(v decimal.Decimal) *SimulateConfigUpsertBulk {
+	return u.Update(func(s *SimulateConfigUpsert) {
+		s.SetProfitTxProbability(v)
+	})
+}
+
+// UpdateProfitTxProbability sets the "profit_tx_probability" field to the value that was provided on create.
+func (u *SimulateConfigUpsertBulk) UpdateProfitTxProbability() *SimulateConfigUpsertBulk {
+	return u.Update(func(s *SimulateConfigUpsert) {
+		s.UpdateProfitTxProbability()
+	})
+}
+
+// ClearProfitTxProbability clears the value of the "profit_tx_probability" field.
+func (u *SimulateConfigUpsertBulk) ClearProfitTxProbability() *SimulateConfigUpsertBulk {
+	return u.Update(func(s *SimulateConfigUpsert) {
+		s.ClearProfitTxProbability()
 	})
 }
 

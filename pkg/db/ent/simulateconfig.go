@@ -27,14 +27,14 @@ type SimulateConfig struct {
 	EntID uuid.UUID `json:"ent_id,omitempty"`
 	// AppID holds the value of the "app_id" field.
 	AppID uuid.UUID `json:"app_id,omitempty"`
-	// Units holds the value of the "units" field.
-	Units decimal.Decimal `json:"units,omitempty"`
-	// Duration holds the value of the "duration" field.
-	Duration uint32 `json:"duration,omitempty"`
 	// SendCouponMode holds the value of the "send_coupon_mode" field.
 	SendCouponMode string `json:"send_coupon_mode,omitempty"`
 	// SendCouponProbability holds the value of the "send_coupon_probability" field.
 	SendCouponProbability decimal.Decimal `json:"send_coupon_probability,omitempty"`
+	// EnabledProfitTx holds the value of the "enabled_profit_tx" field.
+	EnabledProfitTx bool `json:"enabled_profit_tx,omitempty"`
+	// ProfitTxProbability holds the value of the "profit_tx_probability" field.
+	ProfitTxProbability decimal.Decimal `json:"profit_tx_probability,omitempty"`
 	// Enabled holds the value of the "enabled" field.
 	Enabled bool `json:"enabled,omitempty"`
 }
@@ -44,11 +44,11 @@ func (*SimulateConfig) scanValues(columns []string) ([]interface{}, error) {
 	values := make([]interface{}, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case simulateconfig.FieldUnits, simulateconfig.FieldSendCouponProbability:
+		case simulateconfig.FieldSendCouponProbability, simulateconfig.FieldProfitTxProbability:
 			values[i] = new(decimal.Decimal)
-		case simulateconfig.FieldEnabled:
+		case simulateconfig.FieldEnabledProfitTx, simulateconfig.FieldEnabled:
 			values[i] = new(sql.NullBool)
-		case simulateconfig.FieldID, simulateconfig.FieldCreatedAt, simulateconfig.FieldUpdatedAt, simulateconfig.FieldDeletedAt, simulateconfig.FieldDuration:
+		case simulateconfig.FieldID, simulateconfig.FieldCreatedAt, simulateconfig.FieldUpdatedAt, simulateconfig.FieldDeletedAt:
 			values[i] = new(sql.NullInt64)
 		case simulateconfig.FieldSendCouponMode:
 			values[i] = new(sql.NullString)
@@ -105,18 +105,6 @@ func (sc *SimulateConfig) assignValues(columns []string, values []interface{}) e
 			} else if value != nil {
 				sc.AppID = *value
 			}
-		case simulateconfig.FieldUnits:
-			if value, ok := values[i].(*decimal.Decimal); !ok {
-				return fmt.Errorf("unexpected type %T for field units", values[i])
-			} else if value != nil {
-				sc.Units = *value
-			}
-		case simulateconfig.FieldDuration:
-			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for field duration", values[i])
-			} else if value.Valid {
-				sc.Duration = uint32(value.Int64)
-			}
 		case simulateconfig.FieldSendCouponMode:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field send_coupon_mode", values[i])
@@ -128,6 +116,18 @@ func (sc *SimulateConfig) assignValues(columns []string, values []interface{}) e
 				return fmt.Errorf("unexpected type %T for field send_coupon_probability", values[i])
 			} else if value != nil {
 				sc.SendCouponProbability = *value
+			}
+		case simulateconfig.FieldEnabledProfitTx:
+			if value, ok := values[i].(*sql.NullBool); !ok {
+				return fmt.Errorf("unexpected type %T for field enabled_profit_tx", values[i])
+			} else if value.Valid {
+				sc.EnabledProfitTx = value.Bool
+			}
+		case simulateconfig.FieldProfitTxProbability:
+			if value, ok := values[i].(*decimal.Decimal); !ok {
+				return fmt.Errorf("unexpected type %T for field profit_tx_probability", values[i])
+			} else if value != nil {
+				sc.ProfitTxProbability = *value
 			}
 		case simulateconfig.FieldEnabled:
 			if value, ok := values[i].(*sql.NullBool); !ok {
@@ -178,17 +178,17 @@ func (sc *SimulateConfig) String() string {
 	builder.WriteString("app_id=")
 	builder.WriteString(fmt.Sprintf("%v", sc.AppID))
 	builder.WriteString(", ")
-	builder.WriteString("units=")
-	builder.WriteString(fmt.Sprintf("%v", sc.Units))
-	builder.WriteString(", ")
-	builder.WriteString("duration=")
-	builder.WriteString(fmt.Sprintf("%v", sc.Duration))
-	builder.WriteString(", ")
 	builder.WriteString("send_coupon_mode=")
 	builder.WriteString(sc.SendCouponMode)
 	builder.WriteString(", ")
 	builder.WriteString("send_coupon_probability=")
 	builder.WriteString(fmt.Sprintf("%v", sc.SendCouponProbability))
+	builder.WriteString(", ")
+	builder.WriteString("enabled_profit_tx=")
+	builder.WriteString(fmt.Sprintf("%v", sc.EnabledProfitTx))
+	builder.WriteString(", ")
+	builder.WriteString("profit_tx_probability=")
+	builder.WriteString(fmt.Sprintf("%v", sc.ProfitTxProbability))
 	builder.WriteString(", ")
 	builder.WriteString("enabled=")
 	builder.WriteString(fmt.Sprintf("%v", sc.Enabled))

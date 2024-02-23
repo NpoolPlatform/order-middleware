@@ -105,53 +105,6 @@ func (scu *SimulateConfigUpdate) SetAppID(u uuid.UUID) *SimulateConfigUpdate {
 	return scu
 }
 
-// SetUnits sets the "units" field.
-func (scu *SimulateConfigUpdate) SetUnits(d decimal.Decimal) *SimulateConfigUpdate {
-	scu.mutation.SetUnits(d)
-	return scu
-}
-
-// SetNillableUnits sets the "units" field if the given value is not nil.
-func (scu *SimulateConfigUpdate) SetNillableUnits(d *decimal.Decimal) *SimulateConfigUpdate {
-	if d != nil {
-		scu.SetUnits(*d)
-	}
-	return scu
-}
-
-// ClearUnits clears the value of the "units" field.
-func (scu *SimulateConfigUpdate) ClearUnits() *SimulateConfigUpdate {
-	scu.mutation.ClearUnits()
-	return scu
-}
-
-// SetDuration sets the "duration" field.
-func (scu *SimulateConfigUpdate) SetDuration(u uint32) *SimulateConfigUpdate {
-	scu.mutation.ResetDuration()
-	scu.mutation.SetDuration(u)
-	return scu
-}
-
-// SetNillableDuration sets the "duration" field if the given value is not nil.
-func (scu *SimulateConfigUpdate) SetNillableDuration(u *uint32) *SimulateConfigUpdate {
-	if u != nil {
-		scu.SetDuration(*u)
-	}
-	return scu
-}
-
-// AddDuration adds u to the "duration" field.
-func (scu *SimulateConfigUpdate) AddDuration(u int32) *SimulateConfigUpdate {
-	scu.mutation.AddDuration(u)
-	return scu
-}
-
-// ClearDuration clears the value of the "duration" field.
-func (scu *SimulateConfigUpdate) ClearDuration() *SimulateConfigUpdate {
-	scu.mutation.ClearDuration()
-	return scu
-}
-
 // SetSendCouponMode sets the "send_coupon_mode" field.
 func (scu *SimulateConfigUpdate) SetSendCouponMode(s string) *SimulateConfigUpdate {
 	scu.mutation.SetSendCouponMode(s)
@@ -189,6 +142,46 @@ func (scu *SimulateConfigUpdate) SetNillableSendCouponProbability(d *decimal.Dec
 // ClearSendCouponProbability clears the value of the "send_coupon_probability" field.
 func (scu *SimulateConfigUpdate) ClearSendCouponProbability() *SimulateConfigUpdate {
 	scu.mutation.ClearSendCouponProbability()
+	return scu
+}
+
+// SetEnabledProfitTx sets the "enabled_profit_tx" field.
+func (scu *SimulateConfigUpdate) SetEnabledProfitTx(b bool) *SimulateConfigUpdate {
+	scu.mutation.SetEnabledProfitTx(b)
+	return scu
+}
+
+// SetNillableEnabledProfitTx sets the "enabled_profit_tx" field if the given value is not nil.
+func (scu *SimulateConfigUpdate) SetNillableEnabledProfitTx(b *bool) *SimulateConfigUpdate {
+	if b != nil {
+		scu.SetEnabledProfitTx(*b)
+	}
+	return scu
+}
+
+// ClearEnabledProfitTx clears the value of the "enabled_profit_tx" field.
+func (scu *SimulateConfigUpdate) ClearEnabledProfitTx() *SimulateConfigUpdate {
+	scu.mutation.ClearEnabledProfitTx()
+	return scu
+}
+
+// SetProfitTxProbability sets the "profit_tx_probability" field.
+func (scu *SimulateConfigUpdate) SetProfitTxProbability(d decimal.Decimal) *SimulateConfigUpdate {
+	scu.mutation.SetProfitTxProbability(d)
+	return scu
+}
+
+// SetNillableProfitTxProbability sets the "profit_tx_probability" field if the given value is not nil.
+func (scu *SimulateConfigUpdate) SetNillableProfitTxProbability(d *decimal.Decimal) *SimulateConfigUpdate {
+	if d != nil {
+		scu.SetProfitTxProbability(*d)
+	}
+	return scu
+}
+
+// ClearProfitTxProbability clears the value of the "profit_tx_probability" field.
+func (scu *SimulateConfigUpdate) ClearProfitTxProbability() *SimulateConfigUpdate {
+	scu.mutation.ClearProfitTxProbability()
 	return scu
 }
 
@@ -366,39 +359,6 @@ func (scu *SimulateConfigUpdate) sqlSave(ctx context.Context) (n int, err error)
 			Column: simulateconfig.FieldAppID,
 		})
 	}
-	if value, ok := scu.mutation.Units(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeOther,
-			Value:  value,
-			Column: simulateconfig.FieldUnits,
-		})
-	}
-	if scu.mutation.UnitsCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeOther,
-			Column: simulateconfig.FieldUnits,
-		})
-	}
-	if value, ok := scu.mutation.Duration(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeUint32,
-			Value:  value,
-			Column: simulateconfig.FieldDuration,
-		})
-	}
-	if value, ok := scu.mutation.AddedDuration(); ok {
-		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
-			Type:   field.TypeUint32,
-			Value:  value,
-			Column: simulateconfig.FieldDuration,
-		})
-	}
-	if scu.mutation.DurationCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeUint32,
-			Column: simulateconfig.FieldDuration,
-		})
-	}
 	if value, ok := scu.mutation.SendCouponMode(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
@@ -423,6 +383,32 @@ func (scu *SimulateConfigUpdate) sqlSave(ctx context.Context) (n int, err error)
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeOther,
 			Column: simulateconfig.FieldSendCouponProbability,
+		})
+	}
+	if value, ok := scu.mutation.EnabledProfitTx(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Value:  value,
+			Column: simulateconfig.FieldEnabledProfitTx,
+		})
+	}
+	if scu.mutation.EnabledProfitTxCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Column: simulateconfig.FieldEnabledProfitTx,
+		})
+	}
+	if value, ok := scu.mutation.ProfitTxProbability(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeOther,
+			Value:  value,
+			Column: simulateconfig.FieldProfitTxProbability,
+		})
+	}
+	if scu.mutation.ProfitTxProbabilityCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeOther,
+			Column: simulateconfig.FieldProfitTxProbability,
 		})
 	}
 	if value, ok := scu.mutation.Enabled(); ok {
@@ -534,53 +520,6 @@ func (scuo *SimulateConfigUpdateOne) SetAppID(u uuid.UUID) *SimulateConfigUpdate
 	return scuo
 }
 
-// SetUnits sets the "units" field.
-func (scuo *SimulateConfigUpdateOne) SetUnits(d decimal.Decimal) *SimulateConfigUpdateOne {
-	scuo.mutation.SetUnits(d)
-	return scuo
-}
-
-// SetNillableUnits sets the "units" field if the given value is not nil.
-func (scuo *SimulateConfigUpdateOne) SetNillableUnits(d *decimal.Decimal) *SimulateConfigUpdateOne {
-	if d != nil {
-		scuo.SetUnits(*d)
-	}
-	return scuo
-}
-
-// ClearUnits clears the value of the "units" field.
-func (scuo *SimulateConfigUpdateOne) ClearUnits() *SimulateConfigUpdateOne {
-	scuo.mutation.ClearUnits()
-	return scuo
-}
-
-// SetDuration sets the "duration" field.
-func (scuo *SimulateConfigUpdateOne) SetDuration(u uint32) *SimulateConfigUpdateOne {
-	scuo.mutation.ResetDuration()
-	scuo.mutation.SetDuration(u)
-	return scuo
-}
-
-// SetNillableDuration sets the "duration" field if the given value is not nil.
-func (scuo *SimulateConfigUpdateOne) SetNillableDuration(u *uint32) *SimulateConfigUpdateOne {
-	if u != nil {
-		scuo.SetDuration(*u)
-	}
-	return scuo
-}
-
-// AddDuration adds u to the "duration" field.
-func (scuo *SimulateConfigUpdateOne) AddDuration(u int32) *SimulateConfigUpdateOne {
-	scuo.mutation.AddDuration(u)
-	return scuo
-}
-
-// ClearDuration clears the value of the "duration" field.
-func (scuo *SimulateConfigUpdateOne) ClearDuration() *SimulateConfigUpdateOne {
-	scuo.mutation.ClearDuration()
-	return scuo
-}
-
 // SetSendCouponMode sets the "send_coupon_mode" field.
 func (scuo *SimulateConfigUpdateOne) SetSendCouponMode(s string) *SimulateConfigUpdateOne {
 	scuo.mutation.SetSendCouponMode(s)
@@ -618,6 +557,46 @@ func (scuo *SimulateConfigUpdateOne) SetNillableSendCouponProbability(d *decimal
 // ClearSendCouponProbability clears the value of the "send_coupon_probability" field.
 func (scuo *SimulateConfigUpdateOne) ClearSendCouponProbability() *SimulateConfigUpdateOne {
 	scuo.mutation.ClearSendCouponProbability()
+	return scuo
+}
+
+// SetEnabledProfitTx sets the "enabled_profit_tx" field.
+func (scuo *SimulateConfigUpdateOne) SetEnabledProfitTx(b bool) *SimulateConfigUpdateOne {
+	scuo.mutation.SetEnabledProfitTx(b)
+	return scuo
+}
+
+// SetNillableEnabledProfitTx sets the "enabled_profit_tx" field if the given value is not nil.
+func (scuo *SimulateConfigUpdateOne) SetNillableEnabledProfitTx(b *bool) *SimulateConfigUpdateOne {
+	if b != nil {
+		scuo.SetEnabledProfitTx(*b)
+	}
+	return scuo
+}
+
+// ClearEnabledProfitTx clears the value of the "enabled_profit_tx" field.
+func (scuo *SimulateConfigUpdateOne) ClearEnabledProfitTx() *SimulateConfigUpdateOne {
+	scuo.mutation.ClearEnabledProfitTx()
+	return scuo
+}
+
+// SetProfitTxProbability sets the "profit_tx_probability" field.
+func (scuo *SimulateConfigUpdateOne) SetProfitTxProbability(d decimal.Decimal) *SimulateConfigUpdateOne {
+	scuo.mutation.SetProfitTxProbability(d)
+	return scuo
+}
+
+// SetNillableProfitTxProbability sets the "profit_tx_probability" field if the given value is not nil.
+func (scuo *SimulateConfigUpdateOne) SetNillableProfitTxProbability(d *decimal.Decimal) *SimulateConfigUpdateOne {
+	if d != nil {
+		scuo.SetProfitTxProbability(*d)
+	}
+	return scuo
+}
+
+// ClearProfitTxProbability clears the value of the "profit_tx_probability" field.
+func (scuo *SimulateConfigUpdateOne) ClearProfitTxProbability() *SimulateConfigUpdateOne {
+	scuo.mutation.ClearProfitTxProbability()
 	return scuo
 }
 
@@ -825,39 +804,6 @@ func (scuo *SimulateConfigUpdateOne) sqlSave(ctx context.Context) (_node *Simula
 			Column: simulateconfig.FieldAppID,
 		})
 	}
-	if value, ok := scuo.mutation.Units(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeOther,
-			Value:  value,
-			Column: simulateconfig.FieldUnits,
-		})
-	}
-	if scuo.mutation.UnitsCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeOther,
-			Column: simulateconfig.FieldUnits,
-		})
-	}
-	if value, ok := scuo.mutation.Duration(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeUint32,
-			Value:  value,
-			Column: simulateconfig.FieldDuration,
-		})
-	}
-	if value, ok := scuo.mutation.AddedDuration(); ok {
-		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
-			Type:   field.TypeUint32,
-			Value:  value,
-			Column: simulateconfig.FieldDuration,
-		})
-	}
-	if scuo.mutation.DurationCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeUint32,
-			Column: simulateconfig.FieldDuration,
-		})
-	}
 	if value, ok := scuo.mutation.SendCouponMode(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
@@ -882,6 +828,32 @@ func (scuo *SimulateConfigUpdateOne) sqlSave(ctx context.Context) (_node *Simula
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeOther,
 			Column: simulateconfig.FieldSendCouponProbability,
+		})
+	}
+	if value, ok := scuo.mutation.EnabledProfitTx(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Value:  value,
+			Column: simulateconfig.FieldEnabledProfitTx,
+		})
+	}
+	if scuo.mutation.EnabledProfitTxCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Column: simulateconfig.FieldEnabledProfitTx,
+		})
+	}
+	if value, ok := scuo.mutation.ProfitTxProbability(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeOther,
+			Value:  value,
+			Column: simulateconfig.FieldProfitTxProbability,
+		})
+	}
+	if scuo.mutation.ProfitTxProbabilityCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeOther,
+			Column: simulateconfig.FieldProfitTxProbability,
 		})
 	}
 	if value, ok := scuo.mutation.Enabled(); ok {
