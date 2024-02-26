@@ -17,18 +17,18 @@ import (
 )
 
 type Handler struct {
-	ID                    *uint32
-	EntID                 *uuid.UUID
-	AppID                 *uuid.UUID
-	SendCouponMode        *basetypes.SendCouponMode
-	SendCouponProbability *decimal.Decimal
-	EnabledProfitTx       *bool
-	ProfitTxProbability   *decimal.Decimal
-	Enabled               *bool
-	Reqs                  []*npool.SimulateConfigReq
-	Conds                 *configcrud.Conds
-	Offset                int32
-	Limit                 int32
+	ID                        *uint32
+	EntID                     *uuid.UUID
+	AppID                     *uuid.UUID
+	SendCouponMode            *basetypes.SendCouponMode
+	SendCouponProbability     *decimal.Decimal
+	EnabledCashableProfit     *bool
+	CashableProfitProbability *decimal.Decimal
+	Enabled                   *bool
+	Reqs                      []*npool.SimulateConfigReq
+	Conds                     *configcrud.Conds
+	Offset                    int32
+	Limit                     int32
 }
 
 func NewHandler(ctx context.Context, options ...func(context.Context, *Handler) error) (*Handler, error) {
@@ -129,24 +129,24 @@ func WithSendCouponProbability(value *string, must bool) func(context.Context, *
 	}
 }
 
-func WithEnabledProfitTx(value *bool, must bool) func(context.Context, *Handler) error {
+func WithEnabledCashableProfit(value *bool, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if value == nil {
 			if must {
-				return fmt.Errorf("invalid enabledprofittx")
+				return fmt.Errorf("invalid enabledcashableprofit")
 			}
 			return nil
 		}
-		h.EnabledProfitTx = value
+		h.EnabledCashableProfit = value
 		return nil
 	}
 }
 
-func WithProfitTxProbability(value *string, must bool) func(context.Context, *Handler) error {
+func WithCashableProfitProbability(value *string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if value == nil {
 			if must {
-				return fmt.Errorf("invalid profittxprobability")
+				return fmt.Errorf("invalid cashableprofitprobability")
 			}
 			return nil
 		}
@@ -155,9 +155,9 @@ func WithProfitTxProbability(value *string, must bool) func(context.Context, *Ha
 			return err
 		}
 		if amount.Cmp(decimal.NewFromInt(0)) < 0 {
-			return fmt.Errorf("profittxprobability is less than 0")
+			return fmt.Errorf("cashableprofitprobability is less than 0")
 		}
-		h.ProfitTxProbability = &amount
+		h.CashableProfitProbability = &amount
 		return nil
 	}
 }
@@ -223,10 +223,10 @@ func WithConds(conds *npool.Conds) func(context.Context, *Handler) error {
 				Val: conds.GetEnabled().GetValue(),
 			}
 		}
-		if conds.EnabledProfitTx != nil {
-			h.Conds.EnabledProfitTx = &cruder.Cond{
-				Op:  conds.GetEnabledProfitTx().GetOp(),
-				Val: conds.GetEnabledProfitTx().GetValue(),
+		if conds.EnabledCashableProfit != nil {
+			h.Conds.EnabledCashableProfit = &cruder.Cond{
+				Op:  conds.GetEnabledCashableProfit().GetOp(),
+				Val: conds.GetEnabledCashableProfit().GetValue(),
 			}
 		}
 

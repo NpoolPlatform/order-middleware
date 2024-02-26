@@ -17,11 +17,11 @@ func (h *updateHandler) updateSimulateConfig(ctx context.Context, tx *ent.Tx) er
 	if _, err := configcrud.UpdateSet(
 		tx.SimulateConfig.UpdateOneID(*h.ID),
 		&configcrud.Req{
-			EnabledProfitTx:       h.EnabledProfitTx,
-			ProfitTxProbability:   h.ProfitTxProbability,
-			SendCouponMode:        h.SendCouponMode,
-			SendCouponProbability: h.SendCouponProbability,
-			Enabled:               h.Enabled,
+			EnabledCashableProfit:     h.EnabledCashableProfit,
+			CashableProfitProbability: h.CashableProfitProbability,
+			SendCouponMode:            h.SendCouponMode,
+			SendCouponProbability:     h.SendCouponProbability,
+			Enabled:                   h.Enabled,
 		},
 	).Save(ctx); err != nil {
 		return err

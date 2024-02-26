@@ -58,8 +58,8 @@ func (h *queryHandler) queryJoinMyself(s *sql.Selector) {
 		t.C(entconfig.FieldAppID),
 		t.C(entconfig.FieldSendCouponMode),
 		t.C(entconfig.FieldSendCouponProbability),
-		t.C(entconfig.FieldEnabledProfitTx),
-		t.C(entconfig.FieldProfitTxProbability),
+		t.C(entconfig.FieldEnabledCashableProfit),
+		t.C(entconfig.FieldCashableProfitProbability),
 		t.C(entconfig.FieldEnabled),
 		t.C(entconfig.FieldCreatedAt),
 		t.C(entconfig.FieldUpdatedAt),
@@ -93,11 +93,11 @@ func (h *queryHandler) formalize() {
 		} else {
 			info.SendCouponProbability = probability.String()
 		}
-		txProbability, err := decimal.NewFromString(info.ProfitTxProbability)
+		cashableProbability, err := decimal.NewFromString(info.CashableProfitProbability)
 		if err != nil {
-			info.ProfitTxProbability = decimal.NewFromInt(0).String()
+			info.CashableProfitProbability = decimal.NewFromInt(0).String()
 		} else {
-			info.ProfitTxProbability = txProbability.String()
+			info.CashableProfitProbability = cashableProbability.String()
 		}
 		info.SendCouponMode = basetypes.SendCouponMode(basetypes.SendCouponMode_value[info.SendCouponModeStr])
 	}

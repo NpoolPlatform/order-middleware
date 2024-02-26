@@ -30,14 +30,14 @@ func init() {
 
 var (
 	ret = npool.SimulateConfig{
-		EntID:                 uuid.NewString(),
-		AppID:                 uuid.NewString(),
-		ProfitTxProbability:   "1",
-		EnabledProfitTx:       true,
-		SendCouponModeStr:     ordertypes.SendCouponMode_WithoutCoupon.String(),
-		SendCouponMode:        ordertypes.SendCouponMode_WithoutCoupon,
-		SendCouponProbability: "1",
-		Enabled:               false,
+		EntID:                     uuid.NewString(),
+		AppID:                     uuid.NewString(),
+		CashableProfitProbability: "1",
+		EnabledCashableProfit:     true,
+		SendCouponModeStr:         ordertypes.SendCouponMode_WithoutCoupon.String(),
+		SendCouponMode:            ordertypes.SendCouponMode_WithoutCoupon,
+		SendCouponProbability:     "1",
+		Enabled:                   false,
 	}
 )
 
@@ -50,8 +50,8 @@ func createSimulateConfig(t *testing.T) {
 		context.Background(),
 		WithEntID(&ret.EntID, true),
 		WithAppID(&ret.AppID, true),
-		WithEnabledProfitTx(&ret.EnabledProfitTx, true),
-		WithProfitTxProbability(&ret.ProfitTxProbability, true),
+		WithEnabledCashableProfit(&ret.EnabledCashableProfit, true),
+		WithCashableProfitProbability(&ret.CashableProfitProbability, true),
 		WithSendCouponMode(&ret.SendCouponMode, true),
 		WithSendCouponProbability(&ret.SendCouponProbability, true),
 		WithEnabled(&ret.Enabled, true),
@@ -68,16 +68,16 @@ func createSimulateConfig(t *testing.T) {
 }
 
 func updateSimulateConfig(t *testing.T) {
-	ret.EnabledProfitTx = false
-	ret.ProfitTxProbability = "20"
+	ret.EnabledCashableProfit = false
+	ret.CashableProfitProbability = "20"
 	ret.SendCouponMode = ordertypes.SendCouponMode_RandomBenifit
 	ret.SendCouponModeStr = ordertypes.SendCouponMode_RandomBenifit.String()
 	ret.SendCouponProbability = "10"
 	handler, err := NewHandler(
 		context.Background(),
 		WithID(&ret.ID, true),
-		WithEnabledProfitTx(&ret.EnabledProfitTx, true),
-		WithProfitTxProbability(&ret.ProfitTxProbability, true),
+		WithEnabledCashableProfit(&ret.EnabledCashableProfit, true),
+		WithCashableProfitProbability(&ret.CashableProfitProbability, true),
 		WithSendCouponMode(&ret.SendCouponMode, true),
 		WithSendCouponProbability(&ret.SendCouponProbability, true),
 	)

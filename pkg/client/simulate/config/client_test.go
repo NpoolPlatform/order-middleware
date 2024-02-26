@@ -38,14 +38,14 @@ func init() {
 
 var (
 	ret = npool.SimulateConfig{
-		EntID:                 uuid.NewString(),
-		AppID:                 uuid.NewString(),
-		ProfitTxProbability:   "1",
-		EnabledProfitTx:       true,
-		SendCouponModeStr:     ordertypes.SendCouponMode_WithoutCoupon.String(),
-		SendCouponMode:        ordertypes.SendCouponMode_WithoutCoupon,
-		SendCouponProbability: "1",
-		Enabled:               false,
+		EntID:                     uuid.NewString(),
+		AppID:                     uuid.NewString(),
+		CashableProfitProbability: "1",
+		EnabledCashableProfit:     true,
+		SendCouponModeStr:         ordertypes.SendCouponMode_WithoutCoupon.String(),
+		SendCouponMode:            ordertypes.SendCouponMode_WithoutCoupon,
+		SendCouponProbability:     "1",
+		Enabled:                   false,
 	}
 )
 
@@ -56,13 +56,13 @@ func setup(t *testing.T) func(*testing.T) {
 func createSimulateConfig(t *testing.T) {
 	var (
 		req = npool.SimulateConfigReq{
-			EntID:                 &ret.EntID,
-			AppID:                 &ret.AppID,
-			ProfitTxProbability:   &ret.ProfitTxProbability,
-			EnabledProfitTx:       &ret.EnabledProfitTx,
-			SendCouponMode:        &ret.SendCouponMode,
-			SendCouponProbability: &ret.SendCouponProbability,
-			Enabled:               &ret.Enabled,
+			EntID:                     &ret.EntID,
+			AppID:                     &ret.AppID,
+			CashableProfitProbability: &ret.CashableProfitProbability,
+			EnabledCashableProfit:     &ret.EnabledCashableProfit,
+			SendCouponMode:            &ret.SendCouponMode,
+			SendCouponProbability:     &ret.SendCouponProbability,
+			Enabled:                   &ret.Enabled,
 		}
 	)
 
@@ -76,18 +76,18 @@ func createSimulateConfig(t *testing.T) {
 }
 
 func updateSimulateConfig(t *testing.T) {
-	ret.ProfitTxProbability = "10"
-	ret.EnabledProfitTx = false
+	ret.CashableProfitProbability = "10"
+	ret.EnabledCashableProfit = false
 	ret.SendCouponMode = ordertypes.SendCouponMode_RandomBenifit
 	ret.SendCouponModeStr = ordertypes.SendCouponMode_RandomBenifit.String()
 	ret.SendCouponProbability = "10"
 	var (
 		req = npool.SimulateConfigReq{
-			ID:                    &ret.ID,
-			ProfitTxProbability:   &ret.ProfitTxProbability,
-			EnabledProfitTx:       &ret.EnabledProfitTx,
-			SendCouponMode:        &ret.SendCouponMode,
-			SendCouponProbability: &ret.SendCouponProbability,
+			ID:                        &ret.ID,
+			CashableProfitProbability: &ret.CashableProfitProbability,
+			EnabledCashableProfit:     &ret.EnabledCashableProfit,
+			SendCouponMode:            &ret.SendCouponMode,
+			SendCouponProbability:     &ret.SendCouponProbability,
 		}
 	)
 	info, err := UpdateSimulateConfig(context.Background(), &req)

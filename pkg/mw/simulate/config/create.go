@@ -39,13 +39,13 @@ func (h *createHandler) createSimulateConfig(ctx context.Context, tx *ent.Tx) er
 	if _, err := configcrud.CreateSet(
 		tx.SimulateConfig.Create(),
 		&configcrud.Req{
-			EntID:                 h.EntID,
-			AppID:                 h.AppID,
-			SendCouponMode:        h.SendCouponMode,
-			SendCouponProbability: h.SendCouponProbability,
-			EnabledProfitTx:       h.EnabledProfitTx,
-			ProfitTxProbability:   h.ProfitTxProbability,
-			Enabled:               h.Enabled,
+			EntID:                     h.EntID,
+			AppID:                     h.AppID,
+			SendCouponMode:            h.SendCouponMode,
+			SendCouponProbability:     h.SendCouponProbability,
+			EnabledCashableProfit:     h.EnabledCashableProfit,
+			CashableProfitProbability: h.CashableProfitProbability,
+			Enabled:                   h.Enabled,
 		},
 	).Save(ctx); err != nil {
 		return err
