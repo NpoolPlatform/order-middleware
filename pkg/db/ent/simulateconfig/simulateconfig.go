@@ -27,10 +27,10 @@ const (
 	FieldSendCouponMode = "send_coupon_mode"
 	// FieldSendCouponProbability holds the string denoting the send_coupon_probability field in the database.
 	FieldSendCouponProbability = "send_coupon_probability"
-	// FieldEnabledProfitTx holds the string denoting the enabled_profit_tx field in the database.
-	FieldEnabledProfitTx = "enabled_profit_tx"
-	// FieldProfitTxProbability holds the string denoting the profit_tx_probability field in the database.
-	FieldProfitTxProbability = "profit_tx_probability"
+	// FieldEnabledCashableProfit holds the string denoting the enabled_cashable_profit field in the database.
+	FieldEnabledCashableProfit = "enabled_cashable_profit"
+	// FieldCashableProfitProbability holds the string denoting the cashable_profit_probability field in the database.
+	FieldCashableProfitProbability = "cashable_profit_probability"
 	// FieldEnabled holds the string denoting the enabled field in the database.
 	FieldEnabled = "enabled"
 	// Table holds the table name of the simulateconfig in the database.
@@ -47,8 +47,8 @@ var Columns = []string{
 	FieldAppID,
 	FieldSendCouponMode,
 	FieldSendCouponProbability,
-	FieldEnabledProfitTx,
-	FieldProfitTxProbability,
+	FieldEnabledCashableProfit,
+	FieldCashableProfitProbability,
 	FieldEnabled,
 }
 
@@ -85,10 +85,10 @@ var (
 	DefaultSendCouponMode string
 	// DefaultSendCouponProbability holds the default value on creation for the "send_coupon_probability" field.
 	DefaultSendCouponProbability decimal.Decimal
-	// DefaultEnabledProfitTx holds the default value on creation for the "enabled_profit_tx" field.
-	DefaultEnabledProfitTx bool
-	// DefaultProfitTxProbability holds the default value on creation for the "profit_tx_probability" field.
-	DefaultProfitTxProbability decimal.Decimal
+	// DefaultEnabledCashableProfit holds the default value on creation for the "enabled_cashable_profit" field.
+	DefaultEnabledCashableProfit bool
+	// DefaultCashableProfitProbability holds the default value on creation for the "cashable_profit_probability" field.
+	DefaultCashableProfitProbability decimal.Decimal
 	// DefaultEnabled holds the default value on creation for the "enabled" field.
 	DefaultEnabled bool
 )

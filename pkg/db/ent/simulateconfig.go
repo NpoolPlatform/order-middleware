@@ -31,10 +31,10 @@ type SimulateConfig struct {
 	SendCouponMode string `json:"send_coupon_mode,omitempty"`
 	// SendCouponProbability holds the value of the "send_coupon_probability" field.
 	SendCouponProbability decimal.Decimal `json:"send_coupon_probability,omitempty"`
-	// EnabledProfitTx holds the value of the "enabled_profit_tx" field.
-	EnabledProfitTx bool `json:"enabled_profit_tx,omitempty"`
-	// ProfitTxProbability holds the value of the "profit_tx_probability" field.
-	ProfitTxProbability decimal.Decimal `json:"profit_tx_probability,omitempty"`
+	// EnabledCashableProfit holds the value of the "enabled_cashable_profit" field.
+	EnabledCashableProfit bool `json:"enabled_cashable_profit,omitempty"`
+	// CashableProfitProbability holds the value of the "cashable_profit_probability" field.
+	CashableProfitProbability decimal.Decimal `json:"cashable_profit_probability,omitempty"`
 	// Enabled holds the value of the "enabled" field.
 	Enabled bool `json:"enabled,omitempty"`
 }
@@ -44,9 +44,9 @@ func (*SimulateConfig) scanValues(columns []string) ([]interface{}, error) {
 	values := make([]interface{}, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case simulateconfig.FieldSendCouponProbability, simulateconfig.FieldProfitTxProbability:
+		case simulateconfig.FieldSendCouponProbability, simulateconfig.FieldCashableProfitProbability:
 			values[i] = new(decimal.Decimal)
-		case simulateconfig.FieldEnabledProfitTx, simulateconfig.FieldEnabled:
+		case simulateconfig.FieldEnabledCashableProfit, simulateconfig.FieldEnabled:
 			values[i] = new(sql.NullBool)
 		case simulateconfig.FieldID, simulateconfig.FieldCreatedAt, simulateconfig.FieldUpdatedAt, simulateconfig.FieldDeletedAt:
 			values[i] = new(sql.NullInt64)
@@ -117,17 +117,17 @@ func (sc *SimulateConfig) assignValues(columns []string, values []interface{}) e
 			} else if value != nil {
 				sc.SendCouponProbability = *value
 			}
-		case simulateconfig.FieldEnabledProfitTx:
+		case simulateconfig.FieldEnabledCashableProfit:
 			if value, ok := values[i].(*sql.NullBool); !ok {
-				return fmt.Errorf("unexpected type %T for field enabled_profit_tx", values[i])
+				return fmt.Errorf("unexpected type %T for field enabled_cashable_profit", values[i])
 			} else if value.Valid {
-				sc.EnabledProfitTx = value.Bool
+				sc.EnabledCashableProfit = value.Bool
 			}
-		case simulateconfig.FieldProfitTxProbability:
+		case simulateconfig.FieldCashableProfitProbability:
 			if value, ok := values[i].(*decimal.Decimal); !ok {
-				return fmt.Errorf("unexpected type %T for field profit_tx_probability", values[i])
+				return fmt.Errorf("unexpected type %T for field cashable_profit_probability", values[i])
 			} else if value != nil {
-				sc.ProfitTxProbability = *value
+				sc.CashableProfitProbability = *value
 			}
 		case simulateconfig.FieldEnabled:
 			if value, ok := values[i].(*sql.NullBool); !ok {
@@ -184,11 +184,11 @@ func (sc *SimulateConfig) String() string {
 	builder.WriteString("send_coupon_probability=")
 	builder.WriteString(fmt.Sprintf("%v", sc.SendCouponProbability))
 	builder.WriteString(", ")
-	builder.WriteString("enabled_profit_tx=")
-	builder.WriteString(fmt.Sprintf("%v", sc.EnabledProfitTx))
+	builder.WriteString("enabled_cashable_profit=")
+	builder.WriteString(fmt.Sprintf("%v", sc.EnabledCashableProfit))
 	builder.WriteString(", ")
-	builder.WriteString("profit_tx_probability=")
-	builder.WriteString(fmt.Sprintf("%v", sc.ProfitTxProbability))
+	builder.WriteString("cashable_profit_probability=")
+	builder.WriteString(fmt.Sprintf("%v", sc.CashableProfitProbability))
 	builder.WriteString(", ")
 	builder.WriteString("enabled=")
 	builder.WriteString(fmt.Sprintf("%v", sc.Enabled))

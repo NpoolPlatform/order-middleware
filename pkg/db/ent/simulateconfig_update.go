@@ -145,43 +145,43 @@ func (scu *SimulateConfigUpdate) ClearSendCouponProbability() *SimulateConfigUpd
 	return scu
 }
 
-// SetEnabledProfitTx sets the "enabled_profit_tx" field.
-func (scu *SimulateConfigUpdate) SetEnabledProfitTx(b bool) *SimulateConfigUpdate {
-	scu.mutation.SetEnabledProfitTx(b)
+// SetEnabledCashableProfit sets the "enabled_cashable_profit" field.
+func (scu *SimulateConfigUpdate) SetEnabledCashableProfit(b bool) *SimulateConfigUpdate {
+	scu.mutation.SetEnabledCashableProfit(b)
 	return scu
 }
 
-// SetNillableEnabledProfitTx sets the "enabled_profit_tx" field if the given value is not nil.
-func (scu *SimulateConfigUpdate) SetNillableEnabledProfitTx(b *bool) *SimulateConfigUpdate {
+// SetNillableEnabledCashableProfit sets the "enabled_cashable_profit" field if the given value is not nil.
+func (scu *SimulateConfigUpdate) SetNillableEnabledCashableProfit(b *bool) *SimulateConfigUpdate {
 	if b != nil {
-		scu.SetEnabledProfitTx(*b)
+		scu.SetEnabledCashableProfit(*b)
 	}
 	return scu
 }
 
-// ClearEnabledProfitTx clears the value of the "enabled_profit_tx" field.
-func (scu *SimulateConfigUpdate) ClearEnabledProfitTx() *SimulateConfigUpdate {
-	scu.mutation.ClearEnabledProfitTx()
+// ClearEnabledCashableProfit clears the value of the "enabled_cashable_profit" field.
+func (scu *SimulateConfigUpdate) ClearEnabledCashableProfit() *SimulateConfigUpdate {
+	scu.mutation.ClearEnabledCashableProfit()
 	return scu
 }
 
-// SetProfitTxProbability sets the "profit_tx_probability" field.
-func (scu *SimulateConfigUpdate) SetProfitTxProbability(d decimal.Decimal) *SimulateConfigUpdate {
-	scu.mutation.SetProfitTxProbability(d)
+// SetCashableProfitProbability sets the "cashable_profit_probability" field.
+func (scu *SimulateConfigUpdate) SetCashableProfitProbability(d decimal.Decimal) *SimulateConfigUpdate {
+	scu.mutation.SetCashableProfitProbability(d)
 	return scu
 }
 
-// SetNillableProfitTxProbability sets the "profit_tx_probability" field if the given value is not nil.
-func (scu *SimulateConfigUpdate) SetNillableProfitTxProbability(d *decimal.Decimal) *SimulateConfigUpdate {
+// SetNillableCashableProfitProbability sets the "cashable_profit_probability" field if the given value is not nil.
+func (scu *SimulateConfigUpdate) SetNillableCashableProfitProbability(d *decimal.Decimal) *SimulateConfigUpdate {
 	if d != nil {
-		scu.SetProfitTxProbability(*d)
+		scu.SetCashableProfitProbability(*d)
 	}
 	return scu
 }
 
-// ClearProfitTxProbability clears the value of the "profit_tx_probability" field.
-func (scu *SimulateConfigUpdate) ClearProfitTxProbability() *SimulateConfigUpdate {
-	scu.mutation.ClearProfitTxProbability()
+// ClearCashableProfitProbability clears the value of the "cashable_profit_probability" field.
+func (scu *SimulateConfigUpdate) ClearCashableProfitProbability() *SimulateConfigUpdate {
+	scu.mutation.ClearCashableProfitProbability()
 	return scu
 }
 
@@ -385,30 +385,30 @@ func (scu *SimulateConfigUpdate) sqlSave(ctx context.Context) (n int, err error)
 			Column: simulateconfig.FieldSendCouponProbability,
 		})
 	}
-	if value, ok := scu.mutation.EnabledProfitTx(); ok {
+	if value, ok := scu.mutation.EnabledCashableProfit(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeBool,
 			Value:  value,
-			Column: simulateconfig.FieldEnabledProfitTx,
+			Column: simulateconfig.FieldEnabledCashableProfit,
 		})
 	}
-	if scu.mutation.EnabledProfitTxCleared() {
+	if scu.mutation.EnabledCashableProfitCleared() {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeBool,
-			Column: simulateconfig.FieldEnabledProfitTx,
+			Column: simulateconfig.FieldEnabledCashableProfit,
 		})
 	}
-	if value, ok := scu.mutation.ProfitTxProbability(); ok {
+	if value, ok := scu.mutation.CashableProfitProbability(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeOther,
 			Value:  value,
-			Column: simulateconfig.FieldProfitTxProbability,
+			Column: simulateconfig.FieldCashableProfitProbability,
 		})
 	}
-	if scu.mutation.ProfitTxProbabilityCleared() {
+	if scu.mutation.CashableProfitProbabilityCleared() {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeOther,
-			Column: simulateconfig.FieldProfitTxProbability,
+			Column: simulateconfig.FieldCashableProfitProbability,
 		})
 	}
 	if value, ok := scu.mutation.Enabled(); ok {
@@ -560,43 +560,43 @@ func (scuo *SimulateConfigUpdateOne) ClearSendCouponProbability() *SimulateConfi
 	return scuo
 }
 
-// SetEnabledProfitTx sets the "enabled_profit_tx" field.
-func (scuo *SimulateConfigUpdateOne) SetEnabledProfitTx(b bool) *SimulateConfigUpdateOne {
-	scuo.mutation.SetEnabledProfitTx(b)
+// SetEnabledCashableProfit sets the "enabled_cashable_profit" field.
+func (scuo *SimulateConfigUpdateOne) SetEnabledCashableProfit(b bool) *SimulateConfigUpdateOne {
+	scuo.mutation.SetEnabledCashableProfit(b)
 	return scuo
 }
 
-// SetNillableEnabledProfitTx sets the "enabled_profit_tx" field if the given value is not nil.
-func (scuo *SimulateConfigUpdateOne) SetNillableEnabledProfitTx(b *bool) *SimulateConfigUpdateOne {
+// SetNillableEnabledCashableProfit sets the "enabled_cashable_profit" field if the given value is not nil.
+func (scuo *SimulateConfigUpdateOne) SetNillableEnabledCashableProfit(b *bool) *SimulateConfigUpdateOne {
 	if b != nil {
-		scuo.SetEnabledProfitTx(*b)
+		scuo.SetEnabledCashableProfit(*b)
 	}
 	return scuo
 }
 
-// ClearEnabledProfitTx clears the value of the "enabled_profit_tx" field.
-func (scuo *SimulateConfigUpdateOne) ClearEnabledProfitTx() *SimulateConfigUpdateOne {
-	scuo.mutation.ClearEnabledProfitTx()
+// ClearEnabledCashableProfit clears the value of the "enabled_cashable_profit" field.
+func (scuo *SimulateConfigUpdateOne) ClearEnabledCashableProfit() *SimulateConfigUpdateOne {
+	scuo.mutation.ClearEnabledCashableProfit()
 	return scuo
 }
 
-// SetProfitTxProbability sets the "profit_tx_probability" field.
-func (scuo *SimulateConfigUpdateOne) SetProfitTxProbability(d decimal.Decimal) *SimulateConfigUpdateOne {
-	scuo.mutation.SetProfitTxProbability(d)
+// SetCashableProfitProbability sets the "cashable_profit_probability" field.
+func (scuo *SimulateConfigUpdateOne) SetCashableProfitProbability(d decimal.Decimal) *SimulateConfigUpdateOne {
+	scuo.mutation.SetCashableProfitProbability(d)
 	return scuo
 }
 
-// SetNillableProfitTxProbability sets the "profit_tx_probability" field if the given value is not nil.
-func (scuo *SimulateConfigUpdateOne) SetNillableProfitTxProbability(d *decimal.Decimal) *SimulateConfigUpdateOne {
+// SetNillableCashableProfitProbability sets the "cashable_profit_probability" field if the given value is not nil.
+func (scuo *SimulateConfigUpdateOne) SetNillableCashableProfitProbability(d *decimal.Decimal) *SimulateConfigUpdateOne {
 	if d != nil {
-		scuo.SetProfitTxProbability(*d)
+		scuo.SetCashableProfitProbability(*d)
 	}
 	return scuo
 }
 
-// ClearProfitTxProbability clears the value of the "profit_tx_probability" field.
-func (scuo *SimulateConfigUpdateOne) ClearProfitTxProbability() *SimulateConfigUpdateOne {
-	scuo.mutation.ClearProfitTxProbability()
+// ClearCashableProfitProbability clears the value of the "cashable_profit_probability" field.
+func (scuo *SimulateConfigUpdateOne) ClearCashableProfitProbability() *SimulateConfigUpdateOne {
+	scuo.mutation.ClearCashableProfitProbability()
 	return scuo
 }
 
@@ -830,30 +830,30 @@ func (scuo *SimulateConfigUpdateOne) sqlSave(ctx context.Context) (_node *Simula
 			Column: simulateconfig.FieldSendCouponProbability,
 		})
 	}
-	if value, ok := scuo.mutation.EnabledProfitTx(); ok {
+	if value, ok := scuo.mutation.EnabledCashableProfit(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeBool,
 			Value:  value,
-			Column: simulateconfig.FieldEnabledProfitTx,
+			Column: simulateconfig.FieldEnabledCashableProfit,
 		})
 	}
-	if scuo.mutation.EnabledProfitTxCleared() {
+	if scuo.mutation.EnabledCashableProfitCleared() {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeBool,
-			Column: simulateconfig.FieldEnabledProfitTx,
+			Column: simulateconfig.FieldEnabledCashableProfit,
 		})
 	}
-	if value, ok := scuo.mutation.ProfitTxProbability(); ok {
+	if value, ok := scuo.mutation.CashableProfitProbability(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeOther,
 			Value:  value,
-			Column: simulateconfig.FieldProfitTxProbability,
+			Column: simulateconfig.FieldCashableProfitProbability,
 		})
 	}
-	if scuo.mutation.ProfitTxProbabilityCleared() {
+	if scuo.mutation.CashableProfitProbabilityCleared() {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeOther,
-			Column: simulateconfig.FieldProfitTxProbability,
+			Column: simulateconfig.FieldCashableProfitProbability,
 		})
 	}
 	if value, ok := scuo.mutation.Enabled(); ok {

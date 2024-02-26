@@ -232,8 +232,8 @@ var (
 		{Name: "app_id", Type: field.TypeUUID},
 		{Name: "send_coupon_mode", Type: field.TypeString, Nullable: true, Default: "WithoutCoupon"},
 		{Name: "send_coupon_probability", Type: field.TypeOther, Nullable: true, SchemaType: map[string]string{"mysql": "decimal(37,18)"}},
-		{Name: "enabled_profit_tx", Type: field.TypeBool, Nullable: true, Default: false},
-		{Name: "profit_tx_probability", Type: field.TypeOther, Nullable: true, SchemaType: map[string]string{"mysql": "decimal(37,18)"}},
+		{Name: "enabled_cashable_profit", Type: field.TypeBool, Nullable: true, Default: false},
+		{Name: "cashable_profit_probability", Type: field.TypeOther, Nullable: true, SchemaType: map[string]string{"mysql": "decimal(37,18)"}},
 		{Name: "enabled", Type: field.TypeBool, Nullable: true, Default: false},
 	}
 	// SimulateConfigsTable holds the schema information for the "simulate_configs" table.

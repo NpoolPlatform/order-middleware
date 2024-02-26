@@ -113,30 +113,30 @@ func (scc *SimulateConfigCreate) SetNillableSendCouponProbability(d *decimal.Dec
 	return scc
 }
 
-// SetEnabledProfitTx sets the "enabled_profit_tx" field.
-func (scc *SimulateConfigCreate) SetEnabledProfitTx(b bool) *SimulateConfigCreate {
-	scc.mutation.SetEnabledProfitTx(b)
+// SetEnabledCashableProfit sets the "enabled_cashable_profit" field.
+func (scc *SimulateConfigCreate) SetEnabledCashableProfit(b bool) *SimulateConfigCreate {
+	scc.mutation.SetEnabledCashableProfit(b)
 	return scc
 }
 
-// SetNillableEnabledProfitTx sets the "enabled_profit_tx" field if the given value is not nil.
-func (scc *SimulateConfigCreate) SetNillableEnabledProfitTx(b *bool) *SimulateConfigCreate {
+// SetNillableEnabledCashableProfit sets the "enabled_cashable_profit" field if the given value is not nil.
+func (scc *SimulateConfigCreate) SetNillableEnabledCashableProfit(b *bool) *SimulateConfigCreate {
 	if b != nil {
-		scc.SetEnabledProfitTx(*b)
+		scc.SetEnabledCashableProfit(*b)
 	}
 	return scc
 }
 
-// SetProfitTxProbability sets the "profit_tx_probability" field.
-func (scc *SimulateConfigCreate) SetProfitTxProbability(d decimal.Decimal) *SimulateConfigCreate {
-	scc.mutation.SetProfitTxProbability(d)
+// SetCashableProfitProbability sets the "cashable_profit_probability" field.
+func (scc *SimulateConfigCreate) SetCashableProfitProbability(d decimal.Decimal) *SimulateConfigCreate {
+	scc.mutation.SetCashableProfitProbability(d)
 	return scc
 }
 
-// SetNillableProfitTxProbability sets the "profit_tx_probability" field if the given value is not nil.
-func (scc *SimulateConfigCreate) SetNillableProfitTxProbability(d *decimal.Decimal) *SimulateConfigCreate {
+// SetNillableCashableProfitProbability sets the "cashable_profit_probability" field if the given value is not nil.
+func (scc *SimulateConfigCreate) SetNillableCashableProfitProbability(d *decimal.Decimal) *SimulateConfigCreate {
 	if d != nil {
-		scc.SetProfitTxProbability(*d)
+		scc.SetCashableProfitProbability(*d)
 	}
 	return scc
 }
@@ -276,13 +276,13 @@ func (scc *SimulateConfigCreate) defaults() error {
 		v := simulateconfig.DefaultSendCouponProbability
 		scc.mutation.SetSendCouponProbability(v)
 	}
-	if _, ok := scc.mutation.EnabledProfitTx(); !ok {
-		v := simulateconfig.DefaultEnabledProfitTx
-		scc.mutation.SetEnabledProfitTx(v)
+	if _, ok := scc.mutation.EnabledCashableProfit(); !ok {
+		v := simulateconfig.DefaultEnabledCashableProfit
+		scc.mutation.SetEnabledCashableProfit(v)
 	}
-	if _, ok := scc.mutation.ProfitTxProbability(); !ok {
-		v := simulateconfig.DefaultProfitTxProbability
-		scc.mutation.SetProfitTxProbability(v)
+	if _, ok := scc.mutation.CashableProfitProbability(); !ok {
+		v := simulateconfig.DefaultCashableProfitProbability
+		scc.mutation.SetCashableProfitProbability(v)
 	}
 	if _, ok := scc.mutation.Enabled(); !ok {
 		v := simulateconfig.DefaultEnabled
@@ -398,21 +398,21 @@ func (scc *SimulateConfigCreate) createSpec() (*SimulateConfig, *sqlgraph.Create
 		})
 		_node.SendCouponProbability = value
 	}
-	if value, ok := scc.mutation.EnabledProfitTx(); ok {
+	if value, ok := scc.mutation.EnabledCashableProfit(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
 			Type:   field.TypeBool,
 			Value:  value,
-			Column: simulateconfig.FieldEnabledProfitTx,
+			Column: simulateconfig.FieldEnabledCashableProfit,
 		})
-		_node.EnabledProfitTx = value
+		_node.EnabledCashableProfit = value
 	}
-	if value, ok := scc.mutation.ProfitTxProbability(); ok {
+	if value, ok := scc.mutation.CashableProfitProbability(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
 			Type:   field.TypeOther,
 			Value:  value,
-			Column: simulateconfig.FieldProfitTxProbability,
+			Column: simulateconfig.FieldCashableProfitProbability,
 		})
-		_node.ProfitTxProbability = value
+		_node.CashableProfitProbability = value
 	}
 	if value, ok := scc.mutation.Enabled(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -590,39 +590,39 @@ func (u *SimulateConfigUpsert) ClearSendCouponProbability() *SimulateConfigUpser
 	return u
 }
 
-// SetEnabledProfitTx sets the "enabled_profit_tx" field.
-func (u *SimulateConfigUpsert) SetEnabledProfitTx(v bool) *SimulateConfigUpsert {
-	u.Set(simulateconfig.FieldEnabledProfitTx, v)
+// SetEnabledCashableProfit sets the "enabled_cashable_profit" field.
+func (u *SimulateConfigUpsert) SetEnabledCashableProfit(v bool) *SimulateConfigUpsert {
+	u.Set(simulateconfig.FieldEnabledCashableProfit, v)
 	return u
 }
 
-// UpdateEnabledProfitTx sets the "enabled_profit_tx" field to the value that was provided on create.
-func (u *SimulateConfigUpsert) UpdateEnabledProfitTx() *SimulateConfigUpsert {
-	u.SetExcluded(simulateconfig.FieldEnabledProfitTx)
+// UpdateEnabledCashableProfit sets the "enabled_cashable_profit" field to the value that was provided on create.
+func (u *SimulateConfigUpsert) UpdateEnabledCashableProfit() *SimulateConfigUpsert {
+	u.SetExcluded(simulateconfig.FieldEnabledCashableProfit)
 	return u
 }
 
-// ClearEnabledProfitTx clears the value of the "enabled_profit_tx" field.
-func (u *SimulateConfigUpsert) ClearEnabledProfitTx() *SimulateConfigUpsert {
-	u.SetNull(simulateconfig.FieldEnabledProfitTx)
+// ClearEnabledCashableProfit clears the value of the "enabled_cashable_profit" field.
+func (u *SimulateConfigUpsert) ClearEnabledCashableProfit() *SimulateConfigUpsert {
+	u.SetNull(simulateconfig.FieldEnabledCashableProfit)
 	return u
 }
 
-// SetProfitTxProbability sets the "profit_tx_probability" field.
-func (u *SimulateConfigUpsert) SetProfitTxProbability(v decimal.Decimal) *SimulateConfigUpsert {
-	u.Set(simulateconfig.FieldProfitTxProbability, v)
+// SetCashableProfitProbability sets the "cashable_profit_probability" field.
+func (u *SimulateConfigUpsert) SetCashableProfitProbability(v decimal.Decimal) *SimulateConfigUpsert {
+	u.Set(simulateconfig.FieldCashableProfitProbability, v)
 	return u
 }
 
-// UpdateProfitTxProbability sets the "profit_tx_probability" field to the value that was provided on create.
-func (u *SimulateConfigUpsert) UpdateProfitTxProbability() *SimulateConfigUpsert {
-	u.SetExcluded(simulateconfig.FieldProfitTxProbability)
+// UpdateCashableProfitProbability sets the "cashable_profit_probability" field to the value that was provided on create.
+func (u *SimulateConfigUpsert) UpdateCashableProfitProbability() *SimulateConfigUpsert {
+	u.SetExcluded(simulateconfig.FieldCashableProfitProbability)
 	return u
 }
 
-// ClearProfitTxProbability clears the value of the "profit_tx_probability" field.
-func (u *SimulateConfigUpsert) ClearProfitTxProbability() *SimulateConfigUpsert {
-	u.SetNull(simulateconfig.FieldProfitTxProbability)
+// ClearCashableProfitProbability clears the value of the "cashable_profit_probability" field.
+func (u *SimulateConfigUpsert) ClearCashableProfitProbability() *SimulateConfigUpsert {
+	u.SetNull(simulateconfig.FieldCashableProfitProbability)
 	return u
 }
 
@@ -827,45 +827,45 @@ func (u *SimulateConfigUpsertOne) ClearSendCouponProbability() *SimulateConfigUp
 	})
 }
 
-// SetEnabledProfitTx sets the "enabled_profit_tx" field.
-func (u *SimulateConfigUpsertOne) SetEnabledProfitTx(v bool) *SimulateConfigUpsertOne {
+// SetEnabledCashableProfit sets the "enabled_cashable_profit" field.
+func (u *SimulateConfigUpsertOne) SetEnabledCashableProfit(v bool) *SimulateConfigUpsertOne {
 	return u.Update(func(s *SimulateConfigUpsert) {
-		s.SetEnabledProfitTx(v)
+		s.SetEnabledCashableProfit(v)
 	})
 }
 
-// UpdateEnabledProfitTx sets the "enabled_profit_tx" field to the value that was provided on create.
-func (u *SimulateConfigUpsertOne) UpdateEnabledProfitTx() *SimulateConfigUpsertOne {
+// UpdateEnabledCashableProfit sets the "enabled_cashable_profit" field to the value that was provided on create.
+func (u *SimulateConfigUpsertOne) UpdateEnabledCashableProfit() *SimulateConfigUpsertOne {
 	return u.Update(func(s *SimulateConfigUpsert) {
-		s.UpdateEnabledProfitTx()
+		s.UpdateEnabledCashableProfit()
 	})
 }
 
-// ClearEnabledProfitTx clears the value of the "enabled_profit_tx" field.
-func (u *SimulateConfigUpsertOne) ClearEnabledProfitTx() *SimulateConfigUpsertOne {
+// ClearEnabledCashableProfit clears the value of the "enabled_cashable_profit" field.
+func (u *SimulateConfigUpsertOne) ClearEnabledCashableProfit() *SimulateConfigUpsertOne {
 	return u.Update(func(s *SimulateConfigUpsert) {
-		s.ClearEnabledProfitTx()
+		s.ClearEnabledCashableProfit()
 	})
 }
 
-// SetProfitTxProbability sets the "profit_tx_probability" field.
-func (u *SimulateConfigUpsertOne) SetProfitTxProbability(v decimal.Decimal) *SimulateConfigUpsertOne {
+// SetCashableProfitProbability sets the "cashable_profit_probability" field.
+func (u *SimulateConfigUpsertOne) SetCashableProfitProbability(v decimal.Decimal) *SimulateConfigUpsertOne {
 	return u.Update(func(s *SimulateConfigUpsert) {
-		s.SetProfitTxProbability(v)
+		s.SetCashableProfitProbability(v)
 	})
 }
 
-// UpdateProfitTxProbability sets the "profit_tx_probability" field to the value that was provided on create.
-func (u *SimulateConfigUpsertOne) UpdateProfitTxProbability() *SimulateConfigUpsertOne {
+// UpdateCashableProfitProbability sets the "cashable_profit_probability" field to the value that was provided on create.
+func (u *SimulateConfigUpsertOne) UpdateCashableProfitProbability() *SimulateConfigUpsertOne {
 	return u.Update(func(s *SimulateConfigUpsert) {
-		s.UpdateProfitTxProbability()
+		s.UpdateCashableProfitProbability()
 	})
 }
 
-// ClearProfitTxProbability clears the value of the "profit_tx_probability" field.
-func (u *SimulateConfigUpsertOne) ClearProfitTxProbability() *SimulateConfigUpsertOne {
+// ClearCashableProfitProbability clears the value of the "cashable_profit_probability" field.
+func (u *SimulateConfigUpsertOne) ClearCashableProfitProbability() *SimulateConfigUpsertOne {
 	return u.Update(func(s *SimulateConfigUpsert) {
-		s.ClearProfitTxProbability()
+		s.ClearCashableProfitProbability()
 	})
 }
 
@@ -1238,45 +1238,45 @@ func (u *SimulateConfigUpsertBulk) ClearSendCouponProbability() *SimulateConfigU
 	})
 }
 
-// SetEnabledProfitTx sets the "enabled_profit_tx" field.
-func (u *SimulateConfigUpsertBulk) SetEnabledProfitTx(v bool) *SimulateConfigUpsertBulk {
+// SetEnabledCashableProfit sets the "enabled_cashable_profit" field.
+func (u *SimulateConfigUpsertBulk) SetEnabledCashableProfit(v bool) *SimulateConfigUpsertBulk {
 	return u.Update(func(s *SimulateConfigUpsert) {
-		s.SetEnabledProfitTx(v)
+		s.SetEnabledCashableProfit(v)
 	})
 }
 
-// UpdateEnabledProfitTx sets the "enabled_profit_tx" field to the value that was provided on create.
-func (u *SimulateConfigUpsertBulk) UpdateEnabledProfitTx() *SimulateConfigUpsertBulk {
+// UpdateEnabledCashableProfit sets the "enabled_cashable_profit" field to the value that was provided on create.
+func (u *SimulateConfigUpsertBulk) UpdateEnabledCashableProfit() *SimulateConfigUpsertBulk {
 	return u.Update(func(s *SimulateConfigUpsert) {
-		s.UpdateEnabledProfitTx()
+		s.UpdateEnabledCashableProfit()
 	})
 }
 
-// ClearEnabledProfitTx clears the value of the "enabled_profit_tx" field.
-func (u *SimulateConfigUpsertBulk) ClearEnabledProfitTx() *SimulateConfigUpsertBulk {
+// ClearEnabledCashableProfit clears the value of the "enabled_cashable_profit" field.
+func (u *SimulateConfigUpsertBulk) ClearEnabledCashableProfit() *SimulateConfigUpsertBulk {
 	return u.Update(func(s *SimulateConfigUpsert) {
-		s.ClearEnabledProfitTx()
+		s.ClearEnabledCashableProfit()
 	})
 }
 
-// SetProfitTxProbability sets the "profit_tx_probability" field.
-func (u *SimulateConfigUpsertBulk) SetProfitTxProbability(v decimal.Decimal) *SimulateConfigUpsertBulk {
+// SetCashableProfitProbability sets the "cashable_profit_probability" field.
+func (u *SimulateConfigUpsertBulk) SetCashableProfitProbability(v decimal.Decimal) *SimulateConfigUpsertBulk {
 	return u.Update(func(s *SimulateConfigUpsert) {
-		s.SetProfitTxProbability(v)
+		s.SetCashableProfitProbability(v)
 	})
 }
 
-// UpdateProfitTxProbability sets the "profit_tx_probability" field to the value that was provided on create.
-func (u *SimulateConfigUpsertBulk) UpdateProfitTxProbability() *SimulateConfigUpsertBulk {
+// UpdateCashableProfitProbability sets the "cashable_profit_probability" field to the value that was provided on create.
+func (u *SimulateConfigUpsertBulk) UpdateCashableProfitProbability() *SimulateConfigUpsertBulk {
 	return u.Update(func(s *SimulateConfigUpsert) {
-		s.UpdateProfitTxProbability()
+		s.UpdateCashableProfitProbability()
 	})
 }
 
-// ClearProfitTxProbability clears the value of the "profit_tx_probability" field.
-func (u *SimulateConfigUpsertBulk) ClearProfitTxProbability() *SimulateConfigUpsertBulk {
+// ClearCashableProfitProbability clears the value of the "cashable_profit_probability" field.
+func (u *SimulateConfigUpsertBulk) ClearCashableProfitProbability() *SimulateConfigUpsertBulk {
 	return u.Update(func(s *SimulateConfigUpsert) {
-		s.ClearProfitTxProbability()
+		s.ClearCashableProfitProbability()
 	})
 }
 

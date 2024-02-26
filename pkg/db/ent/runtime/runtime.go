@@ -450,14 +450,14 @@ func init() {
 	simulateconfigDescSendCouponProbability := simulateconfigFields[2].Descriptor()
 	// simulateconfig.DefaultSendCouponProbability holds the default value on creation for the send_coupon_probability field.
 	simulateconfig.DefaultSendCouponProbability = simulateconfigDescSendCouponProbability.Default.(decimal.Decimal)
-	// simulateconfigDescEnabledProfitTx is the schema descriptor for enabled_profit_tx field.
-	simulateconfigDescEnabledProfitTx := simulateconfigFields[3].Descriptor()
-	// simulateconfig.DefaultEnabledProfitTx holds the default value on creation for the enabled_profit_tx field.
-	simulateconfig.DefaultEnabledProfitTx = simulateconfigDescEnabledProfitTx.Default.(bool)
-	// simulateconfigDescProfitTxProbability is the schema descriptor for profit_tx_probability field.
-	simulateconfigDescProfitTxProbability := simulateconfigFields[4].Descriptor()
-	// simulateconfig.DefaultProfitTxProbability holds the default value on creation for the profit_tx_probability field.
-	simulateconfig.DefaultProfitTxProbability = simulateconfigDescProfitTxProbability.Default.(decimal.Decimal)
+	// simulateconfigDescEnabledCashableProfit is the schema descriptor for enabled_cashable_profit field.
+	simulateconfigDescEnabledCashableProfit := simulateconfigFields[3].Descriptor()
+	// simulateconfig.DefaultEnabledCashableProfit holds the default value on creation for the enabled_cashable_profit field.
+	simulateconfig.DefaultEnabledCashableProfit = simulateconfigDescEnabledCashableProfit.Default.(bool)
+	// simulateconfigDescCashableProfitProbability is the schema descriptor for cashable_profit_probability field.
+	simulateconfigDescCashableProfitProbability := simulateconfigFields[4].Descriptor()
+	// simulateconfig.DefaultCashableProfitProbability holds the default value on creation for the cashable_profit_probability field.
+	simulateconfig.DefaultCashableProfitProbability = simulateconfigDescCashableProfitProbability.Default.(decimal.Decimal)
 	// simulateconfigDescEnabled is the schema descriptor for enabled field.
 	simulateconfigDescEnabled := simulateconfigFields[5].Descriptor()
 	// simulateconfig.DefaultEnabled holds the default value on creation for the enabled field.

@@ -129,17 +129,17 @@ func SendCouponProbability(v decimal.Decimal) predicate.SimulateConfig {
 	})
 }
 
-// EnabledProfitTx applies equality check predicate on the "enabled_profit_tx" field. It's identical to EnabledProfitTxEQ.
-func EnabledProfitTx(v bool) predicate.SimulateConfig {
+// EnabledCashableProfit applies equality check predicate on the "enabled_cashable_profit" field. It's identical to EnabledCashableProfitEQ.
+func EnabledCashableProfit(v bool) predicate.SimulateConfig {
 	return predicate.SimulateConfig(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldEnabledProfitTx), v))
+		s.Where(sql.EQ(s.C(FieldEnabledCashableProfit), v))
 	})
 }
 
-// ProfitTxProbability applies equality check predicate on the "profit_tx_probability" field. It's identical to ProfitTxProbabilityEQ.
-func ProfitTxProbability(v decimal.Decimal) predicate.SimulateConfig {
+// CashableProfitProbability applies equality check predicate on the "cashable_profit_probability" field. It's identical to CashableProfitProbabilityEQ.
+func CashableProfitProbability(v decimal.Decimal) predicate.SimulateConfig {
 	return predicate.SimulateConfig(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldProfitTxProbability), v))
+		s.Where(sql.EQ(s.C(FieldCashableProfitProbability), v))
 	})
 }
 
@@ -661,109 +661,109 @@ func SendCouponProbabilityNotNil() predicate.SimulateConfig {
 	})
 }
 
-// EnabledProfitTxEQ applies the EQ predicate on the "enabled_profit_tx" field.
-func EnabledProfitTxEQ(v bool) predicate.SimulateConfig {
+// EnabledCashableProfitEQ applies the EQ predicate on the "enabled_cashable_profit" field.
+func EnabledCashableProfitEQ(v bool) predicate.SimulateConfig {
 	return predicate.SimulateConfig(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldEnabledProfitTx), v))
+		s.Where(sql.EQ(s.C(FieldEnabledCashableProfit), v))
 	})
 }
 
-// EnabledProfitTxNEQ applies the NEQ predicate on the "enabled_profit_tx" field.
-func EnabledProfitTxNEQ(v bool) predicate.SimulateConfig {
+// EnabledCashableProfitNEQ applies the NEQ predicate on the "enabled_cashable_profit" field.
+func EnabledCashableProfitNEQ(v bool) predicate.SimulateConfig {
 	return predicate.SimulateConfig(func(s *sql.Selector) {
-		s.Where(sql.NEQ(s.C(FieldEnabledProfitTx), v))
+		s.Where(sql.NEQ(s.C(FieldEnabledCashableProfit), v))
 	})
 }
 
-// EnabledProfitTxIsNil applies the IsNil predicate on the "enabled_profit_tx" field.
-func EnabledProfitTxIsNil() predicate.SimulateConfig {
+// EnabledCashableProfitIsNil applies the IsNil predicate on the "enabled_cashable_profit" field.
+func EnabledCashableProfitIsNil() predicate.SimulateConfig {
 	return predicate.SimulateConfig(func(s *sql.Selector) {
-		s.Where(sql.IsNull(s.C(FieldEnabledProfitTx)))
+		s.Where(sql.IsNull(s.C(FieldEnabledCashableProfit)))
 	})
 }
 
-// EnabledProfitTxNotNil applies the NotNil predicate on the "enabled_profit_tx" field.
-func EnabledProfitTxNotNil() predicate.SimulateConfig {
+// EnabledCashableProfitNotNil applies the NotNil predicate on the "enabled_cashable_profit" field.
+func EnabledCashableProfitNotNil() predicate.SimulateConfig {
 	return predicate.SimulateConfig(func(s *sql.Selector) {
-		s.Where(sql.NotNull(s.C(FieldEnabledProfitTx)))
+		s.Where(sql.NotNull(s.C(FieldEnabledCashableProfit)))
 	})
 }
 
-// ProfitTxProbabilityEQ applies the EQ predicate on the "profit_tx_probability" field.
-func ProfitTxProbabilityEQ(v decimal.Decimal) predicate.SimulateConfig {
+// CashableProfitProbabilityEQ applies the EQ predicate on the "cashable_profit_probability" field.
+func CashableProfitProbabilityEQ(v decimal.Decimal) predicate.SimulateConfig {
 	return predicate.SimulateConfig(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldProfitTxProbability), v))
+		s.Where(sql.EQ(s.C(FieldCashableProfitProbability), v))
 	})
 }
 
-// ProfitTxProbabilityNEQ applies the NEQ predicate on the "profit_tx_probability" field.
-func ProfitTxProbabilityNEQ(v decimal.Decimal) predicate.SimulateConfig {
+// CashableProfitProbabilityNEQ applies the NEQ predicate on the "cashable_profit_probability" field.
+func CashableProfitProbabilityNEQ(v decimal.Decimal) predicate.SimulateConfig {
 	return predicate.SimulateConfig(func(s *sql.Selector) {
-		s.Where(sql.NEQ(s.C(FieldProfitTxProbability), v))
+		s.Where(sql.NEQ(s.C(FieldCashableProfitProbability), v))
 	})
 }
 
-// ProfitTxProbabilityIn applies the In predicate on the "profit_tx_probability" field.
-func ProfitTxProbabilityIn(vs ...decimal.Decimal) predicate.SimulateConfig {
+// CashableProfitProbabilityIn applies the In predicate on the "cashable_profit_probability" field.
+func CashableProfitProbabilityIn(vs ...decimal.Decimal) predicate.SimulateConfig {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
 	}
 	return predicate.SimulateConfig(func(s *sql.Selector) {
-		s.Where(sql.In(s.C(FieldProfitTxProbability), v...))
+		s.Where(sql.In(s.C(FieldCashableProfitProbability), v...))
 	})
 }
 
-// ProfitTxProbabilityNotIn applies the NotIn predicate on the "profit_tx_probability" field.
-func ProfitTxProbabilityNotIn(vs ...decimal.Decimal) predicate.SimulateConfig {
+// CashableProfitProbabilityNotIn applies the NotIn predicate on the "cashable_profit_probability" field.
+func CashableProfitProbabilityNotIn(vs ...decimal.Decimal) predicate.SimulateConfig {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
 	}
 	return predicate.SimulateConfig(func(s *sql.Selector) {
-		s.Where(sql.NotIn(s.C(FieldProfitTxProbability), v...))
+		s.Where(sql.NotIn(s.C(FieldCashableProfitProbability), v...))
 	})
 }
 
-// ProfitTxProbabilityGT applies the GT predicate on the "profit_tx_probability" field.
-func ProfitTxProbabilityGT(v decimal.Decimal) predicate.SimulateConfig {
+// CashableProfitProbabilityGT applies the GT predicate on the "cashable_profit_probability" field.
+func CashableProfitProbabilityGT(v decimal.Decimal) predicate.SimulateConfig {
 	return predicate.SimulateConfig(func(s *sql.Selector) {
-		s.Where(sql.GT(s.C(FieldProfitTxProbability), v))
+		s.Where(sql.GT(s.C(FieldCashableProfitProbability), v))
 	})
 }
 
-// ProfitTxProbabilityGTE applies the GTE predicate on the "profit_tx_probability" field.
-func ProfitTxProbabilityGTE(v decimal.Decimal) predicate.SimulateConfig {
+// CashableProfitProbabilityGTE applies the GTE predicate on the "cashable_profit_probability" field.
+func CashableProfitProbabilityGTE(v decimal.Decimal) predicate.SimulateConfig {
 	return predicate.SimulateConfig(func(s *sql.Selector) {
-		s.Where(sql.GTE(s.C(FieldProfitTxProbability), v))
+		s.Where(sql.GTE(s.C(FieldCashableProfitProbability), v))
 	})
 }
 
-// ProfitTxProbabilityLT applies the LT predicate on the "profit_tx_probability" field.
-func ProfitTxProbabilityLT(v decimal.Decimal) predicate.SimulateConfig {
+// CashableProfitProbabilityLT applies the LT predicate on the "cashable_profit_probability" field.
+func CashableProfitProbabilityLT(v decimal.Decimal) predicate.SimulateConfig {
 	return predicate.SimulateConfig(func(s *sql.Selector) {
-		s.Where(sql.LT(s.C(FieldProfitTxProbability), v))
+		s.Where(sql.LT(s.C(FieldCashableProfitProbability), v))
 	})
 }
 
-// ProfitTxProbabilityLTE applies the LTE predicate on the "profit_tx_probability" field.
-func ProfitTxProbabilityLTE(v decimal.Decimal) predicate.SimulateConfig {
+// CashableProfitProbabilityLTE applies the LTE predicate on the "cashable_profit_probability" field.
+func CashableProfitProbabilityLTE(v decimal.Decimal) predicate.SimulateConfig {
 	return predicate.SimulateConfig(func(s *sql.Selector) {
-		s.Where(sql.LTE(s.C(FieldProfitTxProbability), v))
+		s.Where(sql.LTE(s.C(FieldCashableProfitProbability), v))
 	})
 }
 
-// ProfitTxProbabilityIsNil applies the IsNil predicate on the "profit_tx_probability" field.
-func ProfitTxProbabilityIsNil() predicate.SimulateConfig {
+// CashableProfitProbabilityIsNil applies the IsNil predicate on the "cashable_profit_probability" field.
+func CashableProfitProbabilityIsNil() predicate.SimulateConfig {
 	return predicate.SimulateConfig(func(s *sql.Selector) {
-		s.Where(sql.IsNull(s.C(FieldProfitTxProbability)))
+		s.Where(sql.IsNull(s.C(FieldCashableProfitProbability)))
 	})
 }
 
-// ProfitTxProbabilityNotNil applies the NotNil predicate on the "profit_tx_probability" field.
-func ProfitTxProbabilityNotNil() predicate.SimulateConfig {
+// CashableProfitProbabilityNotNil applies the NotNil predicate on the "cashable_profit_probability" field.
+func CashableProfitProbabilityNotNil() predicate.SimulateConfig {
 	return predicate.SimulateConfig(func(s *sql.Selector) {
-		s.Where(sql.NotNull(s.C(FieldProfitTxProbability)))
+		s.Where(sql.NotNull(s.C(FieldCashableProfitProbability)))
 	})
 }
 

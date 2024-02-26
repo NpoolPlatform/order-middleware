@@ -8216,26 +8216,26 @@ func (m *PaymentMutation) ResetEdge(name string) error {
 // SimulateConfigMutation represents an operation that mutates the SimulateConfig nodes in the graph.
 type SimulateConfigMutation struct {
 	config
-	op                      Op
-	typ                     string
-	id                      *uint32
-	created_at              *uint32
-	addcreated_at           *int32
-	updated_at              *uint32
-	addupdated_at           *int32
-	deleted_at              *uint32
-	adddeleted_at           *int32
-	ent_id                  *uuid.UUID
-	app_id                  *uuid.UUID
-	send_coupon_mode        *string
-	send_coupon_probability *decimal.Decimal
-	enabled_profit_tx       *bool
-	profit_tx_probability   *decimal.Decimal
-	enabled                 *bool
-	clearedFields           map[string]struct{}
-	done                    bool
-	oldValue                func(context.Context) (*SimulateConfig, error)
-	predicates              []predicate.SimulateConfig
+	op                          Op
+	typ                         string
+	id                          *uint32
+	created_at                  *uint32
+	addcreated_at               *int32
+	updated_at                  *uint32
+	addupdated_at               *int32
+	deleted_at                  *uint32
+	adddeleted_at               *int32
+	ent_id                      *uuid.UUID
+	app_id                      *uuid.UUID
+	send_coupon_mode            *string
+	send_coupon_probability     *decimal.Decimal
+	enabled_cashable_profit     *bool
+	cashable_profit_probability *decimal.Decimal
+	enabled                     *bool
+	clearedFields               map[string]struct{}
+	done                        bool
+	oldValue                    func(context.Context) (*SimulateConfig, error)
+	predicates                  []predicate.SimulateConfig
 }
 
 var _ ent.Mutation = (*SimulateConfigMutation)(nil)
@@ -8680,102 +8680,102 @@ func (m *SimulateConfigMutation) ResetSendCouponProbability() {
 	delete(m.clearedFields, simulateconfig.FieldSendCouponProbability)
 }
 
-// SetEnabledProfitTx sets the "enabled_profit_tx" field.
-func (m *SimulateConfigMutation) SetEnabledProfitTx(b bool) {
-	m.enabled_profit_tx = &b
+// SetEnabledCashableProfit sets the "enabled_cashable_profit" field.
+func (m *SimulateConfigMutation) SetEnabledCashableProfit(b bool) {
+	m.enabled_cashable_profit = &b
 }
 
-// EnabledProfitTx returns the value of the "enabled_profit_tx" field in the mutation.
-func (m *SimulateConfigMutation) EnabledProfitTx() (r bool, exists bool) {
-	v := m.enabled_profit_tx
+// EnabledCashableProfit returns the value of the "enabled_cashable_profit" field in the mutation.
+func (m *SimulateConfigMutation) EnabledCashableProfit() (r bool, exists bool) {
+	v := m.enabled_cashable_profit
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// OldEnabledProfitTx returns the old "enabled_profit_tx" field's value of the SimulateConfig entity.
+// OldEnabledCashableProfit returns the old "enabled_cashable_profit" field's value of the SimulateConfig entity.
 // If the SimulateConfig object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *SimulateConfigMutation) OldEnabledProfitTx(ctx context.Context) (v bool, err error) {
+func (m *SimulateConfigMutation) OldEnabledCashableProfit(ctx context.Context) (v bool, err error) {
 	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldEnabledProfitTx is only allowed on UpdateOne operations")
+		return v, errors.New("OldEnabledCashableProfit is only allowed on UpdateOne operations")
 	}
 	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldEnabledProfitTx requires an ID field in the mutation")
+		return v, errors.New("OldEnabledCashableProfit requires an ID field in the mutation")
 	}
 	oldValue, err := m.oldValue(ctx)
 	if err != nil {
-		return v, fmt.Errorf("querying old value for OldEnabledProfitTx: %w", err)
+		return v, fmt.Errorf("querying old value for OldEnabledCashableProfit: %w", err)
 	}
-	return oldValue.EnabledProfitTx, nil
+	return oldValue.EnabledCashableProfit, nil
 }
 
-// ClearEnabledProfitTx clears the value of the "enabled_profit_tx" field.
-func (m *SimulateConfigMutation) ClearEnabledProfitTx() {
-	m.enabled_profit_tx = nil
-	m.clearedFields[simulateconfig.FieldEnabledProfitTx] = struct{}{}
+// ClearEnabledCashableProfit clears the value of the "enabled_cashable_profit" field.
+func (m *SimulateConfigMutation) ClearEnabledCashableProfit() {
+	m.enabled_cashable_profit = nil
+	m.clearedFields[simulateconfig.FieldEnabledCashableProfit] = struct{}{}
 }
 
-// EnabledProfitTxCleared returns if the "enabled_profit_tx" field was cleared in this mutation.
-func (m *SimulateConfigMutation) EnabledProfitTxCleared() bool {
-	_, ok := m.clearedFields[simulateconfig.FieldEnabledProfitTx]
+// EnabledCashableProfitCleared returns if the "enabled_cashable_profit" field was cleared in this mutation.
+func (m *SimulateConfigMutation) EnabledCashableProfitCleared() bool {
+	_, ok := m.clearedFields[simulateconfig.FieldEnabledCashableProfit]
 	return ok
 }
 
-// ResetEnabledProfitTx resets all changes to the "enabled_profit_tx" field.
-func (m *SimulateConfigMutation) ResetEnabledProfitTx() {
-	m.enabled_profit_tx = nil
-	delete(m.clearedFields, simulateconfig.FieldEnabledProfitTx)
+// ResetEnabledCashableProfit resets all changes to the "enabled_cashable_profit" field.
+func (m *SimulateConfigMutation) ResetEnabledCashableProfit() {
+	m.enabled_cashable_profit = nil
+	delete(m.clearedFields, simulateconfig.FieldEnabledCashableProfit)
 }
 
-// SetProfitTxProbability sets the "profit_tx_probability" field.
-func (m *SimulateConfigMutation) SetProfitTxProbability(d decimal.Decimal) {
-	m.profit_tx_probability = &d
+// SetCashableProfitProbability sets the "cashable_profit_probability" field.
+func (m *SimulateConfigMutation) SetCashableProfitProbability(d decimal.Decimal) {
+	m.cashable_profit_probability = &d
 }
 
-// ProfitTxProbability returns the value of the "profit_tx_probability" field in the mutation.
-func (m *SimulateConfigMutation) ProfitTxProbability() (r decimal.Decimal, exists bool) {
-	v := m.profit_tx_probability
+// CashableProfitProbability returns the value of the "cashable_profit_probability" field in the mutation.
+func (m *SimulateConfigMutation) CashableProfitProbability() (r decimal.Decimal, exists bool) {
+	v := m.cashable_profit_probability
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// OldProfitTxProbability returns the old "profit_tx_probability" field's value of the SimulateConfig entity.
+// OldCashableProfitProbability returns the old "cashable_profit_probability" field's value of the SimulateConfig entity.
 // If the SimulateConfig object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *SimulateConfigMutation) OldProfitTxProbability(ctx context.Context) (v decimal.Decimal, err error) {
+func (m *SimulateConfigMutation) OldCashableProfitProbability(ctx context.Context) (v decimal.Decimal, err error) {
 	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldProfitTxProbability is only allowed on UpdateOne operations")
+		return v, errors.New("OldCashableProfitProbability is only allowed on UpdateOne operations")
 	}
 	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldProfitTxProbability requires an ID field in the mutation")
+		return v, errors.New("OldCashableProfitProbability requires an ID field in the mutation")
 	}
 	oldValue, err := m.oldValue(ctx)
 	if err != nil {
-		return v, fmt.Errorf("querying old value for OldProfitTxProbability: %w", err)
+		return v, fmt.Errorf("querying old value for OldCashableProfitProbability: %w", err)
 	}
-	return oldValue.ProfitTxProbability, nil
+	return oldValue.CashableProfitProbability, nil
 }
 
-// ClearProfitTxProbability clears the value of the "profit_tx_probability" field.
-func (m *SimulateConfigMutation) ClearProfitTxProbability() {
-	m.profit_tx_probability = nil
-	m.clearedFields[simulateconfig.FieldProfitTxProbability] = struct{}{}
+// ClearCashableProfitProbability clears the value of the "cashable_profit_probability" field.
+func (m *SimulateConfigMutation) ClearCashableProfitProbability() {
+	m.cashable_profit_probability = nil
+	m.clearedFields[simulateconfig.FieldCashableProfitProbability] = struct{}{}
 }
 
-// ProfitTxProbabilityCleared returns if the "profit_tx_probability" field was cleared in this mutation.
-func (m *SimulateConfigMutation) ProfitTxProbabilityCleared() bool {
-	_, ok := m.clearedFields[simulateconfig.FieldProfitTxProbability]
+// CashableProfitProbabilityCleared returns if the "cashable_profit_probability" field was cleared in this mutation.
+func (m *SimulateConfigMutation) CashableProfitProbabilityCleared() bool {
+	_, ok := m.clearedFields[simulateconfig.FieldCashableProfitProbability]
 	return ok
 }
 
-// ResetProfitTxProbability resets all changes to the "profit_tx_probability" field.
-func (m *SimulateConfigMutation) ResetProfitTxProbability() {
-	m.profit_tx_probability = nil
-	delete(m.clearedFields, simulateconfig.FieldProfitTxProbability)
+// ResetCashableProfitProbability resets all changes to the "cashable_profit_probability" field.
+func (m *SimulateConfigMutation) ResetCashableProfitProbability() {
+	m.cashable_profit_probability = nil
+	delete(m.clearedFields, simulateconfig.FieldCashableProfitProbability)
 }
 
 // SetEnabled sets the "enabled" field.
@@ -8868,11 +8868,11 @@ func (m *SimulateConfigMutation) Fields() []string {
 	if m.send_coupon_probability != nil {
 		fields = append(fields, simulateconfig.FieldSendCouponProbability)
 	}
-	if m.enabled_profit_tx != nil {
-		fields = append(fields, simulateconfig.FieldEnabledProfitTx)
+	if m.enabled_cashable_profit != nil {
+		fields = append(fields, simulateconfig.FieldEnabledCashableProfit)
 	}
-	if m.profit_tx_probability != nil {
-		fields = append(fields, simulateconfig.FieldProfitTxProbability)
+	if m.cashable_profit_probability != nil {
+		fields = append(fields, simulateconfig.FieldCashableProfitProbability)
 	}
 	if m.enabled != nil {
 		fields = append(fields, simulateconfig.FieldEnabled)
@@ -8899,10 +8899,10 @@ func (m *SimulateConfigMutation) Field(name string) (ent.Value, bool) {
 		return m.SendCouponMode()
 	case simulateconfig.FieldSendCouponProbability:
 		return m.SendCouponProbability()
-	case simulateconfig.FieldEnabledProfitTx:
-		return m.EnabledProfitTx()
-	case simulateconfig.FieldProfitTxProbability:
-		return m.ProfitTxProbability()
+	case simulateconfig.FieldEnabledCashableProfit:
+		return m.EnabledCashableProfit()
+	case simulateconfig.FieldCashableProfitProbability:
+		return m.CashableProfitProbability()
 	case simulateconfig.FieldEnabled:
 		return m.Enabled()
 	}
@@ -8928,10 +8928,10 @@ func (m *SimulateConfigMutation) OldField(ctx context.Context, name string) (ent
 		return m.OldSendCouponMode(ctx)
 	case simulateconfig.FieldSendCouponProbability:
 		return m.OldSendCouponProbability(ctx)
-	case simulateconfig.FieldEnabledProfitTx:
-		return m.OldEnabledProfitTx(ctx)
-	case simulateconfig.FieldProfitTxProbability:
-		return m.OldProfitTxProbability(ctx)
+	case simulateconfig.FieldEnabledCashableProfit:
+		return m.OldEnabledCashableProfit(ctx)
+	case simulateconfig.FieldCashableProfitProbability:
+		return m.OldCashableProfitProbability(ctx)
 	case simulateconfig.FieldEnabled:
 		return m.OldEnabled(ctx)
 	}
@@ -8992,19 +8992,19 @@ func (m *SimulateConfigMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetSendCouponProbability(v)
 		return nil
-	case simulateconfig.FieldEnabledProfitTx:
+	case simulateconfig.FieldEnabledCashableProfit:
 		v, ok := value.(bool)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.SetEnabledProfitTx(v)
+		m.SetEnabledCashableProfit(v)
 		return nil
-	case simulateconfig.FieldProfitTxProbability:
+	case simulateconfig.FieldCashableProfitProbability:
 		v, ok := value.(decimal.Decimal)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.SetProfitTxProbability(v)
+		m.SetCashableProfitProbability(v)
 		return nil
 	case simulateconfig.FieldEnabled:
 		v, ok := value.(bool)
@@ -9088,11 +9088,11 @@ func (m *SimulateConfigMutation) ClearedFields() []string {
 	if m.FieldCleared(simulateconfig.FieldSendCouponProbability) {
 		fields = append(fields, simulateconfig.FieldSendCouponProbability)
 	}
-	if m.FieldCleared(simulateconfig.FieldEnabledProfitTx) {
-		fields = append(fields, simulateconfig.FieldEnabledProfitTx)
+	if m.FieldCleared(simulateconfig.FieldEnabledCashableProfit) {
+		fields = append(fields, simulateconfig.FieldEnabledCashableProfit)
 	}
-	if m.FieldCleared(simulateconfig.FieldProfitTxProbability) {
-		fields = append(fields, simulateconfig.FieldProfitTxProbability)
+	if m.FieldCleared(simulateconfig.FieldCashableProfitProbability) {
+		fields = append(fields, simulateconfig.FieldCashableProfitProbability)
 	}
 	if m.FieldCleared(simulateconfig.FieldEnabled) {
 		fields = append(fields, simulateconfig.FieldEnabled)
@@ -9117,11 +9117,11 @@ func (m *SimulateConfigMutation) ClearField(name string) error {
 	case simulateconfig.FieldSendCouponProbability:
 		m.ClearSendCouponProbability()
 		return nil
-	case simulateconfig.FieldEnabledProfitTx:
-		m.ClearEnabledProfitTx()
+	case simulateconfig.FieldEnabledCashableProfit:
+		m.ClearEnabledCashableProfit()
 		return nil
-	case simulateconfig.FieldProfitTxProbability:
-		m.ClearProfitTxProbability()
+	case simulateconfig.FieldCashableProfitProbability:
+		m.ClearCashableProfitProbability()
 		return nil
 	case simulateconfig.FieldEnabled:
 		m.ClearEnabled()
@@ -9155,11 +9155,11 @@ func (m *SimulateConfigMutation) ResetField(name string) error {
 	case simulateconfig.FieldSendCouponProbability:
 		m.ResetSendCouponProbability()
 		return nil
-	case simulateconfig.FieldEnabledProfitTx:
-		m.ResetEnabledProfitTx()
+	case simulateconfig.FieldEnabledCashableProfit:
+		m.ResetEnabledCashableProfit()
 		return nil
-	case simulateconfig.FieldProfitTxProbability:
-		m.ResetProfitTxProbability()
+	case simulateconfig.FieldCashableProfitProbability:
+		m.ResetCashableProfitProbability()
 		return nil
 	case simulateconfig.FieldEnabled:
 		m.ResetEnabled()
