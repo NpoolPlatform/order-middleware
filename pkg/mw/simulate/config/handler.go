@@ -124,6 +124,9 @@ func WithSendCouponProbability(value *string, must bool) func(context.Context, *
 		if amount.Cmp(decimal.NewFromInt(0)) < 0 {
 			return fmt.Errorf("sendcouponprobability is less than 0")
 		}
+		if amount.Cmp(decimal.NewFromInt(1)) > 0 {
+			return fmt.Errorf("sendcouponprobability is more than 1")
+		}
 		h.SendCouponProbability = &amount
 		return nil
 	}
@@ -156,6 +159,9 @@ func WithCashableProfitProbability(value *string, must bool) func(context.Contex
 		}
 		if amount.Cmp(decimal.NewFromInt(0)) < 0 {
 			return fmt.Errorf("cashableprofitprobability is less than 0")
+		}
+		if amount.Cmp(decimal.NewFromInt(1)) > 0 {
+			return fmt.Errorf("cashableprofitprobability is more than 1")
 		}
 		h.CashableProfitProbability = &amount
 		return nil

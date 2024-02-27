@@ -25,11 +25,11 @@ func (s *Server) CreateSimulateConfig(ctx context.Context, in *npool.CreateSimul
 		ctx,
 		config1.WithEntID(req.EntID, false),
 		config1.WithAppID(req.AppID, true),
-		config1.WithEnabledCashableProfit(req.EnabledCashableProfit, true),
-		config1.WithCashableProfitProbability(req.CashableProfitProbability, true),
+		config1.WithEnabledCashableProfit(req.EnabledCashableProfit, false),
+		config1.WithCashableProfitProbability(req.CashableProfitProbability, false),
 		config1.WithSendCouponMode(req.SendCouponMode, true),
-		config1.WithSendCouponProbability(req.SendCouponProbability, true),
-		config1.WithEnabled(req.Enabled, true),
+		config1.WithSendCouponProbability(req.SendCouponProbability, false),
+		config1.WithEnabled(req.Enabled, false),
 	)
 	if err != nil {
 		logger.Sugar().Errorw(
