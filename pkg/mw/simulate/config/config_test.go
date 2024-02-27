@@ -69,10 +69,10 @@ func createSimulateConfig(t *testing.T) {
 
 func updateSimulateConfig(t *testing.T) {
 	ret.EnabledCashableProfit = false
-	ret.CashableProfitProbability = "20"
+	ret.CashableProfitProbability = "0.5"
 	ret.SendCouponMode = ordertypes.SendCouponMode_RandomBenifit
 	ret.SendCouponModeStr = ordertypes.SendCouponMode_RandomBenifit.String()
-	ret.SendCouponProbability = "10"
+	ret.SendCouponProbability = "0.5"
 	handler, err := NewHandler(
 		context.Background(),
 		WithID(&ret.ID, true),

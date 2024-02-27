@@ -76,11 +76,11 @@ func createSimulateConfig(t *testing.T) {
 }
 
 func updateSimulateConfig(t *testing.T) {
-	ret.CashableProfitProbability = "10"
+	ret.CashableProfitProbability = "0.5"
 	ret.EnabledCashableProfit = false
 	ret.SendCouponMode = ordertypes.SendCouponMode_RandomBenifit
 	ret.SendCouponModeStr = ordertypes.SendCouponMode_RandomBenifit.String()
-	ret.SendCouponProbability = "10"
+	ret.SendCouponProbability = "0.5"
 	var (
 		req = npool.SimulateConfigReq{
 			ID:                        &ret.ID,
