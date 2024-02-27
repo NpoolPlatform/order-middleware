@@ -9,7 +9,6 @@ import (
 	configcrud "github.com/NpoolPlatform/order-middleware/pkg/crud/simulate/config"
 	"github.com/NpoolPlatform/order-middleware/pkg/db"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent"
-	"github.com/shopspring/decimal"
 
 	"github.com/google/uuid"
 )
@@ -30,17 +29,6 @@ func (h *createHandler) checkSimulateConfig(ctx context.Context) error {
 		return fmt.Errorf("repeated config")
 	}
 	return nil
-}
-
-func (h *createHandler) checkProbability() {
-	if h.EnabledCashableProfit == nil || !*h.EnabledCashableProfit {
-		if h.CashableProfitProbability == nil {
-			h.CashableProfitProbability = &decimal.Zero
-		}
-	}
-	if h.SendCouponProbability == nil {
-		h.SendCouponProbability = &decimal.Zero
-	}
 }
 
 func (h *createHandler) createSimulateConfig(ctx context.Context, tx *ent.Tx) error {
@@ -73,7 +61,7 @@ func (h *Handler) CreateSimulateConfig(ctx context.Context) (*npool.SimulateConf
 	if err := handler.checkSimulateConfig(ctx); err != nil {
 		return nil, err
 	}
-	handler.checkProbability()
+
 	err := db.WithTx(ctx, func(ctx context.Context, tx *ent.Tx) error {
 		if err := handler.createSimulateConfig(ctx, tx); err != nil {
 			return err

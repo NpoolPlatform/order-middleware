@@ -38,7 +38,7 @@ func (SimulateConfig) Fields() []ent.Field {
 				dialect.MySQL: "decimal(37,18)",
 			}).
 			Optional().
-			Default(decimal.Decimal{}),
+			Default(decimal.NewFromInt(0)),
 		field.
 			Bool("enabled_cashable_profit").
 			Optional().
@@ -49,7 +49,7 @@ func (SimulateConfig) Fields() []ent.Field {
 				dialect.MySQL: "decimal(37,18)",
 			}).
 			Optional().
-			Default(decimal.Decimal{}),
+			Default(decimal.NewFromInt(0)),
 		field.
 			Bool("enabled").
 			Optional().
