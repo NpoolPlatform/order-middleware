@@ -96,6 +96,14 @@ func (OrderState) Fields() []ent.Field {
 			Uint32("compensate_hours").
 			Optional().
 			Default(0),
+		field.
+			String("renew_state").
+			Optional().
+			Default(types.OrderRenewState_OrderRenewWait.String()),
+		field.
+			Uint32("renew_notify_at").
+			Optional().
+			Default(0),
 	}
 }
 

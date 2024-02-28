@@ -91,6 +91,11 @@ var (
 		CompensateHours:      0,
 		AppGoodStockLockID:   uuid.NewString(),
 		Simulate:             false,
+		RenewStateStr:        ordertypes.OrderRenewState_OrderRenewWait.String(),
+		RenewState:           ordertypes.OrderRenewState_OrderRenewWait,
+		CreateMethod:         ordertypes.OrderCreateMethod_OrderCreatedByPurchase,
+		CreateMethodStr:      ordertypes.OrderCreateMethod_OrderCreatedByPurchase.String(),
+		PaymentAmountsStr:    "[]",
 	}
 
 	req = npool.OrderReq{

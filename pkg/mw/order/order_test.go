@@ -85,6 +85,11 @@ var (
 		AppGoodStockLockID:   uuid.NewString(),
 		LedgerLockID:         uuid.NewString(),
 		Simulate:             false,
+		RenewStateStr:        ordertypes.OrderRenewState_OrderRenewWait.String(),
+		RenewState:           ordertypes.OrderRenewState_OrderRenewWait,
+		CreateMethod:         ordertypes.OrderCreateMethod_OrderCreatedByPurchase,
+		CreateMethodStr:      ordertypes.OrderCreateMethod_OrderCreatedByPurchase.String(),
+		PaymentAmountsStr:    "[]",
 	}
 
 	appID         = uuid.NewString()
@@ -145,6 +150,11 @@ var (
 			AppGoodStockLockID:   uuid.NewString(),
 			LedgerLockID:         uuid.NewString(),
 			Simulate:             false,
+			RenewStateStr:        ordertypes.OrderRenewState_OrderRenewWait.String(),
+			RenewState:           ordertypes.OrderRenewState_OrderRenewWait,
+			CreateMethod:         ordertypes.OrderCreateMethod_OrderCreatedByPurchase,
+			CreateMethodStr:      ordertypes.OrderCreateMethod_OrderCreatedByPurchase.String(),
+			PaymentAmountsStr:    "[]",
 		},
 		{
 			EntID:                uuid.NewString(),
@@ -195,6 +205,11 @@ var (
 			CompensateHours:      0,
 			AppGoodStockLockID:   uuid.NewString(),
 			Simulate:             false,
+			RenewStateStr:        ordertypes.OrderRenewState_OrderRenewWait.String(),
+			RenewState:           ordertypes.OrderRenewState_OrderRenewWait,
+			CreateMethod:         ordertypes.OrderCreateMethod_OrderCreatedByPurchase,
+			CreateMethodStr:      ordertypes.OrderCreateMethod_OrderCreatedByPurchase.String(),
+			PaymentAmountsStr:    "[]",
 		},
 	}
 )

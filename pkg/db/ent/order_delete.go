@@ -9,8 +9,9 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/order"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/predicate"
+
+	entorder "github.com/NpoolPlatform/order-middleware/pkg/db/ent/order"
 )
 
 // OrderDelete is the builder for deleting a Order entity.
@@ -70,10 +71,10 @@ func (od *OrderDelete) ExecX(ctx context.Context) int {
 func (od *OrderDelete) sqlExec(ctx context.Context) (int, error) {
 	_spec := &sqlgraph.DeleteSpec{
 		Node: &sqlgraph.NodeSpec{
-			Table: order.Table,
+			Table: entorder.Table,
 			ID: &sqlgraph.FieldSpec{
 				Type:   field.TypeUint32,
-				Column: order.FieldID,
+				Column: entorder.FieldID,
 			},
 		},
 	}
@@ -103,7 +104,7 @@ func (odo *OrderDeleteOne) Exec(ctx context.Context) error {
 	case err != nil:
 		return err
 	case n == 0:
-		return &NotFoundError{order.Label}
+		return &NotFoundError{entorder.Label}
 	default:
 		return nil
 	}

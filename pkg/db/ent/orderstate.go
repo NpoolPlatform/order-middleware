@@ -59,6 +59,10 @@ type OrderState struct {
 	OutofgasHours uint32 `json:"outofgas_hours,omitempty"`
 	// CompensateHours holds the value of the "compensate_hours" field.
 	CompensateHours uint32 `json:"compensate_hours,omitempty"`
+	// RenewState holds the value of the "renew_state" field.
+	RenewState string `json:"renew_state,omitempty"`
+	// RenewNotifyAt holds the value of the "renew_notify_at" field.
+	RenewNotifyAt uint32 `json:"renew_notify_at,omitempty"`
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -70,9 +74,9 @@ func (*OrderState) scanValues(columns []string) ([]interface{}, error) {
 			values[i] = new(decimal.Decimal)
 		case orderstate.FieldUserSetPaid, orderstate.FieldUserSetCanceled, orderstate.FieldAdminSetCanceled:
 			values[i] = new(sql.NullBool)
-		case orderstate.FieldID, orderstate.FieldCreatedAt, orderstate.FieldUpdatedAt, orderstate.FieldDeletedAt, orderstate.FieldStartAt, orderstate.FieldEndAt, orderstate.FieldPaidAt, orderstate.FieldLastBenefitAt, orderstate.FieldOutofgasHours, orderstate.FieldCompensateHours:
+		case orderstate.FieldID, orderstate.FieldCreatedAt, orderstate.FieldUpdatedAt, orderstate.FieldDeletedAt, orderstate.FieldStartAt, orderstate.FieldEndAt, orderstate.FieldPaidAt, orderstate.FieldLastBenefitAt, orderstate.FieldOutofgasHours, orderstate.FieldCompensateHours, orderstate.FieldRenewNotifyAt:
 			values[i] = new(sql.NullInt64)
-		case orderstate.FieldOrderState, orderstate.FieldCancelState, orderstate.FieldStartMode, orderstate.FieldBenefitState, orderstate.FieldPaymentTransactionID, orderstate.FieldPaymentState:
+		case orderstate.FieldOrderState, orderstate.FieldCancelState, orderstate.FieldStartMode, orderstate.FieldBenefitState, orderstate.FieldPaymentTransactionID, orderstate.FieldPaymentState, orderstate.FieldRenewState:
 			values[i] = new(sql.NullString)
 		case orderstate.FieldEntID, orderstate.FieldOrderID:
 			values[i] = new(uuid.UUID)
@@ -223,6 +227,18 @@ func (os *OrderState) assignValues(columns []string, values []interface{}) error
 			} else if value.Valid {
 				os.CompensateHours = uint32(value.Int64)
 			}
+		case orderstate.FieldRenewState:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field renew_state", values[i])
+			} else if value.Valid {
+				os.RenewState = value.String
+			}
+		case orderstate.FieldRenewNotifyAt:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field renew_notify_at", values[i])
+			} else if value.Valid {
+				os.RenewNotifyAt = uint32(value.Int64)
+			}
 		}
 	}
 	return nil
@@ -313,6 +329,12 @@ func (os *OrderState) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("compensate_hours=")
 	builder.WriteString(fmt.Sprintf("%v", os.CompensateHours))
+	builder.WriteString(", ")
+	builder.WriteString("renew_state=")
+	builder.WriteString(os.RenewState)
+	builder.WriteString(", ")
+	builder.WriteString("renew_notify_at=")
+	builder.WriteString(fmt.Sprintf("%v", os.RenewNotifyAt))
 	builder.WriteByte(')')
 	return builder.String()
 }

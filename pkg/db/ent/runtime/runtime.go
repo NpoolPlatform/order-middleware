@@ -5,8 +5,9 @@ package runtime
 import (
 	"context"
 
+	"github.com/NpoolPlatform/message/npool/order/mw/v1/order"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/compensate"
-	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/order"
+	entorder "github.com/NpoolPlatform/order-middleware/pkg/db/ent/order"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/orderlock"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/orderstate"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/outofgas"
@@ -78,16 +79,17 @@ func init() {
 	compensateDescMessage := compensateFields[5].Descriptor()
 	// compensate.DefaultMessage holds the default value on creation for the message field.
 	compensate.DefaultMessage = compensateDescMessage.Default.(string)
-	orderMixin := schema.Order{}.Mixin()
-	order.Policy = privacy.NewPolicies(orderMixin[0], schema.Order{})
-	order.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+	entorderMixin := schema.Order{}.Mixin()
+	entorder.Policy = privacy.NewPolicies(entorderMixin[0], schema.Order{})
+	entorder.Hooks[0] = func(next ent.Mutator) ent.Mutator {
 		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
-			if err := order.Policy.EvalMutation(ctx, m); err != nil {
+			if err := entorder.Policy.EvalMutation(ctx, m); err != nil {
 				return nil, err
 			}
 			return next.Mutate(ctx, m)
 		})
 	}
+<<<<<<< HEAD
 	orderMixinFields0 := orderMixin[0].Fields()
 	_ = orderMixinFields0
 	orderMixinFields1 := orderMixin[1].Fields()
@@ -192,6 +194,120 @@ func init() {
 	orderDescSimulate := orderFields[24].Descriptor()
 	// order.DefaultSimulate holds the default value on creation for the simulate field.
 	order.DefaultSimulate = orderDescSimulate.Default.(bool)
+=======
+	entorderMixinFields0 := entorderMixin[0].Fields()
+	_ = entorderMixinFields0
+	entorderMixinFields1 := entorderMixin[1].Fields()
+	_ = entorderMixinFields1
+	entorderFields := schema.Order{}.Fields()
+	_ = entorderFields
+	// entorderDescCreatedAt is the schema descriptor for created_at field.
+	entorderDescCreatedAt := entorderMixinFields0[0].Descriptor()
+	// entorder.DefaultCreatedAt holds the default value on creation for the created_at field.
+	entorder.DefaultCreatedAt = entorderDescCreatedAt.Default.(func() uint32)
+	// entorderDescUpdatedAt is the schema descriptor for updated_at field.
+	entorderDescUpdatedAt := entorderMixinFields0[1].Descriptor()
+	// entorder.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	entorder.DefaultUpdatedAt = entorderDescUpdatedAt.Default.(func() uint32)
+	// entorder.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	entorder.UpdateDefaultUpdatedAt = entorderDescUpdatedAt.UpdateDefault.(func() uint32)
+	// entorderDescDeletedAt is the schema descriptor for deleted_at field.
+	entorderDescDeletedAt := entorderMixinFields0[2].Descriptor()
+	// entorder.DefaultDeletedAt holds the default value on creation for the deleted_at field.
+	entorder.DefaultDeletedAt = entorderDescDeletedAt.Default.(func() uint32)
+	// entorderDescEntID is the schema descriptor for ent_id field.
+	entorderDescEntID := entorderMixinFields1[1].Descriptor()
+	// entorder.DefaultEntID holds the default value on creation for the ent_id field.
+	entorder.DefaultEntID = entorderDescEntID.Default.(func() uuid.UUID)
+	// entorderDescPaymentID is the schema descriptor for payment_id field.
+	entorderDescPaymentID := entorderFields[4].Descriptor()
+	// entorder.DefaultPaymentID holds the default value on creation for the payment_id field.
+	entorder.DefaultPaymentID = entorderDescPaymentID.Default.(func() uuid.UUID)
+	// entorderDescParentOrderID is the schema descriptor for parent_order_id field.
+	entorderDescParentOrderID := entorderFields[5].Descriptor()
+	// entorder.DefaultParentOrderID holds the default value on creation for the parent_order_id field.
+	entorder.DefaultParentOrderID = entorderDescParentOrderID.Default.(func() uuid.UUID)
+	// entorderDescUnitsV1 is the schema descriptor for units_v1 field.
+	entorderDescUnitsV1 := entorderFields[6].Descriptor()
+	// entorder.DefaultUnitsV1 holds the default value on creation for the units_v1 field.
+	entorder.DefaultUnitsV1 = entorderDescUnitsV1.Default.(decimal.Decimal)
+	// entorderDescGoodValue is the schema descriptor for good_value field.
+	entorderDescGoodValue := entorderFields[7].Descriptor()
+	// entorder.DefaultGoodValue holds the default value on creation for the good_value field.
+	entorder.DefaultGoodValue = entorderDescGoodValue.Default.(decimal.Decimal)
+	// entorderDescGoodValueUsd is the schema descriptor for good_value_usd field.
+	entorderDescGoodValueUsd := entorderFields[8].Descriptor()
+	// entorder.DefaultGoodValueUsd holds the default value on creation for the good_value_usd field.
+	entorder.DefaultGoodValueUsd = entorderDescGoodValueUsd.Default.(decimal.Decimal)
+	// entorderDescPaymentAmount is the schema descriptor for payment_amount field.
+	entorderDescPaymentAmount := entorderFields[9].Descriptor()
+	// entorder.DefaultPaymentAmount holds the default value on creation for the payment_amount field.
+	entorder.DefaultPaymentAmount = entorderDescPaymentAmount.Default.(decimal.Decimal)
+	// entorderDescDiscountAmount is the schema descriptor for discount_amount field.
+	entorderDescDiscountAmount := entorderFields[10].Descriptor()
+	// entorder.DefaultDiscountAmount holds the default value on creation for the discount_amount field.
+	entorder.DefaultDiscountAmount = entorderDescDiscountAmount.Default.(decimal.Decimal)
+	// entorderDescPromotionID is the schema descriptor for promotion_id field.
+	entorderDescPromotionID := entorderFields[11].Descriptor()
+	// entorder.DefaultPromotionID holds the default value on creation for the promotion_id field.
+	entorder.DefaultPromotionID = entorderDescPromotionID.Default.(func() uuid.UUID)
+	// entorderDescDuration is the schema descriptor for duration field.
+	entorderDescDuration := entorderFields[12].Descriptor()
+	// entorder.DefaultDuration holds the default value on creation for the duration field.
+	entorder.DefaultDuration = entorderDescDuration.Default.(uint32)
+	// entorderDescOrderType is the schema descriptor for order_type field.
+	entorderDescOrderType := entorderFields[13].Descriptor()
+	// entorder.DefaultOrderType holds the default value on creation for the order_type field.
+	entorder.DefaultOrderType = entorderDescOrderType.Default.(string)
+	// entorderDescInvestmentType is the schema descriptor for investment_type field.
+	entorderDescInvestmentType := entorderFields[14].Descriptor()
+	// entorder.DefaultInvestmentType holds the default value on creation for the investment_type field.
+	entorder.DefaultInvestmentType = entorderDescInvestmentType.Default.(string)
+	// entorderDescCouponIds is the schema descriptor for coupon_ids field.
+	entorderDescCouponIds := entorderFields[15].Descriptor()
+	// entorder.DefaultCouponIds holds the default value on creation for the coupon_ids field.
+	entorder.DefaultCouponIds = entorderDescCouponIds.Default.(func() []uuid.UUID)
+	// entorderDescPaymentType is the schema descriptor for payment_type field.
+	entorderDescPaymentType := entorderFields[16].Descriptor()
+	// entorder.DefaultPaymentType holds the default value on creation for the payment_type field.
+	entorder.DefaultPaymentType = entorderDescPaymentType.Default.(string)
+	// entorderDescPaymentCoinTypeID is the schema descriptor for payment_coin_type_id field.
+	entorderDescPaymentCoinTypeID := entorderFields[18].Descriptor()
+	// entorder.DefaultPaymentCoinTypeID holds the default value on creation for the payment_coin_type_id field.
+	entorder.DefaultPaymentCoinTypeID = entorderDescPaymentCoinTypeID.Default.(func() uuid.UUID)
+	// entorderDescTransferAmount is the schema descriptor for transfer_amount field.
+	entorderDescTransferAmount := entorderFields[19].Descriptor()
+	// entorder.DefaultTransferAmount holds the default value on creation for the transfer_amount field.
+	entorder.DefaultTransferAmount = entorderDescTransferAmount.Default.(decimal.Decimal)
+	// entorderDescBalanceAmount is the schema descriptor for balance_amount field.
+	entorderDescBalanceAmount := entorderFields[20].Descriptor()
+	// entorder.DefaultBalanceAmount holds the default value on creation for the balance_amount field.
+	entorder.DefaultBalanceAmount = entorderDescBalanceAmount.Default.(decimal.Decimal)
+	// entorderDescCoinUsdCurrency is the schema descriptor for coin_usd_currency field.
+	entorderDescCoinUsdCurrency := entorderFields[21].Descriptor()
+	// entorder.DefaultCoinUsdCurrency holds the default value on creation for the coin_usd_currency field.
+	entorder.DefaultCoinUsdCurrency = entorderDescCoinUsdCurrency.Default.(decimal.Decimal)
+	// entorderDescLocalCoinUsdCurrency is the schema descriptor for local_coin_usd_currency field.
+	entorderDescLocalCoinUsdCurrency := entorderFields[22].Descriptor()
+	// entorder.DefaultLocalCoinUsdCurrency holds the default value on creation for the local_coin_usd_currency field.
+	entorder.DefaultLocalCoinUsdCurrency = entorderDescLocalCoinUsdCurrency.Default.(decimal.Decimal)
+	// entorderDescLiveCoinUsdCurrency is the schema descriptor for live_coin_usd_currency field.
+	entorderDescLiveCoinUsdCurrency := entorderFields[23].Descriptor()
+	// entorder.DefaultLiveCoinUsdCurrency holds the default value on creation for the live_coin_usd_currency field.
+	entorder.DefaultLiveCoinUsdCurrency = entorderDescLiveCoinUsdCurrency.Default.(decimal.Decimal)
+	// entorderDescCreateMethod is the schema descriptor for create_method field.
+	entorderDescCreateMethod := entorderFields[24].Descriptor()
+	// entorder.DefaultCreateMethod holds the default value on creation for the create_method field.
+	entorder.DefaultCreateMethod = entorderDescCreateMethod.Default.(string)
+	// entorderDescMultiPaymentCoins is the schema descriptor for multi_payment_coins field.
+	entorderDescMultiPaymentCoins := entorderFields[25].Descriptor()
+	// entorder.DefaultMultiPaymentCoins holds the default value on creation for the multi_payment_coins field.
+	entorder.DefaultMultiPaymentCoins = entorderDescMultiPaymentCoins.Default.(bool)
+	// entorderDescPaymentAmounts is the schema descriptor for payment_amounts field.
+	entorderDescPaymentAmounts := entorderFields[26].Descriptor()
+	// entorder.DefaultPaymentAmounts holds the default value on creation for the payment_amounts field.
+	entorder.DefaultPaymentAmounts = entorderDescPaymentAmounts.Default.([]order.PaymentAmount)
+>>>>>>> d5fa78b087f47958b427ed03d6d0576f484281c6
 	orderlockMixin := schema.OrderLock{}.Mixin()
 	orderlock.Policy = privacy.NewPolicies(orderlockMixin[0], schema.OrderLock{})
 	orderlock.Hooks[0] = func(next ent.Mutator) ent.Mutator {
@@ -328,6 +444,14 @@ func init() {
 	orderstateDescCompensateHours := orderstateFields[16].Descriptor()
 	// orderstate.DefaultCompensateHours holds the default value on creation for the compensate_hours field.
 	orderstate.DefaultCompensateHours = orderstateDescCompensateHours.Default.(uint32)
+	// orderstateDescRenewState is the schema descriptor for renew_state field.
+	orderstateDescRenewState := orderstateFields[17].Descriptor()
+	// orderstate.DefaultRenewState holds the default value on creation for the renew_state field.
+	orderstate.DefaultRenewState = orderstateDescRenewState.Default.(string)
+	// orderstateDescRenewNotifyAt is the schema descriptor for renew_notify_at field.
+	orderstateDescRenewNotifyAt := orderstateFields[18].Descriptor()
+	// orderstate.DefaultRenewNotifyAt holds the default value on creation for the renew_notify_at field.
+	orderstate.DefaultRenewNotifyAt = orderstateDescRenewNotifyAt.Default.(uint32)
 	outofgasMixin := schema.OutOfGas{}.Mixin()
 	outofgas.Policy = privacy.NewPolicies(outofgasMixin[0], schema.OutOfGas{})
 	outofgas.Hooks[0] = func(next ent.Mutator) ent.Mutator {

@@ -37,7 +37,8 @@ func (h *createHandler) paymentState(req *ordercrud.Req) *types.PaymentState {
 		}
 	}
 	if (req.TransferAmount != nil && req.TransferAmount.Cmp(decimal.NewFromInt(0)) > 0) ||
-		(req.BalanceAmount != nil && req.BalanceAmount.Cmp(decimal.NewFromInt(0)) > 0) {
+		(req.BalanceAmount != nil && req.BalanceAmount.Cmp(decimal.NewFromInt(0)) > 0) ||
+		(req.MultiPaymentCoins != nil && *req.MultiPaymentCoins && len(req.PaymentAmounts) > 0) {
 		return types.PaymentState_PaymentStateWait.Enum()
 	}
 	return types.PaymentState_PaymentStateNoPayment.Enum()

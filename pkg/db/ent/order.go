@@ -8,9 +8,11 @@ import (
 	"strings"
 
 	"entgo.io/ent/dialect/sql"
-	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/order"
+	"github.com/NpoolPlatform/message/npool/order/mw/v1/order"
 	"github.com/google/uuid"
 	"github.com/shopspring/decimal"
+
+	entorder "github.com/NpoolPlatform/order-middleware/pkg/db/ent/order"
 )
 
 // Order is the model entity for the Order schema.
@@ -74,8 +76,17 @@ type Order struct {
 	LocalCoinUsdCurrency decimal.Decimal `json:"local_coin_usd_currency,omitempty"`
 	// LiveCoinUsdCurrency holds the value of the "live_coin_usd_currency" field.
 	LiveCoinUsdCurrency decimal.Decimal `json:"live_coin_usd_currency,omitempty"`
+<<<<<<< HEAD
 	// Simulate holds the value of the "simulate" field.
 	Simulate bool `json:"simulate,omitempty"`
+=======
+	// CreateMethod holds the value of the "create_method" field.
+	CreateMethod string `json:"create_method,omitempty"`
+	// MultiPaymentCoins holds the value of the "multi_payment_coins" field.
+	MultiPaymentCoins bool `json:"multi_payment_coins,omitempty"`
+	// PaymentAmounts holds the value of the "payment_amounts" field.
+	PaymentAmounts []order.PaymentAmount `json:"payment_amounts,omitempty"`
+>>>>>>> d5fa78b087f47958b427ed03d6d0576f484281c6
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -83,17 +94,23 @@ func (*Order) scanValues(columns []string) ([]interface{}, error) {
 	values := make([]interface{}, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case order.FieldCouponIds:
+		case entorder.FieldCouponIds, entorder.FieldPaymentAmounts:
 			values[i] = new([]byte)
-		case order.FieldUnitsV1, order.FieldGoodValue, order.FieldGoodValueUsd, order.FieldPaymentAmount, order.FieldDiscountAmount, order.FieldTransferAmount, order.FieldBalanceAmount, order.FieldCoinUsdCurrency, order.FieldLocalCoinUsdCurrency, order.FieldLiveCoinUsdCurrency:
+		case entorder.FieldUnitsV1, entorder.FieldGoodValue, entorder.FieldGoodValueUsd, entorder.FieldPaymentAmount, entorder.FieldDiscountAmount, entorder.FieldTransferAmount, entorder.FieldBalanceAmount, entorder.FieldCoinUsdCurrency, entorder.FieldLocalCoinUsdCurrency, entorder.FieldLiveCoinUsdCurrency:
 			values[i] = new(decimal.Decimal)
+<<<<<<< HEAD
 		case order.FieldSimulate:
 			values[i] = new(sql.NullBool)
 		case order.FieldID, order.FieldCreatedAt, order.FieldUpdatedAt, order.FieldDeletedAt, order.FieldDuration:
+=======
+		case entorder.FieldMultiPaymentCoins:
+			values[i] = new(sql.NullBool)
+		case entorder.FieldID, entorder.FieldCreatedAt, entorder.FieldUpdatedAt, entorder.FieldDeletedAt, entorder.FieldDuration:
+>>>>>>> d5fa78b087f47958b427ed03d6d0576f484281c6
 			values[i] = new(sql.NullInt64)
-		case order.FieldOrderType, order.FieldInvestmentType, order.FieldPaymentType:
+		case entorder.FieldOrderType, entorder.FieldInvestmentType, entorder.FieldPaymentType, entorder.FieldCreateMethod:
 			values[i] = new(sql.NullString)
-		case order.FieldEntID, order.FieldAppID, order.FieldUserID, order.FieldGoodID, order.FieldAppGoodID, order.FieldPaymentID, order.FieldParentOrderID, order.FieldPromotionID, order.FieldCoinTypeID, order.FieldPaymentCoinTypeID:
+		case entorder.FieldEntID, entorder.FieldAppID, entorder.FieldUserID, entorder.FieldGoodID, entorder.FieldAppGoodID, entorder.FieldPaymentID, entorder.FieldParentOrderID, entorder.FieldPromotionID, entorder.FieldCoinTypeID, entorder.FieldPaymentCoinTypeID:
 			values[i] = new(uuid.UUID)
 		default:
 			return nil, fmt.Errorf("unexpected column %q for type Order", columns[i])
@@ -110,127 +127,127 @@ func (o *Order) assignValues(columns []string, values []interface{}) error {
 	}
 	for i := range columns {
 		switch columns[i] {
-		case order.FieldID:
+		case entorder.FieldID:
 			value, ok := values[i].(*sql.NullInt64)
 			if !ok {
 				return fmt.Errorf("unexpected type %T for field id", value)
 			}
 			o.ID = uint32(value.Int64)
-		case order.FieldCreatedAt:
+		case entorder.FieldCreatedAt:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field created_at", values[i])
 			} else if value.Valid {
 				o.CreatedAt = uint32(value.Int64)
 			}
-		case order.FieldUpdatedAt:
+		case entorder.FieldUpdatedAt:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field updated_at", values[i])
 			} else if value.Valid {
 				o.UpdatedAt = uint32(value.Int64)
 			}
-		case order.FieldDeletedAt:
+		case entorder.FieldDeletedAt:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field deleted_at", values[i])
 			} else if value.Valid {
 				o.DeletedAt = uint32(value.Int64)
 			}
-		case order.FieldEntID:
+		case entorder.FieldEntID:
 			if value, ok := values[i].(*uuid.UUID); !ok {
 				return fmt.Errorf("unexpected type %T for field ent_id", values[i])
 			} else if value != nil {
 				o.EntID = *value
 			}
-		case order.FieldAppID:
+		case entorder.FieldAppID:
 			if value, ok := values[i].(*uuid.UUID); !ok {
 				return fmt.Errorf("unexpected type %T for field app_id", values[i])
 			} else if value != nil {
 				o.AppID = *value
 			}
-		case order.FieldUserID:
+		case entorder.FieldUserID:
 			if value, ok := values[i].(*uuid.UUID); !ok {
 				return fmt.Errorf("unexpected type %T for field user_id", values[i])
 			} else if value != nil {
 				o.UserID = *value
 			}
-		case order.FieldGoodID:
+		case entorder.FieldGoodID:
 			if value, ok := values[i].(*uuid.UUID); !ok {
 				return fmt.Errorf("unexpected type %T for field good_id", values[i])
 			} else if value != nil {
 				o.GoodID = *value
 			}
-		case order.FieldAppGoodID:
+		case entorder.FieldAppGoodID:
 			if value, ok := values[i].(*uuid.UUID); !ok {
 				return fmt.Errorf("unexpected type %T for field app_good_id", values[i])
 			} else if value != nil {
 				o.AppGoodID = *value
 			}
-		case order.FieldPaymentID:
+		case entorder.FieldPaymentID:
 			if value, ok := values[i].(*uuid.UUID); !ok {
 				return fmt.Errorf("unexpected type %T for field payment_id", values[i])
 			} else if value != nil {
 				o.PaymentID = *value
 			}
-		case order.FieldParentOrderID:
+		case entorder.FieldParentOrderID:
 			if value, ok := values[i].(*uuid.UUID); !ok {
 				return fmt.Errorf("unexpected type %T for field parent_order_id", values[i])
 			} else if value != nil {
 				o.ParentOrderID = *value
 			}
-		case order.FieldUnitsV1:
+		case entorder.FieldUnitsV1:
 			if value, ok := values[i].(*decimal.Decimal); !ok {
 				return fmt.Errorf("unexpected type %T for field units_v1", values[i])
 			} else if value != nil {
 				o.UnitsV1 = *value
 			}
-		case order.FieldGoodValue:
+		case entorder.FieldGoodValue:
 			if value, ok := values[i].(*decimal.Decimal); !ok {
 				return fmt.Errorf("unexpected type %T for field good_value", values[i])
 			} else if value != nil {
 				o.GoodValue = *value
 			}
-		case order.FieldGoodValueUsd:
+		case entorder.FieldGoodValueUsd:
 			if value, ok := values[i].(*decimal.Decimal); !ok {
 				return fmt.Errorf("unexpected type %T for field good_value_usd", values[i])
 			} else if value != nil {
 				o.GoodValueUsd = *value
 			}
-		case order.FieldPaymentAmount:
+		case entorder.FieldPaymentAmount:
 			if value, ok := values[i].(*decimal.Decimal); !ok {
 				return fmt.Errorf("unexpected type %T for field payment_amount", values[i])
 			} else if value != nil {
 				o.PaymentAmount = *value
 			}
-		case order.FieldDiscountAmount:
+		case entorder.FieldDiscountAmount:
 			if value, ok := values[i].(*decimal.Decimal); !ok {
 				return fmt.Errorf("unexpected type %T for field discount_amount", values[i])
 			} else if value != nil {
 				o.DiscountAmount = *value
 			}
-		case order.FieldPromotionID:
+		case entorder.FieldPromotionID:
 			if value, ok := values[i].(*uuid.UUID); !ok {
 				return fmt.Errorf("unexpected type %T for field promotion_id", values[i])
 			} else if value != nil {
 				o.PromotionID = *value
 			}
-		case order.FieldDuration:
+		case entorder.FieldDuration:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field duration", values[i])
 			} else if value.Valid {
 				o.Duration = uint32(value.Int64)
 			}
-		case order.FieldOrderType:
+		case entorder.FieldOrderType:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field order_type", values[i])
 			} else if value.Valid {
 				o.OrderType = value.String
 			}
-		case order.FieldInvestmentType:
+		case entorder.FieldInvestmentType:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field investment_type", values[i])
 			} else if value.Valid {
 				o.InvestmentType = value.String
 			}
-		case order.FieldCouponIds:
+		case entorder.FieldCouponIds:
 			if value, ok := values[i].(*[]byte); !ok {
 				return fmt.Errorf("unexpected type %T for field coupon_ids", values[i])
 			} else if value != nil && len(*value) > 0 {
@@ -238,59 +255,81 @@ func (o *Order) assignValues(columns []string, values []interface{}) error {
 					return fmt.Errorf("unmarshal field coupon_ids: %w", err)
 				}
 			}
-		case order.FieldPaymentType:
+		case entorder.FieldPaymentType:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field payment_type", values[i])
 			} else if value.Valid {
 				o.PaymentType = value.String
 			}
-		case order.FieldCoinTypeID:
+		case entorder.FieldCoinTypeID:
 			if value, ok := values[i].(*uuid.UUID); !ok {
 				return fmt.Errorf("unexpected type %T for field coin_type_id", values[i])
 			} else if value != nil {
 				o.CoinTypeID = *value
 			}
-		case order.FieldPaymentCoinTypeID:
+		case entorder.FieldPaymentCoinTypeID:
 			if value, ok := values[i].(*uuid.UUID); !ok {
 				return fmt.Errorf("unexpected type %T for field payment_coin_type_id", values[i])
 			} else if value != nil {
 				o.PaymentCoinTypeID = *value
 			}
-		case order.FieldTransferAmount:
+		case entorder.FieldTransferAmount:
 			if value, ok := values[i].(*decimal.Decimal); !ok {
 				return fmt.Errorf("unexpected type %T for field transfer_amount", values[i])
 			} else if value != nil {
 				o.TransferAmount = *value
 			}
-		case order.FieldBalanceAmount:
+		case entorder.FieldBalanceAmount:
 			if value, ok := values[i].(*decimal.Decimal); !ok {
 				return fmt.Errorf("unexpected type %T for field balance_amount", values[i])
 			} else if value != nil {
 				o.BalanceAmount = *value
 			}
-		case order.FieldCoinUsdCurrency:
+		case entorder.FieldCoinUsdCurrency:
 			if value, ok := values[i].(*decimal.Decimal); !ok {
 				return fmt.Errorf("unexpected type %T for field coin_usd_currency", values[i])
 			} else if value != nil {
 				o.CoinUsdCurrency = *value
 			}
-		case order.FieldLocalCoinUsdCurrency:
+		case entorder.FieldLocalCoinUsdCurrency:
 			if value, ok := values[i].(*decimal.Decimal); !ok {
 				return fmt.Errorf("unexpected type %T for field local_coin_usd_currency", values[i])
 			} else if value != nil {
 				o.LocalCoinUsdCurrency = *value
 			}
-		case order.FieldLiveCoinUsdCurrency:
+		case entorder.FieldLiveCoinUsdCurrency:
 			if value, ok := values[i].(*decimal.Decimal); !ok {
 				return fmt.Errorf("unexpected type %T for field live_coin_usd_currency", values[i])
 			} else if value != nil {
 				o.LiveCoinUsdCurrency = *value
 			}
+<<<<<<< HEAD
 		case order.FieldSimulate:
 			if value, ok := values[i].(*sql.NullBool); !ok {
 				return fmt.Errorf("unexpected type %T for field simulate", values[i])
 			} else if value.Valid {
 				o.Simulate = value.Bool
+=======
+		case entorder.FieldCreateMethod:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field create_method", values[i])
+			} else if value.Valid {
+				o.CreateMethod = value.String
+			}
+		case entorder.FieldMultiPaymentCoins:
+			if value, ok := values[i].(*sql.NullBool); !ok {
+				return fmt.Errorf("unexpected type %T for field multi_payment_coins", values[i])
+			} else if value.Valid {
+				o.MultiPaymentCoins = value.Bool
+			}
+		case entorder.FieldPaymentAmounts:
+			if value, ok := values[i].(*[]byte); !ok {
+				return fmt.Errorf("unexpected type %T for field payment_amounts", values[i])
+			} else if value != nil && len(*value) > 0 {
+				if err := json.Unmarshal(*value, &o.PaymentAmounts); err != nil {
+					return fmt.Errorf("unmarshal field payment_amounts: %w", err)
+				}
+>>>>>>> d5fa78b087f47958b427ed03d6d0576f484281c6
 			}
 		}
 	}
@@ -404,8 +443,19 @@ func (o *Order) String() string {
 	builder.WriteString("live_coin_usd_currency=")
 	builder.WriteString(fmt.Sprintf("%v", o.LiveCoinUsdCurrency))
 	builder.WriteString(", ")
+<<<<<<< HEAD
 	builder.WriteString("simulate=")
 	builder.WriteString(fmt.Sprintf("%v", o.Simulate))
+=======
+	builder.WriteString("create_method=")
+	builder.WriteString(o.CreateMethod)
+	builder.WriteString(", ")
+	builder.WriteString("multi_payment_coins=")
+	builder.WriteString(fmt.Sprintf("%v", o.MultiPaymentCoins))
+	builder.WriteString(", ")
+	builder.WriteString("payment_amounts=")
+	builder.WriteString(fmt.Sprintf("%v", o.PaymentAmounts))
+>>>>>>> d5fa78b087f47958b427ed03d6d0576f484281c6
 	builder.WriteByte(')')
 	return builder.String()
 }

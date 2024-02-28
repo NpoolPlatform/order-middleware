@@ -227,6 +227,20 @@ func CompensateHours(v uint32) predicate.OrderState {
 	})
 }
 
+// RenewState applies equality check predicate on the "renew_state" field. It's identical to RenewStateEQ.
+func RenewState(v string) predicate.OrderState {
+	return predicate.OrderState(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldRenewState), v))
+	})
+}
+
+// RenewNotifyAt applies equality check predicate on the "renew_notify_at" field. It's identical to RenewNotifyAtEQ.
+func RenewNotifyAt(v uint32) predicate.OrderState {
+	return predicate.OrderState(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldRenewNotifyAt), v))
+	})
+}
+
 // CreatedAtEQ applies the EQ predicate on the "created_at" field.
 func CreatedAtEQ(v uint32) predicate.OrderState {
 	return predicate.OrderState(func(s *sql.Selector) {
@@ -1852,6 +1866,197 @@ func CompensateHoursIsNil() predicate.OrderState {
 func CompensateHoursNotNil() predicate.OrderState {
 	return predicate.OrderState(func(s *sql.Selector) {
 		s.Where(sql.NotNull(s.C(FieldCompensateHours)))
+	})
+}
+
+// RenewStateEQ applies the EQ predicate on the "renew_state" field.
+func RenewStateEQ(v string) predicate.OrderState {
+	return predicate.OrderState(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldRenewState), v))
+	})
+}
+
+// RenewStateNEQ applies the NEQ predicate on the "renew_state" field.
+func RenewStateNEQ(v string) predicate.OrderState {
+	return predicate.OrderState(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldRenewState), v))
+	})
+}
+
+// RenewStateIn applies the In predicate on the "renew_state" field.
+func RenewStateIn(vs ...string) predicate.OrderState {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.OrderState(func(s *sql.Selector) {
+		s.Where(sql.In(s.C(FieldRenewState), v...))
+	})
+}
+
+// RenewStateNotIn applies the NotIn predicate on the "renew_state" field.
+func RenewStateNotIn(vs ...string) predicate.OrderState {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.OrderState(func(s *sql.Selector) {
+		s.Where(sql.NotIn(s.C(FieldRenewState), v...))
+	})
+}
+
+// RenewStateGT applies the GT predicate on the "renew_state" field.
+func RenewStateGT(v string) predicate.OrderState {
+	return predicate.OrderState(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldRenewState), v))
+	})
+}
+
+// RenewStateGTE applies the GTE predicate on the "renew_state" field.
+func RenewStateGTE(v string) predicate.OrderState {
+	return predicate.OrderState(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldRenewState), v))
+	})
+}
+
+// RenewStateLT applies the LT predicate on the "renew_state" field.
+func RenewStateLT(v string) predicate.OrderState {
+	return predicate.OrderState(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldRenewState), v))
+	})
+}
+
+// RenewStateLTE applies the LTE predicate on the "renew_state" field.
+func RenewStateLTE(v string) predicate.OrderState {
+	return predicate.OrderState(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldRenewState), v))
+	})
+}
+
+// RenewStateContains applies the Contains predicate on the "renew_state" field.
+func RenewStateContains(v string) predicate.OrderState {
+	return predicate.OrderState(func(s *sql.Selector) {
+		s.Where(sql.Contains(s.C(FieldRenewState), v))
+	})
+}
+
+// RenewStateHasPrefix applies the HasPrefix predicate on the "renew_state" field.
+func RenewStateHasPrefix(v string) predicate.OrderState {
+	return predicate.OrderState(func(s *sql.Selector) {
+		s.Where(sql.HasPrefix(s.C(FieldRenewState), v))
+	})
+}
+
+// RenewStateHasSuffix applies the HasSuffix predicate on the "renew_state" field.
+func RenewStateHasSuffix(v string) predicate.OrderState {
+	return predicate.OrderState(func(s *sql.Selector) {
+		s.Where(sql.HasSuffix(s.C(FieldRenewState), v))
+	})
+}
+
+// RenewStateIsNil applies the IsNil predicate on the "renew_state" field.
+func RenewStateIsNil() predicate.OrderState {
+	return predicate.OrderState(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldRenewState)))
+	})
+}
+
+// RenewStateNotNil applies the NotNil predicate on the "renew_state" field.
+func RenewStateNotNil() predicate.OrderState {
+	return predicate.OrderState(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldRenewState)))
+	})
+}
+
+// RenewStateEqualFold applies the EqualFold predicate on the "renew_state" field.
+func RenewStateEqualFold(v string) predicate.OrderState {
+	return predicate.OrderState(func(s *sql.Selector) {
+		s.Where(sql.EqualFold(s.C(FieldRenewState), v))
+	})
+}
+
+// RenewStateContainsFold applies the ContainsFold predicate on the "renew_state" field.
+func RenewStateContainsFold(v string) predicate.OrderState {
+	return predicate.OrderState(func(s *sql.Selector) {
+		s.Where(sql.ContainsFold(s.C(FieldRenewState), v))
+	})
+}
+
+// RenewNotifyAtEQ applies the EQ predicate on the "renew_notify_at" field.
+func RenewNotifyAtEQ(v uint32) predicate.OrderState {
+	return predicate.OrderState(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldRenewNotifyAt), v))
+	})
+}
+
+// RenewNotifyAtNEQ applies the NEQ predicate on the "renew_notify_at" field.
+func RenewNotifyAtNEQ(v uint32) predicate.OrderState {
+	return predicate.OrderState(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldRenewNotifyAt), v))
+	})
+}
+
+// RenewNotifyAtIn applies the In predicate on the "renew_notify_at" field.
+func RenewNotifyAtIn(vs ...uint32) predicate.OrderState {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.OrderState(func(s *sql.Selector) {
+		s.Where(sql.In(s.C(FieldRenewNotifyAt), v...))
+	})
+}
+
+// RenewNotifyAtNotIn applies the NotIn predicate on the "renew_notify_at" field.
+func RenewNotifyAtNotIn(vs ...uint32) predicate.OrderState {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.OrderState(func(s *sql.Selector) {
+		s.Where(sql.NotIn(s.C(FieldRenewNotifyAt), v...))
+	})
+}
+
+// RenewNotifyAtGT applies the GT predicate on the "renew_notify_at" field.
+func RenewNotifyAtGT(v uint32) predicate.OrderState {
+	return predicate.OrderState(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldRenewNotifyAt), v))
+	})
+}
+
+// RenewNotifyAtGTE applies the GTE predicate on the "renew_notify_at" field.
+func RenewNotifyAtGTE(v uint32) predicate.OrderState {
+	return predicate.OrderState(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldRenewNotifyAt), v))
+	})
+}
+
+// RenewNotifyAtLT applies the LT predicate on the "renew_notify_at" field.
+func RenewNotifyAtLT(v uint32) predicate.OrderState {
+	return predicate.OrderState(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldRenewNotifyAt), v))
+	})
+}
+
+// RenewNotifyAtLTE applies the LTE predicate on the "renew_notify_at" field.
+func RenewNotifyAtLTE(v uint32) predicate.OrderState {
+	return predicate.OrderState(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldRenewNotifyAt), v))
+	})
+}
+
+// RenewNotifyAtIsNil applies the IsNil predicate on the "renew_notify_at" field.
+func RenewNotifyAtIsNil() predicate.OrderState {
+	return predicate.OrderState(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldRenewNotifyAt)))
+	})
+}
+
+// RenewNotifyAtNotNil applies the NotNil predicate on the "renew_notify_at" field.
+func RenewNotifyAtNotNil() predicate.OrderState {
+	return predicate.OrderState(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldRenewNotifyAt)))
 	})
 }
 
