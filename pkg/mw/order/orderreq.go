@@ -160,9 +160,15 @@ func (r *OrderReq) CheckOrderType() error {
 	case basetypes.OrderType_Normal:
 		switch *r.PaymentType {
 		case basetypes.PaymentType_PayWithTransferOnly:
+			fallthrough //nolint
 		case basetypes.PaymentType_PayWithTransferAndBalance:
+			fallthrough //nolint
 		case basetypes.PaymentType_PayWithBalanceOnly:
+			fallthrough //nolint
 		case basetypes.PaymentType_PayWithParentOrder:
+			if r.Simulate != nil && *r.Simulate {
+				return fmt.Errorf("invalid paymenttype")
+			}
 		case basetypes.PaymentType_PayWithNoPayment:
 			if r.Simulate == nil || !*r.Simulate {
 				return fmt.Errorf("invalid paymenttype")
