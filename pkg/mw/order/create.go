@@ -172,7 +172,6 @@ func (h *Handler) CreateOrder(ctx context.Context) (*npool.Order, error) {
 			return err
 		}
 		if h.Simulate != nil && *h.Simulate {
-			fmt.Println("*h.Simulate: ", *h.Simulate)
 			return nil
 		}
 		if req.BalanceLockReq != nil {
@@ -219,6 +218,9 @@ func (h *Handler) CreateOrder(ctx context.Context) (*npool.Order, error) {
 func (h *createHandler) checkBatchParentOrder(ctx context.Context) error {
 	for _, req := range h.Reqs {
 		if req.ParentOrderID == nil {
+			if req.EntID == nil {
+				return fmt.Errorf("invalid entid")
+			}
 			h.parentOrderID = *req.EntID
 			h.createParent = true
 			continue
@@ -303,7 +305,6 @@ func (h *Handler) CreateOrders(ctx context.Context) ([]*npool.Order, error) {
 				continue
 			}
 			if req.Simulate != nil && *req.Simulate {
-				fmt.Println("*req.Simulate: ", *req.Simulate)
 				continue
 			}
 			req.PaymentReq.OrderID = req.Req.EntID

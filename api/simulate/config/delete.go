@@ -2,7 +2,6 @@ package config
 
 import (
 	"context"
-	"fmt"
 
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -43,7 +42,6 @@ func (s *Server) DeleteSimulateConfig(ctx context.Context, in *npool.DeleteSimul
 		)
 		return &npool.DeleteSimulateConfigResponse{}, status.Error(codes.Aborted, err.Error())
 	}
-	fmt.Println("info: ", info)
 	return &npool.DeleteSimulateConfigResponse{
 		Info: info,
 	}, nil
