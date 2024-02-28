@@ -369,7 +369,6 @@ func (oc *OrderCreate) SetNillableLiveCoinUsdCurrency(d *decimal.Decimal) *Order
 	return oc
 }
 
-<<<<<<< HEAD
 // SetSimulate sets the "simulate" field.
 func (oc *OrderCreate) SetSimulate(b bool) *OrderCreate {
 	oc.mutation.SetSimulate(b)
@@ -380,7 +379,10 @@ func (oc *OrderCreate) SetSimulate(b bool) *OrderCreate {
 func (oc *OrderCreate) SetNillableSimulate(b *bool) *OrderCreate {
 	if b != nil {
 		oc.SetSimulate(*b)
-=======
+	}
+	return oc
+}
+
 // SetCreateMethod sets the "create_method" field.
 func (oc *OrderCreate) SetCreateMethod(s string) *OrderCreate {
 	oc.mutation.SetCreateMethod(s)
@@ -391,13 +393,10 @@ func (oc *OrderCreate) SetCreateMethod(s string) *OrderCreate {
 func (oc *OrderCreate) SetNillableCreateMethod(s *string) *OrderCreate {
 	if s != nil {
 		oc.SetCreateMethod(*s)
->>>>>>> d5fa78b087f47958b427ed03d6d0576f484281c6
 	}
 	return oc
 }
 
-<<<<<<< HEAD
-=======
 // SetMultiPaymentCoins sets the "multi_payment_coins" field.
 func (oc *OrderCreate) SetMultiPaymentCoins(b bool) *OrderCreate {
 	oc.mutation.SetMultiPaymentCoins(b)
@@ -418,7 +417,6 @@ func (oc *OrderCreate) SetPaymentAmounts(oa []order.PaymentAmount) *OrderCreate 
 	return oc
 }
 
->>>>>>> d5fa78b087f47958b427ed03d6d0576f484281c6
 // SetID sets the "id" field.
 func (oc *OrderCreate) SetID(u uint32) *OrderCreate {
 	oc.mutation.SetID(u)
@@ -623,11 +621,10 @@ func (oc *OrderCreate) defaults() error {
 		v := entorder.DefaultLiveCoinUsdCurrency
 		oc.mutation.SetLiveCoinUsdCurrency(v)
 	}
-<<<<<<< HEAD
 	if _, ok := oc.mutation.Simulate(); !ok {
-		v := order.DefaultSimulate
+		v := entorder.DefaultSimulate
 		oc.mutation.SetSimulate(v)
-=======
+	}
 	if _, ok := oc.mutation.CreateMethod(); !ok {
 		v := entorder.DefaultCreateMethod
 		oc.mutation.SetCreateMethod(v)
@@ -639,7 +636,6 @@ func (oc *OrderCreate) defaults() error {
 	if _, ok := oc.mutation.PaymentAmounts(); !ok {
 		v := entorder.DefaultPaymentAmounts
 		oc.mutation.SetPaymentAmounts(v)
->>>>>>> d5fa78b087f47958b427ed03d6d0576f484281c6
 	}
 	return nil
 }
@@ -931,15 +927,14 @@ func (oc *OrderCreate) createSpec() (*Order, *sqlgraph.CreateSpec) {
 		})
 		_node.LiveCoinUsdCurrency = value
 	}
-<<<<<<< HEAD
 	if value, ok := oc.mutation.Simulate(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
 			Type:   field.TypeBool,
 			Value:  value,
-			Column: order.FieldSimulate,
+			Column: entorder.FieldSimulate,
 		})
 		_node.Simulate = value
-=======
+	}
 	if value, ok := oc.mutation.CreateMethod(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
@@ -963,7 +958,6 @@ func (oc *OrderCreate) createSpec() (*Order, *sqlgraph.CreateSpec) {
 			Column: entorder.FieldPaymentAmounts,
 		})
 		_node.PaymentAmounts = value
->>>>>>> d5fa78b087f47958b427ed03d6d0576f484281c6
 	}
 	return _node, _spec
 }
@@ -1493,6 +1487,24 @@ func (u *OrderUpsert) ClearLiveCoinUsdCurrency() *OrderUpsert {
 	return u
 }
 
+// SetSimulate sets the "simulate" field.
+func (u *OrderUpsert) SetSimulate(v bool) *OrderUpsert {
+	u.Set(entorder.FieldSimulate, v)
+	return u
+}
+
+// UpdateSimulate sets the "simulate" field to the value that was provided on create.
+func (u *OrderUpsert) UpdateSimulate() *OrderUpsert {
+	u.SetExcluded(entorder.FieldSimulate)
+	return u
+}
+
+// ClearSimulate clears the value of the "simulate" field.
+func (u *OrderUpsert) ClearSimulate() *OrderUpsert {
+	u.SetNull(entorder.FieldSimulate)
+	return u
+}
+
 // SetCreateMethod sets the "create_method" field.
 func (u *OrderUpsert) SetCreateMethod(v string) *OrderUpsert {
 	u.Set(entorder.FieldCreateMethod, v)
@@ -1544,24 +1556,6 @@ func (u *OrderUpsert) UpdatePaymentAmounts() *OrderUpsert {
 // ClearPaymentAmounts clears the value of the "payment_amounts" field.
 func (u *OrderUpsert) ClearPaymentAmounts() *OrderUpsert {
 	u.SetNull(entorder.FieldPaymentAmounts)
-	return u
-}
-
-// SetSimulate sets the "simulate" field.
-func (u *OrderUpsert) SetSimulate(v bool) *OrderUpsert {
-	u.Set(order.FieldSimulate, v)
-	return u
-}
-
-// UpdateSimulate sets the "simulate" field to the value that was provided on create.
-func (u *OrderUpsert) UpdateSimulate() *OrderUpsert {
-	u.SetExcluded(order.FieldSimulate)
-	return u
-}
-
-// ClearSimulate clears the value of the "simulate" field.
-func (u *OrderUpsert) ClearSimulate() *OrderUpsert {
-	u.SetNull(order.FieldSimulate)
 	return u
 }
 
@@ -2168,7 +2162,6 @@ func (u *OrderUpsertOne) ClearLiveCoinUsdCurrency() *OrderUpsertOne {
 	})
 }
 
-<<<<<<< HEAD
 // SetSimulate sets the "simulate" field.
 func (u *OrderUpsertOne) SetSimulate(v bool) *OrderUpsertOne {
 	return u.Update(func(s *OrderUpsert) {
@@ -2187,7 +2180,9 @@ func (u *OrderUpsertOne) UpdateSimulate() *OrderUpsertOne {
 func (u *OrderUpsertOne) ClearSimulate() *OrderUpsertOne {
 	return u.Update(func(s *OrderUpsert) {
 		s.ClearSimulate()
-=======
+	})
+}
+
 // SetCreateMethod sets the "create_method" field.
 func (u *OrderUpsertOne) SetCreateMethod(v string) *OrderUpsertOne {
 	return u.Update(func(s *OrderUpsert) {
@@ -2248,7 +2243,6 @@ func (u *OrderUpsertOne) UpdatePaymentAmounts() *OrderUpsertOne {
 func (u *OrderUpsertOne) ClearPaymentAmounts() *OrderUpsertOne {
 	return u.Update(func(s *OrderUpsert) {
 		s.ClearPaymentAmounts()
->>>>>>> d5fa78b087f47958b427ed03d6d0576f484281c6
 	})
 }
 
@@ -3020,7 +3014,6 @@ func (u *OrderUpsertBulk) ClearLiveCoinUsdCurrency() *OrderUpsertBulk {
 	})
 }
 
-<<<<<<< HEAD
 // SetSimulate sets the "simulate" field.
 func (u *OrderUpsertBulk) SetSimulate(v bool) *OrderUpsertBulk {
 	return u.Update(func(s *OrderUpsert) {
@@ -3039,7 +3032,9 @@ func (u *OrderUpsertBulk) UpdateSimulate() *OrderUpsertBulk {
 func (u *OrderUpsertBulk) ClearSimulate() *OrderUpsertBulk {
 	return u.Update(func(s *OrderUpsert) {
 		s.ClearSimulate()
-=======
+	})
+}
+
 // SetCreateMethod sets the "create_method" field.
 func (u *OrderUpsertBulk) SetCreateMethod(v string) *OrderUpsertBulk {
 	return u.Update(func(s *OrderUpsert) {
@@ -3100,7 +3095,6 @@ func (u *OrderUpsertBulk) UpdatePaymentAmounts() *OrderUpsertBulk {
 func (u *OrderUpsertBulk) ClearPaymentAmounts() *OrderUpsertBulk {
 	return u.Update(func(s *OrderUpsert) {
 		s.ClearPaymentAmounts()
->>>>>>> d5fa78b087f47958b427ed03d6d0576f484281c6
 	})
 }
 

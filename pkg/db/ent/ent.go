@@ -37,22 +37,13 @@ type OrderFunc func(*sql.Selector)
 // columnChecker returns a function indicates if the column exists in the given column.
 func columnChecker(table string) func(string) error {
 	checks := map[string]func(string) bool{
-<<<<<<< HEAD
 		compensate.Table:     compensate.ValidColumn,
-		order.Table:          order.ValidColumn,
+		entorder.Table:       entorder.ValidColumn,
 		orderlock.Table:      orderlock.ValidColumn,
 		orderstate.Table:     orderstate.ValidColumn,
 		outofgas.Table:       outofgas.ValidColumn,
 		payment.Table:        payment.ValidColumn,
 		simulateconfig.Table: simulateconfig.ValidColumn,
-=======
-		compensate.Table: compensate.ValidColumn,
-		entorder.Table:   entorder.ValidColumn,
-		orderlock.Table:  orderlock.ValidColumn,
-		orderstate.Table: orderstate.ValidColumn,
-		outofgas.Table:   outofgas.ValidColumn,
-		payment.Table:    payment.ValidColumn,
->>>>>>> d5fa78b087f47958b427ed03d6d0576f484281c6
 	}
 	check, ok := checks[table]
 	if !ok {

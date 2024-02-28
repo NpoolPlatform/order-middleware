@@ -89,112 +89,6 @@ func init() {
 			return next.Mutate(ctx, m)
 		})
 	}
-<<<<<<< HEAD
-	orderMixinFields0 := orderMixin[0].Fields()
-	_ = orderMixinFields0
-	orderMixinFields1 := orderMixin[1].Fields()
-	_ = orderMixinFields1
-	orderFields := schema.Order{}.Fields()
-	_ = orderFields
-	// orderDescCreatedAt is the schema descriptor for created_at field.
-	orderDescCreatedAt := orderMixinFields0[0].Descriptor()
-	// order.DefaultCreatedAt holds the default value on creation for the created_at field.
-	order.DefaultCreatedAt = orderDescCreatedAt.Default.(func() uint32)
-	// orderDescUpdatedAt is the schema descriptor for updated_at field.
-	orderDescUpdatedAt := orderMixinFields0[1].Descriptor()
-	// order.DefaultUpdatedAt holds the default value on creation for the updated_at field.
-	order.DefaultUpdatedAt = orderDescUpdatedAt.Default.(func() uint32)
-	// order.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
-	order.UpdateDefaultUpdatedAt = orderDescUpdatedAt.UpdateDefault.(func() uint32)
-	// orderDescDeletedAt is the schema descriptor for deleted_at field.
-	orderDescDeletedAt := orderMixinFields0[2].Descriptor()
-	// order.DefaultDeletedAt holds the default value on creation for the deleted_at field.
-	order.DefaultDeletedAt = orderDescDeletedAt.Default.(func() uint32)
-	// orderDescEntID is the schema descriptor for ent_id field.
-	orderDescEntID := orderMixinFields1[1].Descriptor()
-	// order.DefaultEntID holds the default value on creation for the ent_id field.
-	order.DefaultEntID = orderDescEntID.Default.(func() uuid.UUID)
-	// orderDescPaymentID is the schema descriptor for payment_id field.
-	orderDescPaymentID := orderFields[4].Descriptor()
-	// order.DefaultPaymentID holds the default value on creation for the payment_id field.
-	order.DefaultPaymentID = orderDescPaymentID.Default.(func() uuid.UUID)
-	// orderDescParentOrderID is the schema descriptor for parent_order_id field.
-	orderDescParentOrderID := orderFields[5].Descriptor()
-	// order.DefaultParentOrderID holds the default value on creation for the parent_order_id field.
-	order.DefaultParentOrderID = orderDescParentOrderID.Default.(func() uuid.UUID)
-	// orderDescUnitsV1 is the schema descriptor for units_v1 field.
-	orderDescUnitsV1 := orderFields[6].Descriptor()
-	// order.DefaultUnitsV1 holds the default value on creation for the units_v1 field.
-	order.DefaultUnitsV1 = orderDescUnitsV1.Default.(decimal.Decimal)
-	// orderDescGoodValue is the schema descriptor for good_value field.
-	orderDescGoodValue := orderFields[7].Descriptor()
-	// order.DefaultGoodValue holds the default value on creation for the good_value field.
-	order.DefaultGoodValue = orderDescGoodValue.Default.(decimal.Decimal)
-	// orderDescGoodValueUsd is the schema descriptor for good_value_usd field.
-	orderDescGoodValueUsd := orderFields[8].Descriptor()
-	// order.DefaultGoodValueUsd holds the default value on creation for the good_value_usd field.
-	order.DefaultGoodValueUsd = orderDescGoodValueUsd.Default.(decimal.Decimal)
-	// orderDescPaymentAmount is the schema descriptor for payment_amount field.
-	orderDescPaymentAmount := orderFields[9].Descriptor()
-	// order.DefaultPaymentAmount holds the default value on creation for the payment_amount field.
-	order.DefaultPaymentAmount = orderDescPaymentAmount.Default.(decimal.Decimal)
-	// orderDescDiscountAmount is the schema descriptor for discount_amount field.
-	orderDescDiscountAmount := orderFields[10].Descriptor()
-	// order.DefaultDiscountAmount holds the default value on creation for the discount_amount field.
-	order.DefaultDiscountAmount = orderDescDiscountAmount.Default.(decimal.Decimal)
-	// orderDescPromotionID is the schema descriptor for promotion_id field.
-	orderDescPromotionID := orderFields[11].Descriptor()
-	// order.DefaultPromotionID holds the default value on creation for the promotion_id field.
-	order.DefaultPromotionID = orderDescPromotionID.Default.(func() uuid.UUID)
-	// orderDescDuration is the schema descriptor for duration field.
-	orderDescDuration := orderFields[12].Descriptor()
-	// order.DefaultDuration holds the default value on creation for the duration field.
-	order.DefaultDuration = orderDescDuration.Default.(uint32)
-	// orderDescOrderType is the schema descriptor for order_type field.
-	orderDescOrderType := orderFields[13].Descriptor()
-	// order.DefaultOrderType holds the default value on creation for the order_type field.
-	order.DefaultOrderType = orderDescOrderType.Default.(string)
-	// orderDescInvestmentType is the schema descriptor for investment_type field.
-	orderDescInvestmentType := orderFields[14].Descriptor()
-	// order.DefaultInvestmentType holds the default value on creation for the investment_type field.
-	order.DefaultInvestmentType = orderDescInvestmentType.Default.(string)
-	// orderDescCouponIds is the schema descriptor for coupon_ids field.
-	orderDescCouponIds := orderFields[15].Descriptor()
-	// order.DefaultCouponIds holds the default value on creation for the coupon_ids field.
-	order.DefaultCouponIds = orderDescCouponIds.Default.(func() []uuid.UUID)
-	// orderDescPaymentType is the schema descriptor for payment_type field.
-	orderDescPaymentType := orderFields[16].Descriptor()
-	// order.DefaultPaymentType holds the default value on creation for the payment_type field.
-	order.DefaultPaymentType = orderDescPaymentType.Default.(string)
-	// orderDescPaymentCoinTypeID is the schema descriptor for payment_coin_type_id field.
-	orderDescPaymentCoinTypeID := orderFields[18].Descriptor()
-	// order.DefaultPaymentCoinTypeID holds the default value on creation for the payment_coin_type_id field.
-	order.DefaultPaymentCoinTypeID = orderDescPaymentCoinTypeID.Default.(func() uuid.UUID)
-	// orderDescTransferAmount is the schema descriptor for transfer_amount field.
-	orderDescTransferAmount := orderFields[19].Descriptor()
-	// order.DefaultTransferAmount holds the default value on creation for the transfer_amount field.
-	order.DefaultTransferAmount = orderDescTransferAmount.Default.(decimal.Decimal)
-	// orderDescBalanceAmount is the schema descriptor for balance_amount field.
-	orderDescBalanceAmount := orderFields[20].Descriptor()
-	// order.DefaultBalanceAmount holds the default value on creation for the balance_amount field.
-	order.DefaultBalanceAmount = orderDescBalanceAmount.Default.(decimal.Decimal)
-	// orderDescCoinUsdCurrency is the schema descriptor for coin_usd_currency field.
-	orderDescCoinUsdCurrency := orderFields[21].Descriptor()
-	// order.DefaultCoinUsdCurrency holds the default value on creation for the coin_usd_currency field.
-	order.DefaultCoinUsdCurrency = orderDescCoinUsdCurrency.Default.(decimal.Decimal)
-	// orderDescLocalCoinUsdCurrency is the schema descriptor for local_coin_usd_currency field.
-	orderDescLocalCoinUsdCurrency := orderFields[22].Descriptor()
-	// order.DefaultLocalCoinUsdCurrency holds the default value on creation for the local_coin_usd_currency field.
-	order.DefaultLocalCoinUsdCurrency = orderDescLocalCoinUsdCurrency.Default.(decimal.Decimal)
-	// orderDescLiveCoinUsdCurrency is the schema descriptor for live_coin_usd_currency field.
-	orderDescLiveCoinUsdCurrency := orderFields[23].Descriptor()
-	// order.DefaultLiveCoinUsdCurrency holds the default value on creation for the live_coin_usd_currency field.
-	order.DefaultLiveCoinUsdCurrency = orderDescLiveCoinUsdCurrency.Default.(decimal.Decimal)
-	// orderDescSimulate is the schema descriptor for simulate field.
-	orderDescSimulate := orderFields[24].Descriptor()
-	// order.DefaultSimulate holds the default value on creation for the simulate field.
-	order.DefaultSimulate = orderDescSimulate.Default.(bool)
-=======
 	entorderMixinFields0 := entorderMixin[0].Fields()
 	_ = entorderMixinFields0
 	entorderMixinFields1 := entorderMixin[1].Fields()
@@ -295,19 +189,22 @@ func init() {
 	entorderDescLiveCoinUsdCurrency := entorderFields[23].Descriptor()
 	// entorder.DefaultLiveCoinUsdCurrency holds the default value on creation for the live_coin_usd_currency field.
 	entorder.DefaultLiveCoinUsdCurrency = entorderDescLiveCoinUsdCurrency.Default.(decimal.Decimal)
+	// entorderDescSimulate is the schema descriptor for simulate field.
+	entorderDescSimulate := entorderFields[24].Descriptor()
+	// entorder.DefaultSimulate holds the default value on creation for the simulate field.
+	entorder.DefaultSimulate = entorderDescSimulate.Default.(bool)
 	// entorderDescCreateMethod is the schema descriptor for create_method field.
-	entorderDescCreateMethod := entorderFields[24].Descriptor()
+	entorderDescCreateMethod := entorderFields[25].Descriptor()
 	// entorder.DefaultCreateMethod holds the default value on creation for the create_method field.
 	entorder.DefaultCreateMethod = entorderDescCreateMethod.Default.(string)
 	// entorderDescMultiPaymentCoins is the schema descriptor for multi_payment_coins field.
-	entorderDescMultiPaymentCoins := entorderFields[25].Descriptor()
+	entorderDescMultiPaymentCoins := entorderFields[26].Descriptor()
 	// entorder.DefaultMultiPaymentCoins holds the default value on creation for the multi_payment_coins field.
 	entorder.DefaultMultiPaymentCoins = entorderDescMultiPaymentCoins.Default.(bool)
 	// entorderDescPaymentAmounts is the schema descriptor for payment_amounts field.
-	entorderDescPaymentAmounts := entorderFields[26].Descriptor()
+	entorderDescPaymentAmounts := entorderFields[27].Descriptor()
 	// entorder.DefaultPaymentAmounts holds the default value on creation for the payment_amounts field.
 	entorder.DefaultPaymentAmounts = entorderDescPaymentAmounts.Default.([]order.PaymentAmount)
->>>>>>> d5fa78b087f47958b427ed03d6d0576f484281c6
 	orderlockMixin := schema.OrderLock{}.Mixin()
 	orderlock.Policy = privacy.NewPolicies(orderlockMixin[0], schema.OrderLock{})
 	orderlock.Hooks[0] = func(next ent.Mutator) ent.Mutator {

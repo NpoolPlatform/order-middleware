@@ -269,12 +269,13 @@ func LiveCoinUsdCurrency(v decimal.Decimal) predicate.Order {
 	})
 }
 
-<<<<<<< HEAD
 // Simulate applies equality check predicate on the "simulate" field. It's identical to SimulateEQ.
 func Simulate(v bool) predicate.Order {
 	return predicate.Order(func(s *sql.Selector) {
 		s.Where(sql.EQ(s.C(FieldSimulate), v))
-=======
+	})
+}
+
 // CreateMethod applies equality check predicate on the "create_method" field. It's identical to CreateMethodEQ.
 func CreateMethod(v string) predicate.Order {
 	return predicate.Order(func(s *sql.Selector) {
@@ -286,7 +287,6 @@ func CreateMethod(v string) predicate.Order {
 func MultiPaymentCoins(v bool) predicate.Order {
 	return predicate.Order(func(s *sql.Selector) {
 		s.Where(sql.EQ(s.C(FieldMultiPaymentCoins), v))
->>>>>>> d5fa78b087f47958b427ed03d6d0576f484281c6
 	})
 }
 
@@ -2389,7 +2389,6 @@ func LiveCoinUsdCurrencyNotNil() predicate.Order {
 	})
 }
 
-<<<<<<< HEAD
 // SimulateEQ applies the EQ predicate on the "simulate" field.
 func SimulateEQ(v bool) predicate.Order {
 	return predicate.Order(func(s *sql.Selector) {
@@ -2415,7 +2414,9 @@ func SimulateIsNil() predicate.Order {
 func SimulateNotNil() predicate.Order {
 	return predicate.Order(func(s *sql.Selector) {
 		s.Where(sql.NotNull(s.C(FieldSimulate)))
-=======
+	})
+}
+
 // CreateMethodEQ applies the EQ predicate on the "create_method" field.
 func CreateMethodEQ(v string) predicate.Order {
 	return predicate.Order(func(s *sql.Selector) {
@@ -2568,7 +2569,6 @@ func PaymentAmountsIsNil() predicate.Order {
 func PaymentAmountsNotNil() predicate.Order {
 	return predicate.Order(func(s *sql.Selector) {
 		s.Where(sql.NotNull(s.C(FieldPaymentAmounts)))
->>>>>>> d5fa78b087f47958b427ed03d6d0576f484281c6
 	})
 }
 

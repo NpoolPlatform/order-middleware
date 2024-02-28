@@ -54,37 +54,6 @@ var schemaGraph = func() *sqlgraph.Schema {
 		},
 		Type: "Order",
 		Fields: map[string]*sqlgraph.FieldSpec{
-<<<<<<< HEAD
-			order.FieldCreatedAt:            {Type: field.TypeUint32, Column: order.FieldCreatedAt},
-			order.FieldUpdatedAt:            {Type: field.TypeUint32, Column: order.FieldUpdatedAt},
-			order.FieldDeletedAt:            {Type: field.TypeUint32, Column: order.FieldDeletedAt},
-			order.FieldEntID:                {Type: field.TypeUUID, Column: order.FieldEntID},
-			order.FieldAppID:                {Type: field.TypeUUID, Column: order.FieldAppID},
-			order.FieldUserID:               {Type: field.TypeUUID, Column: order.FieldUserID},
-			order.FieldGoodID:               {Type: field.TypeUUID, Column: order.FieldGoodID},
-			order.FieldAppGoodID:            {Type: field.TypeUUID, Column: order.FieldAppGoodID},
-			order.FieldPaymentID:            {Type: field.TypeUUID, Column: order.FieldPaymentID},
-			order.FieldParentOrderID:        {Type: field.TypeUUID, Column: order.FieldParentOrderID},
-			order.FieldUnitsV1:              {Type: field.TypeOther, Column: order.FieldUnitsV1},
-			order.FieldGoodValue:            {Type: field.TypeOther, Column: order.FieldGoodValue},
-			order.FieldGoodValueUsd:         {Type: field.TypeOther, Column: order.FieldGoodValueUsd},
-			order.FieldPaymentAmount:        {Type: field.TypeOther, Column: order.FieldPaymentAmount},
-			order.FieldDiscountAmount:       {Type: field.TypeOther, Column: order.FieldDiscountAmount},
-			order.FieldPromotionID:          {Type: field.TypeUUID, Column: order.FieldPromotionID},
-			order.FieldDuration:             {Type: field.TypeUint32, Column: order.FieldDuration},
-			order.FieldOrderType:            {Type: field.TypeString, Column: order.FieldOrderType},
-			order.FieldInvestmentType:       {Type: field.TypeString, Column: order.FieldInvestmentType},
-			order.FieldCouponIds:            {Type: field.TypeJSON, Column: order.FieldCouponIds},
-			order.FieldPaymentType:          {Type: field.TypeString, Column: order.FieldPaymentType},
-			order.FieldCoinTypeID:           {Type: field.TypeUUID, Column: order.FieldCoinTypeID},
-			order.FieldPaymentCoinTypeID:    {Type: field.TypeUUID, Column: order.FieldPaymentCoinTypeID},
-			order.FieldTransferAmount:       {Type: field.TypeOther, Column: order.FieldTransferAmount},
-			order.FieldBalanceAmount:        {Type: field.TypeOther, Column: order.FieldBalanceAmount},
-			order.FieldCoinUsdCurrency:      {Type: field.TypeOther, Column: order.FieldCoinUsdCurrency},
-			order.FieldLocalCoinUsdCurrency: {Type: field.TypeOther, Column: order.FieldLocalCoinUsdCurrency},
-			order.FieldLiveCoinUsdCurrency:  {Type: field.TypeOther, Column: order.FieldLiveCoinUsdCurrency},
-			order.FieldSimulate:             {Type: field.TypeBool, Column: order.FieldSimulate},
-=======
 			entorder.FieldCreatedAt:            {Type: field.TypeUint32, Column: entorder.FieldCreatedAt},
 			entorder.FieldUpdatedAt:            {Type: field.TypeUint32, Column: entorder.FieldUpdatedAt},
 			entorder.FieldDeletedAt:            {Type: field.TypeUint32, Column: entorder.FieldDeletedAt},
@@ -113,10 +82,10 @@ var schemaGraph = func() *sqlgraph.Schema {
 			entorder.FieldCoinUsdCurrency:      {Type: field.TypeOther, Column: entorder.FieldCoinUsdCurrency},
 			entorder.FieldLocalCoinUsdCurrency: {Type: field.TypeOther, Column: entorder.FieldLocalCoinUsdCurrency},
 			entorder.FieldLiveCoinUsdCurrency:  {Type: field.TypeOther, Column: entorder.FieldLiveCoinUsdCurrency},
+			entorder.FieldSimulate:             {Type: field.TypeBool, Column: entorder.FieldSimulate},
 			entorder.FieldCreateMethod:         {Type: field.TypeString, Column: entorder.FieldCreateMethod},
 			entorder.FieldMultiPaymentCoins:    {Type: field.TypeBool, Column: entorder.FieldMultiPaymentCoins},
 			entorder.FieldPaymentAmounts:       {Type: field.TypeJSON, Column: entorder.FieldPaymentAmounts},
->>>>>>> d5fa78b087f47958b427ed03d6d0576f484281c6
 		},
 	}
 	graph.Nodes[2] = &sqlgraph.Node{
@@ -523,6 +492,11 @@ func (f *OrderFilter) WhereLiveCoinUsdCurrency(p entql.OtherP) {
 	f.Where(p.Field(entorder.FieldLiveCoinUsdCurrency))
 }
 
+// WhereSimulate applies the entql bool predicate on the simulate field.
+func (f *OrderFilter) WhereSimulate(p entql.BoolP) {
+	f.Where(p.Field(entorder.FieldSimulate))
+}
+
 // WhereCreateMethod applies the entql string predicate on the create_method field.
 func (f *OrderFilter) WhereCreateMethod(p entql.StringP) {
 	f.Where(p.Field(entorder.FieldCreateMethod))
@@ -536,11 +510,6 @@ func (f *OrderFilter) WhereMultiPaymentCoins(p entql.BoolP) {
 // WherePaymentAmounts applies the entql json.RawMessage predicate on the payment_amounts field.
 func (f *OrderFilter) WherePaymentAmounts(p entql.BytesP) {
 	f.Where(p.Field(entorder.FieldPaymentAmounts))
-}
-
-// WhereSimulate applies the entql bool predicate on the simulate field.
-func (f *OrderFilter) WhereSimulate(p entql.BoolP) {
-	f.Where(p.Field(order.FieldSimulate))
 }
 
 // addPredicate implements the predicateAdder interface.

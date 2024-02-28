@@ -131,6 +131,7 @@ func CreateSet(c *ent.OrderCreate, req *Req) *ent.OrderCreate {
 	}
 	if req.Simulate != nil {
 		c.SetSimulate(*req.Simulate)
+	}
 	if req.CreateMethod != nil {
 		c.SetCreateMethod(req.CreateMethod.String())
 	}

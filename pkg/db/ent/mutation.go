@@ -1150,13 +1150,10 @@ type OrderMutation struct {
 	coin_usd_currency       *decimal.Decimal
 	local_coin_usd_currency *decimal.Decimal
 	live_coin_usd_currency  *decimal.Decimal
-<<<<<<< HEAD
 	simulate                *bool
-=======
 	create_method           *string
 	multi_payment_coins     *bool
 	payment_amounts         *[]order.PaymentAmount
->>>>>>> d5fa78b087f47958b427ed03d6d0576f484281c6
 	clearedFields           map[string]struct{}
 	done                    bool
 	oldValue                func(context.Context) (*Order, error)
@@ -2603,6 +2600,55 @@ func (m *OrderMutation) ResetLiveCoinUsdCurrency() {
 	delete(m.clearedFields, entorder.FieldLiveCoinUsdCurrency)
 }
 
+// SetSimulate sets the "simulate" field.
+func (m *OrderMutation) SetSimulate(b bool) {
+	m.simulate = &b
+}
+
+// Simulate returns the value of the "simulate" field in the mutation.
+func (m *OrderMutation) Simulate() (r bool, exists bool) {
+	v := m.simulate
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldSimulate returns the old "simulate" field's value of the Order entity.
+// If the Order object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *OrderMutation) OldSimulate(ctx context.Context) (v bool, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldSimulate is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldSimulate requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldSimulate: %w", err)
+	}
+	return oldValue.Simulate, nil
+}
+
+// ClearSimulate clears the value of the "simulate" field.
+func (m *OrderMutation) ClearSimulate() {
+	m.simulate = nil
+	m.clearedFields[entorder.FieldSimulate] = struct{}{}
+}
+
+// SimulateCleared returns if the "simulate" field was cleared in this mutation.
+func (m *OrderMutation) SimulateCleared() bool {
+	_, ok := m.clearedFields[entorder.FieldSimulate]
+	return ok
+}
+
+// ResetSimulate resets all changes to the "simulate" field.
+func (m *OrderMutation) ResetSimulate() {
+	m.simulate = nil
+	delete(m.clearedFields, entorder.FieldSimulate)
+}
+
 // SetCreateMethod sets the "create_method" field.
 func (m *OrderMutation) SetCreateMethod(s string) {
 	m.create_method = &s
@@ -2750,55 +2796,6 @@ func (m *OrderMutation) ResetPaymentAmounts() {
 	delete(m.clearedFields, entorder.FieldPaymentAmounts)
 }
 
-// SetSimulate sets the "simulate" field.
-func (m *OrderMutation) SetSimulate(b bool) {
-	m.simulate = &b
-}
-
-// Simulate returns the value of the "simulate" field in the mutation.
-func (m *OrderMutation) Simulate() (r bool, exists bool) {
-	v := m.simulate
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldSimulate returns the old "simulate" field's value of the Order entity.
-// If the Order object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *OrderMutation) OldSimulate(ctx context.Context) (v bool, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldSimulate is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldSimulate requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldSimulate: %w", err)
-	}
-	return oldValue.Simulate, nil
-}
-
-// ClearSimulate clears the value of the "simulate" field.
-func (m *OrderMutation) ClearSimulate() {
-	m.simulate = nil
-	m.clearedFields[order.FieldSimulate] = struct{}{}
-}
-
-// SimulateCleared returns if the "simulate" field was cleared in this mutation.
-func (m *OrderMutation) SimulateCleared() bool {
-	_, ok := m.clearedFields[order.FieldSimulate]
-	return ok
-}
-
-// ResetSimulate resets all changes to the "simulate" field.
-func (m *OrderMutation) ResetSimulate() {
-	m.simulate = nil
-	delete(m.clearedFields, order.FieldSimulate)
-}
-
 // Where appends a list predicates to the OrderMutation builder.
 func (m *OrderMutation) Where(ps ...predicate.Order) {
 	m.predicates = append(m.predicates, ps...)
@@ -2818,11 +2815,7 @@ func (m *OrderMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *OrderMutation) Fields() []string {
-<<<<<<< HEAD
-	fields := make([]string, 0, 29)
-=======
-	fields := make([]string, 0, 31)
->>>>>>> d5fa78b087f47958b427ed03d6d0576f484281c6
+	fields := make([]string, 0, 32)
 	if m.created_at != nil {
 		fields = append(fields, entorder.FieldCreatedAt)
 	}
@@ -2907,6 +2900,9 @@ func (m *OrderMutation) Fields() []string {
 	if m.live_coin_usd_currency != nil {
 		fields = append(fields, entorder.FieldLiveCoinUsdCurrency)
 	}
+	if m.simulate != nil {
+		fields = append(fields, entorder.FieldSimulate)
+	}
 	if m.create_method != nil {
 		fields = append(fields, entorder.FieldCreateMethod)
 	}
@@ -2915,9 +2911,6 @@ func (m *OrderMutation) Fields() []string {
 	}
 	if m.payment_amounts != nil {
 		fields = append(fields, entorder.FieldPaymentAmounts)
-	}
-	if m.simulate != nil {
-		fields = append(fields, order.FieldSimulate)
 	}
 	return fields
 }
@@ -2983,17 +2976,14 @@ func (m *OrderMutation) Field(name string) (ent.Value, bool) {
 		return m.LocalCoinUsdCurrency()
 	case entorder.FieldLiveCoinUsdCurrency:
 		return m.LiveCoinUsdCurrency()
-<<<<<<< HEAD
-	case order.FieldSimulate:
+	case entorder.FieldSimulate:
 		return m.Simulate()
-=======
 	case entorder.FieldCreateMethod:
 		return m.CreateMethod()
 	case entorder.FieldMultiPaymentCoins:
 		return m.MultiPaymentCoins()
 	case entorder.FieldPaymentAmounts:
 		return m.PaymentAmounts()
->>>>>>> d5fa78b087f47958b427ed03d6d0576f484281c6
 	}
 	return nil, false
 }
@@ -3059,17 +3049,14 @@ func (m *OrderMutation) OldField(ctx context.Context, name string) (ent.Value, e
 		return m.OldLocalCoinUsdCurrency(ctx)
 	case entorder.FieldLiveCoinUsdCurrency:
 		return m.OldLiveCoinUsdCurrency(ctx)
-<<<<<<< HEAD
-	case order.FieldSimulate:
+	case entorder.FieldSimulate:
 		return m.OldSimulate(ctx)
-=======
 	case entorder.FieldCreateMethod:
 		return m.OldCreateMethod(ctx)
 	case entorder.FieldMultiPaymentCoins:
 		return m.OldMultiPaymentCoins(ctx)
 	case entorder.FieldPaymentAmounts:
 		return m.OldPaymentAmounts(ctx)
->>>>>>> d5fa78b087f47958b427ed03d6d0576f484281c6
 	}
 	return nil, fmt.Errorf("unknown Order field %s", name)
 }
@@ -3275,9 +3262,13 @@ func (m *OrderMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetLiveCoinUsdCurrency(v)
 		return nil
-<<<<<<< HEAD
-	case order.FieldSimulate:
-=======
+	case entorder.FieldSimulate:
+		v, ok := value.(bool)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetSimulate(v)
+		return nil
 	case entorder.FieldCreateMethod:
 		v, ok := value.(string)
 		if !ok {
@@ -3286,14 +3277,10 @@ func (m *OrderMutation) SetField(name string, value ent.Value) error {
 		m.SetCreateMethod(v)
 		return nil
 	case entorder.FieldMultiPaymentCoins:
->>>>>>> d5fa78b087f47958b427ed03d6d0576f484281c6
 		v, ok := value.(bool)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-<<<<<<< HEAD
-		m.SetSimulate(v)
-=======
 		m.SetMultiPaymentCoins(v)
 		return nil
 	case entorder.FieldPaymentAmounts:
@@ -3302,7 +3289,6 @@ func (m *OrderMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetPaymentAmounts(v)
->>>>>>> d5fa78b087f47958b427ed03d6d0576f484281c6
 		return nil
 	}
 	return fmt.Errorf("unknown Order field %s", name)
@@ -3442,6 +3428,9 @@ func (m *OrderMutation) ClearedFields() []string {
 	if m.FieldCleared(entorder.FieldLiveCoinUsdCurrency) {
 		fields = append(fields, entorder.FieldLiveCoinUsdCurrency)
 	}
+	if m.FieldCleared(entorder.FieldSimulate) {
+		fields = append(fields, entorder.FieldSimulate)
+	}
 	if m.FieldCleared(entorder.FieldCreateMethod) {
 		fields = append(fields, entorder.FieldCreateMethod)
 	}
@@ -3450,9 +3439,6 @@ func (m *OrderMutation) ClearedFields() []string {
 	}
 	if m.FieldCleared(entorder.FieldPaymentAmounts) {
 		fields = append(fields, entorder.FieldPaymentAmounts)
-	}
-	if m.FieldCleared(order.FieldSimulate) {
-		fields = append(fields, order.FieldSimulate)
 	}
 	return fields
 }
@@ -3525,10 +3511,9 @@ func (m *OrderMutation) ClearField(name string) error {
 	case entorder.FieldLiveCoinUsdCurrency:
 		m.ClearLiveCoinUsdCurrency()
 		return nil
-<<<<<<< HEAD
-	case order.FieldSimulate:
+	case entorder.FieldSimulate:
 		m.ClearSimulate()
-=======
+		return nil
 	case entorder.FieldCreateMethod:
 		m.ClearCreateMethod()
 		return nil
@@ -3537,7 +3522,6 @@ func (m *OrderMutation) ClearField(name string) error {
 		return nil
 	case entorder.FieldPaymentAmounts:
 		m.ClearPaymentAmounts()
->>>>>>> d5fa78b087f47958b427ed03d6d0576f484281c6
 		return nil
 	}
 	return fmt.Errorf("unknown Order nullable field %s", name)
@@ -3631,10 +3615,9 @@ func (m *OrderMutation) ResetField(name string) error {
 	case entorder.FieldLiveCoinUsdCurrency:
 		m.ResetLiveCoinUsdCurrency()
 		return nil
-<<<<<<< HEAD
-	case order.FieldSimulate:
+	case entorder.FieldSimulate:
 		m.ResetSimulate()
-=======
+		return nil
 	case entorder.FieldCreateMethod:
 		m.ResetCreateMethod()
 		return nil
@@ -3643,7 +3626,6 @@ func (m *OrderMutation) ResetField(name string) error {
 		return nil
 	case entorder.FieldPaymentAmounts:
 		m.ResetPaymentAmounts()
->>>>>>> d5fa78b087f47958b427ed03d6d0576f484281c6
 		return nil
 	}
 	return fmt.Errorf("unknown Order field %s", name)

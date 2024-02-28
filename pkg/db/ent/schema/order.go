@@ -159,7 +159,8 @@ func (Order) Fields() []ent.Field {
 			Bool("simulate").
 			Optional().
 			Default(false),
-		String("create_method").
+		field.
+			String("create_method").
 			Optional().
 			Default(types.OrderCreateMethod_OrderCreatedByPurchase.String()),
 		field.
