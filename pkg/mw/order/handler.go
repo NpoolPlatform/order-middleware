@@ -1362,9 +1362,6 @@ func WithReqs(reqs []*npool.OrderReq, must bool) func(context.Context, *Handler)
 				if req.PaymentType == nil {
 					return fmt.Errorf("invalid paymenttype")
 				}
-				if req.PaymentCoinTypeID == nil {
-					return fmt.Errorf("invalid paymentcointypeid")
-				}
 				if req.CoinUSDCurrency == nil {
 					return fmt.Errorf("invalid coinusdcurrency")
 				}
