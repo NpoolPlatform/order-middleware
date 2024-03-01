@@ -155,6 +155,7 @@ func (h *Handler) ToOrderReq(ctx context.Context, newOrder bool) (*OrderReq, err
 	return req, nil
 }
 
+//nolint:gocyclo
 func (r *OrderReq) CheckOrderType() error {
 	switch *r.OrderType {
 	case basetypes.OrderType_Normal:
@@ -166,6 +167,9 @@ func (r *OrderReq) CheckOrderType() error {
 		case basetypes.PaymentType_PayWithBalanceOnly:
 			fallthrough //nolint
 		case basetypes.PaymentType_PayWithParentOrder:
+			if r.ParentOrderID != nil {
+				return nil
+			}
 			if r.Simulate != nil && *r.Simulate {
 				return fmt.Errorf("invalid paymenttype")
 			}
