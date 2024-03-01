@@ -33,7 +33,6 @@ var (
 		EntID:                     uuid.NewString(),
 		AppID:                     uuid.NewString(),
 		CashableProfitProbability: "1",
-		EnabledCashableProfit:     true,
 		SendCouponModeStr:         ordertypes.SendCouponMode_WithoutCoupon.String(),
 		SendCouponMode:            ordertypes.SendCouponMode_WithoutCoupon,
 		SendCouponProbability:     "1",
@@ -50,7 +49,6 @@ func createSimulateConfig(t *testing.T) {
 		context.Background(),
 		WithEntID(&ret.EntID, true),
 		WithAppID(&ret.AppID, true),
-		WithEnabledCashableProfit(&ret.EnabledCashableProfit, true),
 		WithCashableProfitProbability(&ret.CashableProfitProbability, true),
 		WithSendCouponMode(&ret.SendCouponMode, true),
 		WithSendCouponProbability(&ret.SendCouponProbability, true),
@@ -68,7 +66,6 @@ func createSimulateConfig(t *testing.T) {
 }
 
 func updateSimulateConfig(t *testing.T) {
-	ret.EnabledCashableProfit = false
 	ret.CashableProfitProbability = "0.5"
 	ret.SendCouponMode = ordertypes.SendCouponMode_RandomBenifit
 	ret.SendCouponModeStr = ordertypes.SendCouponMode_RandomBenifit.String()
@@ -76,7 +73,6 @@ func updateSimulateConfig(t *testing.T) {
 	handler, err := NewHandler(
 		context.Background(),
 		WithID(&ret.ID, true),
-		WithEnabledCashableProfit(&ret.EnabledCashableProfit, true),
 		WithCashableProfitProbability(&ret.CashableProfitProbability, true),
 		WithSendCouponMode(&ret.SendCouponMode, true),
 		WithSendCouponProbability(&ret.SendCouponProbability, true),

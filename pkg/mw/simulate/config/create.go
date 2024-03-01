@@ -39,7 +39,6 @@ func (h *createHandler) createSimulateConfig(ctx context.Context, tx *ent.Tx) er
 			AppID:                     h.AppID,
 			SendCouponMode:            h.SendCouponMode,
 			SendCouponProbability:     h.SendCouponProbability,
-			EnabledCashableProfit:     h.EnabledCashableProfit,
 			CashableProfitProbability: h.CashableProfitProbability,
 			Enabled:                   h.Enabled,
 		},

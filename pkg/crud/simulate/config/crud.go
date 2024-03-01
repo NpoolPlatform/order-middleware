@@ -18,7 +18,6 @@ type Req struct {
 	Duration                  *uint32
 	SendCouponMode            *basetypes.SendCouponMode
 	SendCouponProbability     *decimal.Decimal
-	EnabledCashableProfit     *bool
 	CashableProfitProbability *decimal.Decimal
 	Enabled                   *bool
 	CreatedAt                 *uint32
@@ -37,9 +36,6 @@ func CreateSet(c *ent.SimulateConfigCreate, req *Req) *ent.SimulateConfigCreate 
 	}
 	if req.SendCouponProbability != nil {
 		c.SetSendCouponProbability(*req.SendCouponProbability)
-	}
-	if req.EnabledCashableProfit != nil {
-		c.SetEnabledCashableProfit(*req.EnabledCashableProfit)
 	}
 	if req.CashableProfitProbability != nil {
 		c.SetCashableProfitProbability(*req.CashableProfitProbability)
@@ -60,9 +56,6 @@ func UpdateSet(u *ent.SimulateConfigUpdateOne, req *Req) *ent.SimulateConfigUpda
 	if req.SendCouponProbability != nil {
 		u.SetSendCouponProbability(*req.SendCouponProbability)
 	}
-	if req.EnabledCashableProfit != nil {
-		u.SetEnabledCashableProfit(*req.EnabledCashableProfit)
-	}
 	if req.CashableProfitProbability != nil {
 		u.SetCashableProfitProbability(*req.CashableProfitProbability)
 	}
@@ -76,12 +69,11 @@ func UpdateSet(u *ent.SimulateConfigUpdateOne, req *Req) *ent.SimulateConfigUpda
 }
 
 type Conds struct {
-	EntID                 *cruder.Cond
-	ID                    *cruder.Cond
-	AppID                 *cruder.Cond
-	SendCouponMode        *cruder.Cond
-	Enabled               *cruder.Cond
-	EnabledCashableProfit *cruder.Cond
+	EntID          *cruder.Cond
+	ID             *cruder.Cond
+	AppID          *cruder.Cond
+	SendCouponMode *cruder.Cond
+	Enabled        *cruder.Cond
 }
 
 //nolint
@@ -148,18 +140,6 @@ func SetQueryConds(q *ent.SimulateConfigQuery, conds *Conds) (*ent.SimulateConfi
 		switch conds.Enabled.Op {
 		case cruder.EQ:
 			q.Where(entconfig.Enabled(enabled))
-		default:
-			return nil, fmt.Errorf("invalid simulateconfig field")
-		}
-	}
-	if conds.EnabledCashableProfit != nil {
-		enabled, ok := conds.EnabledCashableProfit.Val.(bool)
-		if !ok {
-			return nil, fmt.Errorf("invalid enabledcashableprofit")
-		}
-		switch conds.EnabledCashableProfit.Op {
-		case cruder.EQ:
-			q.Where(entconfig.EnabledCashableProfit(enabled))
 		default:
 			return nil, fmt.Errorf("invalid simulateconfig field")
 		}

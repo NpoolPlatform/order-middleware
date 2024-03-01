@@ -22,7 +22,6 @@ type Handler struct {
 	AppID                     *uuid.UUID
 	SendCouponMode            *basetypes.SendCouponMode
 	SendCouponProbability     *decimal.Decimal
-	EnabledCashableProfit     *bool
 	CashableProfitProbability *decimal.Decimal
 	Enabled                   *bool
 	Reqs                      []*npool.SimulateConfigReq
@@ -132,19 +131,6 @@ func WithSendCouponProbability(value *string, must bool) func(context.Context, *
 	}
 }
 
-func WithEnabledCashableProfit(value *bool, must bool) func(context.Context, *Handler) error {
-	return func(ctx context.Context, h *Handler) error {
-		if value == nil {
-			if must {
-				return fmt.Errorf("invalid enabledcashableprofit")
-			}
-			return nil
-		}
-		h.EnabledCashableProfit = value
-		return nil
-	}
-}
-
 func WithCashableProfitProbability(value *string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if value == nil {
@@ -227,12 +213,6 @@ func WithConds(conds *npool.Conds) func(context.Context, *Handler) error {
 			h.Conds.Enabled = &cruder.Cond{
 				Op:  conds.GetEnabled().GetOp(),
 				Val: conds.GetEnabled().GetValue(),
-			}
-		}
-		if conds.EnabledCashableProfit != nil {
-			h.Conds.EnabledCashableProfit = &cruder.Cond{
-				Op:  conds.GetEnabledCashableProfit().GetOp(),
-				Val: conds.GetEnabledCashableProfit().GetValue(),
 			}
 		}
 

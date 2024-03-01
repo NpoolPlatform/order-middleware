@@ -24,7 +24,6 @@ func (s *Server) UpdateSimulateConfig(ctx context.Context, in *npool.UpdateSimul
 	handler, err := config1.NewHandler(
 		ctx,
 		config1.WithID(req.ID, true),
-		config1.WithEnabledCashableProfit(req.EnabledCashableProfit, false),
 		config1.WithCashableProfitProbability(req.CashableProfitProbability, false),
 		config1.WithSendCouponMode(req.SendCouponMode, false),
 		config1.WithSendCouponProbability(req.SendCouponProbability, false),

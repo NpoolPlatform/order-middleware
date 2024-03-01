@@ -58,7 +58,6 @@ func (h *queryHandler) queryJoinMyself(s *sql.Selector) {
 		t.C(entconfig.FieldAppID),
 		t.C(entconfig.FieldSendCouponMode),
 		t.C(entconfig.FieldSendCouponProbability),
-		t.C(entconfig.FieldEnabledCashableProfit),
 		t.C(entconfig.FieldCashableProfitProbability),
 		t.C(entconfig.FieldEnabled),
 		t.C(entconfig.FieldCreatedAt),
