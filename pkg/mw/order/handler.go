@@ -1530,8 +1530,8 @@ func WithReqs(reqs []*npool.OrderReq, must bool) func(context.Context, *Handler)
 				if err != nil {
 					return err
 				}
-				if amount.Cmp(decimal.NewFromInt(0)) <= 0 {
-					return fmt.Errorf("coinusdcurrency is less than or equal to 0")
+				if amount.Cmp(decimal.NewFromInt(0)) < 0 {
+					return fmt.Errorf("coinusdcurrency is less than to 0")
 				}
 				_req.CoinUSDCurrency = &amount
 			}
@@ -1541,7 +1541,7 @@ func WithReqs(reqs []*npool.OrderReq, must bool) func(context.Context, *Handler)
 					return err
 				}
 				if amount.Cmp(decimal.NewFromInt(0)) < 0 {
-					return fmt.Errorf("localcoinusdcurrency is less than or equal to 0")
+					return fmt.Errorf("localcoinusdcurrency is less than to 0")
 				}
 				_req.LocalCoinUSDCurrency = &amount
 			}
@@ -1550,8 +1550,8 @@ func WithReqs(reqs []*npool.OrderReq, must bool) func(context.Context, *Handler)
 				if err != nil {
 					return err
 				}
-				if amount.Cmp(decimal.NewFromInt(0)) <= 0 {
-					return fmt.Errorf("livecoinusdcurrency is less than or equal to 0")
+				if amount.Cmp(decimal.NewFromInt(0)) < 0 {
+					return fmt.Errorf("livecoinusdcurrency is less than to 0")
 				}
 				_req.LiveCoinUSDCurrency = &amount
 			}
