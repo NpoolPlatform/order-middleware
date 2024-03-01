@@ -208,7 +208,6 @@ var schemaGraph = func() *sqlgraph.Schema {
 			simulateconfig.FieldAppID:                     {Type: field.TypeUUID, Column: simulateconfig.FieldAppID},
 			simulateconfig.FieldSendCouponMode:            {Type: field.TypeString, Column: simulateconfig.FieldSendCouponMode},
 			simulateconfig.FieldSendCouponProbability:     {Type: field.TypeOther, Column: simulateconfig.FieldSendCouponProbability},
-			simulateconfig.FieldEnabledCashableProfit:     {Type: field.TypeBool, Column: simulateconfig.FieldEnabledCashableProfit},
 			simulateconfig.FieldCashableProfitProbability: {Type: field.TypeOther, Column: simulateconfig.FieldCashableProfitProbability},
 			simulateconfig.FieldEnabled:                   {Type: field.TypeBool, Column: simulateconfig.FieldEnabled},
 		},
@@ -995,11 +994,6 @@ func (f *SimulateConfigFilter) WhereSendCouponMode(p entql.StringP) {
 // WhereSendCouponProbability applies the entql other predicate on the send_coupon_probability field.
 func (f *SimulateConfigFilter) WhereSendCouponProbability(p entql.OtherP) {
 	f.Where(p.Field(simulateconfig.FieldSendCouponProbability))
-}
-
-// WhereEnabledCashableProfit applies the entql bool predicate on the enabled_cashable_profit field.
-func (f *SimulateConfigFilter) WhereEnabledCashableProfit(p entql.BoolP) {
-	f.Where(p.Field(simulateconfig.FieldEnabledCashableProfit))
 }
 
 // WhereCashableProfitProbability applies the entql other predicate on the cashable_profit_probability field.

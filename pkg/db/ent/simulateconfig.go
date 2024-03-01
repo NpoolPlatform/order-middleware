@@ -31,8 +31,6 @@ type SimulateConfig struct {
 	SendCouponMode string `json:"send_coupon_mode,omitempty"`
 	// SendCouponProbability holds the value of the "send_coupon_probability" field.
 	SendCouponProbability decimal.Decimal `json:"send_coupon_probability,omitempty"`
-	// EnabledCashableProfit holds the value of the "enabled_cashable_profit" field.
-	EnabledCashableProfit bool `json:"enabled_cashable_profit,omitempty"`
 	// CashableProfitProbability holds the value of the "cashable_profit_probability" field.
 	CashableProfitProbability decimal.Decimal `json:"cashable_profit_probability,omitempty"`
 	// Enabled holds the value of the "enabled" field.
@@ -46,7 +44,7 @@ func (*SimulateConfig) scanValues(columns []string) ([]interface{}, error) {
 		switch columns[i] {
 		case simulateconfig.FieldSendCouponProbability, simulateconfig.FieldCashableProfitProbability:
 			values[i] = new(decimal.Decimal)
-		case simulateconfig.FieldEnabledCashableProfit, simulateconfig.FieldEnabled:
+		case simulateconfig.FieldEnabled:
 			values[i] = new(sql.NullBool)
 		case simulateconfig.FieldID, simulateconfig.FieldCreatedAt, simulateconfig.FieldUpdatedAt, simulateconfig.FieldDeletedAt:
 			values[i] = new(sql.NullInt64)
@@ -117,12 +115,6 @@ func (sc *SimulateConfig) assignValues(columns []string, values []interface{}) e
 			} else if value != nil {
 				sc.SendCouponProbability = *value
 			}
-		case simulateconfig.FieldEnabledCashableProfit:
-			if value, ok := values[i].(*sql.NullBool); !ok {
-				return fmt.Errorf("unexpected type %T for field enabled_cashable_profit", values[i])
-			} else if value.Valid {
-				sc.EnabledCashableProfit = value.Bool
-			}
 		case simulateconfig.FieldCashableProfitProbability:
 			if value, ok := values[i].(*decimal.Decimal); !ok {
 				return fmt.Errorf("unexpected type %T for field cashable_profit_probability", values[i])
@@ -183,9 +175,6 @@ func (sc *SimulateConfig) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("send_coupon_probability=")
 	builder.WriteString(fmt.Sprintf("%v", sc.SendCouponProbability))
-	builder.WriteString(", ")
-	builder.WriteString("enabled_cashable_profit=")
-	builder.WriteString(fmt.Sprintf("%v", sc.EnabledCashableProfit))
 	builder.WriteString(", ")
 	builder.WriteString("cashable_profit_probability=")
 	builder.WriteString(fmt.Sprintf("%v", sc.CashableProfitProbability))

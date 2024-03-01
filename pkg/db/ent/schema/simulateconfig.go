@@ -40,10 +40,6 @@ func (SimulateConfig) Fields() []ent.Field {
 			Optional().
 			Default(decimal.NewFromInt(0)),
 		field.
-			Bool("enabled_cashable_profit").
-			Optional().
-			Default(false),
-		field.
 			Other("cashable_profit_probability", decimal.Decimal{}).
 			SchemaType(map[string]string{
 				dialect.MySQL: "decimal(37,18)",

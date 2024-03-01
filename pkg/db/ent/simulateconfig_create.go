@@ -113,20 +113,6 @@ func (scc *SimulateConfigCreate) SetNillableSendCouponProbability(d *decimal.Dec
 	return scc
 }
 
-// SetEnabledCashableProfit sets the "enabled_cashable_profit" field.
-func (scc *SimulateConfigCreate) SetEnabledCashableProfit(b bool) *SimulateConfigCreate {
-	scc.mutation.SetEnabledCashableProfit(b)
-	return scc
-}
-
-// SetNillableEnabledCashableProfit sets the "enabled_cashable_profit" field if the given value is not nil.
-func (scc *SimulateConfigCreate) SetNillableEnabledCashableProfit(b *bool) *SimulateConfigCreate {
-	if b != nil {
-		scc.SetEnabledCashableProfit(*b)
-	}
-	return scc
-}
-
 // SetCashableProfitProbability sets the "cashable_profit_probability" field.
 func (scc *SimulateConfigCreate) SetCashableProfitProbability(d decimal.Decimal) *SimulateConfigCreate {
 	scc.mutation.SetCashableProfitProbability(d)
@@ -276,10 +262,6 @@ func (scc *SimulateConfigCreate) defaults() error {
 		v := simulateconfig.DefaultSendCouponProbability
 		scc.mutation.SetSendCouponProbability(v)
 	}
-	if _, ok := scc.mutation.EnabledCashableProfit(); !ok {
-		v := simulateconfig.DefaultEnabledCashableProfit
-		scc.mutation.SetEnabledCashableProfit(v)
-	}
 	if _, ok := scc.mutation.CashableProfitProbability(); !ok {
 		v := simulateconfig.DefaultCashableProfitProbability
 		scc.mutation.SetCashableProfitProbability(v)
@@ -397,14 +379,6 @@ func (scc *SimulateConfigCreate) createSpec() (*SimulateConfig, *sqlgraph.Create
 			Column: simulateconfig.FieldSendCouponProbability,
 		})
 		_node.SendCouponProbability = value
-	}
-	if value, ok := scc.mutation.EnabledCashableProfit(); ok {
-		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
-			Type:   field.TypeBool,
-			Value:  value,
-			Column: simulateconfig.FieldEnabledCashableProfit,
-		})
-		_node.EnabledCashableProfit = value
 	}
 	if value, ok := scc.mutation.CashableProfitProbability(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -587,24 +561,6 @@ func (u *SimulateConfigUpsert) UpdateSendCouponProbability() *SimulateConfigUpse
 // ClearSendCouponProbability clears the value of the "send_coupon_probability" field.
 func (u *SimulateConfigUpsert) ClearSendCouponProbability() *SimulateConfigUpsert {
 	u.SetNull(simulateconfig.FieldSendCouponProbability)
-	return u
-}
-
-// SetEnabledCashableProfit sets the "enabled_cashable_profit" field.
-func (u *SimulateConfigUpsert) SetEnabledCashableProfit(v bool) *SimulateConfigUpsert {
-	u.Set(simulateconfig.FieldEnabledCashableProfit, v)
-	return u
-}
-
-// UpdateEnabledCashableProfit sets the "enabled_cashable_profit" field to the value that was provided on create.
-func (u *SimulateConfigUpsert) UpdateEnabledCashableProfit() *SimulateConfigUpsert {
-	u.SetExcluded(simulateconfig.FieldEnabledCashableProfit)
-	return u
-}
-
-// ClearEnabledCashableProfit clears the value of the "enabled_cashable_profit" field.
-func (u *SimulateConfigUpsert) ClearEnabledCashableProfit() *SimulateConfigUpsert {
-	u.SetNull(simulateconfig.FieldEnabledCashableProfit)
 	return u
 }
 
@@ -824,27 +780,6 @@ func (u *SimulateConfigUpsertOne) UpdateSendCouponProbability() *SimulateConfigU
 func (u *SimulateConfigUpsertOne) ClearSendCouponProbability() *SimulateConfigUpsertOne {
 	return u.Update(func(s *SimulateConfigUpsert) {
 		s.ClearSendCouponProbability()
-	})
-}
-
-// SetEnabledCashableProfit sets the "enabled_cashable_profit" field.
-func (u *SimulateConfigUpsertOne) SetEnabledCashableProfit(v bool) *SimulateConfigUpsertOne {
-	return u.Update(func(s *SimulateConfigUpsert) {
-		s.SetEnabledCashableProfit(v)
-	})
-}
-
-// UpdateEnabledCashableProfit sets the "enabled_cashable_profit" field to the value that was provided on create.
-func (u *SimulateConfigUpsertOne) UpdateEnabledCashableProfit() *SimulateConfigUpsertOne {
-	return u.Update(func(s *SimulateConfigUpsert) {
-		s.UpdateEnabledCashableProfit()
-	})
-}
-
-// ClearEnabledCashableProfit clears the value of the "enabled_cashable_profit" field.
-func (u *SimulateConfigUpsertOne) ClearEnabledCashableProfit() *SimulateConfigUpsertOne {
-	return u.Update(func(s *SimulateConfigUpsert) {
-		s.ClearEnabledCashableProfit()
 	})
 }
 
@@ -1235,27 +1170,6 @@ func (u *SimulateConfigUpsertBulk) UpdateSendCouponProbability() *SimulateConfig
 func (u *SimulateConfigUpsertBulk) ClearSendCouponProbability() *SimulateConfigUpsertBulk {
 	return u.Update(func(s *SimulateConfigUpsert) {
 		s.ClearSendCouponProbability()
-	})
-}
-
-// SetEnabledCashableProfit sets the "enabled_cashable_profit" field.
-func (u *SimulateConfigUpsertBulk) SetEnabledCashableProfit(v bool) *SimulateConfigUpsertBulk {
-	return u.Update(func(s *SimulateConfigUpsert) {
-		s.SetEnabledCashableProfit(v)
-	})
-}
-
-// UpdateEnabledCashableProfit sets the "enabled_cashable_profit" field to the value that was provided on create.
-func (u *SimulateConfigUpsertBulk) UpdateEnabledCashableProfit() *SimulateConfigUpsertBulk {
-	return u.Update(func(s *SimulateConfigUpsert) {
-		s.UpdateEnabledCashableProfit()
-	})
-}
-
-// ClearEnabledCashableProfit clears the value of the "enabled_cashable_profit" field.
-func (u *SimulateConfigUpsertBulk) ClearEnabledCashableProfit() *SimulateConfigUpsertBulk {
-	return u.Update(func(s *SimulateConfigUpsert) {
-		s.ClearEnabledCashableProfit()
 	})
 }
 

@@ -129,13 +129,6 @@ func SendCouponProbability(v decimal.Decimal) predicate.SimulateConfig {
 	})
 }
 
-// EnabledCashableProfit applies equality check predicate on the "enabled_cashable_profit" field. It's identical to EnabledCashableProfitEQ.
-func EnabledCashableProfit(v bool) predicate.SimulateConfig {
-	return predicate.SimulateConfig(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldEnabledCashableProfit), v))
-	})
-}
-
 // CashableProfitProbability applies equality check predicate on the "cashable_profit_probability" field. It's identical to CashableProfitProbabilityEQ.
 func CashableProfitProbability(v decimal.Decimal) predicate.SimulateConfig {
 	return predicate.SimulateConfig(func(s *sql.Selector) {
@@ -658,34 +651,6 @@ func SendCouponProbabilityIsNil() predicate.SimulateConfig {
 func SendCouponProbabilityNotNil() predicate.SimulateConfig {
 	return predicate.SimulateConfig(func(s *sql.Selector) {
 		s.Where(sql.NotNull(s.C(FieldSendCouponProbability)))
-	})
-}
-
-// EnabledCashableProfitEQ applies the EQ predicate on the "enabled_cashable_profit" field.
-func EnabledCashableProfitEQ(v bool) predicate.SimulateConfig {
-	return predicate.SimulateConfig(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldEnabledCashableProfit), v))
-	})
-}
-
-// EnabledCashableProfitNEQ applies the NEQ predicate on the "enabled_cashable_profit" field.
-func EnabledCashableProfitNEQ(v bool) predicate.SimulateConfig {
-	return predicate.SimulateConfig(func(s *sql.Selector) {
-		s.Where(sql.NEQ(s.C(FieldEnabledCashableProfit), v))
-	})
-}
-
-// EnabledCashableProfitIsNil applies the IsNil predicate on the "enabled_cashable_profit" field.
-func EnabledCashableProfitIsNil() predicate.SimulateConfig {
-	return predicate.SimulateConfig(func(s *sql.Selector) {
-		s.Where(sql.IsNull(s.C(FieldEnabledCashableProfit)))
-	})
-}
-
-// EnabledCashableProfitNotNil applies the NotNil predicate on the "enabled_cashable_profit" field.
-func EnabledCashableProfitNotNil() predicate.SimulateConfig {
-	return predicate.SimulateConfig(func(s *sql.Selector) {
-		s.Where(sql.NotNull(s.C(FieldEnabledCashableProfit)))
 	})
 }
 

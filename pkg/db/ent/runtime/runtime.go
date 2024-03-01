@@ -471,16 +471,12 @@ func init() {
 	simulateconfigDescSendCouponProbability := simulateconfigFields[2].Descriptor()
 	// simulateconfig.DefaultSendCouponProbability holds the default value on creation for the send_coupon_probability field.
 	simulateconfig.DefaultSendCouponProbability = simulateconfigDescSendCouponProbability.Default.(decimal.Decimal)
-	// simulateconfigDescEnabledCashableProfit is the schema descriptor for enabled_cashable_profit field.
-	simulateconfigDescEnabledCashableProfit := simulateconfigFields[3].Descriptor()
-	// simulateconfig.DefaultEnabledCashableProfit holds the default value on creation for the enabled_cashable_profit field.
-	simulateconfig.DefaultEnabledCashableProfit = simulateconfigDescEnabledCashableProfit.Default.(bool)
 	// simulateconfigDescCashableProfitProbability is the schema descriptor for cashable_profit_probability field.
-	simulateconfigDescCashableProfitProbability := simulateconfigFields[4].Descriptor()
+	simulateconfigDescCashableProfitProbability := simulateconfigFields[3].Descriptor()
 	// simulateconfig.DefaultCashableProfitProbability holds the default value on creation for the cashable_profit_probability field.
 	simulateconfig.DefaultCashableProfitProbability = simulateconfigDescCashableProfitProbability.Default.(decimal.Decimal)
 	// simulateconfigDescEnabled is the schema descriptor for enabled field.
-	simulateconfigDescEnabled := simulateconfigFields[5].Descriptor()
+	simulateconfigDescEnabled := simulateconfigFields[4].Descriptor()
 	// simulateconfig.DefaultEnabled holds the default value on creation for the enabled field.
 	simulateconfig.DefaultEnabled = simulateconfigDescEnabled.Default.(bool)
 }
