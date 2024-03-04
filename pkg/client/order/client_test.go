@@ -90,6 +90,7 @@ var (
 		OutOfGasHours:        0,
 		CompensateHours:      0,
 		AppGoodStockLockID:   uuid.NewString(),
+		Simulate:             false,
 		RenewStateStr:        ordertypes.OrderRenewState_OrderRenewWait.String(),
 		RenewState:           ordertypes.OrderRenewState_OrderRenewWait,
 		CreateMethod:         ordertypes.OrderCreateMethod_OrderCreatedByPurchase,
@@ -137,6 +138,7 @@ var (
 		OutOfGasHours:        &ret.OutOfGasHours,
 		CompensateHours:      &ret.CompensateHours,
 		AppGoodStockLockID:   &ret.AppGoodStockLockID,
+		Simulate:             &ret.Simulate,
 	}
 )
 

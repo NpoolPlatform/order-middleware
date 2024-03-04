@@ -9,6 +9,7 @@ import (
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/orderstate"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/outofgas"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/payment"
+	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/simulateconfig"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
@@ -18,7 +19,7 @@ import (
 
 // schemaGraph holds a representation of ent/schema at runtime.
 var schemaGraph = func() *sqlgraph.Schema {
-	graph := &sqlgraph.Schema{Nodes: make([]*sqlgraph.Node, 6)}
+	graph := &sqlgraph.Schema{Nodes: make([]*sqlgraph.Node, 7)}
 	graph.Nodes[0] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   compensate.Table,
@@ -81,6 +82,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			entorder.FieldCoinUsdCurrency:      {Type: field.TypeOther, Column: entorder.FieldCoinUsdCurrency},
 			entorder.FieldLocalCoinUsdCurrency: {Type: field.TypeOther, Column: entorder.FieldLocalCoinUsdCurrency},
 			entorder.FieldLiveCoinUsdCurrency:  {Type: field.TypeOther, Column: entorder.FieldLiveCoinUsdCurrency},
+			entorder.FieldSimulate:             {Type: field.TypeBool, Column: entorder.FieldSimulate},
 			entorder.FieldCreateMethod:         {Type: field.TypeString, Column: entorder.FieldCreateMethod},
 			entorder.FieldMultiPaymentCoins:    {Type: field.TypeBool, Column: entorder.FieldMultiPaymentCoins},
 			entorder.FieldPaymentAmounts:       {Type: field.TypeJSON, Column: entorder.FieldPaymentAmounts},
@@ -186,6 +188,28 @@ var schemaGraph = func() *sqlgraph.Schema {
 			payment.FieldCoinTypeID:  {Type: field.TypeUUID, Column: payment.FieldCoinTypeID},
 			payment.FieldCoinInfoID:  {Type: field.TypeUUID, Column: payment.FieldCoinInfoID},
 			payment.FieldStartAmount: {Type: field.TypeOther, Column: payment.FieldStartAmount},
+		},
+	}
+	graph.Nodes[6] = &sqlgraph.Node{
+		NodeSpec: sqlgraph.NodeSpec{
+			Table:   simulateconfig.Table,
+			Columns: simulateconfig.Columns,
+			ID: &sqlgraph.FieldSpec{
+				Type:   field.TypeUint32,
+				Column: simulateconfig.FieldID,
+			},
+		},
+		Type: "SimulateConfig",
+		Fields: map[string]*sqlgraph.FieldSpec{
+			simulateconfig.FieldCreatedAt:                 {Type: field.TypeUint32, Column: simulateconfig.FieldCreatedAt},
+			simulateconfig.FieldUpdatedAt:                 {Type: field.TypeUint32, Column: simulateconfig.FieldUpdatedAt},
+			simulateconfig.FieldDeletedAt:                 {Type: field.TypeUint32, Column: simulateconfig.FieldDeletedAt},
+			simulateconfig.FieldEntID:                     {Type: field.TypeUUID, Column: simulateconfig.FieldEntID},
+			simulateconfig.FieldAppID:                     {Type: field.TypeUUID, Column: simulateconfig.FieldAppID},
+			simulateconfig.FieldSendCouponMode:            {Type: field.TypeString, Column: simulateconfig.FieldSendCouponMode},
+			simulateconfig.FieldSendCouponProbability:     {Type: field.TypeOther, Column: simulateconfig.FieldSendCouponProbability},
+			simulateconfig.FieldCashableProfitProbability: {Type: field.TypeOther, Column: simulateconfig.FieldCashableProfitProbability},
+			simulateconfig.FieldEnabled:                   {Type: field.TypeBool, Column: simulateconfig.FieldEnabled},
 		},
 	}
 	return graph
@@ -465,6 +489,11 @@ func (f *OrderFilter) WhereLocalCoinUsdCurrency(p entql.OtherP) {
 // WhereLiveCoinUsdCurrency applies the entql other predicate on the live_coin_usd_currency field.
 func (f *OrderFilter) WhereLiveCoinUsdCurrency(p entql.OtherP) {
 	f.Where(p.Field(entorder.FieldLiveCoinUsdCurrency))
+}
+
+// WhereSimulate applies the entql bool predicate on the simulate field.
+func (f *OrderFilter) WhereSimulate(p entql.BoolP) {
+	f.Where(p.Field(entorder.FieldSimulate))
 }
 
 // WhereCreateMethod applies the entql string predicate on the create_method field.
@@ -890,4 +919,89 @@ func (f *PaymentFilter) WhereCoinInfoID(p entql.ValueP) {
 // WhereStartAmount applies the entql other predicate on the start_amount field.
 func (f *PaymentFilter) WhereStartAmount(p entql.OtherP) {
 	f.Where(p.Field(payment.FieldStartAmount))
+}
+
+// addPredicate implements the predicateAdder interface.
+func (scq *SimulateConfigQuery) addPredicate(pred func(s *sql.Selector)) {
+	scq.predicates = append(scq.predicates, pred)
+}
+
+// Filter returns a Filter implementation to apply filters on the SimulateConfigQuery builder.
+func (scq *SimulateConfigQuery) Filter() *SimulateConfigFilter {
+	return &SimulateConfigFilter{config: scq.config, predicateAdder: scq}
+}
+
+// addPredicate implements the predicateAdder interface.
+func (m *SimulateConfigMutation) addPredicate(pred func(s *sql.Selector)) {
+	m.predicates = append(m.predicates, pred)
+}
+
+// Filter returns an entql.Where implementation to apply filters on the SimulateConfigMutation builder.
+func (m *SimulateConfigMutation) Filter() *SimulateConfigFilter {
+	return &SimulateConfigFilter{config: m.config, predicateAdder: m}
+}
+
+// SimulateConfigFilter provides a generic filtering capability at runtime for SimulateConfigQuery.
+type SimulateConfigFilter struct {
+	predicateAdder
+	config
+}
+
+// Where applies the entql predicate on the query filter.
+func (f *SimulateConfigFilter) Where(p entql.P) {
+	f.addPredicate(func(s *sql.Selector) {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[6].Type, p, s); err != nil {
+			s.AddError(err)
+		}
+	})
+}
+
+// WhereID applies the entql uint32 predicate on the id field.
+func (f *SimulateConfigFilter) WhereID(p entql.Uint32P) {
+	f.Where(p.Field(simulateconfig.FieldID))
+}
+
+// WhereCreatedAt applies the entql uint32 predicate on the created_at field.
+func (f *SimulateConfigFilter) WhereCreatedAt(p entql.Uint32P) {
+	f.Where(p.Field(simulateconfig.FieldCreatedAt))
+}
+
+// WhereUpdatedAt applies the entql uint32 predicate on the updated_at field.
+func (f *SimulateConfigFilter) WhereUpdatedAt(p entql.Uint32P) {
+	f.Where(p.Field(simulateconfig.FieldUpdatedAt))
+}
+
+// WhereDeletedAt applies the entql uint32 predicate on the deleted_at field.
+func (f *SimulateConfigFilter) WhereDeletedAt(p entql.Uint32P) {
+	f.Where(p.Field(simulateconfig.FieldDeletedAt))
+}
+
+// WhereEntID applies the entql [16]byte predicate on the ent_id field.
+func (f *SimulateConfigFilter) WhereEntID(p entql.ValueP) {
+	f.Where(p.Field(simulateconfig.FieldEntID))
+}
+
+// WhereAppID applies the entql [16]byte predicate on the app_id field.
+func (f *SimulateConfigFilter) WhereAppID(p entql.ValueP) {
+	f.Where(p.Field(simulateconfig.FieldAppID))
+}
+
+// WhereSendCouponMode applies the entql string predicate on the send_coupon_mode field.
+func (f *SimulateConfigFilter) WhereSendCouponMode(p entql.StringP) {
+	f.Where(p.Field(simulateconfig.FieldSendCouponMode))
+}
+
+// WhereSendCouponProbability applies the entql other predicate on the send_coupon_probability field.
+func (f *SimulateConfigFilter) WhereSendCouponProbability(p entql.OtherP) {
+	f.Where(p.Field(simulateconfig.FieldSendCouponProbability))
+}
+
+// WhereCashableProfitProbability applies the entql other predicate on the cashable_profit_probability field.
+func (f *SimulateConfigFilter) WhereCashableProfitProbability(p entql.OtherP) {
+	f.Where(p.Field(simulateconfig.FieldCashableProfitProbability))
+}
+
+// WhereEnabled applies the entql bool predicate on the enabled field.
+func (f *SimulateConfigFilter) WhereEnabled(p entql.BoolP) {
+	f.Where(p.Field(simulateconfig.FieldEnabled))
 }

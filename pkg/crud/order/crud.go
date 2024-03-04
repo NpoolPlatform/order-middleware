@@ -42,6 +42,7 @@ type Req struct {
 	CoinUSDCurrency      *decimal.Decimal
 	LocalCoinUSDCurrency *decimal.Decimal
 	LiveCoinUSDCurrency  *decimal.Decimal
+	Simulate             *bool
 	CreateMethod         *basetypes.OrderCreateMethod
 	MultiPaymentCoins    *bool
 	PaymentAmounts       []*npool.PaymentAmount
@@ -128,6 +129,9 @@ func CreateSet(c *ent.OrderCreate, req *Req) *ent.OrderCreate {
 	if req.LiveCoinUSDCurrency != nil {
 		c.SetLiveCoinUsdCurrency(*req.LiveCoinUSDCurrency)
 	}
+	if req.Simulate != nil {
+		c.SetSimulate(*req.Simulate)
+	}
 	if req.CreateMethod != nil {
 		c.SetCreateMethod(req.CreateMethod.String())
 	}
@@ -186,6 +190,7 @@ type Conds struct {
 	AdminSetCanceled  *cruder.Cond
 	UserSetCanceled   *cruder.Cond
 	ParentOrderIDs    *cruder.Cond
+	Simulate          *cruder.Cond
 }
 
 //nolint
@@ -506,6 +511,18 @@ func SetQueryConds(q *ent.OrderQuery, conds *Conds) (*ent.OrderQuery, error) {
 			default:
 				return nil, fmt.Errorf("invalid order field")
 			}
+		}
+	}
+	if conds.Simulate != nil {
+		val, ok := conds.Simulate.Val.(bool)
+		if !ok {
+			return nil, fmt.Errorf("invalid simulate")
+		}
+		switch conds.Simulate.Op {
+		case cruder.EQ:
+			q.Where(entorder.Simulate(val))
+		default:
+			return nil, fmt.Errorf("invalid order field")
 		}
 	}
 	return q, nil

@@ -78,6 +78,7 @@ func (h *Handler) ToOrderReq(ctx context.Context, newOrder bool) (*OrderReq, err
 			CoinUSDCurrency:      h.CoinUSDCurrency,
 			LocalCoinUSDCurrency: h.LocalCoinUSDCurrency,
 			LiveCoinUSDCurrency:  h.LiveCoinUSDCurrency,
+			Simulate:             h.Simulate,
 			CreateMethod:         h.CreateMethod,
 			MultiPaymentCoins:    h.MultiPaymentCoins,
 			PaymentAmounts:       h.PaymentAmounts,
@@ -154,14 +155,28 @@ func (h *Handler) ToOrderReq(ctx context.Context, newOrder bool) (*OrderReq, err
 	return req, nil
 }
 
+//nolint:gocyclo
 func (r *OrderReq) CheckOrderType() error {
 	switch *r.OrderType {
 	case basetypes.OrderType_Normal:
 		switch *r.PaymentType {
 		case basetypes.PaymentType_PayWithTransferOnly:
+			fallthrough //nolint
 		case basetypes.PaymentType_PayWithTransferAndBalance:
+			fallthrough //nolint
 		case basetypes.PaymentType_PayWithBalanceOnly:
+			fallthrough //nolint
 		case basetypes.PaymentType_PayWithParentOrder:
+			if r.ParentOrderID != nil {
+				return nil
+			}
+			if r.Simulate != nil && *r.Simulate {
+				return fmt.Errorf("invalid paymenttype")
+			}
+		case basetypes.PaymentType_PayWithNoPayment:
+			if r.Simulate == nil || !*r.Simulate {
+				return fmt.Errorf("invalid paymenttype")
+			}
 		default:
 			return fmt.Errorf("invalid paymenttype")
 		}

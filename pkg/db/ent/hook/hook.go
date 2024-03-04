@@ -87,6 +87,19 @@ func (f PaymentFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, err
 	return f(ctx, mv)
 }
 
+// The SimulateConfigFunc type is an adapter to allow the use of ordinary
+// function as SimulateConfig mutator.
+type SimulateConfigFunc func(context.Context, *ent.SimulateConfigMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f SimulateConfigFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	mv, ok := m.(*ent.SimulateConfigMutation)
+	if !ok {
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.SimulateConfigMutation", m)
+	}
+	return f(ctx, mv)
+}
+
 // Condition is a hook condition function.
 type Condition func(context.Context, ent.Mutation) bool
 

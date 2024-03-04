@@ -16,6 +16,7 @@ import (
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/orderstate"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/outofgas"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/payment"
+	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/simulateconfig"
 )
 
 // ent aliases to avoid import conflicts in user's code.
@@ -36,12 +37,13 @@ type OrderFunc func(*sql.Selector)
 // columnChecker returns a function indicates if the column exists in the given column.
 func columnChecker(table string) func(string) error {
 	checks := map[string]func(string) bool{
-		compensate.Table: compensate.ValidColumn,
-		entorder.Table:   entorder.ValidColumn,
-		orderlock.Table:  orderlock.ValidColumn,
-		orderstate.Table: orderstate.ValidColumn,
-		outofgas.Table:   outofgas.ValidColumn,
-		payment.Table:    payment.ValidColumn,
+		compensate.Table:     compensate.ValidColumn,
+		entorder.Table:       entorder.ValidColumn,
+		orderlock.Table:      orderlock.ValidColumn,
+		orderstate.Table:     orderstate.ValidColumn,
+		outofgas.Table:       outofgas.ValidColumn,
+		payment.Table:        payment.ValidColumn,
+		simulateconfig.Table: simulateconfig.ValidColumn,
 	}
 	check, ok := checks[table]
 	if !ok {

@@ -59,6 +59,7 @@ func (h *baseQueryHandler) QueryJoinMyself(s *sql.Selector) {
 		t.C(entorder.FieldCoinUsdCurrency),
 		t.C(entorder.FieldLocalCoinUsdCurrency),
 		t.C(entorder.FieldLiveCoinUsdCurrency),
+		t.C(entorder.FieldSimulate),
 		t.C(entorder.FieldCreateMethod),
 		t.C(entorder.FieldMultiPaymentCoins),
 		t.C(entorder.FieldPaymentAmounts),

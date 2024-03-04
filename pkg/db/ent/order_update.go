@@ -510,6 +510,26 @@ func (ou *OrderUpdate) ClearLiveCoinUsdCurrency() *OrderUpdate {
 	return ou
 }
 
+// SetSimulate sets the "simulate" field.
+func (ou *OrderUpdate) SetSimulate(b bool) *OrderUpdate {
+	ou.mutation.SetSimulate(b)
+	return ou
+}
+
+// SetNillableSimulate sets the "simulate" field if the given value is not nil.
+func (ou *OrderUpdate) SetNillableSimulate(b *bool) *OrderUpdate {
+	if b != nil {
+		ou.SetSimulate(*b)
+	}
+	return ou
+}
+
+// ClearSimulate clears the value of the "simulate" field.
+func (ou *OrderUpdate) ClearSimulate() *OrderUpdate {
+	ou.mutation.ClearSimulate()
+	return ou
+}
+
 // SetCreateMethod sets the "create_method" field.
 func (ou *OrderUpdate) SetCreateMethod(s string) *OrderUpdate {
 	ou.mutation.SetCreateMethod(s)
@@ -996,6 +1016,19 @@ func (ou *OrderUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeOther,
 			Column: entorder.FieldLiveCoinUsdCurrency,
+		})
+	}
+	if value, ok := ou.mutation.Simulate(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Value:  value,
+			Column: entorder.FieldSimulate,
+		})
+	}
+	if ou.mutation.SimulateCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Column: entorder.FieldSimulate,
 		})
 	}
 	if value, ok := ou.mutation.CreateMethod(); ok {
@@ -1536,6 +1569,26 @@ func (ouo *OrderUpdateOne) ClearLiveCoinUsdCurrency() *OrderUpdateOne {
 	return ouo
 }
 
+// SetSimulate sets the "simulate" field.
+func (ouo *OrderUpdateOne) SetSimulate(b bool) *OrderUpdateOne {
+	ouo.mutation.SetSimulate(b)
+	return ouo
+}
+
+// SetNillableSimulate sets the "simulate" field if the given value is not nil.
+func (ouo *OrderUpdateOne) SetNillableSimulate(b *bool) *OrderUpdateOne {
+	if b != nil {
+		ouo.SetSimulate(*b)
+	}
+	return ouo
+}
+
+// ClearSimulate clears the value of the "simulate" field.
+func (ouo *OrderUpdateOne) ClearSimulate() *OrderUpdateOne {
+	ouo.mutation.ClearSimulate()
+	return ouo
+}
+
 // SetCreateMethod sets the "create_method" field.
 func (ouo *OrderUpdateOne) SetCreateMethod(s string) *OrderUpdateOne {
 	ouo.mutation.SetCreateMethod(s)
@@ -2052,6 +2105,19 @@ func (ouo *OrderUpdateOne) sqlSave(ctx context.Context) (_node *Order, err error
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeOther,
 			Column: entorder.FieldLiveCoinUsdCurrency,
+		})
+	}
+	if value, ok := ouo.mutation.Simulate(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Value:  value,
+			Column: entorder.FieldSimulate,
+		})
+	}
+	if ouo.mutation.SimulateCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Column: entorder.FieldSimulate,
 		})
 	}
 	if value, ok := ouo.mutation.CreateMethod(); ok {

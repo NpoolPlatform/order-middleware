@@ -70,6 +70,8 @@ const (
 	FieldLocalCoinUsdCurrency = "local_coin_usd_currency"
 	// FieldLiveCoinUsdCurrency holds the string denoting the live_coin_usd_currency field in the database.
 	FieldLiveCoinUsdCurrency = "live_coin_usd_currency"
+	// FieldSimulate holds the string denoting the simulate field in the database.
+	FieldSimulate = "simulate"
 	// FieldCreateMethod holds the string denoting the create_method field in the database.
 	FieldCreateMethod = "create_method"
 	// FieldMultiPaymentCoins holds the string denoting the multi_payment_coins field in the database.
@@ -111,6 +113,7 @@ var Columns = []string{
 	FieldCoinUsdCurrency,
 	FieldLocalCoinUsdCurrency,
 	FieldLiveCoinUsdCurrency,
+	FieldSimulate,
 	FieldCreateMethod,
 	FieldMultiPaymentCoins,
 	FieldPaymentAmounts,
@@ -183,6 +186,8 @@ var (
 	DefaultLocalCoinUsdCurrency decimal.Decimal
 	// DefaultLiveCoinUsdCurrency holds the default value on creation for the "live_coin_usd_currency" field.
 	DefaultLiveCoinUsdCurrency decimal.Decimal
+	// DefaultSimulate holds the default value on creation for the "simulate" field.
+	DefaultSimulate bool
 	// DefaultCreateMethod holds the default value on creation for the "create_method" field.
 	DefaultCreateMethod string
 	// DefaultMultiPaymentCoins holds the default value on creation for the "multi_payment_coins" field.

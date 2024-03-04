@@ -76,6 +76,8 @@ type Order struct {
 	LocalCoinUsdCurrency decimal.Decimal `json:"local_coin_usd_currency,omitempty"`
 	// LiveCoinUsdCurrency holds the value of the "live_coin_usd_currency" field.
 	LiveCoinUsdCurrency decimal.Decimal `json:"live_coin_usd_currency,omitempty"`
+	// Simulate holds the value of the "simulate" field.
+	Simulate bool `json:"simulate,omitempty"`
 	// CreateMethod holds the value of the "create_method" field.
 	CreateMethod string `json:"create_method,omitempty"`
 	// MultiPaymentCoins holds the value of the "multi_payment_coins" field.
@@ -93,7 +95,7 @@ func (*Order) scanValues(columns []string) ([]interface{}, error) {
 			values[i] = new([]byte)
 		case entorder.FieldUnitsV1, entorder.FieldGoodValue, entorder.FieldGoodValueUsd, entorder.FieldPaymentAmount, entorder.FieldDiscountAmount, entorder.FieldTransferAmount, entorder.FieldBalanceAmount, entorder.FieldCoinUsdCurrency, entorder.FieldLocalCoinUsdCurrency, entorder.FieldLiveCoinUsdCurrency:
 			values[i] = new(decimal.Decimal)
-		case entorder.FieldMultiPaymentCoins:
+		case entorder.FieldSimulate, entorder.FieldMultiPaymentCoins:
 			values[i] = new(sql.NullBool)
 		case entorder.FieldID, entorder.FieldCreatedAt, entorder.FieldUpdatedAt, entorder.FieldDeletedAt, entorder.FieldDuration:
 			values[i] = new(sql.NullInt64)
@@ -292,6 +294,12 @@ func (o *Order) assignValues(columns []string, values []interface{}) error {
 			} else if value != nil {
 				o.LiveCoinUsdCurrency = *value
 			}
+		case entorder.FieldSimulate:
+			if value, ok := values[i].(*sql.NullBool); !ok {
+				return fmt.Errorf("unexpected type %T for field simulate", values[i])
+			} else if value.Valid {
+				o.Simulate = value.Bool
+			}
 		case entorder.FieldCreateMethod:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field create_method", values[i])
@@ -423,6 +431,9 @@ func (o *Order) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("live_coin_usd_currency=")
 	builder.WriteString(fmt.Sprintf("%v", o.LiveCoinUsdCurrency))
+	builder.WriteString(", ")
+	builder.WriteString("simulate=")
+	builder.WriteString(fmt.Sprintf("%v", o.Simulate))
 	builder.WriteString(", ")
 	builder.WriteString("create_method=")
 	builder.WriteString(o.CreateMethod)

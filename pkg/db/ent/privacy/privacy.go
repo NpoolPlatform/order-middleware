@@ -294,6 +294,30 @@ func (f PaymentMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutatio
 	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.PaymentMutation", m)
 }
 
+// The SimulateConfigQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type SimulateConfigQueryRuleFunc func(context.Context, *ent.SimulateConfigQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f SimulateConfigQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.SimulateConfigQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("ent/privacy: unexpected query type %T, expect *ent.SimulateConfigQuery", q)
+}
+
+// The SimulateConfigMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type SimulateConfigMutationRuleFunc func(context.Context, *ent.SimulateConfigMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f SimulateConfigMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
+	if m, ok := m.(*ent.SimulateConfigMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.SimulateConfigMutation", m)
+}
+
 type (
 	// Filter is the interface that wraps the Where function
 	// for filtering nodes in queries and mutations.
@@ -341,6 +365,8 @@ func queryFilter(q ent.Query) (Filter, error) {
 		return q.Filter(), nil
 	case *ent.PaymentQuery:
 		return q.Filter(), nil
+	case *ent.SimulateConfigQuery:
+		return q.Filter(), nil
 	default:
 		return nil, Denyf("ent/privacy: unexpected query type %T for query filter", q)
 	}
@@ -359,6 +385,8 @@ func mutationFilter(m ent.Mutation) (Filter, error) {
 	case *ent.OutOfGasMutation:
 		return m.Filter(), nil
 	case *ent.PaymentMutation:
+		return m.Filter(), nil
+	case *ent.SimulateConfigMutation:
 		return m.Filter(), nil
 	default:
 		return nil, Denyf("ent/privacy: unexpected mutation type %T for mutation filter", m)

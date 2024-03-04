@@ -171,6 +171,9 @@ func (h *Handler) CreateOrder(ctx context.Context) (*npool.Order, error) {
 		if err := handler.createOrderState(ctx, tx, req.OrderStateReq); err != nil {
 			return err
 		}
+		if h.Simulate != nil && *h.Simulate {
+			return nil
+		}
 		if req.BalanceLockReq != nil {
 			req.BalanceLockReq.OrderID = req.Req.EntID
 		}
@@ -186,6 +189,7 @@ func (h *Handler) CreateOrder(ctx context.Context) (*npool.Order, error) {
 		if err := handler.createPayment(ctx, tx, req.PaymentReq); err != nil {
 			return err
 		}
+
 		return nil
 	})
 	logger.Sugar().Infow(
@@ -214,6 +218,9 @@ func (h *Handler) CreateOrder(ctx context.Context) (*npool.Order, error) {
 func (h *createHandler) checkBatchParentOrder(ctx context.Context) error {
 	for _, req := range h.Reqs {
 		if req.ParentOrderID == nil {
+			if req.EntID == nil {
+				return fmt.Errorf("invalid entid")
+			}
 			h.parentOrderID = *req.EntID
 			h.createParent = true
 			continue
@@ -295,6 +302,9 @@ func (h *Handler) CreateOrders(ctx context.Context) ([]*npool.Order, error) {
 			ids = append(ids, *req.Req.EntID)
 
 			if req.PaymentReq == nil {
+				continue
+			}
+			if req.Simulate != nil && *req.Simulate {
 				continue
 			}
 			req.PaymentReq.OrderID = req.Req.EntID

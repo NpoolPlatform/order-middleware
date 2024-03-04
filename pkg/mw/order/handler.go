@@ -65,6 +65,7 @@ type Handler struct {
 	AppGoodStockLockID   *uuid.UUID
 	LedgerLockID         *uuid.UUID
 	Rollback             *bool
+	Simulate             *bool
 	RenewState           *types.OrderRenewState
 	RenewNotifyAt        *uint32
 	CreateMethod         *types.OrderCreateMethod
@@ -907,6 +908,19 @@ func WithRollback(rollback *bool, must bool) func(context.Context, *Handler) err
 	}
 }
 
+func WithSimulate(value *bool, must bool) func(context.Context, *Handler) error {
+	return func(ctx context.Context, h *Handler) error {
+		if value == nil {
+			if must {
+				return fmt.Errorf("invalid simulate")
+			}
+			return nil
+		}
+		h.Simulate = value
+		return nil
+	}
+}
+
 func WithRenewState(e *types.OrderRenewState, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if e == nil {
@@ -1182,6 +1196,9 @@ func WithConds(conds *npool.Conds) func(context.Context, *Handler) error {
 		if conds.LastBenefitAt != nil {
 			h.Conds.LastBenefitAt = &cruder.Cond{Op: conds.GetLastBenefitAt().GetOp(), Val: conds.GetLastBenefitAt().GetValue()}
 		}
+		if conds.Simulate != nil {
+			h.Conds.Simulate = &cruder.Cond{Op: conds.GetSimulate().GetOp(), Val: conds.GetSimulate().GetValue()}
+		}
 
 		if conds.BenefitState != nil {
 			switch conds.GetBenefitState().GetValue() {
@@ -1344,9 +1361,6 @@ func WithReqs(reqs []*npool.OrderReq, must bool) func(context.Context, *Handler)
 				}
 				if req.PaymentType == nil {
 					return fmt.Errorf("invalid paymenttype")
-				}
-				if req.PaymentCoinTypeID == nil {
-					return fmt.Errorf("invalid paymentcointypeid")
 				}
 				if req.CoinUSDCurrency == nil {
 					return fmt.Errorf("invalid coinusdcurrency")
@@ -1516,8 +1530,8 @@ func WithReqs(reqs []*npool.OrderReq, must bool) func(context.Context, *Handler)
 				if err != nil {
 					return err
 				}
-				if amount.Cmp(decimal.NewFromInt(0)) <= 0 {
-					return fmt.Errorf("coinusdcurrency is less than or equal to 0")
+				if amount.Cmp(decimal.NewFromInt(0)) < 0 {
+					return fmt.Errorf("coinusdcurrency is less than to 0")
 				}
 				_req.CoinUSDCurrency = &amount
 			}
@@ -1527,7 +1541,7 @@ func WithReqs(reqs []*npool.OrderReq, must bool) func(context.Context, *Handler)
 					return err
 				}
 				if amount.Cmp(decimal.NewFromInt(0)) < 0 {
-					return fmt.Errorf("localcoinusdcurrency is less than or equal to 0")
+					return fmt.Errorf("localcoinusdcurrency is less than to 0")
 				}
 				_req.LocalCoinUSDCurrency = &amount
 			}
@@ -1536,8 +1550,8 @@ func WithReqs(reqs []*npool.OrderReq, must bool) func(context.Context, *Handler)
 				if err != nil {
 					return err
 				}
-				if amount.Cmp(decimal.NewFromInt(0)) <= 0 {
-					return fmt.Errorf("livecoinusdcurrency is less than or equal to 0")
+				if amount.Cmp(decimal.NewFromInt(0)) < 0 {
+					return fmt.Errorf("livecoinusdcurrency is less than to 0")
 				}
 				_req.LiveCoinUSDCurrency = &amount
 			}
@@ -1560,6 +1574,9 @@ func WithReqs(reqs []*npool.OrderReq, must bool) func(context.Context, *Handler)
 					_ids = append(_ids, _id)
 				}
 				_req.CouponIDs = _ids
+			}
+			if req.Simulate != nil {
+				_req.Simulate = req.Simulate
 			}
 			if req.CreateMethod != nil {
 				switch *req.CreateMethod {
