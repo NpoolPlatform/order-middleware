@@ -347,6 +347,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			paymenttransfer.FieldEntID:                {Type: field.TypeUUID, Column: paymenttransfer.FieldEntID},
 			paymenttransfer.FieldOrderID:              {Type: field.TypeUUID, Column: paymenttransfer.FieldOrderID},
 			paymenttransfer.FieldCoinTypeID:           {Type: field.TypeUUID, Column: paymenttransfer.FieldCoinTypeID},
+			paymenttransfer.FieldAccountID:            {Type: field.TypeUUID, Column: paymenttransfer.FieldAccountID},
 			paymenttransfer.FieldAmount:               {Type: field.TypeOther, Column: paymenttransfer.FieldAmount},
 			paymenttransfer.FieldStartAmount:          {Type: field.TypeOther, Column: paymenttransfer.FieldStartAmount},
 			paymenttransfer.FieldTransactionID:        {Type: field.TypeString, Column: paymenttransfer.FieldTransactionID},
@@ -1697,6 +1698,11 @@ func (f *PaymentTransferFilter) WhereOrderID(p entql.ValueP) {
 // WhereCoinTypeID applies the entql [16]byte predicate on the coin_type_id field.
 func (f *PaymentTransferFilter) WhereCoinTypeID(p entql.ValueP) {
 	f.Where(p.Field(paymenttransfer.FieldCoinTypeID))
+}
+
+// WhereAccountID applies the entql [16]byte predicate on the account_id field.
+func (f *PaymentTransferFilter) WhereAccountID(p entql.ValueP) {
+	f.Where(p.Field(paymenttransfer.FieldAccountID))
 }
 
 // WhereAmount applies the entql other predicate on the amount field.

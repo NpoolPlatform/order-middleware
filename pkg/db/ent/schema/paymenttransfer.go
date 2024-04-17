@@ -39,6 +39,12 @@ func (PaymentTransfer) Fields() []ent.Field {
 				return uuid.Nil
 			}),
 		field.
+			UUID("account_id", uuid.UUID{}).
+			Optional().
+			Default(func() uuid.UUID {
+				return uuid.Nil
+			}),
+		field.
 			Other("amount", decimal.Decimal{}).
 			SchemaType(map[string]string{
 				dialect.MySQL: "decimal(37,18)",

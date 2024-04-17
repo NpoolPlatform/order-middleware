@@ -139,6 +139,26 @@ func (ptu *PaymentTransferUpdate) ClearCoinTypeID() *PaymentTransferUpdate {
 	return ptu
 }
 
+// SetAccountID sets the "account_id" field.
+func (ptu *PaymentTransferUpdate) SetAccountID(u uuid.UUID) *PaymentTransferUpdate {
+	ptu.mutation.SetAccountID(u)
+	return ptu
+}
+
+// SetNillableAccountID sets the "account_id" field if the given value is not nil.
+func (ptu *PaymentTransferUpdate) SetNillableAccountID(u *uuid.UUID) *PaymentTransferUpdate {
+	if u != nil {
+		ptu.SetAccountID(*u)
+	}
+	return ptu
+}
+
+// ClearAccountID clears the value of the "account_id" field.
+func (ptu *PaymentTransferUpdate) ClearAccountID() *PaymentTransferUpdate {
+	ptu.mutation.ClearAccountID()
+	return ptu
+}
+
 // SetAmount sets the "amount" field.
 func (ptu *PaymentTransferUpdate) SetAmount(d decimal.Decimal) *PaymentTransferUpdate {
 	ptu.mutation.SetAmount(d)
@@ -452,6 +472,19 @@ func (ptu *PaymentTransferUpdate) sqlSave(ctx context.Context) (n int, err error
 			Column: paymenttransfer.FieldCoinTypeID,
 		})
 	}
+	if value, ok := ptu.mutation.AccountID(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Value:  value,
+			Column: paymenttransfer.FieldAccountID,
+		})
+	}
+	if ptu.mutation.AccountIDCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Column: paymenttransfer.FieldAccountID,
+		})
+	}
 	if value, ok := ptu.mutation.Amount(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeOther,
@@ -670,6 +703,26 @@ func (ptuo *PaymentTransferUpdateOne) SetNillableCoinTypeID(u *uuid.UUID) *Payme
 // ClearCoinTypeID clears the value of the "coin_type_id" field.
 func (ptuo *PaymentTransferUpdateOne) ClearCoinTypeID() *PaymentTransferUpdateOne {
 	ptuo.mutation.ClearCoinTypeID()
+	return ptuo
+}
+
+// SetAccountID sets the "account_id" field.
+func (ptuo *PaymentTransferUpdateOne) SetAccountID(u uuid.UUID) *PaymentTransferUpdateOne {
+	ptuo.mutation.SetAccountID(u)
+	return ptuo
+}
+
+// SetNillableAccountID sets the "account_id" field if the given value is not nil.
+func (ptuo *PaymentTransferUpdateOne) SetNillableAccountID(u *uuid.UUID) *PaymentTransferUpdateOne {
+	if u != nil {
+		ptuo.SetAccountID(*u)
+	}
+	return ptuo
+}
+
+// ClearAccountID clears the value of the "account_id" field.
+func (ptuo *PaymentTransferUpdateOne) ClearAccountID() *PaymentTransferUpdateOne {
+	ptuo.mutation.ClearAccountID()
 	return ptuo
 }
 
@@ -1014,6 +1067,19 @@ func (ptuo *PaymentTransferUpdateOne) sqlSave(ctx context.Context) (_node *Payme
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeUUID,
 			Column: paymenttransfer.FieldCoinTypeID,
+		})
+	}
+	if value, ok := ptuo.mutation.AccountID(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Value:  value,
+			Column: paymenttransfer.FieldAccountID,
+		})
+	}
+	if ptuo.mutation.AccountIDCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Column: paymenttransfer.FieldAccountID,
 		})
 	}
 	if value, ok := ptuo.mutation.Amount(); ok {

@@ -29,6 +29,8 @@ type PaymentTransfer struct {
 	OrderID uuid.UUID `json:"order_id,omitempty"`
 	// CoinTypeID holds the value of the "coin_type_id" field.
 	CoinTypeID uuid.UUID `json:"coin_type_id,omitempty"`
+	// AccountID holds the value of the "account_id" field.
+	AccountID uuid.UUID `json:"account_id,omitempty"`
 	// Amount holds the value of the "amount" field.
 	Amount decimal.Decimal `json:"amount,omitempty"`
 	// StartAmount holds the value of the "start_amount" field.
@@ -56,7 +58,7 @@ func (*PaymentTransfer) scanValues(columns []string) ([]interface{}, error) {
 			values[i] = new(sql.NullInt64)
 		case paymenttransfer.FieldTransactionID:
 			values[i] = new(sql.NullString)
-		case paymenttransfer.FieldEntID, paymenttransfer.FieldOrderID, paymenttransfer.FieldCoinTypeID:
+		case paymenttransfer.FieldEntID, paymenttransfer.FieldOrderID, paymenttransfer.FieldCoinTypeID, paymenttransfer.FieldAccountID:
 			values[i] = new(uuid.UUID)
 		default:
 			return nil, fmt.Errorf("unexpected column %q for type PaymentTransfer", columns[i])
@@ -114,6 +116,12 @@ func (pt *PaymentTransfer) assignValues(columns []string, values []interface{}) 
 				return fmt.Errorf("unexpected type %T for field coin_type_id", values[i])
 			} else if value != nil {
 				pt.CoinTypeID = *value
+			}
+		case paymenttransfer.FieldAccountID:
+			if value, ok := values[i].(*uuid.UUID); !ok {
+				return fmt.Errorf("unexpected type %T for field account_id", values[i])
+			} else if value != nil {
+				pt.AccountID = *value
 			}
 		case paymenttransfer.FieldAmount:
 			if value, ok := values[i].(*decimal.Decimal); !ok {
@@ -202,6 +210,9 @@ func (pt *PaymentTransfer) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("coin_type_id=")
 	builder.WriteString(fmt.Sprintf("%v", pt.CoinTypeID))
+	builder.WriteString(", ")
+	builder.WriteString("account_id=")
+	builder.WriteString(fmt.Sprintf("%v", pt.AccountID))
 	builder.WriteString(", ")
 	builder.WriteString("amount=")
 	builder.WriteString(fmt.Sprintf("%v", pt.Amount))

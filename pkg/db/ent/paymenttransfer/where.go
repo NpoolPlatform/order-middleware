@@ -122,6 +122,13 @@ func CoinTypeID(v uuid.UUID) predicate.PaymentTransfer {
 	})
 }
 
+// AccountID applies equality check predicate on the "account_id" field. It's identical to AccountIDEQ.
+func AccountID(v uuid.UUID) predicate.PaymentTransfer {
+	return predicate.PaymentTransfer(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldAccountID), v))
+	})
+}
+
 // Amount applies equality check predicate on the "amount" field. It's identical to AmountEQ.
 func Amount(v decimal.Decimal) predicate.PaymentTransfer {
 	return predicate.PaymentTransfer(func(s *sql.Selector) {
@@ -580,6 +587,84 @@ func CoinTypeIDIsNil() predicate.PaymentTransfer {
 func CoinTypeIDNotNil() predicate.PaymentTransfer {
 	return predicate.PaymentTransfer(func(s *sql.Selector) {
 		s.Where(sql.NotNull(s.C(FieldCoinTypeID)))
+	})
+}
+
+// AccountIDEQ applies the EQ predicate on the "account_id" field.
+func AccountIDEQ(v uuid.UUID) predicate.PaymentTransfer {
+	return predicate.PaymentTransfer(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldAccountID), v))
+	})
+}
+
+// AccountIDNEQ applies the NEQ predicate on the "account_id" field.
+func AccountIDNEQ(v uuid.UUID) predicate.PaymentTransfer {
+	return predicate.PaymentTransfer(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldAccountID), v))
+	})
+}
+
+// AccountIDIn applies the In predicate on the "account_id" field.
+func AccountIDIn(vs ...uuid.UUID) predicate.PaymentTransfer {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.PaymentTransfer(func(s *sql.Selector) {
+		s.Where(sql.In(s.C(FieldAccountID), v...))
+	})
+}
+
+// AccountIDNotIn applies the NotIn predicate on the "account_id" field.
+func AccountIDNotIn(vs ...uuid.UUID) predicate.PaymentTransfer {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.PaymentTransfer(func(s *sql.Selector) {
+		s.Where(sql.NotIn(s.C(FieldAccountID), v...))
+	})
+}
+
+// AccountIDGT applies the GT predicate on the "account_id" field.
+func AccountIDGT(v uuid.UUID) predicate.PaymentTransfer {
+	return predicate.PaymentTransfer(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldAccountID), v))
+	})
+}
+
+// AccountIDGTE applies the GTE predicate on the "account_id" field.
+func AccountIDGTE(v uuid.UUID) predicate.PaymentTransfer {
+	return predicate.PaymentTransfer(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldAccountID), v))
+	})
+}
+
+// AccountIDLT applies the LT predicate on the "account_id" field.
+func AccountIDLT(v uuid.UUID) predicate.PaymentTransfer {
+	return predicate.PaymentTransfer(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldAccountID), v))
+	})
+}
+
+// AccountIDLTE applies the LTE predicate on the "account_id" field.
+func AccountIDLTE(v uuid.UUID) predicate.PaymentTransfer {
+	return predicate.PaymentTransfer(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldAccountID), v))
+	})
+}
+
+// AccountIDIsNil applies the IsNil predicate on the "account_id" field.
+func AccountIDIsNil() predicate.PaymentTransfer {
+	return predicate.PaymentTransfer(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldAccountID)))
+	})
+}
+
+// AccountIDNotNil applies the NotNil predicate on the "account_id" field.
+func AccountIDNotNil() predicate.PaymentTransfer {
+	return predicate.PaymentTransfer(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldAccountID)))
 	})
 }
 

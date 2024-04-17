@@ -107,6 +107,20 @@ func (ptc *PaymentTransferCreate) SetNillableCoinTypeID(u *uuid.UUID) *PaymentTr
 	return ptc
 }
 
+// SetAccountID sets the "account_id" field.
+func (ptc *PaymentTransferCreate) SetAccountID(u uuid.UUID) *PaymentTransferCreate {
+	ptc.mutation.SetAccountID(u)
+	return ptc
+}
+
+// SetNillableAccountID sets the "account_id" field if the given value is not nil.
+func (ptc *PaymentTransferCreate) SetNillableAccountID(u *uuid.UUID) *PaymentTransferCreate {
+	if u != nil {
+		ptc.SetAccountID(*u)
+	}
+	return ptc
+}
+
 // SetAmount sets the "amount" field.
 func (ptc *PaymentTransferCreate) SetAmount(d decimal.Decimal) *PaymentTransferCreate {
 	ptc.mutation.SetAmount(d)
@@ -332,6 +346,13 @@ func (ptc *PaymentTransferCreate) defaults() error {
 		v := paymenttransfer.DefaultCoinTypeID()
 		ptc.mutation.SetCoinTypeID(v)
 	}
+	if _, ok := ptc.mutation.AccountID(); !ok {
+		if paymenttransfer.DefaultAccountID == nil {
+			return fmt.Errorf("ent: uninitialized paymenttransfer.DefaultAccountID (forgotten import ent/runtime?)")
+		}
+		v := paymenttransfer.DefaultAccountID()
+		ptc.mutation.SetAccountID(v)
+	}
 	if _, ok := ptc.mutation.Amount(); !ok {
 		v := paymenttransfer.DefaultAmount
 		ptc.mutation.SetAmount(v)
@@ -458,6 +479,14 @@ func (ptc *PaymentTransferCreate) createSpec() (*PaymentTransfer, *sqlgraph.Crea
 			Column: paymenttransfer.FieldCoinTypeID,
 		})
 		_node.CoinTypeID = value
+	}
+	if value, ok := ptc.mutation.AccountID(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Value:  value,
+			Column: paymenttransfer.FieldAccountID,
+		})
+		_node.AccountID = value
 	}
 	if value, ok := ptc.mutation.Amount(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -668,6 +697,24 @@ func (u *PaymentTransferUpsert) UpdateCoinTypeID() *PaymentTransferUpsert {
 // ClearCoinTypeID clears the value of the "coin_type_id" field.
 func (u *PaymentTransferUpsert) ClearCoinTypeID() *PaymentTransferUpsert {
 	u.SetNull(paymenttransfer.FieldCoinTypeID)
+	return u
+}
+
+// SetAccountID sets the "account_id" field.
+func (u *PaymentTransferUpsert) SetAccountID(v uuid.UUID) *PaymentTransferUpsert {
+	u.Set(paymenttransfer.FieldAccountID, v)
+	return u
+}
+
+// UpdateAccountID sets the "account_id" field to the value that was provided on create.
+func (u *PaymentTransferUpsert) UpdateAccountID() *PaymentTransferUpsert {
+	u.SetExcluded(paymenttransfer.FieldAccountID)
+	return u
+}
+
+// ClearAccountID clears the value of the "account_id" field.
+func (u *PaymentTransferUpsert) ClearAccountID() *PaymentTransferUpsert {
+	u.SetNull(paymenttransfer.FieldAccountID)
 	return u
 }
 
@@ -963,6 +1010,27 @@ func (u *PaymentTransferUpsertOne) UpdateCoinTypeID() *PaymentTransferUpsertOne 
 func (u *PaymentTransferUpsertOne) ClearCoinTypeID() *PaymentTransferUpsertOne {
 	return u.Update(func(s *PaymentTransferUpsert) {
 		s.ClearCoinTypeID()
+	})
+}
+
+// SetAccountID sets the "account_id" field.
+func (u *PaymentTransferUpsertOne) SetAccountID(v uuid.UUID) *PaymentTransferUpsertOne {
+	return u.Update(func(s *PaymentTransferUpsert) {
+		s.SetAccountID(v)
+	})
+}
+
+// UpdateAccountID sets the "account_id" field to the value that was provided on create.
+func (u *PaymentTransferUpsertOne) UpdateAccountID() *PaymentTransferUpsertOne {
+	return u.Update(func(s *PaymentTransferUpsert) {
+		s.UpdateAccountID()
+	})
+}
+
+// ClearAccountID clears the value of the "account_id" field.
+func (u *PaymentTransferUpsertOne) ClearAccountID() *PaymentTransferUpsertOne {
+	return u.Update(func(s *PaymentTransferUpsert) {
+		s.ClearAccountID()
 	})
 }
 
@@ -1444,6 +1512,27 @@ func (u *PaymentTransferUpsertBulk) UpdateCoinTypeID() *PaymentTransferUpsertBul
 func (u *PaymentTransferUpsertBulk) ClearCoinTypeID() *PaymentTransferUpsertBulk {
 	return u.Update(func(s *PaymentTransferUpsert) {
 		s.ClearCoinTypeID()
+	})
+}
+
+// SetAccountID sets the "account_id" field.
+func (u *PaymentTransferUpsertBulk) SetAccountID(v uuid.UUID) *PaymentTransferUpsertBulk {
+	return u.Update(func(s *PaymentTransferUpsert) {
+		s.SetAccountID(v)
+	})
+}
+
+// UpdateAccountID sets the "account_id" field to the value that was provided on create.
+func (u *PaymentTransferUpsertBulk) UpdateAccountID() *PaymentTransferUpsertBulk {
+	return u.Update(func(s *PaymentTransferUpsert) {
+		s.UpdateAccountID()
+	})
+}
+
+// ClearAccountID clears the value of the "account_id" field.
+func (u *PaymentTransferUpsertBulk) ClearAccountID() *PaymentTransferUpsertBulk {
+	return u.Update(func(s *PaymentTransferUpsert) {
+		s.ClearAccountID()
 	})
 }
 

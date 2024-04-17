@@ -25,6 +25,8 @@ const (
 	FieldOrderID = "order_id"
 	// FieldCoinTypeID holds the string denoting the coin_type_id field in the database.
 	FieldCoinTypeID = "coin_type_id"
+	// FieldAccountID holds the string denoting the account_id field in the database.
+	FieldAccountID = "account_id"
 	// FieldAmount holds the string denoting the amount field in the database.
 	FieldAmount = "amount"
 	// FieldStartAmount holds the string denoting the start_amount field in the database.
@@ -52,6 +54,7 @@ var Columns = []string{
 	FieldEntID,
 	FieldOrderID,
 	FieldCoinTypeID,
+	FieldAccountID,
 	FieldAmount,
 	FieldStartAmount,
 	FieldTransactionID,
@@ -94,6 +97,8 @@ var (
 	DefaultOrderID func() uuid.UUID
 	// DefaultCoinTypeID holds the default value on creation for the "coin_type_id" field.
 	DefaultCoinTypeID func() uuid.UUID
+	// DefaultAccountID holds the default value on creation for the "account_id" field.
+	DefaultAccountID func() uuid.UUID
 	// DefaultAmount holds the default value on creation for the "amount" field.
 	DefaultAmount decimal.Decimal
 	// DefaultStartAmount holds the default value on creation for the "start_amount" field.

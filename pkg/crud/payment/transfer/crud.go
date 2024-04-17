@@ -14,6 +14,7 @@ type Req struct {
 	EntID                *uuid.UUID
 	OrderID              *uuid.UUID
 	CoinTypeID           *uuid.UUID
+	AccountID            *uuid.UUID
 	Amount               *decimal.Decimal
 	StartAmount          *decimal.Decimal
 	TransactionID        *string
@@ -33,6 +34,9 @@ func CreateSet(c *ent.PaymentTransferCreate, req *Req) *ent.PaymentTransferCreat
 	}
 	if req.CoinTypeID != nil {
 		c.SetCoinTypeID(*req.CoinTypeID)
+	}
+	if req.AccountID != nil {
+		c.SetAccountID(*req.AccountID)
 	}
 	if req.Amount != nil {
 		c.SetAmount(*req.Amount)

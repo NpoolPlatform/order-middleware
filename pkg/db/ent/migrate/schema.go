@@ -417,6 +417,7 @@ var (
 		{Name: "ent_id", Type: field.TypeUUID, Unique: true},
 		{Name: "order_id", Type: field.TypeUUID, Nullable: true},
 		{Name: "coin_type_id", Type: field.TypeUUID, Nullable: true},
+		{Name: "account_id", Type: field.TypeUUID, Nullable: true},
 		{Name: "amount", Type: field.TypeOther, Nullable: true, SchemaType: map[string]string{"mysql": "decimal(37,18)"}},
 		{Name: "start_amount", Type: field.TypeOther, Nullable: true, SchemaType: map[string]string{"mysql": "decimal(37,18)"}},
 		{Name: "transaction_id", Type: field.TypeString, Nullable: true, Default: ""},

@@ -1,37 +1,32 @@
 //nolint:dupl
-package config
+package appconfig
 
 import (
 	"context"
 	"fmt"
 
-	basetypes "github.com/NpoolPlatform/message/npool/basetypes/order/v1"
+	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
+	types "github.com/NpoolPlatform/message/npool/basetypes/order/v1"
 	npool "github.com/NpoolPlatform/message/npool/order/mw/v1/app/config"
 	constant "github.com/NpoolPlatform/order-middleware/pkg/const"
-	configcrud "github.com/NpoolPlatform/order-middleware/pkg/crud/app/config"
-	"github.com/shopspring/decimal"
-
-	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
+	appconfigcrud "github.com/NpoolPlatform/order-middleware/pkg/crud/app/config"
 
 	"github.com/google/uuid"
+	"github.com/shopspring/decimal"
 )
 
 type Handler struct {
-	ID                        *uint32
-	EntID                     *uuid.UUID
-	AppID                     *uuid.UUID
-	SendCouponMode            *basetypes.SendCouponMode
-	SendCouponProbability     *decimal.Decimal
-	CashableProfitProbability *decimal.Decimal
-	Enabled                   *bool
-	Reqs                      []*npool.SimulateConfigReq
-	Conds                     *configcrud.Conds
-	Offset                    int32
-	Limit                     int32
+	ID *uint32
+	appconfigcrud.Req
+	AppConfigConds *appconfigcrud.Conds
+	Offset         int32
+	Limit          int32
 }
 
 func NewHandler(ctx context.Context, options ...func(context.Context, *Handler) error) (*Handler, error) {
-	handler := &Handler{}
+	handler := &Handler{
+		AppConfigConds: &appconfigcrud.Conds{},
+	}
 	for _, opt := range options {
 		if err := opt(ctx, handler); err != nil {
 			return nil, err
@@ -87,136 +82,113 @@ func WithAppID(id *string, must bool) func(context.Context, *Handler) error {
 	}
 }
 
-func WithSendCouponMode(sendcouponmode *basetypes.SendCouponMode, must bool) func(context.Context, *Handler) error {
+func WithEnableSimulateOrder(b *bool, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
-		if sendcouponmode == nil {
+		h.EnableSimulateOrder = b
+		return nil
+	}
+}
+
+func WithSimulateOrderCouponMode(e *types.SimulateOrderCouponMode, must bool) func(context.Context, *Handler) error {
+	return func(ctx context.Context, h *Handler) error {
+		if e == nil {
 			if must {
-				return fmt.Errorf("invalid sendcouponmode")
+				return fmt.Errorf("invalid simulateordercouponmode")
 			}
 			return nil
 		}
-		switch *sendcouponmode {
-		case basetypes.SendCouponMode_WithoutCoupon:
-		case basetypes.SendCouponMode_FirstBenifit:
-		case basetypes.SendCouponMode_RandomBenifit:
-		case basetypes.SendCouponMode_FirstAndRandomBenifit:
+		switch *e {
+		case types.SimulateOrderCouponMode_WithoutCoupon:
+		case types.SimulateOrderCouponMode_FirstBenifit:
+		case types.SimulateOrderCouponMode_RandomBenifit:
+		case types.SimulateOrderCouponMode_FirstAndRandomBenifit:
 		default:
-			return fmt.Errorf("invalid sendcouponmode")
+			return fmt.Errorf("invalid simulateordercouponmode")
 		}
-		h.SendCouponMode = sendcouponmode
+		h.SimulateOrderCouponMode = e
 		return nil
 	}
 }
 
-func WithSendCouponProbability(value *string, must bool) func(context.Context, *Handler) error {
+func WithSimulateOrderCouponProbability(s *string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
-		if value == nil {
+		if s == nil {
 			if must {
-				return fmt.Errorf("invalid sendcouponprobability")
+				return fmt.Errorf("invalid simulateordercouponprobability")
 			}
 			return nil
 		}
-		amount, err := decimal.NewFromString(*value)
+		amount, err := decimal.NewFromString(*s)
 		if err != nil {
 			return err
 		}
 		if amount.Cmp(decimal.NewFromInt(0)) < 0 {
-			return fmt.Errorf("sendcouponprobability is less than 0")
+			return fmt.Errorf("invalid simulateordercouponprobability")
 		}
 		if amount.Cmp(decimal.NewFromInt(1)) > 0 {
-			return fmt.Errorf("sendcouponprobability is more than 1")
+			return fmt.Errorf("invalid simulateordercouponprobability")
 		}
-		h.SendCouponProbability = &amount
+		h.SimulateOrderCouponProbability = &amount
 		return nil
 	}
 }
 
-func WithCashableProfitProbability(value *string, must bool) func(context.Context, *Handler) error {
+func WithSimulateOrderCashableProfitProbability(s *string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
-		if value == nil {
+		if s == nil {
 			if must {
-				return fmt.Errorf("invalid cashableprofitprobability")
+				return fmt.Errorf("invalid simulateordercashableprofitprobability")
 			}
 			return nil
 		}
-		amount, err := decimal.NewFromString(*value)
+		amount, err := decimal.NewFromString(*s)
 		if err != nil {
 			return err
 		}
 		if amount.Cmp(decimal.NewFromInt(0)) < 0 {
-			return fmt.Errorf("cashableprofitprobability is less than 0")
+			return fmt.Errorf("invalid simulateordercashableprofitprobability")
 		}
 		if amount.Cmp(decimal.NewFromInt(1)) > 0 {
-			return fmt.Errorf("cashableprofitprobability is more than 1")
+			return fmt.Errorf("invalid simulateordercashableprofitprobability")
 		}
-		h.CashableProfitProbability = &amount
+		h.SimulateOrderCashableProfitProbability = &amount
 		return nil
 	}
 }
 
-func WithEnabled(value *bool, must bool) func(context.Context, *Handler) error {
-	return func(ctx context.Context, h *Handler) error {
-		if value == nil {
-			if must {
-				return fmt.Errorf("invalid enabled")
-			}
-			return nil
+func (h *Handler) withAppConfigConds(conds *npool.Conds) error {
+	if conds.ID != nil {
+		h.AppConfigConds.ID = &cruder.Cond{
+			Op: conds.GetID().GetOp(), Val: conds.GetID().GetValue(),
 		}
-		h.Enabled = value
-		return nil
+	}
+	if conds.EntID != nil {
+		id, err := uuid.Parse(conds.GetEntID().GetValue())
+		if err != nil {
+			return err
+		}
+		h.AppConfigConds.EntID = &cruder.Cond{
+			Op: conds.GetEntID().GetOp(), Val: id,
+		}
+	}
+	if conds.AppID != nil {
+		id, err := uuid.Parse(conds.GetAppID().GetValue())
+		if err != nil {
+			return err
+		}
+		h.AppConfigConds.AppID = &cruder.Cond{
+			Op:  conds.GetAppID().GetOp(),
+			Val: id,
+		}
 	}
 }
 
 func WithConds(conds *npool.Conds) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
-		h.Conds = &configcrud.Conds{}
 		if conds == nil {
 			return nil
 		}
-		if conds.ID != nil {
-			h.Conds.ID = &cruder.Cond{
-				Op: conds.GetID().GetOp(), Val: conds.GetID().GetValue(),
-			}
-		}
-		if conds.EntID != nil {
-			id, err := uuid.Parse(conds.GetEntID().GetValue())
-			if err != nil {
-				return err
-			}
-			h.Conds.EntID = &cruder.Cond{
-				Op: conds.GetEntID().GetOp(), Val: id,
-			}
-		}
-		if conds.AppID != nil {
-			id, err := uuid.Parse(conds.GetAppID().GetValue())
-			if err != nil {
-				return err
-			}
-			h.Conds.AppID = &cruder.Cond{
-				Op:  conds.GetAppID().GetOp(),
-				Val: id,
-			}
-		}
-		if conds.SendCouponMode != nil {
-			switch conds.GetSendCouponMode().GetValue() {
-			case uint32(basetypes.SendCouponMode_WithoutCoupon):
-			case uint32(basetypes.SendCouponMode_FirstBenifit):
-			case uint32(basetypes.SendCouponMode_RandomBenifit):
-			case uint32(basetypes.SendCouponMode_FirstAndRandomBenifit):
-			default:
-				return fmt.Errorf("invalid sendcouponmode")
-			}
-			_type := conds.GetSendCouponMode().GetValue()
-			h.Conds.SendCouponMode = &cruder.Cond{Op: conds.GetSendCouponMode().GetOp(), Val: basetypes.SendCouponMode(_type)}
-		}
-		if conds.Enabled != nil {
-			h.Conds.Enabled = &cruder.Cond{
-				Op:  conds.GetEnabled().GetOp(),
-				Val: conds.GetEnabled().GetValue(),
-			}
-		}
-
-		return nil
+		return h.withAppConfigConds(conds)
 	}
 }
 

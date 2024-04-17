@@ -17,6 +17,7 @@ type Req struct {
 	AppID                                  *uuid.UUID
 	EnableSimulateOrder                    *bool
 	SimulateOrderCouponMode                *types.SimulateOrderCouponMode
+	SimulateOrderCouponProbability         *decimal.Decimal
 	SimulateOrderCashableProfitProbability *decimal.Decimal
 	MaxUnpaidOrders                        *uint32
 	DeletedAt                              *uint32
@@ -35,6 +36,9 @@ func CreateSet(c *ent.AppConfigCreate, req *Req) *ent.AppConfigCreate {
 	if req.SimulateOrderCouponMode != nil {
 		c.SetSimulateOrderCouponMode(req.SimulateOrderCouponMode.String())
 	}
+	if req.SimulateOrderCouponProbability != nil {
+		c.SetSimulateOrderCouponProbability(*req.SimulateOrderCouponProbability)
+	}
 	if req.SimulateOrderCashableProfitProbability != nil {
 		c.SetSimulateOrderCashableProfitProbability(*req.SimulateOrderCashableProfitProbability)
 	}
@@ -50,6 +54,9 @@ func UpdateSet(u *ent.AppConfigUpdateOne, req *Req) *ent.AppConfigUpdateOne {
 	}
 	if req.SimulateOrderCouponMode != nil {
 		u.SetSimulateOrderCouponMode(req.SimulateOrderCouponMode.String())
+	}
+	if req.SimulateOrderCouponProbability != nil {
+		u.SetSimulateOrderCouponProbability(*req.SimulateOrderCouponProbability)
 	}
 	if req.SimulateOrderCashableProfitProbability != nil {
 		u.SetSimulateOrderCashableProfitProbability(*req.SimulateOrderCashableProfitProbability)
