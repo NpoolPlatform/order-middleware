@@ -98,6 +98,14 @@ func (occ *OrderCouponCreate) SetCouponID(u uuid.UUID) *OrderCouponCreate {
 	return occ
 }
 
+// SetNillableCouponID sets the "coupon_id" field if the given value is not nil.
+func (occ *OrderCouponCreate) SetNillableCouponID(u *uuid.UUID) *OrderCouponCreate {
+	if u != nil {
+		occ.SetCouponID(*u)
+	}
+	return occ
+}
+
 // SetID sets the "id" field.
 func (occ *OrderCouponCreate) SetID(u uint32) *OrderCouponCreate {
 	occ.mutation.SetID(u)
@@ -318,7 +326,7 @@ func (occ *OrderCouponCreate) createSpec() (*OrderCoupon, *sqlgraph.CreateSpec) 
 	}
 	if value, ok := occ.mutation.CouponID(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
-			Type:   field.TypeJSON,
+			Type:   field.TypeUUID,
 			Value:  value,
 			Column: ordercoupon.FieldCouponID,
 		})

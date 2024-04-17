@@ -80,6 +80,8 @@ var (
 	DefaultDeletedAt func() uint32
 	// DefaultEntID holds the default value on creation for the "ent_id" field.
 	DefaultEntID func() uuid.UUID
+	// DefaultOrderID holds the default value on creation for the "order_id" field.
+	DefaultOrderID func() uuid.UUID
 	// DefaultStartAt holds the default value on creation for the "start_at" field.
 	DefaultStartAt uint32
 	// DefaultEndAt holds the default value on creation for the "end_at" field.

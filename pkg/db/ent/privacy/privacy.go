@@ -150,6 +150,30 @@ func DenyMutationOperationRule(op ent.Op) MutationRule {
 	return OnMutationOperation(rule, op)
 }
 
+// The AppConfigQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type AppConfigQueryRuleFunc func(context.Context, *ent.AppConfigQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f AppConfigQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.AppConfigQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("ent/privacy: unexpected query type %T, expect *ent.AppConfigQuery", q)
+}
+
+// The AppConfigMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type AppConfigMutationRuleFunc func(context.Context, *ent.AppConfigMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f AppConfigMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
+	if m, ok := m.(*ent.AppConfigMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.AppConfigMutation", m)
+}
+
 // The CompensateQueryRuleFunc type is an adapter to allow the use of ordinary
 // functions as a query rule.
 type CompensateQueryRuleFunc func(context.Context, *ent.CompensateQuery) error
@@ -366,6 +390,30 @@ func (f OrderStateMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Muta
 	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.OrderStateMutation", m)
 }
 
+// The OrderStateBaseQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type OrderStateBaseQueryRuleFunc func(context.Context, *ent.OrderStateBaseQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f OrderStateBaseQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.OrderStateBaseQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("ent/privacy: unexpected query type %T, expect *ent.OrderStateBaseQuery", q)
+}
+
+// The OrderStateBaseMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type OrderStateBaseMutationRuleFunc func(context.Context, *ent.OrderStateBaseMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f OrderStateBaseMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
+	if m, ok := m.(*ent.OrderStateBaseMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.OrderStateBaseMutation", m)
+}
+
 // The OutOfGasQueryRuleFunc type is an adapter to allow the use of ordinary
 // functions as a query rule.
 type OutOfGasQueryRuleFunc func(context.Context, *ent.OutOfGasQuery) error
@@ -438,28 +486,28 @@ func (f PowerRentalMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mut
 	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.PowerRentalMutation", m)
 }
 
-// The SimulateConfigQueryRuleFunc type is an adapter to allow the use of ordinary
+// The PowerRentalStateQueryRuleFunc type is an adapter to allow the use of ordinary
 // functions as a query rule.
-type SimulateConfigQueryRuleFunc func(context.Context, *ent.SimulateConfigQuery) error
+type PowerRentalStateQueryRuleFunc func(context.Context, *ent.PowerRentalStateQuery) error
 
 // EvalQuery return f(ctx, q).
-func (f SimulateConfigQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
-	if q, ok := q.(*ent.SimulateConfigQuery); ok {
+func (f PowerRentalStateQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.PowerRentalStateQuery); ok {
 		return f(ctx, q)
 	}
-	return Denyf("ent/privacy: unexpected query type %T, expect *ent.SimulateConfigQuery", q)
+	return Denyf("ent/privacy: unexpected query type %T, expect *ent.PowerRentalStateQuery", q)
 }
 
-// The SimulateConfigMutationRuleFunc type is an adapter to allow the use of ordinary
+// The PowerRentalStateMutationRuleFunc type is an adapter to allow the use of ordinary
 // functions as a mutation rule.
-type SimulateConfigMutationRuleFunc func(context.Context, *ent.SimulateConfigMutation) error
+type PowerRentalStateMutationRuleFunc func(context.Context, *ent.PowerRentalStateMutation) error
 
 // EvalMutation calls f(ctx, m).
-func (f SimulateConfigMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
-	if m, ok := m.(*ent.SimulateConfigMutation); ok {
+func (f PowerRentalStateMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
+	if m, ok := m.(*ent.PowerRentalStateMutation); ok {
 		return f(ctx, m)
 	}
-	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.SimulateConfigMutation", m)
+	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.PowerRentalStateMutation", m)
 }
 
 type (
@@ -497,6 +545,8 @@ var _ QueryMutationRule = FilterFunc(nil)
 
 func queryFilter(q ent.Query) (Filter, error) {
 	switch q := q.(type) {
+	case *ent.AppConfigQuery:
+		return q.Filter(), nil
 	case *ent.CompensateQuery:
 		return q.Filter(), nil
 	case *ent.OrderQuery:
@@ -515,13 +565,15 @@ func queryFilter(q ent.Query) (Filter, error) {
 		return q.Filter(), nil
 	case *ent.OrderStateQuery:
 		return q.Filter(), nil
+	case *ent.OrderStateBaseQuery:
+		return q.Filter(), nil
 	case *ent.OutOfGasQuery:
 		return q.Filter(), nil
 	case *ent.PaymentQuery:
 		return q.Filter(), nil
 	case *ent.PowerRentalQuery:
 		return q.Filter(), nil
-	case *ent.SimulateConfigQuery:
+	case *ent.PowerRentalStateQuery:
 		return q.Filter(), nil
 	default:
 		return nil, Denyf("ent/privacy: unexpected query type %T for query filter", q)
@@ -530,6 +582,8 @@ func queryFilter(q ent.Query) (Filter, error) {
 
 func mutationFilter(m ent.Mutation) (Filter, error) {
 	switch m := m.(type) {
+	case *ent.AppConfigMutation:
+		return m.Filter(), nil
 	case *ent.CompensateMutation:
 		return m.Filter(), nil
 	case *ent.OrderMutation:
@@ -548,13 +602,15 @@ func mutationFilter(m ent.Mutation) (Filter, error) {
 		return m.Filter(), nil
 	case *ent.OrderStateMutation:
 		return m.Filter(), nil
+	case *ent.OrderStateBaseMutation:
+		return m.Filter(), nil
 	case *ent.OutOfGasMutation:
 		return m.Filter(), nil
 	case *ent.PaymentMutation:
 		return m.Filter(), nil
 	case *ent.PowerRentalMutation:
 		return m.Filter(), nil
-	case *ent.SimulateConfigMutation:
+	case *ent.PowerRentalStateMutation:
 		return m.Filter(), nil
 	default:
 		return nil, Denyf("ent/privacy: unexpected mutation type %T for mutation filter", m)

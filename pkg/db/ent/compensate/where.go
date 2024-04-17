@@ -469,6 +469,20 @@ func OrderIDLTE(v uuid.UUID) predicate.Compensate {
 	})
 }
 
+// OrderIDIsNil applies the IsNil predicate on the "order_id" field.
+func OrderIDIsNil() predicate.Compensate {
+	return predicate.Compensate(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldOrderID)))
+	})
+}
+
+// OrderIDNotNil applies the NotNil predicate on the "order_id" field.
+func OrderIDNotNil() predicate.Compensate {
+	return predicate.Compensate(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldOrderID)))
+	})
+}
+
 // StartAtEQ applies the EQ predicate on the "start_at" field.
 func StartAtEQ(v uint32) predicate.Compensate {
 	return predicate.Compensate(func(s *sql.Selector) {

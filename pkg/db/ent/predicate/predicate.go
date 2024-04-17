@@ -6,6 +6,9 @@ import (
 	"entgo.io/ent/dialect/sql"
 )
 
+// AppConfig is the predicate function for appconfig builders.
+type AppConfig func(*sql.Selector)
+
 // Compensate is the predicate function for compensate builders.
 type Compensate func(*sql.Selector)
 
@@ -33,6 +36,9 @@ type OrderPaymentTransfer func(*sql.Selector)
 // OrderState is the predicate function for orderstate builders.
 type OrderState func(*sql.Selector)
 
+// OrderStateBase is the predicate function for orderstatebase builders.
+type OrderStateBase func(*sql.Selector)
+
 // OutOfGas is the predicate function for outofgas builders.
 type OutOfGas func(*sql.Selector)
 
@@ -42,5 +48,5 @@ type Payment func(*sql.Selector)
 // PowerRental is the predicate function for powerrental builders.
 type PowerRental func(*sql.Selector)
 
-// SimulateConfig is the predicate function for simulateconfig builders.
-type SimulateConfig func(*sql.Selector)
+// PowerRentalState is the predicate function for powerrentalstate builders.
+type PowerRentalState func(*sql.Selector)

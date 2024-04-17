@@ -129,6 +129,20 @@ func StartAmount(v decimal.Decimal) predicate.OrderPaymentTransfer {
 	})
 }
 
+// PaymentTransactionID applies equality check predicate on the "payment_transaction_id" field. It's identical to PaymentTransactionIDEQ.
+func PaymentTransactionID(v string) predicate.OrderPaymentTransfer {
+	return predicate.OrderPaymentTransfer(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldPaymentTransactionID), v))
+	})
+}
+
+// PaymentFinishAmount applies equality check predicate on the "payment_finish_amount" field. It's identical to PaymentFinishAmountEQ.
+func PaymentFinishAmount(v decimal.Decimal) predicate.OrderPaymentTransfer {
+	return predicate.OrderPaymentTransfer(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldPaymentFinishAmount), v))
+	})
+}
+
 // CreatedAtEQ applies the EQ predicate on the "created_at" field.
 func CreatedAtEQ(v uint32) predicate.OrderPaymentTransfer {
 	return predicate.OrderPaymentTransfer(func(s *sql.Selector) {
@@ -616,6 +630,197 @@ func StartAmountIsNil() predicate.OrderPaymentTransfer {
 func StartAmountNotNil() predicate.OrderPaymentTransfer {
 	return predicate.OrderPaymentTransfer(func(s *sql.Selector) {
 		s.Where(sql.NotNull(s.C(FieldStartAmount)))
+	})
+}
+
+// PaymentTransactionIDEQ applies the EQ predicate on the "payment_transaction_id" field.
+func PaymentTransactionIDEQ(v string) predicate.OrderPaymentTransfer {
+	return predicate.OrderPaymentTransfer(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldPaymentTransactionID), v))
+	})
+}
+
+// PaymentTransactionIDNEQ applies the NEQ predicate on the "payment_transaction_id" field.
+func PaymentTransactionIDNEQ(v string) predicate.OrderPaymentTransfer {
+	return predicate.OrderPaymentTransfer(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldPaymentTransactionID), v))
+	})
+}
+
+// PaymentTransactionIDIn applies the In predicate on the "payment_transaction_id" field.
+func PaymentTransactionIDIn(vs ...string) predicate.OrderPaymentTransfer {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.OrderPaymentTransfer(func(s *sql.Selector) {
+		s.Where(sql.In(s.C(FieldPaymentTransactionID), v...))
+	})
+}
+
+// PaymentTransactionIDNotIn applies the NotIn predicate on the "payment_transaction_id" field.
+func PaymentTransactionIDNotIn(vs ...string) predicate.OrderPaymentTransfer {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.OrderPaymentTransfer(func(s *sql.Selector) {
+		s.Where(sql.NotIn(s.C(FieldPaymentTransactionID), v...))
+	})
+}
+
+// PaymentTransactionIDGT applies the GT predicate on the "payment_transaction_id" field.
+func PaymentTransactionIDGT(v string) predicate.OrderPaymentTransfer {
+	return predicate.OrderPaymentTransfer(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldPaymentTransactionID), v))
+	})
+}
+
+// PaymentTransactionIDGTE applies the GTE predicate on the "payment_transaction_id" field.
+func PaymentTransactionIDGTE(v string) predicate.OrderPaymentTransfer {
+	return predicate.OrderPaymentTransfer(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldPaymentTransactionID), v))
+	})
+}
+
+// PaymentTransactionIDLT applies the LT predicate on the "payment_transaction_id" field.
+func PaymentTransactionIDLT(v string) predicate.OrderPaymentTransfer {
+	return predicate.OrderPaymentTransfer(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldPaymentTransactionID), v))
+	})
+}
+
+// PaymentTransactionIDLTE applies the LTE predicate on the "payment_transaction_id" field.
+func PaymentTransactionIDLTE(v string) predicate.OrderPaymentTransfer {
+	return predicate.OrderPaymentTransfer(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldPaymentTransactionID), v))
+	})
+}
+
+// PaymentTransactionIDContains applies the Contains predicate on the "payment_transaction_id" field.
+func PaymentTransactionIDContains(v string) predicate.OrderPaymentTransfer {
+	return predicate.OrderPaymentTransfer(func(s *sql.Selector) {
+		s.Where(sql.Contains(s.C(FieldPaymentTransactionID), v))
+	})
+}
+
+// PaymentTransactionIDHasPrefix applies the HasPrefix predicate on the "payment_transaction_id" field.
+func PaymentTransactionIDHasPrefix(v string) predicate.OrderPaymentTransfer {
+	return predicate.OrderPaymentTransfer(func(s *sql.Selector) {
+		s.Where(sql.HasPrefix(s.C(FieldPaymentTransactionID), v))
+	})
+}
+
+// PaymentTransactionIDHasSuffix applies the HasSuffix predicate on the "payment_transaction_id" field.
+func PaymentTransactionIDHasSuffix(v string) predicate.OrderPaymentTransfer {
+	return predicate.OrderPaymentTransfer(func(s *sql.Selector) {
+		s.Where(sql.HasSuffix(s.C(FieldPaymentTransactionID), v))
+	})
+}
+
+// PaymentTransactionIDIsNil applies the IsNil predicate on the "payment_transaction_id" field.
+func PaymentTransactionIDIsNil() predicate.OrderPaymentTransfer {
+	return predicate.OrderPaymentTransfer(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldPaymentTransactionID)))
+	})
+}
+
+// PaymentTransactionIDNotNil applies the NotNil predicate on the "payment_transaction_id" field.
+func PaymentTransactionIDNotNil() predicate.OrderPaymentTransfer {
+	return predicate.OrderPaymentTransfer(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldPaymentTransactionID)))
+	})
+}
+
+// PaymentTransactionIDEqualFold applies the EqualFold predicate on the "payment_transaction_id" field.
+func PaymentTransactionIDEqualFold(v string) predicate.OrderPaymentTransfer {
+	return predicate.OrderPaymentTransfer(func(s *sql.Selector) {
+		s.Where(sql.EqualFold(s.C(FieldPaymentTransactionID), v))
+	})
+}
+
+// PaymentTransactionIDContainsFold applies the ContainsFold predicate on the "payment_transaction_id" field.
+func PaymentTransactionIDContainsFold(v string) predicate.OrderPaymentTransfer {
+	return predicate.OrderPaymentTransfer(func(s *sql.Selector) {
+		s.Where(sql.ContainsFold(s.C(FieldPaymentTransactionID), v))
+	})
+}
+
+// PaymentFinishAmountEQ applies the EQ predicate on the "payment_finish_amount" field.
+func PaymentFinishAmountEQ(v decimal.Decimal) predicate.OrderPaymentTransfer {
+	return predicate.OrderPaymentTransfer(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldPaymentFinishAmount), v))
+	})
+}
+
+// PaymentFinishAmountNEQ applies the NEQ predicate on the "payment_finish_amount" field.
+func PaymentFinishAmountNEQ(v decimal.Decimal) predicate.OrderPaymentTransfer {
+	return predicate.OrderPaymentTransfer(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldPaymentFinishAmount), v))
+	})
+}
+
+// PaymentFinishAmountIn applies the In predicate on the "payment_finish_amount" field.
+func PaymentFinishAmountIn(vs ...decimal.Decimal) predicate.OrderPaymentTransfer {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.OrderPaymentTransfer(func(s *sql.Selector) {
+		s.Where(sql.In(s.C(FieldPaymentFinishAmount), v...))
+	})
+}
+
+// PaymentFinishAmountNotIn applies the NotIn predicate on the "payment_finish_amount" field.
+func PaymentFinishAmountNotIn(vs ...decimal.Decimal) predicate.OrderPaymentTransfer {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.OrderPaymentTransfer(func(s *sql.Selector) {
+		s.Where(sql.NotIn(s.C(FieldPaymentFinishAmount), v...))
+	})
+}
+
+// PaymentFinishAmountGT applies the GT predicate on the "payment_finish_amount" field.
+func PaymentFinishAmountGT(v decimal.Decimal) predicate.OrderPaymentTransfer {
+	return predicate.OrderPaymentTransfer(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldPaymentFinishAmount), v))
+	})
+}
+
+// PaymentFinishAmountGTE applies the GTE predicate on the "payment_finish_amount" field.
+func PaymentFinishAmountGTE(v decimal.Decimal) predicate.OrderPaymentTransfer {
+	return predicate.OrderPaymentTransfer(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldPaymentFinishAmount), v))
+	})
+}
+
+// PaymentFinishAmountLT applies the LT predicate on the "payment_finish_amount" field.
+func PaymentFinishAmountLT(v decimal.Decimal) predicate.OrderPaymentTransfer {
+	return predicate.OrderPaymentTransfer(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldPaymentFinishAmount), v))
+	})
+}
+
+// PaymentFinishAmountLTE applies the LTE predicate on the "payment_finish_amount" field.
+func PaymentFinishAmountLTE(v decimal.Decimal) predicate.OrderPaymentTransfer {
+	return predicate.OrderPaymentTransfer(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldPaymentFinishAmount), v))
+	})
+}
+
+// PaymentFinishAmountIsNil applies the IsNil predicate on the "payment_finish_amount" field.
+func PaymentFinishAmountIsNil() predicate.OrderPaymentTransfer {
+	return predicate.OrderPaymentTransfer(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldPaymentFinishAmount)))
+	})
+}
+
+// PaymentFinishAmountNotNil applies the NotNil predicate on the "payment_finish_amount" field.
+func PaymentFinishAmountNotNil() predicate.OrderPaymentTransfer {
+	return predicate.OrderPaymentTransfer(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldPaymentFinishAmount)))
 	})
 }
 

@@ -114,6 +114,13 @@ func OrderID(v uuid.UUID) predicate.OrderCoupon {
 	})
 }
 
+// CouponID applies equality check predicate on the "coupon_id" field. It's identical to CouponIDEQ.
+func CouponID(v uuid.UUID) predicate.OrderCoupon {
+	return predicate.OrderCoupon(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldCouponID), v))
+	})
+}
+
 // CreatedAtEQ applies the EQ predicate on the "created_at" field.
 func CreatedAtEQ(v uint32) predicate.OrderCoupon {
 	return predicate.OrderCoupon(func(s *sql.Selector) {
@@ -445,6 +452,70 @@ func OrderIDIsNil() predicate.OrderCoupon {
 func OrderIDNotNil() predicate.OrderCoupon {
 	return predicate.OrderCoupon(func(s *sql.Selector) {
 		s.Where(sql.NotNull(s.C(FieldOrderID)))
+	})
+}
+
+// CouponIDEQ applies the EQ predicate on the "coupon_id" field.
+func CouponIDEQ(v uuid.UUID) predicate.OrderCoupon {
+	return predicate.OrderCoupon(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldCouponID), v))
+	})
+}
+
+// CouponIDNEQ applies the NEQ predicate on the "coupon_id" field.
+func CouponIDNEQ(v uuid.UUID) predicate.OrderCoupon {
+	return predicate.OrderCoupon(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldCouponID), v))
+	})
+}
+
+// CouponIDIn applies the In predicate on the "coupon_id" field.
+func CouponIDIn(vs ...uuid.UUID) predicate.OrderCoupon {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.OrderCoupon(func(s *sql.Selector) {
+		s.Where(sql.In(s.C(FieldCouponID), v...))
+	})
+}
+
+// CouponIDNotIn applies the NotIn predicate on the "coupon_id" field.
+func CouponIDNotIn(vs ...uuid.UUID) predicate.OrderCoupon {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.OrderCoupon(func(s *sql.Selector) {
+		s.Where(sql.NotIn(s.C(FieldCouponID), v...))
+	})
+}
+
+// CouponIDGT applies the GT predicate on the "coupon_id" field.
+func CouponIDGT(v uuid.UUID) predicate.OrderCoupon {
+	return predicate.OrderCoupon(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldCouponID), v))
+	})
+}
+
+// CouponIDGTE applies the GTE predicate on the "coupon_id" field.
+func CouponIDGTE(v uuid.UUID) predicate.OrderCoupon {
+	return predicate.OrderCoupon(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldCouponID), v))
+	})
+}
+
+// CouponIDLT applies the LT predicate on the "coupon_id" field.
+func CouponIDLT(v uuid.UUID) predicate.OrderCoupon {
+	return predicate.OrderCoupon(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldCouponID), v))
+	})
+}
+
+// CouponIDLTE applies the LTE predicate on the "coupon_id" field.
+func CouponIDLTE(v uuid.UUID) predicate.OrderCoupon {
+	return predicate.OrderCoupon(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldCouponID), v))
 	})
 }
 

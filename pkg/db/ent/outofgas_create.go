@@ -84,6 +84,14 @@ func (oogc *OutOfGasCreate) SetOrderID(u uuid.UUID) *OutOfGasCreate {
 	return oogc
 }
 
+// SetNillableOrderID sets the "order_id" field if the given value is not nil.
+func (oogc *OutOfGasCreate) SetNillableOrderID(u *uuid.UUID) *OutOfGasCreate {
+	if u != nil {
+		oogc.SetOrderID(*u)
+	}
+	return oogc
+}
+
 // SetStartAt sets the "start_at" field.
 func (oogc *OutOfGasCreate) SetStartAt(u uint32) *OutOfGasCreate {
 	oogc.mutation.SetStartAt(u)
@@ -225,6 +233,13 @@ func (oogc *OutOfGasCreate) defaults() error {
 		v := outofgas.DefaultEntID()
 		oogc.mutation.SetEntID(v)
 	}
+	if _, ok := oogc.mutation.OrderID(); !ok {
+		if outofgas.DefaultOrderID == nil {
+			return fmt.Errorf("ent: uninitialized outofgas.DefaultOrderID (forgotten import ent/runtime?)")
+		}
+		v := outofgas.DefaultOrderID()
+		oogc.mutation.SetOrderID(v)
+	}
 	if _, ok := oogc.mutation.StartAt(); !ok {
 		v := outofgas.DefaultStartAt
 		oogc.mutation.SetStartAt(v)
@@ -249,9 +264,6 @@ func (oogc *OutOfGasCreate) check() error {
 	}
 	if _, ok := oogc.mutation.EntID(); !ok {
 		return &ValidationError{Name: "ent_id", err: errors.New(`ent: missing required field "OutOfGas.ent_id"`)}
-	}
-	if _, ok := oogc.mutation.OrderID(); !ok {
-		return &ValidationError{Name: "order_id", err: errors.New(`ent: missing required field "OutOfGas.order_id"`)}
 	}
 	return nil
 }
@@ -475,6 +487,12 @@ func (u *OutOfGasUpsert) UpdateOrderID() *OutOfGasUpsert {
 	return u
 }
 
+// ClearOrderID clears the value of the "order_id" field.
+func (u *OutOfGasUpsert) ClearOrderID() *OutOfGasUpsert {
+	u.SetNull(outofgas.FieldOrderID)
+	return u
+}
+
 // SetStartAt sets the "start_at" field.
 func (u *OutOfGasUpsert) SetStartAt(v uint32) *OutOfGasUpsert {
 	u.Set(outofgas.FieldStartAt, v)
@@ -661,6 +679,13 @@ func (u *OutOfGasUpsertOne) SetOrderID(v uuid.UUID) *OutOfGasUpsertOne {
 func (u *OutOfGasUpsertOne) UpdateOrderID() *OutOfGasUpsertOne {
 	return u.Update(func(s *OutOfGasUpsert) {
 		s.UpdateOrderID()
+	})
+}
+
+// ClearOrderID clears the value of the "order_id" field.
+func (u *OutOfGasUpsertOne) ClearOrderID() *OutOfGasUpsertOne {
+	return u.Update(func(s *OutOfGasUpsert) {
+		s.ClearOrderID()
 	})
 }
 
@@ -1023,6 +1048,13 @@ func (u *OutOfGasUpsertBulk) SetOrderID(v uuid.UUID) *OutOfGasUpsertBulk {
 func (u *OutOfGasUpsertBulk) UpdateOrderID() *OutOfGasUpsertBulk {
 	return u.Update(func(s *OutOfGasUpsert) {
 		s.UpdateOrderID()
+	})
+}
+
+// ClearOrderID clears the value of the "order_id" field.
+func (u *OutOfGasUpsertBulk) ClearOrderID() *OutOfGasUpsertBulk {
+	return u.Update(func(s *OutOfGasUpsert) {
+		s.ClearOrderID()
 	})
 }
 

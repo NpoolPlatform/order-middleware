@@ -121,6 +121,34 @@ func (optc *OrderPaymentTransferCreate) SetNillableStartAmount(d *decimal.Decima
 	return optc
 }
 
+// SetPaymentTransactionID sets the "payment_transaction_id" field.
+func (optc *OrderPaymentTransferCreate) SetPaymentTransactionID(s string) *OrderPaymentTransferCreate {
+	optc.mutation.SetPaymentTransactionID(s)
+	return optc
+}
+
+// SetNillablePaymentTransactionID sets the "payment_transaction_id" field if the given value is not nil.
+func (optc *OrderPaymentTransferCreate) SetNillablePaymentTransactionID(s *string) *OrderPaymentTransferCreate {
+	if s != nil {
+		optc.SetPaymentTransactionID(*s)
+	}
+	return optc
+}
+
+// SetPaymentFinishAmount sets the "payment_finish_amount" field.
+func (optc *OrderPaymentTransferCreate) SetPaymentFinishAmount(d decimal.Decimal) *OrderPaymentTransferCreate {
+	optc.mutation.SetPaymentFinishAmount(d)
+	return optc
+}
+
+// SetNillablePaymentFinishAmount sets the "payment_finish_amount" field if the given value is not nil.
+func (optc *OrderPaymentTransferCreate) SetNillablePaymentFinishAmount(d *decimal.Decimal) *OrderPaymentTransferCreate {
+	if d != nil {
+		optc.SetPaymentFinishAmount(*d)
+	}
+	return optc
+}
+
 // SetID sets the "id" field.
 func (optc *OrderPaymentTransferCreate) SetID(u uint32) *OrderPaymentTransferCreate {
 	optc.mutation.SetID(u)
@@ -252,6 +280,14 @@ func (optc *OrderPaymentTransferCreate) defaults() error {
 		v := orderpaymenttransfer.DefaultStartAmount
 		optc.mutation.SetStartAmount(v)
 	}
+	if _, ok := optc.mutation.PaymentTransactionID(); !ok {
+		v := orderpaymenttransfer.DefaultPaymentTransactionID
+		optc.mutation.SetPaymentTransactionID(v)
+	}
+	if _, ok := optc.mutation.PaymentFinishAmount(); !ok {
+		v := orderpaymenttransfer.DefaultPaymentFinishAmount
+		optc.mutation.SetPaymentFinishAmount(v)
+	}
 	return nil
 }
 
@@ -358,6 +394,22 @@ func (optc *OrderPaymentTransferCreate) createSpec() (*OrderPaymentTransfer, *sq
 			Column: orderpaymenttransfer.FieldStartAmount,
 		})
 		_node.StartAmount = value
+	}
+	if value, ok := optc.mutation.PaymentTransactionID(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: orderpaymenttransfer.FieldPaymentTransactionID,
+		})
+		_node.PaymentTransactionID = value
+	}
+	if value, ok := optc.mutation.PaymentFinishAmount(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeOther,
+			Value:  value,
+			Column: orderpaymenttransfer.FieldPaymentFinishAmount,
+		})
+		_node.PaymentFinishAmount = value
 	}
 	return _node, _spec
 }
@@ -530,6 +582,42 @@ func (u *OrderPaymentTransferUpsert) UpdateStartAmount() *OrderPaymentTransferUp
 // ClearStartAmount clears the value of the "start_amount" field.
 func (u *OrderPaymentTransferUpsert) ClearStartAmount() *OrderPaymentTransferUpsert {
 	u.SetNull(orderpaymenttransfer.FieldStartAmount)
+	return u
+}
+
+// SetPaymentTransactionID sets the "payment_transaction_id" field.
+func (u *OrderPaymentTransferUpsert) SetPaymentTransactionID(v string) *OrderPaymentTransferUpsert {
+	u.Set(orderpaymenttransfer.FieldPaymentTransactionID, v)
+	return u
+}
+
+// UpdatePaymentTransactionID sets the "payment_transaction_id" field to the value that was provided on create.
+func (u *OrderPaymentTransferUpsert) UpdatePaymentTransactionID() *OrderPaymentTransferUpsert {
+	u.SetExcluded(orderpaymenttransfer.FieldPaymentTransactionID)
+	return u
+}
+
+// ClearPaymentTransactionID clears the value of the "payment_transaction_id" field.
+func (u *OrderPaymentTransferUpsert) ClearPaymentTransactionID() *OrderPaymentTransferUpsert {
+	u.SetNull(orderpaymenttransfer.FieldPaymentTransactionID)
+	return u
+}
+
+// SetPaymentFinishAmount sets the "payment_finish_amount" field.
+func (u *OrderPaymentTransferUpsert) SetPaymentFinishAmount(v decimal.Decimal) *OrderPaymentTransferUpsert {
+	u.Set(orderpaymenttransfer.FieldPaymentFinishAmount, v)
+	return u
+}
+
+// UpdatePaymentFinishAmount sets the "payment_finish_amount" field to the value that was provided on create.
+func (u *OrderPaymentTransferUpsert) UpdatePaymentFinishAmount() *OrderPaymentTransferUpsert {
+	u.SetExcluded(orderpaymenttransfer.FieldPaymentFinishAmount)
+	return u
+}
+
+// ClearPaymentFinishAmount clears the value of the "payment_finish_amount" field.
+func (u *OrderPaymentTransferUpsert) ClearPaymentFinishAmount() *OrderPaymentTransferUpsert {
+	u.SetNull(orderpaymenttransfer.FieldPaymentFinishAmount)
 	return u
 }
 
@@ -720,6 +808,48 @@ func (u *OrderPaymentTransferUpsertOne) UpdateStartAmount() *OrderPaymentTransfe
 func (u *OrderPaymentTransferUpsertOne) ClearStartAmount() *OrderPaymentTransferUpsertOne {
 	return u.Update(func(s *OrderPaymentTransferUpsert) {
 		s.ClearStartAmount()
+	})
+}
+
+// SetPaymentTransactionID sets the "payment_transaction_id" field.
+func (u *OrderPaymentTransferUpsertOne) SetPaymentTransactionID(v string) *OrderPaymentTransferUpsertOne {
+	return u.Update(func(s *OrderPaymentTransferUpsert) {
+		s.SetPaymentTransactionID(v)
+	})
+}
+
+// UpdatePaymentTransactionID sets the "payment_transaction_id" field to the value that was provided on create.
+func (u *OrderPaymentTransferUpsertOne) UpdatePaymentTransactionID() *OrderPaymentTransferUpsertOne {
+	return u.Update(func(s *OrderPaymentTransferUpsert) {
+		s.UpdatePaymentTransactionID()
+	})
+}
+
+// ClearPaymentTransactionID clears the value of the "payment_transaction_id" field.
+func (u *OrderPaymentTransferUpsertOne) ClearPaymentTransactionID() *OrderPaymentTransferUpsertOne {
+	return u.Update(func(s *OrderPaymentTransferUpsert) {
+		s.ClearPaymentTransactionID()
+	})
+}
+
+// SetPaymentFinishAmount sets the "payment_finish_amount" field.
+func (u *OrderPaymentTransferUpsertOne) SetPaymentFinishAmount(v decimal.Decimal) *OrderPaymentTransferUpsertOne {
+	return u.Update(func(s *OrderPaymentTransferUpsert) {
+		s.SetPaymentFinishAmount(v)
+	})
+}
+
+// UpdatePaymentFinishAmount sets the "payment_finish_amount" field to the value that was provided on create.
+func (u *OrderPaymentTransferUpsertOne) UpdatePaymentFinishAmount() *OrderPaymentTransferUpsertOne {
+	return u.Update(func(s *OrderPaymentTransferUpsert) {
+		s.UpdatePaymentFinishAmount()
+	})
+}
+
+// ClearPaymentFinishAmount clears the value of the "payment_finish_amount" field.
+func (u *OrderPaymentTransferUpsertOne) ClearPaymentFinishAmount() *OrderPaymentTransferUpsertOne {
+	return u.Update(func(s *OrderPaymentTransferUpsert) {
+		s.ClearPaymentFinishAmount()
 	})
 }
 
@@ -1075,6 +1205,48 @@ func (u *OrderPaymentTransferUpsertBulk) UpdateStartAmount() *OrderPaymentTransf
 func (u *OrderPaymentTransferUpsertBulk) ClearStartAmount() *OrderPaymentTransferUpsertBulk {
 	return u.Update(func(s *OrderPaymentTransferUpsert) {
 		s.ClearStartAmount()
+	})
+}
+
+// SetPaymentTransactionID sets the "payment_transaction_id" field.
+func (u *OrderPaymentTransferUpsertBulk) SetPaymentTransactionID(v string) *OrderPaymentTransferUpsertBulk {
+	return u.Update(func(s *OrderPaymentTransferUpsert) {
+		s.SetPaymentTransactionID(v)
+	})
+}
+
+// UpdatePaymentTransactionID sets the "payment_transaction_id" field to the value that was provided on create.
+func (u *OrderPaymentTransferUpsertBulk) UpdatePaymentTransactionID() *OrderPaymentTransferUpsertBulk {
+	return u.Update(func(s *OrderPaymentTransferUpsert) {
+		s.UpdatePaymentTransactionID()
+	})
+}
+
+// ClearPaymentTransactionID clears the value of the "payment_transaction_id" field.
+func (u *OrderPaymentTransferUpsertBulk) ClearPaymentTransactionID() *OrderPaymentTransferUpsertBulk {
+	return u.Update(func(s *OrderPaymentTransferUpsert) {
+		s.ClearPaymentTransactionID()
+	})
+}
+
+// SetPaymentFinishAmount sets the "payment_finish_amount" field.
+func (u *OrderPaymentTransferUpsertBulk) SetPaymentFinishAmount(v decimal.Decimal) *OrderPaymentTransferUpsertBulk {
+	return u.Update(func(s *OrderPaymentTransferUpsert) {
+		s.SetPaymentFinishAmount(v)
+	})
+}
+
+// UpdatePaymentFinishAmount sets the "payment_finish_amount" field to the value that was provided on create.
+func (u *OrderPaymentTransferUpsertBulk) UpdatePaymentFinishAmount() *OrderPaymentTransferUpsertBulk {
+	return u.Update(func(s *OrderPaymentTransferUpsert) {
+		s.UpdatePaymentFinishAmount()
+	})
+}
+
+// ClearPaymentFinishAmount clears the value of the "payment_finish_amount" field.
+func (u *OrderPaymentTransferUpsertBulk) ClearPaymentFinishAmount() *OrderPaymentTransferUpsertBulk {
+	return u.Update(func(s *OrderPaymentTransferUpsert) {
+		s.ClearPaymentFinishAmount()
 	})
 }
 

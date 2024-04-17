@@ -84,6 +84,14 @@ func (cc *CompensateCreate) SetOrderID(u uuid.UUID) *CompensateCreate {
 	return cc
 }
 
+// SetNillableOrderID sets the "order_id" field if the given value is not nil.
+func (cc *CompensateCreate) SetNillableOrderID(u *uuid.UUID) *CompensateCreate {
+	if u != nil {
+		cc.SetOrderID(*u)
+	}
+	return cc
+}
+
 // SetStartAt sets the "start_at" field.
 func (cc *CompensateCreate) SetStartAt(u uint32) *CompensateCreate {
 	cc.mutation.SetStartAt(u)
@@ -267,6 +275,13 @@ func (cc *CompensateCreate) defaults() error {
 		v := compensate.DefaultEntID()
 		cc.mutation.SetEntID(v)
 	}
+	if _, ok := cc.mutation.OrderID(); !ok {
+		if compensate.DefaultOrderID == nil {
+			return fmt.Errorf("ent: uninitialized compensate.DefaultOrderID (forgotten import ent/runtime?)")
+		}
+		v := compensate.DefaultOrderID()
+		cc.mutation.SetOrderID(v)
+	}
 	if _, ok := cc.mutation.StartAt(); !ok {
 		v := compensate.DefaultStartAt
 		cc.mutation.SetStartAt(v)
@@ -303,9 +318,6 @@ func (cc *CompensateCreate) check() error {
 	}
 	if _, ok := cc.mutation.EntID(); !ok {
 		return &ValidationError{Name: "ent_id", err: errors.New(`ent: missing required field "Compensate.ent_id"`)}
-	}
-	if _, ok := cc.mutation.OrderID(); !ok {
-		return &ValidationError{Name: "order_id", err: errors.New(`ent: missing required field "Compensate.order_id"`)}
 	}
 	return nil
 }
@@ -553,6 +565,12 @@ func (u *CompensateUpsert) UpdateOrderID() *CompensateUpsert {
 	return u
 }
 
+// ClearOrderID clears the value of the "order_id" field.
+func (u *CompensateUpsert) ClearOrderID() *CompensateUpsert {
+	u.SetNull(compensate.FieldOrderID)
+	return u
+}
+
 // SetStartAt sets the "start_at" field.
 func (u *CompensateUpsert) SetStartAt(v uint32) *CompensateUpsert {
 	u.Set(compensate.FieldStartAt, v)
@@ -793,6 +811,13 @@ func (u *CompensateUpsertOne) SetOrderID(v uuid.UUID) *CompensateUpsertOne {
 func (u *CompensateUpsertOne) UpdateOrderID() *CompensateUpsertOne {
 	return u.Update(func(s *CompensateUpsert) {
 		s.UpdateOrderID()
+	})
+}
+
+// ClearOrderID clears the value of the "order_id" field.
+func (u *CompensateUpsertOne) ClearOrderID() *CompensateUpsertOne {
+	return u.Update(func(s *CompensateUpsert) {
+		s.ClearOrderID()
 	})
 }
 
@@ -1218,6 +1243,13 @@ func (u *CompensateUpsertBulk) SetOrderID(v uuid.UUID) *CompensateUpsertBulk {
 func (u *CompensateUpsertBulk) UpdateOrderID() *CompensateUpsertBulk {
 	return u.Update(func(s *CompensateUpsert) {
 		s.UpdateOrderID()
+	})
+}
+
+// ClearOrderID clears the value of the "order_id" field.
+func (u *CompensateUpsertBulk) ClearOrderID() *CompensateUpsertBulk {
+	return u.Update(func(s *CompensateUpsert) {
+		s.ClearOrderID()
 	})
 }
 

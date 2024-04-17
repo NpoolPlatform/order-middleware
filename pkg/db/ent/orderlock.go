@@ -24,10 +24,6 @@ type OrderLock struct {
 	DeletedAt uint32 `json:"deleted_at,omitempty"`
 	// EntID holds the value of the "ent_id" field.
 	EntID uuid.UUID `json:"ent_id,omitempty"`
-	// AppID holds the value of the "app_id" field.
-	AppID uuid.UUID `json:"app_id,omitempty"`
-	// UserID holds the value of the "user_id" field.
-	UserID uuid.UUID `json:"user_id,omitempty"`
 	// OrderID holds the value of the "order_id" field.
 	OrderID uuid.UUID `json:"order_id,omitempty"`
 	// LockType holds the value of the "lock_type" field.
@@ -43,7 +39,7 @@ func (*OrderLock) scanValues(columns []string) ([]interface{}, error) {
 			values[i] = new(sql.NullInt64)
 		case orderlock.FieldLockType:
 			values[i] = new(sql.NullString)
-		case orderlock.FieldEntID, orderlock.FieldAppID, orderlock.FieldUserID, orderlock.FieldOrderID:
+		case orderlock.FieldEntID, orderlock.FieldOrderID:
 			values[i] = new(uuid.UUID)
 		default:
 			return nil, fmt.Errorf("unexpected column %q for type OrderLock", columns[i])
@@ -89,18 +85,6 @@ func (ol *OrderLock) assignValues(columns []string, values []interface{}) error 
 				return fmt.Errorf("unexpected type %T for field ent_id", values[i])
 			} else if value != nil {
 				ol.EntID = *value
-			}
-		case orderlock.FieldAppID:
-			if value, ok := values[i].(*uuid.UUID); !ok {
-				return fmt.Errorf("unexpected type %T for field app_id", values[i])
-			} else if value != nil {
-				ol.AppID = *value
-			}
-		case orderlock.FieldUserID:
-			if value, ok := values[i].(*uuid.UUID); !ok {
-				return fmt.Errorf("unexpected type %T for field user_id", values[i])
-			} else if value != nil {
-				ol.UserID = *value
 			}
 		case orderlock.FieldOrderID:
 			if value, ok := values[i].(*uuid.UUID); !ok {
@@ -153,12 +137,6 @@ func (ol *OrderLock) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("ent_id=")
 	builder.WriteString(fmt.Sprintf("%v", ol.EntID))
-	builder.WriteString(", ")
-	builder.WriteString("app_id=")
-	builder.WriteString(fmt.Sprintf("%v", ol.AppID))
-	builder.WriteString(", ")
-	builder.WriteString("user_id=")
-	builder.WriteString(fmt.Sprintf("%v", ol.UserID))
 	builder.WriteString(", ")
 	builder.WriteString("order_id=")
 	builder.WriteString(fmt.Sprintf("%v", ol.OrderID))

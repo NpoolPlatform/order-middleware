@@ -28,6 +28,7 @@ type config struct {
 
 // hooks per client, for fast access.
 type hooks struct {
+	AppConfig            []ent.Hook
 	Compensate           []ent.Hook
 	Order                []ent.Hook
 	OrderBase            []ent.Hook
@@ -37,10 +38,11 @@ type hooks struct {
 	OrderPaymentContract []ent.Hook
 	OrderPaymentTransfer []ent.Hook
 	OrderState           []ent.Hook
+	OrderStateBase       []ent.Hook
 	OutOfGas             []ent.Hook
 	Payment              []ent.Hook
 	PowerRental          []ent.Hook
-	SimulateConfig       []ent.Hook
+	PowerRentalState     []ent.Hook
 }
 
 // Options applies the options on the config object.

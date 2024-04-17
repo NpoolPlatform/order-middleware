@@ -104,6 +104,20 @@ func (cu *CompensateUpdate) SetOrderID(u uuid.UUID) *CompensateUpdate {
 	return cu
 }
 
+// SetNillableOrderID sets the "order_id" field if the given value is not nil.
+func (cu *CompensateUpdate) SetNillableOrderID(u *uuid.UUID) *CompensateUpdate {
+	if u != nil {
+		cu.SetOrderID(*u)
+	}
+	return cu
+}
+
+// ClearOrderID clears the value of the "order_id" field.
+func (cu *CompensateUpdate) ClearOrderID() *CompensateUpdate {
+	cu.mutation.ClearOrderID()
+	return cu
+}
+
 // SetStartAt sets the "start_at" field.
 func (cu *CompensateUpdate) SetStartAt(u uint32) *CompensateUpdate {
 	cu.mutation.ResetStartAt()
@@ -372,6 +386,12 @@ func (cu *CompensateUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: compensate.FieldOrderID,
 		})
 	}
+	if cu.mutation.OrderIDCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Column: compensate.FieldOrderID,
+		})
+	}
 	if value, ok := cu.mutation.StartAt(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeUint32,
@@ -544,6 +564,20 @@ func (cuo *CompensateUpdateOne) SetNillableEntID(u *uuid.UUID) *CompensateUpdate
 // SetOrderID sets the "order_id" field.
 func (cuo *CompensateUpdateOne) SetOrderID(u uuid.UUID) *CompensateUpdateOne {
 	cuo.mutation.SetOrderID(u)
+	return cuo
+}
+
+// SetNillableOrderID sets the "order_id" field if the given value is not nil.
+func (cuo *CompensateUpdateOne) SetNillableOrderID(u *uuid.UUID) *CompensateUpdateOne {
+	if u != nil {
+		cuo.SetOrderID(*u)
+	}
+	return cuo
+}
+
+// ClearOrderID clears the value of the "order_id" field.
+func (cuo *CompensateUpdateOne) ClearOrderID() *CompensateUpdateOne {
+	cuo.mutation.ClearOrderID()
 	return cuo
 }
 
@@ -842,6 +876,12 @@ func (cuo *CompensateUpdateOne) sqlSave(ctx context.Context) (_node *Compensate,
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeUUID,
 			Value:  value,
+			Column: compensate.FieldOrderID,
+		})
+	}
+	if cuo.mutation.OrderIDCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
 			Column: compensate.FieldOrderID,
 		})
 	}

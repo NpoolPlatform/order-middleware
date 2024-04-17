@@ -3,7 +3,6 @@
 package ent
 
 import (
-	"encoding/json"
 	"fmt"
 	"strings"
 
@@ -94,10 +93,8 @@ func (oc *OrderCoupon) assignValues(columns []string, values []interface{}) erro
 		case ordercoupon.FieldCouponID:
 			if value, ok := values[i].(*uuid.UUID); !ok {
 				return fmt.Errorf("unexpected type %T for field coupon_id", values[i])
-			} else if value != nil && len(*value) > 0 {
-				if err := json.Unmarshal(*value, &oc.CouponID); err != nil {
-					return fmt.Errorf("unmarshal field coupon_id: %w", err)
-				}
+			} else if value != nil {
+				oc.CouponID = *value
 			}
 		}
 	}

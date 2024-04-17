@@ -8,6 +8,33 @@ import (
 )
 
 var (
+	// AppConfigsColumns holds the columns for the "app_configs" table.
+	AppConfigsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true},
+		{Name: "created_at", Type: field.TypeUint32},
+		{Name: "updated_at", Type: field.TypeUint32},
+		{Name: "deleted_at", Type: field.TypeUint32},
+		{Name: "ent_id", Type: field.TypeUUID, Unique: true},
+		{Name: "app_id", Type: field.TypeUUID, Nullable: true},
+		{Name: "simulate_order_coupon_mode", Type: field.TypeString, Nullable: true, Default: "WithoutCoupon"},
+		{Name: "simulate_order_coupon_probability", Type: field.TypeOther, Nullable: true, SchemaType: map[string]string{"mysql": "decimal(37,18)"}},
+		{Name: "simulate_order_cashable_profit_probability", Type: field.TypeOther, Nullable: true, SchemaType: map[string]string{"mysql": "decimal(37,18)"}},
+		{Name: "enable_simulate_order", Type: field.TypeBool, Nullable: true, Default: false},
+		{Name: "max_unpaid_orders", Type: field.TypeUint32, Nullable: true, Default: 5},
+	}
+	// AppConfigsTable holds the schema information for the "app_configs" table.
+	AppConfigsTable = &schema.Table{
+		Name:       "app_configs",
+		Columns:    AppConfigsColumns,
+		PrimaryKey: []*schema.Column{AppConfigsColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "appconfig_ent_id",
+				Unique:  true,
+				Columns: []*schema.Column{AppConfigsColumns[4]},
+			},
+		},
+	}
 	// CompensatesColumns holds the columns for the "compensates" table.
 	CompensatesColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUint32, Increment: true},
@@ -15,7 +42,7 @@ var (
 		{Name: "updated_at", Type: field.TypeUint32},
 		{Name: "deleted_at", Type: field.TypeUint32},
 		{Name: "ent_id", Type: field.TypeUUID, Unique: true},
-		{Name: "order_id", Type: field.TypeUUID},
+		{Name: "order_id", Type: field.TypeUUID, Nullable: true},
 		{Name: "start_at", Type: field.TypeUint32, Nullable: true, Default: 0},
 		{Name: "end_at", Type: field.TypeUint32, Nullable: true, Default: 0},
 		{Name: "compensate_type", Type: field.TypeString, Nullable: true, Default: "DefaultCompensateType"},
@@ -136,7 +163,7 @@ var (
 		{Name: "deleted_at", Type: field.TypeUint32},
 		{Name: "ent_id", Type: field.TypeUUID, Unique: true},
 		{Name: "order_id", Type: field.TypeUUID, Nullable: true},
-		{Name: "coupon_id", Type: field.TypeJSON, Nullable: true},
+		{Name: "coupon_id", Type: field.TypeUUID, Nullable: true},
 	}
 	// OrderCouponsTable holds the schema information for the "order_coupons" table.
 	OrderCouponsTable = &schema.Table{
@@ -163,9 +190,7 @@ var (
 		{Name: "updated_at", Type: field.TypeUint32},
 		{Name: "deleted_at", Type: field.TypeUint32},
 		{Name: "ent_id", Type: field.TypeUUID, Unique: true},
-		{Name: "app_id", Type: field.TypeUUID},
-		{Name: "user_id", Type: field.TypeUUID},
-		{Name: "order_id", Type: field.TypeUUID},
+		{Name: "order_id", Type: field.TypeUUID, Nullable: true},
 		{Name: "lock_type", Type: field.TypeString, Nullable: true, Default: "DefaultOrderLockType"},
 	}
 	// OrderLocksTable holds the schema information for the "order_locks" table.
@@ -182,7 +207,7 @@ var (
 			{
 				Name:    "orderlock_order_id",
 				Unique:  false,
-				Columns: []*schema.Column{OrderLocksColumns[7]},
+				Columns: []*schema.Column{OrderLocksColumns[5]},
 			},
 		},
 	}
@@ -257,6 +282,8 @@ var (
 		{Name: "order_id", Type: field.TypeUUID, Nullable: true},
 		{Name: "coin_type_id", Type: field.TypeUUID, Nullable: true},
 		{Name: "start_amount", Type: field.TypeOther, Nullable: true, SchemaType: map[string]string{"mysql": "decimal(37,18)"}},
+		{Name: "payment_transaction_id", Type: field.TypeString, Nullable: true, Default: ""},
+		{Name: "payment_finish_amount", Type: field.TypeOther, Nullable: true, SchemaType: map[string]string{"mysql": "decimal(37,18)"}},
 	}
 	// OrderPaymentTransfersTable holds the schema information for the "order_payment_transfers" table.
 	OrderPaymentTransfersTable = &schema.Table{
@@ -321,6 +348,38 @@ var (
 			},
 		},
 	}
+	// OrderStateBasesColumns holds the columns for the "order_state_bases" table.
+	OrderStateBasesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true},
+		{Name: "created_at", Type: field.TypeUint32},
+		{Name: "updated_at", Type: field.TypeUint32},
+		{Name: "deleted_at", Type: field.TypeUint32},
+		{Name: "ent_id", Type: field.TypeUUID, Unique: true},
+		{Name: "order_id", Type: field.TypeUUID, Nullable: true},
+		{Name: "order_state", Type: field.TypeString, Nullable: true, Default: "OrderStateCreated"},
+		{Name: "start_mode", Type: field.TypeString, Nullable: true, Default: "OrderStartConfirmed"},
+		{Name: "start_at", Type: field.TypeUint32, Nullable: true, Default: 0},
+		{Name: "last_benefit_at", Type: field.TypeUint32, Nullable: true, Default: 0},
+		{Name: "benefit_state", Type: field.TypeString, Nullable: true, Default: "BenefitWait"},
+	}
+	// OrderStateBasesTable holds the schema information for the "order_state_bases" table.
+	OrderStateBasesTable = &schema.Table{
+		Name:       "order_state_bases",
+		Columns:    OrderStateBasesColumns,
+		PrimaryKey: []*schema.Column{OrderStateBasesColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "orderstatebase_ent_id",
+				Unique:  true,
+				Columns: []*schema.Column{OrderStateBasesColumns[4]},
+			},
+			{
+				Name:    "orderstatebase_order_id",
+				Unique:  false,
+				Columns: []*schema.Column{OrderStateBasesColumns[5]},
+			},
+		},
+	}
 	// OutOfGasColumns holds the columns for the "out_of_gas" table.
 	OutOfGasColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUint32, Increment: true},
@@ -328,7 +387,7 @@ var (
 		{Name: "updated_at", Type: field.TypeUint32},
 		{Name: "deleted_at", Type: field.TypeUint32},
 		{Name: "ent_id", Type: field.TypeUUID, Unique: true},
-		{Name: "order_id", Type: field.TypeUUID},
+		{Name: "order_id", Type: field.TypeUUID, Nullable: true},
 		{Name: "start_at", Type: field.TypeUint32, Nullable: true, Default: 0},
 		{Name: "end_at", Type: field.TypeUint32, Nullable: true, Default: 0},
 	}
@@ -415,34 +474,47 @@ var (
 			},
 		},
 	}
-	// SimulateConfigsColumns holds the columns for the "simulate_configs" table.
-	SimulateConfigsColumns = []*schema.Column{
+	// PowerRentalStatesColumns holds the columns for the "power_rental_states" table.
+	PowerRentalStatesColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUint32, Increment: true},
 		{Name: "created_at", Type: field.TypeUint32},
 		{Name: "updated_at", Type: field.TypeUint32},
 		{Name: "deleted_at", Type: field.TypeUint32},
 		{Name: "ent_id", Type: field.TypeUUID, Unique: true},
-		{Name: "app_id", Type: field.TypeUUID},
-		{Name: "send_coupon_mode", Type: field.TypeString, Nullable: true, Default: "WithoutCoupon"},
-		{Name: "send_coupon_probability", Type: field.TypeOther, Nullable: true, SchemaType: map[string]string{"mysql": "decimal(37,18)"}},
-		{Name: "cashable_profit_probability", Type: field.TypeOther, Nullable: true, SchemaType: map[string]string{"mysql": "decimal(37,18)"}},
-		{Name: "enabled", Type: field.TypeBool, Nullable: true, Default: false},
+		{Name: "order_id", Type: field.TypeUUID, Nullable: true},
+		{Name: "cancel_state", Type: field.TypeString, Nullable: true, Default: "DefaultOrderState"},
+		{Name: "end_at", Type: field.TypeUint32, Nullable: true, Default: 0},
+		{Name: "paid_at", Type: field.TypeUint32, Nullable: true, Default: 0},
+		{Name: "user_set_paid", Type: field.TypeBool, Nullable: true, Default: false},
+		{Name: "user_set_canceled", Type: field.TypeBool, Nullable: true, Default: false},
+		{Name: "admin_set_canceled", Type: field.TypeBool, Nullable: true, Default: false},
+		{Name: "payment_state", Type: field.TypeString, Nullable: true, Default: "PaymentStateWait"},
+		{Name: "outofgas_hours", Type: field.TypeUint32, Nullable: true, Default: 0},
+		{Name: "compensate_hours", Type: field.TypeUint32, Nullable: true, Default: 0},
+		{Name: "renew_state", Type: field.TypeString, Nullable: true, Default: "OrderRenewWait"},
+		{Name: "renew_notify_at", Type: field.TypeUint32, Nullable: true, Default: 0},
 	}
-	// SimulateConfigsTable holds the schema information for the "simulate_configs" table.
-	SimulateConfigsTable = &schema.Table{
-		Name:       "simulate_configs",
-		Columns:    SimulateConfigsColumns,
-		PrimaryKey: []*schema.Column{SimulateConfigsColumns[0]},
+	// PowerRentalStatesTable holds the schema information for the "power_rental_states" table.
+	PowerRentalStatesTable = &schema.Table{
+		Name:       "power_rental_states",
+		Columns:    PowerRentalStatesColumns,
+		PrimaryKey: []*schema.Column{PowerRentalStatesColumns[0]},
 		Indexes: []*schema.Index{
 			{
-				Name:    "simulateconfig_ent_id",
+				Name:    "powerrentalstate_ent_id",
 				Unique:  true,
-				Columns: []*schema.Column{SimulateConfigsColumns[4]},
+				Columns: []*schema.Column{PowerRentalStatesColumns[4]},
+			},
+			{
+				Name:    "powerrentalstate_order_id",
+				Unique:  false,
+				Columns: []*schema.Column{PowerRentalStatesColumns[5]},
 			},
 		},
 	}
 	// Tables holds all the tables in the schema.
 	Tables = []*schema.Table{
+		AppConfigsTable,
 		CompensatesTable,
 		OrdersTable,
 		OrderBasesTable,
@@ -452,10 +524,11 @@ var (
 		OrderPaymentContractsTable,
 		OrderPaymentTransfersTable,
 		OrderStatesTable,
+		OrderStateBasesTable,
 		OutOfGasTable,
 		PaymentsTable,
 		PowerRentalsTable,
-		SimulateConfigsTable,
+		PowerRentalStatesTable,
 	}
 )
 

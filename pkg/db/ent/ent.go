@@ -10,6 +10,7 @@ import (
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
+	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/appconfig"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/compensate"
 	entorder "github.com/NpoolPlatform/order-middleware/pkg/db/ent/order"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/orderbase"
@@ -19,10 +20,11 @@ import (
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/orderpaymentcontract"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/orderpaymenttransfer"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/orderstate"
+	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/orderstatebase"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/outofgas"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/payment"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/powerrental"
-	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/simulateconfig"
+	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/powerrentalstate"
 )
 
 // ent aliases to avoid import conflicts in user's code.
@@ -43,6 +45,7 @@ type OrderFunc func(*sql.Selector)
 // columnChecker returns a function indicates if the column exists in the given column.
 func columnChecker(table string) func(string) error {
 	checks := map[string]func(string) bool{
+		appconfig.Table:            appconfig.ValidColumn,
 		compensate.Table:           compensate.ValidColumn,
 		entorder.Table:             entorder.ValidColumn,
 		orderbase.Table:            orderbase.ValidColumn,
@@ -52,10 +55,11 @@ func columnChecker(table string) func(string) error {
 		orderpaymentcontract.Table: orderpaymentcontract.ValidColumn,
 		orderpaymenttransfer.Table: orderpaymenttransfer.ValidColumn,
 		orderstate.Table:           orderstate.ValidColumn,
+		orderstatebase.Table:       orderstatebase.ValidColumn,
 		outofgas.Table:             outofgas.ValidColumn,
 		payment.Table:              payment.ValidColumn,
 		powerrental.Table:          powerrental.ValidColumn,
-		simulateconfig.Table:       simulateconfig.ValidColumn,
+		powerrentalstate.Table:     powerrentalstate.ValidColumn,
 	}
 	check, ok := checks[table]
 	if !ok {

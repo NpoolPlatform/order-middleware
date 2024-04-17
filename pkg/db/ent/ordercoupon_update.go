@@ -124,6 +124,14 @@ func (ocu *OrderCouponUpdate) SetCouponID(u uuid.UUID) *OrderCouponUpdate {
 	return ocu
 }
 
+// SetNillableCouponID sets the "coupon_id" field if the given value is not nil.
+func (ocu *OrderCouponUpdate) SetNillableCouponID(u *uuid.UUID) *OrderCouponUpdate {
+	if u != nil {
+		ocu.SetCouponID(*u)
+	}
+	return ocu
+}
+
 // ClearCouponID clears the value of the "coupon_id" field.
 func (ocu *OrderCouponUpdate) ClearCouponID() *OrderCouponUpdate {
 	ocu.mutation.ClearCouponID()
@@ -292,14 +300,14 @@ func (ocu *OrderCouponUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if value, ok := ocu.mutation.CouponID(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeJSON,
+			Type:   field.TypeUUID,
 			Value:  value,
 			Column: ordercoupon.FieldCouponID,
 		})
 	}
 	if ocu.mutation.CouponIDCleared() {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeJSON,
+			Type:   field.TypeUUID,
 			Column: ordercoupon.FieldCouponID,
 		})
 	}
@@ -416,6 +424,14 @@ func (ocuo *OrderCouponUpdateOne) ClearOrderID() *OrderCouponUpdateOne {
 // SetCouponID sets the "coupon_id" field.
 func (ocuo *OrderCouponUpdateOne) SetCouponID(u uuid.UUID) *OrderCouponUpdateOne {
 	ocuo.mutation.SetCouponID(u)
+	return ocuo
+}
+
+// SetNillableCouponID sets the "coupon_id" field if the given value is not nil.
+func (ocuo *OrderCouponUpdateOne) SetNillableCouponID(u *uuid.UUID) *OrderCouponUpdateOne {
+	if u != nil {
+		ocuo.SetCouponID(*u)
+	}
 	return ocuo
 }
 
@@ -617,14 +633,14 @@ func (ocuo *OrderCouponUpdateOne) sqlSave(ctx context.Context) (_node *OrderCoup
 	}
 	if value, ok := ocuo.mutation.CouponID(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeJSON,
+			Type:   field.TypeUUID,
 			Value:  value,
 			Column: ordercoupon.FieldCouponID,
 		})
 	}
 	if ocuo.mutation.CouponIDCleared() {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeJSON,
+			Type:   field.TypeUUID,
 			Column: ordercoupon.FieldCouponID,
 		})
 	}

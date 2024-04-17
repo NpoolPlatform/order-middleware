@@ -14,6 +14,8 @@ import (
 // Tx is a transactional client that is created by calling Client.Tx().
 type Tx struct {
 	config
+	// AppConfig is the client for interacting with the AppConfig builders.
+	AppConfig *AppConfigClient
 	// Compensate is the client for interacting with the Compensate builders.
 	Compensate *CompensateClient
 	// Order is the client for interacting with the Order builders.
@@ -32,14 +34,16 @@ type Tx struct {
 	OrderPaymentTransfer *OrderPaymentTransferClient
 	// OrderState is the client for interacting with the OrderState builders.
 	OrderState *OrderStateClient
+	// OrderStateBase is the client for interacting with the OrderStateBase builders.
+	OrderStateBase *OrderStateBaseClient
 	// OutOfGas is the client for interacting with the OutOfGas builders.
 	OutOfGas *OutOfGasClient
 	// Payment is the client for interacting with the Payment builders.
 	Payment *PaymentClient
 	// PowerRental is the client for interacting with the PowerRental builders.
 	PowerRental *PowerRentalClient
-	// SimulateConfig is the client for interacting with the SimulateConfig builders.
-	SimulateConfig *SimulateConfigClient
+	// PowerRentalState is the client for interacting with the PowerRentalState builders.
+	PowerRentalState *PowerRentalStateClient
 
 	// lazily loaded.
 	client     *Client
@@ -175,6 +179,7 @@ func (tx *Tx) Client() *Client {
 }
 
 func (tx *Tx) init() {
+	tx.AppConfig = NewAppConfigClient(tx.config)
 	tx.Compensate = NewCompensateClient(tx.config)
 	tx.Order = NewOrderClient(tx.config)
 	tx.OrderBase = NewOrderBaseClient(tx.config)
@@ -184,10 +189,11 @@ func (tx *Tx) init() {
 	tx.OrderPaymentContract = NewOrderPaymentContractClient(tx.config)
 	tx.OrderPaymentTransfer = NewOrderPaymentTransferClient(tx.config)
 	tx.OrderState = NewOrderStateClient(tx.config)
+	tx.OrderStateBase = NewOrderStateBaseClient(tx.config)
 	tx.OutOfGas = NewOutOfGasClient(tx.config)
 	tx.Payment = NewPaymentClient(tx.config)
 	tx.PowerRental = NewPowerRentalClient(tx.config)
-	tx.SimulateConfig = NewSimulateConfigClient(tx.config)
+	tx.PowerRentalState = NewPowerRentalStateClient(tx.config)
 }
 
 // txDriver wraps the given dialect.Tx with a nop dialect.Driver implementation.
@@ -197,7 +203,7 @@ func (tx *Tx) init() {
 // of them in order to commit or rollback the transaction.
 //
 // If a closed transaction is embedded in one of the generated entities, and the entity
-// applies a query, for example: Compensate.QueryXXX(), the query will be executed
+// applies a query, for example: AppConfig.QueryXXX(), the query will be executed
 // through the driver which created this transaction.
 //
 // Note that txDriver is not goroutine safe.

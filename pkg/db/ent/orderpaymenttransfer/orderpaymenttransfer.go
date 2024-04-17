@@ -27,6 +27,10 @@ const (
 	FieldCoinTypeID = "coin_type_id"
 	// FieldStartAmount holds the string denoting the start_amount field in the database.
 	FieldStartAmount = "start_amount"
+	// FieldPaymentTransactionID holds the string denoting the payment_transaction_id field in the database.
+	FieldPaymentTransactionID = "payment_transaction_id"
+	// FieldPaymentFinishAmount holds the string denoting the payment_finish_amount field in the database.
+	FieldPaymentFinishAmount = "payment_finish_amount"
 	// Table holds the table name of the orderpaymenttransfer in the database.
 	Table = "order_payment_transfers"
 )
@@ -41,6 +45,8 @@ var Columns = []string{
 	FieldOrderID,
 	FieldCoinTypeID,
 	FieldStartAmount,
+	FieldPaymentTransactionID,
+	FieldPaymentFinishAmount,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -78,4 +84,8 @@ var (
 	DefaultCoinTypeID func() uuid.UUID
 	// DefaultStartAmount holds the default value on creation for the "start_amount" field.
 	DefaultStartAmount decimal.Decimal
+	// DefaultPaymentTransactionID holds the default value on creation for the "payment_transaction_id" field.
+	DefaultPaymentTransactionID string
+	// DefaultPaymentFinishAmount holds the default value on creation for the "payment_finish_amount" field.
+	DefaultPaymentFinishAmount decimal.Decimal
 )

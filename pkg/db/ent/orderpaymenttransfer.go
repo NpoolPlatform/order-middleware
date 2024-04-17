@@ -31,6 +31,10 @@ type OrderPaymentTransfer struct {
 	CoinTypeID uuid.UUID `json:"coin_type_id,omitempty"`
 	// StartAmount holds the value of the "start_amount" field.
 	StartAmount decimal.Decimal `json:"start_amount,omitempty"`
+	// PaymentTransactionID holds the value of the "payment_transaction_id" field.
+	PaymentTransactionID string `json:"payment_transaction_id,omitempty"`
+	// PaymentFinishAmount holds the value of the "payment_finish_amount" field.
+	PaymentFinishAmount decimal.Decimal `json:"payment_finish_amount,omitempty"`
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -38,10 +42,12 @@ func (*OrderPaymentTransfer) scanValues(columns []string) ([]interface{}, error)
 	values := make([]interface{}, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case orderpaymenttransfer.FieldStartAmount:
+		case orderpaymenttransfer.FieldStartAmount, orderpaymenttransfer.FieldPaymentFinishAmount:
 			values[i] = new(decimal.Decimal)
 		case orderpaymenttransfer.FieldID, orderpaymenttransfer.FieldCreatedAt, orderpaymenttransfer.FieldUpdatedAt, orderpaymenttransfer.FieldDeletedAt:
 			values[i] = new(sql.NullInt64)
+		case orderpaymenttransfer.FieldPaymentTransactionID:
+			values[i] = new(sql.NullString)
 		case orderpaymenttransfer.FieldEntID, orderpaymenttransfer.FieldOrderID, orderpaymenttransfer.FieldCoinTypeID:
 			values[i] = new(uuid.UUID)
 		default:
@@ -107,6 +113,18 @@ func (opt *OrderPaymentTransfer) assignValues(columns []string, values []interfa
 			} else if value != nil {
 				opt.StartAmount = *value
 			}
+		case orderpaymenttransfer.FieldPaymentTransactionID:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field payment_transaction_id", values[i])
+			} else if value.Valid {
+				opt.PaymentTransactionID = value.String
+			}
+		case orderpaymenttransfer.FieldPaymentFinishAmount:
+			if value, ok := values[i].(*decimal.Decimal); !ok {
+				return fmt.Errorf("unexpected type %T for field payment_finish_amount", values[i])
+			} else if value != nil {
+				opt.PaymentFinishAmount = *value
+			}
 		}
 	}
 	return nil
@@ -155,6 +173,12 @@ func (opt *OrderPaymentTransfer) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("start_amount=")
 	builder.WriteString(fmt.Sprintf("%v", opt.StartAmount))
+	builder.WriteString(", ")
+	builder.WriteString("payment_transaction_id=")
+	builder.WriteString(opt.PaymentTransactionID)
+	builder.WriteString(", ")
+	builder.WriteString("payment_finish_amount=")
+	builder.WriteString(fmt.Sprintf("%v", opt.PaymentFinishAmount))
 	builder.WriteByte(')')
 	return builder.String()
 }

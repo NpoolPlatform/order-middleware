@@ -9,6 +9,19 @@ import (
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent"
 )
 
+// The AppConfigFunc type is an adapter to allow the use of ordinary
+// function as AppConfig mutator.
+type AppConfigFunc func(context.Context, *ent.AppConfigMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f AppConfigFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	mv, ok := m.(*ent.AppConfigMutation)
+	if !ok {
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.AppConfigMutation", m)
+	}
+	return f(ctx, mv)
+}
+
 // The CompensateFunc type is an adapter to allow the use of ordinary
 // function as Compensate mutator.
 type CompensateFunc func(context.Context, *ent.CompensateMutation) (ent.Value, error)
@@ -126,6 +139,19 @@ func (f OrderStateFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, 
 	return f(ctx, mv)
 }
 
+// The OrderStateBaseFunc type is an adapter to allow the use of ordinary
+// function as OrderStateBase mutator.
+type OrderStateBaseFunc func(context.Context, *ent.OrderStateBaseMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f OrderStateBaseFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	mv, ok := m.(*ent.OrderStateBaseMutation)
+	if !ok {
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.OrderStateBaseMutation", m)
+	}
+	return f(ctx, mv)
+}
+
 // The OutOfGasFunc type is an adapter to allow the use of ordinary
 // function as OutOfGas mutator.
 type OutOfGasFunc func(context.Context, *ent.OutOfGasMutation) (ent.Value, error)
@@ -165,15 +191,15 @@ func (f PowerRentalFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value,
 	return f(ctx, mv)
 }
 
-// The SimulateConfigFunc type is an adapter to allow the use of ordinary
-// function as SimulateConfig mutator.
-type SimulateConfigFunc func(context.Context, *ent.SimulateConfigMutation) (ent.Value, error)
+// The PowerRentalStateFunc type is an adapter to allow the use of ordinary
+// function as PowerRentalState mutator.
+type PowerRentalStateFunc func(context.Context, *ent.PowerRentalStateMutation) (ent.Value, error)
 
 // Mutate calls f(ctx, m).
-func (f SimulateConfigFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
-	mv, ok := m.(*ent.SimulateConfigMutation)
+func (f PowerRentalStateFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	mv, ok := m.(*ent.PowerRentalStateMutation)
 	if !ok {
-		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.SimulateConfigMutation", m)
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.PowerRentalStateMutation", m)
 	}
 	return f(ctx, mv)
 }

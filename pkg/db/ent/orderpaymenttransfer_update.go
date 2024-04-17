@@ -159,6 +159,46 @@ func (optu *OrderPaymentTransferUpdate) ClearStartAmount() *OrderPaymentTransfer
 	return optu
 }
 
+// SetPaymentTransactionID sets the "payment_transaction_id" field.
+func (optu *OrderPaymentTransferUpdate) SetPaymentTransactionID(s string) *OrderPaymentTransferUpdate {
+	optu.mutation.SetPaymentTransactionID(s)
+	return optu
+}
+
+// SetNillablePaymentTransactionID sets the "payment_transaction_id" field if the given value is not nil.
+func (optu *OrderPaymentTransferUpdate) SetNillablePaymentTransactionID(s *string) *OrderPaymentTransferUpdate {
+	if s != nil {
+		optu.SetPaymentTransactionID(*s)
+	}
+	return optu
+}
+
+// ClearPaymentTransactionID clears the value of the "payment_transaction_id" field.
+func (optu *OrderPaymentTransferUpdate) ClearPaymentTransactionID() *OrderPaymentTransferUpdate {
+	optu.mutation.ClearPaymentTransactionID()
+	return optu
+}
+
+// SetPaymentFinishAmount sets the "payment_finish_amount" field.
+func (optu *OrderPaymentTransferUpdate) SetPaymentFinishAmount(d decimal.Decimal) *OrderPaymentTransferUpdate {
+	optu.mutation.SetPaymentFinishAmount(d)
+	return optu
+}
+
+// SetNillablePaymentFinishAmount sets the "payment_finish_amount" field if the given value is not nil.
+func (optu *OrderPaymentTransferUpdate) SetNillablePaymentFinishAmount(d *decimal.Decimal) *OrderPaymentTransferUpdate {
+	if d != nil {
+		optu.SetPaymentFinishAmount(*d)
+	}
+	return optu
+}
+
+// ClearPaymentFinishAmount clears the value of the "payment_finish_amount" field.
+func (optu *OrderPaymentTransferUpdate) ClearPaymentFinishAmount() *OrderPaymentTransferUpdate {
+	optu.mutation.ClearPaymentFinishAmount()
+	return optu
+}
+
 // Mutation returns the OrderPaymentTransferMutation object of the builder.
 func (optu *OrderPaymentTransferUpdate) Mutation() *OrderPaymentTransferMutation {
 	return optu.mutation
@@ -345,6 +385,32 @@ func (optu *OrderPaymentTransferUpdate) sqlSave(ctx context.Context) (n int, err
 			Column: orderpaymenttransfer.FieldStartAmount,
 		})
 	}
+	if value, ok := optu.mutation.PaymentTransactionID(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: orderpaymenttransfer.FieldPaymentTransactionID,
+		})
+	}
+	if optu.mutation.PaymentTransactionIDCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Column: orderpaymenttransfer.FieldPaymentTransactionID,
+		})
+	}
+	if value, ok := optu.mutation.PaymentFinishAmount(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeOther,
+			Value:  value,
+			Column: orderpaymenttransfer.FieldPaymentFinishAmount,
+		})
+	}
+	if optu.mutation.PaymentFinishAmountCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeOther,
+			Column: orderpaymenttransfer.FieldPaymentFinishAmount,
+		})
+	}
 	_spec.Modifiers = optu.modifiers
 	if n, err = sqlgraph.UpdateNodes(ctx, optu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
@@ -492,6 +558,46 @@ func (optuo *OrderPaymentTransferUpdateOne) SetNillableStartAmount(d *decimal.De
 // ClearStartAmount clears the value of the "start_amount" field.
 func (optuo *OrderPaymentTransferUpdateOne) ClearStartAmount() *OrderPaymentTransferUpdateOne {
 	optuo.mutation.ClearStartAmount()
+	return optuo
+}
+
+// SetPaymentTransactionID sets the "payment_transaction_id" field.
+func (optuo *OrderPaymentTransferUpdateOne) SetPaymentTransactionID(s string) *OrderPaymentTransferUpdateOne {
+	optuo.mutation.SetPaymentTransactionID(s)
+	return optuo
+}
+
+// SetNillablePaymentTransactionID sets the "payment_transaction_id" field if the given value is not nil.
+func (optuo *OrderPaymentTransferUpdateOne) SetNillablePaymentTransactionID(s *string) *OrderPaymentTransferUpdateOne {
+	if s != nil {
+		optuo.SetPaymentTransactionID(*s)
+	}
+	return optuo
+}
+
+// ClearPaymentTransactionID clears the value of the "payment_transaction_id" field.
+func (optuo *OrderPaymentTransferUpdateOne) ClearPaymentTransactionID() *OrderPaymentTransferUpdateOne {
+	optuo.mutation.ClearPaymentTransactionID()
+	return optuo
+}
+
+// SetPaymentFinishAmount sets the "payment_finish_amount" field.
+func (optuo *OrderPaymentTransferUpdateOne) SetPaymentFinishAmount(d decimal.Decimal) *OrderPaymentTransferUpdateOne {
+	optuo.mutation.SetPaymentFinishAmount(d)
+	return optuo
+}
+
+// SetNillablePaymentFinishAmount sets the "payment_finish_amount" field if the given value is not nil.
+func (optuo *OrderPaymentTransferUpdateOne) SetNillablePaymentFinishAmount(d *decimal.Decimal) *OrderPaymentTransferUpdateOne {
+	if d != nil {
+		optuo.SetPaymentFinishAmount(*d)
+	}
+	return optuo
+}
+
+// ClearPaymentFinishAmount clears the value of the "payment_finish_amount" field.
+func (optuo *OrderPaymentTransferUpdateOne) ClearPaymentFinishAmount() *OrderPaymentTransferUpdateOne {
+	optuo.mutation.ClearPaymentFinishAmount()
 	return optuo
 }
 
@@ -709,6 +815,32 @@ func (optuo *OrderPaymentTransferUpdateOne) sqlSave(ctx context.Context) (_node 
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeOther,
 			Column: orderpaymenttransfer.FieldStartAmount,
+		})
+	}
+	if value, ok := optuo.mutation.PaymentTransactionID(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: orderpaymenttransfer.FieldPaymentTransactionID,
+		})
+	}
+	if optuo.mutation.PaymentTransactionIDCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Column: orderpaymenttransfer.FieldPaymentTransactionID,
+		})
+	}
+	if value, ok := optuo.mutation.PaymentFinishAmount(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeOther,
+			Value:  value,
+			Column: orderpaymenttransfer.FieldPaymentFinishAmount,
+		})
+	}
+	if optuo.mutation.PaymentFinishAmountCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeOther,
+			Column: orderpaymenttransfer.FieldPaymentFinishAmount,
 		})
 	}
 	_spec.Modifiers = optuo.modifiers

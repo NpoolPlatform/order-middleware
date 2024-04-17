@@ -10,6 +10,7 @@ import (
 
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/migrate"
 
+	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/appconfig"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/compensate"
 	entorder "github.com/NpoolPlatform/order-middleware/pkg/db/ent/order"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/orderbase"
@@ -19,10 +20,11 @@ import (
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/orderpaymentcontract"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/orderpaymenttransfer"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/orderstate"
+	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/orderstatebase"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/outofgas"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/payment"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/powerrental"
-	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/simulateconfig"
+	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/powerrentalstate"
 
 	"entgo.io/ent/dialect"
 	"entgo.io/ent/dialect/sql"
@@ -33,6 +35,8 @@ type Client struct {
 	config
 	// Schema is the client for creating, migrating and dropping schema.
 	Schema *migrate.Schema
+	// AppConfig is the client for interacting with the AppConfig builders.
+	AppConfig *AppConfigClient
 	// Compensate is the client for interacting with the Compensate builders.
 	Compensate *CompensateClient
 	// Order is the client for interacting with the Order builders.
@@ -51,14 +55,16 @@ type Client struct {
 	OrderPaymentTransfer *OrderPaymentTransferClient
 	// OrderState is the client for interacting with the OrderState builders.
 	OrderState *OrderStateClient
+	// OrderStateBase is the client for interacting with the OrderStateBase builders.
+	OrderStateBase *OrderStateBaseClient
 	// OutOfGas is the client for interacting with the OutOfGas builders.
 	OutOfGas *OutOfGasClient
 	// Payment is the client for interacting with the Payment builders.
 	Payment *PaymentClient
 	// PowerRental is the client for interacting with the PowerRental builders.
 	PowerRental *PowerRentalClient
-	// SimulateConfig is the client for interacting with the SimulateConfig builders.
-	SimulateConfig *SimulateConfigClient
+	// PowerRentalState is the client for interacting with the PowerRentalState builders.
+	PowerRentalState *PowerRentalStateClient
 }
 
 // NewClient creates a new client configured with the given options.
@@ -72,6 +78,7 @@ func NewClient(opts ...Option) *Client {
 
 func (c *Client) init() {
 	c.Schema = migrate.NewSchema(c.driver)
+	c.AppConfig = NewAppConfigClient(c.config)
 	c.Compensate = NewCompensateClient(c.config)
 	c.Order = NewOrderClient(c.config)
 	c.OrderBase = NewOrderBaseClient(c.config)
@@ -81,10 +88,11 @@ func (c *Client) init() {
 	c.OrderPaymentContract = NewOrderPaymentContractClient(c.config)
 	c.OrderPaymentTransfer = NewOrderPaymentTransferClient(c.config)
 	c.OrderState = NewOrderStateClient(c.config)
+	c.OrderStateBase = NewOrderStateBaseClient(c.config)
 	c.OutOfGas = NewOutOfGasClient(c.config)
 	c.Payment = NewPaymentClient(c.config)
 	c.PowerRental = NewPowerRentalClient(c.config)
-	c.SimulateConfig = NewSimulateConfigClient(c.config)
+	c.PowerRentalState = NewPowerRentalStateClient(c.config)
 }
 
 // Open opens a database/sql.DB specified by the driver name and
@@ -118,6 +126,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 	return &Tx{
 		ctx:                  ctx,
 		config:               cfg,
+		AppConfig:            NewAppConfigClient(cfg),
 		Compensate:           NewCompensateClient(cfg),
 		Order:                NewOrderClient(cfg),
 		OrderBase:            NewOrderBaseClient(cfg),
@@ -127,10 +136,11 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		OrderPaymentContract: NewOrderPaymentContractClient(cfg),
 		OrderPaymentTransfer: NewOrderPaymentTransferClient(cfg),
 		OrderState:           NewOrderStateClient(cfg),
+		OrderStateBase:       NewOrderStateBaseClient(cfg),
 		OutOfGas:             NewOutOfGasClient(cfg),
 		Payment:              NewPaymentClient(cfg),
 		PowerRental:          NewPowerRentalClient(cfg),
-		SimulateConfig:       NewSimulateConfigClient(cfg),
+		PowerRentalState:     NewPowerRentalStateClient(cfg),
 	}, nil
 }
 
@@ -150,6 +160,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 	return &Tx{
 		ctx:                  ctx,
 		config:               cfg,
+		AppConfig:            NewAppConfigClient(cfg),
 		Compensate:           NewCompensateClient(cfg),
 		Order:                NewOrderClient(cfg),
 		OrderBase:            NewOrderBaseClient(cfg),
@@ -159,17 +170,18 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		OrderPaymentContract: NewOrderPaymentContractClient(cfg),
 		OrderPaymentTransfer: NewOrderPaymentTransferClient(cfg),
 		OrderState:           NewOrderStateClient(cfg),
+		OrderStateBase:       NewOrderStateBaseClient(cfg),
 		OutOfGas:             NewOutOfGasClient(cfg),
 		Payment:              NewPaymentClient(cfg),
 		PowerRental:          NewPowerRentalClient(cfg),
-		SimulateConfig:       NewSimulateConfigClient(cfg),
+		PowerRentalState:     NewPowerRentalStateClient(cfg),
 	}, nil
 }
 
 // Debug returns a new debug-client. It's used to get verbose logging on specific operations.
 //
 //	client.Debug().
-//		Compensate.
+//		AppConfig.
 //		Query().
 //		Count(ctx)
 //
@@ -192,6 +204,7 @@ func (c *Client) Close() error {
 // Use adds the mutation hooks to all the entity clients.
 // In order to add hooks to a specific client, call: `client.Node.Use(...)`.
 func (c *Client) Use(hooks ...Hook) {
+	c.AppConfig.Use(hooks...)
 	c.Compensate.Use(hooks...)
 	c.Order.Use(hooks...)
 	c.OrderBase.Use(hooks...)
@@ -201,10 +214,102 @@ func (c *Client) Use(hooks ...Hook) {
 	c.OrderPaymentContract.Use(hooks...)
 	c.OrderPaymentTransfer.Use(hooks...)
 	c.OrderState.Use(hooks...)
+	c.OrderStateBase.Use(hooks...)
 	c.OutOfGas.Use(hooks...)
 	c.Payment.Use(hooks...)
 	c.PowerRental.Use(hooks...)
-	c.SimulateConfig.Use(hooks...)
+	c.PowerRentalState.Use(hooks...)
+}
+
+// AppConfigClient is a client for the AppConfig schema.
+type AppConfigClient struct {
+	config
+}
+
+// NewAppConfigClient returns a client for the AppConfig from the given config.
+func NewAppConfigClient(c config) *AppConfigClient {
+	return &AppConfigClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `appconfig.Hooks(f(g(h())))`.
+func (c *AppConfigClient) Use(hooks ...Hook) {
+	c.hooks.AppConfig = append(c.hooks.AppConfig, hooks...)
+}
+
+// Create returns a builder for creating a AppConfig entity.
+func (c *AppConfigClient) Create() *AppConfigCreate {
+	mutation := newAppConfigMutation(c.config, OpCreate)
+	return &AppConfigCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of AppConfig entities.
+func (c *AppConfigClient) CreateBulk(builders ...*AppConfigCreate) *AppConfigCreateBulk {
+	return &AppConfigCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for AppConfig.
+func (c *AppConfigClient) Update() *AppConfigUpdate {
+	mutation := newAppConfigMutation(c.config, OpUpdate)
+	return &AppConfigUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *AppConfigClient) UpdateOne(ac *AppConfig) *AppConfigUpdateOne {
+	mutation := newAppConfigMutation(c.config, OpUpdateOne, withAppConfig(ac))
+	return &AppConfigUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *AppConfigClient) UpdateOneID(id uint32) *AppConfigUpdateOne {
+	mutation := newAppConfigMutation(c.config, OpUpdateOne, withAppConfigID(id))
+	return &AppConfigUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for AppConfig.
+func (c *AppConfigClient) Delete() *AppConfigDelete {
+	mutation := newAppConfigMutation(c.config, OpDelete)
+	return &AppConfigDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *AppConfigClient) DeleteOne(ac *AppConfig) *AppConfigDeleteOne {
+	return c.DeleteOneID(ac.ID)
+}
+
+// DeleteOne returns a builder for deleting the given entity by its id.
+func (c *AppConfigClient) DeleteOneID(id uint32) *AppConfigDeleteOne {
+	builder := c.Delete().Where(appconfig.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &AppConfigDeleteOne{builder}
+}
+
+// Query returns a query builder for AppConfig.
+func (c *AppConfigClient) Query() *AppConfigQuery {
+	return &AppConfigQuery{
+		config: c.config,
+	}
+}
+
+// Get returns a AppConfig entity by its id.
+func (c *AppConfigClient) Get(ctx context.Context, id uint32) (*AppConfig, error) {
+	return c.Query().Where(appconfig.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *AppConfigClient) GetX(ctx context.Context, id uint32) *AppConfig {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *AppConfigClient) Hooks() []Hook {
+	hooks := c.hooks.AppConfig
+	return append(hooks[:len(hooks):len(hooks)], appconfig.Hooks[:]...)
 }
 
 // CompensateClient is a client for the Compensate schema.
@@ -1026,6 +1131,97 @@ func (c *OrderStateClient) Hooks() []Hook {
 	return append(hooks[:len(hooks):len(hooks)], orderstate.Hooks[:]...)
 }
 
+// OrderStateBaseClient is a client for the OrderStateBase schema.
+type OrderStateBaseClient struct {
+	config
+}
+
+// NewOrderStateBaseClient returns a client for the OrderStateBase from the given config.
+func NewOrderStateBaseClient(c config) *OrderStateBaseClient {
+	return &OrderStateBaseClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `orderstatebase.Hooks(f(g(h())))`.
+func (c *OrderStateBaseClient) Use(hooks ...Hook) {
+	c.hooks.OrderStateBase = append(c.hooks.OrderStateBase, hooks...)
+}
+
+// Create returns a builder for creating a OrderStateBase entity.
+func (c *OrderStateBaseClient) Create() *OrderStateBaseCreate {
+	mutation := newOrderStateBaseMutation(c.config, OpCreate)
+	return &OrderStateBaseCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of OrderStateBase entities.
+func (c *OrderStateBaseClient) CreateBulk(builders ...*OrderStateBaseCreate) *OrderStateBaseCreateBulk {
+	return &OrderStateBaseCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for OrderStateBase.
+func (c *OrderStateBaseClient) Update() *OrderStateBaseUpdate {
+	mutation := newOrderStateBaseMutation(c.config, OpUpdate)
+	return &OrderStateBaseUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *OrderStateBaseClient) UpdateOne(osb *OrderStateBase) *OrderStateBaseUpdateOne {
+	mutation := newOrderStateBaseMutation(c.config, OpUpdateOne, withOrderStateBase(osb))
+	return &OrderStateBaseUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *OrderStateBaseClient) UpdateOneID(id uint32) *OrderStateBaseUpdateOne {
+	mutation := newOrderStateBaseMutation(c.config, OpUpdateOne, withOrderStateBaseID(id))
+	return &OrderStateBaseUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for OrderStateBase.
+func (c *OrderStateBaseClient) Delete() *OrderStateBaseDelete {
+	mutation := newOrderStateBaseMutation(c.config, OpDelete)
+	return &OrderStateBaseDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *OrderStateBaseClient) DeleteOne(osb *OrderStateBase) *OrderStateBaseDeleteOne {
+	return c.DeleteOneID(osb.ID)
+}
+
+// DeleteOne returns a builder for deleting the given entity by its id.
+func (c *OrderStateBaseClient) DeleteOneID(id uint32) *OrderStateBaseDeleteOne {
+	builder := c.Delete().Where(orderstatebase.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &OrderStateBaseDeleteOne{builder}
+}
+
+// Query returns a query builder for OrderStateBase.
+func (c *OrderStateBaseClient) Query() *OrderStateBaseQuery {
+	return &OrderStateBaseQuery{
+		config: c.config,
+	}
+}
+
+// Get returns a OrderStateBase entity by its id.
+func (c *OrderStateBaseClient) Get(ctx context.Context, id uint32) (*OrderStateBase, error) {
+	return c.Query().Where(orderstatebase.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *OrderStateBaseClient) GetX(ctx context.Context, id uint32) *OrderStateBase {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *OrderStateBaseClient) Hooks() []Hook {
+	hooks := c.hooks.OrderStateBase
+	return append(hooks[:len(hooks):len(hooks)], orderstatebase.Hooks[:]...)
+}
+
 // OutOfGasClient is a client for the OutOfGas schema.
 type OutOfGasClient struct {
 	config
@@ -1299,84 +1495,84 @@ func (c *PowerRentalClient) Hooks() []Hook {
 	return append(hooks[:len(hooks):len(hooks)], powerrental.Hooks[:]...)
 }
 
-// SimulateConfigClient is a client for the SimulateConfig schema.
-type SimulateConfigClient struct {
+// PowerRentalStateClient is a client for the PowerRentalState schema.
+type PowerRentalStateClient struct {
 	config
 }
 
-// NewSimulateConfigClient returns a client for the SimulateConfig from the given config.
-func NewSimulateConfigClient(c config) *SimulateConfigClient {
-	return &SimulateConfigClient{config: c}
+// NewPowerRentalStateClient returns a client for the PowerRentalState from the given config.
+func NewPowerRentalStateClient(c config) *PowerRentalStateClient {
+	return &PowerRentalStateClient{config: c}
 }
 
 // Use adds a list of mutation hooks to the hooks stack.
-// A call to `Use(f, g, h)` equals to `simulateconfig.Hooks(f(g(h())))`.
-func (c *SimulateConfigClient) Use(hooks ...Hook) {
-	c.hooks.SimulateConfig = append(c.hooks.SimulateConfig, hooks...)
+// A call to `Use(f, g, h)` equals to `powerrentalstate.Hooks(f(g(h())))`.
+func (c *PowerRentalStateClient) Use(hooks ...Hook) {
+	c.hooks.PowerRentalState = append(c.hooks.PowerRentalState, hooks...)
 }
 
-// Create returns a builder for creating a SimulateConfig entity.
-func (c *SimulateConfigClient) Create() *SimulateConfigCreate {
-	mutation := newSimulateConfigMutation(c.config, OpCreate)
-	return &SimulateConfigCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+// Create returns a builder for creating a PowerRentalState entity.
+func (c *PowerRentalStateClient) Create() *PowerRentalStateCreate {
+	mutation := newPowerRentalStateMutation(c.config, OpCreate)
+	return &PowerRentalStateCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
-// CreateBulk returns a builder for creating a bulk of SimulateConfig entities.
-func (c *SimulateConfigClient) CreateBulk(builders ...*SimulateConfigCreate) *SimulateConfigCreateBulk {
-	return &SimulateConfigCreateBulk{config: c.config, builders: builders}
+// CreateBulk returns a builder for creating a bulk of PowerRentalState entities.
+func (c *PowerRentalStateClient) CreateBulk(builders ...*PowerRentalStateCreate) *PowerRentalStateCreateBulk {
+	return &PowerRentalStateCreateBulk{config: c.config, builders: builders}
 }
 
-// Update returns an update builder for SimulateConfig.
-func (c *SimulateConfigClient) Update() *SimulateConfigUpdate {
-	mutation := newSimulateConfigMutation(c.config, OpUpdate)
-	return &SimulateConfigUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+// Update returns an update builder for PowerRentalState.
+func (c *PowerRentalStateClient) Update() *PowerRentalStateUpdate {
+	mutation := newPowerRentalStateMutation(c.config, OpUpdate)
+	return &PowerRentalStateUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
 // UpdateOne returns an update builder for the given entity.
-func (c *SimulateConfigClient) UpdateOne(sc *SimulateConfig) *SimulateConfigUpdateOne {
-	mutation := newSimulateConfigMutation(c.config, OpUpdateOne, withSimulateConfig(sc))
-	return &SimulateConfigUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+func (c *PowerRentalStateClient) UpdateOne(prs *PowerRentalState) *PowerRentalStateUpdateOne {
+	mutation := newPowerRentalStateMutation(c.config, OpUpdateOne, withPowerRentalState(prs))
+	return &PowerRentalStateUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
 // UpdateOneID returns an update builder for the given id.
-func (c *SimulateConfigClient) UpdateOneID(id uint32) *SimulateConfigUpdateOne {
-	mutation := newSimulateConfigMutation(c.config, OpUpdateOne, withSimulateConfigID(id))
-	return &SimulateConfigUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+func (c *PowerRentalStateClient) UpdateOneID(id uint32) *PowerRentalStateUpdateOne {
+	mutation := newPowerRentalStateMutation(c.config, OpUpdateOne, withPowerRentalStateID(id))
+	return &PowerRentalStateUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
-// Delete returns a delete builder for SimulateConfig.
-func (c *SimulateConfigClient) Delete() *SimulateConfigDelete {
-	mutation := newSimulateConfigMutation(c.config, OpDelete)
-	return &SimulateConfigDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+// Delete returns a delete builder for PowerRentalState.
+func (c *PowerRentalStateClient) Delete() *PowerRentalStateDelete {
+	mutation := newPowerRentalStateMutation(c.config, OpDelete)
+	return &PowerRentalStateDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
 // DeleteOne returns a builder for deleting the given entity.
-func (c *SimulateConfigClient) DeleteOne(sc *SimulateConfig) *SimulateConfigDeleteOne {
-	return c.DeleteOneID(sc.ID)
+func (c *PowerRentalStateClient) DeleteOne(prs *PowerRentalState) *PowerRentalStateDeleteOne {
+	return c.DeleteOneID(prs.ID)
 }
 
 // DeleteOne returns a builder for deleting the given entity by its id.
-func (c *SimulateConfigClient) DeleteOneID(id uint32) *SimulateConfigDeleteOne {
-	builder := c.Delete().Where(simulateconfig.ID(id))
+func (c *PowerRentalStateClient) DeleteOneID(id uint32) *PowerRentalStateDeleteOne {
+	builder := c.Delete().Where(powerrentalstate.ID(id))
 	builder.mutation.id = &id
 	builder.mutation.op = OpDeleteOne
-	return &SimulateConfigDeleteOne{builder}
+	return &PowerRentalStateDeleteOne{builder}
 }
 
-// Query returns a query builder for SimulateConfig.
-func (c *SimulateConfigClient) Query() *SimulateConfigQuery {
-	return &SimulateConfigQuery{
+// Query returns a query builder for PowerRentalState.
+func (c *PowerRentalStateClient) Query() *PowerRentalStateQuery {
+	return &PowerRentalStateQuery{
 		config: c.config,
 	}
 }
 
-// Get returns a SimulateConfig entity by its id.
-func (c *SimulateConfigClient) Get(ctx context.Context, id uint32) (*SimulateConfig, error) {
-	return c.Query().Where(simulateconfig.ID(id)).Only(ctx)
+// Get returns a PowerRentalState entity by its id.
+func (c *PowerRentalStateClient) Get(ctx context.Context, id uint32) (*PowerRentalState, error) {
+	return c.Query().Where(powerrentalstate.ID(id)).Only(ctx)
 }
 
 // GetX is like Get, but panics if an error occurs.
-func (c *SimulateConfigClient) GetX(ctx context.Context, id uint32) *SimulateConfig {
+func (c *PowerRentalStateClient) GetX(ctx context.Context, id uint32) *PowerRentalState {
 	obj, err := c.Get(ctx, id)
 	if err != nil {
 		panic(err)
@@ -1385,7 +1581,7 @@ func (c *SimulateConfigClient) GetX(ctx context.Context, id uint32) *SimulateCon
 }
 
 // Hooks returns the client hooks.
-func (c *SimulateConfigClient) Hooks() []Hook {
-	hooks := c.hooks.SimulateConfig
-	return append(hooks[:len(hooks):len(hooks)], simulateconfig.Hooks[:]...)
+func (c *PowerRentalStateClient) Hooks() []Hook {
+	hooks := c.hooks.PowerRentalState
+	return append(hooks[:len(hooks):len(hooks)], powerrentalstate.Hooks[:]...)
 }
