@@ -32,7 +32,7 @@ func (OrderCoupon) Fields() []ent.Field {
 				return uuid.Nil
 			}),
 		field.
-			JSON("coupon_id", uuid.UUID{}).
+			UUID("coupon_id", uuid.UUID{}).
 			Optional().
 			Default(func() uuid.UUID {
 				return uuid.Nil

@@ -10,20 +10,20 @@ import (
 	"github.com/google/uuid"
 )
 
-// Compensate holds the schema definition for the Compensate entity.
-type Compensate struct {
+// OrderStateBase holds the schema definition for the OrderStateBase entity.
+type OrderStateBase struct {
 	ent.Schema
 }
 
-func (Compensate) Mixin() []ent.Mixin {
+func (OrderStateBase) Mixin() []ent.Mixin {
 	return []ent.Mixin{
 		mixin.TimeMixin{},
 		crudermixin.AutoIDMixin{},
 	}
 }
 
-// Fields of the Compensate.
-func (Compensate) Fields() []ent.Field {
+// Fields of the OrderStateBase.
+func (OrderStateBase) Fields() []ent.Field {
 	return []ent.Field{
 		field.
 			UUID("order_id", uuid.UUID{}).
@@ -32,34 +32,34 @@ func (Compensate) Fields() []ent.Field {
 				return uuid.Nil
 			}),
 		field.
+			String("order_state").
+			Optional().
+			Default(types.OrderState_OrderStateCreated.String()),
+		field.
+			String("start_mode").
+			Optional().
+			Default(types.OrderStartMode_OrderStartConfirmed.String()),
+		field.
 			Uint32("start_at").
 			Optional().
 			Default(0),
 		field.
-			Uint32("end_at").
+			Uint32("last_benefit_at").
 			Optional().
 			Default(0),
 		field.
-			String("compensate_type").
+			String("benefit_state").
 			Optional().
-			Default(types.CompensateType_DefaultCompensateType.String()),
-		field.
-			String("title").
-			Optional().
-			Default(""),
-		field.
-			String("message").
-			Optional().
-			Default(""),
+			Default(types.BenefitState_BenefitWait.String()),
 	}
 }
 
-// Edges of the Compensate.
-func (Compensate) Edges() []ent.Edge {
+// Edges of the OrderStateBase.
+func (OrderStateBase) Edges() []ent.Edge {
 	return nil
 }
 
-func (Compensate) Indexes() []ent.Index {
+func (OrderStateBase) Indexes() []ent.Index {
 	return []ent.Index{
 		index.Fields("order_id"),
 	}

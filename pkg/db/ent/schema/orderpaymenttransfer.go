@@ -45,6 +45,17 @@ func (OrderPaymentTransfer) Fields() []ent.Field {
 			}).
 			Optional().
 			Default(decimal.Decimal{}),
+		field.
+			String("payment_transaction_id").
+			Optional().
+			Default(""),
+		field.
+			Other("payment_finish_amount", decimal.Decimal{}).
+			SchemaType(map[string]string{
+				dialect.MySQL: "decimal(37,18)",
+			}).
+			Optional().
+			Default(decimal.Decimal{}),
 	}
 }
 

@@ -24,7 +24,11 @@ func (OutOfGas) Mixin() []ent.Mixin {
 func (OutOfGas) Fields() []ent.Field {
 	return []ent.Field{
 		field.
-			UUID("order_id", uuid.UUID{}),
+			UUID("order_id", uuid.UUID{}).
+			Optional().
+			Default(func() uuid.UUID {
+				return uuid.Nil
+			}),
 		field.
 			Uint32("start_at").
 			Optional().

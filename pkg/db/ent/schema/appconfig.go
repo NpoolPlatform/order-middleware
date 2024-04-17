@@ -11,49 +11,57 @@ import (
 	"github.com/shopspring/decimal"
 )
 
-// SimulateConfig holds the schema definition for the SimulateConfig entity.
-type SimulateConfig struct {
+// AppConfig holds the schema definition for the AppConfig entity.
+type AppConfig struct {
 	ent.Schema
 }
 
-func (SimulateConfig) Mixin() []ent.Mixin {
+func (AppConfig) Mixin() []ent.Mixin {
 	return []ent.Mixin{
 		mixin.TimeMixin{},
 		crudermixin.AutoIDMixin{},
 	}
 }
 
-// Fields of the SimulateConfig.
-func (SimulateConfig) Fields() []ent.Field {
+// Fields of the AppConfig.
+func (AppConfig) Fields() []ent.Field {
 	return []ent.Field{
 		field.
-			UUID("app_id", uuid.UUID{}),
+			UUID("app_id", uuid.UUID{}).
+			Optional().
+			Default(func() uuid.UUID {
+				return uuid.Nil
+			}),
 		field.
-			String("send_coupon_mode").
+			String("simulate_order_coupon_mode").
 			Optional().
 			Default(types.SendCouponMode_WithoutCoupon.String()),
 		field.
-			Other("send_coupon_probability", decimal.Decimal{}).
+			Other("simulate_order_coupon_probability", decimal.Decimal{}).
 			SchemaType(map[string]string{
 				dialect.MySQL: "decimal(37,18)",
 			}).
 			Optional().
 			Default(decimal.NewFromInt(0)),
 		field.
-			Other("cashable_profit_probability", decimal.Decimal{}).
+			Other("simulate_order_cashable_profit_probability", decimal.Decimal{}).
 			SchemaType(map[string]string{
 				dialect.MySQL: "decimal(37,18)",
 			}).
 			Optional().
 			Default(decimal.NewFromInt(0)),
 		field.
-			Bool("enabled").
+			Bool("enable_simulate_order").
 			Optional().
 			Default(false),
+		field.
+			Uint32("max_unpaid_orders").
+			Optional().
+			Default(5),
 	}
 }
 
-// Edges of the SimulateConfig.
-func (SimulateConfig) Edges() []ent.Edge {
+// Edges of the AppConfig.
+func (AppConfig) Edges() []ent.Edge {
 	return nil
 }
