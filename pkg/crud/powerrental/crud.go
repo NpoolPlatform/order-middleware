@@ -4,10 +4,12 @@ import (
 	"fmt"
 
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
+	types "github.com/NpoolPlatform/message/npool/basetypes/order/v1"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent"
 	entpowerrental "github.com/NpoolPlatform/order-middleware/pkg/db/ent/powerrental"
 
 	"github.com/google/uuid"
+	"github.com/shopspring/decimal"
 )
 
 type Req struct {
@@ -24,7 +26,7 @@ type Req struct {
 	DeletedAt         *uint32
 }
 
-func CreateSet(c *ent.OrderCouponCreate, req *Req) *ent.OrderCouponCreate {
+func CreateSet(c *ent.PowerRentalCreate, req *Req) *ent.PowerRentalCreate {
 	if req.EntID != nil {
 		c.SetEntID(*req.EntID)
 	}
@@ -34,10 +36,28 @@ func CreateSet(c *ent.OrderCouponCreate, req *Req) *ent.OrderCouponCreate {
 	if req.Units != nil {
 		c.SetUnits(*req.Units)
 	}
+	if req.GoodValueUSD != nil {
+		c.SetGoodValueUsd(*req.GoodValueUSD)
+	}
+	if req.PaymentAmountUSD != nil {
+		c.SetPaymentAmountUsd(*req.PaymentAmountUSD)
+	}
+	if req.DiscountAmountUSD != nil {
+		c.SetDiscountAmountUsd(*req.DiscountAmountUSD)
+	}
+	if req.PromotionID != nil {
+		c.SetPromotionID(*req.PromotionID)
+	}
+	if req.Duration != nil {
+		c.SetDuration(*req.Duration)
+	}
+	if req.InvestmentType != nil {
+		c.SetInvestmentType(req.InvestmentType.String())
+	}
 	return c
 }
 
-func UpdateSet(u *ent.OrderCouponUpdateOne, req *Req) *ent.OrderCouponUpdateOne {
+func UpdateSet(u *ent.PowerRentalUpdateOne, req *Req) *ent.PowerRentalUpdateOne {
 	if req.DeletedAt != nil {
 		u.SetDeletedAt(*req.DeletedAt)
 	}
@@ -45,17 +65,17 @@ func UpdateSet(u *ent.OrderCouponUpdateOne, req *Req) *ent.OrderCouponUpdateOne 
 }
 
 type Conds struct {
-	ID       *cruder.Cond
-	IDs      *cruder.Cond
-	EntID    *cruder.Cond
-	EntIDs   *cruder.Cond
-	OrderID  *cruder.Cond
-	OrderIDs *cruder.Cond
-	CouponID *cruder.Cond
+	ID             *cruder.Cond
+	IDs            *cruder.Cond
+	EntID          *cruder.Cond
+	EntIDs         *cruder.Cond
+	OrderID        *cruder.Cond
+	OrderIDs       *cruder.Cond
+	InvestmentType *cruder.Cond
 }
 
 //nolint
-func SetQueryConds(q *ent.OrderCouponQuery, conds *Conds) (*ent.OrderCouponQuery, error) {
+func SetQueryConds(q *ent.PowerRentalQuery, conds *Conds) (*ent.PowerRentalQuery, error) {
 	q.Where(entpowerrental.DeletedAt(0))
 	if conds == nil {
 		return q, nil
@@ -140,14 +160,14 @@ func SetQueryConds(q *ent.OrderCouponQuery, conds *Conds) (*ent.OrderCouponQuery
 			}
 		}
 	}
-	if conds.CouponID != nil {
-		id, ok := conds.CouponID.Val.(uuid.UUID)
+	if conds.InvestmentType != nil {
+		_type, ok := conds.InvestmentType.Val.(types.InvestmentType)
 		if !ok {
-			return nil, fmt.Errorf("invalid couponid")
+			return nil, fmt.Errorf("invalid investmenttype")
 		}
-		switch conds.CouponID.Op {
+		switch conds.InvestmentType.Op {
 		case cruder.EQ:
-			q.Where(entpowerrental.CouponID(id))
+			q.Where(entpowerrental.InvestmentType(_type.String()))
 		default:
 			return nil, fmt.Errorf("invalid powerrental field")
 		}
