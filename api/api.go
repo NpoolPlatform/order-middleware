@@ -7,7 +7,6 @@ import (
 	config "github.com/NpoolPlatform/order-middleware/api/app/config"
 	"github.com/NpoolPlatform/order-middleware/api/compensate"
 	order1 "github.com/NpoolPlatform/order-middleware/api/order"
-	orderlock "github.com/NpoolPlatform/order-middleware/api/order/orderlock"
 	"github.com/NpoolPlatform/order-middleware/api/outofgas"
 
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
@@ -23,7 +22,6 @@ func Register(server grpc.ServiceRegistrar) {
 	order1.Register(server)
 	compensate.Register(server)
 	outofgas.Register(server)
-	orderlock.Register(server)
 	config.Register(server)
 }
 
