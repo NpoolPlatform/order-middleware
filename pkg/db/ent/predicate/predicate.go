@@ -24,15 +24,6 @@ type OrderCoupon func(*sql.Selector)
 // OrderLock is the predicate function for orderlock builders.
 type OrderLock func(*sql.Selector)
 
-// OrderPaymentBalance is the predicate function for orderpaymentbalance builders.
-type OrderPaymentBalance func(*sql.Selector)
-
-// OrderPaymentContract is the predicate function for orderpaymentcontract builders.
-type OrderPaymentContract func(*sql.Selector)
-
-// OrderPaymentTransfer is the predicate function for orderpaymenttransfer builders.
-type OrderPaymentTransfer func(*sql.Selector)
-
 // OrderState is the predicate function for orderstate builders.
 type OrderState func(*sql.Selector)
 
@@ -44,6 +35,15 @@ type OutOfGas func(*sql.Selector)
 
 // Payment is the predicate function for payment builders.
 type Payment func(*sql.Selector)
+
+// PaymentBalance is the predicate function for paymentbalance builders.
+type PaymentBalance func(*sql.Selector)
+
+// PaymentContract is the predicate function for paymentcontract builders.
+type PaymentContract func(*sql.Selector)
+
+// PaymentTransfer is the predicate function for paymenttransfer builders.
+type PaymentTransfer func(*sql.Selector)
 
 // PowerRental is the predicate function for powerrental builders.
 type PowerRental func(*sql.Selector)

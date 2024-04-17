@@ -16,13 +16,13 @@ import (
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/orderbase"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/ordercoupon"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/orderlock"
-	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/orderpaymentbalance"
-	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/orderpaymentcontract"
-	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/orderpaymenttransfer"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/orderstate"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/orderstatebase"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/outofgas"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/payment"
+	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/paymentbalance"
+	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/paymentcontract"
+	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/paymenttransfer"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/powerrental"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/powerrentalstate"
 
@@ -47,12 +47,6 @@ type Client struct {
 	OrderCoupon *OrderCouponClient
 	// OrderLock is the client for interacting with the OrderLock builders.
 	OrderLock *OrderLockClient
-	// OrderPaymentBalance is the client for interacting with the OrderPaymentBalance builders.
-	OrderPaymentBalance *OrderPaymentBalanceClient
-	// OrderPaymentContract is the client for interacting with the OrderPaymentContract builders.
-	OrderPaymentContract *OrderPaymentContractClient
-	// OrderPaymentTransfer is the client for interacting with the OrderPaymentTransfer builders.
-	OrderPaymentTransfer *OrderPaymentTransferClient
 	// OrderState is the client for interacting with the OrderState builders.
 	OrderState *OrderStateClient
 	// OrderStateBase is the client for interacting with the OrderStateBase builders.
@@ -61,6 +55,12 @@ type Client struct {
 	OutOfGas *OutOfGasClient
 	// Payment is the client for interacting with the Payment builders.
 	Payment *PaymentClient
+	// PaymentBalance is the client for interacting with the PaymentBalance builders.
+	PaymentBalance *PaymentBalanceClient
+	// PaymentContract is the client for interacting with the PaymentContract builders.
+	PaymentContract *PaymentContractClient
+	// PaymentTransfer is the client for interacting with the PaymentTransfer builders.
+	PaymentTransfer *PaymentTransferClient
 	// PowerRental is the client for interacting with the PowerRental builders.
 	PowerRental *PowerRentalClient
 	// PowerRentalState is the client for interacting with the PowerRentalState builders.
@@ -84,13 +84,13 @@ func (c *Client) init() {
 	c.OrderBase = NewOrderBaseClient(c.config)
 	c.OrderCoupon = NewOrderCouponClient(c.config)
 	c.OrderLock = NewOrderLockClient(c.config)
-	c.OrderPaymentBalance = NewOrderPaymentBalanceClient(c.config)
-	c.OrderPaymentContract = NewOrderPaymentContractClient(c.config)
-	c.OrderPaymentTransfer = NewOrderPaymentTransferClient(c.config)
 	c.OrderState = NewOrderStateClient(c.config)
 	c.OrderStateBase = NewOrderStateBaseClient(c.config)
 	c.OutOfGas = NewOutOfGasClient(c.config)
 	c.Payment = NewPaymentClient(c.config)
+	c.PaymentBalance = NewPaymentBalanceClient(c.config)
+	c.PaymentContract = NewPaymentContractClient(c.config)
+	c.PaymentTransfer = NewPaymentTransferClient(c.config)
 	c.PowerRental = NewPowerRentalClient(c.config)
 	c.PowerRentalState = NewPowerRentalStateClient(c.config)
 }
@@ -124,23 +124,23 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 	cfg := c.config
 	cfg.driver = tx
 	return &Tx{
-		ctx:                  ctx,
-		config:               cfg,
-		AppConfig:            NewAppConfigClient(cfg),
-		Compensate:           NewCompensateClient(cfg),
-		Order:                NewOrderClient(cfg),
-		OrderBase:            NewOrderBaseClient(cfg),
-		OrderCoupon:          NewOrderCouponClient(cfg),
-		OrderLock:            NewOrderLockClient(cfg),
-		OrderPaymentBalance:  NewOrderPaymentBalanceClient(cfg),
-		OrderPaymentContract: NewOrderPaymentContractClient(cfg),
-		OrderPaymentTransfer: NewOrderPaymentTransferClient(cfg),
-		OrderState:           NewOrderStateClient(cfg),
-		OrderStateBase:       NewOrderStateBaseClient(cfg),
-		OutOfGas:             NewOutOfGasClient(cfg),
-		Payment:              NewPaymentClient(cfg),
-		PowerRental:          NewPowerRentalClient(cfg),
-		PowerRentalState:     NewPowerRentalStateClient(cfg),
+		ctx:              ctx,
+		config:           cfg,
+		AppConfig:        NewAppConfigClient(cfg),
+		Compensate:       NewCompensateClient(cfg),
+		Order:            NewOrderClient(cfg),
+		OrderBase:        NewOrderBaseClient(cfg),
+		OrderCoupon:      NewOrderCouponClient(cfg),
+		OrderLock:        NewOrderLockClient(cfg),
+		OrderState:       NewOrderStateClient(cfg),
+		OrderStateBase:   NewOrderStateBaseClient(cfg),
+		OutOfGas:         NewOutOfGasClient(cfg),
+		Payment:          NewPaymentClient(cfg),
+		PaymentBalance:   NewPaymentBalanceClient(cfg),
+		PaymentContract:  NewPaymentContractClient(cfg),
+		PaymentTransfer:  NewPaymentTransferClient(cfg),
+		PowerRental:      NewPowerRentalClient(cfg),
+		PowerRentalState: NewPowerRentalStateClient(cfg),
 	}, nil
 }
 
@@ -158,23 +158,23 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 	cfg := c.config
 	cfg.driver = &txDriver{tx: tx, drv: c.driver}
 	return &Tx{
-		ctx:                  ctx,
-		config:               cfg,
-		AppConfig:            NewAppConfigClient(cfg),
-		Compensate:           NewCompensateClient(cfg),
-		Order:                NewOrderClient(cfg),
-		OrderBase:            NewOrderBaseClient(cfg),
-		OrderCoupon:          NewOrderCouponClient(cfg),
-		OrderLock:            NewOrderLockClient(cfg),
-		OrderPaymentBalance:  NewOrderPaymentBalanceClient(cfg),
-		OrderPaymentContract: NewOrderPaymentContractClient(cfg),
-		OrderPaymentTransfer: NewOrderPaymentTransferClient(cfg),
-		OrderState:           NewOrderStateClient(cfg),
-		OrderStateBase:       NewOrderStateBaseClient(cfg),
-		OutOfGas:             NewOutOfGasClient(cfg),
-		Payment:              NewPaymentClient(cfg),
-		PowerRental:          NewPowerRentalClient(cfg),
-		PowerRentalState:     NewPowerRentalStateClient(cfg),
+		ctx:              ctx,
+		config:           cfg,
+		AppConfig:        NewAppConfigClient(cfg),
+		Compensate:       NewCompensateClient(cfg),
+		Order:            NewOrderClient(cfg),
+		OrderBase:        NewOrderBaseClient(cfg),
+		OrderCoupon:      NewOrderCouponClient(cfg),
+		OrderLock:        NewOrderLockClient(cfg),
+		OrderState:       NewOrderStateClient(cfg),
+		OrderStateBase:   NewOrderStateBaseClient(cfg),
+		OutOfGas:         NewOutOfGasClient(cfg),
+		Payment:          NewPaymentClient(cfg),
+		PaymentBalance:   NewPaymentBalanceClient(cfg),
+		PaymentContract:  NewPaymentContractClient(cfg),
+		PaymentTransfer:  NewPaymentTransferClient(cfg),
+		PowerRental:      NewPowerRentalClient(cfg),
+		PowerRentalState: NewPowerRentalStateClient(cfg),
 	}, nil
 }
 
@@ -210,13 +210,13 @@ func (c *Client) Use(hooks ...Hook) {
 	c.OrderBase.Use(hooks...)
 	c.OrderCoupon.Use(hooks...)
 	c.OrderLock.Use(hooks...)
-	c.OrderPaymentBalance.Use(hooks...)
-	c.OrderPaymentContract.Use(hooks...)
-	c.OrderPaymentTransfer.Use(hooks...)
 	c.OrderState.Use(hooks...)
 	c.OrderStateBase.Use(hooks...)
 	c.OutOfGas.Use(hooks...)
 	c.Payment.Use(hooks...)
+	c.PaymentBalance.Use(hooks...)
+	c.PaymentContract.Use(hooks...)
+	c.PaymentTransfer.Use(hooks...)
 	c.PowerRental.Use(hooks...)
 	c.PowerRentalState.Use(hooks...)
 }
@@ -767,279 +767,6 @@ func (c *OrderLockClient) Hooks() []Hook {
 	return append(hooks[:len(hooks):len(hooks)], orderlock.Hooks[:]...)
 }
 
-// OrderPaymentBalanceClient is a client for the OrderPaymentBalance schema.
-type OrderPaymentBalanceClient struct {
-	config
-}
-
-// NewOrderPaymentBalanceClient returns a client for the OrderPaymentBalance from the given config.
-func NewOrderPaymentBalanceClient(c config) *OrderPaymentBalanceClient {
-	return &OrderPaymentBalanceClient{config: c}
-}
-
-// Use adds a list of mutation hooks to the hooks stack.
-// A call to `Use(f, g, h)` equals to `orderpaymentbalance.Hooks(f(g(h())))`.
-func (c *OrderPaymentBalanceClient) Use(hooks ...Hook) {
-	c.hooks.OrderPaymentBalance = append(c.hooks.OrderPaymentBalance, hooks...)
-}
-
-// Create returns a builder for creating a OrderPaymentBalance entity.
-func (c *OrderPaymentBalanceClient) Create() *OrderPaymentBalanceCreate {
-	mutation := newOrderPaymentBalanceMutation(c.config, OpCreate)
-	return &OrderPaymentBalanceCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// CreateBulk returns a builder for creating a bulk of OrderPaymentBalance entities.
-func (c *OrderPaymentBalanceClient) CreateBulk(builders ...*OrderPaymentBalanceCreate) *OrderPaymentBalanceCreateBulk {
-	return &OrderPaymentBalanceCreateBulk{config: c.config, builders: builders}
-}
-
-// Update returns an update builder for OrderPaymentBalance.
-func (c *OrderPaymentBalanceClient) Update() *OrderPaymentBalanceUpdate {
-	mutation := newOrderPaymentBalanceMutation(c.config, OpUpdate)
-	return &OrderPaymentBalanceUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// UpdateOne returns an update builder for the given entity.
-func (c *OrderPaymentBalanceClient) UpdateOne(opb *OrderPaymentBalance) *OrderPaymentBalanceUpdateOne {
-	mutation := newOrderPaymentBalanceMutation(c.config, OpUpdateOne, withOrderPaymentBalance(opb))
-	return &OrderPaymentBalanceUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// UpdateOneID returns an update builder for the given id.
-func (c *OrderPaymentBalanceClient) UpdateOneID(id uint32) *OrderPaymentBalanceUpdateOne {
-	mutation := newOrderPaymentBalanceMutation(c.config, OpUpdateOne, withOrderPaymentBalanceID(id))
-	return &OrderPaymentBalanceUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// Delete returns a delete builder for OrderPaymentBalance.
-func (c *OrderPaymentBalanceClient) Delete() *OrderPaymentBalanceDelete {
-	mutation := newOrderPaymentBalanceMutation(c.config, OpDelete)
-	return &OrderPaymentBalanceDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// DeleteOne returns a builder for deleting the given entity.
-func (c *OrderPaymentBalanceClient) DeleteOne(opb *OrderPaymentBalance) *OrderPaymentBalanceDeleteOne {
-	return c.DeleteOneID(opb.ID)
-}
-
-// DeleteOne returns a builder for deleting the given entity by its id.
-func (c *OrderPaymentBalanceClient) DeleteOneID(id uint32) *OrderPaymentBalanceDeleteOne {
-	builder := c.Delete().Where(orderpaymentbalance.ID(id))
-	builder.mutation.id = &id
-	builder.mutation.op = OpDeleteOne
-	return &OrderPaymentBalanceDeleteOne{builder}
-}
-
-// Query returns a query builder for OrderPaymentBalance.
-func (c *OrderPaymentBalanceClient) Query() *OrderPaymentBalanceQuery {
-	return &OrderPaymentBalanceQuery{
-		config: c.config,
-	}
-}
-
-// Get returns a OrderPaymentBalance entity by its id.
-func (c *OrderPaymentBalanceClient) Get(ctx context.Context, id uint32) (*OrderPaymentBalance, error) {
-	return c.Query().Where(orderpaymentbalance.ID(id)).Only(ctx)
-}
-
-// GetX is like Get, but panics if an error occurs.
-func (c *OrderPaymentBalanceClient) GetX(ctx context.Context, id uint32) *OrderPaymentBalance {
-	obj, err := c.Get(ctx, id)
-	if err != nil {
-		panic(err)
-	}
-	return obj
-}
-
-// Hooks returns the client hooks.
-func (c *OrderPaymentBalanceClient) Hooks() []Hook {
-	hooks := c.hooks.OrderPaymentBalance
-	return append(hooks[:len(hooks):len(hooks)], orderpaymentbalance.Hooks[:]...)
-}
-
-// OrderPaymentContractClient is a client for the OrderPaymentContract schema.
-type OrderPaymentContractClient struct {
-	config
-}
-
-// NewOrderPaymentContractClient returns a client for the OrderPaymentContract from the given config.
-func NewOrderPaymentContractClient(c config) *OrderPaymentContractClient {
-	return &OrderPaymentContractClient{config: c}
-}
-
-// Use adds a list of mutation hooks to the hooks stack.
-// A call to `Use(f, g, h)` equals to `orderpaymentcontract.Hooks(f(g(h())))`.
-func (c *OrderPaymentContractClient) Use(hooks ...Hook) {
-	c.hooks.OrderPaymentContract = append(c.hooks.OrderPaymentContract, hooks...)
-}
-
-// Create returns a builder for creating a OrderPaymentContract entity.
-func (c *OrderPaymentContractClient) Create() *OrderPaymentContractCreate {
-	mutation := newOrderPaymentContractMutation(c.config, OpCreate)
-	return &OrderPaymentContractCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// CreateBulk returns a builder for creating a bulk of OrderPaymentContract entities.
-func (c *OrderPaymentContractClient) CreateBulk(builders ...*OrderPaymentContractCreate) *OrderPaymentContractCreateBulk {
-	return &OrderPaymentContractCreateBulk{config: c.config, builders: builders}
-}
-
-// Update returns an update builder for OrderPaymentContract.
-func (c *OrderPaymentContractClient) Update() *OrderPaymentContractUpdate {
-	mutation := newOrderPaymentContractMutation(c.config, OpUpdate)
-	return &OrderPaymentContractUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// UpdateOne returns an update builder for the given entity.
-func (c *OrderPaymentContractClient) UpdateOne(opc *OrderPaymentContract) *OrderPaymentContractUpdateOne {
-	mutation := newOrderPaymentContractMutation(c.config, OpUpdateOne, withOrderPaymentContract(opc))
-	return &OrderPaymentContractUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// UpdateOneID returns an update builder for the given id.
-func (c *OrderPaymentContractClient) UpdateOneID(id uint32) *OrderPaymentContractUpdateOne {
-	mutation := newOrderPaymentContractMutation(c.config, OpUpdateOne, withOrderPaymentContractID(id))
-	return &OrderPaymentContractUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// Delete returns a delete builder for OrderPaymentContract.
-func (c *OrderPaymentContractClient) Delete() *OrderPaymentContractDelete {
-	mutation := newOrderPaymentContractMutation(c.config, OpDelete)
-	return &OrderPaymentContractDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// DeleteOne returns a builder for deleting the given entity.
-func (c *OrderPaymentContractClient) DeleteOne(opc *OrderPaymentContract) *OrderPaymentContractDeleteOne {
-	return c.DeleteOneID(opc.ID)
-}
-
-// DeleteOne returns a builder for deleting the given entity by its id.
-func (c *OrderPaymentContractClient) DeleteOneID(id uint32) *OrderPaymentContractDeleteOne {
-	builder := c.Delete().Where(orderpaymentcontract.ID(id))
-	builder.mutation.id = &id
-	builder.mutation.op = OpDeleteOne
-	return &OrderPaymentContractDeleteOne{builder}
-}
-
-// Query returns a query builder for OrderPaymentContract.
-func (c *OrderPaymentContractClient) Query() *OrderPaymentContractQuery {
-	return &OrderPaymentContractQuery{
-		config: c.config,
-	}
-}
-
-// Get returns a OrderPaymentContract entity by its id.
-func (c *OrderPaymentContractClient) Get(ctx context.Context, id uint32) (*OrderPaymentContract, error) {
-	return c.Query().Where(orderpaymentcontract.ID(id)).Only(ctx)
-}
-
-// GetX is like Get, but panics if an error occurs.
-func (c *OrderPaymentContractClient) GetX(ctx context.Context, id uint32) *OrderPaymentContract {
-	obj, err := c.Get(ctx, id)
-	if err != nil {
-		panic(err)
-	}
-	return obj
-}
-
-// Hooks returns the client hooks.
-func (c *OrderPaymentContractClient) Hooks() []Hook {
-	hooks := c.hooks.OrderPaymentContract
-	return append(hooks[:len(hooks):len(hooks)], orderpaymentcontract.Hooks[:]...)
-}
-
-// OrderPaymentTransferClient is a client for the OrderPaymentTransfer schema.
-type OrderPaymentTransferClient struct {
-	config
-}
-
-// NewOrderPaymentTransferClient returns a client for the OrderPaymentTransfer from the given config.
-func NewOrderPaymentTransferClient(c config) *OrderPaymentTransferClient {
-	return &OrderPaymentTransferClient{config: c}
-}
-
-// Use adds a list of mutation hooks to the hooks stack.
-// A call to `Use(f, g, h)` equals to `orderpaymenttransfer.Hooks(f(g(h())))`.
-func (c *OrderPaymentTransferClient) Use(hooks ...Hook) {
-	c.hooks.OrderPaymentTransfer = append(c.hooks.OrderPaymentTransfer, hooks...)
-}
-
-// Create returns a builder for creating a OrderPaymentTransfer entity.
-func (c *OrderPaymentTransferClient) Create() *OrderPaymentTransferCreate {
-	mutation := newOrderPaymentTransferMutation(c.config, OpCreate)
-	return &OrderPaymentTransferCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// CreateBulk returns a builder for creating a bulk of OrderPaymentTransfer entities.
-func (c *OrderPaymentTransferClient) CreateBulk(builders ...*OrderPaymentTransferCreate) *OrderPaymentTransferCreateBulk {
-	return &OrderPaymentTransferCreateBulk{config: c.config, builders: builders}
-}
-
-// Update returns an update builder for OrderPaymentTransfer.
-func (c *OrderPaymentTransferClient) Update() *OrderPaymentTransferUpdate {
-	mutation := newOrderPaymentTransferMutation(c.config, OpUpdate)
-	return &OrderPaymentTransferUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// UpdateOne returns an update builder for the given entity.
-func (c *OrderPaymentTransferClient) UpdateOne(opt *OrderPaymentTransfer) *OrderPaymentTransferUpdateOne {
-	mutation := newOrderPaymentTransferMutation(c.config, OpUpdateOne, withOrderPaymentTransfer(opt))
-	return &OrderPaymentTransferUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// UpdateOneID returns an update builder for the given id.
-func (c *OrderPaymentTransferClient) UpdateOneID(id uint32) *OrderPaymentTransferUpdateOne {
-	mutation := newOrderPaymentTransferMutation(c.config, OpUpdateOne, withOrderPaymentTransferID(id))
-	return &OrderPaymentTransferUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// Delete returns a delete builder for OrderPaymentTransfer.
-func (c *OrderPaymentTransferClient) Delete() *OrderPaymentTransferDelete {
-	mutation := newOrderPaymentTransferMutation(c.config, OpDelete)
-	return &OrderPaymentTransferDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// DeleteOne returns a builder for deleting the given entity.
-func (c *OrderPaymentTransferClient) DeleteOne(opt *OrderPaymentTransfer) *OrderPaymentTransferDeleteOne {
-	return c.DeleteOneID(opt.ID)
-}
-
-// DeleteOne returns a builder for deleting the given entity by its id.
-func (c *OrderPaymentTransferClient) DeleteOneID(id uint32) *OrderPaymentTransferDeleteOne {
-	builder := c.Delete().Where(orderpaymenttransfer.ID(id))
-	builder.mutation.id = &id
-	builder.mutation.op = OpDeleteOne
-	return &OrderPaymentTransferDeleteOne{builder}
-}
-
-// Query returns a query builder for OrderPaymentTransfer.
-func (c *OrderPaymentTransferClient) Query() *OrderPaymentTransferQuery {
-	return &OrderPaymentTransferQuery{
-		config: c.config,
-	}
-}
-
-// Get returns a OrderPaymentTransfer entity by its id.
-func (c *OrderPaymentTransferClient) Get(ctx context.Context, id uint32) (*OrderPaymentTransfer, error) {
-	return c.Query().Where(orderpaymenttransfer.ID(id)).Only(ctx)
-}
-
-// GetX is like Get, but panics if an error occurs.
-func (c *OrderPaymentTransferClient) GetX(ctx context.Context, id uint32) *OrderPaymentTransfer {
-	obj, err := c.Get(ctx, id)
-	if err != nil {
-		panic(err)
-	}
-	return obj
-}
-
-// Hooks returns the client hooks.
-func (c *OrderPaymentTransferClient) Hooks() []Hook {
-	hooks := c.hooks.OrderPaymentTransfer
-	return append(hooks[:len(hooks):len(hooks)], orderpaymenttransfer.Hooks[:]...)
-}
-
 // OrderStateClient is a client for the OrderState schema.
 type OrderStateClient struct {
 	config
@@ -1402,6 +1129,279 @@ func (c *PaymentClient) GetX(ctx context.Context, id uint32) *Payment {
 func (c *PaymentClient) Hooks() []Hook {
 	hooks := c.hooks.Payment
 	return append(hooks[:len(hooks):len(hooks)], payment.Hooks[:]...)
+}
+
+// PaymentBalanceClient is a client for the PaymentBalance schema.
+type PaymentBalanceClient struct {
+	config
+}
+
+// NewPaymentBalanceClient returns a client for the PaymentBalance from the given config.
+func NewPaymentBalanceClient(c config) *PaymentBalanceClient {
+	return &PaymentBalanceClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `paymentbalance.Hooks(f(g(h())))`.
+func (c *PaymentBalanceClient) Use(hooks ...Hook) {
+	c.hooks.PaymentBalance = append(c.hooks.PaymentBalance, hooks...)
+}
+
+// Create returns a builder for creating a PaymentBalance entity.
+func (c *PaymentBalanceClient) Create() *PaymentBalanceCreate {
+	mutation := newPaymentBalanceMutation(c.config, OpCreate)
+	return &PaymentBalanceCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of PaymentBalance entities.
+func (c *PaymentBalanceClient) CreateBulk(builders ...*PaymentBalanceCreate) *PaymentBalanceCreateBulk {
+	return &PaymentBalanceCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for PaymentBalance.
+func (c *PaymentBalanceClient) Update() *PaymentBalanceUpdate {
+	mutation := newPaymentBalanceMutation(c.config, OpUpdate)
+	return &PaymentBalanceUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *PaymentBalanceClient) UpdateOne(pb *PaymentBalance) *PaymentBalanceUpdateOne {
+	mutation := newPaymentBalanceMutation(c.config, OpUpdateOne, withPaymentBalance(pb))
+	return &PaymentBalanceUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *PaymentBalanceClient) UpdateOneID(id uint32) *PaymentBalanceUpdateOne {
+	mutation := newPaymentBalanceMutation(c.config, OpUpdateOne, withPaymentBalanceID(id))
+	return &PaymentBalanceUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for PaymentBalance.
+func (c *PaymentBalanceClient) Delete() *PaymentBalanceDelete {
+	mutation := newPaymentBalanceMutation(c.config, OpDelete)
+	return &PaymentBalanceDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *PaymentBalanceClient) DeleteOne(pb *PaymentBalance) *PaymentBalanceDeleteOne {
+	return c.DeleteOneID(pb.ID)
+}
+
+// DeleteOne returns a builder for deleting the given entity by its id.
+func (c *PaymentBalanceClient) DeleteOneID(id uint32) *PaymentBalanceDeleteOne {
+	builder := c.Delete().Where(paymentbalance.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &PaymentBalanceDeleteOne{builder}
+}
+
+// Query returns a query builder for PaymentBalance.
+func (c *PaymentBalanceClient) Query() *PaymentBalanceQuery {
+	return &PaymentBalanceQuery{
+		config: c.config,
+	}
+}
+
+// Get returns a PaymentBalance entity by its id.
+func (c *PaymentBalanceClient) Get(ctx context.Context, id uint32) (*PaymentBalance, error) {
+	return c.Query().Where(paymentbalance.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *PaymentBalanceClient) GetX(ctx context.Context, id uint32) *PaymentBalance {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *PaymentBalanceClient) Hooks() []Hook {
+	hooks := c.hooks.PaymentBalance
+	return append(hooks[:len(hooks):len(hooks)], paymentbalance.Hooks[:]...)
+}
+
+// PaymentContractClient is a client for the PaymentContract schema.
+type PaymentContractClient struct {
+	config
+}
+
+// NewPaymentContractClient returns a client for the PaymentContract from the given config.
+func NewPaymentContractClient(c config) *PaymentContractClient {
+	return &PaymentContractClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `paymentcontract.Hooks(f(g(h())))`.
+func (c *PaymentContractClient) Use(hooks ...Hook) {
+	c.hooks.PaymentContract = append(c.hooks.PaymentContract, hooks...)
+}
+
+// Create returns a builder for creating a PaymentContract entity.
+func (c *PaymentContractClient) Create() *PaymentContractCreate {
+	mutation := newPaymentContractMutation(c.config, OpCreate)
+	return &PaymentContractCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of PaymentContract entities.
+func (c *PaymentContractClient) CreateBulk(builders ...*PaymentContractCreate) *PaymentContractCreateBulk {
+	return &PaymentContractCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for PaymentContract.
+func (c *PaymentContractClient) Update() *PaymentContractUpdate {
+	mutation := newPaymentContractMutation(c.config, OpUpdate)
+	return &PaymentContractUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *PaymentContractClient) UpdateOne(pc *PaymentContract) *PaymentContractUpdateOne {
+	mutation := newPaymentContractMutation(c.config, OpUpdateOne, withPaymentContract(pc))
+	return &PaymentContractUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *PaymentContractClient) UpdateOneID(id uint32) *PaymentContractUpdateOne {
+	mutation := newPaymentContractMutation(c.config, OpUpdateOne, withPaymentContractID(id))
+	return &PaymentContractUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for PaymentContract.
+func (c *PaymentContractClient) Delete() *PaymentContractDelete {
+	mutation := newPaymentContractMutation(c.config, OpDelete)
+	return &PaymentContractDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *PaymentContractClient) DeleteOne(pc *PaymentContract) *PaymentContractDeleteOne {
+	return c.DeleteOneID(pc.ID)
+}
+
+// DeleteOne returns a builder for deleting the given entity by its id.
+func (c *PaymentContractClient) DeleteOneID(id uint32) *PaymentContractDeleteOne {
+	builder := c.Delete().Where(paymentcontract.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &PaymentContractDeleteOne{builder}
+}
+
+// Query returns a query builder for PaymentContract.
+func (c *PaymentContractClient) Query() *PaymentContractQuery {
+	return &PaymentContractQuery{
+		config: c.config,
+	}
+}
+
+// Get returns a PaymentContract entity by its id.
+func (c *PaymentContractClient) Get(ctx context.Context, id uint32) (*PaymentContract, error) {
+	return c.Query().Where(paymentcontract.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *PaymentContractClient) GetX(ctx context.Context, id uint32) *PaymentContract {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *PaymentContractClient) Hooks() []Hook {
+	hooks := c.hooks.PaymentContract
+	return append(hooks[:len(hooks):len(hooks)], paymentcontract.Hooks[:]...)
+}
+
+// PaymentTransferClient is a client for the PaymentTransfer schema.
+type PaymentTransferClient struct {
+	config
+}
+
+// NewPaymentTransferClient returns a client for the PaymentTransfer from the given config.
+func NewPaymentTransferClient(c config) *PaymentTransferClient {
+	return &PaymentTransferClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `paymenttransfer.Hooks(f(g(h())))`.
+func (c *PaymentTransferClient) Use(hooks ...Hook) {
+	c.hooks.PaymentTransfer = append(c.hooks.PaymentTransfer, hooks...)
+}
+
+// Create returns a builder for creating a PaymentTransfer entity.
+func (c *PaymentTransferClient) Create() *PaymentTransferCreate {
+	mutation := newPaymentTransferMutation(c.config, OpCreate)
+	return &PaymentTransferCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of PaymentTransfer entities.
+func (c *PaymentTransferClient) CreateBulk(builders ...*PaymentTransferCreate) *PaymentTransferCreateBulk {
+	return &PaymentTransferCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for PaymentTransfer.
+func (c *PaymentTransferClient) Update() *PaymentTransferUpdate {
+	mutation := newPaymentTransferMutation(c.config, OpUpdate)
+	return &PaymentTransferUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *PaymentTransferClient) UpdateOne(pt *PaymentTransfer) *PaymentTransferUpdateOne {
+	mutation := newPaymentTransferMutation(c.config, OpUpdateOne, withPaymentTransfer(pt))
+	return &PaymentTransferUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *PaymentTransferClient) UpdateOneID(id uint32) *PaymentTransferUpdateOne {
+	mutation := newPaymentTransferMutation(c.config, OpUpdateOne, withPaymentTransferID(id))
+	return &PaymentTransferUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for PaymentTransfer.
+func (c *PaymentTransferClient) Delete() *PaymentTransferDelete {
+	mutation := newPaymentTransferMutation(c.config, OpDelete)
+	return &PaymentTransferDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *PaymentTransferClient) DeleteOne(pt *PaymentTransfer) *PaymentTransferDeleteOne {
+	return c.DeleteOneID(pt.ID)
+}
+
+// DeleteOne returns a builder for deleting the given entity by its id.
+func (c *PaymentTransferClient) DeleteOneID(id uint32) *PaymentTransferDeleteOne {
+	builder := c.Delete().Where(paymenttransfer.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &PaymentTransferDeleteOne{builder}
+}
+
+// Query returns a query builder for PaymentTransfer.
+func (c *PaymentTransferClient) Query() *PaymentTransferQuery {
+	return &PaymentTransferQuery{
+		config: c.config,
+	}
+}
+
+// Get returns a PaymentTransfer entity by its id.
+func (c *PaymentTransferClient) Get(ctx context.Context, id uint32) (*PaymentTransfer, error) {
+	return c.Query().Where(paymenttransfer.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *PaymentTransferClient) GetX(ctx context.Context, id uint32) *PaymentTransfer {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *PaymentTransferClient) Hooks() []Hook {
+	hooks := c.hooks.PaymentTransfer
+	return append(hooks[:len(hooks):len(hooks)], paymenttransfer.Hooks[:]...)
 }
 
 // PowerRentalClient is a client for the PowerRental schema.

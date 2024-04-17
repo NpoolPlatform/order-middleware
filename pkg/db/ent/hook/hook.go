@@ -87,45 +87,6 @@ func (f OrderLockFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, e
 	return f(ctx, mv)
 }
 
-// The OrderPaymentBalanceFunc type is an adapter to allow the use of ordinary
-// function as OrderPaymentBalance mutator.
-type OrderPaymentBalanceFunc func(context.Context, *ent.OrderPaymentBalanceMutation) (ent.Value, error)
-
-// Mutate calls f(ctx, m).
-func (f OrderPaymentBalanceFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
-	mv, ok := m.(*ent.OrderPaymentBalanceMutation)
-	if !ok {
-		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.OrderPaymentBalanceMutation", m)
-	}
-	return f(ctx, mv)
-}
-
-// The OrderPaymentContractFunc type is an adapter to allow the use of ordinary
-// function as OrderPaymentContract mutator.
-type OrderPaymentContractFunc func(context.Context, *ent.OrderPaymentContractMutation) (ent.Value, error)
-
-// Mutate calls f(ctx, m).
-func (f OrderPaymentContractFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
-	mv, ok := m.(*ent.OrderPaymentContractMutation)
-	if !ok {
-		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.OrderPaymentContractMutation", m)
-	}
-	return f(ctx, mv)
-}
-
-// The OrderPaymentTransferFunc type is an adapter to allow the use of ordinary
-// function as OrderPaymentTransfer mutator.
-type OrderPaymentTransferFunc func(context.Context, *ent.OrderPaymentTransferMutation) (ent.Value, error)
-
-// Mutate calls f(ctx, m).
-func (f OrderPaymentTransferFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
-	mv, ok := m.(*ent.OrderPaymentTransferMutation)
-	if !ok {
-		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.OrderPaymentTransferMutation", m)
-	}
-	return f(ctx, mv)
-}
-
 // The OrderStateFunc type is an adapter to allow the use of ordinary
 // function as OrderState mutator.
 type OrderStateFunc func(context.Context, *ent.OrderStateMutation) (ent.Value, error)
@@ -174,6 +135,45 @@ func (f PaymentFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, err
 	mv, ok := m.(*ent.PaymentMutation)
 	if !ok {
 		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.PaymentMutation", m)
+	}
+	return f(ctx, mv)
+}
+
+// The PaymentBalanceFunc type is an adapter to allow the use of ordinary
+// function as PaymentBalance mutator.
+type PaymentBalanceFunc func(context.Context, *ent.PaymentBalanceMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f PaymentBalanceFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	mv, ok := m.(*ent.PaymentBalanceMutation)
+	if !ok {
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.PaymentBalanceMutation", m)
+	}
+	return f(ctx, mv)
+}
+
+// The PaymentContractFunc type is an adapter to allow the use of ordinary
+// function as PaymentContract mutator.
+type PaymentContractFunc func(context.Context, *ent.PaymentContractMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f PaymentContractFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	mv, ok := m.(*ent.PaymentContractMutation)
+	if !ok {
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.PaymentContractMutation", m)
+	}
+	return f(ctx, mv)
+}
+
+// The PaymentTransferFunc type is an adapter to allow the use of ordinary
+// function as PaymentTransfer mutator.
+type PaymentTransferFunc func(context.Context, *ent.PaymentTransferMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f PaymentTransferFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	mv, ok := m.(*ent.PaymentTransferMutation)
+	if !ok {
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.PaymentTransferMutation", m)
 	}
 	return f(ctx, mv)
 }

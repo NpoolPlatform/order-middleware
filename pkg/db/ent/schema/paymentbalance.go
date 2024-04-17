@@ -11,20 +11,20 @@ import (
 	"github.com/shopspring/decimal"
 )
 
-// OrderPaymentTransfer holds the schema definition for the OrderPaymentTransfer entity.
-type OrderPaymentTransfer struct {
+// PaymentBalance holds the schema definition for the PaymentBalance entity.
+type PaymentBalance struct {
 	ent.Schema
 }
 
-func (OrderPaymentTransfer) Mixin() []ent.Mixin {
+func (PaymentBalance) Mixin() []ent.Mixin {
 	return []ent.Mixin{
 		mixin.TimeMixin{},
 		crudermixin.AutoIDMixin{},
 	}
 }
 
-// Fields of the OrderPaymentTransfer.
-func (OrderPaymentTransfer) Fields() []ent.Field {
+// Fields of the PaymentBalance.
+func (PaymentBalance) Fields() []ent.Field {
 	return []ent.Field{
 		field.
 			UUID("order_id", uuid.UUID{}).
@@ -40,24 +40,6 @@ func (OrderPaymentTransfer) Fields() []ent.Field {
 			}),
 		field.
 			Other("amount", decimal.Decimal{}).
-			SchemaType(map[string]string{
-				dialect.MySQL: "decimal(37,18)",
-			}).
-			Optional().
-			Default(decimal.Decimal{}),
-		field.
-			Other("start_amount", decimal.Decimal{}).
-			SchemaType(map[string]string{
-				dialect.MySQL: "decimal(37,18)",
-			}).
-			Optional().
-			Default(decimal.Decimal{}),
-		field.
-			String("payment_transaction_id").
-			Optional().
-			Default(""),
-		field.
-			Other("payment_finish_amount", decimal.Decimal{}).
 			SchemaType(map[string]string{
 				dialect.MySQL: "decimal(37,18)",
 			}).
@@ -87,12 +69,12 @@ func (OrderPaymentTransfer) Fields() []ent.Field {
 	}
 }
 
-// Edges of the OrderPaymentTransfer.
-func (OrderPaymentTransfer) Edges() []ent.Edge {
+// Edges of the PaymentBalance.
+func (PaymentBalance) Edges() []ent.Edge {
 	return nil
 }
 
-func (OrderPaymentTransfer) Indexes() []ent.Index {
+func (PaymentBalance) Indexes() []ent.Index {
 	return []ent.Index{
 		index.Fields("order_id"),
 	}

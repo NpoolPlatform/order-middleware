@@ -9,13 +9,13 @@ import (
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/orderbase"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/ordercoupon"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/orderlock"
-	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/orderpaymentbalance"
-	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/orderpaymentcontract"
-	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/orderpaymenttransfer"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/orderstate"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/orderstatebase"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/outofgas"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/payment"
+	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/paymentbalance"
+	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/paymentcontract"
+	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/paymenttransfer"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/powerrental"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/powerrentalstate"
 
@@ -185,75 +185,6 @@ var schemaGraph = func() *sqlgraph.Schema {
 	}
 	graph.Nodes[6] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
-			Table:   orderpaymentbalance.Table,
-			Columns: orderpaymentbalance.Columns,
-			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeUint32,
-				Column: orderpaymentbalance.FieldID,
-			},
-		},
-		Type: "OrderPaymentBalance",
-		Fields: map[string]*sqlgraph.FieldSpec{
-			orderpaymentbalance.FieldCreatedAt:            {Type: field.TypeUint32, Column: orderpaymentbalance.FieldCreatedAt},
-			orderpaymentbalance.FieldUpdatedAt:            {Type: field.TypeUint32, Column: orderpaymentbalance.FieldUpdatedAt},
-			orderpaymentbalance.FieldDeletedAt:            {Type: field.TypeUint32, Column: orderpaymentbalance.FieldDeletedAt},
-			orderpaymentbalance.FieldEntID:                {Type: field.TypeUUID, Column: orderpaymentbalance.FieldEntID},
-			orderpaymentbalance.FieldOrderID:              {Type: field.TypeUUID, Column: orderpaymentbalance.FieldOrderID},
-			orderpaymentbalance.FieldCoinTypeID:           {Type: field.TypeUUID, Column: orderpaymentbalance.FieldCoinTypeID},
-			orderpaymentbalance.FieldAmount:               {Type: field.TypeOther, Column: orderpaymentbalance.FieldAmount},
-			orderpaymentbalance.FieldCoinUsdCurrency:      {Type: field.TypeOther, Column: orderpaymentbalance.FieldCoinUsdCurrency},
-			orderpaymentbalance.FieldLocalCoinUsdCurrency: {Type: field.TypeOther, Column: orderpaymentbalance.FieldLocalCoinUsdCurrency},
-			orderpaymentbalance.FieldLiveCoinUsdCurrency:  {Type: field.TypeOther, Column: orderpaymentbalance.FieldLiveCoinUsdCurrency},
-		},
-	}
-	graph.Nodes[7] = &sqlgraph.Node{
-		NodeSpec: sqlgraph.NodeSpec{
-			Table:   orderpaymentcontract.Table,
-			Columns: orderpaymentcontract.Columns,
-			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeUint32,
-				Column: orderpaymentcontract.FieldID,
-			},
-		},
-		Type: "OrderPaymentContract",
-		Fields: map[string]*sqlgraph.FieldSpec{
-			orderpaymentcontract.FieldCreatedAt:  {Type: field.TypeUint32, Column: orderpaymentcontract.FieldCreatedAt},
-			orderpaymentcontract.FieldUpdatedAt:  {Type: field.TypeUint32, Column: orderpaymentcontract.FieldUpdatedAt},
-			orderpaymentcontract.FieldDeletedAt:  {Type: field.TypeUint32, Column: orderpaymentcontract.FieldDeletedAt},
-			orderpaymentcontract.FieldEntID:      {Type: field.TypeUUID, Column: orderpaymentcontract.FieldEntID},
-			orderpaymentcontract.FieldOrderID:    {Type: field.TypeUUID, Column: orderpaymentcontract.FieldOrderID},
-			orderpaymentcontract.FieldCoinTypeID: {Type: field.TypeUUID, Column: orderpaymentcontract.FieldCoinTypeID},
-			orderpaymentcontract.FieldAmount:     {Type: field.TypeOther, Column: orderpaymentcontract.FieldAmount},
-		},
-	}
-	graph.Nodes[8] = &sqlgraph.Node{
-		NodeSpec: sqlgraph.NodeSpec{
-			Table:   orderpaymenttransfer.Table,
-			Columns: orderpaymenttransfer.Columns,
-			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeUint32,
-				Column: orderpaymenttransfer.FieldID,
-			},
-		},
-		Type: "OrderPaymentTransfer",
-		Fields: map[string]*sqlgraph.FieldSpec{
-			orderpaymenttransfer.FieldCreatedAt:            {Type: field.TypeUint32, Column: orderpaymenttransfer.FieldCreatedAt},
-			orderpaymenttransfer.FieldUpdatedAt:            {Type: field.TypeUint32, Column: orderpaymenttransfer.FieldUpdatedAt},
-			orderpaymenttransfer.FieldDeletedAt:            {Type: field.TypeUint32, Column: orderpaymenttransfer.FieldDeletedAt},
-			orderpaymenttransfer.FieldEntID:                {Type: field.TypeUUID, Column: orderpaymenttransfer.FieldEntID},
-			orderpaymenttransfer.FieldOrderID:              {Type: field.TypeUUID, Column: orderpaymenttransfer.FieldOrderID},
-			orderpaymenttransfer.FieldCoinTypeID:           {Type: field.TypeUUID, Column: orderpaymenttransfer.FieldCoinTypeID},
-			orderpaymenttransfer.FieldAmount:               {Type: field.TypeOther, Column: orderpaymenttransfer.FieldAmount},
-			orderpaymenttransfer.FieldStartAmount:          {Type: field.TypeOther, Column: orderpaymenttransfer.FieldStartAmount},
-			orderpaymenttransfer.FieldPaymentTransactionID: {Type: field.TypeString, Column: orderpaymenttransfer.FieldPaymentTransactionID},
-			orderpaymenttransfer.FieldPaymentFinishAmount:  {Type: field.TypeOther, Column: orderpaymenttransfer.FieldPaymentFinishAmount},
-			orderpaymenttransfer.FieldCoinUsdCurrency:      {Type: field.TypeOther, Column: orderpaymenttransfer.FieldCoinUsdCurrency},
-			orderpaymenttransfer.FieldLocalCoinUsdCurrency: {Type: field.TypeOther, Column: orderpaymenttransfer.FieldLocalCoinUsdCurrency},
-			orderpaymenttransfer.FieldLiveCoinUsdCurrency:  {Type: field.TypeOther, Column: orderpaymenttransfer.FieldLiveCoinUsdCurrency},
-		},
-	}
-	graph.Nodes[9] = &sqlgraph.Node{
-		NodeSpec: sqlgraph.NodeSpec{
 			Table:   orderstate.Table,
 			Columns: orderstate.Columns,
 			ID: &sqlgraph.FieldSpec{
@@ -288,7 +219,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			orderstate.FieldRenewNotifyAt:        {Type: field.TypeUint32, Column: orderstate.FieldRenewNotifyAt},
 		},
 	}
-	graph.Nodes[10] = &sqlgraph.Node{
+	graph.Nodes[7] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   orderstatebase.Table,
 			Columns: orderstatebase.Columns,
@@ -311,7 +242,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			orderstatebase.FieldBenefitState:  {Type: field.TypeString, Column: orderstatebase.FieldBenefitState},
 		},
 	}
-	graph.Nodes[11] = &sqlgraph.Node{
+	graph.Nodes[8] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   outofgas.Table,
 			Columns: outofgas.Columns,
@@ -331,7 +262,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			outofgas.FieldEndAt:     {Type: field.TypeUint32, Column: outofgas.FieldEndAt},
 		},
 	}
-	graph.Nodes[12] = &sqlgraph.Node{
+	graph.Nodes[9] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   payment.Table,
 			Columns: payment.Columns,
@@ -354,6 +285,75 @@ var schemaGraph = func() *sqlgraph.Schema {
 			payment.FieldCoinTypeID:  {Type: field.TypeUUID, Column: payment.FieldCoinTypeID},
 			payment.FieldCoinInfoID:  {Type: field.TypeUUID, Column: payment.FieldCoinInfoID},
 			payment.FieldStartAmount: {Type: field.TypeOther, Column: payment.FieldStartAmount},
+		},
+	}
+	graph.Nodes[10] = &sqlgraph.Node{
+		NodeSpec: sqlgraph.NodeSpec{
+			Table:   paymentbalance.Table,
+			Columns: paymentbalance.Columns,
+			ID: &sqlgraph.FieldSpec{
+				Type:   field.TypeUint32,
+				Column: paymentbalance.FieldID,
+			},
+		},
+		Type: "PaymentBalance",
+		Fields: map[string]*sqlgraph.FieldSpec{
+			paymentbalance.FieldCreatedAt:            {Type: field.TypeUint32, Column: paymentbalance.FieldCreatedAt},
+			paymentbalance.FieldUpdatedAt:            {Type: field.TypeUint32, Column: paymentbalance.FieldUpdatedAt},
+			paymentbalance.FieldDeletedAt:            {Type: field.TypeUint32, Column: paymentbalance.FieldDeletedAt},
+			paymentbalance.FieldEntID:                {Type: field.TypeUUID, Column: paymentbalance.FieldEntID},
+			paymentbalance.FieldOrderID:              {Type: field.TypeUUID, Column: paymentbalance.FieldOrderID},
+			paymentbalance.FieldCoinTypeID:           {Type: field.TypeUUID, Column: paymentbalance.FieldCoinTypeID},
+			paymentbalance.FieldAmount:               {Type: field.TypeOther, Column: paymentbalance.FieldAmount},
+			paymentbalance.FieldCoinUsdCurrency:      {Type: field.TypeOther, Column: paymentbalance.FieldCoinUsdCurrency},
+			paymentbalance.FieldLocalCoinUsdCurrency: {Type: field.TypeOther, Column: paymentbalance.FieldLocalCoinUsdCurrency},
+			paymentbalance.FieldLiveCoinUsdCurrency:  {Type: field.TypeOther, Column: paymentbalance.FieldLiveCoinUsdCurrency},
+		},
+	}
+	graph.Nodes[11] = &sqlgraph.Node{
+		NodeSpec: sqlgraph.NodeSpec{
+			Table:   paymentcontract.Table,
+			Columns: paymentcontract.Columns,
+			ID: &sqlgraph.FieldSpec{
+				Type:   field.TypeUint32,
+				Column: paymentcontract.FieldID,
+			},
+		},
+		Type: "PaymentContract",
+		Fields: map[string]*sqlgraph.FieldSpec{
+			paymentcontract.FieldCreatedAt:  {Type: field.TypeUint32, Column: paymentcontract.FieldCreatedAt},
+			paymentcontract.FieldUpdatedAt:  {Type: field.TypeUint32, Column: paymentcontract.FieldUpdatedAt},
+			paymentcontract.FieldDeletedAt:  {Type: field.TypeUint32, Column: paymentcontract.FieldDeletedAt},
+			paymentcontract.FieldEntID:      {Type: field.TypeUUID, Column: paymentcontract.FieldEntID},
+			paymentcontract.FieldOrderID:    {Type: field.TypeUUID, Column: paymentcontract.FieldOrderID},
+			paymentcontract.FieldCoinTypeID: {Type: field.TypeUUID, Column: paymentcontract.FieldCoinTypeID},
+			paymentcontract.FieldAmount:     {Type: field.TypeOther, Column: paymentcontract.FieldAmount},
+		},
+	}
+	graph.Nodes[12] = &sqlgraph.Node{
+		NodeSpec: sqlgraph.NodeSpec{
+			Table:   paymenttransfer.Table,
+			Columns: paymenttransfer.Columns,
+			ID: &sqlgraph.FieldSpec{
+				Type:   field.TypeUint32,
+				Column: paymenttransfer.FieldID,
+			},
+		},
+		Type: "PaymentTransfer",
+		Fields: map[string]*sqlgraph.FieldSpec{
+			paymenttransfer.FieldCreatedAt:            {Type: field.TypeUint32, Column: paymenttransfer.FieldCreatedAt},
+			paymenttransfer.FieldUpdatedAt:            {Type: field.TypeUint32, Column: paymenttransfer.FieldUpdatedAt},
+			paymenttransfer.FieldDeletedAt:            {Type: field.TypeUint32, Column: paymenttransfer.FieldDeletedAt},
+			paymenttransfer.FieldEntID:                {Type: field.TypeUUID, Column: paymenttransfer.FieldEntID},
+			paymenttransfer.FieldOrderID:              {Type: field.TypeUUID, Column: paymenttransfer.FieldOrderID},
+			paymenttransfer.FieldCoinTypeID:           {Type: field.TypeUUID, Column: paymenttransfer.FieldCoinTypeID},
+			paymenttransfer.FieldAmount:               {Type: field.TypeOther, Column: paymenttransfer.FieldAmount},
+			paymenttransfer.FieldStartAmount:          {Type: field.TypeOther, Column: paymenttransfer.FieldStartAmount},
+			paymenttransfer.FieldTransactionID:        {Type: field.TypeString, Column: paymenttransfer.FieldTransactionID},
+			paymenttransfer.FieldFinishAmount:         {Type: field.TypeOther, Column: paymenttransfer.FieldFinishAmount},
+			paymenttransfer.FieldCoinUsdCurrency:      {Type: field.TypeOther, Column: paymenttransfer.FieldCoinUsdCurrency},
+			paymenttransfer.FieldLocalCoinUsdCurrency: {Type: field.TypeOther, Column: paymenttransfer.FieldLocalCoinUsdCurrency},
+			paymenttransfer.FieldLiveCoinUsdCurrency:  {Type: field.TypeOther, Column: paymenttransfer.FieldLiveCoinUsdCurrency},
 		},
 	}
 	graph.Nodes[13] = &sqlgraph.Node{
@@ -1046,276 +1046,6 @@ func (f *OrderLockFilter) WhereLockType(p entql.StringP) {
 }
 
 // addPredicate implements the predicateAdder interface.
-func (opbq *OrderPaymentBalanceQuery) addPredicate(pred func(s *sql.Selector)) {
-	opbq.predicates = append(opbq.predicates, pred)
-}
-
-// Filter returns a Filter implementation to apply filters on the OrderPaymentBalanceQuery builder.
-func (opbq *OrderPaymentBalanceQuery) Filter() *OrderPaymentBalanceFilter {
-	return &OrderPaymentBalanceFilter{config: opbq.config, predicateAdder: opbq}
-}
-
-// addPredicate implements the predicateAdder interface.
-func (m *OrderPaymentBalanceMutation) addPredicate(pred func(s *sql.Selector)) {
-	m.predicates = append(m.predicates, pred)
-}
-
-// Filter returns an entql.Where implementation to apply filters on the OrderPaymentBalanceMutation builder.
-func (m *OrderPaymentBalanceMutation) Filter() *OrderPaymentBalanceFilter {
-	return &OrderPaymentBalanceFilter{config: m.config, predicateAdder: m}
-}
-
-// OrderPaymentBalanceFilter provides a generic filtering capability at runtime for OrderPaymentBalanceQuery.
-type OrderPaymentBalanceFilter struct {
-	predicateAdder
-	config
-}
-
-// Where applies the entql predicate on the query filter.
-func (f *OrderPaymentBalanceFilter) Where(p entql.P) {
-	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[6].Type, p, s); err != nil {
-			s.AddError(err)
-		}
-	})
-}
-
-// WhereID applies the entql uint32 predicate on the id field.
-func (f *OrderPaymentBalanceFilter) WhereID(p entql.Uint32P) {
-	f.Where(p.Field(orderpaymentbalance.FieldID))
-}
-
-// WhereCreatedAt applies the entql uint32 predicate on the created_at field.
-func (f *OrderPaymentBalanceFilter) WhereCreatedAt(p entql.Uint32P) {
-	f.Where(p.Field(orderpaymentbalance.FieldCreatedAt))
-}
-
-// WhereUpdatedAt applies the entql uint32 predicate on the updated_at field.
-func (f *OrderPaymentBalanceFilter) WhereUpdatedAt(p entql.Uint32P) {
-	f.Where(p.Field(orderpaymentbalance.FieldUpdatedAt))
-}
-
-// WhereDeletedAt applies the entql uint32 predicate on the deleted_at field.
-func (f *OrderPaymentBalanceFilter) WhereDeletedAt(p entql.Uint32P) {
-	f.Where(p.Field(orderpaymentbalance.FieldDeletedAt))
-}
-
-// WhereEntID applies the entql [16]byte predicate on the ent_id field.
-func (f *OrderPaymentBalanceFilter) WhereEntID(p entql.ValueP) {
-	f.Where(p.Field(orderpaymentbalance.FieldEntID))
-}
-
-// WhereOrderID applies the entql [16]byte predicate on the order_id field.
-func (f *OrderPaymentBalanceFilter) WhereOrderID(p entql.ValueP) {
-	f.Where(p.Field(orderpaymentbalance.FieldOrderID))
-}
-
-// WhereCoinTypeID applies the entql [16]byte predicate on the coin_type_id field.
-func (f *OrderPaymentBalanceFilter) WhereCoinTypeID(p entql.ValueP) {
-	f.Where(p.Field(orderpaymentbalance.FieldCoinTypeID))
-}
-
-// WhereAmount applies the entql other predicate on the amount field.
-func (f *OrderPaymentBalanceFilter) WhereAmount(p entql.OtherP) {
-	f.Where(p.Field(orderpaymentbalance.FieldAmount))
-}
-
-// WhereCoinUsdCurrency applies the entql other predicate on the coin_usd_currency field.
-func (f *OrderPaymentBalanceFilter) WhereCoinUsdCurrency(p entql.OtherP) {
-	f.Where(p.Field(orderpaymentbalance.FieldCoinUsdCurrency))
-}
-
-// WhereLocalCoinUsdCurrency applies the entql other predicate on the local_coin_usd_currency field.
-func (f *OrderPaymentBalanceFilter) WhereLocalCoinUsdCurrency(p entql.OtherP) {
-	f.Where(p.Field(orderpaymentbalance.FieldLocalCoinUsdCurrency))
-}
-
-// WhereLiveCoinUsdCurrency applies the entql other predicate on the live_coin_usd_currency field.
-func (f *OrderPaymentBalanceFilter) WhereLiveCoinUsdCurrency(p entql.OtherP) {
-	f.Where(p.Field(orderpaymentbalance.FieldLiveCoinUsdCurrency))
-}
-
-// addPredicate implements the predicateAdder interface.
-func (opcq *OrderPaymentContractQuery) addPredicate(pred func(s *sql.Selector)) {
-	opcq.predicates = append(opcq.predicates, pred)
-}
-
-// Filter returns a Filter implementation to apply filters on the OrderPaymentContractQuery builder.
-func (opcq *OrderPaymentContractQuery) Filter() *OrderPaymentContractFilter {
-	return &OrderPaymentContractFilter{config: opcq.config, predicateAdder: opcq}
-}
-
-// addPredicate implements the predicateAdder interface.
-func (m *OrderPaymentContractMutation) addPredicate(pred func(s *sql.Selector)) {
-	m.predicates = append(m.predicates, pred)
-}
-
-// Filter returns an entql.Where implementation to apply filters on the OrderPaymentContractMutation builder.
-func (m *OrderPaymentContractMutation) Filter() *OrderPaymentContractFilter {
-	return &OrderPaymentContractFilter{config: m.config, predicateAdder: m}
-}
-
-// OrderPaymentContractFilter provides a generic filtering capability at runtime for OrderPaymentContractQuery.
-type OrderPaymentContractFilter struct {
-	predicateAdder
-	config
-}
-
-// Where applies the entql predicate on the query filter.
-func (f *OrderPaymentContractFilter) Where(p entql.P) {
-	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[7].Type, p, s); err != nil {
-			s.AddError(err)
-		}
-	})
-}
-
-// WhereID applies the entql uint32 predicate on the id field.
-func (f *OrderPaymentContractFilter) WhereID(p entql.Uint32P) {
-	f.Where(p.Field(orderpaymentcontract.FieldID))
-}
-
-// WhereCreatedAt applies the entql uint32 predicate on the created_at field.
-func (f *OrderPaymentContractFilter) WhereCreatedAt(p entql.Uint32P) {
-	f.Where(p.Field(orderpaymentcontract.FieldCreatedAt))
-}
-
-// WhereUpdatedAt applies the entql uint32 predicate on the updated_at field.
-func (f *OrderPaymentContractFilter) WhereUpdatedAt(p entql.Uint32P) {
-	f.Where(p.Field(orderpaymentcontract.FieldUpdatedAt))
-}
-
-// WhereDeletedAt applies the entql uint32 predicate on the deleted_at field.
-func (f *OrderPaymentContractFilter) WhereDeletedAt(p entql.Uint32P) {
-	f.Where(p.Field(orderpaymentcontract.FieldDeletedAt))
-}
-
-// WhereEntID applies the entql [16]byte predicate on the ent_id field.
-func (f *OrderPaymentContractFilter) WhereEntID(p entql.ValueP) {
-	f.Where(p.Field(orderpaymentcontract.FieldEntID))
-}
-
-// WhereOrderID applies the entql [16]byte predicate on the order_id field.
-func (f *OrderPaymentContractFilter) WhereOrderID(p entql.ValueP) {
-	f.Where(p.Field(orderpaymentcontract.FieldOrderID))
-}
-
-// WhereCoinTypeID applies the entql [16]byte predicate on the coin_type_id field.
-func (f *OrderPaymentContractFilter) WhereCoinTypeID(p entql.ValueP) {
-	f.Where(p.Field(orderpaymentcontract.FieldCoinTypeID))
-}
-
-// WhereAmount applies the entql other predicate on the amount field.
-func (f *OrderPaymentContractFilter) WhereAmount(p entql.OtherP) {
-	f.Where(p.Field(orderpaymentcontract.FieldAmount))
-}
-
-// addPredicate implements the predicateAdder interface.
-func (optq *OrderPaymentTransferQuery) addPredicate(pred func(s *sql.Selector)) {
-	optq.predicates = append(optq.predicates, pred)
-}
-
-// Filter returns a Filter implementation to apply filters on the OrderPaymentTransferQuery builder.
-func (optq *OrderPaymentTransferQuery) Filter() *OrderPaymentTransferFilter {
-	return &OrderPaymentTransferFilter{config: optq.config, predicateAdder: optq}
-}
-
-// addPredicate implements the predicateAdder interface.
-func (m *OrderPaymentTransferMutation) addPredicate(pred func(s *sql.Selector)) {
-	m.predicates = append(m.predicates, pred)
-}
-
-// Filter returns an entql.Where implementation to apply filters on the OrderPaymentTransferMutation builder.
-func (m *OrderPaymentTransferMutation) Filter() *OrderPaymentTransferFilter {
-	return &OrderPaymentTransferFilter{config: m.config, predicateAdder: m}
-}
-
-// OrderPaymentTransferFilter provides a generic filtering capability at runtime for OrderPaymentTransferQuery.
-type OrderPaymentTransferFilter struct {
-	predicateAdder
-	config
-}
-
-// Where applies the entql predicate on the query filter.
-func (f *OrderPaymentTransferFilter) Where(p entql.P) {
-	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[8].Type, p, s); err != nil {
-			s.AddError(err)
-		}
-	})
-}
-
-// WhereID applies the entql uint32 predicate on the id field.
-func (f *OrderPaymentTransferFilter) WhereID(p entql.Uint32P) {
-	f.Where(p.Field(orderpaymenttransfer.FieldID))
-}
-
-// WhereCreatedAt applies the entql uint32 predicate on the created_at field.
-func (f *OrderPaymentTransferFilter) WhereCreatedAt(p entql.Uint32P) {
-	f.Where(p.Field(orderpaymenttransfer.FieldCreatedAt))
-}
-
-// WhereUpdatedAt applies the entql uint32 predicate on the updated_at field.
-func (f *OrderPaymentTransferFilter) WhereUpdatedAt(p entql.Uint32P) {
-	f.Where(p.Field(orderpaymenttransfer.FieldUpdatedAt))
-}
-
-// WhereDeletedAt applies the entql uint32 predicate on the deleted_at field.
-func (f *OrderPaymentTransferFilter) WhereDeletedAt(p entql.Uint32P) {
-	f.Where(p.Field(orderpaymenttransfer.FieldDeletedAt))
-}
-
-// WhereEntID applies the entql [16]byte predicate on the ent_id field.
-func (f *OrderPaymentTransferFilter) WhereEntID(p entql.ValueP) {
-	f.Where(p.Field(orderpaymenttransfer.FieldEntID))
-}
-
-// WhereOrderID applies the entql [16]byte predicate on the order_id field.
-func (f *OrderPaymentTransferFilter) WhereOrderID(p entql.ValueP) {
-	f.Where(p.Field(orderpaymenttransfer.FieldOrderID))
-}
-
-// WhereCoinTypeID applies the entql [16]byte predicate on the coin_type_id field.
-func (f *OrderPaymentTransferFilter) WhereCoinTypeID(p entql.ValueP) {
-	f.Where(p.Field(orderpaymenttransfer.FieldCoinTypeID))
-}
-
-// WhereAmount applies the entql other predicate on the amount field.
-func (f *OrderPaymentTransferFilter) WhereAmount(p entql.OtherP) {
-	f.Where(p.Field(orderpaymenttransfer.FieldAmount))
-}
-
-// WhereStartAmount applies the entql other predicate on the start_amount field.
-func (f *OrderPaymentTransferFilter) WhereStartAmount(p entql.OtherP) {
-	f.Where(p.Field(orderpaymenttransfer.FieldStartAmount))
-}
-
-// WherePaymentTransactionID applies the entql string predicate on the payment_transaction_id field.
-func (f *OrderPaymentTransferFilter) WherePaymentTransactionID(p entql.StringP) {
-	f.Where(p.Field(orderpaymenttransfer.FieldPaymentTransactionID))
-}
-
-// WherePaymentFinishAmount applies the entql other predicate on the payment_finish_amount field.
-func (f *OrderPaymentTransferFilter) WherePaymentFinishAmount(p entql.OtherP) {
-	f.Where(p.Field(orderpaymenttransfer.FieldPaymentFinishAmount))
-}
-
-// WhereCoinUsdCurrency applies the entql other predicate on the coin_usd_currency field.
-func (f *OrderPaymentTransferFilter) WhereCoinUsdCurrency(p entql.OtherP) {
-	f.Where(p.Field(orderpaymenttransfer.FieldCoinUsdCurrency))
-}
-
-// WhereLocalCoinUsdCurrency applies the entql other predicate on the local_coin_usd_currency field.
-func (f *OrderPaymentTransferFilter) WhereLocalCoinUsdCurrency(p entql.OtherP) {
-	f.Where(p.Field(orderpaymenttransfer.FieldLocalCoinUsdCurrency))
-}
-
-// WhereLiveCoinUsdCurrency applies the entql other predicate on the live_coin_usd_currency field.
-func (f *OrderPaymentTransferFilter) WhereLiveCoinUsdCurrency(p entql.OtherP) {
-	f.Where(p.Field(orderpaymenttransfer.FieldLiveCoinUsdCurrency))
-}
-
-// addPredicate implements the predicateAdder interface.
 func (osq *OrderStateQuery) addPredicate(pred func(s *sql.Selector)) {
 	osq.predicates = append(osq.predicates, pred)
 }
@@ -1344,7 +1074,7 @@ type OrderStateFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *OrderStateFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[9].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[6].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})
@@ -1499,7 +1229,7 @@ type OrderStateBaseFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *OrderStateBaseFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[10].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[7].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})
@@ -1589,7 +1319,7 @@ type OutOfGasFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *OutOfGasFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[11].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[8].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})
@@ -1664,7 +1394,7 @@ type PaymentFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *PaymentFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[12].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[9].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})
@@ -1733,6 +1463,276 @@ func (f *PaymentFilter) WhereCoinInfoID(p entql.ValueP) {
 // WhereStartAmount applies the entql other predicate on the start_amount field.
 func (f *PaymentFilter) WhereStartAmount(p entql.OtherP) {
 	f.Where(p.Field(payment.FieldStartAmount))
+}
+
+// addPredicate implements the predicateAdder interface.
+func (pbq *PaymentBalanceQuery) addPredicate(pred func(s *sql.Selector)) {
+	pbq.predicates = append(pbq.predicates, pred)
+}
+
+// Filter returns a Filter implementation to apply filters on the PaymentBalanceQuery builder.
+func (pbq *PaymentBalanceQuery) Filter() *PaymentBalanceFilter {
+	return &PaymentBalanceFilter{config: pbq.config, predicateAdder: pbq}
+}
+
+// addPredicate implements the predicateAdder interface.
+func (m *PaymentBalanceMutation) addPredicate(pred func(s *sql.Selector)) {
+	m.predicates = append(m.predicates, pred)
+}
+
+// Filter returns an entql.Where implementation to apply filters on the PaymentBalanceMutation builder.
+func (m *PaymentBalanceMutation) Filter() *PaymentBalanceFilter {
+	return &PaymentBalanceFilter{config: m.config, predicateAdder: m}
+}
+
+// PaymentBalanceFilter provides a generic filtering capability at runtime for PaymentBalanceQuery.
+type PaymentBalanceFilter struct {
+	predicateAdder
+	config
+}
+
+// Where applies the entql predicate on the query filter.
+func (f *PaymentBalanceFilter) Where(p entql.P) {
+	f.addPredicate(func(s *sql.Selector) {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[10].Type, p, s); err != nil {
+			s.AddError(err)
+		}
+	})
+}
+
+// WhereID applies the entql uint32 predicate on the id field.
+func (f *PaymentBalanceFilter) WhereID(p entql.Uint32P) {
+	f.Where(p.Field(paymentbalance.FieldID))
+}
+
+// WhereCreatedAt applies the entql uint32 predicate on the created_at field.
+func (f *PaymentBalanceFilter) WhereCreatedAt(p entql.Uint32P) {
+	f.Where(p.Field(paymentbalance.FieldCreatedAt))
+}
+
+// WhereUpdatedAt applies the entql uint32 predicate on the updated_at field.
+func (f *PaymentBalanceFilter) WhereUpdatedAt(p entql.Uint32P) {
+	f.Where(p.Field(paymentbalance.FieldUpdatedAt))
+}
+
+// WhereDeletedAt applies the entql uint32 predicate on the deleted_at field.
+func (f *PaymentBalanceFilter) WhereDeletedAt(p entql.Uint32P) {
+	f.Where(p.Field(paymentbalance.FieldDeletedAt))
+}
+
+// WhereEntID applies the entql [16]byte predicate on the ent_id field.
+func (f *PaymentBalanceFilter) WhereEntID(p entql.ValueP) {
+	f.Where(p.Field(paymentbalance.FieldEntID))
+}
+
+// WhereOrderID applies the entql [16]byte predicate on the order_id field.
+func (f *PaymentBalanceFilter) WhereOrderID(p entql.ValueP) {
+	f.Where(p.Field(paymentbalance.FieldOrderID))
+}
+
+// WhereCoinTypeID applies the entql [16]byte predicate on the coin_type_id field.
+func (f *PaymentBalanceFilter) WhereCoinTypeID(p entql.ValueP) {
+	f.Where(p.Field(paymentbalance.FieldCoinTypeID))
+}
+
+// WhereAmount applies the entql other predicate on the amount field.
+func (f *PaymentBalanceFilter) WhereAmount(p entql.OtherP) {
+	f.Where(p.Field(paymentbalance.FieldAmount))
+}
+
+// WhereCoinUsdCurrency applies the entql other predicate on the coin_usd_currency field.
+func (f *PaymentBalanceFilter) WhereCoinUsdCurrency(p entql.OtherP) {
+	f.Where(p.Field(paymentbalance.FieldCoinUsdCurrency))
+}
+
+// WhereLocalCoinUsdCurrency applies the entql other predicate on the local_coin_usd_currency field.
+func (f *PaymentBalanceFilter) WhereLocalCoinUsdCurrency(p entql.OtherP) {
+	f.Where(p.Field(paymentbalance.FieldLocalCoinUsdCurrency))
+}
+
+// WhereLiveCoinUsdCurrency applies the entql other predicate on the live_coin_usd_currency field.
+func (f *PaymentBalanceFilter) WhereLiveCoinUsdCurrency(p entql.OtherP) {
+	f.Where(p.Field(paymentbalance.FieldLiveCoinUsdCurrency))
+}
+
+// addPredicate implements the predicateAdder interface.
+func (pcq *PaymentContractQuery) addPredicate(pred func(s *sql.Selector)) {
+	pcq.predicates = append(pcq.predicates, pred)
+}
+
+// Filter returns a Filter implementation to apply filters on the PaymentContractQuery builder.
+func (pcq *PaymentContractQuery) Filter() *PaymentContractFilter {
+	return &PaymentContractFilter{config: pcq.config, predicateAdder: pcq}
+}
+
+// addPredicate implements the predicateAdder interface.
+func (m *PaymentContractMutation) addPredicate(pred func(s *sql.Selector)) {
+	m.predicates = append(m.predicates, pred)
+}
+
+// Filter returns an entql.Where implementation to apply filters on the PaymentContractMutation builder.
+func (m *PaymentContractMutation) Filter() *PaymentContractFilter {
+	return &PaymentContractFilter{config: m.config, predicateAdder: m}
+}
+
+// PaymentContractFilter provides a generic filtering capability at runtime for PaymentContractQuery.
+type PaymentContractFilter struct {
+	predicateAdder
+	config
+}
+
+// Where applies the entql predicate on the query filter.
+func (f *PaymentContractFilter) Where(p entql.P) {
+	f.addPredicate(func(s *sql.Selector) {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[11].Type, p, s); err != nil {
+			s.AddError(err)
+		}
+	})
+}
+
+// WhereID applies the entql uint32 predicate on the id field.
+func (f *PaymentContractFilter) WhereID(p entql.Uint32P) {
+	f.Where(p.Field(paymentcontract.FieldID))
+}
+
+// WhereCreatedAt applies the entql uint32 predicate on the created_at field.
+func (f *PaymentContractFilter) WhereCreatedAt(p entql.Uint32P) {
+	f.Where(p.Field(paymentcontract.FieldCreatedAt))
+}
+
+// WhereUpdatedAt applies the entql uint32 predicate on the updated_at field.
+func (f *PaymentContractFilter) WhereUpdatedAt(p entql.Uint32P) {
+	f.Where(p.Field(paymentcontract.FieldUpdatedAt))
+}
+
+// WhereDeletedAt applies the entql uint32 predicate on the deleted_at field.
+func (f *PaymentContractFilter) WhereDeletedAt(p entql.Uint32P) {
+	f.Where(p.Field(paymentcontract.FieldDeletedAt))
+}
+
+// WhereEntID applies the entql [16]byte predicate on the ent_id field.
+func (f *PaymentContractFilter) WhereEntID(p entql.ValueP) {
+	f.Where(p.Field(paymentcontract.FieldEntID))
+}
+
+// WhereOrderID applies the entql [16]byte predicate on the order_id field.
+func (f *PaymentContractFilter) WhereOrderID(p entql.ValueP) {
+	f.Where(p.Field(paymentcontract.FieldOrderID))
+}
+
+// WhereCoinTypeID applies the entql [16]byte predicate on the coin_type_id field.
+func (f *PaymentContractFilter) WhereCoinTypeID(p entql.ValueP) {
+	f.Where(p.Field(paymentcontract.FieldCoinTypeID))
+}
+
+// WhereAmount applies the entql other predicate on the amount field.
+func (f *PaymentContractFilter) WhereAmount(p entql.OtherP) {
+	f.Where(p.Field(paymentcontract.FieldAmount))
+}
+
+// addPredicate implements the predicateAdder interface.
+func (ptq *PaymentTransferQuery) addPredicate(pred func(s *sql.Selector)) {
+	ptq.predicates = append(ptq.predicates, pred)
+}
+
+// Filter returns a Filter implementation to apply filters on the PaymentTransferQuery builder.
+func (ptq *PaymentTransferQuery) Filter() *PaymentTransferFilter {
+	return &PaymentTransferFilter{config: ptq.config, predicateAdder: ptq}
+}
+
+// addPredicate implements the predicateAdder interface.
+func (m *PaymentTransferMutation) addPredicate(pred func(s *sql.Selector)) {
+	m.predicates = append(m.predicates, pred)
+}
+
+// Filter returns an entql.Where implementation to apply filters on the PaymentTransferMutation builder.
+func (m *PaymentTransferMutation) Filter() *PaymentTransferFilter {
+	return &PaymentTransferFilter{config: m.config, predicateAdder: m}
+}
+
+// PaymentTransferFilter provides a generic filtering capability at runtime for PaymentTransferQuery.
+type PaymentTransferFilter struct {
+	predicateAdder
+	config
+}
+
+// Where applies the entql predicate on the query filter.
+func (f *PaymentTransferFilter) Where(p entql.P) {
+	f.addPredicate(func(s *sql.Selector) {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[12].Type, p, s); err != nil {
+			s.AddError(err)
+		}
+	})
+}
+
+// WhereID applies the entql uint32 predicate on the id field.
+func (f *PaymentTransferFilter) WhereID(p entql.Uint32P) {
+	f.Where(p.Field(paymenttransfer.FieldID))
+}
+
+// WhereCreatedAt applies the entql uint32 predicate on the created_at field.
+func (f *PaymentTransferFilter) WhereCreatedAt(p entql.Uint32P) {
+	f.Where(p.Field(paymenttransfer.FieldCreatedAt))
+}
+
+// WhereUpdatedAt applies the entql uint32 predicate on the updated_at field.
+func (f *PaymentTransferFilter) WhereUpdatedAt(p entql.Uint32P) {
+	f.Where(p.Field(paymenttransfer.FieldUpdatedAt))
+}
+
+// WhereDeletedAt applies the entql uint32 predicate on the deleted_at field.
+func (f *PaymentTransferFilter) WhereDeletedAt(p entql.Uint32P) {
+	f.Where(p.Field(paymenttransfer.FieldDeletedAt))
+}
+
+// WhereEntID applies the entql [16]byte predicate on the ent_id field.
+func (f *PaymentTransferFilter) WhereEntID(p entql.ValueP) {
+	f.Where(p.Field(paymenttransfer.FieldEntID))
+}
+
+// WhereOrderID applies the entql [16]byte predicate on the order_id field.
+func (f *PaymentTransferFilter) WhereOrderID(p entql.ValueP) {
+	f.Where(p.Field(paymenttransfer.FieldOrderID))
+}
+
+// WhereCoinTypeID applies the entql [16]byte predicate on the coin_type_id field.
+func (f *PaymentTransferFilter) WhereCoinTypeID(p entql.ValueP) {
+	f.Where(p.Field(paymenttransfer.FieldCoinTypeID))
+}
+
+// WhereAmount applies the entql other predicate on the amount field.
+func (f *PaymentTransferFilter) WhereAmount(p entql.OtherP) {
+	f.Where(p.Field(paymenttransfer.FieldAmount))
+}
+
+// WhereStartAmount applies the entql other predicate on the start_amount field.
+func (f *PaymentTransferFilter) WhereStartAmount(p entql.OtherP) {
+	f.Where(p.Field(paymenttransfer.FieldStartAmount))
+}
+
+// WhereTransactionID applies the entql string predicate on the transaction_id field.
+func (f *PaymentTransferFilter) WhereTransactionID(p entql.StringP) {
+	f.Where(p.Field(paymenttransfer.FieldTransactionID))
+}
+
+// WhereFinishAmount applies the entql other predicate on the finish_amount field.
+func (f *PaymentTransferFilter) WhereFinishAmount(p entql.OtherP) {
+	f.Where(p.Field(paymenttransfer.FieldFinishAmount))
+}
+
+// WhereCoinUsdCurrency applies the entql other predicate on the coin_usd_currency field.
+func (f *PaymentTransferFilter) WhereCoinUsdCurrency(p entql.OtherP) {
+	f.Where(p.Field(paymenttransfer.FieldCoinUsdCurrency))
+}
+
+// WhereLocalCoinUsdCurrency applies the entql other predicate on the local_coin_usd_currency field.
+func (f *PaymentTransferFilter) WhereLocalCoinUsdCurrency(p entql.OtherP) {
+	f.Where(p.Field(paymenttransfer.FieldLocalCoinUsdCurrency))
+}
+
+// WhereLiveCoinUsdCurrency applies the entql other predicate on the live_coin_usd_currency field.
+func (f *PaymentTransferFilter) WhereLiveCoinUsdCurrency(p entql.OtherP) {
+	f.Where(p.Field(paymenttransfer.FieldLiveCoinUsdCurrency))
 }
 
 // addPredicate implements the predicateAdder interface.

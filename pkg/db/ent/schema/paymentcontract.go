@@ -11,20 +11,20 @@ import (
 	"github.com/shopspring/decimal"
 )
 
-// OrderPaymentContract holds the schema definition for the OrderPaymentContract entity.
-type OrderPaymentContract struct {
+// PaymentContract holds the schema definition for the PaymentContract entity.
+type PaymentContract struct {
 	ent.Schema
 }
 
-func (OrderPaymentContract) Mixin() []ent.Mixin {
+func (PaymentContract) Mixin() []ent.Mixin {
 	return []ent.Mixin{
 		mixin.TimeMixin{},
 		crudermixin.AutoIDMixin{},
 	}
 }
 
-// Fields of the OrderPaymentContract.
-func (OrderPaymentContract) Fields() []ent.Field {
+// Fields of the PaymentContract.
+func (PaymentContract) Fields() []ent.Field {
 	return []ent.Field{
 		field.
 			UUID("order_id", uuid.UUID{}).
@@ -48,12 +48,12 @@ func (OrderPaymentContract) Fields() []ent.Field {
 	}
 }
 
-// Edges of the OrderPaymentContract.
-func (OrderPaymentContract) Edges() []ent.Edge {
+// Edges of the PaymentContract.
+func (PaymentContract) Edges() []ent.Edge {
 	return nil
 }
 
-func (OrderPaymentContract) Indexes() []ent.Index {
+func (PaymentContract) Indexes() []ent.Index {
 	return []ent.Index{
 		index.Fields("order_id"),
 	}

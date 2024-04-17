@@ -7,13 +7,13 @@ import (
 	"strings"
 
 	"entgo.io/ent/dialect/sql"
-	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/orderpaymentbalance"
+	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/paymentbalance"
 	"github.com/google/uuid"
 	"github.com/shopspring/decimal"
 )
 
-// OrderPaymentBalance is the model entity for the OrderPaymentBalance schema.
-type OrderPaymentBalance struct {
+// PaymentBalance is the model entity for the PaymentBalance schema.
+type PaymentBalance struct {
 	config `json:"-"`
 	// ID of the ent.
 	ID uint32 `json:"id,omitempty"`
@@ -40,163 +40,163 @@ type OrderPaymentBalance struct {
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
-func (*OrderPaymentBalance) scanValues(columns []string) ([]interface{}, error) {
+func (*PaymentBalance) scanValues(columns []string) ([]interface{}, error) {
 	values := make([]interface{}, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case orderpaymentbalance.FieldAmount, orderpaymentbalance.FieldCoinUsdCurrency, orderpaymentbalance.FieldLocalCoinUsdCurrency, orderpaymentbalance.FieldLiveCoinUsdCurrency:
+		case paymentbalance.FieldAmount, paymentbalance.FieldCoinUsdCurrency, paymentbalance.FieldLocalCoinUsdCurrency, paymentbalance.FieldLiveCoinUsdCurrency:
 			values[i] = new(decimal.Decimal)
-		case orderpaymentbalance.FieldID, orderpaymentbalance.FieldCreatedAt, orderpaymentbalance.FieldUpdatedAt, orderpaymentbalance.FieldDeletedAt:
+		case paymentbalance.FieldID, paymentbalance.FieldCreatedAt, paymentbalance.FieldUpdatedAt, paymentbalance.FieldDeletedAt:
 			values[i] = new(sql.NullInt64)
-		case orderpaymentbalance.FieldEntID, orderpaymentbalance.FieldOrderID, orderpaymentbalance.FieldCoinTypeID:
+		case paymentbalance.FieldEntID, paymentbalance.FieldOrderID, paymentbalance.FieldCoinTypeID:
 			values[i] = new(uuid.UUID)
 		default:
-			return nil, fmt.Errorf("unexpected column %q for type OrderPaymentBalance", columns[i])
+			return nil, fmt.Errorf("unexpected column %q for type PaymentBalance", columns[i])
 		}
 	}
 	return values, nil
 }
 
 // assignValues assigns the values that were returned from sql.Rows (after scanning)
-// to the OrderPaymentBalance fields.
-func (opb *OrderPaymentBalance) assignValues(columns []string, values []interface{}) error {
+// to the PaymentBalance fields.
+func (pb *PaymentBalance) assignValues(columns []string, values []interface{}) error {
 	if m, n := len(values), len(columns); m < n {
 		return fmt.Errorf("mismatch number of scan values: %d != %d", m, n)
 	}
 	for i := range columns {
 		switch columns[i] {
-		case orderpaymentbalance.FieldID:
+		case paymentbalance.FieldID:
 			value, ok := values[i].(*sql.NullInt64)
 			if !ok {
 				return fmt.Errorf("unexpected type %T for field id", value)
 			}
-			opb.ID = uint32(value.Int64)
-		case orderpaymentbalance.FieldCreatedAt:
+			pb.ID = uint32(value.Int64)
+		case paymentbalance.FieldCreatedAt:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field created_at", values[i])
 			} else if value.Valid {
-				opb.CreatedAt = uint32(value.Int64)
+				pb.CreatedAt = uint32(value.Int64)
 			}
-		case orderpaymentbalance.FieldUpdatedAt:
+		case paymentbalance.FieldUpdatedAt:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field updated_at", values[i])
 			} else if value.Valid {
-				opb.UpdatedAt = uint32(value.Int64)
+				pb.UpdatedAt = uint32(value.Int64)
 			}
-		case orderpaymentbalance.FieldDeletedAt:
+		case paymentbalance.FieldDeletedAt:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field deleted_at", values[i])
 			} else if value.Valid {
-				opb.DeletedAt = uint32(value.Int64)
+				pb.DeletedAt = uint32(value.Int64)
 			}
-		case orderpaymentbalance.FieldEntID:
+		case paymentbalance.FieldEntID:
 			if value, ok := values[i].(*uuid.UUID); !ok {
 				return fmt.Errorf("unexpected type %T for field ent_id", values[i])
 			} else if value != nil {
-				opb.EntID = *value
+				pb.EntID = *value
 			}
-		case orderpaymentbalance.FieldOrderID:
+		case paymentbalance.FieldOrderID:
 			if value, ok := values[i].(*uuid.UUID); !ok {
 				return fmt.Errorf("unexpected type %T for field order_id", values[i])
 			} else if value != nil {
-				opb.OrderID = *value
+				pb.OrderID = *value
 			}
-		case orderpaymentbalance.FieldCoinTypeID:
+		case paymentbalance.FieldCoinTypeID:
 			if value, ok := values[i].(*uuid.UUID); !ok {
 				return fmt.Errorf("unexpected type %T for field coin_type_id", values[i])
 			} else if value != nil {
-				opb.CoinTypeID = *value
+				pb.CoinTypeID = *value
 			}
-		case orderpaymentbalance.FieldAmount:
+		case paymentbalance.FieldAmount:
 			if value, ok := values[i].(*decimal.Decimal); !ok {
 				return fmt.Errorf("unexpected type %T for field amount", values[i])
 			} else if value != nil {
-				opb.Amount = *value
+				pb.Amount = *value
 			}
-		case orderpaymentbalance.FieldCoinUsdCurrency:
+		case paymentbalance.FieldCoinUsdCurrency:
 			if value, ok := values[i].(*decimal.Decimal); !ok {
 				return fmt.Errorf("unexpected type %T for field coin_usd_currency", values[i])
 			} else if value != nil {
-				opb.CoinUsdCurrency = *value
+				pb.CoinUsdCurrency = *value
 			}
-		case orderpaymentbalance.FieldLocalCoinUsdCurrency:
+		case paymentbalance.FieldLocalCoinUsdCurrency:
 			if value, ok := values[i].(*decimal.Decimal); !ok {
 				return fmt.Errorf("unexpected type %T for field local_coin_usd_currency", values[i])
 			} else if value != nil {
-				opb.LocalCoinUsdCurrency = *value
+				pb.LocalCoinUsdCurrency = *value
 			}
-		case orderpaymentbalance.FieldLiveCoinUsdCurrency:
+		case paymentbalance.FieldLiveCoinUsdCurrency:
 			if value, ok := values[i].(*decimal.Decimal); !ok {
 				return fmt.Errorf("unexpected type %T for field live_coin_usd_currency", values[i])
 			} else if value != nil {
-				opb.LiveCoinUsdCurrency = *value
+				pb.LiveCoinUsdCurrency = *value
 			}
 		}
 	}
 	return nil
 }
 
-// Update returns a builder for updating this OrderPaymentBalance.
-// Note that you need to call OrderPaymentBalance.Unwrap() before calling this method if this OrderPaymentBalance
+// Update returns a builder for updating this PaymentBalance.
+// Note that you need to call PaymentBalance.Unwrap() before calling this method if this PaymentBalance
 // was returned from a transaction, and the transaction was committed or rolled back.
-func (opb *OrderPaymentBalance) Update() *OrderPaymentBalanceUpdateOne {
-	return (&OrderPaymentBalanceClient{config: opb.config}).UpdateOne(opb)
+func (pb *PaymentBalance) Update() *PaymentBalanceUpdateOne {
+	return (&PaymentBalanceClient{config: pb.config}).UpdateOne(pb)
 }
 
-// Unwrap unwraps the OrderPaymentBalance entity that was returned from a transaction after it was closed,
+// Unwrap unwraps the PaymentBalance entity that was returned from a transaction after it was closed,
 // so that all future queries will be executed through the driver which created the transaction.
-func (opb *OrderPaymentBalance) Unwrap() *OrderPaymentBalance {
-	_tx, ok := opb.config.driver.(*txDriver)
+func (pb *PaymentBalance) Unwrap() *PaymentBalance {
+	_tx, ok := pb.config.driver.(*txDriver)
 	if !ok {
-		panic("ent: OrderPaymentBalance is not a transactional entity")
+		panic("ent: PaymentBalance is not a transactional entity")
 	}
-	opb.config.driver = _tx.drv
-	return opb
+	pb.config.driver = _tx.drv
+	return pb
 }
 
 // String implements the fmt.Stringer.
-func (opb *OrderPaymentBalance) String() string {
+func (pb *PaymentBalance) String() string {
 	var builder strings.Builder
-	builder.WriteString("OrderPaymentBalance(")
-	builder.WriteString(fmt.Sprintf("id=%v, ", opb.ID))
+	builder.WriteString("PaymentBalance(")
+	builder.WriteString(fmt.Sprintf("id=%v, ", pb.ID))
 	builder.WriteString("created_at=")
-	builder.WriteString(fmt.Sprintf("%v", opb.CreatedAt))
+	builder.WriteString(fmt.Sprintf("%v", pb.CreatedAt))
 	builder.WriteString(", ")
 	builder.WriteString("updated_at=")
-	builder.WriteString(fmt.Sprintf("%v", opb.UpdatedAt))
+	builder.WriteString(fmt.Sprintf("%v", pb.UpdatedAt))
 	builder.WriteString(", ")
 	builder.WriteString("deleted_at=")
-	builder.WriteString(fmt.Sprintf("%v", opb.DeletedAt))
+	builder.WriteString(fmt.Sprintf("%v", pb.DeletedAt))
 	builder.WriteString(", ")
 	builder.WriteString("ent_id=")
-	builder.WriteString(fmt.Sprintf("%v", opb.EntID))
+	builder.WriteString(fmt.Sprintf("%v", pb.EntID))
 	builder.WriteString(", ")
 	builder.WriteString("order_id=")
-	builder.WriteString(fmt.Sprintf("%v", opb.OrderID))
+	builder.WriteString(fmt.Sprintf("%v", pb.OrderID))
 	builder.WriteString(", ")
 	builder.WriteString("coin_type_id=")
-	builder.WriteString(fmt.Sprintf("%v", opb.CoinTypeID))
+	builder.WriteString(fmt.Sprintf("%v", pb.CoinTypeID))
 	builder.WriteString(", ")
 	builder.WriteString("amount=")
-	builder.WriteString(fmt.Sprintf("%v", opb.Amount))
+	builder.WriteString(fmt.Sprintf("%v", pb.Amount))
 	builder.WriteString(", ")
 	builder.WriteString("coin_usd_currency=")
-	builder.WriteString(fmt.Sprintf("%v", opb.CoinUsdCurrency))
+	builder.WriteString(fmt.Sprintf("%v", pb.CoinUsdCurrency))
 	builder.WriteString(", ")
 	builder.WriteString("local_coin_usd_currency=")
-	builder.WriteString(fmt.Sprintf("%v", opb.LocalCoinUsdCurrency))
+	builder.WriteString(fmt.Sprintf("%v", pb.LocalCoinUsdCurrency))
 	builder.WriteString(", ")
 	builder.WriteString("live_coin_usd_currency=")
-	builder.WriteString(fmt.Sprintf("%v", opb.LiveCoinUsdCurrency))
+	builder.WriteString(fmt.Sprintf("%v", pb.LiveCoinUsdCurrency))
 	builder.WriteByte(')')
 	return builder.String()
 }
 
-// OrderPaymentBalances is a parsable slice of OrderPaymentBalance.
-type OrderPaymentBalances []*OrderPaymentBalance
+// PaymentBalances is a parsable slice of PaymentBalance.
+type PaymentBalances []*PaymentBalance
 
-func (opb OrderPaymentBalances) config(cfg config) {
-	for _i := range opb {
-		opb[_i].config = cfg
+func (pb PaymentBalances) config(cfg config) {
+	for _i := range pb {
+		pb[_i].config = cfg
 	}
 }

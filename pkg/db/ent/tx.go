@@ -26,12 +26,6 @@ type Tx struct {
 	OrderCoupon *OrderCouponClient
 	// OrderLock is the client for interacting with the OrderLock builders.
 	OrderLock *OrderLockClient
-	// OrderPaymentBalance is the client for interacting with the OrderPaymentBalance builders.
-	OrderPaymentBalance *OrderPaymentBalanceClient
-	// OrderPaymentContract is the client for interacting with the OrderPaymentContract builders.
-	OrderPaymentContract *OrderPaymentContractClient
-	// OrderPaymentTransfer is the client for interacting with the OrderPaymentTransfer builders.
-	OrderPaymentTransfer *OrderPaymentTransferClient
 	// OrderState is the client for interacting with the OrderState builders.
 	OrderState *OrderStateClient
 	// OrderStateBase is the client for interacting with the OrderStateBase builders.
@@ -40,6 +34,12 @@ type Tx struct {
 	OutOfGas *OutOfGasClient
 	// Payment is the client for interacting with the Payment builders.
 	Payment *PaymentClient
+	// PaymentBalance is the client for interacting with the PaymentBalance builders.
+	PaymentBalance *PaymentBalanceClient
+	// PaymentContract is the client for interacting with the PaymentContract builders.
+	PaymentContract *PaymentContractClient
+	// PaymentTransfer is the client for interacting with the PaymentTransfer builders.
+	PaymentTransfer *PaymentTransferClient
 	// PowerRental is the client for interacting with the PowerRental builders.
 	PowerRental *PowerRentalClient
 	// PowerRentalState is the client for interacting with the PowerRentalState builders.
@@ -185,13 +185,13 @@ func (tx *Tx) init() {
 	tx.OrderBase = NewOrderBaseClient(tx.config)
 	tx.OrderCoupon = NewOrderCouponClient(tx.config)
 	tx.OrderLock = NewOrderLockClient(tx.config)
-	tx.OrderPaymentBalance = NewOrderPaymentBalanceClient(tx.config)
-	tx.OrderPaymentContract = NewOrderPaymentContractClient(tx.config)
-	tx.OrderPaymentTransfer = NewOrderPaymentTransferClient(tx.config)
 	tx.OrderState = NewOrderStateClient(tx.config)
 	tx.OrderStateBase = NewOrderStateBaseClient(tx.config)
 	tx.OutOfGas = NewOutOfGasClient(tx.config)
 	tx.Payment = NewPaymentClient(tx.config)
+	tx.PaymentBalance = NewPaymentBalanceClient(tx.config)
+	tx.PaymentContract = NewPaymentContractClient(tx.config)
+	tx.PaymentTransfer = NewPaymentTransferClient(tx.config)
 	tx.PowerRental = NewPowerRentalClient(tx.config)
 	tx.PowerRentalState = NewPowerRentalStateClient(tx.config)
 }

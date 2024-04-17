@@ -7,13 +7,13 @@ import (
 	"strings"
 
 	"entgo.io/ent/dialect/sql"
-	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/orderpaymentcontract"
+	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/paymentcontract"
 	"github.com/google/uuid"
 	"github.com/shopspring/decimal"
 )
 
-// OrderPaymentContract is the model entity for the OrderPaymentContract schema.
-type OrderPaymentContract struct {
+// PaymentContract is the model entity for the PaymentContract schema.
+type PaymentContract struct {
 	config `json:"-"`
 	// ID of the ent.
 	ID uint32 `json:"id,omitempty"`
@@ -34,136 +34,136 @@ type OrderPaymentContract struct {
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
-func (*OrderPaymentContract) scanValues(columns []string) ([]interface{}, error) {
+func (*PaymentContract) scanValues(columns []string) ([]interface{}, error) {
 	values := make([]interface{}, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case orderpaymentcontract.FieldAmount:
+		case paymentcontract.FieldAmount:
 			values[i] = new(decimal.Decimal)
-		case orderpaymentcontract.FieldID, orderpaymentcontract.FieldCreatedAt, orderpaymentcontract.FieldUpdatedAt, orderpaymentcontract.FieldDeletedAt:
+		case paymentcontract.FieldID, paymentcontract.FieldCreatedAt, paymentcontract.FieldUpdatedAt, paymentcontract.FieldDeletedAt:
 			values[i] = new(sql.NullInt64)
-		case orderpaymentcontract.FieldEntID, orderpaymentcontract.FieldOrderID, orderpaymentcontract.FieldCoinTypeID:
+		case paymentcontract.FieldEntID, paymentcontract.FieldOrderID, paymentcontract.FieldCoinTypeID:
 			values[i] = new(uuid.UUID)
 		default:
-			return nil, fmt.Errorf("unexpected column %q for type OrderPaymentContract", columns[i])
+			return nil, fmt.Errorf("unexpected column %q for type PaymentContract", columns[i])
 		}
 	}
 	return values, nil
 }
 
 // assignValues assigns the values that were returned from sql.Rows (after scanning)
-// to the OrderPaymentContract fields.
-func (opc *OrderPaymentContract) assignValues(columns []string, values []interface{}) error {
+// to the PaymentContract fields.
+func (pc *PaymentContract) assignValues(columns []string, values []interface{}) error {
 	if m, n := len(values), len(columns); m < n {
 		return fmt.Errorf("mismatch number of scan values: %d != %d", m, n)
 	}
 	for i := range columns {
 		switch columns[i] {
-		case orderpaymentcontract.FieldID:
+		case paymentcontract.FieldID:
 			value, ok := values[i].(*sql.NullInt64)
 			if !ok {
 				return fmt.Errorf("unexpected type %T for field id", value)
 			}
-			opc.ID = uint32(value.Int64)
-		case orderpaymentcontract.FieldCreatedAt:
+			pc.ID = uint32(value.Int64)
+		case paymentcontract.FieldCreatedAt:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field created_at", values[i])
 			} else if value.Valid {
-				opc.CreatedAt = uint32(value.Int64)
+				pc.CreatedAt = uint32(value.Int64)
 			}
-		case orderpaymentcontract.FieldUpdatedAt:
+		case paymentcontract.FieldUpdatedAt:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field updated_at", values[i])
 			} else if value.Valid {
-				opc.UpdatedAt = uint32(value.Int64)
+				pc.UpdatedAt = uint32(value.Int64)
 			}
-		case orderpaymentcontract.FieldDeletedAt:
+		case paymentcontract.FieldDeletedAt:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field deleted_at", values[i])
 			} else if value.Valid {
-				opc.DeletedAt = uint32(value.Int64)
+				pc.DeletedAt = uint32(value.Int64)
 			}
-		case orderpaymentcontract.FieldEntID:
+		case paymentcontract.FieldEntID:
 			if value, ok := values[i].(*uuid.UUID); !ok {
 				return fmt.Errorf("unexpected type %T for field ent_id", values[i])
 			} else if value != nil {
-				opc.EntID = *value
+				pc.EntID = *value
 			}
-		case orderpaymentcontract.FieldOrderID:
+		case paymentcontract.FieldOrderID:
 			if value, ok := values[i].(*uuid.UUID); !ok {
 				return fmt.Errorf("unexpected type %T for field order_id", values[i])
 			} else if value != nil {
-				opc.OrderID = *value
+				pc.OrderID = *value
 			}
-		case orderpaymentcontract.FieldCoinTypeID:
+		case paymentcontract.FieldCoinTypeID:
 			if value, ok := values[i].(*uuid.UUID); !ok {
 				return fmt.Errorf("unexpected type %T for field coin_type_id", values[i])
 			} else if value != nil {
-				opc.CoinTypeID = *value
+				pc.CoinTypeID = *value
 			}
-		case orderpaymentcontract.FieldAmount:
+		case paymentcontract.FieldAmount:
 			if value, ok := values[i].(*decimal.Decimal); !ok {
 				return fmt.Errorf("unexpected type %T for field amount", values[i])
 			} else if value != nil {
-				opc.Amount = *value
+				pc.Amount = *value
 			}
 		}
 	}
 	return nil
 }
 
-// Update returns a builder for updating this OrderPaymentContract.
-// Note that you need to call OrderPaymentContract.Unwrap() before calling this method if this OrderPaymentContract
+// Update returns a builder for updating this PaymentContract.
+// Note that you need to call PaymentContract.Unwrap() before calling this method if this PaymentContract
 // was returned from a transaction, and the transaction was committed or rolled back.
-func (opc *OrderPaymentContract) Update() *OrderPaymentContractUpdateOne {
-	return (&OrderPaymentContractClient{config: opc.config}).UpdateOne(opc)
+func (pc *PaymentContract) Update() *PaymentContractUpdateOne {
+	return (&PaymentContractClient{config: pc.config}).UpdateOne(pc)
 }
 
-// Unwrap unwraps the OrderPaymentContract entity that was returned from a transaction after it was closed,
+// Unwrap unwraps the PaymentContract entity that was returned from a transaction after it was closed,
 // so that all future queries will be executed through the driver which created the transaction.
-func (opc *OrderPaymentContract) Unwrap() *OrderPaymentContract {
-	_tx, ok := opc.config.driver.(*txDriver)
+func (pc *PaymentContract) Unwrap() *PaymentContract {
+	_tx, ok := pc.config.driver.(*txDriver)
 	if !ok {
-		panic("ent: OrderPaymentContract is not a transactional entity")
+		panic("ent: PaymentContract is not a transactional entity")
 	}
-	opc.config.driver = _tx.drv
-	return opc
+	pc.config.driver = _tx.drv
+	return pc
 }
 
 // String implements the fmt.Stringer.
-func (opc *OrderPaymentContract) String() string {
+func (pc *PaymentContract) String() string {
 	var builder strings.Builder
-	builder.WriteString("OrderPaymentContract(")
-	builder.WriteString(fmt.Sprintf("id=%v, ", opc.ID))
+	builder.WriteString("PaymentContract(")
+	builder.WriteString(fmt.Sprintf("id=%v, ", pc.ID))
 	builder.WriteString("created_at=")
-	builder.WriteString(fmt.Sprintf("%v", opc.CreatedAt))
+	builder.WriteString(fmt.Sprintf("%v", pc.CreatedAt))
 	builder.WriteString(", ")
 	builder.WriteString("updated_at=")
-	builder.WriteString(fmt.Sprintf("%v", opc.UpdatedAt))
+	builder.WriteString(fmt.Sprintf("%v", pc.UpdatedAt))
 	builder.WriteString(", ")
 	builder.WriteString("deleted_at=")
-	builder.WriteString(fmt.Sprintf("%v", opc.DeletedAt))
+	builder.WriteString(fmt.Sprintf("%v", pc.DeletedAt))
 	builder.WriteString(", ")
 	builder.WriteString("ent_id=")
-	builder.WriteString(fmt.Sprintf("%v", opc.EntID))
+	builder.WriteString(fmt.Sprintf("%v", pc.EntID))
 	builder.WriteString(", ")
 	builder.WriteString("order_id=")
-	builder.WriteString(fmt.Sprintf("%v", opc.OrderID))
+	builder.WriteString(fmt.Sprintf("%v", pc.OrderID))
 	builder.WriteString(", ")
 	builder.WriteString("coin_type_id=")
-	builder.WriteString(fmt.Sprintf("%v", opc.CoinTypeID))
+	builder.WriteString(fmt.Sprintf("%v", pc.CoinTypeID))
 	builder.WriteString(", ")
 	builder.WriteString("amount=")
-	builder.WriteString(fmt.Sprintf("%v", opc.Amount))
+	builder.WriteString(fmt.Sprintf("%v", pc.Amount))
 	builder.WriteByte(')')
 	return builder.String()
 }
 
-// OrderPaymentContracts is a parsable slice of OrderPaymentContract.
-type OrderPaymentContracts []*OrderPaymentContract
+// PaymentContracts is a parsable slice of PaymentContract.
+type PaymentContracts []*PaymentContract
 
-func (opc OrderPaymentContracts) config(cfg config) {
-	for _i := range opc {
-		opc[_i].config = cfg
+func (pc PaymentContracts) config(cfg config) {
+	for _i := range pc {
+		pc[_i].config = cfg
 	}
 }

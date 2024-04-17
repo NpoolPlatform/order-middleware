@@ -12,13 +12,13 @@ import (
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/orderbase"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/ordercoupon"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/orderlock"
-	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/orderpaymentbalance"
-	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/orderpaymentcontract"
-	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/orderpaymenttransfer"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/orderstate"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/orderstatebase"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/outofgas"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/payment"
+	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/paymentbalance"
+	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/paymentcontract"
+	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/paymenttransfer"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/powerrental"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/powerrentalstate"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/schema"
@@ -429,180 +429,6 @@ func init() {
 	orderlockDescLockType := orderlockFields[1].Descriptor()
 	// orderlock.DefaultLockType holds the default value on creation for the lock_type field.
 	orderlock.DefaultLockType = orderlockDescLockType.Default.(string)
-	orderpaymentbalanceMixin := schema.OrderPaymentBalance{}.Mixin()
-	orderpaymentbalance.Policy = privacy.NewPolicies(orderpaymentbalanceMixin[0], schema.OrderPaymentBalance{})
-	orderpaymentbalance.Hooks[0] = func(next ent.Mutator) ent.Mutator {
-		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
-			if err := orderpaymentbalance.Policy.EvalMutation(ctx, m); err != nil {
-				return nil, err
-			}
-			return next.Mutate(ctx, m)
-		})
-	}
-	orderpaymentbalanceMixinFields0 := orderpaymentbalanceMixin[0].Fields()
-	_ = orderpaymentbalanceMixinFields0
-	orderpaymentbalanceMixinFields1 := orderpaymentbalanceMixin[1].Fields()
-	_ = orderpaymentbalanceMixinFields1
-	orderpaymentbalanceFields := schema.OrderPaymentBalance{}.Fields()
-	_ = orderpaymentbalanceFields
-	// orderpaymentbalanceDescCreatedAt is the schema descriptor for created_at field.
-	orderpaymentbalanceDescCreatedAt := orderpaymentbalanceMixinFields0[0].Descriptor()
-	// orderpaymentbalance.DefaultCreatedAt holds the default value on creation for the created_at field.
-	orderpaymentbalance.DefaultCreatedAt = orderpaymentbalanceDescCreatedAt.Default.(func() uint32)
-	// orderpaymentbalanceDescUpdatedAt is the schema descriptor for updated_at field.
-	orderpaymentbalanceDescUpdatedAt := orderpaymentbalanceMixinFields0[1].Descriptor()
-	// orderpaymentbalance.DefaultUpdatedAt holds the default value on creation for the updated_at field.
-	orderpaymentbalance.DefaultUpdatedAt = orderpaymentbalanceDescUpdatedAt.Default.(func() uint32)
-	// orderpaymentbalance.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
-	orderpaymentbalance.UpdateDefaultUpdatedAt = orderpaymentbalanceDescUpdatedAt.UpdateDefault.(func() uint32)
-	// orderpaymentbalanceDescDeletedAt is the schema descriptor for deleted_at field.
-	orderpaymentbalanceDescDeletedAt := orderpaymentbalanceMixinFields0[2].Descriptor()
-	// orderpaymentbalance.DefaultDeletedAt holds the default value on creation for the deleted_at field.
-	orderpaymentbalance.DefaultDeletedAt = orderpaymentbalanceDescDeletedAt.Default.(func() uint32)
-	// orderpaymentbalanceDescEntID is the schema descriptor for ent_id field.
-	orderpaymentbalanceDescEntID := orderpaymentbalanceMixinFields1[1].Descriptor()
-	// orderpaymentbalance.DefaultEntID holds the default value on creation for the ent_id field.
-	orderpaymentbalance.DefaultEntID = orderpaymentbalanceDescEntID.Default.(func() uuid.UUID)
-	// orderpaymentbalanceDescOrderID is the schema descriptor for order_id field.
-	orderpaymentbalanceDescOrderID := orderpaymentbalanceFields[0].Descriptor()
-	// orderpaymentbalance.DefaultOrderID holds the default value on creation for the order_id field.
-	orderpaymentbalance.DefaultOrderID = orderpaymentbalanceDescOrderID.Default.(func() uuid.UUID)
-	// orderpaymentbalanceDescCoinTypeID is the schema descriptor for coin_type_id field.
-	orderpaymentbalanceDescCoinTypeID := orderpaymentbalanceFields[1].Descriptor()
-	// orderpaymentbalance.DefaultCoinTypeID holds the default value on creation for the coin_type_id field.
-	orderpaymentbalance.DefaultCoinTypeID = orderpaymentbalanceDescCoinTypeID.Default.(func() uuid.UUID)
-	// orderpaymentbalanceDescAmount is the schema descriptor for amount field.
-	orderpaymentbalanceDescAmount := orderpaymentbalanceFields[2].Descriptor()
-	// orderpaymentbalance.DefaultAmount holds the default value on creation for the amount field.
-	orderpaymentbalance.DefaultAmount = orderpaymentbalanceDescAmount.Default.(decimal.Decimal)
-	// orderpaymentbalanceDescCoinUsdCurrency is the schema descriptor for coin_usd_currency field.
-	orderpaymentbalanceDescCoinUsdCurrency := orderpaymentbalanceFields[3].Descriptor()
-	// orderpaymentbalance.DefaultCoinUsdCurrency holds the default value on creation for the coin_usd_currency field.
-	orderpaymentbalance.DefaultCoinUsdCurrency = orderpaymentbalanceDescCoinUsdCurrency.Default.(decimal.Decimal)
-	// orderpaymentbalanceDescLocalCoinUsdCurrency is the schema descriptor for local_coin_usd_currency field.
-	orderpaymentbalanceDescLocalCoinUsdCurrency := orderpaymentbalanceFields[4].Descriptor()
-	// orderpaymentbalance.DefaultLocalCoinUsdCurrency holds the default value on creation for the local_coin_usd_currency field.
-	orderpaymentbalance.DefaultLocalCoinUsdCurrency = orderpaymentbalanceDescLocalCoinUsdCurrency.Default.(decimal.Decimal)
-	// orderpaymentbalanceDescLiveCoinUsdCurrency is the schema descriptor for live_coin_usd_currency field.
-	orderpaymentbalanceDescLiveCoinUsdCurrency := orderpaymentbalanceFields[5].Descriptor()
-	// orderpaymentbalance.DefaultLiveCoinUsdCurrency holds the default value on creation for the live_coin_usd_currency field.
-	orderpaymentbalance.DefaultLiveCoinUsdCurrency = orderpaymentbalanceDescLiveCoinUsdCurrency.Default.(decimal.Decimal)
-	orderpaymentcontractMixin := schema.OrderPaymentContract{}.Mixin()
-	orderpaymentcontract.Policy = privacy.NewPolicies(orderpaymentcontractMixin[0], schema.OrderPaymentContract{})
-	orderpaymentcontract.Hooks[0] = func(next ent.Mutator) ent.Mutator {
-		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
-			if err := orderpaymentcontract.Policy.EvalMutation(ctx, m); err != nil {
-				return nil, err
-			}
-			return next.Mutate(ctx, m)
-		})
-	}
-	orderpaymentcontractMixinFields0 := orderpaymentcontractMixin[0].Fields()
-	_ = orderpaymentcontractMixinFields0
-	orderpaymentcontractMixinFields1 := orderpaymentcontractMixin[1].Fields()
-	_ = orderpaymentcontractMixinFields1
-	orderpaymentcontractFields := schema.OrderPaymentContract{}.Fields()
-	_ = orderpaymentcontractFields
-	// orderpaymentcontractDescCreatedAt is the schema descriptor for created_at field.
-	orderpaymentcontractDescCreatedAt := orderpaymentcontractMixinFields0[0].Descriptor()
-	// orderpaymentcontract.DefaultCreatedAt holds the default value on creation for the created_at field.
-	orderpaymentcontract.DefaultCreatedAt = orderpaymentcontractDescCreatedAt.Default.(func() uint32)
-	// orderpaymentcontractDescUpdatedAt is the schema descriptor for updated_at field.
-	orderpaymentcontractDescUpdatedAt := orderpaymentcontractMixinFields0[1].Descriptor()
-	// orderpaymentcontract.DefaultUpdatedAt holds the default value on creation for the updated_at field.
-	orderpaymentcontract.DefaultUpdatedAt = orderpaymentcontractDescUpdatedAt.Default.(func() uint32)
-	// orderpaymentcontract.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
-	orderpaymentcontract.UpdateDefaultUpdatedAt = orderpaymentcontractDescUpdatedAt.UpdateDefault.(func() uint32)
-	// orderpaymentcontractDescDeletedAt is the schema descriptor for deleted_at field.
-	orderpaymentcontractDescDeletedAt := orderpaymentcontractMixinFields0[2].Descriptor()
-	// orderpaymentcontract.DefaultDeletedAt holds the default value on creation for the deleted_at field.
-	orderpaymentcontract.DefaultDeletedAt = orderpaymentcontractDescDeletedAt.Default.(func() uint32)
-	// orderpaymentcontractDescEntID is the schema descriptor for ent_id field.
-	orderpaymentcontractDescEntID := orderpaymentcontractMixinFields1[1].Descriptor()
-	// orderpaymentcontract.DefaultEntID holds the default value on creation for the ent_id field.
-	orderpaymentcontract.DefaultEntID = orderpaymentcontractDescEntID.Default.(func() uuid.UUID)
-	// orderpaymentcontractDescOrderID is the schema descriptor for order_id field.
-	orderpaymentcontractDescOrderID := orderpaymentcontractFields[0].Descriptor()
-	// orderpaymentcontract.DefaultOrderID holds the default value on creation for the order_id field.
-	orderpaymentcontract.DefaultOrderID = orderpaymentcontractDescOrderID.Default.(func() uuid.UUID)
-	// orderpaymentcontractDescCoinTypeID is the schema descriptor for coin_type_id field.
-	orderpaymentcontractDescCoinTypeID := orderpaymentcontractFields[1].Descriptor()
-	// orderpaymentcontract.DefaultCoinTypeID holds the default value on creation for the coin_type_id field.
-	orderpaymentcontract.DefaultCoinTypeID = orderpaymentcontractDescCoinTypeID.Default.(func() uuid.UUID)
-	// orderpaymentcontractDescAmount is the schema descriptor for amount field.
-	orderpaymentcontractDescAmount := orderpaymentcontractFields[2].Descriptor()
-	// orderpaymentcontract.DefaultAmount holds the default value on creation for the amount field.
-	orderpaymentcontract.DefaultAmount = orderpaymentcontractDescAmount.Default.(decimal.Decimal)
-	orderpaymenttransferMixin := schema.OrderPaymentTransfer{}.Mixin()
-	orderpaymenttransfer.Policy = privacy.NewPolicies(orderpaymenttransferMixin[0], schema.OrderPaymentTransfer{})
-	orderpaymenttransfer.Hooks[0] = func(next ent.Mutator) ent.Mutator {
-		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
-			if err := orderpaymenttransfer.Policy.EvalMutation(ctx, m); err != nil {
-				return nil, err
-			}
-			return next.Mutate(ctx, m)
-		})
-	}
-	orderpaymenttransferMixinFields0 := orderpaymenttransferMixin[0].Fields()
-	_ = orderpaymenttransferMixinFields0
-	orderpaymenttransferMixinFields1 := orderpaymenttransferMixin[1].Fields()
-	_ = orderpaymenttransferMixinFields1
-	orderpaymenttransferFields := schema.OrderPaymentTransfer{}.Fields()
-	_ = orderpaymenttransferFields
-	// orderpaymenttransferDescCreatedAt is the schema descriptor for created_at field.
-	orderpaymenttransferDescCreatedAt := orderpaymenttransferMixinFields0[0].Descriptor()
-	// orderpaymenttransfer.DefaultCreatedAt holds the default value on creation for the created_at field.
-	orderpaymenttransfer.DefaultCreatedAt = orderpaymenttransferDescCreatedAt.Default.(func() uint32)
-	// orderpaymenttransferDescUpdatedAt is the schema descriptor for updated_at field.
-	orderpaymenttransferDescUpdatedAt := orderpaymenttransferMixinFields0[1].Descriptor()
-	// orderpaymenttransfer.DefaultUpdatedAt holds the default value on creation for the updated_at field.
-	orderpaymenttransfer.DefaultUpdatedAt = orderpaymenttransferDescUpdatedAt.Default.(func() uint32)
-	// orderpaymenttransfer.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
-	orderpaymenttransfer.UpdateDefaultUpdatedAt = orderpaymenttransferDescUpdatedAt.UpdateDefault.(func() uint32)
-	// orderpaymenttransferDescDeletedAt is the schema descriptor for deleted_at field.
-	orderpaymenttransferDescDeletedAt := orderpaymenttransferMixinFields0[2].Descriptor()
-	// orderpaymenttransfer.DefaultDeletedAt holds the default value on creation for the deleted_at field.
-	orderpaymenttransfer.DefaultDeletedAt = orderpaymenttransferDescDeletedAt.Default.(func() uint32)
-	// orderpaymenttransferDescEntID is the schema descriptor for ent_id field.
-	orderpaymenttransferDescEntID := orderpaymenttransferMixinFields1[1].Descriptor()
-	// orderpaymenttransfer.DefaultEntID holds the default value on creation for the ent_id field.
-	orderpaymenttransfer.DefaultEntID = orderpaymenttransferDescEntID.Default.(func() uuid.UUID)
-	// orderpaymenttransferDescOrderID is the schema descriptor for order_id field.
-	orderpaymenttransferDescOrderID := orderpaymenttransferFields[0].Descriptor()
-	// orderpaymenttransfer.DefaultOrderID holds the default value on creation for the order_id field.
-	orderpaymenttransfer.DefaultOrderID = orderpaymenttransferDescOrderID.Default.(func() uuid.UUID)
-	// orderpaymenttransferDescCoinTypeID is the schema descriptor for coin_type_id field.
-	orderpaymenttransferDescCoinTypeID := orderpaymenttransferFields[1].Descriptor()
-	// orderpaymenttransfer.DefaultCoinTypeID holds the default value on creation for the coin_type_id field.
-	orderpaymenttransfer.DefaultCoinTypeID = orderpaymenttransferDescCoinTypeID.Default.(func() uuid.UUID)
-	// orderpaymenttransferDescAmount is the schema descriptor for amount field.
-	orderpaymenttransferDescAmount := orderpaymenttransferFields[2].Descriptor()
-	// orderpaymenttransfer.DefaultAmount holds the default value on creation for the amount field.
-	orderpaymenttransfer.DefaultAmount = orderpaymenttransferDescAmount.Default.(decimal.Decimal)
-	// orderpaymenttransferDescStartAmount is the schema descriptor for start_amount field.
-	orderpaymenttransferDescStartAmount := orderpaymenttransferFields[3].Descriptor()
-	// orderpaymenttransfer.DefaultStartAmount holds the default value on creation for the start_amount field.
-	orderpaymenttransfer.DefaultStartAmount = orderpaymenttransferDescStartAmount.Default.(decimal.Decimal)
-	// orderpaymenttransferDescPaymentTransactionID is the schema descriptor for payment_transaction_id field.
-	orderpaymenttransferDescPaymentTransactionID := orderpaymenttransferFields[4].Descriptor()
-	// orderpaymenttransfer.DefaultPaymentTransactionID holds the default value on creation for the payment_transaction_id field.
-	orderpaymenttransfer.DefaultPaymentTransactionID = orderpaymenttransferDescPaymentTransactionID.Default.(string)
-	// orderpaymenttransferDescPaymentFinishAmount is the schema descriptor for payment_finish_amount field.
-	orderpaymenttransferDescPaymentFinishAmount := orderpaymenttransferFields[5].Descriptor()
-	// orderpaymenttransfer.DefaultPaymentFinishAmount holds the default value on creation for the payment_finish_amount field.
-	orderpaymenttransfer.DefaultPaymentFinishAmount = orderpaymenttransferDescPaymentFinishAmount.Default.(decimal.Decimal)
-	// orderpaymenttransferDescCoinUsdCurrency is the schema descriptor for coin_usd_currency field.
-	orderpaymenttransferDescCoinUsdCurrency := orderpaymenttransferFields[6].Descriptor()
-	// orderpaymenttransfer.DefaultCoinUsdCurrency holds the default value on creation for the coin_usd_currency field.
-	orderpaymenttransfer.DefaultCoinUsdCurrency = orderpaymenttransferDescCoinUsdCurrency.Default.(decimal.Decimal)
-	// orderpaymenttransferDescLocalCoinUsdCurrency is the schema descriptor for local_coin_usd_currency field.
-	orderpaymenttransferDescLocalCoinUsdCurrency := orderpaymenttransferFields[7].Descriptor()
-	// orderpaymenttransfer.DefaultLocalCoinUsdCurrency holds the default value on creation for the local_coin_usd_currency field.
-	orderpaymenttransfer.DefaultLocalCoinUsdCurrency = orderpaymenttransferDescLocalCoinUsdCurrency.Default.(decimal.Decimal)
-	// orderpaymenttransferDescLiveCoinUsdCurrency is the schema descriptor for live_coin_usd_currency field.
-	orderpaymenttransferDescLiveCoinUsdCurrency := orderpaymenttransferFields[8].Descriptor()
-	// orderpaymenttransfer.DefaultLiveCoinUsdCurrency holds the default value on creation for the live_coin_usd_currency field.
-	orderpaymenttransfer.DefaultLiveCoinUsdCurrency = orderpaymenttransferDescLiveCoinUsdCurrency.Default.(decimal.Decimal)
 	orderstateMixin := schema.OrderState{}.Mixin()
 	orderstate.Policy = privacy.NewPolicies(orderstateMixin[0], schema.OrderState{})
 	orderstate.Hooks[0] = func(next ent.Mutator) ent.Mutator {
@@ -851,6 +677,180 @@ func init() {
 	paymentDescStartAmount := paymentFields[7].Descriptor()
 	// payment.DefaultStartAmount holds the default value on creation for the start_amount field.
 	payment.DefaultStartAmount = paymentDescStartAmount.Default.(decimal.Decimal)
+	paymentbalanceMixin := schema.PaymentBalance{}.Mixin()
+	paymentbalance.Policy = privacy.NewPolicies(paymentbalanceMixin[0], schema.PaymentBalance{})
+	paymentbalance.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+			if err := paymentbalance.Policy.EvalMutation(ctx, m); err != nil {
+				return nil, err
+			}
+			return next.Mutate(ctx, m)
+		})
+	}
+	paymentbalanceMixinFields0 := paymentbalanceMixin[0].Fields()
+	_ = paymentbalanceMixinFields0
+	paymentbalanceMixinFields1 := paymentbalanceMixin[1].Fields()
+	_ = paymentbalanceMixinFields1
+	paymentbalanceFields := schema.PaymentBalance{}.Fields()
+	_ = paymentbalanceFields
+	// paymentbalanceDescCreatedAt is the schema descriptor for created_at field.
+	paymentbalanceDescCreatedAt := paymentbalanceMixinFields0[0].Descriptor()
+	// paymentbalance.DefaultCreatedAt holds the default value on creation for the created_at field.
+	paymentbalance.DefaultCreatedAt = paymentbalanceDescCreatedAt.Default.(func() uint32)
+	// paymentbalanceDescUpdatedAt is the schema descriptor for updated_at field.
+	paymentbalanceDescUpdatedAt := paymentbalanceMixinFields0[1].Descriptor()
+	// paymentbalance.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	paymentbalance.DefaultUpdatedAt = paymentbalanceDescUpdatedAt.Default.(func() uint32)
+	// paymentbalance.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	paymentbalance.UpdateDefaultUpdatedAt = paymentbalanceDescUpdatedAt.UpdateDefault.(func() uint32)
+	// paymentbalanceDescDeletedAt is the schema descriptor for deleted_at field.
+	paymentbalanceDescDeletedAt := paymentbalanceMixinFields0[2].Descriptor()
+	// paymentbalance.DefaultDeletedAt holds the default value on creation for the deleted_at field.
+	paymentbalance.DefaultDeletedAt = paymentbalanceDescDeletedAt.Default.(func() uint32)
+	// paymentbalanceDescEntID is the schema descriptor for ent_id field.
+	paymentbalanceDescEntID := paymentbalanceMixinFields1[1].Descriptor()
+	// paymentbalance.DefaultEntID holds the default value on creation for the ent_id field.
+	paymentbalance.DefaultEntID = paymentbalanceDescEntID.Default.(func() uuid.UUID)
+	// paymentbalanceDescOrderID is the schema descriptor for order_id field.
+	paymentbalanceDescOrderID := paymentbalanceFields[0].Descriptor()
+	// paymentbalance.DefaultOrderID holds the default value on creation for the order_id field.
+	paymentbalance.DefaultOrderID = paymentbalanceDescOrderID.Default.(func() uuid.UUID)
+	// paymentbalanceDescCoinTypeID is the schema descriptor for coin_type_id field.
+	paymentbalanceDescCoinTypeID := paymentbalanceFields[1].Descriptor()
+	// paymentbalance.DefaultCoinTypeID holds the default value on creation for the coin_type_id field.
+	paymentbalance.DefaultCoinTypeID = paymentbalanceDescCoinTypeID.Default.(func() uuid.UUID)
+	// paymentbalanceDescAmount is the schema descriptor for amount field.
+	paymentbalanceDescAmount := paymentbalanceFields[2].Descriptor()
+	// paymentbalance.DefaultAmount holds the default value on creation for the amount field.
+	paymentbalance.DefaultAmount = paymentbalanceDescAmount.Default.(decimal.Decimal)
+	// paymentbalanceDescCoinUsdCurrency is the schema descriptor for coin_usd_currency field.
+	paymentbalanceDescCoinUsdCurrency := paymentbalanceFields[3].Descriptor()
+	// paymentbalance.DefaultCoinUsdCurrency holds the default value on creation for the coin_usd_currency field.
+	paymentbalance.DefaultCoinUsdCurrency = paymentbalanceDescCoinUsdCurrency.Default.(decimal.Decimal)
+	// paymentbalanceDescLocalCoinUsdCurrency is the schema descriptor for local_coin_usd_currency field.
+	paymentbalanceDescLocalCoinUsdCurrency := paymentbalanceFields[4].Descriptor()
+	// paymentbalance.DefaultLocalCoinUsdCurrency holds the default value on creation for the local_coin_usd_currency field.
+	paymentbalance.DefaultLocalCoinUsdCurrency = paymentbalanceDescLocalCoinUsdCurrency.Default.(decimal.Decimal)
+	// paymentbalanceDescLiveCoinUsdCurrency is the schema descriptor for live_coin_usd_currency field.
+	paymentbalanceDescLiveCoinUsdCurrency := paymentbalanceFields[5].Descriptor()
+	// paymentbalance.DefaultLiveCoinUsdCurrency holds the default value on creation for the live_coin_usd_currency field.
+	paymentbalance.DefaultLiveCoinUsdCurrency = paymentbalanceDescLiveCoinUsdCurrency.Default.(decimal.Decimal)
+	paymentcontractMixin := schema.PaymentContract{}.Mixin()
+	paymentcontract.Policy = privacy.NewPolicies(paymentcontractMixin[0], schema.PaymentContract{})
+	paymentcontract.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+			if err := paymentcontract.Policy.EvalMutation(ctx, m); err != nil {
+				return nil, err
+			}
+			return next.Mutate(ctx, m)
+		})
+	}
+	paymentcontractMixinFields0 := paymentcontractMixin[0].Fields()
+	_ = paymentcontractMixinFields0
+	paymentcontractMixinFields1 := paymentcontractMixin[1].Fields()
+	_ = paymentcontractMixinFields1
+	paymentcontractFields := schema.PaymentContract{}.Fields()
+	_ = paymentcontractFields
+	// paymentcontractDescCreatedAt is the schema descriptor for created_at field.
+	paymentcontractDescCreatedAt := paymentcontractMixinFields0[0].Descriptor()
+	// paymentcontract.DefaultCreatedAt holds the default value on creation for the created_at field.
+	paymentcontract.DefaultCreatedAt = paymentcontractDescCreatedAt.Default.(func() uint32)
+	// paymentcontractDescUpdatedAt is the schema descriptor for updated_at field.
+	paymentcontractDescUpdatedAt := paymentcontractMixinFields0[1].Descriptor()
+	// paymentcontract.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	paymentcontract.DefaultUpdatedAt = paymentcontractDescUpdatedAt.Default.(func() uint32)
+	// paymentcontract.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	paymentcontract.UpdateDefaultUpdatedAt = paymentcontractDescUpdatedAt.UpdateDefault.(func() uint32)
+	// paymentcontractDescDeletedAt is the schema descriptor for deleted_at field.
+	paymentcontractDescDeletedAt := paymentcontractMixinFields0[2].Descriptor()
+	// paymentcontract.DefaultDeletedAt holds the default value on creation for the deleted_at field.
+	paymentcontract.DefaultDeletedAt = paymentcontractDescDeletedAt.Default.(func() uint32)
+	// paymentcontractDescEntID is the schema descriptor for ent_id field.
+	paymentcontractDescEntID := paymentcontractMixinFields1[1].Descriptor()
+	// paymentcontract.DefaultEntID holds the default value on creation for the ent_id field.
+	paymentcontract.DefaultEntID = paymentcontractDescEntID.Default.(func() uuid.UUID)
+	// paymentcontractDescOrderID is the schema descriptor for order_id field.
+	paymentcontractDescOrderID := paymentcontractFields[0].Descriptor()
+	// paymentcontract.DefaultOrderID holds the default value on creation for the order_id field.
+	paymentcontract.DefaultOrderID = paymentcontractDescOrderID.Default.(func() uuid.UUID)
+	// paymentcontractDescCoinTypeID is the schema descriptor for coin_type_id field.
+	paymentcontractDescCoinTypeID := paymentcontractFields[1].Descriptor()
+	// paymentcontract.DefaultCoinTypeID holds the default value on creation for the coin_type_id field.
+	paymentcontract.DefaultCoinTypeID = paymentcontractDescCoinTypeID.Default.(func() uuid.UUID)
+	// paymentcontractDescAmount is the schema descriptor for amount field.
+	paymentcontractDescAmount := paymentcontractFields[2].Descriptor()
+	// paymentcontract.DefaultAmount holds the default value on creation for the amount field.
+	paymentcontract.DefaultAmount = paymentcontractDescAmount.Default.(decimal.Decimal)
+	paymenttransferMixin := schema.PaymentTransfer{}.Mixin()
+	paymenttransfer.Policy = privacy.NewPolicies(paymenttransferMixin[0], schema.PaymentTransfer{})
+	paymenttransfer.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+			if err := paymenttransfer.Policy.EvalMutation(ctx, m); err != nil {
+				return nil, err
+			}
+			return next.Mutate(ctx, m)
+		})
+	}
+	paymenttransferMixinFields0 := paymenttransferMixin[0].Fields()
+	_ = paymenttransferMixinFields0
+	paymenttransferMixinFields1 := paymenttransferMixin[1].Fields()
+	_ = paymenttransferMixinFields1
+	paymenttransferFields := schema.PaymentTransfer{}.Fields()
+	_ = paymenttransferFields
+	// paymenttransferDescCreatedAt is the schema descriptor for created_at field.
+	paymenttransferDescCreatedAt := paymenttransferMixinFields0[0].Descriptor()
+	// paymenttransfer.DefaultCreatedAt holds the default value on creation for the created_at field.
+	paymenttransfer.DefaultCreatedAt = paymenttransferDescCreatedAt.Default.(func() uint32)
+	// paymenttransferDescUpdatedAt is the schema descriptor for updated_at field.
+	paymenttransferDescUpdatedAt := paymenttransferMixinFields0[1].Descriptor()
+	// paymenttransfer.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	paymenttransfer.DefaultUpdatedAt = paymenttransferDescUpdatedAt.Default.(func() uint32)
+	// paymenttransfer.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	paymenttransfer.UpdateDefaultUpdatedAt = paymenttransferDescUpdatedAt.UpdateDefault.(func() uint32)
+	// paymenttransferDescDeletedAt is the schema descriptor for deleted_at field.
+	paymenttransferDescDeletedAt := paymenttransferMixinFields0[2].Descriptor()
+	// paymenttransfer.DefaultDeletedAt holds the default value on creation for the deleted_at field.
+	paymenttransfer.DefaultDeletedAt = paymenttransferDescDeletedAt.Default.(func() uint32)
+	// paymenttransferDescEntID is the schema descriptor for ent_id field.
+	paymenttransferDescEntID := paymenttransferMixinFields1[1].Descriptor()
+	// paymenttransfer.DefaultEntID holds the default value on creation for the ent_id field.
+	paymenttransfer.DefaultEntID = paymenttransferDescEntID.Default.(func() uuid.UUID)
+	// paymenttransferDescOrderID is the schema descriptor for order_id field.
+	paymenttransferDescOrderID := paymenttransferFields[0].Descriptor()
+	// paymenttransfer.DefaultOrderID holds the default value on creation for the order_id field.
+	paymenttransfer.DefaultOrderID = paymenttransferDescOrderID.Default.(func() uuid.UUID)
+	// paymenttransferDescCoinTypeID is the schema descriptor for coin_type_id field.
+	paymenttransferDescCoinTypeID := paymenttransferFields[1].Descriptor()
+	// paymenttransfer.DefaultCoinTypeID holds the default value on creation for the coin_type_id field.
+	paymenttransfer.DefaultCoinTypeID = paymenttransferDescCoinTypeID.Default.(func() uuid.UUID)
+	// paymenttransferDescAmount is the schema descriptor for amount field.
+	paymenttransferDescAmount := paymenttransferFields[2].Descriptor()
+	// paymenttransfer.DefaultAmount holds the default value on creation for the amount field.
+	paymenttransfer.DefaultAmount = paymenttransferDescAmount.Default.(decimal.Decimal)
+	// paymenttransferDescStartAmount is the schema descriptor for start_amount field.
+	paymenttransferDescStartAmount := paymenttransferFields[3].Descriptor()
+	// paymenttransfer.DefaultStartAmount holds the default value on creation for the start_amount field.
+	paymenttransfer.DefaultStartAmount = paymenttransferDescStartAmount.Default.(decimal.Decimal)
+	// paymenttransferDescTransactionID is the schema descriptor for transaction_id field.
+	paymenttransferDescTransactionID := paymenttransferFields[4].Descriptor()
+	// paymenttransfer.DefaultTransactionID holds the default value on creation for the transaction_id field.
+	paymenttransfer.DefaultTransactionID = paymenttransferDescTransactionID.Default.(string)
+	// paymenttransferDescFinishAmount is the schema descriptor for finish_amount field.
+	paymenttransferDescFinishAmount := paymenttransferFields[5].Descriptor()
+	// paymenttransfer.DefaultFinishAmount holds the default value on creation for the finish_amount field.
+	paymenttransfer.DefaultFinishAmount = paymenttransferDescFinishAmount.Default.(decimal.Decimal)
+	// paymenttransferDescCoinUsdCurrency is the schema descriptor for coin_usd_currency field.
+	paymenttransferDescCoinUsdCurrency := paymenttransferFields[6].Descriptor()
+	// paymenttransfer.DefaultCoinUsdCurrency holds the default value on creation for the coin_usd_currency field.
+	paymenttransfer.DefaultCoinUsdCurrency = paymenttransferDescCoinUsdCurrency.Default.(decimal.Decimal)
+	// paymenttransferDescLocalCoinUsdCurrency is the schema descriptor for local_coin_usd_currency field.
+	paymenttransferDescLocalCoinUsdCurrency := paymenttransferFields[7].Descriptor()
+	// paymenttransfer.DefaultLocalCoinUsdCurrency holds the default value on creation for the local_coin_usd_currency field.
+	paymenttransfer.DefaultLocalCoinUsdCurrency = paymenttransferDescLocalCoinUsdCurrency.Default.(decimal.Decimal)
+	// paymenttransferDescLiveCoinUsdCurrency is the schema descriptor for live_coin_usd_currency field.
+	paymenttransferDescLiveCoinUsdCurrency := paymenttransferFields[8].Descriptor()
+	// paymenttransfer.DefaultLiveCoinUsdCurrency holds the default value on creation for the live_coin_usd_currency field.
+	paymenttransfer.DefaultLiveCoinUsdCurrency = paymenttransferDescLiveCoinUsdCurrency.Default.(decimal.Decimal)
 	powerrentalMixin := schema.PowerRental{}.Mixin()
 	powerrental.Policy = privacy.NewPolicies(powerrentalMixin[0], schema.PowerRental{})
 	powerrental.Hooks[0] = func(next ent.Mutator) ent.Mutator {

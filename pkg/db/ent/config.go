@@ -28,21 +28,21 @@ type config struct {
 
 // hooks per client, for fast access.
 type hooks struct {
-	AppConfig            []ent.Hook
-	Compensate           []ent.Hook
-	Order                []ent.Hook
-	OrderBase            []ent.Hook
-	OrderCoupon          []ent.Hook
-	OrderLock            []ent.Hook
-	OrderPaymentBalance  []ent.Hook
-	OrderPaymentContract []ent.Hook
-	OrderPaymentTransfer []ent.Hook
-	OrderState           []ent.Hook
-	OrderStateBase       []ent.Hook
-	OutOfGas             []ent.Hook
-	Payment              []ent.Hook
-	PowerRental          []ent.Hook
-	PowerRentalState     []ent.Hook
+	AppConfig        []ent.Hook
+	Compensate       []ent.Hook
+	Order            []ent.Hook
+	OrderBase        []ent.Hook
+	OrderCoupon      []ent.Hook
+	OrderLock        []ent.Hook
+	OrderState       []ent.Hook
+	OrderStateBase   []ent.Hook
+	OutOfGas         []ent.Hook
+	Payment          []ent.Hook
+	PaymentBalance   []ent.Hook
+	PaymentContract  []ent.Hook
+	PaymentTransfer  []ent.Hook
+	PowerRental      []ent.Hook
+	PowerRentalState []ent.Hook
 }
 
 // Options applies the options on the config object.

@@ -16,13 +16,13 @@ import (
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/orderbase"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/ordercoupon"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/orderlock"
-	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/orderpaymentbalance"
-	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/orderpaymentcontract"
-	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/orderpaymenttransfer"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/orderstate"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/orderstatebase"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/outofgas"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/payment"
+	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/paymentbalance"
+	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/paymentcontract"
+	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/paymenttransfer"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/powerrental"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/powerrentalstate"
 )
@@ -45,21 +45,21 @@ type OrderFunc func(*sql.Selector)
 // columnChecker returns a function indicates if the column exists in the given column.
 func columnChecker(table string) func(string) error {
 	checks := map[string]func(string) bool{
-		appconfig.Table:            appconfig.ValidColumn,
-		compensate.Table:           compensate.ValidColumn,
-		entorder.Table:             entorder.ValidColumn,
-		orderbase.Table:            orderbase.ValidColumn,
-		ordercoupon.Table:          ordercoupon.ValidColumn,
-		orderlock.Table:            orderlock.ValidColumn,
-		orderpaymentbalance.Table:  orderpaymentbalance.ValidColumn,
-		orderpaymentcontract.Table: orderpaymentcontract.ValidColumn,
-		orderpaymenttransfer.Table: orderpaymenttransfer.ValidColumn,
-		orderstate.Table:           orderstate.ValidColumn,
-		orderstatebase.Table:       orderstatebase.ValidColumn,
-		outofgas.Table:             outofgas.ValidColumn,
-		payment.Table:              payment.ValidColumn,
-		powerrental.Table:          powerrental.ValidColumn,
-		powerrentalstate.Table:     powerrentalstate.ValidColumn,
+		appconfig.Table:        appconfig.ValidColumn,
+		compensate.Table:       compensate.ValidColumn,
+		entorder.Table:         entorder.ValidColumn,
+		orderbase.Table:        orderbase.ValidColumn,
+		ordercoupon.Table:      ordercoupon.ValidColumn,
+		orderlock.Table:        orderlock.ValidColumn,
+		orderstate.Table:       orderstate.ValidColumn,
+		orderstatebase.Table:   orderstatebase.ValidColumn,
+		outofgas.Table:         outofgas.ValidColumn,
+		payment.Table:          payment.ValidColumn,
+		paymentbalance.Table:   paymentbalance.ValidColumn,
+		paymentcontract.Table:  paymentcontract.ValidColumn,
+		paymenttransfer.Table:  paymenttransfer.ValidColumn,
+		powerrental.Table:      powerrental.ValidColumn,
+		powerrentalstate.Table: powerrentalstate.ValidColumn,
 	}
 	check, ok := checks[table]
 	if !ok {

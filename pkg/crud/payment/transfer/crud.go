@@ -11,10 +11,12 @@ import (
 )
 
 type Req struct {
-	EntID                *uuid.UUID
-	OrderID              *uuid.UUID
-	CoinTypeID           *uuid.UUID
-	Amount               *decimal.Decimal
+	EntID       *uuid.UUID
+	OrderID     *uuid.UUID
+	CoinTypeID  *uuid.UUID
+	Amount      *decimal.Decimal
+	StartAmount *decimal.Decimal
+	PaymentTransactionID
 	CoinUSDCurrency      *decimal.Decimal
 	LocalCoinUSDCurrency *decimal.Decimal
 	LiveCoinUSDCurrency  *decimal.Decimal
