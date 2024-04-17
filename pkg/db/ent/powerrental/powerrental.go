@@ -25,14 +25,12 @@ const (
 	FieldOrderID = "order_id"
 	// FieldUnits holds the string denoting the units field in the database.
 	FieldUnits = "units"
-	// FieldGoodValue holds the string denoting the good_value field in the database.
-	FieldGoodValue = "good_value"
 	// FieldGoodValueUsd holds the string denoting the good_value_usd field in the database.
 	FieldGoodValueUsd = "good_value_usd"
-	// FieldPaymentAmount holds the string denoting the payment_amount field in the database.
-	FieldPaymentAmount = "payment_amount"
-	// FieldDiscountAmount holds the string denoting the discount_amount field in the database.
-	FieldDiscountAmount = "discount_amount"
+	// FieldPaymentAmountUsd holds the string denoting the payment_amount_usd field in the database.
+	FieldPaymentAmountUsd = "payment_amount_usd"
+	// FieldDiscountAmountUsd holds the string denoting the discount_amount_usd field in the database.
+	FieldDiscountAmountUsd = "discount_amount_usd"
 	// FieldPromotionID holds the string denoting the promotion_id field in the database.
 	FieldPromotionID = "promotion_id"
 	// FieldDuration holds the string denoting the duration field in the database.
@@ -52,10 +50,9 @@ var Columns = []string{
 	FieldEntID,
 	FieldOrderID,
 	FieldUnits,
-	FieldGoodValue,
 	FieldGoodValueUsd,
-	FieldPaymentAmount,
-	FieldDiscountAmount,
+	FieldPaymentAmountUsd,
+	FieldDiscountAmountUsd,
 	FieldPromotionID,
 	FieldDuration,
 	FieldInvestmentType,
@@ -94,14 +91,12 @@ var (
 	DefaultOrderID func() uuid.UUID
 	// DefaultUnits holds the default value on creation for the "units" field.
 	DefaultUnits decimal.Decimal
-	// DefaultGoodValue holds the default value on creation for the "good_value" field.
-	DefaultGoodValue decimal.Decimal
 	// DefaultGoodValueUsd holds the default value on creation for the "good_value_usd" field.
 	DefaultGoodValueUsd decimal.Decimal
-	// DefaultPaymentAmount holds the default value on creation for the "payment_amount" field.
-	DefaultPaymentAmount decimal.Decimal
-	// DefaultDiscountAmount holds the default value on creation for the "discount_amount" field.
-	DefaultDiscountAmount decimal.Decimal
+	// DefaultPaymentAmountUsd holds the default value on creation for the "payment_amount_usd" field.
+	DefaultPaymentAmountUsd decimal.Decimal
+	// DefaultDiscountAmountUsd holds the default value on creation for the "discount_amount_usd" field.
+	DefaultDiscountAmountUsd decimal.Decimal
 	// DefaultPromotionID holds the default value on creation for the "promotion_id" field.
 	DefaultPromotionID func() uuid.UUID
 	// DefaultDuration holds the default value on creation for the "duration" field.

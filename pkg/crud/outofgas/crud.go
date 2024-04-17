@@ -14,7 +14,6 @@ type Req struct {
 	OrderID   *uuid.UUID
 	StartAt   *uint32
 	EndAt     *uint32
-	CreatedAt *uint32
 	DeletedAt *uint32
 }
 
@@ -30,9 +29,6 @@ func CreateSet(c *ent.OutOfGasCreate, req *Req) *ent.OutOfGasCreate {
 	}
 	if req.EndAt != nil {
 		c.SetEndAt(*req.EndAt)
-	}
-	if req.CreatedAt != nil {
-		c.SetCreatedAt(*req.CreatedAt)
 	}
 	return c
 }

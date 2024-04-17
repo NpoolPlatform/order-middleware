@@ -367,19 +367,18 @@ var schemaGraph = func() *sqlgraph.Schema {
 		},
 		Type: "PowerRental",
 		Fields: map[string]*sqlgraph.FieldSpec{
-			powerrental.FieldCreatedAt:      {Type: field.TypeUint32, Column: powerrental.FieldCreatedAt},
-			powerrental.FieldUpdatedAt:      {Type: field.TypeUint32, Column: powerrental.FieldUpdatedAt},
-			powerrental.FieldDeletedAt:      {Type: field.TypeUint32, Column: powerrental.FieldDeletedAt},
-			powerrental.FieldEntID:          {Type: field.TypeUUID, Column: powerrental.FieldEntID},
-			powerrental.FieldOrderID:        {Type: field.TypeUUID, Column: powerrental.FieldOrderID},
-			powerrental.FieldUnits:          {Type: field.TypeOther, Column: powerrental.FieldUnits},
-			powerrental.FieldGoodValue:      {Type: field.TypeOther, Column: powerrental.FieldGoodValue},
-			powerrental.FieldGoodValueUsd:   {Type: field.TypeOther, Column: powerrental.FieldGoodValueUsd},
-			powerrental.FieldPaymentAmount:  {Type: field.TypeOther, Column: powerrental.FieldPaymentAmount},
-			powerrental.FieldDiscountAmount: {Type: field.TypeOther, Column: powerrental.FieldDiscountAmount},
-			powerrental.FieldPromotionID:    {Type: field.TypeUUID, Column: powerrental.FieldPromotionID},
-			powerrental.FieldDuration:       {Type: field.TypeUint32, Column: powerrental.FieldDuration},
-			powerrental.FieldInvestmentType: {Type: field.TypeString, Column: powerrental.FieldInvestmentType},
+			powerrental.FieldCreatedAt:         {Type: field.TypeUint32, Column: powerrental.FieldCreatedAt},
+			powerrental.FieldUpdatedAt:         {Type: field.TypeUint32, Column: powerrental.FieldUpdatedAt},
+			powerrental.FieldDeletedAt:         {Type: field.TypeUint32, Column: powerrental.FieldDeletedAt},
+			powerrental.FieldEntID:             {Type: field.TypeUUID, Column: powerrental.FieldEntID},
+			powerrental.FieldOrderID:           {Type: field.TypeUUID, Column: powerrental.FieldOrderID},
+			powerrental.FieldUnits:             {Type: field.TypeOther, Column: powerrental.FieldUnits},
+			powerrental.FieldGoodValueUsd:      {Type: field.TypeOther, Column: powerrental.FieldGoodValueUsd},
+			powerrental.FieldPaymentAmountUsd:  {Type: field.TypeOther, Column: powerrental.FieldPaymentAmountUsd},
+			powerrental.FieldDiscountAmountUsd: {Type: field.TypeOther, Column: powerrental.FieldDiscountAmountUsd},
+			powerrental.FieldPromotionID:       {Type: field.TypeUUID, Column: powerrental.FieldPromotionID},
+			powerrental.FieldDuration:          {Type: field.TypeUint32, Column: powerrental.FieldDuration},
+			powerrental.FieldInvestmentType:    {Type: field.TypeString, Column: powerrental.FieldInvestmentType},
 		},
 	}
 	graph.Nodes[14] = &sqlgraph.Node{
@@ -1805,24 +1804,19 @@ func (f *PowerRentalFilter) WhereUnits(p entql.OtherP) {
 	f.Where(p.Field(powerrental.FieldUnits))
 }
 
-// WhereGoodValue applies the entql other predicate on the good_value field.
-func (f *PowerRentalFilter) WhereGoodValue(p entql.OtherP) {
-	f.Where(p.Field(powerrental.FieldGoodValue))
-}
-
 // WhereGoodValueUsd applies the entql other predicate on the good_value_usd field.
 func (f *PowerRentalFilter) WhereGoodValueUsd(p entql.OtherP) {
 	f.Where(p.Field(powerrental.FieldGoodValueUsd))
 }
 
-// WherePaymentAmount applies the entql other predicate on the payment_amount field.
-func (f *PowerRentalFilter) WherePaymentAmount(p entql.OtherP) {
-	f.Where(p.Field(powerrental.FieldPaymentAmount))
+// WherePaymentAmountUsd applies the entql other predicate on the payment_amount_usd field.
+func (f *PowerRentalFilter) WherePaymentAmountUsd(p entql.OtherP) {
+	f.Where(p.Field(powerrental.FieldPaymentAmountUsd))
 }
 
-// WhereDiscountAmount applies the entql other predicate on the discount_amount field.
-func (f *PowerRentalFilter) WhereDiscountAmount(p entql.OtherP) {
-	f.Where(p.Field(powerrental.FieldDiscountAmount))
+// WhereDiscountAmountUsd applies the entql other predicate on the discount_amount_usd field.
+func (f *PowerRentalFilter) WhereDiscountAmountUsd(p entql.OtherP) {
+	f.Where(p.Field(powerrental.FieldDiscountAmountUsd))
 }
 
 // WherePromotionID applies the entql [16]byte predicate on the promotion_id field.

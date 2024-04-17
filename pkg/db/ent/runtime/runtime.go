@@ -893,32 +893,28 @@ func init() {
 	powerrentalDescUnits := powerrentalFields[1].Descriptor()
 	// powerrental.DefaultUnits holds the default value on creation for the units field.
 	powerrental.DefaultUnits = powerrentalDescUnits.Default.(decimal.Decimal)
-	// powerrentalDescGoodValue is the schema descriptor for good_value field.
-	powerrentalDescGoodValue := powerrentalFields[2].Descriptor()
-	// powerrental.DefaultGoodValue holds the default value on creation for the good_value field.
-	powerrental.DefaultGoodValue = powerrentalDescGoodValue.Default.(decimal.Decimal)
 	// powerrentalDescGoodValueUsd is the schema descriptor for good_value_usd field.
-	powerrentalDescGoodValueUsd := powerrentalFields[3].Descriptor()
+	powerrentalDescGoodValueUsd := powerrentalFields[2].Descriptor()
 	// powerrental.DefaultGoodValueUsd holds the default value on creation for the good_value_usd field.
 	powerrental.DefaultGoodValueUsd = powerrentalDescGoodValueUsd.Default.(decimal.Decimal)
-	// powerrentalDescPaymentAmount is the schema descriptor for payment_amount field.
-	powerrentalDescPaymentAmount := powerrentalFields[4].Descriptor()
-	// powerrental.DefaultPaymentAmount holds the default value on creation for the payment_amount field.
-	powerrental.DefaultPaymentAmount = powerrentalDescPaymentAmount.Default.(decimal.Decimal)
-	// powerrentalDescDiscountAmount is the schema descriptor for discount_amount field.
-	powerrentalDescDiscountAmount := powerrentalFields[5].Descriptor()
-	// powerrental.DefaultDiscountAmount holds the default value on creation for the discount_amount field.
-	powerrental.DefaultDiscountAmount = powerrentalDescDiscountAmount.Default.(decimal.Decimal)
+	// powerrentalDescPaymentAmountUsd is the schema descriptor for payment_amount_usd field.
+	powerrentalDescPaymentAmountUsd := powerrentalFields[3].Descriptor()
+	// powerrental.DefaultPaymentAmountUsd holds the default value on creation for the payment_amount_usd field.
+	powerrental.DefaultPaymentAmountUsd = powerrentalDescPaymentAmountUsd.Default.(decimal.Decimal)
+	// powerrentalDescDiscountAmountUsd is the schema descriptor for discount_amount_usd field.
+	powerrentalDescDiscountAmountUsd := powerrentalFields[4].Descriptor()
+	// powerrental.DefaultDiscountAmountUsd holds the default value on creation for the discount_amount_usd field.
+	powerrental.DefaultDiscountAmountUsd = powerrentalDescDiscountAmountUsd.Default.(decimal.Decimal)
 	// powerrentalDescPromotionID is the schema descriptor for promotion_id field.
-	powerrentalDescPromotionID := powerrentalFields[6].Descriptor()
+	powerrentalDescPromotionID := powerrentalFields[5].Descriptor()
 	// powerrental.DefaultPromotionID holds the default value on creation for the promotion_id field.
 	powerrental.DefaultPromotionID = powerrentalDescPromotionID.Default.(func() uuid.UUID)
 	// powerrentalDescDuration is the schema descriptor for duration field.
-	powerrentalDescDuration := powerrentalFields[7].Descriptor()
+	powerrentalDescDuration := powerrentalFields[6].Descriptor()
 	// powerrental.DefaultDuration holds the default value on creation for the duration field.
 	powerrental.DefaultDuration = powerrentalDescDuration.Default.(uint32)
 	// powerrentalDescInvestmentType is the schema descriptor for investment_type field.
-	powerrentalDescInvestmentType := powerrentalFields[8].Descriptor()
+	powerrentalDescInvestmentType := powerrentalFields[7].Descriptor()
 	// powerrental.DefaultInvestmentType holds the default value on creation for the investment_type field.
 	powerrental.DefaultInvestmentType = powerrentalDescInvestmentType.Default.(string)
 	powerrentalstateMixin := schema.PowerRentalState{}.Mixin()

@@ -15764,30 +15764,29 @@ func (m *PaymentTransferMutation) ResetEdge(name string) error {
 // PowerRentalMutation represents an operation that mutates the PowerRental nodes in the graph.
 type PowerRentalMutation struct {
 	config
-	op              Op
-	typ             string
-	id              *uint32
-	created_at      *uint32
-	addcreated_at   *int32
-	updated_at      *uint32
-	addupdated_at   *int32
-	deleted_at      *uint32
-	adddeleted_at   *int32
-	ent_id          *uuid.UUID
-	order_id        *uuid.UUID
-	units           *decimal.Decimal
-	good_value      *decimal.Decimal
-	good_value_usd  *decimal.Decimal
-	payment_amount  *decimal.Decimal
-	discount_amount *decimal.Decimal
-	promotion_id    *uuid.UUID
-	duration        *uint32
-	addduration     *int32
-	investment_type *string
-	clearedFields   map[string]struct{}
-	done            bool
-	oldValue        func(context.Context) (*PowerRental, error)
-	predicates      []predicate.PowerRental
+	op                  Op
+	typ                 string
+	id                  *uint32
+	created_at          *uint32
+	addcreated_at       *int32
+	updated_at          *uint32
+	addupdated_at       *int32
+	deleted_at          *uint32
+	adddeleted_at       *int32
+	ent_id              *uuid.UUID
+	order_id            *uuid.UUID
+	units               *decimal.Decimal
+	good_value_usd      *decimal.Decimal
+	payment_amount_usd  *decimal.Decimal
+	discount_amount_usd *decimal.Decimal
+	promotion_id        *uuid.UUID
+	duration            *uint32
+	addduration         *int32
+	investment_type     *string
+	clearedFields       map[string]struct{}
+	done                bool
+	oldValue            func(context.Context) (*PowerRental, error)
+	predicates          []predicate.PowerRental
 }
 
 var _ ent.Mutation = (*PowerRentalMutation)(nil)
@@ -16196,55 +16195,6 @@ func (m *PowerRentalMutation) ResetUnits() {
 	delete(m.clearedFields, powerrental.FieldUnits)
 }
 
-// SetGoodValue sets the "good_value" field.
-func (m *PowerRentalMutation) SetGoodValue(d decimal.Decimal) {
-	m.good_value = &d
-}
-
-// GoodValue returns the value of the "good_value" field in the mutation.
-func (m *PowerRentalMutation) GoodValue() (r decimal.Decimal, exists bool) {
-	v := m.good_value
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldGoodValue returns the old "good_value" field's value of the PowerRental entity.
-// If the PowerRental object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *PowerRentalMutation) OldGoodValue(ctx context.Context) (v decimal.Decimal, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldGoodValue is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldGoodValue requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldGoodValue: %w", err)
-	}
-	return oldValue.GoodValue, nil
-}
-
-// ClearGoodValue clears the value of the "good_value" field.
-func (m *PowerRentalMutation) ClearGoodValue() {
-	m.good_value = nil
-	m.clearedFields[powerrental.FieldGoodValue] = struct{}{}
-}
-
-// GoodValueCleared returns if the "good_value" field was cleared in this mutation.
-func (m *PowerRentalMutation) GoodValueCleared() bool {
-	_, ok := m.clearedFields[powerrental.FieldGoodValue]
-	return ok
-}
-
-// ResetGoodValue resets all changes to the "good_value" field.
-func (m *PowerRentalMutation) ResetGoodValue() {
-	m.good_value = nil
-	delete(m.clearedFields, powerrental.FieldGoodValue)
-}
-
 // SetGoodValueUsd sets the "good_value_usd" field.
 func (m *PowerRentalMutation) SetGoodValueUsd(d decimal.Decimal) {
 	m.good_value_usd = &d
@@ -16294,102 +16244,102 @@ func (m *PowerRentalMutation) ResetGoodValueUsd() {
 	delete(m.clearedFields, powerrental.FieldGoodValueUsd)
 }
 
-// SetPaymentAmount sets the "payment_amount" field.
-func (m *PowerRentalMutation) SetPaymentAmount(d decimal.Decimal) {
-	m.payment_amount = &d
+// SetPaymentAmountUsd sets the "payment_amount_usd" field.
+func (m *PowerRentalMutation) SetPaymentAmountUsd(d decimal.Decimal) {
+	m.payment_amount_usd = &d
 }
 
-// PaymentAmount returns the value of the "payment_amount" field in the mutation.
-func (m *PowerRentalMutation) PaymentAmount() (r decimal.Decimal, exists bool) {
-	v := m.payment_amount
+// PaymentAmountUsd returns the value of the "payment_amount_usd" field in the mutation.
+func (m *PowerRentalMutation) PaymentAmountUsd() (r decimal.Decimal, exists bool) {
+	v := m.payment_amount_usd
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// OldPaymentAmount returns the old "payment_amount" field's value of the PowerRental entity.
+// OldPaymentAmountUsd returns the old "payment_amount_usd" field's value of the PowerRental entity.
 // If the PowerRental object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *PowerRentalMutation) OldPaymentAmount(ctx context.Context) (v decimal.Decimal, err error) {
+func (m *PowerRentalMutation) OldPaymentAmountUsd(ctx context.Context) (v decimal.Decimal, err error) {
 	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldPaymentAmount is only allowed on UpdateOne operations")
+		return v, errors.New("OldPaymentAmountUsd is only allowed on UpdateOne operations")
 	}
 	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldPaymentAmount requires an ID field in the mutation")
+		return v, errors.New("OldPaymentAmountUsd requires an ID field in the mutation")
 	}
 	oldValue, err := m.oldValue(ctx)
 	if err != nil {
-		return v, fmt.Errorf("querying old value for OldPaymentAmount: %w", err)
+		return v, fmt.Errorf("querying old value for OldPaymentAmountUsd: %w", err)
 	}
-	return oldValue.PaymentAmount, nil
+	return oldValue.PaymentAmountUsd, nil
 }
 
-// ClearPaymentAmount clears the value of the "payment_amount" field.
-func (m *PowerRentalMutation) ClearPaymentAmount() {
-	m.payment_amount = nil
-	m.clearedFields[powerrental.FieldPaymentAmount] = struct{}{}
+// ClearPaymentAmountUsd clears the value of the "payment_amount_usd" field.
+func (m *PowerRentalMutation) ClearPaymentAmountUsd() {
+	m.payment_amount_usd = nil
+	m.clearedFields[powerrental.FieldPaymentAmountUsd] = struct{}{}
 }
 
-// PaymentAmountCleared returns if the "payment_amount" field was cleared in this mutation.
-func (m *PowerRentalMutation) PaymentAmountCleared() bool {
-	_, ok := m.clearedFields[powerrental.FieldPaymentAmount]
+// PaymentAmountUsdCleared returns if the "payment_amount_usd" field was cleared in this mutation.
+func (m *PowerRentalMutation) PaymentAmountUsdCleared() bool {
+	_, ok := m.clearedFields[powerrental.FieldPaymentAmountUsd]
 	return ok
 }
 
-// ResetPaymentAmount resets all changes to the "payment_amount" field.
-func (m *PowerRentalMutation) ResetPaymentAmount() {
-	m.payment_amount = nil
-	delete(m.clearedFields, powerrental.FieldPaymentAmount)
+// ResetPaymentAmountUsd resets all changes to the "payment_amount_usd" field.
+func (m *PowerRentalMutation) ResetPaymentAmountUsd() {
+	m.payment_amount_usd = nil
+	delete(m.clearedFields, powerrental.FieldPaymentAmountUsd)
 }
 
-// SetDiscountAmount sets the "discount_amount" field.
-func (m *PowerRentalMutation) SetDiscountAmount(d decimal.Decimal) {
-	m.discount_amount = &d
+// SetDiscountAmountUsd sets the "discount_amount_usd" field.
+func (m *PowerRentalMutation) SetDiscountAmountUsd(d decimal.Decimal) {
+	m.discount_amount_usd = &d
 }
 
-// DiscountAmount returns the value of the "discount_amount" field in the mutation.
-func (m *PowerRentalMutation) DiscountAmount() (r decimal.Decimal, exists bool) {
-	v := m.discount_amount
+// DiscountAmountUsd returns the value of the "discount_amount_usd" field in the mutation.
+func (m *PowerRentalMutation) DiscountAmountUsd() (r decimal.Decimal, exists bool) {
+	v := m.discount_amount_usd
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// OldDiscountAmount returns the old "discount_amount" field's value of the PowerRental entity.
+// OldDiscountAmountUsd returns the old "discount_amount_usd" field's value of the PowerRental entity.
 // If the PowerRental object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *PowerRentalMutation) OldDiscountAmount(ctx context.Context) (v decimal.Decimal, err error) {
+func (m *PowerRentalMutation) OldDiscountAmountUsd(ctx context.Context) (v decimal.Decimal, err error) {
 	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldDiscountAmount is only allowed on UpdateOne operations")
+		return v, errors.New("OldDiscountAmountUsd is only allowed on UpdateOne operations")
 	}
 	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldDiscountAmount requires an ID field in the mutation")
+		return v, errors.New("OldDiscountAmountUsd requires an ID field in the mutation")
 	}
 	oldValue, err := m.oldValue(ctx)
 	if err != nil {
-		return v, fmt.Errorf("querying old value for OldDiscountAmount: %w", err)
+		return v, fmt.Errorf("querying old value for OldDiscountAmountUsd: %w", err)
 	}
-	return oldValue.DiscountAmount, nil
+	return oldValue.DiscountAmountUsd, nil
 }
 
-// ClearDiscountAmount clears the value of the "discount_amount" field.
-func (m *PowerRentalMutation) ClearDiscountAmount() {
-	m.discount_amount = nil
-	m.clearedFields[powerrental.FieldDiscountAmount] = struct{}{}
+// ClearDiscountAmountUsd clears the value of the "discount_amount_usd" field.
+func (m *PowerRentalMutation) ClearDiscountAmountUsd() {
+	m.discount_amount_usd = nil
+	m.clearedFields[powerrental.FieldDiscountAmountUsd] = struct{}{}
 }
 
-// DiscountAmountCleared returns if the "discount_amount" field was cleared in this mutation.
-func (m *PowerRentalMutation) DiscountAmountCleared() bool {
-	_, ok := m.clearedFields[powerrental.FieldDiscountAmount]
+// DiscountAmountUsdCleared returns if the "discount_amount_usd" field was cleared in this mutation.
+func (m *PowerRentalMutation) DiscountAmountUsdCleared() bool {
+	_, ok := m.clearedFields[powerrental.FieldDiscountAmountUsd]
 	return ok
 }
 
-// ResetDiscountAmount resets all changes to the "discount_amount" field.
-func (m *PowerRentalMutation) ResetDiscountAmount() {
-	m.discount_amount = nil
-	delete(m.clearedFields, powerrental.FieldDiscountAmount)
+// ResetDiscountAmountUsd resets all changes to the "discount_amount_usd" field.
+func (m *PowerRentalMutation) ResetDiscountAmountUsd() {
+	m.discount_amount_usd = nil
+	delete(m.clearedFields, powerrental.FieldDiscountAmountUsd)
 }
 
 // SetPromotionID sets the "promotion_id" field.
@@ -16579,7 +16529,7 @@ func (m *PowerRentalMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *PowerRentalMutation) Fields() []string {
-	fields := make([]string, 0, 13)
+	fields := make([]string, 0, 12)
 	if m.created_at != nil {
 		fields = append(fields, powerrental.FieldCreatedAt)
 	}
@@ -16598,17 +16548,14 @@ func (m *PowerRentalMutation) Fields() []string {
 	if m.units != nil {
 		fields = append(fields, powerrental.FieldUnits)
 	}
-	if m.good_value != nil {
-		fields = append(fields, powerrental.FieldGoodValue)
-	}
 	if m.good_value_usd != nil {
 		fields = append(fields, powerrental.FieldGoodValueUsd)
 	}
-	if m.payment_amount != nil {
-		fields = append(fields, powerrental.FieldPaymentAmount)
+	if m.payment_amount_usd != nil {
+		fields = append(fields, powerrental.FieldPaymentAmountUsd)
 	}
-	if m.discount_amount != nil {
-		fields = append(fields, powerrental.FieldDiscountAmount)
+	if m.discount_amount_usd != nil {
+		fields = append(fields, powerrental.FieldDiscountAmountUsd)
 	}
 	if m.promotion_id != nil {
 		fields = append(fields, powerrental.FieldPromotionID)
@@ -16639,14 +16586,12 @@ func (m *PowerRentalMutation) Field(name string) (ent.Value, bool) {
 		return m.OrderID()
 	case powerrental.FieldUnits:
 		return m.Units()
-	case powerrental.FieldGoodValue:
-		return m.GoodValue()
 	case powerrental.FieldGoodValueUsd:
 		return m.GoodValueUsd()
-	case powerrental.FieldPaymentAmount:
-		return m.PaymentAmount()
-	case powerrental.FieldDiscountAmount:
-		return m.DiscountAmount()
+	case powerrental.FieldPaymentAmountUsd:
+		return m.PaymentAmountUsd()
+	case powerrental.FieldDiscountAmountUsd:
+		return m.DiscountAmountUsd()
 	case powerrental.FieldPromotionID:
 		return m.PromotionID()
 	case powerrental.FieldDuration:
@@ -16674,14 +16619,12 @@ func (m *PowerRentalMutation) OldField(ctx context.Context, name string) (ent.Va
 		return m.OldOrderID(ctx)
 	case powerrental.FieldUnits:
 		return m.OldUnits(ctx)
-	case powerrental.FieldGoodValue:
-		return m.OldGoodValue(ctx)
 	case powerrental.FieldGoodValueUsd:
 		return m.OldGoodValueUsd(ctx)
-	case powerrental.FieldPaymentAmount:
-		return m.OldPaymentAmount(ctx)
-	case powerrental.FieldDiscountAmount:
-		return m.OldDiscountAmount(ctx)
+	case powerrental.FieldPaymentAmountUsd:
+		return m.OldPaymentAmountUsd(ctx)
+	case powerrental.FieldDiscountAmountUsd:
+		return m.OldDiscountAmountUsd(ctx)
 	case powerrental.FieldPromotionID:
 		return m.OldPromotionID(ctx)
 	case powerrental.FieldDuration:
@@ -16739,13 +16682,6 @@ func (m *PowerRentalMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetUnits(v)
 		return nil
-	case powerrental.FieldGoodValue:
-		v, ok := value.(decimal.Decimal)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetGoodValue(v)
-		return nil
 	case powerrental.FieldGoodValueUsd:
 		v, ok := value.(decimal.Decimal)
 		if !ok {
@@ -16753,19 +16689,19 @@ func (m *PowerRentalMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetGoodValueUsd(v)
 		return nil
-	case powerrental.FieldPaymentAmount:
+	case powerrental.FieldPaymentAmountUsd:
 		v, ok := value.(decimal.Decimal)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.SetPaymentAmount(v)
+		m.SetPaymentAmountUsd(v)
 		return nil
-	case powerrental.FieldDiscountAmount:
+	case powerrental.FieldDiscountAmountUsd:
 		v, ok := value.(decimal.Decimal)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.SetDiscountAmount(v)
+		m.SetDiscountAmountUsd(v)
 		return nil
 	case powerrental.FieldPromotionID:
 		v, ok := value.(uuid.UUID)
@@ -16875,17 +16811,14 @@ func (m *PowerRentalMutation) ClearedFields() []string {
 	if m.FieldCleared(powerrental.FieldUnits) {
 		fields = append(fields, powerrental.FieldUnits)
 	}
-	if m.FieldCleared(powerrental.FieldGoodValue) {
-		fields = append(fields, powerrental.FieldGoodValue)
-	}
 	if m.FieldCleared(powerrental.FieldGoodValueUsd) {
 		fields = append(fields, powerrental.FieldGoodValueUsd)
 	}
-	if m.FieldCleared(powerrental.FieldPaymentAmount) {
-		fields = append(fields, powerrental.FieldPaymentAmount)
+	if m.FieldCleared(powerrental.FieldPaymentAmountUsd) {
+		fields = append(fields, powerrental.FieldPaymentAmountUsd)
 	}
-	if m.FieldCleared(powerrental.FieldDiscountAmount) {
-		fields = append(fields, powerrental.FieldDiscountAmount)
+	if m.FieldCleared(powerrental.FieldDiscountAmountUsd) {
+		fields = append(fields, powerrental.FieldDiscountAmountUsd)
 	}
 	if m.FieldCleared(powerrental.FieldPromotionID) {
 		fields = append(fields, powerrental.FieldPromotionID)
@@ -16916,17 +16849,14 @@ func (m *PowerRentalMutation) ClearField(name string) error {
 	case powerrental.FieldUnits:
 		m.ClearUnits()
 		return nil
-	case powerrental.FieldGoodValue:
-		m.ClearGoodValue()
-		return nil
 	case powerrental.FieldGoodValueUsd:
 		m.ClearGoodValueUsd()
 		return nil
-	case powerrental.FieldPaymentAmount:
-		m.ClearPaymentAmount()
+	case powerrental.FieldPaymentAmountUsd:
+		m.ClearPaymentAmountUsd()
 		return nil
-	case powerrental.FieldDiscountAmount:
-		m.ClearDiscountAmount()
+	case powerrental.FieldDiscountAmountUsd:
+		m.ClearDiscountAmountUsd()
 		return nil
 	case powerrental.FieldPromotionID:
 		m.ClearPromotionID()
@@ -16963,17 +16893,14 @@ func (m *PowerRentalMutation) ResetField(name string) error {
 	case powerrental.FieldUnits:
 		m.ResetUnits()
 		return nil
-	case powerrental.FieldGoodValue:
-		m.ResetGoodValue()
-		return nil
 	case powerrental.FieldGoodValueUsd:
 		m.ResetGoodValueUsd()
 		return nil
-	case powerrental.FieldPaymentAmount:
-		m.ResetPaymentAmount()
+	case powerrental.FieldPaymentAmountUsd:
+		m.ResetPaymentAmountUsd()
 		return nil
-	case powerrental.FieldDiscountAmount:
-		m.ResetDiscountAmount()
+	case powerrental.FieldDiscountAmountUsd:
+		m.ResetDiscountAmountUsd()
 		return nil
 	case powerrental.FieldPromotionID:
 		m.ResetPromotionID()

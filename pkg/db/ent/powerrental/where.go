@@ -122,13 +122,6 @@ func Units(v decimal.Decimal) predicate.PowerRental {
 	})
 }
 
-// GoodValue applies equality check predicate on the "good_value" field. It's identical to GoodValueEQ.
-func GoodValue(v decimal.Decimal) predicate.PowerRental {
-	return predicate.PowerRental(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldGoodValue), v))
-	})
-}
-
 // GoodValueUsd applies equality check predicate on the "good_value_usd" field. It's identical to GoodValueUsdEQ.
 func GoodValueUsd(v decimal.Decimal) predicate.PowerRental {
 	return predicate.PowerRental(func(s *sql.Selector) {
@@ -136,17 +129,17 @@ func GoodValueUsd(v decimal.Decimal) predicate.PowerRental {
 	})
 }
 
-// PaymentAmount applies equality check predicate on the "payment_amount" field. It's identical to PaymentAmountEQ.
-func PaymentAmount(v decimal.Decimal) predicate.PowerRental {
+// PaymentAmountUsd applies equality check predicate on the "payment_amount_usd" field. It's identical to PaymentAmountUsdEQ.
+func PaymentAmountUsd(v decimal.Decimal) predicate.PowerRental {
 	return predicate.PowerRental(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldPaymentAmount), v))
+		s.Where(sql.EQ(s.C(FieldPaymentAmountUsd), v))
 	})
 }
 
-// DiscountAmount applies equality check predicate on the "discount_amount" field. It's identical to DiscountAmountEQ.
-func DiscountAmount(v decimal.Decimal) predicate.PowerRental {
+// DiscountAmountUsd applies equality check predicate on the "discount_amount_usd" field. It's identical to DiscountAmountUsdEQ.
+func DiscountAmountUsd(v decimal.Decimal) predicate.PowerRental {
 	return predicate.PowerRental(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldDiscountAmount), v))
+		s.Where(sql.EQ(s.C(FieldDiscountAmountUsd), v))
 	})
 }
 
@@ -583,84 +576,6 @@ func UnitsNotNil() predicate.PowerRental {
 	})
 }
 
-// GoodValueEQ applies the EQ predicate on the "good_value" field.
-func GoodValueEQ(v decimal.Decimal) predicate.PowerRental {
-	return predicate.PowerRental(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldGoodValue), v))
-	})
-}
-
-// GoodValueNEQ applies the NEQ predicate on the "good_value" field.
-func GoodValueNEQ(v decimal.Decimal) predicate.PowerRental {
-	return predicate.PowerRental(func(s *sql.Selector) {
-		s.Where(sql.NEQ(s.C(FieldGoodValue), v))
-	})
-}
-
-// GoodValueIn applies the In predicate on the "good_value" field.
-func GoodValueIn(vs ...decimal.Decimal) predicate.PowerRental {
-	v := make([]interface{}, len(vs))
-	for i := range v {
-		v[i] = vs[i]
-	}
-	return predicate.PowerRental(func(s *sql.Selector) {
-		s.Where(sql.In(s.C(FieldGoodValue), v...))
-	})
-}
-
-// GoodValueNotIn applies the NotIn predicate on the "good_value" field.
-func GoodValueNotIn(vs ...decimal.Decimal) predicate.PowerRental {
-	v := make([]interface{}, len(vs))
-	for i := range v {
-		v[i] = vs[i]
-	}
-	return predicate.PowerRental(func(s *sql.Selector) {
-		s.Where(sql.NotIn(s.C(FieldGoodValue), v...))
-	})
-}
-
-// GoodValueGT applies the GT predicate on the "good_value" field.
-func GoodValueGT(v decimal.Decimal) predicate.PowerRental {
-	return predicate.PowerRental(func(s *sql.Selector) {
-		s.Where(sql.GT(s.C(FieldGoodValue), v))
-	})
-}
-
-// GoodValueGTE applies the GTE predicate on the "good_value" field.
-func GoodValueGTE(v decimal.Decimal) predicate.PowerRental {
-	return predicate.PowerRental(func(s *sql.Selector) {
-		s.Where(sql.GTE(s.C(FieldGoodValue), v))
-	})
-}
-
-// GoodValueLT applies the LT predicate on the "good_value" field.
-func GoodValueLT(v decimal.Decimal) predicate.PowerRental {
-	return predicate.PowerRental(func(s *sql.Selector) {
-		s.Where(sql.LT(s.C(FieldGoodValue), v))
-	})
-}
-
-// GoodValueLTE applies the LTE predicate on the "good_value" field.
-func GoodValueLTE(v decimal.Decimal) predicate.PowerRental {
-	return predicate.PowerRental(func(s *sql.Selector) {
-		s.Where(sql.LTE(s.C(FieldGoodValue), v))
-	})
-}
-
-// GoodValueIsNil applies the IsNil predicate on the "good_value" field.
-func GoodValueIsNil() predicate.PowerRental {
-	return predicate.PowerRental(func(s *sql.Selector) {
-		s.Where(sql.IsNull(s.C(FieldGoodValue)))
-	})
-}
-
-// GoodValueNotNil applies the NotNil predicate on the "good_value" field.
-func GoodValueNotNil() predicate.PowerRental {
-	return predicate.PowerRental(func(s *sql.Selector) {
-		s.Where(sql.NotNull(s.C(FieldGoodValue)))
-	})
-}
-
 // GoodValueUsdEQ applies the EQ predicate on the "good_value_usd" field.
 func GoodValueUsdEQ(v decimal.Decimal) predicate.PowerRental {
 	return predicate.PowerRental(func(s *sql.Selector) {
@@ -739,159 +654,159 @@ func GoodValueUsdNotNil() predicate.PowerRental {
 	})
 }
 
-// PaymentAmountEQ applies the EQ predicate on the "payment_amount" field.
-func PaymentAmountEQ(v decimal.Decimal) predicate.PowerRental {
+// PaymentAmountUsdEQ applies the EQ predicate on the "payment_amount_usd" field.
+func PaymentAmountUsdEQ(v decimal.Decimal) predicate.PowerRental {
 	return predicate.PowerRental(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldPaymentAmount), v))
+		s.Where(sql.EQ(s.C(FieldPaymentAmountUsd), v))
 	})
 }
 
-// PaymentAmountNEQ applies the NEQ predicate on the "payment_amount" field.
-func PaymentAmountNEQ(v decimal.Decimal) predicate.PowerRental {
+// PaymentAmountUsdNEQ applies the NEQ predicate on the "payment_amount_usd" field.
+func PaymentAmountUsdNEQ(v decimal.Decimal) predicate.PowerRental {
 	return predicate.PowerRental(func(s *sql.Selector) {
-		s.Where(sql.NEQ(s.C(FieldPaymentAmount), v))
+		s.Where(sql.NEQ(s.C(FieldPaymentAmountUsd), v))
 	})
 }
 
-// PaymentAmountIn applies the In predicate on the "payment_amount" field.
-func PaymentAmountIn(vs ...decimal.Decimal) predicate.PowerRental {
+// PaymentAmountUsdIn applies the In predicate on the "payment_amount_usd" field.
+func PaymentAmountUsdIn(vs ...decimal.Decimal) predicate.PowerRental {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
 	}
 	return predicate.PowerRental(func(s *sql.Selector) {
-		s.Where(sql.In(s.C(FieldPaymentAmount), v...))
+		s.Where(sql.In(s.C(FieldPaymentAmountUsd), v...))
 	})
 }
 
-// PaymentAmountNotIn applies the NotIn predicate on the "payment_amount" field.
-func PaymentAmountNotIn(vs ...decimal.Decimal) predicate.PowerRental {
+// PaymentAmountUsdNotIn applies the NotIn predicate on the "payment_amount_usd" field.
+func PaymentAmountUsdNotIn(vs ...decimal.Decimal) predicate.PowerRental {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
 	}
 	return predicate.PowerRental(func(s *sql.Selector) {
-		s.Where(sql.NotIn(s.C(FieldPaymentAmount), v...))
+		s.Where(sql.NotIn(s.C(FieldPaymentAmountUsd), v...))
 	})
 }
 
-// PaymentAmountGT applies the GT predicate on the "payment_amount" field.
-func PaymentAmountGT(v decimal.Decimal) predicate.PowerRental {
+// PaymentAmountUsdGT applies the GT predicate on the "payment_amount_usd" field.
+func PaymentAmountUsdGT(v decimal.Decimal) predicate.PowerRental {
 	return predicate.PowerRental(func(s *sql.Selector) {
-		s.Where(sql.GT(s.C(FieldPaymentAmount), v))
+		s.Where(sql.GT(s.C(FieldPaymentAmountUsd), v))
 	})
 }
 
-// PaymentAmountGTE applies the GTE predicate on the "payment_amount" field.
-func PaymentAmountGTE(v decimal.Decimal) predicate.PowerRental {
+// PaymentAmountUsdGTE applies the GTE predicate on the "payment_amount_usd" field.
+func PaymentAmountUsdGTE(v decimal.Decimal) predicate.PowerRental {
 	return predicate.PowerRental(func(s *sql.Selector) {
-		s.Where(sql.GTE(s.C(FieldPaymentAmount), v))
+		s.Where(sql.GTE(s.C(FieldPaymentAmountUsd), v))
 	})
 }
 
-// PaymentAmountLT applies the LT predicate on the "payment_amount" field.
-func PaymentAmountLT(v decimal.Decimal) predicate.PowerRental {
+// PaymentAmountUsdLT applies the LT predicate on the "payment_amount_usd" field.
+func PaymentAmountUsdLT(v decimal.Decimal) predicate.PowerRental {
 	return predicate.PowerRental(func(s *sql.Selector) {
-		s.Where(sql.LT(s.C(FieldPaymentAmount), v))
+		s.Where(sql.LT(s.C(FieldPaymentAmountUsd), v))
 	})
 }
 
-// PaymentAmountLTE applies the LTE predicate on the "payment_amount" field.
-func PaymentAmountLTE(v decimal.Decimal) predicate.PowerRental {
+// PaymentAmountUsdLTE applies the LTE predicate on the "payment_amount_usd" field.
+func PaymentAmountUsdLTE(v decimal.Decimal) predicate.PowerRental {
 	return predicate.PowerRental(func(s *sql.Selector) {
-		s.Where(sql.LTE(s.C(FieldPaymentAmount), v))
+		s.Where(sql.LTE(s.C(FieldPaymentAmountUsd), v))
 	})
 }
 
-// PaymentAmountIsNil applies the IsNil predicate on the "payment_amount" field.
-func PaymentAmountIsNil() predicate.PowerRental {
+// PaymentAmountUsdIsNil applies the IsNil predicate on the "payment_amount_usd" field.
+func PaymentAmountUsdIsNil() predicate.PowerRental {
 	return predicate.PowerRental(func(s *sql.Selector) {
-		s.Where(sql.IsNull(s.C(FieldPaymentAmount)))
+		s.Where(sql.IsNull(s.C(FieldPaymentAmountUsd)))
 	})
 }
 
-// PaymentAmountNotNil applies the NotNil predicate on the "payment_amount" field.
-func PaymentAmountNotNil() predicate.PowerRental {
+// PaymentAmountUsdNotNil applies the NotNil predicate on the "payment_amount_usd" field.
+func PaymentAmountUsdNotNil() predicate.PowerRental {
 	return predicate.PowerRental(func(s *sql.Selector) {
-		s.Where(sql.NotNull(s.C(FieldPaymentAmount)))
+		s.Where(sql.NotNull(s.C(FieldPaymentAmountUsd)))
 	})
 }
 
-// DiscountAmountEQ applies the EQ predicate on the "discount_amount" field.
-func DiscountAmountEQ(v decimal.Decimal) predicate.PowerRental {
+// DiscountAmountUsdEQ applies the EQ predicate on the "discount_amount_usd" field.
+func DiscountAmountUsdEQ(v decimal.Decimal) predicate.PowerRental {
 	return predicate.PowerRental(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldDiscountAmount), v))
+		s.Where(sql.EQ(s.C(FieldDiscountAmountUsd), v))
 	})
 }
 
-// DiscountAmountNEQ applies the NEQ predicate on the "discount_amount" field.
-func DiscountAmountNEQ(v decimal.Decimal) predicate.PowerRental {
+// DiscountAmountUsdNEQ applies the NEQ predicate on the "discount_amount_usd" field.
+func DiscountAmountUsdNEQ(v decimal.Decimal) predicate.PowerRental {
 	return predicate.PowerRental(func(s *sql.Selector) {
-		s.Where(sql.NEQ(s.C(FieldDiscountAmount), v))
+		s.Where(sql.NEQ(s.C(FieldDiscountAmountUsd), v))
 	})
 }
 
-// DiscountAmountIn applies the In predicate on the "discount_amount" field.
-func DiscountAmountIn(vs ...decimal.Decimal) predicate.PowerRental {
+// DiscountAmountUsdIn applies the In predicate on the "discount_amount_usd" field.
+func DiscountAmountUsdIn(vs ...decimal.Decimal) predicate.PowerRental {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
 	}
 	return predicate.PowerRental(func(s *sql.Selector) {
-		s.Where(sql.In(s.C(FieldDiscountAmount), v...))
+		s.Where(sql.In(s.C(FieldDiscountAmountUsd), v...))
 	})
 }
 
-// DiscountAmountNotIn applies the NotIn predicate on the "discount_amount" field.
-func DiscountAmountNotIn(vs ...decimal.Decimal) predicate.PowerRental {
+// DiscountAmountUsdNotIn applies the NotIn predicate on the "discount_amount_usd" field.
+func DiscountAmountUsdNotIn(vs ...decimal.Decimal) predicate.PowerRental {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
 	}
 	return predicate.PowerRental(func(s *sql.Selector) {
-		s.Where(sql.NotIn(s.C(FieldDiscountAmount), v...))
+		s.Where(sql.NotIn(s.C(FieldDiscountAmountUsd), v...))
 	})
 }
 
-// DiscountAmountGT applies the GT predicate on the "discount_amount" field.
-func DiscountAmountGT(v decimal.Decimal) predicate.PowerRental {
+// DiscountAmountUsdGT applies the GT predicate on the "discount_amount_usd" field.
+func DiscountAmountUsdGT(v decimal.Decimal) predicate.PowerRental {
 	return predicate.PowerRental(func(s *sql.Selector) {
-		s.Where(sql.GT(s.C(FieldDiscountAmount), v))
+		s.Where(sql.GT(s.C(FieldDiscountAmountUsd), v))
 	})
 }
 
-// DiscountAmountGTE applies the GTE predicate on the "discount_amount" field.
-func DiscountAmountGTE(v decimal.Decimal) predicate.PowerRental {
+// DiscountAmountUsdGTE applies the GTE predicate on the "discount_amount_usd" field.
+func DiscountAmountUsdGTE(v decimal.Decimal) predicate.PowerRental {
 	return predicate.PowerRental(func(s *sql.Selector) {
-		s.Where(sql.GTE(s.C(FieldDiscountAmount), v))
+		s.Where(sql.GTE(s.C(FieldDiscountAmountUsd), v))
 	})
 }
 
-// DiscountAmountLT applies the LT predicate on the "discount_amount" field.
-func DiscountAmountLT(v decimal.Decimal) predicate.PowerRental {
+// DiscountAmountUsdLT applies the LT predicate on the "discount_amount_usd" field.
+func DiscountAmountUsdLT(v decimal.Decimal) predicate.PowerRental {
 	return predicate.PowerRental(func(s *sql.Selector) {
-		s.Where(sql.LT(s.C(FieldDiscountAmount), v))
+		s.Where(sql.LT(s.C(FieldDiscountAmountUsd), v))
 	})
 }
 
-// DiscountAmountLTE applies the LTE predicate on the "discount_amount" field.
-func DiscountAmountLTE(v decimal.Decimal) predicate.PowerRental {
+// DiscountAmountUsdLTE applies the LTE predicate on the "discount_amount_usd" field.
+func DiscountAmountUsdLTE(v decimal.Decimal) predicate.PowerRental {
 	return predicate.PowerRental(func(s *sql.Selector) {
-		s.Where(sql.LTE(s.C(FieldDiscountAmount), v))
+		s.Where(sql.LTE(s.C(FieldDiscountAmountUsd), v))
 	})
 }
 
-// DiscountAmountIsNil applies the IsNil predicate on the "discount_amount" field.
-func DiscountAmountIsNil() predicate.PowerRental {
+// DiscountAmountUsdIsNil applies the IsNil predicate on the "discount_amount_usd" field.
+func DiscountAmountUsdIsNil() predicate.PowerRental {
 	return predicate.PowerRental(func(s *sql.Selector) {
-		s.Where(sql.IsNull(s.C(FieldDiscountAmount)))
+		s.Where(sql.IsNull(s.C(FieldDiscountAmountUsd)))
 	})
 }
 
-// DiscountAmountNotNil applies the NotNil predicate on the "discount_amount" field.
-func DiscountAmountNotNil() predicate.PowerRental {
+// DiscountAmountUsdNotNil applies the NotNil predicate on the "discount_amount_usd" field.
+func DiscountAmountUsdNotNil() predicate.PowerRental {
 	return predicate.PowerRental(func(s *sql.Selector) {
-		s.Where(sql.NotNull(s.C(FieldDiscountAmount)))
+		s.Where(sql.NotNull(s.C(FieldDiscountAmountUsd)))
 	})
 }
 

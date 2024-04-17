@@ -42,13 +42,6 @@ func (PowerRental) Fields() []ent.Field {
 			Optional().
 			Default(decimal.Decimal{}),
 		field.
-			Other("good_value", decimal.Decimal{}).
-			SchemaType(map[string]string{
-				dialect.MySQL: "decimal(37,18)",
-			}).
-			Optional().
-			Default(decimal.Decimal{}),
-		field.
 			Other("good_value_usd", decimal.Decimal{}).
 			SchemaType(map[string]string{
 				dialect.MySQL: "decimal(37,18)",
@@ -56,14 +49,14 @@ func (PowerRental) Fields() []ent.Field {
 			Optional().
 			Default(decimal.Decimal{}),
 		field.
-			Other("payment_amount", decimal.Decimal{}).
+			Other("payment_amount_usd", decimal.Decimal{}).
 			SchemaType(map[string]string{
 				dialect.MySQL: "decimal(37,18)",
 			}).
 			Optional().
 			Default(decimal.Decimal{}),
 		field.
-			Other("discount_amount", decimal.Decimal{}).
+			Other("discount_amount_usd", decimal.Decimal{}).
 			SchemaType(map[string]string{
 				dialect.MySQL: "decimal(37,18)",
 			}).

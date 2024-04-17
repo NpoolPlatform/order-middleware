@@ -139,26 +139,6 @@ func (pru *PowerRentalUpdate) ClearUnits() *PowerRentalUpdate {
 	return pru
 }
 
-// SetGoodValue sets the "good_value" field.
-func (pru *PowerRentalUpdate) SetGoodValue(d decimal.Decimal) *PowerRentalUpdate {
-	pru.mutation.SetGoodValue(d)
-	return pru
-}
-
-// SetNillableGoodValue sets the "good_value" field if the given value is not nil.
-func (pru *PowerRentalUpdate) SetNillableGoodValue(d *decimal.Decimal) *PowerRentalUpdate {
-	if d != nil {
-		pru.SetGoodValue(*d)
-	}
-	return pru
-}
-
-// ClearGoodValue clears the value of the "good_value" field.
-func (pru *PowerRentalUpdate) ClearGoodValue() *PowerRentalUpdate {
-	pru.mutation.ClearGoodValue()
-	return pru
-}
-
 // SetGoodValueUsd sets the "good_value_usd" field.
 func (pru *PowerRentalUpdate) SetGoodValueUsd(d decimal.Decimal) *PowerRentalUpdate {
 	pru.mutation.SetGoodValueUsd(d)
@@ -179,43 +159,43 @@ func (pru *PowerRentalUpdate) ClearGoodValueUsd() *PowerRentalUpdate {
 	return pru
 }
 
-// SetPaymentAmount sets the "payment_amount" field.
-func (pru *PowerRentalUpdate) SetPaymentAmount(d decimal.Decimal) *PowerRentalUpdate {
-	pru.mutation.SetPaymentAmount(d)
+// SetPaymentAmountUsd sets the "payment_amount_usd" field.
+func (pru *PowerRentalUpdate) SetPaymentAmountUsd(d decimal.Decimal) *PowerRentalUpdate {
+	pru.mutation.SetPaymentAmountUsd(d)
 	return pru
 }
 
-// SetNillablePaymentAmount sets the "payment_amount" field if the given value is not nil.
-func (pru *PowerRentalUpdate) SetNillablePaymentAmount(d *decimal.Decimal) *PowerRentalUpdate {
+// SetNillablePaymentAmountUsd sets the "payment_amount_usd" field if the given value is not nil.
+func (pru *PowerRentalUpdate) SetNillablePaymentAmountUsd(d *decimal.Decimal) *PowerRentalUpdate {
 	if d != nil {
-		pru.SetPaymentAmount(*d)
+		pru.SetPaymentAmountUsd(*d)
 	}
 	return pru
 }
 
-// ClearPaymentAmount clears the value of the "payment_amount" field.
-func (pru *PowerRentalUpdate) ClearPaymentAmount() *PowerRentalUpdate {
-	pru.mutation.ClearPaymentAmount()
+// ClearPaymentAmountUsd clears the value of the "payment_amount_usd" field.
+func (pru *PowerRentalUpdate) ClearPaymentAmountUsd() *PowerRentalUpdate {
+	pru.mutation.ClearPaymentAmountUsd()
 	return pru
 }
 
-// SetDiscountAmount sets the "discount_amount" field.
-func (pru *PowerRentalUpdate) SetDiscountAmount(d decimal.Decimal) *PowerRentalUpdate {
-	pru.mutation.SetDiscountAmount(d)
+// SetDiscountAmountUsd sets the "discount_amount_usd" field.
+func (pru *PowerRentalUpdate) SetDiscountAmountUsd(d decimal.Decimal) *PowerRentalUpdate {
+	pru.mutation.SetDiscountAmountUsd(d)
 	return pru
 }
 
-// SetNillableDiscountAmount sets the "discount_amount" field if the given value is not nil.
-func (pru *PowerRentalUpdate) SetNillableDiscountAmount(d *decimal.Decimal) *PowerRentalUpdate {
+// SetNillableDiscountAmountUsd sets the "discount_amount_usd" field if the given value is not nil.
+func (pru *PowerRentalUpdate) SetNillableDiscountAmountUsd(d *decimal.Decimal) *PowerRentalUpdate {
 	if d != nil {
-		pru.SetDiscountAmount(*d)
+		pru.SetDiscountAmountUsd(*d)
 	}
 	return pru
 }
 
-// ClearDiscountAmount clears the value of the "discount_amount" field.
-func (pru *PowerRentalUpdate) ClearDiscountAmount() *PowerRentalUpdate {
-	pru.mutation.ClearDiscountAmount()
+// ClearDiscountAmountUsd clears the value of the "discount_amount_usd" field.
+func (pru *PowerRentalUpdate) ClearDiscountAmountUsd() *PowerRentalUpdate {
+	pru.mutation.ClearDiscountAmountUsd()
 	return pru
 }
 
@@ -459,19 +439,6 @@ func (pru *PowerRentalUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: powerrental.FieldUnits,
 		})
 	}
-	if value, ok := pru.mutation.GoodValue(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeOther,
-			Value:  value,
-			Column: powerrental.FieldGoodValue,
-		})
-	}
-	if pru.mutation.GoodValueCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeOther,
-			Column: powerrental.FieldGoodValue,
-		})
-	}
 	if value, ok := pru.mutation.GoodValueUsd(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeOther,
@@ -485,30 +452,30 @@ func (pru *PowerRentalUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: powerrental.FieldGoodValueUsd,
 		})
 	}
-	if value, ok := pru.mutation.PaymentAmount(); ok {
+	if value, ok := pru.mutation.PaymentAmountUsd(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeOther,
 			Value:  value,
-			Column: powerrental.FieldPaymentAmount,
+			Column: powerrental.FieldPaymentAmountUsd,
 		})
 	}
-	if pru.mutation.PaymentAmountCleared() {
+	if pru.mutation.PaymentAmountUsdCleared() {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeOther,
-			Column: powerrental.FieldPaymentAmount,
+			Column: powerrental.FieldPaymentAmountUsd,
 		})
 	}
-	if value, ok := pru.mutation.DiscountAmount(); ok {
+	if value, ok := pru.mutation.DiscountAmountUsd(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeOther,
 			Value:  value,
-			Column: powerrental.FieldDiscountAmount,
+			Column: powerrental.FieldDiscountAmountUsd,
 		})
 	}
-	if pru.mutation.DiscountAmountCleared() {
+	if pru.mutation.DiscountAmountUsdCleared() {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeOther,
-			Column: powerrental.FieldDiscountAmount,
+			Column: powerrental.FieldDiscountAmountUsd,
 		})
 	}
 	if value, ok := pru.mutation.PromotionID(); ok {
@@ -687,26 +654,6 @@ func (pruo *PowerRentalUpdateOne) ClearUnits() *PowerRentalUpdateOne {
 	return pruo
 }
 
-// SetGoodValue sets the "good_value" field.
-func (pruo *PowerRentalUpdateOne) SetGoodValue(d decimal.Decimal) *PowerRentalUpdateOne {
-	pruo.mutation.SetGoodValue(d)
-	return pruo
-}
-
-// SetNillableGoodValue sets the "good_value" field if the given value is not nil.
-func (pruo *PowerRentalUpdateOne) SetNillableGoodValue(d *decimal.Decimal) *PowerRentalUpdateOne {
-	if d != nil {
-		pruo.SetGoodValue(*d)
-	}
-	return pruo
-}
-
-// ClearGoodValue clears the value of the "good_value" field.
-func (pruo *PowerRentalUpdateOne) ClearGoodValue() *PowerRentalUpdateOne {
-	pruo.mutation.ClearGoodValue()
-	return pruo
-}
-
 // SetGoodValueUsd sets the "good_value_usd" field.
 func (pruo *PowerRentalUpdateOne) SetGoodValueUsd(d decimal.Decimal) *PowerRentalUpdateOne {
 	pruo.mutation.SetGoodValueUsd(d)
@@ -727,43 +674,43 @@ func (pruo *PowerRentalUpdateOne) ClearGoodValueUsd() *PowerRentalUpdateOne {
 	return pruo
 }
 
-// SetPaymentAmount sets the "payment_amount" field.
-func (pruo *PowerRentalUpdateOne) SetPaymentAmount(d decimal.Decimal) *PowerRentalUpdateOne {
-	pruo.mutation.SetPaymentAmount(d)
+// SetPaymentAmountUsd sets the "payment_amount_usd" field.
+func (pruo *PowerRentalUpdateOne) SetPaymentAmountUsd(d decimal.Decimal) *PowerRentalUpdateOne {
+	pruo.mutation.SetPaymentAmountUsd(d)
 	return pruo
 }
 
-// SetNillablePaymentAmount sets the "payment_amount" field if the given value is not nil.
-func (pruo *PowerRentalUpdateOne) SetNillablePaymentAmount(d *decimal.Decimal) *PowerRentalUpdateOne {
+// SetNillablePaymentAmountUsd sets the "payment_amount_usd" field if the given value is not nil.
+func (pruo *PowerRentalUpdateOne) SetNillablePaymentAmountUsd(d *decimal.Decimal) *PowerRentalUpdateOne {
 	if d != nil {
-		pruo.SetPaymentAmount(*d)
+		pruo.SetPaymentAmountUsd(*d)
 	}
 	return pruo
 }
 
-// ClearPaymentAmount clears the value of the "payment_amount" field.
-func (pruo *PowerRentalUpdateOne) ClearPaymentAmount() *PowerRentalUpdateOne {
-	pruo.mutation.ClearPaymentAmount()
+// ClearPaymentAmountUsd clears the value of the "payment_amount_usd" field.
+func (pruo *PowerRentalUpdateOne) ClearPaymentAmountUsd() *PowerRentalUpdateOne {
+	pruo.mutation.ClearPaymentAmountUsd()
 	return pruo
 }
 
-// SetDiscountAmount sets the "discount_amount" field.
-func (pruo *PowerRentalUpdateOne) SetDiscountAmount(d decimal.Decimal) *PowerRentalUpdateOne {
-	pruo.mutation.SetDiscountAmount(d)
+// SetDiscountAmountUsd sets the "discount_amount_usd" field.
+func (pruo *PowerRentalUpdateOne) SetDiscountAmountUsd(d decimal.Decimal) *PowerRentalUpdateOne {
+	pruo.mutation.SetDiscountAmountUsd(d)
 	return pruo
 }
 
-// SetNillableDiscountAmount sets the "discount_amount" field if the given value is not nil.
-func (pruo *PowerRentalUpdateOne) SetNillableDiscountAmount(d *decimal.Decimal) *PowerRentalUpdateOne {
+// SetNillableDiscountAmountUsd sets the "discount_amount_usd" field if the given value is not nil.
+func (pruo *PowerRentalUpdateOne) SetNillableDiscountAmountUsd(d *decimal.Decimal) *PowerRentalUpdateOne {
 	if d != nil {
-		pruo.SetDiscountAmount(*d)
+		pruo.SetDiscountAmountUsd(*d)
 	}
 	return pruo
 }
 
-// ClearDiscountAmount clears the value of the "discount_amount" field.
-func (pruo *PowerRentalUpdateOne) ClearDiscountAmount() *PowerRentalUpdateOne {
-	pruo.mutation.ClearDiscountAmount()
+// ClearDiscountAmountUsd clears the value of the "discount_amount_usd" field.
+func (pruo *PowerRentalUpdateOne) ClearDiscountAmountUsd() *PowerRentalUpdateOne {
+	pruo.mutation.ClearDiscountAmountUsd()
 	return pruo
 }
 
@@ -1037,19 +984,6 @@ func (pruo *PowerRentalUpdateOne) sqlSave(ctx context.Context) (_node *PowerRent
 			Column: powerrental.FieldUnits,
 		})
 	}
-	if value, ok := pruo.mutation.GoodValue(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeOther,
-			Value:  value,
-			Column: powerrental.FieldGoodValue,
-		})
-	}
-	if pruo.mutation.GoodValueCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeOther,
-			Column: powerrental.FieldGoodValue,
-		})
-	}
 	if value, ok := pruo.mutation.GoodValueUsd(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeOther,
@@ -1063,30 +997,30 @@ func (pruo *PowerRentalUpdateOne) sqlSave(ctx context.Context) (_node *PowerRent
 			Column: powerrental.FieldGoodValueUsd,
 		})
 	}
-	if value, ok := pruo.mutation.PaymentAmount(); ok {
+	if value, ok := pruo.mutation.PaymentAmountUsd(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeOther,
 			Value:  value,
-			Column: powerrental.FieldPaymentAmount,
+			Column: powerrental.FieldPaymentAmountUsd,
 		})
 	}
-	if pruo.mutation.PaymentAmountCleared() {
+	if pruo.mutation.PaymentAmountUsdCleared() {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeOther,
-			Column: powerrental.FieldPaymentAmount,
+			Column: powerrental.FieldPaymentAmountUsd,
 		})
 	}
-	if value, ok := pruo.mutation.DiscountAmount(); ok {
+	if value, ok := pruo.mutation.DiscountAmountUsd(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeOther,
 			Value:  value,
-			Column: powerrental.FieldDiscountAmount,
+			Column: powerrental.FieldDiscountAmountUsd,
 		})
 	}
-	if pruo.mutation.DiscountAmountCleared() {
+	if pruo.mutation.DiscountAmountUsdCleared() {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeOther,
-			Column: powerrental.FieldDiscountAmount,
+			Column: powerrental.FieldDiscountAmountUsd,
 		})
 	}
 	if value, ok := pruo.mutation.PromotionID(); ok {

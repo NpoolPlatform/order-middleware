@@ -107,20 +107,6 @@ func (prc *PowerRentalCreate) SetNillableUnits(d *decimal.Decimal) *PowerRentalC
 	return prc
 }
 
-// SetGoodValue sets the "good_value" field.
-func (prc *PowerRentalCreate) SetGoodValue(d decimal.Decimal) *PowerRentalCreate {
-	prc.mutation.SetGoodValue(d)
-	return prc
-}
-
-// SetNillableGoodValue sets the "good_value" field if the given value is not nil.
-func (prc *PowerRentalCreate) SetNillableGoodValue(d *decimal.Decimal) *PowerRentalCreate {
-	if d != nil {
-		prc.SetGoodValue(*d)
-	}
-	return prc
-}
-
 // SetGoodValueUsd sets the "good_value_usd" field.
 func (prc *PowerRentalCreate) SetGoodValueUsd(d decimal.Decimal) *PowerRentalCreate {
 	prc.mutation.SetGoodValueUsd(d)
@@ -135,30 +121,30 @@ func (prc *PowerRentalCreate) SetNillableGoodValueUsd(d *decimal.Decimal) *Power
 	return prc
 }
 
-// SetPaymentAmount sets the "payment_amount" field.
-func (prc *PowerRentalCreate) SetPaymentAmount(d decimal.Decimal) *PowerRentalCreate {
-	prc.mutation.SetPaymentAmount(d)
+// SetPaymentAmountUsd sets the "payment_amount_usd" field.
+func (prc *PowerRentalCreate) SetPaymentAmountUsd(d decimal.Decimal) *PowerRentalCreate {
+	prc.mutation.SetPaymentAmountUsd(d)
 	return prc
 }
 
-// SetNillablePaymentAmount sets the "payment_amount" field if the given value is not nil.
-func (prc *PowerRentalCreate) SetNillablePaymentAmount(d *decimal.Decimal) *PowerRentalCreate {
+// SetNillablePaymentAmountUsd sets the "payment_amount_usd" field if the given value is not nil.
+func (prc *PowerRentalCreate) SetNillablePaymentAmountUsd(d *decimal.Decimal) *PowerRentalCreate {
 	if d != nil {
-		prc.SetPaymentAmount(*d)
+		prc.SetPaymentAmountUsd(*d)
 	}
 	return prc
 }
 
-// SetDiscountAmount sets the "discount_amount" field.
-func (prc *PowerRentalCreate) SetDiscountAmount(d decimal.Decimal) *PowerRentalCreate {
-	prc.mutation.SetDiscountAmount(d)
+// SetDiscountAmountUsd sets the "discount_amount_usd" field.
+func (prc *PowerRentalCreate) SetDiscountAmountUsd(d decimal.Decimal) *PowerRentalCreate {
+	prc.mutation.SetDiscountAmountUsd(d)
 	return prc
 }
 
-// SetNillableDiscountAmount sets the "discount_amount" field if the given value is not nil.
-func (prc *PowerRentalCreate) SetNillableDiscountAmount(d *decimal.Decimal) *PowerRentalCreate {
+// SetNillableDiscountAmountUsd sets the "discount_amount_usd" field if the given value is not nil.
+func (prc *PowerRentalCreate) SetNillableDiscountAmountUsd(d *decimal.Decimal) *PowerRentalCreate {
 	if d != nil {
-		prc.SetDiscountAmount(*d)
+		prc.SetDiscountAmountUsd(*d)
 	}
 	return prc
 }
@@ -329,21 +315,17 @@ func (prc *PowerRentalCreate) defaults() error {
 		v := powerrental.DefaultUnits
 		prc.mutation.SetUnits(v)
 	}
-	if _, ok := prc.mutation.GoodValue(); !ok {
-		v := powerrental.DefaultGoodValue
-		prc.mutation.SetGoodValue(v)
-	}
 	if _, ok := prc.mutation.GoodValueUsd(); !ok {
 		v := powerrental.DefaultGoodValueUsd
 		prc.mutation.SetGoodValueUsd(v)
 	}
-	if _, ok := prc.mutation.PaymentAmount(); !ok {
-		v := powerrental.DefaultPaymentAmount
-		prc.mutation.SetPaymentAmount(v)
+	if _, ok := prc.mutation.PaymentAmountUsd(); !ok {
+		v := powerrental.DefaultPaymentAmountUsd
+		prc.mutation.SetPaymentAmountUsd(v)
 	}
-	if _, ok := prc.mutation.DiscountAmount(); !ok {
-		v := powerrental.DefaultDiscountAmount
-		prc.mutation.SetDiscountAmount(v)
+	if _, ok := prc.mutation.DiscountAmountUsd(); !ok {
+		v := powerrental.DefaultDiscountAmountUsd
+		prc.mutation.SetDiscountAmountUsd(v)
 	}
 	if _, ok := prc.mutation.PromotionID(); !ok {
 		if powerrental.DefaultPromotionID == nil {
@@ -459,14 +441,6 @@ func (prc *PowerRentalCreate) createSpec() (*PowerRental, *sqlgraph.CreateSpec) 
 		})
 		_node.Units = value
 	}
-	if value, ok := prc.mutation.GoodValue(); ok {
-		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
-			Type:   field.TypeOther,
-			Value:  value,
-			Column: powerrental.FieldGoodValue,
-		})
-		_node.GoodValue = value
-	}
 	if value, ok := prc.mutation.GoodValueUsd(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
 			Type:   field.TypeOther,
@@ -475,21 +449,21 @@ func (prc *PowerRentalCreate) createSpec() (*PowerRental, *sqlgraph.CreateSpec) 
 		})
 		_node.GoodValueUsd = value
 	}
-	if value, ok := prc.mutation.PaymentAmount(); ok {
+	if value, ok := prc.mutation.PaymentAmountUsd(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
 			Type:   field.TypeOther,
 			Value:  value,
-			Column: powerrental.FieldPaymentAmount,
+			Column: powerrental.FieldPaymentAmountUsd,
 		})
-		_node.PaymentAmount = value
+		_node.PaymentAmountUsd = value
 	}
-	if value, ok := prc.mutation.DiscountAmount(); ok {
+	if value, ok := prc.mutation.DiscountAmountUsd(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
 			Type:   field.TypeOther,
 			Value:  value,
-			Column: powerrental.FieldDiscountAmount,
+			Column: powerrental.FieldDiscountAmountUsd,
 		})
-		_node.DiscountAmount = value
+		_node.DiscountAmountUsd = value
 	}
 	if value, ok := prc.mutation.PromotionID(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -671,24 +645,6 @@ func (u *PowerRentalUpsert) ClearUnits() *PowerRentalUpsert {
 	return u
 }
 
-// SetGoodValue sets the "good_value" field.
-func (u *PowerRentalUpsert) SetGoodValue(v decimal.Decimal) *PowerRentalUpsert {
-	u.Set(powerrental.FieldGoodValue, v)
-	return u
-}
-
-// UpdateGoodValue sets the "good_value" field to the value that was provided on create.
-func (u *PowerRentalUpsert) UpdateGoodValue() *PowerRentalUpsert {
-	u.SetExcluded(powerrental.FieldGoodValue)
-	return u
-}
-
-// ClearGoodValue clears the value of the "good_value" field.
-func (u *PowerRentalUpsert) ClearGoodValue() *PowerRentalUpsert {
-	u.SetNull(powerrental.FieldGoodValue)
-	return u
-}
-
 // SetGoodValueUsd sets the "good_value_usd" field.
 func (u *PowerRentalUpsert) SetGoodValueUsd(v decimal.Decimal) *PowerRentalUpsert {
 	u.Set(powerrental.FieldGoodValueUsd, v)
@@ -707,39 +663,39 @@ func (u *PowerRentalUpsert) ClearGoodValueUsd() *PowerRentalUpsert {
 	return u
 }
 
-// SetPaymentAmount sets the "payment_amount" field.
-func (u *PowerRentalUpsert) SetPaymentAmount(v decimal.Decimal) *PowerRentalUpsert {
-	u.Set(powerrental.FieldPaymentAmount, v)
+// SetPaymentAmountUsd sets the "payment_amount_usd" field.
+func (u *PowerRentalUpsert) SetPaymentAmountUsd(v decimal.Decimal) *PowerRentalUpsert {
+	u.Set(powerrental.FieldPaymentAmountUsd, v)
 	return u
 }
 
-// UpdatePaymentAmount sets the "payment_amount" field to the value that was provided on create.
-func (u *PowerRentalUpsert) UpdatePaymentAmount() *PowerRentalUpsert {
-	u.SetExcluded(powerrental.FieldPaymentAmount)
+// UpdatePaymentAmountUsd sets the "payment_amount_usd" field to the value that was provided on create.
+func (u *PowerRentalUpsert) UpdatePaymentAmountUsd() *PowerRentalUpsert {
+	u.SetExcluded(powerrental.FieldPaymentAmountUsd)
 	return u
 }
 
-// ClearPaymentAmount clears the value of the "payment_amount" field.
-func (u *PowerRentalUpsert) ClearPaymentAmount() *PowerRentalUpsert {
-	u.SetNull(powerrental.FieldPaymentAmount)
+// ClearPaymentAmountUsd clears the value of the "payment_amount_usd" field.
+func (u *PowerRentalUpsert) ClearPaymentAmountUsd() *PowerRentalUpsert {
+	u.SetNull(powerrental.FieldPaymentAmountUsd)
 	return u
 }
 
-// SetDiscountAmount sets the "discount_amount" field.
-func (u *PowerRentalUpsert) SetDiscountAmount(v decimal.Decimal) *PowerRentalUpsert {
-	u.Set(powerrental.FieldDiscountAmount, v)
+// SetDiscountAmountUsd sets the "discount_amount_usd" field.
+func (u *PowerRentalUpsert) SetDiscountAmountUsd(v decimal.Decimal) *PowerRentalUpsert {
+	u.Set(powerrental.FieldDiscountAmountUsd, v)
 	return u
 }
 
-// UpdateDiscountAmount sets the "discount_amount" field to the value that was provided on create.
-func (u *PowerRentalUpsert) UpdateDiscountAmount() *PowerRentalUpsert {
-	u.SetExcluded(powerrental.FieldDiscountAmount)
+// UpdateDiscountAmountUsd sets the "discount_amount_usd" field to the value that was provided on create.
+func (u *PowerRentalUpsert) UpdateDiscountAmountUsd() *PowerRentalUpsert {
+	u.SetExcluded(powerrental.FieldDiscountAmountUsd)
 	return u
 }
 
-// ClearDiscountAmount clears the value of the "discount_amount" field.
-func (u *PowerRentalUpsert) ClearDiscountAmount() *PowerRentalUpsert {
-	u.SetNull(powerrental.FieldDiscountAmount)
+// ClearDiscountAmountUsd clears the value of the "discount_amount_usd" field.
+func (u *PowerRentalUpsert) ClearDiscountAmountUsd() *PowerRentalUpsert {
+	u.SetNull(powerrental.FieldDiscountAmountUsd)
 	return u
 }
 
@@ -972,27 +928,6 @@ func (u *PowerRentalUpsertOne) ClearUnits() *PowerRentalUpsertOne {
 	})
 }
 
-// SetGoodValue sets the "good_value" field.
-func (u *PowerRentalUpsertOne) SetGoodValue(v decimal.Decimal) *PowerRentalUpsertOne {
-	return u.Update(func(s *PowerRentalUpsert) {
-		s.SetGoodValue(v)
-	})
-}
-
-// UpdateGoodValue sets the "good_value" field to the value that was provided on create.
-func (u *PowerRentalUpsertOne) UpdateGoodValue() *PowerRentalUpsertOne {
-	return u.Update(func(s *PowerRentalUpsert) {
-		s.UpdateGoodValue()
-	})
-}
-
-// ClearGoodValue clears the value of the "good_value" field.
-func (u *PowerRentalUpsertOne) ClearGoodValue() *PowerRentalUpsertOne {
-	return u.Update(func(s *PowerRentalUpsert) {
-		s.ClearGoodValue()
-	})
-}
-
 // SetGoodValueUsd sets the "good_value_usd" field.
 func (u *PowerRentalUpsertOne) SetGoodValueUsd(v decimal.Decimal) *PowerRentalUpsertOne {
 	return u.Update(func(s *PowerRentalUpsert) {
@@ -1014,45 +949,45 @@ func (u *PowerRentalUpsertOne) ClearGoodValueUsd() *PowerRentalUpsertOne {
 	})
 }
 
-// SetPaymentAmount sets the "payment_amount" field.
-func (u *PowerRentalUpsertOne) SetPaymentAmount(v decimal.Decimal) *PowerRentalUpsertOne {
+// SetPaymentAmountUsd sets the "payment_amount_usd" field.
+func (u *PowerRentalUpsertOne) SetPaymentAmountUsd(v decimal.Decimal) *PowerRentalUpsertOne {
 	return u.Update(func(s *PowerRentalUpsert) {
-		s.SetPaymentAmount(v)
+		s.SetPaymentAmountUsd(v)
 	})
 }
 
-// UpdatePaymentAmount sets the "payment_amount" field to the value that was provided on create.
-func (u *PowerRentalUpsertOne) UpdatePaymentAmount() *PowerRentalUpsertOne {
+// UpdatePaymentAmountUsd sets the "payment_amount_usd" field to the value that was provided on create.
+func (u *PowerRentalUpsertOne) UpdatePaymentAmountUsd() *PowerRentalUpsertOne {
 	return u.Update(func(s *PowerRentalUpsert) {
-		s.UpdatePaymentAmount()
+		s.UpdatePaymentAmountUsd()
 	})
 }
 
-// ClearPaymentAmount clears the value of the "payment_amount" field.
-func (u *PowerRentalUpsertOne) ClearPaymentAmount() *PowerRentalUpsertOne {
+// ClearPaymentAmountUsd clears the value of the "payment_amount_usd" field.
+func (u *PowerRentalUpsertOne) ClearPaymentAmountUsd() *PowerRentalUpsertOne {
 	return u.Update(func(s *PowerRentalUpsert) {
-		s.ClearPaymentAmount()
+		s.ClearPaymentAmountUsd()
 	})
 }
 
-// SetDiscountAmount sets the "discount_amount" field.
-func (u *PowerRentalUpsertOne) SetDiscountAmount(v decimal.Decimal) *PowerRentalUpsertOne {
+// SetDiscountAmountUsd sets the "discount_amount_usd" field.
+func (u *PowerRentalUpsertOne) SetDiscountAmountUsd(v decimal.Decimal) *PowerRentalUpsertOne {
 	return u.Update(func(s *PowerRentalUpsert) {
-		s.SetDiscountAmount(v)
+		s.SetDiscountAmountUsd(v)
 	})
 }
 
-// UpdateDiscountAmount sets the "discount_amount" field to the value that was provided on create.
-func (u *PowerRentalUpsertOne) UpdateDiscountAmount() *PowerRentalUpsertOne {
+// UpdateDiscountAmountUsd sets the "discount_amount_usd" field to the value that was provided on create.
+func (u *PowerRentalUpsertOne) UpdateDiscountAmountUsd() *PowerRentalUpsertOne {
 	return u.Update(func(s *PowerRentalUpsert) {
-		s.UpdateDiscountAmount()
+		s.UpdateDiscountAmountUsd()
 	})
 }
 
-// ClearDiscountAmount clears the value of the "discount_amount" field.
-func (u *PowerRentalUpsertOne) ClearDiscountAmount() *PowerRentalUpsertOne {
+// ClearDiscountAmountUsd clears the value of the "discount_amount_usd" field.
+func (u *PowerRentalUpsertOne) ClearDiscountAmountUsd() *PowerRentalUpsertOne {
 	return u.Update(func(s *PowerRentalUpsert) {
-		s.ClearDiscountAmount()
+		s.ClearDiscountAmountUsd()
 	})
 }
 
@@ -1460,27 +1395,6 @@ func (u *PowerRentalUpsertBulk) ClearUnits() *PowerRentalUpsertBulk {
 	})
 }
 
-// SetGoodValue sets the "good_value" field.
-func (u *PowerRentalUpsertBulk) SetGoodValue(v decimal.Decimal) *PowerRentalUpsertBulk {
-	return u.Update(func(s *PowerRentalUpsert) {
-		s.SetGoodValue(v)
-	})
-}
-
-// UpdateGoodValue sets the "good_value" field to the value that was provided on create.
-func (u *PowerRentalUpsertBulk) UpdateGoodValue() *PowerRentalUpsertBulk {
-	return u.Update(func(s *PowerRentalUpsert) {
-		s.UpdateGoodValue()
-	})
-}
-
-// ClearGoodValue clears the value of the "good_value" field.
-func (u *PowerRentalUpsertBulk) ClearGoodValue() *PowerRentalUpsertBulk {
-	return u.Update(func(s *PowerRentalUpsert) {
-		s.ClearGoodValue()
-	})
-}
-
 // SetGoodValueUsd sets the "good_value_usd" field.
 func (u *PowerRentalUpsertBulk) SetGoodValueUsd(v decimal.Decimal) *PowerRentalUpsertBulk {
 	return u.Update(func(s *PowerRentalUpsert) {
@@ -1502,45 +1416,45 @@ func (u *PowerRentalUpsertBulk) ClearGoodValueUsd() *PowerRentalUpsertBulk {
 	})
 }
 
-// SetPaymentAmount sets the "payment_amount" field.
-func (u *PowerRentalUpsertBulk) SetPaymentAmount(v decimal.Decimal) *PowerRentalUpsertBulk {
+// SetPaymentAmountUsd sets the "payment_amount_usd" field.
+func (u *PowerRentalUpsertBulk) SetPaymentAmountUsd(v decimal.Decimal) *PowerRentalUpsertBulk {
 	return u.Update(func(s *PowerRentalUpsert) {
-		s.SetPaymentAmount(v)
+		s.SetPaymentAmountUsd(v)
 	})
 }
 
-// UpdatePaymentAmount sets the "payment_amount" field to the value that was provided on create.
-func (u *PowerRentalUpsertBulk) UpdatePaymentAmount() *PowerRentalUpsertBulk {
+// UpdatePaymentAmountUsd sets the "payment_amount_usd" field to the value that was provided on create.
+func (u *PowerRentalUpsertBulk) UpdatePaymentAmountUsd() *PowerRentalUpsertBulk {
 	return u.Update(func(s *PowerRentalUpsert) {
-		s.UpdatePaymentAmount()
+		s.UpdatePaymentAmountUsd()
 	})
 }
 
-// ClearPaymentAmount clears the value of the "payment_amount" field.
-func (u *PowerRentalUpsertBulk) ClearPaymentAmount() *PowerRentalUpsertBulk {
+// ClearPaymentAmountUsd clears the value of the "payment_amount_usd" field.
+func (u *PowerRentalUpsertBulk) ClearPaymentAmountUsd() *PowerRentalUpsertBulk {
 	return u.Update(func(s *PowerRentalUpsert) {
-		s.ClearPaymentAmount()
+		s.ClearPaymentAmountUsd()
 	})
 }
 
-// SetDiscountAmount sets the "discount_amount" field.
-func (u *PowerRentalUpsertBulk) SetDiscountAmount(v decimal.Decimal) *PowerRentalUpsertBulk {
+// SetDiscountAmountUsd sets the "discount_amount_usd" field.
+func (u *PowerRentalUpsertBulk) SetDiscountAmountUsd(v decimal.Decimal) *PowerRentalUpsertBulk {
 	return u.Update(func(s *PowerRentalUpsert) {
-		s.SetDiscountAmount(v)
+		s.SetDiscountAmountUsd(v)
 	})
 }
 
-// UpdateDiscountAmount sets the "discount_amount" field to the value that was provided on create.
-func (u *PowerRentalUpsertBulk) UpdateDiscountAmount() *PowerRentalUpsertBulk {
+// UpdateDiscountAmountUsd sets the "discount_amount_usd" field to the value that was provided on create.
+func (u *PowerRentalUpsertBulk) UpdateDiscountAmountUsd() *PowerRentalUpsertBulk {
 	return u.Update(func(s *PowerRentalUpsert) {
-		s.UpdateDiscountAmount()
+		s.UpdateDiscountAmountUsd()
 	})
 }
 
-// ClearDiscountAmount clears the value of the "discount_amount" field.
-func (u *PowerRentalUpsertBulk) ClearDiscountAmount() *PowerRentalUpsertBulk {
+// ClearDiscountAmountUsd clears the value of the "discount_amount_usd" field.
+func (u *PowerRentalUpsertBulk) ClearDiscountAmountUsd() *PowerRentalUpsertBulk {
 	return u.Update(func(s *PowerRentalUpsert) {
-		s.ClearDiscountAmount()
+		s.ClearDiscountAmountUsd()
 	})
 }
 

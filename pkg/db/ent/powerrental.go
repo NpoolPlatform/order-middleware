@@ -29,14 +29,12 @@ type PowerRental struct {
 	OrderID uuid.UUID `json:"order_id,omitempty"`
 	// Units holds the value of the "units" field.
 	Units decimal.Decimal `json:"units,omitempty"`
-	// GoodValue holds the value of the "good_value" field.
-	GoodValue decimal.Decimal `json:"good_value,omitempty"`
 	// GoodValueUsd holds the value of the "good_value_usd" field.
 	GoodValueUsd decimal.Decimal `json:"good_value_usd,omitempty"`
-	// PaymentAmount holds the value of the "payment_amount" field.
-	PaymentAmount decimal.Decimal `json:"payment_amount,omitempty"`
-	// DiscountAmount holds the value of the "discount_amount" field.
-	DiscountAmount decimal.Decimal `json:"discount_amount,omitempty"`
+	// PaymentAmountUsd holds the value of the "payment_amount_usd" field.
+	PaymentAmountUsd decimal.Decimal `json:"payment_amount_usd,omitempty"`
+	// DiscountAmountUsd holds the value of the "discount_amount_usd" field.
+	DiscountAmountUsd decimal.Decimal `json:"discount_amount_usd,omitempty"`
 	// PromotionID holds the value of the "promotion_id" field.
 	PromotionID uuid.UUID `json:"promotion_id,omitempty"`
 	// Duration holds the value of the "duration" field.
@@ -50,7 +48,7 @@ func (*PowerRental) scanValues(columns []string) ([]interface{}, error) {
 	values := make([]interface{}, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case powerrental.FieldUnits, powerrental.FieldGoodValue, powerrental.FieldGoodValueUsd, powerrental.FieldPaymentAmount, powerrental.FieldDiscountAmount:
+		case powerrental.FieldUnits, powerrental.FieldGoodValueUsd, powerrental.FieldPaymentAmountUsd, powerrental.FieldDiscountAmountUsd:
 			values[i] = new(decimal.Decimal)
 		case powerrental.FieldID, powerrental.FieldCreatedAt, powerrental.FieldUpdatedAt, powerrental.FieldDeletedAt, powerrental.FieldDuration:
 			values[i] = new(sql.NullInt64)
@@ -115,29 +113,23 @@ func (pr *PowerRental) assignValues(columns []string, values []interface{}) erro
 			} else if value != nil {
 				pr.Units = *value
 			}
-		case powerrental.FieldGoodValue:
-			if value, ok := values[i].(*decimal.Decimal); !ok {
-				return fmt.Errorf("unexpected type %T for field good_value", values[i])
-			} else if value != nil {
-				pr.GoodValue = *value
-			}
 		case powerrental.FieldGoodValueUsd:
 			if value, ok := values[i].(*decimal.Decimal); !ok {
 				return fmt.Errorf("unexpected type %T for field good_value_usd", values[i])
 			} else if value != nil {
 				pr.GoodValueUsd = *value
 			}
-		case powerrental.FieldPaymentAmount:
+		case powerrental.FieldPaymentAmountUsd:
 			if value, ok := values[i].(*decimal.Decimal); !ok {
-				return fmt.Errorf("unexpected type %T for field payment_amount", values[i])
+				return fmt.Errorf("unexpected type %T for field payment_amount_usd", values[i])
 			} else if value != nil {
-				pr.PaymentAmount = *value
+				pr.PaymentAmountUsd = *value
 			}
-		case powerrental.FieldDiscountAmount:
+		case powerrental.FieldDiscountAmountUsd:
 			if value, ok := values[i].(*decimal.Decimal); !ok {
-				return fmt.Errorf("unexpected type %T for field discount_amount", values[i])
+				return fmt.Errorf("unexpected type %T for field discount_amount_usd", values[i])
 			} else if value != nil {
-				pr.DiscountAmount = *value
+				pr.DiscountAmountUsd = *value
 			}
 		case powerrental.FieldPromotionID:
 			if value, ok := values[i].(*uuid.UUID); !ok {
@@ -203,17 +195,14 @@ func (pr *PowerRental) String() string {
 	builder.WriteString("units=")
 	builder.WriteString(fmt.Sprintf("%v", pr.Units))
 	builder.WriteString(", ")
-	builder.WriteString("good_value=")
-	builder.WriteString(fmt.Sprintf("%v", pr.GoodValue))
-	builder.WriteString(", ")
 	builder.WriteString("good_value_usd=")
 	builder.WriteString(fmt.Sprintf("%v", pr.GoodValueUsd))
 	builder.WriteString(", ")
-	builder.WriteString("payment_amount=")
-	builder.WriteString(fmt.Sprintf("%v", pr.PaymentAmount))
+	builder.WriteString("payment_amount_usd=")
+	builder.WriteString(fmt.Sprintf("%v", pr.PaymentAmountUsd))
 	builder.WriteString(", ")
-	builder.WriteString("discount_amount=")
-	builder.WriteString(fmt.Sprintf("%v", pr.DiscountAmount))
+	builder.WriteString("discount_amount_usd=")
+	builder.WriteString(fmt.Sprintf("%v", pr.DiscountAmountUsd))
 	builder.WriteString(", ")
 	builder.WriteString("promotion_id=")
 	builder.WriteString(fmt.Sprintf("%v", pr.PromotionID))
