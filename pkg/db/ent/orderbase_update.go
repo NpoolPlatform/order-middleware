@@ -98,6 +98,26 @@ func (obu *OrderBaseUpdate) SetNillableEntID(u *uuid.UUID) *OrderBaseUpdate {
 	return obu
 }
 
+// SetAppID sets the "app_id" field.
+func (obu *OrderBaseUpdate) SetAppID(u uuid.UUID) *OrderBaseUpdate {
+	obu.mutation.SetAppID(u)
+	return obu
+}
+
+// SetNillableAppID sets the "app_id" field if the given value is not nil.
+func (obu *OrderBaseUpdate) SetNillableAppID(u *uuid.UUID) *OrderBaseUpdate {
+	if u != nil {
+		obu.SetAppID(*u)
+	}
+	return obu
+}
+
+// ClearAppID clears the value of the "app_id" field.
+func (obu *OrderBaseUpdate) ClearAppID() *OrderBaseUpdate {
+	obu.mutation.ClearAppID()
+	return obu
+}
+
 // SetUserID sets the "user_id" field.
 func (obu *OrderBaseUpdate) SetUserID(u uuid.UUID) *OrderBaseUpdate {
 	obu.mutation.SetUserID(u)
@@ -115,6 +135,26 @@ func (obu *OrderBaseUpdate) SetNillableUserID(u *uuid.UUID) *OrderBaseUpdate {
 // ClearUserID clears the value of the "user_id" field.
 func (obu *OrderBaseUpdate) ClearUserID() *OrderBaseUpdate {
 	obu.mutation.ClearUserID()
+	return obu
+}
+
+// SetGoodID sets the "good_id" field.
+func (obu *OrderBaseUpdate) SetGoodID(u uuid.UUID) *OrderBaseUpdate {
+	obu.mutation.SetGoodID(u)
+	return obu
+}
+
+// SetNillableGoodID sets the "good_id" field if the given value is not nil.
+func (obu *OrderBaseUpdate) SetNillableGoodID(u *uuid.UUID) *OrderBaseUpdate {
+	if u != nil {
+		obu.SetGoodID(*u)
+	}
+	return obu
+}
+
+// ClearGoodID clears the value of the "good_id" field.
+func (obu *OrderBaseUpdate) ClearGoodID() *OrderBaseUpdate {
+	obu.mutation.ClearGoodID()
 	return obu
 }
 
@@ -385,6 +425,19 @@ func (obu *OrderBaseUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: orderbase.FieldEntID,
 		})
 	}
+	if value, ok := obu.mutation.AppID(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Value:  value,
+			Column: orderbase.FieldAppID,
+		})
+	}
+	if obu.mutation.AppIDCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Column: orderbase.FieldAppID,
+		})
+	}
 	if value, ok := obu.mutation.UserID(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeUUID,
@@ -396,6 +449,19 @@ func (obu *OrderBaseUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeUUID,
 			Column: orderbase.FieldUserID,
+		})
+	}
+	if value, ok := obu.mutation.GoodID(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Value:  value,
+			Column: orderbase.FieldGoodID,
+		})
+	}
+	if obu.mutation.GoodIDCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Column: orderbase.FieldGoodID,
 		})
 	}
 	if value, ok := obu.mutation.AppGoodID(); ok {
@@ -566,6 +632,26 @@ func (obuo *OrderBaseUpdateOne) SetNillableEntID(u *uuid.UUID) *OrderBaseUpdateO
 	return obuo
 }
 
+// SetAppID sets the "app_id" field.
+func (obuo *OrderBaseUpdateOne) SetAppID(u uuid.UUID) *OrderBaseUpdateOne {
+	obuo.mutation.SetAppID(u)
+	return obuo
+}
+
+// SetNillableAppID sets the "app_id" field if the given value is not nil.
+func (obuo *OrderBaseUpdateOne) SetNillableAppID(u *uuid.UUID) *OrderBaseUpdateOne {
+	if u != nil {
+		obuo.SetAppID(*u)
+	}
+	return obuo
+}
+
+// ClearAppID clears the value of the "app_id" field.
+func (obuo *OrderBaseUpdateOne) ClearAppID() *OrderBaseUpdateOne {
+	obuo.mutation.ClearAppID()
+	return obuo
+}
+
 // SetUserID sets the "user_id" field.
 func (obuo *OrderBaseUpdateOne) SetUserID(u uuid.UUID) *OrderBaseUpdateOne {
 	obuo.mutation.SetUserID(u)
@@ -583,6 +669,26 @@ func (obuo *OrderBaseUpdateOne) SetNillableUserID(u *uuid.UUID) *OrderBaseUpdate
 // ClearUserID clears the value of the "user_id" field.
 func (obuo *OrderBaseUpdateOne) ClearUserID() *OrderBaseUpdateOne {
 	obuo.mutation.ClearUserID()
+	return obuo
+}
+
+// SetGoodID sets the "good_id" field.
+func (obuo *OrderBaseUpdateOne) SetGoodID(u uuid.UUID) *OrderBaseUpdateOne {
+	obuo.mutation.SetGoodID(u)
+	return obuo
+}
+
+// SetNillableGoodID sets the "good_id" field if the given value is not nil.
+func (obuo *OrderBaseUpdateOne) SetNillableGoodID(u *uuid.UUID) *OrderBaseUpdateOne {
+	if u != nil {
+		obuo.SetGoodID(*u)
+	}
+	return obuo
+}
+
+// ClearGoodID clears the value of the "good_id" field.
+func (obuo *OrderBaseUpdateOne) ClearGoodID() *OrderBaseUpdateOne {
+	obuo.mutation.ClearGoodID()
 	return obuo
 }
 
@@ -883,6 +989,19 @@ func (obuo *OrderBaseUpdateOne) sqlSave(ctx context.Context) (_node *OrderBase, 
 			Column: orderbase.FieldEntID,
 		})
 	}
+	if value, ok := obuo.mutation.AppID(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Value:  value,
+			Column: orderbase.FieldAppID,
+		})
+	}
+	if obuo.mutation.AppIDCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Column: orderbase.FieldAppID,
+		})
+	}
 	if value, ok := obuo.mutation.UserID(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeUUID,
@@ -894,6 +1013,19 @@ func (obuo *OrderBaseUpdateOne) sqlSave(ctx context.Context) (_node *OrderBase, 
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeUUID,
 			Column: orderbase.FieldUserID,
+		})
+	}
+	if value, ok := obuo.mutation.GoodID(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Value:  value,
+			Column: orderbase.FieldGoodID,
+		})
+	}
+	if obuo.mutation.GoodIDCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Column: orderbase.FieldGoodID,
 		})
 	}
 	if value, ok := obuo.mutation.AppGoodID(); ok {

@@ -24,8 +24,12 @@ type OrderBase struct {
 	DeletedAt uint32 `json:"deleted_at,omitempty"`
 	// EntID holds the value of the "ent_id" field.
 	EntID uuid.UUID `json:"ent_id,omitempty"`
+	// AppID holds the value of the "app_id" field.
+	AppID uuid.UUID `json:"app_id,omitempty"`
 	// UserID holds the value of the "user_id" field.
 	UserID uuid.UUID `json:"user_id,omitempty"`
+	// GoodID holds the value of the "good_id" field.
+	GoodID uuid.UUID `json:"good_id,omitempty"`
 	// AppGoodID holds the value of the "app_good_id" field.
 	AppGoodID uuid.UUID `json:"app_good_id,omitempty"`
 	// ParentOrderID holds the value of the "parent_order_id" field.
@@ -51,7 +55,7 @@ func (*OrderBase) scanValues(columns []string) ([]interface{}, error) {
 			values[i] = new(sql.NullInt64)
 		case orderbase.FieldOrderType, orderbase.FieldPaymentType, orderbase.FieldCreateMethod:
 			values[i] = new(sql.NullString)
-		case orderbase.FieldEntID, orderbase.FieldUserID, orderbase.FieldAppGoodID, orderbase.FieldParentOrderID:
+		case orderbase.FieldEntID, orderbase.FieldAppID, orderbase.FieldUserID, orderbase.FieldGoodID, orderbase.FieldAppGoodID, orderbase.FieldParentOrderID:
 			values[i] = new(uuid.UUID)
 		default:
 			return nil, fmt.Errorf("unexpected column %q for type OrderBase", columns[i])
@@ -98,11 +102,23 @@ func (ob *OrderBase) assignValues(columns []string, values []interface{}) error 
 			} else if value != nil {
 				ob.EntID = *value
 			}
+		case orderbase.FieldAppID:
+			if value, ok := values[i].(*uuid.UUID); !ok {
+				return fmt.Errorf("unexpected type %T for field app_id", values[i])
+			} else if value != nil {
+				ob.AppID = *value
+			}
 		case orderbase.FieldUserID:
 			if value, ok := values[i].(*uuid.UUID); !ok {
 				return fmt.Errorf("unexpected type %T for field user_id", values[i])
 			} else if value != nil {
 				ob.UserID = *value
+			}
+		case orderbase.FieldGoodID:
+			if value, ok := values[i].(*uuid.UUID); !ok {
+				return fmt.Errorf("unexpected type %T for field good_id", values[i])
+			} else if value != nil {
+				ob.GoodID = *value
 			}
 		case orderbase.FieldAppGoodID:
 			if value, ok := values[i].(*uuid.UUID); !ok {
@@ -180,8 +196,14 @@ func (ob *OrderBase) String() string {
 	builder.WriteString("ent_id=")
 	builder.WriteString(fmt.Sprintf("%v", ob.EntID))
 	builder.WriteString(", ")
+	builder.WriteString("app_id=")
+	builder.WriteString(fmt.Sprintf("%v", ob.AppID))
+	builder.WriteString(", ")
 	builder.WriteString("user_id=")
 	builder.WriteString(fmt.Sprintf("%v", ob.UserID))
+	builder.WriteString(", ")
+	builder.WriteString("good_id=")
+	builder.WriteString(fmt.Sprintf("%v", ob.GoodID))
 	builder.WriteString(", ")
 	builder.WriteString("app_good_id=")
 	builder.WriteString(fmt.Sprintf("%v", ob.AppGoodID))

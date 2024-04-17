@@ -128,7 +128,9 @@ var (
 		{Name: "updated_at", Type: field.TypeUint32},
 		{Name: "deleted_at", Type: field.TypeUint32},
 		{Name: "ent_id", Type: field.TypeUUID, Unique: true},
+		{Name: "app_id", Type: field.TypeUUID, Nullable: true},
 		{Name: "user_id", Type: field.TypeUUID, Nullable: true},
+		{Name: "good_id", Type: field.TypeUUID, Nullable: true},
 		{Name: "app_good_id", Type: field.TypeUUID, Nullable: true},
 		{Name: "parent_order_id", Type: field.TypeUUID, Nullable: true},
 		{Name: "order_type", Type: field.TypeString, Nullable: true, Default: "Normal"},
@@ -150,7 +152,7 @@ var (
 			{
 				Name:    "orderbase_user_id_app_good_id",
 				Unique:  false,
-				Columns: []*schema.Column{OrderBasesColumns[5], OrderBasesColumns[6]},
+				Columns: []*schema.Column{OrderBasesColumns[6], OrderBasesColumns[8]},
 			},
 		},
 	}

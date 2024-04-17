@@ -13,7 +13,9 @@ import (
 
 type Req struct {
 	EntID         *uuid.UUID
+	AppID         *uuid.UUID
 	UserID        *uuid.UUID
+	GoodID        *uuid.UUID
 	AppGoodID     *uuid.UUID
 	ParentOrderID *uuid.UUID
 	OrderType     *types.OrderType
@@ -28,8 +30,14 @@ func CreateSet(c *ent.OrderBaseCreate, req *Req) *ent.OrderBaseCreate {
 	if req.EntID != nil {
 		c.SetEntID(*req.EntID)
 	}
+	if req.AppID != nil {
+		c.SetAppID(*req.AppID)
+	}
 	if req.UserID != nil {
 		c.SetUserID(*req.UserID)
+	}
+	if req.GoodID != nil {
+		c.SetGoodID(*req.GoodID)
 	}
 	if req.AppGoodID != nil {
 		c.SetAppGoodID(*req.AppGoodID)
@@ -68,7 +76,10 @@ type Conds struct {
 	IDs            *cruder.Cond
 	EntID          *cruder.Cond
 	EntIDs         *cruder.Cond
+	AppID          *cruder.Cond
 	UserID         *cruder.Cond
+	GoodID         *cruder.Cond
+	GoodIDs        *cruder.Cond
 	AppGoodID      *cruder.Cond
 	AppGoodIDs     *cruder.Cond
 	ParentOrderID  *cruder.Cond
@@ -141,6 +152,18 @@ func SetQueryConds(q *ent.OrderBaseQuery, conds *Conds) (*ent.OrderBaseQuery, er
 			}
 		}
 	}
+	if conds.AppID != nil {
+		id, ok := conds.AppID.Val.(uuid.UUID)
+		if !ok {
+			return nil, fmt.Errorf("invalid appid")
+		}
+		switch conds.AppID.Op {
+		case cruder.EQ:
+			q.Where(entorderbase.AppID(id))
+		default:
+			return nil, fmt.Errorf("invalid order field")
+		}
+	}
 	if conds.UserID != nil {
 		id, ok := conds.UserID.Val.(uuid.UUID)
 		if !ok {
@@ -151,6 +174,32 @@ func SetQueryConds(q *ent.OrderBaseQuery, conds *Conds) (*ent.OrderBaseQuery, er
 			q.Where(entorderbase.UserID(id))
 		default:
 			return nil, fmt.Errorf("invalid order field")
+		}
+	}
+	if conds.GoodID != nil {
+		id, ok := conds.GoodID.Val.(uuid.UUID)
+		if !ok {
+			return nil, fmt.Errorf("invalid goodid")
+		}
+		switch conds.GoodID.Op {
+		case cruder.EQ:
+			q.Where(entorderbase.GoodID(id))
+		default:
+			return nil, fmt.Errorf("invalid order field")
+		}
+	}
+	if conds.GoodIDs != nil {
+		ids, ok := conds.GoodIDs.Val.([]uuid.UUID)
+		if !ok {
+			return nil, fmt.Errorf("invalid goodids")
+		}
+		if len(ids) > 0 {
+			switch conds.GoodIDs.Op {
+			case cruder.IN:
+				q.Where(entorderbase.GoodIDIn(ids...))
+			default:
+				return nil, fmt.Errorf("invalid order field")
+			}
 		}
 	}
 	if conds.AppGoodID != nil {

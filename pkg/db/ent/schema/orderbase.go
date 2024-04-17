@@ -27,7 +27,19 @@ func (OrderBase) Mixin() []ent.Mixin {
 func (OrderBase) Fields() []ent.Field {
 	return []ent.Field{
 		field.
+			UUID("app_id", uuid.UUID{}).
+			Optional().
+			Default(func() uuid.UUID {
+				return uuid.Nil
+			}),
+		field.
 			UUID("user_id", uuid.UUID{}).
+			Optional().
+			Default(func() uuid.UUID {
+				return uuid.Nil
+			}),
+		field.
+			UUID("good_id", uuid.UUID{}).
 			Optional().
 			Default(func() uuid.UUID {
 				return uuid.Nil
