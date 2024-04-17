@@ -29,12 +29,20 @@ type OrderPaymentTransfer struct {
 	OrderID uuid.UUID `json:"order_id,omitempty"`
 	// CoinTypeID holds the value of the "coin_type_id" field.
 	CoinTypeID uuid.UUID `json:"coin_type_id,omitempty"`
+	// Amount holds the value of the "amount" field.
+	Amount decimal.Decimal `json:"amount,omitempty"`
 	// StartAmount holds the value of the "start_amount" field.
 	StartAmount decimal.Decimal `json:"start_amount,omitempty"`
 	// PaymentTransactionID holds the value of the "payment_transaction_id" field.
 	PaymentTransactionID string `json:"payment_transaction_id,omitempty"`
 	// PaymentFinishAmount holds the value of the "payment_finish_amount" field.
 	PaymentFinishAmount decimal.Decimal `json:"payment_finish_amount,omitempty"`
+	// CoinUsdCurrency holds the value of the "coin_usd_currency" field.
+	CoinUsdCurrency decimal.Decimal `json:"coin_usd_currency,omitempty"`
+	// LocalCoinUsdCurrency holds the value of the "local_coin_usd_currency" field.
+	LocalCoinUsdCurrency decimal.Decimal `json:"local_coin_usd_currency,omitempty"`
+	// LiveCoinUsdCurrency holds the value of the "live_coin_usd_currency" field.
+	LiveCoinUsdCurrency decimal.Decimal `json:"live_coin_usd_currency,omitempty"`
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -42,7 +50,7 @@ func (*OrderPaymentTransfer) scanValues(columns []string) ([]interface{}, error)
 	values := make([]interface{}, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case orderpaymenttransfer.FieldStartAmount, orderpaymenttransfer.FieldPaymentFinishAmount:
+		case orderpaymenttransfer.FieldAmount, orderpaymenttransfer.FieldStartAmount, orderpaymenttransfer.FieldPaymentFinishAmount, orderpaymenttransfer.FieldCoinUsdCurrency, orderpaymenttransfer.FieldLocalCoinUsdCurrency, orderpaymenttransfer.FieldLiveCoinUsdCurrency:
 			values[i] = new(decimal.Decimal)
 		case orderpaymenttransfer.FieldID, orderpaymenttransfer.FieldCreatedAt, orderpaymenttransfer.FieldUpdatedAt, orderpaymenttransfer.FieldDeletedAt:
 			values[i] = new(sql.NullInt64)
@@ -107,6 +115,12 @@ func (opt *OrderPaymentTransfer) assignValues(columns []string, values []interfa
 			} else if value != nil {
 				opt.CoinTypeID = *value
 			}
+		case orderpaymenttransfer.FieldAmount:
+			if value, ok := values[i].(*decimal.Decimal); !ok {
+				return fmt.Errorf("unexpected type %T for field amount", values[i])
+			} else if value != nil {
+				opt.Amount = *value
+			}
 		case orderpaymenttransfer.FieldStartAmount:
 			if value, ok := values[i].(*decimal.Decimal); !ok {
 				return fmt.Errorf("unexpected type %T for field start_amount", values[i])
@@ -124,6 +138,24 @@ func (opt *OrderPaymentTransfer) assignValues(columns []string, values []interfa
 				return fmt.Errorf("unexpected type %T for field payment_finish_amount", values[i])
 			} else if value != nil {
 				opt.PaymentFinishAmount = *value
+			}
+		case orderpaymenttransfer.FieldCoinUsdCurrency:
+			if value, ok := values[i].(*decimal.Decimal); !ok {
+				return fmt.Errorf("unexpected type %T for field coin_usd_currency", values[i])
+			} else if value != nil {
+				opt.CoinUsdCurrency = *value
+			}
+		case orderpaymenttransfer.FieldLocalCoinUsdCurrency:
+			if value, ok := values[i].(*decimal.Decimal); !ok {
+				return fmt.Errorf("unexpected type %T for field local_coin_usd_currency", values[i])
+			} else if value != nil {
+				opt.LocalCoinUsdCurrency = *value
+			}
+		case orderpaymenttransfer.FieldLiveCoinUsdCurrency:
+			if value, ok := values[i].(*decimal.Decimal); !ok {
+				return fmt.Errorf("unexpected type %T for field live_coin_usd_currency", values[i])
+			} else if value != nil {
+				opt.LiveCoinUsdCurrency = *value
 			}
 		}
 	}
@@ -171,6 +203,9 @@ func (opt *OrderPaymentTransfer) String() string {
 	builder.WriteString("coin_type_id=")
 	builder.WriteString(fmt.Sprintf("%v", opt.CoinTypeID))
 	builder.WriteString(", ")
+	builder.WriteString("amount=")
+	builder.WriteString(fmt.Sprintf("%v", opt.Amount))
+	builder.WriteString(", ")
 	builder.WriteString("start_amount=")
 	builder.WriteString(fmt.Sprintf("%v", opt.StartAmount))
 	builder.WriteString(", ")
@@ -179,6 +214,15 @@ func (opt *OrderPaymentTransfer) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("payment_finish_amount=")
 	builder.WriteString(fmt.Sprintf("%v", opt.PaymentFinishAmount))
+	builder.WriteString(", ")
+	builder.WriteString("coin_usd_currency=")
+	builder.WriteString(fmt.Sprintf("%v", opt.CoinUsdCurrency))
+	builder.WriteString(", ")
+	builder.WriteString("local_coin_usd_currency=")
+	builder.WriteString(fmt.Sprintf("%v", opt.LocalCoinUsdCurrency))
+	builder.WriteString(", ")
+	builder.WriteString("live_coin_usd_currency=")
+	builder.WriteString(fmt.Sprintf("%v", opt.LiveCoinUsdCurrency))
 	builder.WriteByte(')')
 	return builder.String()
 }

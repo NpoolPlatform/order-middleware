@@ -139,6 +139,26 @@ func (optu *OrderPaymentTransferUpdate) ClearCoinTypeID() *OrderPaymentTransferU
 	return optu
 }
 
+// SetAmount sets the "amount" field.
+func (optu *OrderPaymentTransferUpdate) SetAmount(d decimal.Decimal) *OrderPaymentTransferUpdate {
+	optu.mutation.SetAmount(d)
+	return optu
+}
+
+// SetNillableAmount sets the "amount" field if the given value is not nil.
+func (optu *OrderPaymentTransferUpdate) SetNillableAmount(d *decimal.Decimal) *OrderPaymentTransferUpdate {
+	if d != nil {
+		optu.SetAmount(*d)
+	}
+	return optu
+}
+
+// ClearAmount clears the value of the "amount" field.
+func (optu *OrderPaymentTransferUpdate) ClearAmount() *OrderPaymentTransferUpdate {
+	optu.mutation.ClearAmount()
+	return optu
+}
+
 // SetStartAmount sets the "start_amount" field.
 func (optu *OrderPaymentTransferUpdate) SetStartAmount(d decimal.Decimal) *OrderPaymentTransferUpdate {
 	optu.mutation.SetStartAmount(d)
@@ -196,6 +216,66 @@ func (optu *OrderPaymentTransferUpdate) SetNillablePaymentFinishAmount(d *decima
 // ClearPaymentFinishAmount clears the value of the "payment_finish_amount" field.
 func (optu *OrderPaymentTransferUpdate) ClearPaymentFinishAmount() *OrderPaymentTransferUpdate {
 	optu.mutation.ClearPaymentFinishAmount()
+	return optu
+}
+
+// SetCoinUsdCurrency sets the "coin_usd_currency" field.
+func (optu *OrderPaymentTransferUpdate) SetCoinUsdCurrency(d decimal.Decimal) *OrderPaymentTransferUpdate {
+	optu.mutation.SetCoinUsdCurrency(d)
+	return optu
+}
+
+// SetNillableCoinUsdCurrency sets the "coin_usd_currency" field if the given value is not nil.
+func (optu *OrderPaymentTransferUpdate) SetNillableCoinUsdCurrency(d *decimal.Decimal) *OrderPaymentTransferUpdate {
+	if d != nil {
+		optu.SetCoinUsdCurrency(*d)
+	}
+	return optu
+}
+
+// ClearCoinUsdCurrency clears the value of the "coin_usd_currency" field.
+func (optu *OrderPaymentTransferUpdate) ClearCoinUsdCurrency() *OrderPaymentTransferUpdate {
+	optu.mutation.ClearCoinUsdCurrency()
+	return optu
+}
+
+// SetLocalCoinUsdCurrency sets the "local_coin_usd_currency" field.
+func (optu *OrderPaymentTransferUpdate) SetLocalCoinUsdCurrency(d decimal.Decimal) *OrderPaymentTransferUpdate {
+	optu.mutation.SetLocalCoinUsdCurrency(d)
+	return optu
+}
+
+// SetNillableLocalCoinUsdCurrency sets the "local_coin_usd_currency" field if the given value is not nil.
+func (optu *OrderPaymentTransferUpdate) SetNillableLocalCoinUsdCurrency(d *decimal.Decimal) *OrderPaymentTransferUpdate {
+	if d != nil {
+		optu.SetLocalCoinUsdCurrency(*d)
+	}
+	return optu
+}
+
+// ClearLocalCoinUsdCurrency clears the value of the "local_coin_usd_currency" field.
+func (optu *OrderPaymentTransferUpdate) ClearLocalCoinUsdCurrency() *OrderPaymentTransferUpdate {
+	optu.mutation.ClearLocalCoinUsdCurrency()
+	return optu
+}
+
+// SetLiveCoinUsdCurrency sets the "live_coin_usd_currency" field.
+func (optu *OrderPaymentTransferUpdate) SetLiveCoinUsdCurrency(d decimal.Decimal) *OrderPaymentTransferUpdate {
+	optu.mutation.SetLiveCoinUsdCurrency(d)
+	return optu
+}
+
+// SetNillableLiveCoinUsdCurrency sets the "live_coin_usd_currency" field if the given value is not nil.
+func (optu *OrderPaymentTransferUpdate) SetNillableLiveCoinUsdCurrency(d *decimal.Decimal) *OrderPaymentTransferUpdate {
+	if d != nil {
+		optu.SetLiveCoinUsdCurrency(*d)
+	}
+	return optu
+}
+
+// ClearLiveCoinUsdCurrency clears the value of the "live_coin_usd_currency" field.
+func (optu *OrderPaymentTransferUpdate) ClearLiveCoinUsdCurrency() *OrderPaymentTransferUpdate {
+	optu.mutation.ClearLiveCoinUsdCurrency()
 	return optu
 }
 
@@ -372,6 +452,19 @@ func (optu *OrderPaymentTransferUpdate) sqlSave(ctx context.Context) (n int, err
 			Column: orderpaymenttransfer.FieldCoinTypeID,
 		})
 	}
+	if value, ok := optu.mutation.Amount(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeOther,
+			Value:  value,
+			Column: orderpaymenttransfer.FieldAmount,
+		})
+	}
+	if optu.mutation.AmountCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeOther,
+			Column: orderpaymenttransfer.FieldAmount,
+		})
+	}
 	if value, ok := optu.mutation.StartAmount(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeOther,
@@ -409,6 +502,45 @@ func (optu *OrderPaymentTransferUpdate) sqlSave(ctx context.Context) (n int, err
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeOther,
 			Column: orderpaymenttransfer.FieldPaymentFinishAmount,
+		})
+	}
+	if value, ok := optu.mutation.CoinUsdCurrency(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeOther,
+			Value:  value,
+			Column: orderpaymenttransfer.FieldCoinUsdCurrency,
+		})
+	}
+	if optu.mutation.CoinUsdCurrencyCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeOther,
+			Column: orderpaymenttransfer.FieldCoinUsdCurrency,
+		})
+	}
+	if value, ok := optu.mutation.LocalCoinUsdCurrency(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeOther,
+			Value:  value,
+			Column: orderpaymenttransfer.FieldLocalCoinUsdCurrency,
+		})
+	}
+	if optu.mutation.LocalCoinUsdCurrencyCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeOther,
+			Column: orderpaymenttransfer.FieldLocalCoinUsdCurrency,
+		})
+	}
+	if value, ok := optu.mutation.LiveCoinUsdCurrency(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeOther,
+			Value:  value,
+			Column: orderpaymenttransfer.FieldLiveCoinUsdCurrency,
+		})
+	}
+	if optu.mutation.LiveCoinUsdCurrencyCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeOther,
+			Column: orderpaymenttransfer.FieldLiveCoinUsdCurrency,
 		})
 	}
 	_spec.Modifiers = optu.modifiers
@@ -541,6 +673,26 @@ func (optuo *OrderPaymentTransferUpdateOne) ClearCoinTypeID() *OrderPaymentTrans
 	return optuo
 }
 
+// SetAmount sets the "amount" field.
+func (optuo *OrderPaymentTransferUpdateOne) SetAmount(d decimal.Decimal) *OrderPaymentTransferUpdateOne {
+	optuo.mutation.SetAmount(d)
+	return optuo
+}
+
+// SetNillableAmount sets the "amount" field if the given value is not nil.
+func (optuo *OrderPaymentTransferUpdateOne) SetNillableAmount(d *decimal.Decimal) *OrderPaymentTransferUpdateOne {
+	if d != nil {
+		optuo.SetAmount(*d)
+	}
+	return optuo
+}
+
+// ClearAmount clears the value of the "amount" field.
+func (optuo *OrderPaymentTransferUpdateOne) ClearAmount() *OrderPaymentTransferUpdateOne {
+	optuo.mutation.ClearAmount()
+	return optuo
+}
+
 // SetStartAmount sets the "start_amount" field.
 func (optuo *OrderPaymentTransferUpdateOne) SetStartAmount(d decimal.Decimal) *OrderPaymentTransferUpdateOne {
 	optuo.mutation.SetStartAmount(d)
@@ -598,6 +750,66 @@ func (optuo *OrderPaymentTransferUpdateOne) SetNillablePaymentFinishAmount(d *de
 // ClearPaymentFinishAmount clears the value of the "payment_finish_amount" field.
 func (optuo *OrderPaymentTransferUpdateOne) ClearPaymentFinishAmount() *OrderPaymentTransferUpdateOne {
 	optuo.mutation.ClearPaymentFinishAmount()
+	return optuo
+}
+
+// SetCoinUsdCurrency sets the "coin_usd_currency" field.
+func (optuo *OrderPaymentTransferUpdateOne) SetCoinUsdCurrency(d decimal.Decimal) *OrderPaymentTransferUpdateOne {
+	optuo.mutation.SetCoinUsdCurrency(d)
+	return optuo
+}
+
+// SetNillableCoinUsdCurrency sets the "coin_usd_currency" field if the given value is not nil.
+func (optuo *OrderPaymentTransferUpdateOne) SetNillableCoinUsdCurrency(d *decimal.Decimal) *OrderPaymentTransferUpdateOne {
+	if d != nil {
+		optuo.SetCoinUsdCurrency(*d)
+	}
+	return optuo
+}
+
+// ClearCoinUsdCurrency clears the value of the "coin_usd_currency" field.
+func (optuo *OrderPaymentTransferUpdateOne) ClearCoinUsdCurrency() *OrderPaymentTransferUpdateOne {
+	optuo.mutation.ClearCoinUsdCurrency()
+	return optuo
+}
+
+// SetLocalCoinUsdCurrency sets the "local_coin_usd_currency" field.
+func (optuo *OrderPaymentTransferUpdateOne) SetLocalCoinUsdCurrency(d decimal.Decimal) *OrderPaymentTransferUpdateOne {
+	optuo.mutation.SetLocalCoinUsdCurrency(d)
+	return optuo
+}
+
+// SetNillableLocalCoinUsdCurrency sets the "local_coin_usd_currency" field if the given value is not nil.
+func (optuo *OrderPaymentTransferUpdateOne) SetNillableLocalCoinUsdCurrency(d *decimal.Decimal) *OrderPaymentTransferUpdateOne {
+	if d != nil {
+		optuo.SetLocalCoinUsdCurrency(*d)
+	}
+	return optuo
+}
+
+// ClearLocalCoinUsdCurrency clears the value of the "local_coin_usd_currency" field.
+func (optuo *OrderPaymentTransferUpdateOne) ClearLocalCoinUsdCurrency() *OrderPaymentTransferUpdateOne {
+	optuo.mutation.ClearLocalCoinUsdCurrency()
+	return optuo
+}
+
+// SetLiveCoinUsdCurrency sets the "live_coin_usd_currency" field.
+func (optuo *OrderPaymentTransferUpdateOne) SetLiveCoinUsdCurrency(d decimal.Decimal) *OrderPaymentTransferUpdateOne {
+	optuo.mutation.SetLiveCoinUsdCurrency(d)
+	return optuo
+}
+
+// SetNillableLiveCoinUsdCurrency sets the "live_coin_usd_currency" field if the given value is not nil.
+func (optuo *OrderPaymentTransferUpdateOne) SetNillableLiveCoinUsdCurrency(d *decimal.Decimal) *OrderPaymentTransferUpdateOne {
+	if d != nil {
+		optuo.SetLiveCoinUsdCurrency(*d)
+	}
+	return optuo
+}
+
+// ClearLiveCoinUsdCurrency clears the value of the "live_coin_usd_currency" field.
+func (optuo *OrderPaymentTransferUpdateOne) ClearLiveCoinUsdCurrency() *OrderPaymentTransferUpdateOne {
+	optuo.mutation.ClearLiveCoinUsdCurrency()
 	return optuo
 }
 
@@ -804,6 +1016,19 @@ func (optuo *OrderPaymentTransferUpdateOne) sqlSave(ctx context.Context) (_node 
 			Column: orderpaymenttransfer.FieldCoinTypeID,
 		})
 	}
+	if value, ok := optuo.mutation.Amount(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeOther,
+			Value:  value,
+			Column: orderpaymenttransfer.FieldAmount,
+		})
+	}
+	if optuo.mutation.AmountCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeOther,
+			Column: orderpaymenttransfer.FieldAmount,
+		})
+	}
 	if value, ok := optuo.mutation.StartAmount(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeOther,
@@ -841,6 +1066,45 @@ func (optuo *OrderPaymentTransferUpdateOne) sqlSave(ctx context.Context) (_node 
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeOther,
 			Column: orderpaymenttransfer.FieldPaymentFinishAmount,
+		})
+	}
+	if value, ok := optuo.mutation.CoinUsdCurrency(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeOther,
+			Value:  value,
+			Column: orderpaymenttransfer.FieldCoinUsdCurrency,
+		})
+	}
+	if optuo.mutation.CoinUsdCurrencyCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeOther,
+			Column: orderpaymenttransfer.FieldCoinUsdCurrency,
+		})
+	}
+	if value, ok := optuo.mutation.LocalCoinUsdCurrency(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeOther,
+			Value:  value,
+			Column: orderpaymenttransfer.FieldLocalCoinUsdCurrency,
+		})
+	}
+	if optuo.mutation.LocalCoinUsdCurrencyCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeOther,
+			Column: orderpaymenttransfer.FieldLocalCoinUsdCurrency,
+		})
+	}
+	if value, ok := optuo.mutation.LiveCoinUsdCurrency(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeOther,
+			Value:  value,
+			Column: orderpaymenttransfer.FieldLiveCoinUsdCurrency,
+		})
+	}
+	if optuo.mutation.LiveCoinUsdCurrencyCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeOther,
+			Column: orderpaymenttransfer.FieldLiveCoinUsdCurrency,
 		})
 	}
 	_spec.Modifiers = optuo.modifiers

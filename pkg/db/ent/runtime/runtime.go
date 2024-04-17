@@ -575,18 +575,34 @@ func init() {
 	orderpaymenttransferDescCoinTypeID := orderpaymenttransferFields[1].Descriptor()
 	// orderpaymenttransfer.DefaultCoinTypeID holds the default value on creation for the coin_type_id field.
 	orderpaymenttransfer.DefaultCoinTypeID = orderpaymenttransferDescCoinTypeID.Default.(func() uuid.UUID)
+	// orderpaymenttransferDescAmount is the schema descriptor for amount field.
+	orderpaymenttransferDescAmount := orderpaymenttransferFields[2].Descriptor()
+	// orderpaymenttransfer.DefaultAmount holds the default value on creation for the amount field.
+	orderpaymenttransfer.DefaultAmount = orderpaymenttransferDescAmount.Default.(decimal.Decimal)
 	// orderpaymenttransferDescStartAmount is the schema descriptor for start_amount field.
-	orderpaymenttransferDescStartAmount := orderpaymenttransferFields[2].Descriptor()
+	orderpaymenttransferDescStartAmount := orderpaymenttransferFields[3].Descriptor()
 	// orderpaymenttransfer.DefaultStartAmount holds the default value on creation for the start_amount field.
 	orderpaymenttransfer.DefaultStartAmount = orderpaymenttransferDescStartAmount.Default.(decimal.Decimal)
 	// orderpaymenttransferDescPaymentTransactionID is the schema descriptor for payment_transaction_id field.
-	orderpaymenttransferDescPaymentTransactionID := orderpaymenttransferFields[3].Descriptor()
+	orderpaymenttransferDescPaymentTransactionID := orderpaymenttransferFields[4].Descriptor()
 	// orderpaymenttransfer.DefaultPaymentTransactionID holds the default value on creation for the payment_transaction_id field.
 	orderpaymenttransfer.DefaultPaymentTransactionID = orderpaymenttransferDescPaymentTransactionID.Default.(string)
 	// orderpaymenttransferDescPaymentFinishAmount is the schema descriptor for payment_finish_amount field.
-	orderpaymenttransferDescPaymentFinishAmount := orderpaymenttransferFields[4].Descriptor()
+	orderpaymenttransferDescPaymentFinishAmount := orderpaymenttransferFields[5].Descriptor()
 	// orderpaymenttransfer.DefaultPaymentFinishAmount holds the default value on creation for the payment_finish_amount field.
 	orderpaymenttransfer.DefaultPaymentFinishAmount = orderpaymenttransferDescPaymentFinishAmount.Default.(decimal.Decimal)
+	// orderpaymenttransferDescCoinUsdCurrency is the schema descriptor for coin_usd_currency field.
+	orderpaymenttransferDescCoinUsdCurrency := orderpaymenttransferFields[6].Descriptor()
+	// orderpaymenttransfer.DefaultCoinUsdCurrency holds the default value on creation for the coin_usd_currency field.
+	orderpaymenttransfer.DefaultCoinUsdCurrency = orderpaymenttransferDescCoinUsdCurrency.Default.(decimal.Decimal)
+	// orderpaymenttransferDescLocalCoinUsdCurrency is the schema descriptor for local_coin_usd_currency field.
+	orderpaymenttransferDescLocalCoinUsdCurrency := orderpaymenttransferFields[7].Descriptor()
+	// orderpaymenttransfer.DefaultLocalCoinUsdCurrency holds the default value on creation for the local_coin_usd_currency field.
+	orderpaymenttransfer.DefaultLocalCoinUsdCurrency = orderpaymenttransferDescLocalCoinUsdCurrency.Default.(decimal.Decimal)
+	// orderpaymenttransferDescLiveCoinUsdCurrency is the schema descriptor for live_coin_usd_currency field.
+	orderpaymenttransferDescLiveCoinUsdCurrency := orderpaymenttransferFields[8].Descriptor()
+	// orderpaymenttransfer.DefaultLiveCoinUsdCurrency holds the default value on creation for the live_coin_usd_currency field.
+	orderpaymenttransfer.DefaultLiveCoinUsdCurrency = orderpaymenttransferDescLiveCoinUsdCurrency.Default.(decimal.Decimal)
 	orderstateMixin := schema.OrderState{}.Mixin()
 	orderstate.Policy = privacy.NewPolicies(orderstateMixin[0], schema.OrderState{})
 	orderstate.Hooks[0] = func(next ent.Mutator) ent.Mutator {

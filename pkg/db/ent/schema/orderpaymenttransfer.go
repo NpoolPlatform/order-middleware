@@ -39,6 +39,13 @@ func (OrderPaymentTransfer) Fields() []ent.Field {
 				return uuid.Nil
 			}),
 		field.
+			Other("amount", decimal.Decimal{}).
+			SchemaType(map[string]string{
+				dialect.MySQL: "decimal(37,18)",
+			}).
+			Optional().
+			Default(decimal.Decimal{}),
+		field.
 			Other("start_amount", decimal.Decimal{}).
 			SchemaType(map[string]string{
 				dialect.MySQL: "decimal(37,18)",
@@ -53,6 +60,27 @@ func (OrderPaymentTransfer) Fields() []ent.Field {
 			Other("payment_finish_amount", decimal.Decimal{}).
 			SchemaType(map[string]string{
 				dialect.MySQL: "decimal(37,18)",
+			}).
+			Optional().
+			Default(decimal.Decimal{}),
+		field.
+			Other("coin_usd_currency", decimal.Decimal{}).
+			SchemaType(map[string]string{
+				dialect.MySQL: "decimal(37, 18)",
+			}).
+			Optional().
+			Default(decimal.Decimal{}),
+		field.
+			Other("local_coin_usd_currency", decimal.Decimal{}).
+			SchemaType(map[string]string{
+				dialect.MySQL: "decimal(37, 18)",
+			}).
+			Optional().
+			Default(decimal.Decimal{}),
+		field.
+			Other("live_coin_usd_currency", decimal.Decimal{}).
+			SchemaType(map[string]string{
+				dialect.MySQL: "decimal(37, 18)",
 			}).
 			Optional().
 			Default(decimal.Decimal{}),

@@ -243,9 +243,13 @@ var schemaGraph = func() *sqlgraph.Schema {
 			orderpaymenttransfer.FieldEntID:                {Type: field.TypeUUID, Column: orderpaymenttransfer.FieldEntID},
 			orderpaymenttransfer.FieldOrderID:              {Type: field.TypeUUID, Column: orderpaymenttransfer.FieldOrderID},
 			orderpaymenttransfer.FieldCoinTypeID:           {Type: field.TypeUUID, Column: orderpaymenttransfer.FieldCoinTypeID},
+			orderpaymenttransfer.FieldAmount:               {Type: field.TypeOther, Column: orderpaymenttransfer.FieldAmount},
 			orderpaymenttransfer.FieldStartAmount:          {Type: field.TypeOther, Column: orderpaymenttransfer.FieldStartAmount},
 			orderpaymenttransfer.FieldPaymentTransactionID: {Type: field.TypeString, Column: orderpaymenttransfer.FieldPaymentTransactionID},
 			orderpaymenttransfer.FieldPaymentFinishAmount:  {Type: field.TypeOther, Column: orderpaymenttransfer.FieldPaymentFinishAmount},
+			orderpaymenttransfer.FieldCoinUsdCurrency:      {Type: field.TypeOther, Column: orderpaymenttransfer.FieldCoinUsdCurrency},
+			orderpaymenttransfer.FieldLocalCoinUsdCurrency: {Type: field.TypeOther, Column: orderpaymenttransfer.FieldLocalCoinUsdCurrency},
+			orderpaymenttransfer.FieldLiveCoinUsdCurrency:  {Type: field.TypeOther, Column: orderpaymenttransfer.FieldLiveCoinUsdCurrency},
 		},
 	}
 	graph.Nodes[9] = &sqlgraph.Node{
@@ -1276,6 +1280,11 @@ func (f *OrderPaymentTransferFilter) WhereCoinTypeID(p entql.ValueP) {
 	f.Where(p.Field(orderpaymenttransfer.FieldCoinTypeID))
 }
 
+// WhereAmount applies the entql other predicate on the amount field.
+func (f *OrderPaymentTransferFilter) WhereAmount(p entql.OtherP) {
+	f.Where(p.Field(orderpaymenttransfer.FieldAmount))
+}
+
 // WhereStartAmount applies the entql other predicate on the start_amount field.
 func (f *OrderPaymentTransferFilter) WhereStartAmount(p entql.OtherP) {
 	f.Where(p.Field(orderpaymenttransfer.FieldStartAmount))
@@ -1289,6 +1298,21 @@ func (f *OrderPaymentTransferFilter) WherePaymentTransactionID(p entql.StringP) 
 // WherePaymentFinishAmount applies the entql other predicate on the payment_finish_amount field.
 func (f *OrderPaymentTransferFilter) WherePaymentFinishAmount(p entql.OtherP) {
 	f.Where(p.Field(orderpaymenttransfer.FieldPaymentFinishAmount))
+}
+
+// WhereCoinUsdCurrency applies the entql other predicate on the coin_usd_currency field.
+func (f *OrderPaymentTransferFilter) WhereCoinUsdCurrency(p entql.OtherP) {
+	f.Where(p.Field(orderpaymenttransfer.FieldCoinUsdCurrency))
+}
+
+// WhereLocalCoinUsdCurrency applies the entql other predicate on the local_coin_usd_currency field.
+func (f *OrderPaymentTransferFilter) WhereLocalCoinUsdCurrency(p entql.OtherP) {
+	f.Where(p.Field(orderpaymenttransfer.FieldLocalCoinUsdCurrency))
+}
+
+// WhereLiveCoinUsdCurrency applies the entql other predicate on the live_coin_usd_currency field.
+func (f *OrderPaymentTransferFilter) WhereLiveCoinUsdCurrency(p entql.OtherP) {
+	f.Where(p.Field(orderpaymenttransfer.FieldLiveCoinUsdCurrency))
 }
 
 // addPredicate implements the predicateAdder interface.

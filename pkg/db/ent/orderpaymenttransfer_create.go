@@ -107,6 +107,20 @@ func (optc *OrderPaymentTransferCreate) SetNillableCoinTypeID(u *uuid.UUID) *Ord
 	return optc
 }
 
+// SetAmount sets the "amount" field.
+func (optc *OrderPaymentTransferCreate) SetAmount(d decimal.Decimal) *OrderPaymentTransferCreate {
+	optc.mutation.SetAmount(d)
+	return optc
+}
+
+// SetNillableAmount sets the "amount" field if the given value is not nil.
+func (optc *OrderPaymentTransferCreate) SetNillableAmount(d *decimal.Decimal) *OrderPaymentTransferCreate {
+	if d != nil {
+		optc.SetAmount(*d)
+	}
+	return optc
+}
+
 // SetStartAmount sets the "start_amount" field.
 func (optc *OrderPaymentTransferCreate) SetStartAmount(d decimal.Decimal) *OrderPaymentTransferCreate {
 	optc.mutation.SetStartAmount(d)
@@ -145,6 +159,48 @@ func (optc *OrderPaymentTransferCreate) SetPaymentFinishAmount(d decimal.Decimal
 func (optc *OrderPaymentTransferCreate) SetNillablePaymentFinishAmount(d *decimal.Decimal) *OrderPaymentTransferCreate {
 	if d != nil {
 		optc.SetPaymentFinishAmount(*d)
+	}
+	return optc
+}
+
+// SetCoinUsdCurrency sets the "coin_usd_currency" field.
+func (optc *OrderPaymentTransferCreate) SetCoinUsdCurrency(d decimal.Decimal) *OrderPaymentTransferCreate {
+	optc.mutation.SetCoinUsdCurrency(d)
+	return optc
+}
+
+// SetNillableCoinUsdCurrency sets the "coin_usd_currency" field if the given value is not nil.
+func (optc *OrderPaymentTransferCreate) SetNillableCoinUsdCurrency(d *decimal.Decimal) *OrderPaymentTransferCreate {
+	if d != nil {
+		optc.SetCoinUsdCurrency(*d)
+	}
+	return optc
+}
+
+// SetLocalCoinUsdCurrency sets the "local_coin_usd_currency" field.
+func (optc *OrderPaymentTransferCreate) SetLocalCoinUsdCurrency(d decimal.Decimal) *OrderPaymentTransferCreate {
+	optc.mutation.SetLocalCoinUsdCurrency(d)
+	return optc
+}
+
+// SetNillableLocalCoinUsdCurrency sets the "local_coin_usd_currency" field if the given value is not nil.
+func (optc *OrderPaymentTransferCreate) SetNillableLocalCoinUsdCurrency(d *decimal.Decimal) *OrderPaymentTransferCreate {
+	if d != nil {
+		optc.SetLocalCoinUsdCurrency(*d)
+	}
+	return optc
+}
+
+// SetLiveCoinUsdCurrency sets the "live_coin_usd_currency" field.
+func (optc *OrderPaymentTransferCreate) SetLiveCoinUsdCurrency(d decimal.Decimal) *OrderPaymentTransferCreate {
+	optc.mutation.SetLiveCoinUsdCurrency(d)
+	return optc
+}
+
+// SetNillableLiveCoinUsdCurrency sets the "live_coin_usd_currency" field if the given value is not nil.
+func (optc *OrderPaymentTransferCreate) SetNillableLiveCoinUsdCurrency(d *decimal.Decimal) *OrderPaymentTransferCreate {
+	if d != nil {
+		optc.SetLiveCoinUsdCurrency(*d)
 	}
 	return optc
 }
@@ -276,6 +332,10 @@ func (optc *OrderPaymentTransferCreate) defaults() error {
 		v := orderpaymenttransfer.DefaultCoinTypeID()
 		optc.mutation.SetCoinTypeID(v)
 	}
+	if _, ok := optc.mutation.Amount(); !ok {
+		v := orderpaymenttransfer.DefaultAmount
+		optc.mutation.SetAmount(v)
+	}
 	if _, ok := optc.mutation.StartAmount(); !ok {
 		v := orderpaymenttransfer.DefaultStartAmount
 		optc.mutation.SetStartAmount(v)
@@ -287,6 +347,18 @@ func (optc *OrderPaymentTransferCreate) defaults() error {
 	if _, ok := optc.mutation.PaymentFinishAmount(); !ok {
 		v := orderpaymenttransfer.DefaultPaymentFinishAmount
 		optc.mutation.SetPaymentFinishAmount(v)
+	}
+	if _, ok := optc.mutation.CoinUsdCurrency(); !ok {
+		v := orderpaymenttransfer.DefaultCoinUsdCurrency
+		optc.mutation.SetCoinUsdCurrency(v)
+	}
+	if _, ok := optc.mutation.LocalCoinUsdCurrency(); !ok {
+		v := orderpaymenttransfer.DefaultLocalCoinUsdCurrency
+		optc.mutation.SetLocalCoinUsdCurrency(v)
+	}
+	if _, ok := optc.mutation.LiveCoinUsdCurrency(); !ok {
+		v := orderpaymenttransfer.DefaultLiveCoinUsdCurrency
+		optc.mutation.SetLiveCoinUsdCurrency(v)
 	}
 	return nil
 }
@@ -387,6 +459,14 @@ func (optc *OrderPaymentTransferCreate) createSpec() (*OrderPaymentTransfer, *sq
 		})
 		_node.CoinTypeID = value
 	}
+	if value, ok := optc.mutation.Amount(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeOther,
+			Value:  value,
+			Column: orderpaymenttransfer.FieldAmount,
+		})
+		_node.Amount = value
+	}
 	if value, ok := optc.mutation.StartAmount(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
 			Type:   field.TypeOther,
@@ -410,6 +490,30 @@ func (optc *OrderPaymentTransferCreate) createSpec() (*OrderPaymentTransfer, *sq
 			Column: orderpaymenttransfer.FieldPaymentFinishAmount,
 		})
 		_node.PaymentFinishAmount = value
+	}
+	if value, ok := optc.mutation.CoinUsdCurrency(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeOther,
+			Value:  value,
+			Column: orderpaymenttransfer.FieldCoinUsdCurrency,
+		})
+		_node.CoinUsdCurrency = value
+	}
+	if value, ok := optc.mutation.LocalCoinUsdCurrency(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeOther,
+			Value:  value,
+			Column: orderpaymenttransfer.FieldLocalCoinUsdCurrency,
+		})
+		_node.LocalCoinUsdCurrency = value
+	}
+	if value, ok := optc.mutation.LiveCoinUsdCurrency(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeOther,
+			Value:  value,
+			Column: orderpaymenttransfer.FieldLiveCoinUsdCurrency,
+		})
+		_node.LiveCoinUsdCurrency = value
 	}
 	return _node, _spec
 }
@@ -567,6 +671,24 @@ func (u *OrderPaymentTransferUpsert) ClearCoinTypeID() *OrderPaymentTransferUpse
 	return u
 }
 
+// SetAmount sets the "amount" field.
+func (u *OrderPaymentTransferUpsert) SetAmount(v decimal.Decimal) *OrderPaymentTransferUpsert {
+	u.Set(orderpaymenttransfer.FieldAmount, v)
+	return u
+}
+
+// UpdateAmount sets the "amount" field to the value that was provided on create.
+func (u *OrderPaymentTransferUpsert) UpdateAmount() *OrderPaymentTransferUpsert {
+	u.SetExcluded(orderpaymenttransfer.FieldAmount)
+	return u
+}
+
+// ClearAmount clears the value of the "amount" field.
+func (u *OrderPaymentTransferUpsert) ClearAmount() *OrderPaymentTransferUpsert {
+	u.SetNull(orderpaymenttransfer.FieldAmount)
+	return u
+}
+
 // SetStartAmount sets the "start_amount" field.
 func (u *OrderPaymentTransferUpsert) SetStartAmount(v decimal.Decimal) *OrderPaymentTransferUpsert {
 	u.Set(orderpaymenttransfer.FieldStartAmount, v)
@@ -618,6 +740,60 @@ func (u *OrderPaymentTransferUpsert) UpdatePaymentFinishAmount() *OrderPaymentTr
 // ClearPaymentFinishAmount clears the value of the "payment_finish_amount" field.
 func (u *OrderPaymentTransferUpsert) ClearPaymentFinishAmount() *OrderPaymentTransferUpsert {
 	u.SetNull(orderpaymenttransfer.FieldPaymentFinishAmount)
+	return u
+}
+
+// SetCoinUsdCurrency sets the "coin_usd_currency" field.
+func (u *OrderPaymentTransferUpsert) SetCoinUsdCurrency(v decimal.Decimal) *OrderPaymentTransferUpsert {
+	u.Set(orderpaymenttransfer.FieldCoinUsdCurrency, v)
+	return u
+}
+
+// UpdateCoinUsdCurrency sets the "coin_usd_currency" field to the value that was provided on create.
+func (u *OrderPaymentTransferUpsert) UpdateCoinUsdCurrency() *OrderPaymentTransferUpsert {
+	u.SetExcluded(orderpaymenttransfer.FieldCoinUsdCurrency)
+	return u
+}
+
+// ClearCoinUsdCurrency clears the value of the "coin_usd_currency" field.
+func (u *OrderPaymentTransferUpsert) ClearCoinUsdCurrency() *OrderPaymentTransferUpsert {
+	u.SetNull(orderpaymenttransfer.FieldCoinUsdCurrency)
+	return u
+}
+
+// SetLocalCoinUsdCurrency sets the "local_coin_usd_currency" field.
+func (u *OrderPaymentTransferUpsert) SetLocalCoinUsdCurrency(v decimal.Decimal) *OrderPaymentTransferUpsert {
+	u.Set(orderpaymenttransfer.FieldLocalCoinUsdCurrency, v)
+	return u
+}
+
+// UpdateLocalCoinUsdCurrency sets the "local_coin_usd_currency" field to the value that was provided on create.
+func (u *OrderPaymentTransferUpsert) UpdateLocalCoinUsdCurrency() *OrderPaymentTransferUpsert {
+	u.SetExcluded(orderpaymenttransfer.FieldLocalCoinUsdCurrency)
+	return u
+}
+
+// ClearLocalCoinUsdCurrency clears the value of the "local_coin_usd_currency" field.
+func (u *OrderPaymentTransferUpsert) ClearLocalCoinUsdCurrency() *OrderPaymentTransferUpsert {
+	u.SetNull(orderpaymenttransfer.FieldLocalCoinUsdCurrency)
+	return u
+}
+
+// SetLiveCoinUsdCurrency sets the "live_coin_usd_currency" field.
+func (u *OrderPaymentTransferUpsert) SetLiveCoinUsdCurrency(v decimal.Decimal) *OrderPaymentTransferUpsert {
+	u.Set(orderpaymenttransfer.FieldLiveCoinUsdCurrency, v)
+	return u
+}
+
+// UpdateLiveCoinUsdCurrency sets the "live_coin_usd_currency" field to the value that was provided on create.
+func (u *OrderPaymentTransferUpsert) UpdateLiveCoinUsdCurrency() *OrderPaymentTransferUpsert {
+	u.SetExcluded(orderpaymenttransfer.FieldLiveCoinUsdCurrency)
+	return u
+}
+
+// ClearLiveCoinUsdCurrency clears the value of the "live_coin_usd_currency" field.
+func (u *OrderPaymentTransferUpsert) ClearLiveCoinUsdCurrency() *OrderPaymentTransferUpsert {
+	u.SetNull(orderpaymenttransfer.FieldLiveCoinUsdCurrency)
 	return u
 }
 
@@ -790,6 +966,27 @@ func (u *OrderPaymentTransferUpsertOne) ClearCoinTypeID() *OrderPaymentTransferU
 	})
 }
 
+// SetAmount sets the "amount" field.
+func (u *OrderPaymentTransferUpsertOne) SetAmount(v decimal.Decimal) *OrderPaymentTransferUpsertOne {
+	return u.Update(func(s *OrderPaymentTransferUpsert) {
+		s.SetAmount(v)
+	})
+}
+
+// UpdateAmount sets the "amount" field to the value that was provided on create.
+func (u *OrderPaymentTransferUpsertOne) UpdateAmount() *OrderPaymentTransferUpsertOne {
+	return u.Update(func(s *OrderPaymentTransferUpsert) {
+		s.UpdateAmount()
+	})
+}
+
+// ClearAmount clears the value of the "amount" field.
+func (u *OrderPaymentTransferUpsertOne) ClearAmount() *OrderPaymentTransferUpsertOne {
+	return u.Update(func(s *OrderPaymentTransferUpsert) {
+		s.ClearAmount()
+	})
+}
+
 // SetStartAmount sets the "start_amount" field.
 func (u *OrderPaymentTransferUpsertOne) SetStartAmount(v decimal.Decimal) *OrderPaymentTransferUpsertOne {
 	return u.Update(func(s *OrderPaymentTransferUpsert) {
@@ -850,6 +1047,69 @@ func (u *OrderPaymentTransferUpsertOne) UpdatePaymentFinishAmount() *OrderPaymen
 func (u *OrderPaymentTransferUpsertOne) ClearPaymentFinishAmount() *OrderPaymentTransferUpsertOne {
 	return u.Update(func(s *OrderPaymentTransferUpsert) {
 		s.ClearPaymentFinishAmount()
+	})
+}
+
+// SetCoinUsdCurrency sets the "coin_usd_currency" field.
+func (u *OrderPaymentTransferUpsertOne) SetCoinUsdCurrency(v decimal.Decimal) *OrderPaymentTransferUpsertOne {
+	return u.Update(func(s *OrderPaymentTransferUpsert) {
+		s.SetCoinUsdCurrency(v)
+	})
+}
+
+// UpdateCoinUsdCurrency sets the "coin_usd_currency" field to the value that was provided on create.
+func (u *OrderPaymentTransferUpsertOne) UpdateCoinUsdCurrency() *OrderPaymentTransferUpsertOne {
+	return u.Update(func(s *OrderPaymentTransferUpsert) {
+		s.UpdateCoinUsdCurrency()
+	})
+}
+
+// ClearCoinUsdCurrency clears the value of the "coin_usd_currency" field.
+func (u *OrderPaymentTransferUpsertOne) ClearCoinUsdCurrency() *OrderPaymentTransferUpsertOne {
+	return u.Update(func(s *OrderPaymentTransferUpsert) {
+		s.ClearCoinUsdCurrency()
+	})
+}
+
+// SetLocalCoinUsdCurrency sets the "local_coin_usd_currency" field.
+func (u *OrderPaymentTransferUpsertOne) SetLocalCoinUsdCurrency(v decimal.Decimal) *OrderPaymentTransferUpsertOne {
+	return u.Update(func(s *OrderPaymentTransferUpsert) {
+		s.SetLocalCoinUsdCurrency(v)
+	})
+}
+
+// UpdateLocalCoinUsdCurrency sets the "local_coin_usd_currency" field to the value that was provided on create.
+func (u *OrderPaymentTransferUpsertOne) UpdateLocalCoinUsdCurrency() *OrderPaymentTransferUpsertOne {
+	return u.Update(func(s *OrderPaymentTransferUpsert) {
+		s.UpdateLocalCoinUsdCurrency()
+	})
+}
+
+// ClearLocalCoinUsdCurrency clears the value of the "local_coin_usd_currency" field.
+func (u *OrderPaymentTransferUpsertOne) ClearLocalCoinUsdCurrency() *OrderPaymentTransferUpsertOne {
+	return u.Update(func(s *OrderPaymentTransferUpsert) {
+		s.ClearLocalCoinUsdCurrency()
+	})
+}
+
+// SetLiveCoinUsdCurrency sets the "live_coin_usd_currency" field.
+func (u *OrderPaymentTransferUpsertOne) SetLiveCoinUsdCurrency(v decimal.Decimal) *OrderPaymentTransferUpsertOne {
+	return u.Update(func(s *OrderPaymentTransferUpsert) {
+		s.SetLiveCoinUsdCurrency(v)
+	})
+}
+
+// UpdateLiveCoinUsdCurrency sets the "live_coin_usd_currency" field to the value that was provided on create.
+func (u *OrderPaymentTransferUpsertOne) UpdateLiveCoinUsdCurrency() *OrderPaymentTransferUpsertOne {
+	return u.Update(func(s *OrderPaymentTransferUpsert) {
+		s.UpdateLiveCoinUsdCurrency()
+	})
+}
+
+// ClearLiveCoinUsdCurrency clears the value of the "live_coin_usd_currency" field.
+func (u *OrderPaymentTransferUpsertOne) ClearLiveCoinUsdCurrency() *OrderPaymentTransferUpsertOne {
+	return u.Update(func(s *OrderPaymentTransferUpsert) {
+		s.ClearLiveCoinUsdCurrency()
 	})
 }
 
@@ -1187,6 +1447,27 @@ func (u *OrderPaymentTransferUpsertBulk) ClearCoinTypeID() *OrderPaymentTransfer
 	})
 }
 
+// SetAmount sets the "amount" field.
+func (u *OrderPaymentTransferUpsertBulk) SetAmount(v decimal.Decimal) *OrderPaymentTransferUpsertBulk {
+	return u.Update(func(s *OrderPaymentTransferUpsert) {
+		s.SetAmount(v)
+	})
+}
+
+// UpdateAmount sets the "amount" field to the value that was provided on create.
+func (u *OrderPaymentTransferUpsertBulk) UpdateAmount() *OrderPaymentTransferUpsertBulk {
+	return u.Update(func(s *OrderPaymentTransferUpsert) {
+		s.UpdateAmount()
+	})
+}
+
+// ClearAmount clears the value of the "amount" field.
+func (u *OrderPaymentTransferUpsertBulk) ClearAmount() *OrderPaymentTransferUpsertBulk {
+	return u.Update(func(s *OrderPaymentTransferUpsert) {
+		s.ClearAmount()
+	})
+}
+
 // SetStartAmount sets the "start_amount" field.
 func (u *OrderPaymentTransferUpsertBulk) SetStartAmount(v decimal.Decimal) *OrderPaymentTransferUpsertBulk {
 	return u.Update(func(s *OrderPaymentTransferUpsert) {
@@ -1247,6 +1528,69 @@ func (u *OrderPaymentTransferUpsertBulk) UpdatePaymentFinishAmount() *OrderPayme
 func (u *OrderPaymentTransferUpsertBulk) ClearPaymentFinishAmount() *OrderPaymentTransferUpsertBulk {
 	return u.Update(func(s *OrderPaymentTransferUpsert) {
 		s.ClearPaymentFinishAmount()
+	})
+}
+
+// SetCoinUsdCurrency sets the "coin_usd_currency" field.
+func (u *OrderPaymentTransferUpsertBulk) SetCoinUsdCurrency(v decimal.Decimal) *OrderPaymentTransferUpsertBulk {
+	return u.Update(func(s *OrderPaymentTransferUpsert) {
+		s.SetCoinUsdCurrency(v)
+	})
+}
+
+// UpdateCoinUsdCurrency sets the "coin_usd_currency" field to the value that was provided on create.
+func (u *OrderPaymentTransferUpsertBulk) UpdateCoinUsdCurrency() *OrderPaymentTransferUpsertBulk {
+	return u.Update(func(s *OrderPaymentTransferUpsert) {
+		s.UpdateCoinUsdCurrency()
+	})
+}
+
+// ClearCoinUsdCurrency clears the value of the "coin_usd_currency" field.
+func (u *OrderPaymentTransferUpsertBulk) ClearCoinUsdCurrency() *OrderPaymentTransferUpsertBulk {
+	return u.Update(func(s *OrderPaymentTransferUpsert) {
+		s.ClearCoinUsdCurrency()
+	})
+}
+
+// SetLocalCoinUsdCurrency sets the "local_coin_usd_currency" field.
+func (u *OrderPaymentTransferUpsertBulk) SetLocalCoinUsdCurrency(v decimal.Decimal) *OrderPaymentTransferUpsertBulk {
+	return u.Update(func(s *OrderPaymentTransferUpsert) {
+		s.SetLocalCoinUsdCurrency(v)
+	})
+}
+
+// UpdateLocalCoinUsdCurrency sets the "local_coin_usd_currency" field to the value that was provided on create.
+func (u *OrderPaymentTransferUpsertBulk) UpdateLocalCoinUsdCurrency() *OrderPaymentTransferUpsertBulk {
+	return u.Update(func(s *OrderPaymentTransferUpsert) {
+		s.UpdateLocalCoinUsdCurrency()
+	})
+}
+
+// ClearLocalCoinUsdCurrency clears the value of the "local_coin_usd_currency" field.
+func (u *OrderPaymentTransferUpsertBulk) ClearLocalCoinUsdCurrency() *OrderPaymentTransferUpsertBulk {
+	return u.Update(func(s *OrderPaymentTransferUpsert) {
+		s.ClearLocalCoinUsdCurrency()
+	})
+}
+
+// SetLiveCoinUsdCurrency sets the "live_coin_usd_currency" field.
+func (u *OrderPaymentTransferUpsertBulk) SetLiveCoinUsdCurrency(v decimal.Decimal) *OrderPaymentTransferUpsertBulk {
+	return u.Update(func(s *OrderPaymentTransferUpsert) {
+		s.SetLiveCoinUsdCurrency(v)
+	})
+}
+
+// UpdateLiveCoinUsdCurrency sets the "live_coin_usd_currency" field to the value that was provided on create.
+func (u *OrderPaymentTransferUpsertBulk) UpdateLiveCoinUsdCurrency() *OrderPaymentTransferUpsertBulk {
+	return u.Update(func(s *OrderPaymentTransferUpsert) {
+		s.UpdateLiveCoinUsdCurrency()
+	})
+}
+
+// ClearLiveCoinUsdCurrency clears the value of the "live_coin_usd_currency" field.
+func (u *OrderPaymentTransferUpsertBulk) ClearLiveCoinUsdCurrency() *OrderPaymentTransferUpsertBulk {
+	return u.Update(func(s *OrderPaymentTransferUpsert) {
+		s.ClearLiveCoinUsdCurrency()
 	})
 }
 

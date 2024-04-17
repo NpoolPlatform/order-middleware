@@ -25,12 +25,20 @@ const (
 	FieldOrderID = "order_id"
 	// FieldCoinTypeID holds the string denoting the coin_type_id field in the database.
 	FieldCoinTypeID = "coin_type_id"
+	// FieldAmount holds the string denoting the amount field in the database.
+	FieldAmount = "amount"
 	// FieldStartAmount holds the string denoting the start_amount field in the database.
 	FieldStartAmount = "start_amount"
 	// FieldPaymentTransactionID holds the string denoting the payment_transaction_id field in the database.
 	FieldPaymentTransactionID = "payment_transaction_id"
 	// FieldPaymentFinishAmount holds the string denoting the payment_finish_amount field in the database.
 	FieldPaymentFinishAmount = "payment_finish_amount"
+	// FieldCoinUsdCurrency holds the string denoting the coin_usd_currency field in the database.
+	FieldCoinUsdCurrency = "coin_usd_currency"
+	// FieldLocalCoinUsdCurrency holds the string denoting the local_coin_usd_currency field in the database.
+	FieldLocalCoinUsdCurrency = "local_coin_usd_currency"
+	// FieldLiveCoinUsdCurrency holds the string denoting the live_coin_usd_currency field in the database.
+	FieldLiveCoinUsdCurrency = "live_coin_usd_currency"
 	// Table holds the table name of the orderpaymenttransfer in the database.
 	Table = "order_payment_transfers"
 )
@@ -44,9 +52,13 @@ var Columns = []string{
 	FieldEntID,
 	FieldOrderID,
 	FieldCoinTypeID,
+	FieldAmount,
 	FieldStartAmount,
 	FieldPaymentTransactionID,
 	FieldPaymentFinishAmount,
+	FieldCoinUsdCurrency,
+	FieldLocalCoinUsdCurrency,
+	FieldLiveCoinUsdCurrency,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -82,10 +94,18 @@ var (
 	DefaultOrderID func() uuid.UUID
 	// DefaultCoinTypeID holds the default value on creation for the "coin_type_id" field.
 	DefaultCoinTypeID func() uuid.UUID
+	// DefaultAmount holds the default value on creation for the "amount" field.
+	DefaultAmount decimal.Decimal
 	// DefaultStartAmount holds the default value on creation for the "start_amount" field.
 	DefaultStartAmount decimal.Decimal
 	// DefaultPaymentTransactionID holds the default value on creation for the "payment_transaction_id" field.
 	DefaultPaymentTransactionID string
 	// DefaultPaymentFinishAmount holds the default value on creation for the "payment_finish_amount" field.
 	DefaultPaymentFinishAmount decimal.Decimal
+	// DefaultCoinUsdCurrency holds the default value on creation for the "coin_usd_currency" field.
+	DefaultCoinUsdCurrency decimal.Decimal
+	// DefaultLocalCoinUsdCurrency holds the default value on creation for the "local_coin_usd_currency" field.
+	DefaultLocalCoinUsdCurrency decimal.Decimal
+	// DefaultLiveCoinUsdCurrency holds the default value on creation for the "live_coin_usd_currency" field.
+	DefaultLiveCoinUsdCurrency decimal.Decimal
 )
