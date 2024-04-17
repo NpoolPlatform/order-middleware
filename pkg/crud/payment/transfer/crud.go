@@ -5,25 +5,26 @@ import (
 
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent"
-	entpaymenttransfer "github.com/NpoolPlatform/order-middleware/pkg/db/ent/orderpaymenttransfer"
+	entpaymenttransfer "github.com/NpoolPlatform/order-middleware/pkg/db/ent/paymenttransfer"
 	"github.com/google/uuid"
 	"github.com/shopspring/decimal"
 )
 
 type Req struct {
-	EntID       *uuid.UUID
-	OrderID     *uuid.UUID
-	CoinTypeID  *uuid.UUID
-	Amount      *decimal.Decimal
-	StartAmount *decimal.Decimal
-	PaymentTransactionID
+	EntID                *uuid.UUID
+	OrderID              *uuid.UUID
+	CoinTypeID           *uuid.UUID
+	Amount               *decimal.Decimal
+	StartAmount          *decimal.Decimal
+	TransactionID        *string
+	FinishAmount         *decimal.Decimal
 	CoinUSDCurrency      *decimal.Decimal
 	LocalCoinUSDCurrency *decimal.Decimal
 	LiveCoinUSDCurrency  *decimal.Decimal
 	DeletedAt            *uint32
 }
 
-func CreateSet(c *ent.OrderPaymentTransferCreate, req *Req) *ent.OrderPaymentTransferCreate {
+func CreateSet(c *ent.PaymentTransferCreate, req *Req) *ent.PaymentTransferCreate {
 	if req.EntID != nil {
 		c.SetEntID(*req.EntID)
 	}
@@ -35,6 +36,15 @@ func CreateSet(c *ent.OrderPaymentTransferCreate, req *Req) *ent.OrderPaymentTra
 	}
 	if req.Amount != nil {
 		c.SetAmount(*req.Amount)
+	}
+	if req.StartAmount != nil {
+		c.SetStartAmount(*req.StartAmount)
+	}
+	if req.TransactionID != nil {
+		c.SetTransactionID(*req.TransactionID)
+	}
+	if req.FinishAmount != nil {
+		c.SetFinishAmount(*req.FinishAmount)
 	}
 	if req.CoinUSDCurrency != nil {
 		c.SetCoinUsdCurrency(*req.CoinUSDCurrency)
@@ -48,7 +58,7 @@ func CreateSet(c *ent.OrderPaymentTransferCreate, req *Req) *ent.OrderPaymentTra
 	return c
 }
 
-func UpdateSet(u *ent.OrderPaymentTransferUpdateOne, req *Req) *ent.OrderPaymentTransferUpdateOne {
+func UpdateSet(u *ent.PaymentTransferUpdateOne, req *Req) *ent.PaymentTransferUpdateOne {
 	if req.DeletedAt != nil {
 		u.SetDeletedAt(*req.DeletedAt)
 	}
@@ -65,7 +75,7 @@ type Conds struct {
 }
 
 //nolint
-func SetQueryConds(q *ent.OrderPaymentTransferQuery, conds *Conds) (*ent.OrderPaymentTransferQuery, error) {
+func SetQueryConds(q *ent.PaymentTransferQuery, conds *Conds) (*ent.PaymentTransferQuery, error) {
 	q.Where(entpaymenttransfer.DeletedAt(0))
 	if conds == nil {
 		return q, nil

@@ -5,7 +5,7 @@ import (
 
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent"
-	entpaymentcontract "github.com/NpoolPlatform/order-middleware/pkg/db/ent/orderpaymentcontract"
+	entpaymentcontract "github.com/NpoolPlatform/order-middleware/pkg/db/ent/paymentcontract"
 	"github.com/google/uuid"
 	"github.com/shopspring/decimal"
 )
@@ -18,7 +18,7 @@ type Req struct {
 	DeletedAt  *uint32
 }
 
-func CreateSet(c *ent.OrderPaymentContractCreate, req *Req) *ent.OrderPaymentContractCreate {
+func CreateSet(c *ent.PaymentContractCreate, req *Req) *ent.PaymentContractCreate {
 	if req.EntID != nil {
 		c.SetEntID(*req.EntID)
 	}
@@ -34,7 +34,7 @@ func CreateSet(c *ent.OrderPaymentContractCreate, req *Req) *ent.OrderPaymentCon
 	return c
 }
 
-func UpdateSet(u *ent.OrderPaymentContractUpdateOne, req *Req) *ent.OrderPaymentContractUpdateOne {
+func UpdateSet(u *ent.PaymentContractUpdateOne, req *Req) *ent.PaymentContractUpdateOne {
 	if req.DeletedAt != nil {
 		u.SetDeletedAt(*req.DeletedAt)
 	}
@@ -51,7 +51,7 @@ type Conds struct {
 }
 
 //nolint
-func SetQueryConds(q *ent.OrderPaymentContractQuery, conds *Conds) (*ent.OrderPaymentContractQuery, error) {
+func SetQueryConds(q *ent.PaymentContractQuery, conds *Conds) (*ent.PaymentContractQuery, error) {
 	q.Where(entpaymentcontract.DeletedAt(0))
 	if conds == nil {
 		return q, nil
