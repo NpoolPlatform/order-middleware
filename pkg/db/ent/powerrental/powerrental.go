@@ -39,8 +39,6 @@ const (
 	FieldDuration = "duration"
 	// FieldInvestmentType holds the string denoting the investment_type field in the database.
 	FieldInvestmentType = "investment_type"
-	// FieldSimulate holds the string denoting the simulate field in the database.
-	FieldSimulate = "simulate"
 	// Table holds the table name of the powerrental in the database.
 	Table = "power_rentals"
 )
@@ -61,7 +59,6 @@ var Columns = []string{
 	FieldPromotionID,
 	FieldDuration,
 	FieldInvestmentType,
-	FieldSimulate,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -111,6 +108,4 @@ var (
 	DefaultDuration uint32
 	// DefaultInvestmentType holds the default value on creation for the "investment_type" field.
 	DefaultInvestmentType string
-	// DefaultSimulate holds the default value on creation for the "simulate" field.
-	DefaultSimulate bool
 )

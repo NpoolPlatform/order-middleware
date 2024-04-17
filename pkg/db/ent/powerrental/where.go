@@ -171,13 +171,6 @@ func InvestmentType(v string) predicate.PowerRental {
 	})
 }
 
-// Simulate applies equality check predicate on the "simulate" field. It's identical to SimulateEQ.
-func Simulate(v bool) predicate.PowerRental {
-	return predicate.PowerRental(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldSimulate), v))
-	})
-}
-
 // CreatedAtEQ applies the EQ predicate on the "created_at" field.
 func CreatedAtEQ(v uint32) predicate.PowerRental {
 	return predicate.PowerRental(func(s *sql.Selector) {
@@ -1168,34 +1161,6 @@ func InvestmentTypeEqualFold(v string) predicate.PowerRental {
 func InvestmentTypeContainsFold(v string) predicate.PowerRental {
 	return predicate.PowerRental(func(s *sql.Selector) {
 		s.Where(sql.ContainsFold(s.C(FieldInvestmentType), v))
-	})
-}
-
-// SimulateEQ applies the EQ predicate on the "simulate" field.
-func SimulateEQ(v bool) predicate.PowerRental {
-	return predicate.PowerRental(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldSimulate), v))
-	})
-}
-
-// SimulateNEQ applies the NEQ predicate on the "simulate" field.
-func SimulateNEQ(v bool) predicate.PowerRental {
-	return predicate.PowerRental(func(s *sql.Selector) {
-		s.Where(sql.NEQ(s.C(FieldSimulate), v))
-	})
-}
-
-// SimulateIsNil applies the IsNil predicate on the "simulate" field.
-func SimulateIsNil() predicate.PowerRental {
-	return predicate.PowerRental(func(s *sql.Selector) {
-		s.Where(sql.IsNull(s.C(FieldSimulate)))
-	})
-}
-
-// SimulateNotNil applies the NotNil predicate on the "simulate" field.
-func SimulateNotNil() predicate.PowerRental {
-	return predicate.PowerRental(func(s *sql.Selector) {
-		s.Where(sql.NotNull(s.C(FieldSimulate)))
 	})
 }
 

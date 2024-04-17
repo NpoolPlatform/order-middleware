@@ -149,6 +149,13 @@ func CreateMethod(v string) predicate.OrderBase {
 	})
 }
 
+// Simulate applies equality check predicate on the "simulate" field. It's identical to SimulateEQ.
+func Simulate(v bool) predicate.OrderBase {
+	return predicate.OrderBase(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldSimulate), v))
+	})
+}
+
 // CreatedAtEQ applies the EQ predicate on the "created_at" field.
 func CreatedAtEQ(v uint32) predicate.OrderBase {
 	return predicate.OrderBase(func(s *sql.Selector) {
@@ -975,6 +982,34 @@ func CreateMethodEqualFold(v string) predicate.OrderBase {
 func CreateMethodContainsFold(v string) predicate.OrderBase {
 	return predicate.OrderBase(func(s *sql.Selector) {
 		s.Where(sql.ContainsFold(s.C(FieldCreateMethod), v))
+	})
+}
+
+// SimulateEQ applies the EQ predicate on the "simulate" field.
+func SimulateEQ(v bool) predicate.OrderBase {
+	return predicate.OrderBase(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldSimulate), v))
+	})
+}
+
+// SimulateNEQ applies the NEQ predicate on the "simulate" field.
+func SimulateNEQ(v bool) predicate.OrderBase {
+	return predicate.OrderBase(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldSimulate), v))
+	})
+}
+
+// SimulateIsNil applies the IsNil predicate on the "simulate" field.
+func SimulateIsNil() predicate.OrderBase {
+	return predicate.OrderBase(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldSimulate)))
+	})
+}
+
+// SimulateNotNil applies the NotNil predicate on the "simulate" field.
+func SimulateNotNil() predicate.OrderBase {
+	return predicate.OrderBase(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldSimulate)))
 	})
 }
 

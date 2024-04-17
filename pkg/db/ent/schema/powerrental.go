@@ -83,10 +83,6 @@ func (PowerRental) Fields() []ent.Field {
 			String("investment_type").
 			Optional().
 			Default(types.InvestmentType_FullPayment.String()),
-		field.
-			Bool("simulate").
-			Optional().
-			Default(false),
 	}
 }
 

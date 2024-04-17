@@ -134,6 +134,7 @@ var (
 		{Name: "order_type", Type: field.TypeString, Nullable: true, Default: "Normal"},
 		{Name: "payment_type", Type: field.TypeString, Nullable: true, Default: "PayWithBalanceOnly"},
 		{Name: "create_method", Type: field.TypeString, Nullable: true, Default: "OrderCreatedByPurchase"},
+		{Name: "simulate", Type: field.TypeBool, Nullable: true, Default: false},
 	}
 	// OrderBasesTable holds the schema information for the "order_bases" table.
 	OrderBasesTable = &schema.Table{
@@ -452,7 +453,6 @@ var (
 		{Name: "promotion_id", Type: field.TypeUUID, Nullable: true},
 		{Name: "duration", Type: field.TypeUint32, Nullable: true, Default: 0},
 		{Name: "investment_type", Type: field.TypeString, Nullable: true, Default: "FullPayment"},
-		{Name: "simulate", Type: field.TypeBool, Nullable: true, Default: false},
 	}
 	// PowerRentalsTable holds the schema information for the "power_rentals" table.
 	PowerRentalsTable = &schema.Table{

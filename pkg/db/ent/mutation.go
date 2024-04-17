@@ -4789,6 +4789,7 @@ type OrderBaseMutation struct {
 	order_type      *string
 	payment_type    *string
 	create_method   *string
+	simulate        *bool
 	clearedFields   map[string]struct{}
 	done            bool
 	oldValue        func(context.Context) (*OrderBase, error)
@@ -5397,6 +5398,55 @@ func (m *OrderBaseMutation) ResetCreateMethod() {
 	delete(m.clearedFields, orderbase.FieldCreateMethod)
 }
 
+// SetSimulate sets the "simulate" field.
+func (m *OrderBaseMutation) SetSimulate(b bool) {
+	m.simulate = &b
+}
+
+// Simulate returns the value of the "simulate" field in the mutation.
+func (m *OrderBaseMutation) Simulate() (r bool, exists bool) {
+	v := m.simulate
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldSimulate returns the old "simulate" field's value of the OrderBase entity.
+// If the OrderBase object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *OrderBaseMutation) OldSimulate(ctx context.Context) (v bool, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldSimulate is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldSimulate requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldSimulate: %w", err)
+	}
+	return oldValue.Simulate, nil
+}
+
+// ClearSimulate clears the value of the "simulate" field.
+func (m *OrderBaseMutation) ClearSimulate() {
+	m.simulate = nil
+	m.clearedFields[orderbase.FieldSimulate] = struct{}{}
+}
+
+// SimulateCleared returns if the "simulate" field was cleared in this mutation.
+func (m *OrderBaseMutation) SimulateCleared() bool {
+	_, ok := m.clearedFields[orderbase.FieldSimulate]
+	return ok
+}
+
+// ResetSimulate resets all changes to the "simulate" field.
+func (m *OrderBaseMutation) ResetSimulate() {
+	m.simulate = nil
+	delete(m.clearedFields, orderbase.FieldSimulate)
+}
+
 // Where appends a list predicates to the OrderBaseMutation builder.
 func (m *OrderBaseMutation) Where(ps ...predicate.OrderBase) {
 	m.predicates = append(m.predicates, ps...)
@@ -5416,7 +5466,7 @@ func (m *OrderBaseMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *OrderBaseMutation) Fields() []string {
-	fields := make([]string, 0, 10)
+	fields := make([]string, 0, 11)
 	if m.created_at != nil {
 		fields = append(fields, orderbase.FieldCreatedAt)
 	}
@@ -5447,6 +5497,9 @@ func (m *OrderBaseMutation) Fields() []string {
 	if m.create_method != nil {
 		fields = append(fields, orderbase.FieldCreateMethod)
 	}
+	if m.simulate != nil {
+		fields = append(fields, orderbase.FieldSimulate)
+	}
 	return fields
 }
 
@@ -5475,6 +5528,8 @@ func (m *OrderBaseMutation) Field(name string) (ent.Value, bool) {
 		return m.PaymentType()
 	case orderbase.FieldCreateMethod:
 		return m.CreateMethod()
+	case orderbase.FieldSimulate:
+		return m.Simulate()
 	}
 	return nil, false
 }
@@ -5504,6 +5559,8 @@ func (m *OrderBaseMutation) OldField(ctx context.Context, name string) (ent.Valu
 		return m.OldPaymentType(ctx)
 	case orderbase.FieldCreateMethod:
 		return m.OldCreateMethod(ctx)
+	case orderbase.FieldSimulate:
+		return m.OldSimulate(ctx)
 	}
 	return nil, fmt.Errorf("unknown OrderBase field %s", name)
 }
@@ -5582,6 +5639,13 @@ func (m *OrderBaseMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetCreateMethod(v)
+		return nil
+	case orderbase.FieldSimulate:
+		v, ok := value.(bool)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetSimulate(v)
 		return nil
 	}
 	return fmt.Errorf("unknown OrderBase field %s", name)
@@ -5670,6 +5734,9 @@ func (m *OrderBaseMutation) ClearedFields() []string {
 	if m.FieldCleared(orderbase.FieldCreateMethod) {
 		fields = append(fields, orderbase.FieldCreateMethod)
 	}
+	if m.FieldCleared(orderbase.FieldSimulate) {
+		fields = append(fields, orderbase.FieldSimulate)
+	}
 	return fields
 }
 
@@ -5701,6 +5768,9 @@ func (m *OrderBaseMutation) ClearField(name string) error {
 		return nil
 	case orderbase.FieldCreateMethod:
 		m.ClearCreateMethod()
+		return nil
+	case orderbase.FieldSimulate:
+		m.ClearSimulate()
 		return nil
 	}
 	return fmt.Errorf("unknown OrderBase nullable field %s", name)
@@ -5739,6 +5809,9 @@ func (m *OrderBaseMutation) ResetField(name string) error {
 		return nil
 	case orderbase.FieldCreateMethod:
 		m.ResetCreateMethod()
+		return nil
+	case orderbase.FieldSimulate:
+		m.ResetSimulate()
 		return nil
 	}
 	return fmt.Errorf("unknown OrderBase field %s", name)
@@ -15273,7 +15346,6 @@ type PowerRentalMutation struct {
 	duration        *uint32
 	addduration     *int32
 	investment_type *string
-	simulate        *bool
 	clearedFields   map[string]struct{}
 	done            bool
 	oldValue        func(context.Context) (*PowerRental, error)
@@ -16050,55 +16122,6 @@ func (m *PowerRentalMutation) ResetInvestmentType() {
 	delete(m.clearedFields, powerrental.FieldInvestmentType)
 }
 
-// SetSimulate sets the "simulate" field.
-func (m *PowerRentalMutation) SetSimulate(b bool) {
-	m.simulate = &b
-}
-
-// Simulate returns the value of the "simulate" field in the mutation.
-func (m *PowerRentalMutation) Simulate() (r bool, exists bool) {
-	v := m.simulate
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldSimulate returns the old "simulate" field's value of the PowerRental entity.
-// If the PowerRental object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *PowerRentalMutation) OldSimulate(ctx context.Context) (v bool, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldSimulate is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldSimulate requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldSimulate: %w", err)
-	}
-	return oldValue.Simulate, nil
-}
-
-// ClearSimulate clears the value of the "simulate" field.
-func (m *PowerRentalMutation) ClearSimulate() {
-	m.simulate = nil
-	m.clearedFields[powerrental.FieldSimulate] = struct{}{}
-}
-
-// SimulateCleared returns if the "simulate" field was cleared in this mutation.
-func (m *PowerRentalMutation) SimulateCleared() bool {
-	_, ok := m.clearedFields[powerrental.FieldSimulate]
-	return ok
-}
-
-// ResetSimulate resets all changes to the "simulate" field.
-func (m *PowerRentalMutation) ResetSimulate() {
-	m.simulate = nil
-	delete(m.clearedFields, powerrental.FieldSimulate)
-}
-
 // Where appends a list predicates to the PowerRentalMutation builder.
 func (m *PowerRentalMutation) Where(ps ...predicate.PowerRental) {
 	m.predicates = append(m.predicates, ps...)
@@ -16118,7 +16141,7 @@ func (m *PowerRentalMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *PowerRentalMutation) Fields() []string {
-	fields := make([]string, 0, 14)
+	fields := make([]string, 0, 13)
 	if m.created_at != nil {
 		fields = append(fields, powerrental.FieldCreatedAt)
 	}
@@ -16158,9 +16181,6 @@ func (m *PowerRentalMutation) Fields() []string {
 	if m.investment_type != nil {
 		fields = append(fields, powerrental.FieldInvestmentType)
 	}
-	if m.simulate != nil {
-		fields = append(fields, powerrental.FieldSimulate)
-	}
 	return fields
 }
 
@@ -16195,8 +16215,6 @@ func (m *PowerRentalMutation) Field(name string) (ent.Value, bool) {
 		return m.Duration()
 	case powerrental.FieldInvestmentType:
 		return m.InvestmentType()
-	case powerrental.FieldSimulate:
-		return m.Simulate()
 	}
 	return nil, false
 }
@@ -16232,8 +16250,6 @@ func (m *PowerRentalMutation) OldField(ctx context.Context, name string) (ent.Va
 		return m.OldDuration(ctx)
 	case powerrental.FieldInvestmentType:
 		return m.OldInvestmentType(ctx)
-	case powerrental.FieldSimulate:
-		return m.OldSimulate(ctx)
 	}
 	return nil, fmt.Errorf("unknown PowerRental field %s", name)
 }
@@ -16333,13 +16349,6 @@ func (m *PowerRentalMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetInvestmentType(v)
-		return nil
-	case powerrental.FieldSimulate:
-		v, ok := value.(bool)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetSimulate(v)
 		return nil
 	}
 	return fmt.Errorf("unknown PowerRental field %s", name)
@@ -16449,9 +16458,6 @@ func (m *PowerRentalMutation) ClearedFields() []string {
 	if m.FieldCleared(powerrental.FieldInvestmentType) {
 		fields = append(fields, powerrental.FieldInvestmentType)
 	}
-	if m.FieldCleared(powerrental.FieldSimulate) {
-		fields = append(fields, powerrental.FieldSimulate)
-	}
 	return fields
 }
 
@@ -16492,9 +16498,6 @@ func (m *PowerRentalMutation) ClearField(name string) error {
 		return nil
 	case powerrental.FieldInvestmentType:
 		m.ClearInvestmentType()
-		return nil
-	case powerrental.FieldSimulate:
-		m.ClearSimulate()
 		return nil
 	}
 	return fmt.Errorf("unknown PowerRental nullable field %s", name)
@@ -16542,9 +16545,6 @@ func (m *PowerRentalMutation) ResetField(name string) error {
 		return nil
 	case powerrental.FieldInvestmentType:
 		m.ResetInvestmentType()
-		return nil
-	case powerrental.FieldSimulate:
-		m.ResetSimulate()
 		return nil
 	}
 	return fmt.Errorf("unknown PowerRental field %s", name)

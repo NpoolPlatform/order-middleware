@@ -205,20 +205,6 @@ func (prc *PowerRentalCreate) SetNillableInvestmentType(s *string) *PowerRentalC
 	return prc
 }
 
-// SetSimulate sets the "simulate" field.
-func (prc *PowerRentalCreate) SetSimulate(b bool) *PowerRentalCreate {
-	prc.mutation.SetSimulate(b)
-	return prc
-}
-
-// SetNillableSimulate sets the "simulate" field if the given value is not nil.
-func (prc *PowerRentalCreate) SetNillableSimulate(b *bool) *PowerRentalCreate {
-	if b != nil {
-		prc.SetSimulate(*b)
-	}
-	return prc
-}
-
 // SetID sets the "id" field.
 func (prc *PowerRentalCreate) SetID(u uint32) *PowerRentalCreate {
 	prc.mutation.SetID(u)
@@ -374,10 +360,6 @@ func (prc *PowerRentalCreate) defaults() error {
 		v := powerrental.DefaultInvestmentType
 		prc.mutation.SetInvestmentType(v)
 	}
-	if _, ok := prc.mutation.Simulate(); !ok {
-		v := powerrental.DefaultSimulate
-		prc.mutation.SetSimulate(v)
-	}
 	return nil
 }
 
@@ -532,14 +514,6 @@ func (prc *PowerRentalCreate) createSpec() (*PowerRental, *sqlgraph.CreateSpec) 
 			Column: powerrental.FieldInvestmentType,
 		})
 		_node.InvestmentType = value
-	}
-	if value, ok := prc.mutation.Simulate(); ok {
-		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
-			Type:   field.TypeBool,
-			Value:  value,
-			Column: powerrental.FieldSimulate,
-		})
-		_node.Simulate = value
 	}
 	return _node, _spec
 }
@@ -826,24 +800,6 @@ func (u *PowerRentalUpsert) UpdateInvestmentType() *PowerRentalUpsert {
 // ClearInvestmentType clears the value of the "investment_type" field.
 func (u *PowerRentalUpsert) ClearInvestmentType() *PowerRentalUpsert {
 	u.SetNull(powerrental.FieldInvestmentType)
-	return u
-}
-
-// SetSimulate sets the "simulate" field.
-func (u *PowerRentalUpsert) SetSimulate(v bool) *PowerRentalUpsert {
-	u.Set(powerrental.FieldSimulate, v)
-	return u
-}
-
-// UpdateSimulate sets the "simulate" field to the value that was provided on create.
-func (u *PowerRentalUpsert) UpdateSimulate() *PowerRentalUpsert {
-	u.SetExcluded(powerrental.FieldSimulate)
-	return u
-}
-
-// ClearSimulate clears the value of the "simulate" field.
-func (u *PowerRentalUpsert) ClearSimulate() *PowerRentalUpsert {
-	u.SetNull(powerrental.FieldSimulate)
 	return u
 }
 
@@ -1167,27 +1123,6 @@ func (u *PowerRentalUpsertOne) UpdateInvestmentType() *PowerRentalUpsertOne {
 func (u *PowerRentalUpsertOne) ClearInvestmentType() *PowerRentalUpsertOne {
 	return u.Update(func(s *PowerRentalUpsert) {
 		s.ClearInvestmentType()
-	})
-}
-
-// SetSimulate sets the "simulate" field.
-func (u *PowerRentalUpsertOne) SetSimulate(v bool) *PowerRentalUpsertOne {
-	return u.Update(func(s *PowerRentalUpsert) {
-		s.SetSimulate(v)
-	})
-}
-
-// UpdateSimulate sets the "simulate" field to the value that was provided on create.
-func (u *PowerRentalUpsertOne) UpdateSimulate() *PowerRentalUpsertOne {
-	return u.Update(func(s *PowerRentalUpsert) {
-		s.UpdateSimulate()
-	})
-}
-
-// ClearSimulate clears the value of the "simulate" field.
-func (u *PowerRentalUpsertOne) ClearSimulate() *PowerRentalUpsertOne {
-	return u.Update(func(s *PowerRentalUpsert) {
-		s.ClearSimulate()
 	})
 }
 
@@ -1676,27 +1611,6 @@ func (u *PowerRentalUpsertBulk) UpdateInvestmentType() *PowerRentalUpsertBulk {
 func (u *PowerRentalUpsertBulk) ClearInvestmentType() *PowerRentalUpsertBulk {
 	return u.Update(func(s *PowerRentalUpsert) {
 		s.ClearInvestmentType()
-	})
-}
-
-// SetSimulate sets the "simulate" field.
-func (u *PowerRentalUpsertBulk) SetSimulate(v bool) *PowerRentalUpsertBulk {
-	return u.Update(func(s *PowerRentalUpsert) {
-		s.SetSimulate(v)
-	})
-}
-
-// UpdateSimulate sets the "simulate" field to the value that was provided on create.
-func (u *PowerRentalUpsertBulk) UpdateSimulate() *PowerRentalUpsertBulk {
-	return u.Update(func(s *PowerRentalUpsert) {
-		s.UpdateSimulate()
-	})
-}
-
-// ClearSimulate clears the value of the "simulate" field.
-func (u *PowerRentalUpsertBulk) ClearSimulate() *PowerRentalUpsertBulk {
-	return u.Update(func(s *PowerRentalUpsert) {
-		s.ClearSimulate()
 	})
 }
 

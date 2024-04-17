@@ -43,8 +43,6 @@ type PowerRental struct {
 	Duration uint32 `json:"duration,omitempty"`
 	// InvestmentType holds the value of the "investment_type" field.
 	InvestmentType string `json:"investment_type,omitempty"`
-	// Simulate holds the value of the "simulate" field.
-	Simulate bool `json:"simulate,omitempty"`
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -54,8 +52,6 @@ func (*PowerRental) scanValues(columns []string) ([]interface{}, error) {
 		switch columns[i] {
 		case powerrental.FieldUnits, powerrental.FieldGoodValue, powerrental.FieldGoodValueUsd, powerrental.FieldPaymentAmount, powerrental.FieldDiscountAmount:
 			values[i] = new(decimal.Decimal)
-		case powerrental.FieldSimulate:
-			values[i] = new(sql.NullBool)
 		case powerrental.FieldID, powerrental.FieldCreatedAt, powerrental.FieldUpdatedAt, powerrental.FieldDeletedAt, powerrental.FieldDuration:
 			values[i] = new(sql.NullInt64)
 		case powerrental.FieldInvestmentType:
@@ -161,12 +157,6 @@ func (pr *PowerRental) assignValues(columns []string, values []interface{}) erro
 			} else if value.Valid {
 				pr.InvestmentType = value.String
 			}
-		case powerrental.FieldSimulate:
-			if value, ok := values[i].(*sql.NullBool); !ok {
-				return fmt.Errorf("unexpected type %T for field simulate", values[i])
-			} else if value.Valid {
-				pr.Simulate = value.Bool
-			}
 		}
 	}
 	return nil
@@ -233,9 +223,6 @@ func (pr *PowerRental) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("investment_type=")
 	builder.WriteString(pr.InvestmentType)
-	builder.WriteString(", ")
-	builder.WriteString("simulate=")
-	builder.WriteString(fmt.Sprintf("%v", pr.Simulate))
 	builder.WriteByte(')')
 	return builder.String()
 }

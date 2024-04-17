@@ -333,6 +333,10 @@ func init() {
 	orderbaseDescCreateMethod := orderbaseFields[5].Descriptor()
 	// orderbase.DefaultCreateMethod holds the default value on creation for the create_method field.
 	orderbase.DefaultCreateMethod = orderbaseDescCreateMethod.Default.(string)
+	// orderbaseDescSimulate is the schema descriptor for simulate field.
+	orderbaseDescSimulate := orderbaseFields[6].Descriptor()
+	// orderbase.DefaultSimulate holds the default value on creation for the simulate field.
+	orderbase.DefaultSimulate = orderbaseDescSimulate.Default.(bool)
 	ordercouponMixin := schema.OrderCoupon{}.Mixin()
 	ordercoupon.Policy = privacy.NewPolicies(ordercouponMixin[0], schema.OrderCoupon{})
 	ordercoupon.Hooks[0] = func(next ent.Mutator) ent.Mutator {
@@ -893,10 +897,6 @@ func init() {
 	powerrentalDescInvestmentType := powerrentalFields[8].Descriptor()
 	// powerrental.DefaultInvestmentType holds the default value on creation for the investment_type field.
 	powerrental.DefaultInvestmentType = powerrentalDescInvestmentType.Default.(string)
-	// powerrentalDescSimulate is the schema descriptor for simulate field.
-	powerrentalDescSimulate := powerrentalFields[9].Descriptor()
-	// powerrental.DefaultSimulate holds the default value on creation for the simulate field.
-	powerrental.DefaultSimulate = powerrentalDescSimulate.Default.(bool)
 	powerrentalstateMixin := schema.PowerRentalState{}.Mixin()
 	powerrentalstate.Policy = privacy.NewPolicies(powerrentalstateMixin[0], schema.PowerRentalState{})
 	powerrentalstate.Hooks[0] = func(next ent.Mutator) ent.Mutator {

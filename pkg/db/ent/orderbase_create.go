@@ -162,6 +162,20 @@ func (obc *OrderBaseCreate) SetNillableCreateMethod(s *string) *OrderBaseCreate 
 	return obc
 }
 
+// SetSimulate sets the "simulate" field.
+func (obc *OrderBaseCreate) SetSimulate(b bool) *OrderBaseCreate {
+	obc.mutation.SetSimulate(b)
+	return obc
+}
+
+// SetNillableSimulate sets the "simulate" field if the given value is not nil.
+func (obc *OrderBaseCreate) SetNillableSimulate(b *bool) *OrderBaseCreate {
+	if b != nil {
+		obc.SetSimulate(*b)
+	}
+	return obc
+}
+
 // SetID sets the "id" field.
 func (obc *OrderBaseCreate) SetID(u uint32) *OrderBaseCreate {
 	obc.mutation.SetID(u)
@@ -308,6 +322,10 @@ func (obc *OrderBaseCreate) defaults() error {
 		v := orderbase.DefaultCreateMethod
 		obc.mutation.SetCreateMethod(v)
 	}
+	if _, ok := obc.mutation.Simulate(); !ok {
+		v := orderbase.DefaultSimulate
+		obc.mutation.SetSimulate(v)
+	}
 	return nil
 }
 
@@ -438,6 +456,14 @@ func (obc *OrderBaseCreate) createSpec() (*OrderBase, *sqlgraph.CreateSpec) {
 			Column: orderbase.FieldCreateMethod,
 		})
 		_node.CreateMethod = value
+	}
+	if value, ok := obc.mutation.Simulate(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Value:  value,
+			Column: orderbase.FieldSimulate,
+		})
+		_node.Simulate = value
 	}
 	return _node, _spec
 }
@@ -664,6 +690,24 @@ func (u *OrderBaseUpsert) UpdateCreateMethod() *OrderBaseUpsert {
 // ClearCreateMethod clears the value of the "create_method" field.
 func (u *OrderBaseUpsert) ClearCreateMethod() *OrderBaseUpsert {
 	u.SetNull(orderbase.FieldCreateMethod)
+	return u
+}
+
+// SetSimulate sets the "simulate" field.
+func (u *OrderBaseUpsert) SetSimulate(v bool) *OrderBaseUpsert {
+	u.Set(orderbase.FieldSimulate, v)
+	return u
+}
+
+// UpdateSimulate sets the "simulate" field to the value that was provided on create.
+func (u *OrderBaseUpsert) UpdateSimulate() *OrderBaseUpsert {
+	u.SetExcluded(orderbase.FieldSimulate)
+	return u
+}
+
+// ClearSimulate clears the value of the "simulate" field.
+func (u *OrderBaseUpsert) ClearSimulate() *OrderBaseUpsert {
+	u.SetNull(orderbase.FieldSimulate)
 	return u
 }
 
@@ -917,6 +961,27 @@ func (u *OrderBaseUpsertOne) UpdateCreateMethod() *OrderBaseUpsertOne {
 func (u *OrderBaseUpsertOne) ClearCreateMethod() *OrderBaseUpsertOne {
 	return u.Update(func(s *OrderBaseUpsert) {
 		s.ClearCreateMethod()
+	})
+}
+
+// SetSimulate sets the "simulate" field.
+func (u *OrderBaseUpsertOne) SetSimulate(v bool) *OrderBaseUpsertOne {
+	return u.Update(func(s *OrderBaseUpsert) {
+		s.SetSimulate(v)
+	})
+}
+
+// UpdateSimulate sets the "simulate" field to the value that was provided on create.
+func (u *OrderBaseUpsertOne) UpdateSimulate() *OrderBaseUpsertOne {
+	return u.Update(func(s *OrderBaseUpsert) {
+		s.UpdateSimulate()
+	})
+}
+
+// ClearSimulate clears the value of the "simulate" field.
+func (u *OrderBaseUpsertOne) ClearSimulate() *OrderBaseUpsertOne {
+	return u.Update(func(s *OrderBaseUpsert) {
+		s.ClearSimulate()
 	})
 }
 
@@ -1335,6 +1400,27 @@ func (u *OrderBaseUpsertBulk) UpdateCreateMethod() *OrderBaseUpsertBulk {
 func (u *OrderBaseUpsertBulk) ClearCreateMethod() *OrderBaseUpsertBulk {
 	return u.Update(func(s *OrderBaseUpsert) {
 		s.ClearCreateMethod()
+	})
+}
+
+// SetSimulate sets the "simulate" field.
+func (u *OrderBaseUpsertBulk) SetSimulate(v bool) *OrderBaseUpsertBulk {
+	return u.Update(func(s *OrderBaseUpsert) {
+		s.SetSimulate(v)
+	})
+}
+
+// UpdateSimulate sets the "simulate" field to the value that was provided on create.
+func (u *OrderBaseUpsertBulk) UpdateSimulate() *OrderBaseUpsertBulk {
+	return u.Update(func(s *OrderBaseUpsert) {
+		s.UpdateSimulate()
+	})
+}
+
+// ClearSimulate clears the value of the "simulate" field.
+func (u *OrderBaseUpsertBulk) ClearSimulate() *OrderBaseUpsertBulk {
+	return u.Update(func(s *OrderBaseUpsert) {
+		s.ClearSimulate()
 	})
 }
 

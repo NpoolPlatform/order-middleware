@@ -140,6 +140,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			orderbase.FieldOrderType:     {Type: field.TypeString, Column: orderbase.FieldOrderType},
 			orderbase.FieldPaymentType:   {Type: field.TypeString, Column: orderbase.FieldPaymentType},
 			orderbase.FieldCreateMethod:  {Type: field.TypeString, Column: orderbase.FieldCreateMethod},
+			orderbase.FieldSimulate:      {Type: field.TypeBool, Column: orderbase.FieldSimulate},
 		},
 	}
 	graph.Nodes[4] = &sqlgraph.Node{
@@ -373,7 +374,6 @@ var schemaGraph = func() *sqlgraph.Schema {
 			powerrental.FieldPromotionID:    {Type: field.TypeUUID, Column: powerrental.FieldPromotionID},
 			powerrental.FieldDuration:       {Type: field.TypeUint32, Column: powerrental.FieldDuration},
 			powerrental.FieldInvestmentType: {Type: field.TypeString, Column: powerrental.FieldInvestmentType},
-			powerrental.FieldSimulate:       {Type: field.TypeBool, Column: powerrental.FieldSimulate},
 		},
 	}
 	graph.Nodes[14] = &sqlgraph.Node{
@@ -882,6 +882,11 @@ func (f *OrderBaseFilter) WherePaymentType(p entql.StringP) {
 // WhereCreateMethod applies the entql string predicate on the create_method field.
 func (f *OrderBaseFilter) WhereCreateMethod(p entql.StringP) {
 	f.Where(p.Field(orderbase.FieldCreateMethod))
+}
+
+// WhereSimulate applies the entql bool predicate on the simulate field.
+func (f *OrderBaseFilter) WhereSimulate(p entql.BoolP) {
+	f.Where(p.Field(orderbase.FieldSimulate))
 }
 
 // addPredicate implements the predicateAdder interface.
@@ -1797,11 +1802,6 @@ func (f *PowerRentalFilter) WhereDuration(p entql.Uint32P) {
 // WhereInvestmentType applies the entql string predicate on the investment_type field.
 func (f *PowerRentalFilter) WhereInvestmentType(p entql.StringP) {
 	f.Where(p.Field(powerrental.FieldInvestmentType))
-}
-
-// WhereSimulate applies the entql bool predicate on the simulate field.
-func (f *PowerRentalFilter) WhereSimulate(p entql.BoolP) {
-	f.Where(p.Field(powerrental.FieldSimulate))
 }
 
 // addPredicate implements the predicateAdder interface.

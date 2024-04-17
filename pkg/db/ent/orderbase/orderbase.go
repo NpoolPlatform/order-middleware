@@ -32,6 +32,8 @@ const (
 	FieldPaymentType = "payment_type"
 	// FieldCreateMethod holds the string denoting the create_method field in the database.
 	FieldCreateMethod = "create_method"
+	// FieldSimulate holds the string denoting the simulate field in the database.
+	FieldSimulate = "simulate"
 	// Table holds the table name of the orderbase in the database.
 	Table = "order_bases"
 )
@@ -49,6 +51,7 @@ var Columns = []string{
 	FieldOrderType,
 	FieldPaymentType,
 	FieldCreateMethod,
+	FieldSimulate,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -92,4 +95,6 @@ var (
 	DefaultPaymentType string
 	// DefaultCreateMethod holds the default value on creation for the "create_method" field.
 	DefaultCreateMethod string
+	// DefaultSimulate holds the default value on creation for the "simulate" field.
+	DefaultSimulate bool
 )

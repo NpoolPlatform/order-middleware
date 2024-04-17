@@ -218,6 +218,26 @@ func (obu *OrderBaseUpdate) ClearCreateMethod() *OrderBaseUpdate {
 	return obu
 }
 
+// SetSimulate sets the "simulate" field.
+func (obu *OrderBaseUpdate) SetSimulate(b bool) *OrderBaseUpdate {
+	obu.mutation.SetSimulate(b)
+	return obu
+}
+
+// SetNillableSimulate sets the "simulate" field if the given value is not nil.
+func (obu *OrderBaseUpdate) SetNillableSimulate(b *bool) *OrderBaseUpdate {
+	if b != nil {
+		obu.SetSimulate(*b)
+	}
+	return obu
+}
+
+// ClearSimulate clears the value of the "simulate" field.
+func (obu *OrderBaseUpdate) ClearSimulate() *OrderBaseUpdate {
+	obu.mutation.ClearSimulate()
+	return obu
+}
+
 // Mutation returns the OrderBaseMutation object of the builder.
 func (obu *OrderBaseUpdate) Mutation() *OrderBaseMutation {
 	return obu.mutation
@@ -443,6 +463,19 @@ func (obu *OrderBaseUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: orderbase.FieldCreateMethod,
 		})
 	}
+	if value, ok := obu.mutation.Simulate(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Value:  value,
+			Column: orderbase.FieldSimulate,
+		})
+	}
+	if obu.mutation.SimulateCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Column: orderbase.FieldSimulate,
+		})
+	}
 	_spec.Modifiers = obu.modifiers
 	if n, err = sqlgraph.UpdateNodes(ctx, obu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
@@ -650,6 +683,26 @@ func (obuo *OrderBaseUpdateOne) SetNillableCreateMethod(s *string) *OrderBaseUpd
 // ClearCreateMethod clears the value of the "create_method" field.
 func (obuo *OrderBaseUpdateOne) ClearCreateMethod() *OrderBaseUpdateOne {
 	obuo.mutation.ClearCreateMethod()
+	return obuo
+}
+
+// SetSimulate sets the "simulate" field.
+func (obuo *OrderBaseUpdateOne) SetSimulate(b bool) *OrderBaseUpdateOne {
+	obuo.mutation.SetSimulate(b)
+	return obuo
+}
+
+// SetNillableSimulate sets the "simulate" field if the given value is not nil.
+func (obuo *OrderBaseUpdateOne) SetNillableSimulate(b *bool) *OrderBaseUpdateOne {
+	if b != nil {
+		obuo.SetSimulate(*b)
+	}
+	return obuo
+}
+
+// ClearSimulate clears the value of the "simulate" field.
+func (obuo *OrderBaseUpdateOne) ClearSimulate() *OrderBaseUpdateOne {
+	obuo.mutation.ClearSimulate()
 	return obuo
 }
 
@@ -906,6 +959,19 @@ func (obuo *OrderBaseUpdateOne) sqlSave(ctx context.Context) (_node *OrderBase, 
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
 			Column: orderbase.FieldCreateMethod,
+		})
+	}
+	if value, ok := obuo.mutation.Simulate(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Value:  value,
+			Column: orderbase.FieldSimulate,
+		})
+	}
+	if obuo.mutation.SimulateCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Column: orderbase.FieldSimulate,
 		})
 	}
 	_spec.Modifiers = obuo.modifiers

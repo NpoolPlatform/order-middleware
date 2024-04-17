@@ -56,6 +56,10 @@ func (OrderBase) Fields() []ent.Field {
 			String("create_method").
 			Optional().
 			Default(types.OrderCreateMethod_OrderCreatedByPurchase.String()),
+		field.
+			Bool("simulate").
+			Optional().
+			Default(false),
 	}
 }
 

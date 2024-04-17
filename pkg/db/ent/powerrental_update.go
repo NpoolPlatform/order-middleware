@@ -286,26 +286,6 @@ func (pru *PowerRentalUpdate) ClearInvestmentType() *PowerRentalUpdate {
 	return pru
 }
 
-// SetSimulate sets the "simulate" field.
-func (pru *PowerRentalUpdate) SetSimulate(b bool) *PowerRentalUpdate {
-	pru.mutation.SetSimulate(b)
-	return pru
-}
-
-// SetNillableSimulate sets the "simulate" field if the given value is not nil.
-func (pru *PowerRentalUpdate) SetNillableSimulate(b *bool) *PowerRentalUpdate {
-	if b != nil {
-		pru.SetSimulate(*b)
-	}
-	return pru
-}
-
-// ClearSimulate clears the value of the "simulate" field.
-func (pru *PowerRentalUpdate) ClearSimulate() *PowerRentalUpdate {
-	pru.mutation.ClearSimulate()
-	return pru
-}
-
 // Mutation returns the PowerRentalMutation object of the builder.
 func (pru *PowerRentalUpdate) Mutation() *PowerRentalMutation {
 	return pru.mutation
@@ -575,19 +555,6 @@ func (pru *PowerRentalUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
 			Column: powerrental.FieldInvestmentType,
-		})
-	}
-	if value, ok := pru.mutation.Simulate(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeBool,
-			Value:  value,
-			Column: powerrental.FieldSimulate,
-		})
-	}
-	if pru.mutation.SimulateCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeBool,
-			Column: powerrental.FieldSimulate,
 		})
 	}
 	_spec.Modifiers = pru.modifiers
@@ -864,26 +831,6 @@ func (pruo *PowerRentalUpdateOne) SetNillableInvestmentType(s *string) *PowerRen
 // ClearInvestmentType clears the value of the "investment_type" field.
 func (pruo *PowerRentalUpdateOne) ClearInvestmentType() *PowerRentalUpdateOne {
 	pruo.mutation.ClearInvestmentType()
-	return pruo
-}
-
-// SetSimulate sets the "simulate" field.
-func (pruo *PowerRentalUpdateOne) SetSimulate(b bool) *PowerRentalUpdateOne {
-	pruo.mutation.SetSimulate(b)
-	return pruo
-}
-
-// SetNillableSimulate sets the "simulate" field if the given value is not nil.
-func (pruo *PowerRentalUpdateOne) SetNillableSimulate(b *bool) *PowerRentalUpdateOne {
-	if b != nil {
-		pruo.SetSimulate(*b)
-	}
-	return pruo
-}
-
-// ClearSimulate clears the value of the "simulate" field.
-func (pruo *PowerRentalUpdateOne) ClearSimulate() *PowerRentalUpdateOne {
-	pruo.mutation.ClearSimulate()
 	return pruo
 }
 
@@ -1186,19 +1133,6 @@ func (pruo *PowerRentalUpdateOne) sqlSave(ctx context.Context) (_node *PowerRent
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
 			Column: powerrental.FieldInvestmentType,
-		})
-	}
-	if value, ok := pruo.mutation.Simulate(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeBool,
-			Value:  value,
-			Column: powerrental.FieldSimulate,
-		})
-	}
-	if pruo.mutation.SimulateCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeBool,
-			Column: powerrental.FieldSimulate,
 		})
 	}
 	_spec.Modifiers = pruo.modifiers
