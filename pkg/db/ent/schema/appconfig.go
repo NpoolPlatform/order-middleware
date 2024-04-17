@@ -35,7 +35,7 @@ func (AppConfig) Fields() []ent.Field {
 		field.
 			String("simulate_order_coupon_mode").
 			Optional().
-			Default(types.SendCouponMode_WithoutCoupon.String()),
+			Default(types.SimulateOrderCouponMode_WithoutCoupon.String()),
 		field.
 			Other("simulate_order_coupon_probability", decimal.Decimal{}).
 			SchemaType(map[string]string{
