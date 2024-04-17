@@ -4,11 +4,11 @@ import (
 	"context"
 
 	order "github.com/NpoolPlatform/message/npool/order/mw/v1"
+	config "github.com/NpoolPlatform/order-middleware/api/app/config"
 	"github.com/NpoolPlatform/order-middleware/api/compensate"
 	order1 "github.com/NpoolPlatform/order-middleware/api/order"
 	orderlock "github.com/NpoolPlatform/order-middleware/api/order/orderlock"
 	"github.com/NpoolPlatform/order-middleware/api/outofgas"
-	config "github.com/NpoolPlatform/order-middleware/api/simulate/config"
 
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"google.golang.org/grpc"

@@ -8,11 +8,11 @@ import (
 	basetypes "github.com/NpoolPlatform/message/npool/basetypes/order/v1"
 	"github.com/NpoolPlatform/order-middleware/pkg/db"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent"
-	entconfig "github.com/NpoolPlatform/order-middleware/pkg/db/ent/simulateconfig"
+	entconfig "github.com/NpoolPlatform/order-middleware/pkg/db/ent/appconfig"
 	"github.com/shopspring/decimal"
 
-	npool "github.com/NpoolPlatform/message/npool/order/mw/v1/simulate/config"
-	configcrud "github.com/NpoolPlatform/order-middleware/pkg/crud/simulate/config"
+	npool "github.com/NpoolPlatform/message/npool/order/mw/v1/app/config"
+	configcrud "github.com/NpoolPlatform/order-middleware/pkg/crud/app/config"
 )
 
 type queryHandler struct {

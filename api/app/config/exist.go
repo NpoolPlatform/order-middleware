@@ -8,8 +8,8 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
-	npool "github.com/NpoolPlatform/message/npool/order/mw/v1/simulate/config"
-	order1 "github.com/NpoolPlatform/order-middleware/pkg/mw/simulate/config"
+	npool "github.com/NpoolPlatform/message/npool/order/mw/v1/app/config"
+	order1 "github.com/NpoolPlatform/order-middleware/pkg/mw/app/config"
 )
 
 func (s *Server) ExistSimulateConfig(ctx context.Context, in *npool.ExistSimulateConfigRequest) (*npool.ExistSimulateConfigResponse, error) {

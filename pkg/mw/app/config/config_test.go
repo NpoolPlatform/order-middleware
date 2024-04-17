@@ -11,7 +11,7 @@ import (
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
 	ordertypes "github.com/NpoolPlatform/message/npool/basetypes/order/v1"
 	basetypes "github.com/NpoolPlatform/message/npool/basetypes/v1"
-	npool "github.com/NpoolPlatform/message/npool/order/mw/v1/simulate/config"
+	npool "github.com/NpoolPlatform/message/npool/order/mw/v1/app/config"
 
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"

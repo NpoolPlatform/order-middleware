@@ -6,8 +6,8 @@ import (
 	"github.com/NpoolPlatform/order-middleware/pkg/db"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent"
 
-	configcrud "github.com/NpoolPlatform/order-middleware/pkg/crud/simulate/config"
-	entconfig "github.com/NpoolPlatform/order-middleware/pkg/db/ent/simulateconfig"
+	configcrud "github.com/NpoolPlatform/order-middleware/pkg/crud/app/config"
+	entconfig "github.com/NpoolPlatform/order-middleware/pkg/db/ent/appconfig"
 )
 
 func (h *Handler) ExistSimulateConfig(ctx context.Context) (bool, error) {

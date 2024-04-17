@@ -5,8 +5,8 @@ import (
 	"fmt"
 
 	cruder "github.com/NpoolPlatform/libent-cruder/pkg/cruder"
-	npool "github.com/NpoolPlatform/message/npool/order/mw/v1/simulate/config"
-	configcrud "github.com/NpoolPlatform/order-middleware/pkg/crud/simulate/config"
+	npool "github.com/NpoolPlatform/message/npool/order/mw/v1/app/config"
+	configcrud "github.com/NpoolPlatform/order-middleware/pkg/crud/app/config"
 	"github.com/NpoolPlatform/order-middleware/pkg/db"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent"
 

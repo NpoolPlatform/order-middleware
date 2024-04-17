@@ -7,9 +7,9 @@ import (
 	"google.golang.org/grpc/status"
 
 	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
-	npool "github.com/NpoolPlatform/message/npool/order/mw/v1/simulate/config"
+	npool "github.com/NpoolPlatform/message/npool/order/mw/v1/app/config"
 
-	config1 "github.com/NpoolPlatform/order-middleware/pkg/mw/simulate/config"
+	config1 "github.com/NpoolPlatform/order-middleware/pkg/mw/app/config"
 )
 
 func (s *Server) CreateSimulateConfig(ctx context.Context, in *npool.CreateSimulateConfigRequest) (*npool.CreateSimulateConfigResponse, error) {

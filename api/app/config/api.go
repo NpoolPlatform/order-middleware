@@ -1,7 +1,7 @@
 package config
 
 import (
-	"github.com/NpoolPlatform/message/npool/order/mw/v1/simulate/config"
+	"github.com/NpoolPlatform/message/npool/order/mw/v1/app/config"
 
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"google.golang.org/grpc"

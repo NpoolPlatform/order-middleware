@@ -16,7 +16,7 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 
-	npool "github.com/NpoolPlatform/message/npool/order/mw/v1/simulate/config"
+	npool "github.com/NpoolPlatform/message/npool/order/mw/v1/app/config"
 
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
