@@ -6,6 +6,7 @@ import (
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent"
 	entcompensate "github.com/NpoolPlatform/order-middleware/pkg/db/ent/compensate"
+
 	"github.com/google/uuid"
 )
 
@@ -16,7 +17,6 @@ type Req struct {
 	EndAt     *uint32
 	Title     *string
 	Message   *string
-	CreatedAt *uint32
 	DeletedAt *uint32
 }
 
@@ -38,9 +38,6 @@ func CreateSet(c *ent.CompensateCreate, req *Req) *ent.CompensateCreate {
 	}
 	if req.Message != nil {
 		c.SetMessage(*req.Message)
-	}
-	if req.CreatedAt != nil {
-		c.SetCreatedAt(*req.CreatedAt)
 	}
 	return c
 }
@@ -65,10 +62,10 @@ func UpdateSet(u *ent.CompensateUpdateOne, req *Req) *ent.CompensateUpdateOne {
 }
 
 type Conds struct {
-	EntID    *cruder.Cond
-	EntIDs   *cruder.Cond
 	ID       *cruder.Cond
 	IDs      *cruder.Cond
+	EntID    *cruder.Cond
+	EntIDs   *cruder.Cond
 	OrderID  *cruder.Cond
 	StartAt  *cruder.Cond
 	EndAt    *cruder.Cond
@@ -80,34 +77,6 @@ func SetQueryConds(q *ent.CompensateQuery, conds *Conds) (*ent.CompensateQuery, 
 	q.Where(entcompensate.DeletedAt(0))
 	if conds == nil {
 		return q, nil
-	}
-	if conds.EntID != nil {
-		id, ok := conds.EntID.Val.(uuid.UUID)
-		if !ok {
-			return nil, fmt.Errorf("invalid entid")
-		}
-		switch conds.EntID.Op {
-		case cruder.EQ:
-			q.Where(entcompensate.EntID(id))
-		case cruder.NEQ:
-			q.Where(entcompensate.EntIDNEQ(id))
-		default:
-			return nil, fmt.Errorf("invalid compensate field")
-		}
-	}
-	if conds.EntIDs != nil {
-		ids, ok := conds.EntIDs.Val.([]uuid.UUID)
-		if !ok {
-			return nil, fmt.Errorf("invalid entids")
-		}
-		if len(ids) > 0 {
-			switch conds.EntIDs.Op {
-			case cruder.IN:
-				q.Where(entcompensate.EntIDIn(ids...))
-			default:
-				return nil, fmt.Errorf("invalid compensate field")
-			}
-		}
 	}
 	if conds.ID != nil {
 		id, ok := conds.ID.Val.(uint32)
@@ -132,6 +101,34 @@ func SetQueryConds(q *ent.CompensateQuery, conds *Conds) (*ent.CompensateQuery, 
 			switch conds.IDs.Op {
 			case cruder.IN:
 				q.Where(entcompensate.IDIn(ids...))
+			default:
+				return nil, fmt.Errorf("invalid compensate field")
+			}
+		}
+	}
+	if conds.EntID != nil {
+		id, ok := conds.EntID.Val.(uuid.UUID)
+		if !ok {
+			return nil, fmt.Errorf("invalid entid")
+		}
+		switch conds.EntID.Op {
+		case cruder.EQ:
+			q.Where(entcompensate.EntID(id))
+		case cruder.NEQ:
+			q.Where(entcompensate.EntIDNEQ(id))
+		default:
+			return nil, fmt.Errorf("invalid compensate field")
+		}
+	}
+	if conds.EntIDs != nil {
+		ids, ok := conds.EntIDs.Val.([]uuid.UUID)
+		if !ok {
+			return nil, fmt.Errorf("invalid entids")
+		}
+		if len(ids) > 0 {
+			switch conds.EntIDs.Op {
+			case cruder.IN:
+				q.Where(entcompensate.EntIDIn(ids...))
 			default:
 				return nil, fmt.Errorf("invalid compensate field")
 			}

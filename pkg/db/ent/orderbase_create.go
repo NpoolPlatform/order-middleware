@@ -78,20 +78,6 @@ func (obc *OrderBaseCreate) SetNillableEntID(u *uuid.UUID) *OrderBaseCreate {
 	return obc
 }
 
-// SetAppID sets the "app_id" field.
-func (obc *OrderBaseCreate) SetAppID(u uuid.UUID) *OrderBaseCreate {
-	obc.mutation.SetAppID(u)
-	return obc
-}
-
-// SetNillableAppID sets the "app_id" field if the given value is not nil.
-func (obc *OrderBaseCreate) SetNillableAppID(u *uuid.UUID) *OrderBaseCreate {
-	if u != nil {
-		obc.SetAppID(*u)
-	}
-	return obc
-}
-
 // SetUserID sets the "user_id" field.
 func (obc *OrderBaseCreate) SetUserID(u uuid.UUID) *OrderBaseCreate {
 	obc.mutation.SetUserID(u)
@@ -102,20 +88,6 @@ func (obc *OrderBaseCreate) SetUserID(u uuid.UUID) *OrderBaseCreate {
 func (obc *OrderBaseCreate) SetNillableUserID(u *uuid.UUID) *OrderBaseCreate {
 	if u != nil {
 		obc.SetUserID(*u)
-	}
-	return obc
-}
-
-// SetGoodID sets the "good_id" field.
-func (obc *OrderBaseCreate) SetGoodID(u uuid.UUID) *OrderBaseCreate {
-	obc.mutation.SetGoodID(u)
-	return obc
-}
-
-// SetNillableGoodID sets the "good_id" field if the given value is not nil.
-func (obc *OrderBaseCreate) SetNillableGoodID(u *uuid.UUID) *OrderBaseCreate {
-	if u != nil {
-		obc.SetGoodID(*u)
 	}
 	return obc
 }
@@ -303,26 +275,12 @@ func (obc *OrderBaseCreate) defaults() error {
 		v := orderbase.DefaultEntID()
 		obc.mutation.SetEntID(v)
 	}
-	if _, ok := obc.mutation.AppID(); !ok {
-		if orderbase.DefaultAppID == nil {
-			return fmt.Errorf("ent: uninitialized orderbase.DefaultAppID (forgotten import ent/runtime?)")
-		}
-		v := orderbase.DefaultAppID()
-		obc.mutation.SetAppID(v)
-	}
 	if _, ok := obc.mutation.UserID(); !ok {
 		if orderbase.DefaultUserID == nil {
 			return fmt.Errorf("ent: uninitialized orderbase.DefaultUserID (forgotten import ent/runtime?)")
 		}
 		v := orderbase.DefaultUserID()
 		obc.mutation.SetUserID(v)
-	}
-	if _, ok := obc.mutation.GoodID(); !ok {
-		if orderbase.DefaultGoodID == nil {
-			return fmt.Errorf("ent: uninitialized orderbase.DefaultGoodID (forgotten import ent/runtime?)")
-		}
-		v := orderbase.DefaultGoodID()
-		obc.mutation.SetGoodID(v)
 	}
 	if _, ok := obc.mutation.AppGoodID(); !ok {
 		if orderbase.DefaultAppGoodID == nil {
@@ -433,14 +391,6 @@ func (obc *OrderBaseCreate) createSpec() (*OrderBase, *sqlgraph.CreateSpec) {
 		})
 		_node.EntID = value
 	}
-	if value, ok := obc.mutation.AppID(); ok {
-		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
-			Type:   field.TypeUUID,
-			Value:  value,
-			Column: orderbase.FieldAppID,
-		})
-		_node.AppID = value
-	}
 	if value, ok := obc.mutation.UserID(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
 			Type:   field.TypeUUID,
@@ -448,14 +398,6 @@ func (obc *OrderBaseCreate) createSpec() (*OrderBase, *sqlgraph.CreateSpec) {
 			Column: orderbase.FieldUserID,
 		})
 		_node.UserID = value
-	}
-	if value, ok := obc.mutation.GoodID(); ok {
-		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
-			Type:   field.TypeUUID,
-			Value:  value,
-			Column: orderbase.FieldGoodID,
-		})
-		_node.GoodID = value
 	}
 	if value, ok := obc.mutation.AppGoodID(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -617,24 +559,6 @@ func (u *OrderBaseUpsert) UpdateEntID() *OrderBaseUpsert {
 	return u
 }
 
-// SetAppID sets the "app_id" field.
-func (u *OrderBaseUpsert) SetAppID(v uuid.UUID) *OrderBaseUpsert {
-	u.Set(orderbase.FieldAppID, v)
-	return u
-}
-
-// UpdateAppID sets the "app_id" field to the value that was provided on create.
-func (u *OrderBaseUpsert) UpdateAppID() *OrderBaseUpsert {
-	u.SetExcluded(orderbase.FieldAppID)
-	return u
-}
-
-// ClearAppID clears the value of the "app_id" field.
-func (u *OrderBaseUpsert) ClearAppID() *OrderBaseUpsert {
-	u.SetNull(orderbase.FieldAppID)
-	return u
-}
-
 // SetUserID sets the "user_id" field.
 func (u *OrderBaseUpsert) SetUserID(v uuid.UUID) *OrderBaseUpsert {
 	u.Set(orderbase.FieldUserID, v)
@@ -650,24 +574,6 @@ func (u *OrderBaseUpsert) UpdateUserID() *OrderBaseUpsert {
 // ClearUserID clears the value of the "user_id" field.
 func (u *OrderBaseUpsert) ClearUserID() *OrderBaseUpsert {
 	u.SetNull(orderbase.FieldUserID)
-	return u
-}
-
-// SetGoodID sets the "good_id" field.
-func (u *OrderBaseUpsert) SetGoodID(v uuid.UUID) *OrderBaseUpsert {
-	u.Set(orderbase.FieldGoodID, v)
-	return u
-}
-
-// UpdateGoodID sets the "good_id" field to the value that was provided on create.
-func (u *OrderBaseUpsert) UpdateGoodID() *OrderBaseUpsert {
-	u.SetExcluded(orderbase.FieldGoodID)
-	return u
-}
-
-// ClearGoodID clears the value of the "good_id" field.
-func (u *OrderBaseUpsert) ClearGoodID() *OrderBaseUpsert {
-	u.SetNull(orderbase.FieldGoodID)
 	return u
 }
 
@@ -888,27 +794,6 @@ func (u *OrderBaseUpsertOne) UpdateEntID() *OrderBaseUpsertOne {
 	})
 }
 
-// SetAppID sets the "app_id" field.
-func (u *OrderBaseUpsertOne) SetAppID(v uuid.UUID) *OrderBaseUpsertOne {
-	return u.Update(func(s *OrderBaseUpsert) {
-		s.SetAppID(v)
-	})
-}
-
-// UpdateAppID sets the "app_id" field to the value that was provided on create.
-func (u *OrderBaseUpsertOne) UpdateAppID() *OrderBaseUpsertOne {
-	return u.Update(func(s *OrderBaseUpsert) {
-		s.UpdateAppID()
-	})
-}
-
-// ClearAppID clears the value of the "app_id" field.
-func (u *OrderBaseUpsertOne) ClearAppID() *OrderBaseUpsertOne {
-	return u.Update(func(s *OrderBaseUpsert) {
-		s.ClearAppID()
-	})
-}
-
 // SetUserID sets the "user_id" field.
 func (u *OrderBaseUpsertOne) SetUserID(v uuid.UUID) *OrderBaseUpsertOne {
 	return u.Update(func(s *OrderBaseUpsert) {
@@ -927,27 +812,6 @@ func (u *OrderBaseUpsertOne) UpdateUserID() *OrderBaseUpsertOne {
 func (u *OrderBaseUpsertOne) ClearUserID() *OrderBaseUpsertOne {
 	return u.Update(func(s *OrderBaseUpsert) {
 		s.ClearUserID()
-	})
-}
-
-// SetGoodID sets the "good_id" field.
-func (u *OrderBaseUpsertOne) SetGoodID(v uuid.UUID) *OrderBaseUpsertOne {
-	return u.Update(func(s *OrderBaseUpsert) {
-		s.SetGoodID(v)
-	})
-}
-
-// UpdateGoodID sets the "good_id" field to the value that was provided on create.
-func (u *OrderBaseUpsertOne) UpdateGoodID() *OrderBaseUpsertOne {
-	return u.Update(func(s *OrderBaseUpsert) {
-		s.UpdateGoodID()
-	})
-}
-
-// ClearGoodID clears the value of the "good_id" field.
-func (u *OrderBaseUpsertOne) ClearGoodID() *OrderBaseUpsertOne {
-	return u.Update(func(s *OrderBaseUpsert) {
-		s.ClearGoodID()
 	})
 }
 
@@ -1348,27 +1212,6 @@ func (u *OrderBaseUpsertBulk) UpdateEntID() *OrderBaseUpsertBulk {
 	})
 }
 
-// SetAppID sets the "app_id" field.
-func (u *OrderBaseUpsertBulk) SetAppID(v uuid.UUID) *OrderBaseUpsertBulk {
-	return u.Update(func(s *OrderBaseUpsert) {
-		s.SetAppID(v)
-	})
-}
-
-// UpdateAppID sets the "app_id" field to the value that was provided on create.
-func (u *OrderBaseUpsertBulk) UpdateAppID() *OrderBaseUpsertBulk {
-	return u.Update(func(s *OrderBaseUpsert) {
-		s.UpdateAppID()
-	})
-}
-
-// ClearAppID clears the value of the "app_id" field.
-func (u *OrderBaseUpsertBulk) ClearAppID() *OrderBaseUpsertBulk {
-	return u.Update(func(s *OrderBaseUpsert) {
-		s.ClearAppID()
-	})
-}
-
 // SetUserID sets the "user_id" field.
 func (u *OrderBaseUpsertBulk) SetUserID(v uuid.UUID) *OrderBaseUpsertBulk {
 	return u.Update(func(s *OrderBaseUpsert) {
@@ -1387,27 +1230,6 @@ func (u *OrderBaseUpsertBulk) UpdateUserID() *OrderBaseUpsertBulk {
 func (u *OrderBaseUpsertBulk) ClearUserID() *OrderBaseUpsertBulk {
 	return u.Update(func(s *OrderBaseUpsert) {
 		s.ClearUserID()
-	})
-}
-
-// SetGoodID sets the "good_id" field.
-func (u *OrderBaseUpsertBulk) SetGoodID(v uuid.UUID) *OrderBaseUpsertBulk {
-	return u.Update(func(s *OrderBaseUpsert) {
-		s.SetGoodID(v)
-	})
-}
-
-// UpdateGoodID sets the "good_id" field to the value that was provided on create.
-func (u *OrderBaseUpsertBulk) UpdateGoodID() *OrderBaseUpsertBulk {
-	return u.Update(func(s *OrderBaseUpsert) {
-		s.UpdateGoodID()
-	})
-}
-
-// ClearGoodID clears the value of the "good_id" field.
-func (u *OrderBaseUpsertBulk) ClearGoodID() *OrderBaseUpsertBulk {
-	return u.Update(func(s *OrderBaseUpsert) {
-		s.ClearGoodID()
 	})
 }
 

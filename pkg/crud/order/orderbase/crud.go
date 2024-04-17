@@ -7,12 +7,10 @@ import (
 	"entgo.io/ent/dialect/sql/sqljson"
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
 	basetypes "github.com/NpoolPlatform/message/npool/basetypes/order/v1"
-	npool "github.com/NpoolPlatform/message/npool/order/mw/v1/order"
-	orderstatecrud "github.com/NpoolPlatform/order-middleware/pkg/crud/orderstate"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent"
-	entorder "github.com/NpoolPlatform/order-middleware/pkg/db/ent/order"
+	entorderbase "github.com/NpoolPlatform/order-middleware/pkg/db/ent/orderbase"
+
 	"github.com/google/uuid"
-	"github.com/shopspring/decimal"
 )
 
 type Req struct {
@@ -45,7 +43,6 @@ type Req struct {
 	Simulate             *bool
 	CreateMethod         *basetypes.OrderCreateMethod
 	MultiPaymentCoins    *bool
-	PaymentAmounts       []*npool.PaymentAmount
 	CreatedAt            *uint32
 	DeletedAt            *uint32
 }
@@ -138,20 +135,6 @@ func CreateSet(c *ent.OrderCreate, req *Req) *ent.OrderCreate {
 	if req.MultiPaymentCoins != nil {
 		c.SetMultiPaymentCoins(*req.MultiPaymentCoins)
 	}
-	if len(req.PaymentAmounts) > 0 {
-		amounts := []npool.PaymentAmount{}
-		for _, amount := range req.PaymentAmounts {
-			amounts = append(amounts, npool.PaymentAmount{
-				CoinTypeID:  amount.CoinTypeID,
-				USDCurrency: amount.USDCurrency,
-				Amount:      amount.Amount,
-			})
-		}
-		c.SetPaymentAmounts(amounts)
-	}
-	if req.CreatedAt != nil {
-		c.SetCreatedAt(*req.CreatedAt)
-	}
 
 	return c
 }
@@ -164,7 +147,6 @@ func UpdateSet(u *ent.OrderUpdateOne, req *Req) *ent.OrderUpdateOne {
 }
 
 type Conds struct {
-	orderstatecrud.Conds
 	EntID             *cruder.Cond
 	EntIDs            *cruder.Cond
 	ID                *cruder.Cond

@@ -27,19 +27,7 @@ func (OrderBase) Mixin() []ent.Mixin {
 func (OrderBase) Fields() []ent.Field {
 	return []ent.Field{
 		field.
-			UUID("app_id", uuid.UUID{}).
-			Optional().
-			Default(func() uuid.UUID {
-				return uuid.Nil
-			}),
-		field.
 			UUID("user_id", uuid.UUID{}).
-			Optional().
-			Default(func() uuid.UUID {
-				return uuid.Nil
-			}),
-		field.
-			UUID("good_id", uuid.UUID{}).
 			Optional().
 			Default(func() uuid.UUID {
 				return uuid.Nil
@@ -78,6 +66,6 @@ func (OrderBase) Edges() []ent.Edge {
 
 func (OrderBase) Indexes() []ent.Index {
 	return []ent.Index{
-		index.Fields("app_id", "user_id", "good_id", "app_good_id"),
+		index.Fields("user_id", "app_good_id"),
 	}
 }

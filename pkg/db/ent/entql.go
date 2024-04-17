@@ -134,9 +134,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			orderbase.FieldUpdatedAt:     {Type: field.TypeUint32, Column: orderbase.FieldUpdatedAt},
 			orderbase.FieldDeletedAt:     {Type: field.TypeUint32, Column: orderbase.FieldDeletedAt},
 			orderbase.FieldEntID:         {Type: field.TypeUUID, Column: orderbase.FieldEntID},
-			orderbase.FieldAppID:         {Type: field.TypeUUID, Column: orderbase.FieldAppID},
 			orderbase.FieldUserID:        {Type: field.TypeUUID, Column: orderbase.FieldUserID},
-			orderbase.FieldGoodID:        {Type: field.TypeUUID, Column: orderbase.FieldGoodID},
 			orderbase.FieldAppGoodID:     {Type: field.TypeUUID, Column: orderbase.FieldAppGoodID},
 			orderbase.FieldParentOrderID: {Type: field.TypeUUID, Column: orderbase.FieldParentOrderID},
 			orderbase.FieldOrderType:     {Type: field.TypeString, Column: orderbase.FieldOrderType},
@@ -856,19 +854,9 @@ func (f *OrderBaseFilter) WhereEntID(p entql.ValueP) {
 	f.Where(p.Field(orderbase.FieldEntID))
 }
 
-// WhereAppID applies the entql [16]byte predicate on the app_id field.
-func (f *OrderBaseFilter) WhereAppID(p entql.ValueP) {
-	f.Where(p.Field(orderbase.FieldAppID))
-}
-
 // WhereUserID applies the entql [16]byte predicate on the user_id field.
 func (f *OrderBaseFilter) WhereUserID(p entql.ValueP) {
 	f.Where(p.Field(orderbase.FieldUserID))
-}
-
-// WhereGoodID applies the entql [16]byte predicate on the good_id field.
-func (f *OrderBaseFilter) WhereGoodID(p entql.ValueP) {
-	f.Where(p.Field(orderbase.FieldGoodID))
 }
 
 // WhereAppGoodID applies the entql [16]byte predicate on the app_good_id field.

@@ -309,36 +309,28 @@ func init() {
 	orderbaseDescEntID := orderbaseMixinFields1[1].Descriptor()
 	// orderbase.DefaultEntID holds the default value on creation for the ent_id field.
 	orderbase.DefaultEntID = orderbaseDescEntID.Default.(func() uuid.UUID)
-	// orderbaseDescAppID is the schema descriptor for app_id field.
-	orderbaseDescAppID := orderbaseFields[0].Descriptor()
-	// orderbase.DefaultAppID holds the default value on creation for the app_id field.
-	orderbase.DefaultAppID = orderbaseDescAppID.Default.(func() uuid.UUID)
 	// orderbaseDescUserID is the schema descriptor for user_id field.
-	orderbaseDescUserID := orderbaseFields[1].Descriptor()
+	orderbaseDescUserID := orderbaseFields[0].Descriptor()
 	// orderbase.DefaultUserID holds the default value on creation for the user_id field.
 	orderbase.DefaultUserID = orderbaseDescUserID.Default.(func() uuid.UUID)
-	// orderbaseDescGoodID is the schema descriptor for good_id field.
-	orderbaseDescGoodID := orderbaseFields[2].Descriptor()
-	// orderbase.DefaultGoodID holds the default value on creation for the good_id field.
-	orderbase.DefaultGoodID = orderbaseDescGoodID.Default.(func() uuid.UUID)
 	// orderbaseDescAppGoodID is the schema descriptor for app_good_id field.
-	orderbaseDescAppGoodID := orderbaseFields[3].Descriptor()
+	orderbaseDescAppGoodID := orderbaseFields[1].Descriptor()
 	// orderbase.DefaultAppGoodID holds the default value on creation for the app_good_id field.
 	orderbase.DefaultAppGoodID = orderbaseDescAppGoodID.Default.(func() uuid.UUID)
 	// orderbaseDescParentOrderID is the schema descriptor for parent_order_id field.
-	orderbaseDescParentOrderID := orderbaseFields[4].Descriptor()
+	orderbaseDescParentOrderID := orderbaseFields[2].Descriptor()
 	// orderbase.DefaultParentOrderID holds the default value on creation for the parent_order_id field.
 	orderbase.DefaultParentOrderID = orderbaseDescParentOrderID.Default.(func() uuid.UUID)
 	// orderbaseDescOrderType is the schema descriptor for order_type field.
-	orderbaseDescOrderType := orderbaseFields[5].Descriptor()
+	orderbaseDescOrderType := orderbaseFields[3].Descriptor()
 	// orderbase.DefaultOrderType holds the default value on creation for the order_type field.
 	orderbase.DefaultOrderType = orderbaseDescOrderType.Default.(string)
 	// orderbaseDescPaymentType is the schema descriptor for payment_type field.
-	orderbaseDescPaymentType := orderbaseFields[6].Descriptor()
+	orderbaseDescPaymentType := orderbaseFields[4].Descriptor()
 	// orderbase.DefaultPaymentType holds the default value on creation for the payment_type field.
 	orderbase.DefaultPaymentType = orderbaseDescPaymentType.Default.(string)
 	// orderbaseDescCreateMethod is the schema descriptor for create_method field.
-	orderbaseDescCreateMethod := orderbaseFields[7].Descriptor()
+	orderbaseDescCreateMethod := orderbaseFields[5].Descriptor()
 	// orderbase.DefaultCreateMethod holds the default value on creation for the create_method field.
 	orderbase.DefaultCreateMethod = orderbaseDescCreateMethod.Default.(string)
 	ordercouponMixin := schema.OrderCoupon{}.Mixin()

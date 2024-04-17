@@ -4783,9 +4783,7 @@ type OrderBaseMutation struct {
 	deleted_at      *uint32
 	adddeleted_at   *int32
 	ent_id          *uuid.UUID
-	app_id          *uuid.UUID
 	user_id         *uuid.UUID
-	good_id         *uuid.UUID
 	app_good_id     *uuid.UUID
 	parent_order_id *uuid.UUID
 	order_type      *string
@@ -5105,55 +5103,6 @@ func (m *OrderBaseMutation) ResetEntID() {
 	m.ent_id = nil
 }
 
-// SetAppID sets the "app_id" field.
-func (m *OrderBaseMutation) SetAppID(u uuid.UUID) {
-	m.app_id = &u
-}
-
-// AppID returns the value of the "app_id" field in the mutation.
-func (m *OrderBaseMutation) AppID() (r uuid.UUID, exists bool) {
-	v := m.app_id
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldAppID returns the old "app_id" field's value of the OrderBase entity.
-// If the OrderBase object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *OrderBaseMutation) OldAppID(ctx context.Context) (v uuid.UUID, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldAppID is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldAppID requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldAppID: %w", err)
-	}
-	return oldValue.AppID, nil
-}
-
-// ClearAppID clears the value of the "app_id" field.
-func (m *OrderBaseMutation) ClearAppID() {
-	m.app_id = nil
-	m.clearedFields[orderbase.FieldAppID] = struct{}{}
-}
-
-// AppIDCleared returns if the "app_id" field was cleared in this mutation.
-func (m *OrderBaseMutation) AppIDCleared() bool {
-	_, ok := m.clearedFields[orderbase.FieldAppID]
-	return ok
-}
-
-// ResetAppID resets all changes to the "app_id" field.
-func (m *OrderBaseMutation) ResetAppID() {
-	m.app_id = nil
-	delete(m.clearedFields, orderbase.FieldAppID)
-}
-
 // SetUserID sets the "user_id" field.
 func (m *OrderBaseMutation) SetUserID(u uuid.UUID) {
 	m.user_id = &u
@@ -5201,55 +5150,6 @@ func (m *OrderBaseMutation) UserIDCleared() bool {
 func (m *OrderBaseMutation) ResetUserID() {
 	m.user_id = nil
 	delete(m.clearedFields, orderbase.FieldUserID)
-}
-
-// SetGoodID sets the "good_id" field.
-func (m *OrderBaseMutation) SetGoodID(u uuid.UUID) {
-	m.good_id = &u
-}
-
-// GoodID returns the value of the "good_id" field in the mutation.
-func (m *OrderBaseMutation) GoodID() (r uuid.UUID, exists bool) {
-	v := m.good_id
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldGoodID returns the old "good_id" field's value of the OrderBase entity.
-// If the OrderBase object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *OrderBaseMutation) OldGoodID(ctx context.Context) (v uuid.UUID, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldGoodID is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldGoodID requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldGoodID: %w", err)
-	}
-	return oldValue.GoodID, nil
-}
-
-// ClearGoodID clears the value of the "good_id" field.
-func (m *OrderBaseMutation) ClearGoodID() {
-	m.good_id = nil
-	m.clearedFields[orderbase.FieldGoodID] = struct{}{}
-}
-
-// GoodIDCleared returns if the "good_id" field was cleared in this mutation.
-func (m *OrderBaseMutation) GoodIDCleared() bool {
-	_, ok := m.clearedFields[orderbase.FieldGoodID]
-	return ok
-}
-
-// ResetGoodID resets all changes to the "good_id" field.
-func (m *OrderBaseMutation) ResetGoodID() {
-	m.good_id = nil
-	delete(m.clearedFields, orderbase.FieldGoodID)
 }
 
 // SetAppGoodID sets the "app_good_id" field.
@@ -5516,7 +5416,7 @@ func (m *OrderBaseMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *OrderBaseMutation) Fields() []string {
-	fields := make([]string, 0, 12)
+	fields := make([]string, 0, 10)
 	if m.created_at != nil {
 		fields = append(fields, orderbase.FieldCreatedAt)
 	}
@@ -5529,14 +5429,8 @@ func (m *OrderBaseMutation) Fields() []string {
 	if m.ent_id != nil {
 		fields = append(fields, orderbase.FieldEntID)
 	}
-	if m.app_id != nil {
-		fields = append(fields, orderbase.FieldAppID)
-	}
 	if m.user_id != nil {
 		fields = append(fields, orderbase.FieldUserID)
-	}
-	if m.good_id != nil {
-		fields = append(fields, orderbase.FieldGoodID)
 	}
 	if m.app_good_id != nil {
 		fields = append(fields, orderbase.FieldAppGoodID)
@@ -5569,12 +5463,8 @@ func (m *OrderBaseMutation) Field(name string) (ent.Value, bool) {
 		return m.DeletedAt()
 	case orderbase.FieldEntID:
 		return m.EntID()
-	case orderbase.FieldAppID:
-		return m.AppID()
 	case orderbase.FieldUserID:
 		return m.UserID()
-	case orderbase.FieldGoodID:
-		return m.GoodID()
 	case orderbase.FieldAppGoodID:
 		return m.AppGoodID()
 	case orderbase.FieldParentOrderID:
@@ -5602,12 +5492,8 @@ func (m *OrderBaseMutation) OldField(ctx context.Context, name string) (ent.Valu
 		return m.OldDeletedAt(ctx)
 	case orderbase.FieldEntID:
 		return m.OldEntID(ctx)
-	case orderbase.FieldAppID:
-		return m.OldAppID(ctx)
 	case orderbase.FieldUserID:
 		return m.OldUserID(ctx)
-	case orderbase.FieldGoodID:
-		return m.OldGoodID(ctx)
 	case orderbase.FieldAppGoodID:
 		return m.OldAppGoodID(ctx)
 	case orderbase.FieldParentOrderID:
@@ -5655,26 +5541,12 @@ func (m *OrderBaseMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetEntID(v)
 		return nil
-	case orderbase.FieldAppID:
-		v, ok := value.(uuid.UUID)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetAppID(v)
-		return nil
 	case orderbase.FieldUserID:
 		v, ok := value.(uuid.UUID)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetUserID(v)
-		return nil
-	case orderbase.FieldGoodID:
-		v, ok := value.(uuid.UUID)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetGoodID(v)
 		return nil
 	case orderbase.FieldAppGoodID:
 		v, ok := value.(uuid.UUID)
@@ -5780,14 +5652,8 @@ func (m *OrderBaseMutation) AddField(name string, value ent.Value) error {
 // mutation.
 func (m *OrderBaseMutation) ClearedFields() []string {
 	var fields []string
-	if m.FieldCleared(orderbase.FieldAppID) {
-		fields = append(fields, orderbase.FieldAppID)
-	}
 	if m.FieldCleared(orderbase.FieldUserID) {
 		fields = append(fields, orderbase.FieldUserID)
-	}
-	if m.FieldCleared(orderbase.FieldGoodID) {
-		fields = append(fields, orderbase.FieldGoodID)
 	}
 	if m.FieldCleared(orderbase.FieldAppGoodID) {
 		fields = append(fields, orderbase.FieldAppGoodID)
@@ -5818,14 +5684,8 @@ func (m *OrderBaseMutation) FieldCleared(name string) bool {
 // error if the field is not defined in the schema.
 func (m *OrderBaseMutation) ClearField(name string) error {
 	switch name {
-	case orderbase.FieldAppID:
-		m.ClearAppID()
-		return nil
 	case orderbase.FieldUserID:
 		m.ClearUserID()
-		return nil
-	case orderbase.FieldGoodID:
-		m.ClearGoodID()
 		return nil
 	case orderbase.FieldAppGoodID:
 		m.ClearAppGoodID()
@@ -5862,14 +5722,8 @@ func (m *OrderBaseMutation) ResetField(name string) error {
 	case orderbase.FieldEntID:
 		m.ResetEntID()
 		return nil
-	case orderbase.FieldAppID:
-		m.ResetAppID()
-		return nil
 	case orderbase.FieldUserID:
 		m.ResetUserID()
-		return nil
-	case orderbase.FieldGoodID:
-		m.ResetGoodID()
 		return nil
 	case orderbase.FieldAppGoodID:
 		m.ResetAppGoodID()
