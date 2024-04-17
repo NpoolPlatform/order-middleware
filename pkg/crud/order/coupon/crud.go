@@ -4,40 +4,30 @@ import (
 	"fmt"
 
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
-	basetypes "github.com/NpoolPlatform/message/npool/basetypes/order/v1"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent"
 	entordercoupon "github.com/NpoolPlatform/order-middleware/pkg/db/ent/ordercoupon"
+
 	"github.com/google/uuid"
 )
 
 type Req struct {
-	ID         *uint32
-	EntID      *uuid.UUID
-	AppID      *uuid.UUID
-	UserID     *uuid.UUID
-	OrderID    *uuid.UUID
-	CouponType *basetypes.OrderCouponType
-	CreatedAt  *uint32
-	DeletedAt  *uint32
+	ID        *uint32
+	EntID     *uuid.UUID
+	OrderID   *uuid.UUID
+	CouponID  *uuid.UUID
+	DeletedAt *uint32
 }
 
 func CreateSet(c *ent.OrderCouponCreate, req *Req) *ent.OrderCouponCreate {
 	if req.EntID != nil {
 		c.SetEntID(*req.EntID)
 	}
-	if req.AppID != nil {
-		c.SetAppID(*req.AppID)
-	}
-	if req.UserID != nil {
-		c.SetUserID(*req.UserID)
-	}
 	if req.OrderID != nil {
 		c.SetOrderID(*req.OrderID)
 	}
-	if req.CouponType != nil {
-		c.SetCouponType(req.CouponType.String())
+	if req.CouponID != nil {
+		c.SetCouponID(*req.CouponID)
 	}
-
 	return c
 }
 
@@ -49,15 +39,13 @@ func UpdateSet(u *ent.OrderCouponUpdateOne, req *Req) *ent.OrderCouponUpdateOne 
 }
 
 type Conds struct {
-	EntID      *cruder.Cond
-	EntIDs     *cruder.Cond
-	ID         *cruder.Cond
-	AppID      *cruder.Cond
-	UserID     *cruder.Cond
-	OrderID    *cruder.Cond
-	CouponType *cruder.Cond
-	IDs        *cruder.Cond
-	OrderIDs   *cruder.Cond
+	ID       *cruder.Cond
+	IDs      *cruder.Cond
+	EntID    *cruder.Cond
+	EntIDs   *cruder.Cond
+	OrderID  *cruder.Cond
+	OrderIDs *cruder.Cond
+	CouponID *cruder.Cond
 }
 
 //nolint
@@ -65,6 +53,32 @@ func SetQueryConds(q *ent.OrderCouponQuery, conds *Conds) (*ent.OrderCouponQuery
 	q.Where(entordercoupon.DeletedAt(0))
 	if conds == nil {
 		return q, nil
+	}
+	if conds.ID != nil {
+		id, ok := conds.ID.Val.(uint32)
+		if !ok {
+			return nil, fmt.Errorf("invalid id")
+		}
+		switch conds.ID.Op {
+		case cruder.EQ:
+			q.Where(entordercoupon.ID(id))
+		default:
+			return nil, fmt.Errorf("invalid ordercoupon field")
+		}
+	}
+	if conds.IDs != nil {
+		ids, ok := conds.IDs.Val.([]uint32)
+		if !ok {
+			return nil, fmt.Errorf("invalid ids")
+		}
+		if len(ids) > 0 {
+			switch conds.IDs.Op {
+			case cruder.IN:
+				q.Where(entordercoupon.IDIn(ids...))
+			default:
+				return nil, fmt.Errorf("invalid ordercoupon field")
+			}
+		}
 	}
 	if conds.EntID != nil {
 		id, ok := conds.EntID.Val.(uuid.UUID)
@@ -94,42 +108,6 @@ func SetQueryConds(q *ent.OrderCouponQuery, conds *Conds) (*ent.OrderCouponQuery
 			}
 		}
 	}
-	if conds.ID != nil {
-		id, ok := conds.ID.Val.(uint32)
-		if !ok {
-			return nil, fmt.Errorf("invalid id")
-		}
-		switch conds.ID.Op {
-		case cruder.EQ:
-			q.Where(entordercoupon.ID(id))
-		default:
-			return nil, fmt.Errorf("invalid ordercoupon field")
-		}
-	}
-	if conds.AppID != nil {
-		id, ok := conds.AppID.Val.(uuid.UUID)
-		if !ok {
-			return nil, fmt.Errorf("invalid appid")
-		}
-		switch conds.AppID.Op {
-		case cruder.EQ:
-			q.Where(entordercoupon.AppID(id))
-		default:
-			return nil, fmt.Errorf("invalid ordercoupon field")
-		}
-	}
-	if conds.UserID != nil {
-		id, ok := conds.UserID.Val.(uuid.UUID)
-		if !ok {
-			return nil, fmt.Errorf("invalid userid")
-		}
-		switch conds.UserID.Op {
-		case cruder.EQ:
-			q.Where(entordercoupon.UserID(id))
-		default:
-			return nil, fmt.Errorf("invalid ordercoupon field")
-		}
-	}
 	if conds.OrderID != nil {
 		id, ok := conds.OrderID.Val.(uuid.UUID)
 		if !ok {
@@ -140,32 +118,6 @@ func SetQueryConds(q *ent.OrderCouponQuery, conds *Conds) (*ent.OrderCouponQuery
 			q.Where(entordercoupon.OrderID(id))
 		default:
 			return nil, fmt.Errorf("invalid ordercoupon field")
-		}
-	}
-	if conds.CouponType != nil {
-		_type, ok := conds.CouponType.Val.(basetypes.OrderCouponType)
-		if !ok {
-			return nil, fmt.Errorf("invalid coupontype")
-		}
-		switch conds.CouponType.Op {
-		case cruder.EQ:
-			q.Where(entordercoupon.CouponType(_type.String()))
-		default:
-			return nil, fmt.Errorf("invalid ordercoupon field")
-		}
-	}
-	if conds.IDs != nil {
-		ids, ok := conds.IDs.Val.([]uint32)
-		if !ok {
-			return nil, fmt.Errorf("invalid ids")
-		}
-		if len(ids) > 0 {
-			switch conds.IDs.Op {
-			case cruder.IN:
-				q.Where(entordercoupon.IDIn(ids...))
-			default:
-				return nil, fmt.Errorf("invalid ordercoupon field")
-			}
 		}
 	}
 	if conds.OrderIDs != nil {
@@ -180,6 +132,18 @@ func SetQueryConds(q *ent.OrderCouponQuery, conds *Conds) (*ent.OrderCouponQuery
 			default:
 				return nil, fmt.Errorf("invalid ordercoupon field")
 			}
+		}
+	}
+	if conds.CouponID != nil {
+		id, ok := conds.CouponID.Val.(uuid.UUID)
+		if !ok {
+			return nil, fmt.Errorf("invalid couponid")
+		}
+		switch conds.CouponID.Op {
+		case cruder.EQ:
+			q.Where(entordercoupon.CouponID(id))
+		default:
+			return nil, fmt.Errorf("invalid ordercoupon field")
 		}
 	}
 	return q, nil
