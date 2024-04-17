@@ -12,10 +12,16 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/compensate"
 	entorder "github.com/NpoolPlatform/order-middleware/pkg/db/ent/order"
+	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/orderbase"
+	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/ordercoupon"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/orderlock"
+	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/orderpaymentbalance"
+	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/orderpaymentcontract"
+	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/orderpaymenttransfer"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/orderstate"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/outofgas"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/payment"
+	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/powerrental"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/simulateconfig"
 )
 
@@ -37,13 +43,19 @@ type OrderFunc func(*sql.Selector)
 // columnChecker returns a function indicates if the column exists in the given column.
 func columnChecker(table string) func(string) error {
 	checks := map[string]func(string) bool{
-		compensate.Table:     compensate.ValidColumn,
-		entorder.Table:       entorder.ValidColumn,
-		orderlock.Table:      orderlock.ValidColumn,
-		orderstate.Table:     orderstate.ValidColumn,
-		outofgas.Table:       outofgas.ValidColumn,
-		payment.Table:        payment.ValidColumn,
-		simulateconfig.Table: simulateconfig.ValidColumn,
+		compensate.Table:           compensate.ValidColumn,
+		entorder.Table:             entorder.ValidColumn,
+		orderbase.Table:            orderbase.ValidColumn,
+		ordercoupon.Table:          ordercoupon.ValidColumn,
+		orderlock.Table:            orderlock.ValidColumn,
+		orderpaymentbalance.Table:  orderpaymentbalance.ValidColumn,
+		orderpaymentcontract.Table: orderpaymentcontract.ValidColumn,
+		orderpaymenttransfer.Table: orderpaymenttransfer.ValidColumn,
+		orderstate.Table:           orderstate.ValidColumn,
+		outofgas.Table:             outofgas.ValidColumn,
+		payment.Table:              payment.ValidColumn,
+		powerrental.Table:          powerrental.ValidColumn,
+		simulateconfig.Table:       simulateconfig.ValidColumn,
 	}
 	check, ok := checks[table]
 	if !ok {

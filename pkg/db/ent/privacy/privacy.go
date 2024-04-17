@@ -198,6 +198,54 @@ func (f OrderMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation)
 	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.OrderMutation", m)
 }
 
+// The OrderBaseQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type OrderBaseQueryRuleFunc func(context.Context, *ent.OrderBaseQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f OrderBaseQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.OrderBaseQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("ent/privacy: unexpected query type %T, expect *ent.OrderBaseQuery", q)
+}
+
+// The OrderBaseMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type OrderBaseMutationRuleFunc func(context.Context, *ent.OrderBaseMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f OrderBaseMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
+	if m, ok := m.(*ent.OrderBaseMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.OrderBaseMutation", m)
+}
+
+// The OrderCouponQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type OrderCouponQueryRuleFunc func(context.Context, *ent.OrderCouponQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f OrderCouponQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.OrderCouponQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("ent/privacy: unexpected query type %T, expect *ent.OrderCouponQuery", q)
+}
+
+// The OrderCouponMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type OrderCouponMutationRuleFunc func(context.Context, *ent.OrderCouponMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f OrderCouponMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
+	if m, ok := m.(*ent.OrderCouponMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.OrderCouponMutation", m)
+}
+
 // The OrderLockQueryRuleFunc type is an adapter to allow the use of ordinary
 // functions as a query rule.
 type OrderLockQueryRuleFunc func(context.Context, *ent.OrderLockQuery) error
@@ -220,6 +268,78 @@ func (f OrderLockMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutat
 		return f(ctx, m)
 	}
 	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.OrderLockMutation", m)
+}
+
+// The OrderPaymentBalanceQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type OrderPaymentBalanceQueryRuleFunc func(context.Context, *ent.OrderPaymentBalanceQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f OrderPaymentBalanceQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.OrderPaymentBalanceQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("ent/privacy: unexpected query type %T, expect *ent.OrderPaymentBalanceQuery", q)
+}
+
+// The OrderPaymentBalanceMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type OrderPaymentBalanceMutationRuleFunc func(context.Context, *ent.OrderPaymentBalanceMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f OrderPaymentBalanceMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
+	if m, ok := m.(*ent.OrderPaymentBalanceMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.OrderPaymentBalanceMutation", m)
+}
+
+// The OrderPaymentContractQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type OrderPaymentContractQueryRuleFunc func(context.Context, *ent.OrderPaymentContractQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f OrderPaymentContractQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.OrderPaymentContractQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("ent/privacy: unexpected query type %T, expect *ent.OrderPaymentContractQuery", q)
+}
+
+// The OrderPaymentContractMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type OrderPaymentContractMutationRuleFunc func(context.Context, *ent.OrderPaymentContractMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f OrderPaymentContractMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
+	if m, ok := m.(*ent.OrderPaymentContractMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.OrderPaymentContractMutation", m)
+}
+
+// The OrderPaymentTransferQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type OrderPaymentTransferQueryRuleFunc func(context.Context, *ent.OrderPaymentTransferQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f OrderPaymentTransferQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.OrderPaymentTransferQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("ent/privacy: unexpected query type %T, expect *ent.OrderPaymentTransferQuery", q)
+}
+
+// The OrderPaymentTransferMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type OrderPaymentTransferMutationRuleFunc func(context.Context, *ent.OrderPaymentTransferMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f OrderPaymentTransferMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
+	if m, ok := m.(*ent.OrderPaymentTransferMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.OrderPaymentTransferMutation", m)
 }
 
 // The OrderStateQueryRuleFunc type is an adapter to allow the use of ordinary
@@ -294,6 +414,30 @@ func (f PaymentMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutatio
 	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.PaymentMutation", m)
 }
 
+// The PowerRentalQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type PowerRentalQueryRuleFunc func(context.Context, *ent.PowerRentalQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f PowerRentalQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.PowerRentalQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("ent/privacy: unexpected query type %T, expect *ent.PowerRentalQuery", q)
+}
+
+// The PowerRentalMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type PowerRentalMutationRuleFunc func(context.Context, *ent.PowerRentalMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f PowerRentalMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
+	if m, ok := m.(*ent.PowerRentalMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.PowerRentalMutation", m)
+}
+
 // The SimulateConfigQueryRuleFunc type is an adapter to allow the use of ordinary
 // functions as a query rule.
 type SimulateConfigQueryRuleFunc func(context.Context, *ent.SimulateConfigQuery) error
@@ -357,13 +501,25 @@ func queryFilter(q ent.Query) (Filter, error) {
 		return q.Filter(), nil
 	case *ent.OrderQuery:
 		return q.Filter(), nil
+	case *ent.OrderBaseQuery:
+		return q.Filter(), nil
+	case *ent.OrderCouponQuery:
+		return q.Filter(), nil
 	case *ent.OrderLockQuery:
+		return q.Filter(), nil
+	case *ent.OrderPaymentBalanceQuery:
+		return q.Filter(), nil
+	case *ent.OrderPaymentContractQuery:
+		return q.Filter(), nil
+	case *ent.OrderPaymentTransferQuery:
 		return q.Filter(), nil
 	case *ent.OrderStateQuery:
 		return q.Filter(), nil
 	case *ent.OutOfGasQuery:
 		return q.Filter(), nil
 	case *ent.PaymentQuery:
+		return q.Filter(), nil
+	case *ent.PowerRentalQuery:
 		return q.Filter(), nil
 	case *ent.SimulateConfigQuery:
 		return q.Filter(), nil
@@ -378,13 +534,25 @@ func mutationFilter(m ent.Mutation) (Filter, error) {
 		return m.Filter(), nil
 	case *ent.OrderMutation:
 		return m.Filter(), nil
+	case *ent.OrderBaseMutation:
+		return m.Filter(), nil
+	case *ent.OrderCouponMutation:
+		return m.Filter(), nil
 	case *ent.OrderLockMutation:
+		return m.Filter(), nil
+	case *ent.OrderPaymentBalanceMutation:
+		return m.Filter(), nil
+	case *ent.OrderPaymentContractMutation:
+		return m.Filter(), nil
+	case *ent.OrderPaymentTransferMutation:
 		return m.Filter(), nil
 	case *ent.OrderStateMutation:
 		return m.Filter(), nil
 	case *ent.OutOfGasMutation:
 		return m.Filter(), nil
 	case *ent.PaymentMutation:
+		return m.Filter(), nil
+	case *ent.PowerRentalMutation:
 		return m.Filter(), nil
 	case *ent.SimulateConfigMutation:
 		return m.Filter(), nil

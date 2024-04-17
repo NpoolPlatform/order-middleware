@@ -1,0 +1,52 @@
+package schema
+
+import (
+	"entgo.io/ent"
+	"entgo.io/ent/schema/field"
+	"entgo.io/ent/schema/index"
+	crudermixin "github.com/NpoolPlatform/libent-cruder/pkg/mixin"
+	"github.com/NpoolPlatform/order-middleware/pkg/db/mixin"
+	"github.com/google/uuid"
+)
+
+// OrderCoupon holds the schema definition for the OrderCoupon entity.
+type OrderCoupon struct {
+	ent.Schema
+}
+
+func (OrderCoupon) Mixin() []ent.Mixin {
+	return []ent.Mixin{
+		mixin.TimeMixin{},
+		crudermixin.AutoIDMixin{},
+	}
+}
+
+// Fields of the OrderCoupon.
+//nolint:funlen
+func (OrderCoupon) Fields() []ent.Field {
+	return []ent.Field{
+		field.
+			UUID("order_id", uuid.UUID{}).
+			Optional().
+			Default(func() uuid.UUID {
+				return uuid.Nil
+			}),
+		field.
+			JSON("coupon_id", uuid.UUID{}).
+			Optional().
+			Default(func() uuid.UUID {
+				return uuid.Nil
+			}),
+	}
+}
+
+// Edges of the OrderCoupon.
+func (OrderCoupon) Edges() []ent.Edge {
+	return nil
+}
+
+func (OrderCoupon) Indexes() []ent.Index {
+	return []ent.Index{
+		index.Fields("order_id"),
+	}
+}

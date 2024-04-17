@@ -18,14 +18,26 @@ type Tx struct {
 	Compensate *CompensateClient
 	// Order is the client for interacting with the Order builders.
 	Order *OrderClient
+	// OrderBase is the client for interacting with the OrderBase builders.
+	OrderBase *OrderBaseClient
+	// OrderCoupon is the client for interacting with the OrderCoupon builders.
+	OrderCoupon *OrderCouponClient
 	// OrderLock is the client for interacting with the OrderLock builders.
 	OrderLock *OrderLockClient
+	// OrderPaymentBalance is the client for interacting with the OrderPaymentBalance builders.
+	OrderPaymentBalance *OrderPaymentBalanceClient
+	// OrderPaymentContract is the client for interacting with the OrderPaymentContract builders.
+	OrderPaymentContract *OrderPaymentContractClient
+	// OrderPaymentTransfer is the client for interacting with the OrderPaymentTransfer builders.
+	OrderPaymentTransfer *OrderPaymentTransferClient
 	// OrderState is the client for interacting with the OrderState builders.
 	OrderState *OrderStateClient
 	// OutOfGas is the client for interacting with the OutOfGas builders.
 	OutOfGas *OutOfGasClient
 	// Payment is the client for interacting with the Payment builders.
 	Payment *PaymentClient
+	// PowerRental is the client for interacting with the PowerRental builders.
+	PowerRental *PowerRentalClient
 	// SimulateConfig is the client for interacting with the SimulateConfig builders.
 	SimulateConfig *SimulateConfigClient
 
@@ -165,10 +177,16 @@ func (tx *Tx) Client() *Client {
 func (tx *Tx) init() {
 	tx.Compensate = NewCompensateClient(tx.config)
 	tx.Order = NewOrderClient(tx.config)
+	tx.OrderBase = NewOrderBaseClient(tx.config)
+	tx.OrderCoupon = NewOrderCouponClient(tx.config)
 	tx.OrderLock = NewOrderLockClient(tx.config)
+	tx.OrderPaymentBalance = NewOrderPaymentBalanceClient(tx.config)
+	tx.OrderPaymentContract = NewOrderPaymentContractClient(tx.config)
+	tx.OrderPaymentTransfer = NewOrderPaymentTransferClient(tx.config)
 	tx.OrderState = NewOrderStateClient(tx.config)
 	tx.OutOfGas = NewOutOfGasClient(tx.config)
 	tx.Payment = NewPaymentClient(tx.config)
+	tx.PowerRental = NewPowerRentalClient(tx.config)
 	tx.SimulateConfig = NewSimulateConfigClient(tx.config)
 }
 

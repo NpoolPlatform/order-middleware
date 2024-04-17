@@ -8,10 +8,16 @@ import (
 	"github.com/NpoolPlatform/message/npool/order/mw/v1/order"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/compensate"
 	entorder "github.com/NpoolPlatform/order-middleware/pkg/db/ent/order"
+	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/orderbase"
+	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/ordercoupon"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/orderlock"
+	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/orderpaymentbalance"
+	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/orderpaymentcontract"
+	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/orderpaymenttransfer"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/orderstate"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/outofgas"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/payment"
+	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/powerrental"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/schema"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/simulateconfig"
 	"github.com/google/uuid"
@@ -205,6 +211,114 @@ func init() {
 	entorderDescPaymentAmounts := entorderFields[27].Descriptor()
 	// entorder.DefaultPaymentAmounts holds the default value on creation for the payment_amounts field.
 	entorder.DefaultPaymentAmounts = entorderDescPaymentAmounts.Default.([]order.PaymentAmount)
+	orderbaseMixin := schema.OrderBase{}.Mixin()
+	orderbase.Policy = privacy.NewPolicies(orderbaseMixin[0], schema.OrderBase{})
+	orderbase.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+			if err := orderbase.Policy.EvalMutation(ctx, m); err != nil {
+				return nil, err
+			}
+			return next.Mutate(ctx, m)
+		})
+	}
+	orderbaseMixinFields0 := orderbaseMixin[0].Fields()
+	_ = orderbaseMixinFields0
+	orderbaseMixinFields1 := orderbaseMixin[1].Fields()
+	_ = orderbaseMixinFields1
+	orderbaseFields := schema.OrderBase{}.Fields()
+	_ = orderbaseFields
+	// orderbaseDescCreatedAt is the schema descriptor for created_at field.
+	orderbaseDescCreatedAt := orderbaseMixinFields0[0].Descriptor()
+	// orderbase.DefaultCreatedAt holds the default value on creation for the created_at field.
+	orderbase.DefaultCreatedAt = orderbaseDescCreatedAt.Default.(func() uint32)
+	// orderbaseDescUpdatedAt is the schema descriptor for updated_at field.
+	orderbaseDescUpdatedAt := orderbaseMixinFields0[1].Descriptor()
+	// orderbase.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	orderbase.DefaultUpdatedAt = orderbaseDescUpdatedAt.Default.(func() uint32)
+	// orderbase.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	orderbase.UpdateDefaultUpdatedAt = orderbaseDescUpdatedAt.UpdateDefault.(func() uint32)
+	// orderbaseDescDeletedAt is the schema descriptor for deleted_at field.
+	orderbaseDescDeletedAt := orderbaseMixinFields0[2].Descriptor()
+	// orderbase.DefaultDeletedAt holds the default value on creation for the deleted_at field.
+	orderbase.DefaultDeletedAt = orderbaseDescDeletedAt.Default.(func() uint32)
+	// orderbaseDescEntID is the schema descriptor for ent_id field.
+	orderbaseDescEntID := orderbaseMixinFields1[1].Descriptor()
+	// orderbase.DefaultEntID holds the default value on creation for the ent_id field.
+	orderbase.DefaultEntID = orderbaseDescEntID.Default.(func() uuid.UUID)
+	// orderbaseDescAppID is the schema descriptor for app_id field.
+	orderbaseDescAppID := orderbaseFields[0].Descriptor()
+	// orderbase.DefaultAppID holds the default value on creation for the app_id field.
+	orderbase.DefaultAppID = orderbaseDescAppID.Default.(func() uuid.UUID)
+	// orderbaseDescUserID is the schema descriptor for user_id field.
+	orderbaseDescUserID := orderbaseFields[1].Descriptor()
+	// orderbase.DefaultUserID holds the default value on creation for the user_id field.
+	orderbase.DefaultUserID = orderbaseDescUserID.Default.(func() uuid.UUID)
+	// orderbaseDescGoodID is the schema descriptor for good_id field.
+	orderbaseDescGoodID := orderbaseFields[2].Descriptor()
+	// orderbase.DefaultGoodID holds the default value on creation for the good_id field.
+	orderbase.DefaultGoodID = orderbaseDescGoodID.Default.(func() uuid.UUID)
+	// orderbaseDescAppGoodID is the schema descriptor for app_good_id field.
+	orderbaseDescAppGoodID := orderbaseFields[3].Descriptor()
+	// orderbase.DefaultAppGoodID holds the default value on creation for the app_good_id field.
+	orderbase.DefaultAppGoodID = orderbaseDescAppGoodID.Default.(func() uuid.UUID)
+	// orderbaseDescParentOrderID is the schema descriptor for parent_order_id field.
+	orderbaseDescParentOrderID := orderbaseFields[4].Descriptor()
+	// orderbase.DefaultParentOrderID holds the default value on creation for the parent_order_id field.
+	orderbase.DefaultParentOrderID = orderbaseDescParentOrderID.Default.(func() uuid.UUID)
+	// orderbaseDescOrderType is the schema descriptor for order_type field.
+	orderbaseDescOrderType := orderbaseFields[5].Descriptor()
+	// orderbase.DefaultOrderType holds the default value on creation for the order_type field.
+	orderbase.DefaultOrderType = orderbaseDescOrderType.Default.(string)
+	// orderbaseDescPaymentType is the schema descriptor for payment_type field.
+	orderbaseDescPaymentType := orderbaseFields[6].Descriptor()
+	// orderbase.DefaultPaymentType holds the default value on creation for the payment_type field.
+	orderbase.DefaultPaymentType = orderbaseDescPaymentType.Default.(string)
+	// orderbaseDescCreateMethod is the schema descriptor for create_method field.
+	orderbaseDescCreateMethod := orderbaseFields[7].Descriptor()
+	// orderbase.DefaultCreateMethod holds the default value on creation for the create_method field.
+	orderbase.DefaultCreateMethod = orderbaseDescCreateMethod.Default.(string)
+	ordercouponMixin := schema.OrderCoupon{}.Mixin()
+	ordercoupon.Policy = privacy.NewPolicies(ordercouponMixin[0], schema.OrderCoupon{})
+	ordercoupon.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+			if err := ordercoupon.Policy.EvalMutation(ctx, m); err != nil {
+				return nil, err
+			}
+			return next.Mutate(ctx, m)
+		})
+	}
+	ordercouponMixinFields0 := ordercouponMixin[0].Fields()
+	_ = ordercouponMixinFields0
+	ordercouponMixinFields1 := ordercouponMixin[1].Fields()
+	_ = ordercouponMixinFields1
+	ordercouponFields := schema.OrderCoupon{}.Fields()
+	_ = ordercouponFields
+	// ordercouponDescCreatedAt is the schema descriptor for created_at field.
+	ordercouponDescCreatedAt := ordercouponMixinFields0[0].Descriptor()
+	// ordercoupon.DefaultCreatedAt holds the default value on creation for the created_at field.
+	ordercoupon.DefaultCreatedAt = ordercouponDescCreatedAt.Default.(func() uint32)
+	// ordercouponDescUpdatedAt is the schema descriptor for updated_at field.
+	ordercouponDescUpdatedAt := ordercouponMixinFields0[1].Descriptor()
+	// ordercoupon.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	ordercoupon.DefaultUpdatedAt = ordercouponDescUpdatedAt.Default.(func() uint32)
+	// ordercoupon.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	ordercoupon.UpdateDefaultUpdatedAt = ordercouponDescUpdatedAt.UpdateDefault.(func() uint32)
+	// ordercouponDescDeletedAt is the schema descriptor for deleted_at field.
+	ordercouponDescDeletedAt := ordercouponMixinFields0[2].Descriptor()
+	// ordercoupon.DefaultDeletedAt holds the default value on creation for the deleted_at field.
+	ordercoupon.DefaultDeletedAt = ordercouponDescDeletedAt.Default.(func() uint32)
+	// ordercouponDescEntID is the schema descriptor for ent_id field.
+	ordercouponDescEntID := ordercouponMixinFields1[1].Descriptor()
+	// ordercoupon.DefaultEntID holds the default value on creation for the ent_id field.
+	ordercoupon.DefaultEntID = ordercouponDescEntID.Default.(func() uuid.UUID)
+	// ordercouponDescOrderID is the schema descriptor for order_id field.
+	ordercouponDescOrderID := ordercouponFields[0].Descriptor()
+	// ordercoupon.DefaultOrderID holds the default value on creation for the order_id field.
+	ordercoupon.DefaultOrderID = ordercouponDescOrderID.Default.(func() uuid.UUID)
+	// ordercouponDescCouponID is the schema descriptor for coupon_id field.
+	ordercouponDescCouponID := ordercouponFields[1].Descriptor()
+	// ordercoupon.DefaultCouponID holds the default value on creation for the coupon_id field.
+	ordercoupon.DefaultCouponID = ordercouponDescCouponID.Default.(func() uuid.UUID)
 	orderlockMixin := schema.OrderLock{}.Mixin()
 	orderlock.Policy = privacy.NewPolicies(orderlockMixin[0], schema.OrderLock{})
 	orderlock.Hooks[0] = func(next ent.Mutator) ent.Mutator {
@@ -243,6 +357,156 @@ func init() {
 	orderlockDescLockType := orderlockFields[3].Descriptor()
 	// orderlock.DefaultLockType holds the default value on creation for the lock_type field.
 	orderlock.DefaultLockType = orderlockDescLockType.Default.(string)
+	orderpaymentbalanceMixin := schema.OrderPaymentBalance{}.Mixin()
+	orderpaymentbalance.Policy = privacy.NewPolicies(orderpaymentbalanceMixin[0], schema.OrderPaymentBalance{})
+	orderpaymentbalance.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+			if err := orderpaymentbalance.Policy.EvalMutation(ctx, m); err != nil {
+				return nil, err
+			}
+			return next.Mutate(ctx, m)
+		})
+	}
+	orderpaymentbalanceMixinFields0 := orderpaymentbalanceMixin[0].Fields()
+	_ = orderpaymentbalanceMixinFields0
+	orderpaymentbalanceMixinFields1 := orderpaymentbalanceMixin[1].Fields()
+	_ = orderpaymentbalanceMixinFields1
+	orderpaymentbalanceFields := schema.OrderPaymentBalance{}.Fields()
+	_ = orderpaymentbalanceFields
+	// orderpaymentbalanceDescCreatedAt is the schema descriptor for created_at field.
+	orderpaymentbalanceDescCreatedAt := orderpaymentbalanceMixinFields0[0].Descriptor()
+	// orderpaymentbalance.DefaultCreatedAt holds the default value on creation for the created_at field.
+	orderpaymentbalance.DefaultCreatedAt = orderpaymentbalanceDescCreatedAt.Default.(func() uint32)
+	// orderpaymentbalanceDescUpdatedAt is the schema descriptor for updated_at field.
+	orderpaymentbalanceDescUpdatedAt := orderpaymentbalanceMixinFields0[1].Descriptor()
+	// orderpaymentbalance.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	orderpaymentbalance.DefaultUpdatedAt = orderpaymentbalanceDescUpdatedAt.Default.(func() uint32)
+	// orderpaymentbalance.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	orderpaymentbalance.UpdateDefaultUpdatedAt = orderpaymentbalanceDescUpdatedAt.UpdateDefault.(func() uint32)
+	// orderpaymentbalanceDescDeletedAt is the schema descriptor for deleted_at field.
+	orderpaymentbalanceDescDeletedAt := orderpaymentbalanceMixinFields0[2].Descriptor()
+	// orderpaymentbalance.DefaultDeletedAt holds the default value on creation for the deleted_at field.
+	orderpaymentbalance.DefaultDeletedAt = orderpaymentbalanceDescDeletedAt.Default.(func() uint32)
+	// orderpaymentbalanceDescEntID is the schema descriptor for ent_id field.
+	orderpaymentbalanceDescEntID := orderpaymentbalanceMixinFields1[1].Descriptor()
+	// orderpaymentbalance.DefaultEntID holds the default value on creation for the ent_id field.
+	orderpaymentbalance.DefaultEntID = orderpaymentbalanceDescEntID.Default.(func() uuid.UUID)
+	// orderpaymentbalanceDescOrderID is the schema descriptor for order_id field.
+	orderpaymentbalanceDescOrderID := orderpaymentbalanceFields[0].Descriptor()
+	// orderpaymentbalance.DefaultOrderID holds the default value on creation for the order_id field.
+	orderpaymentbalance.DefaultOrderID = orderpaymentbalanceDescOrderID.Default.(func() uuid.UUID)
+	// orderpaymentbalanceDescCoinTypeID is the schema descriptor for coin_type_id field.
+	orderpaymentbalanceDescCoinTypeID := orderpaymentbalanceFields[1].Descriptor()
+	// orderpaymentbalance.DefaultCoinTypeID holds the default value on creation for the coin_type_id field.
+	orderpaymentbalance.DefaultCoinTypeID = orderpaymentbalanceDescCoinTypeID.Default.(func() uuid.UUID)
+	// orderpaymentbalanceDescAmount is the schema descriptor for amount field.
+	orderpaymentbalanceDescAmount := orderpaymentbalanceFields[2].Descriptor()
+	// orderpaymentbalance.DefaultAmount holds the default value on creation for the amount field.
+	orderpaymentbalance.DefaultAmount = orderpaymentbalanceDescAmount.Default.(decimal.Decimal)
+	// orderpaymentbalanceDescCoinUsdCurrency is the schema descriptor for coin_usd_currency field.
+	orderpaymentbalanceDescCoinUsdCurrency := orderpaymentbalanceFields[3].Descriptor()
+	// orderpaymentbalance.DefaultCoinUsdCurrency holds the default value on creation for the coin_usd_currency field.
+	orderpaymentbalance.DefaultCoinUsdCurrency = orderpaymentbalanceDescCoinUsdCurrency.Default.(decimal.Decimal)
+	// orderpaymentbalanceDescLocalCoinUsdCurrency is the schema descriptor for local_coin_usd_currency field.
+	orderpaymentbalanceDescLocalCoinUsdCurrency := orderpaymentbalanceFields[4].Descriptor()
+	// orderpaymentbalance.DefaultLocalCoinUsdCurrency holds the default value on creation for the local_coin_usd_currency field.
+	orderpaymentbalance.DefaultLocalCoinUsdCurrency = orderpaymentbalanceDescLocalCoinUsdCurrency.Default.(decimal.Decimal)
+	// orderpaymentbalanceDescLiveCoinUsdCurrency is the schema descriptor for live_coin_usd_currency field.
+	orderpaymentbalanceDescLiveCoinUsdCurrency := orderpaymentbalanceFields[5].Descriptor()
+	// orderpaymentbalance.DefaultLiveCoinUsdCurrency holds the default value on creation for the live_coin_usd_currency field.
+	orderpaymentbalance.DefaultLiveCoinUsdCurrency = orderpaymentbalanceDescLiveCoinUsdCurrency.Default.(decimal.Decimal)
+	orderpaymentcontractMixin := schema.OrderPaymentContract{}.Mixin()
+	orderpaymentcontract.Policy = privacy.NewPolicies(orderpaymentcontractMixin[0], schema.OrderPaymentContract{})
+	orderpaymentcontract.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+			if err := orderpaymentcontract.Policy.EvalMutation(ctx, m); err != nil {
+				return nil, err
+			}
+			return next.Mutate(ctx, m)
+		})
+	}
+	orderpaymentcontractMixinFields0 := orderpaymentcontractMixin[0].Fields()
+	_ = orderpaymentcontractMixinFields0
+	orderpaymentcontractMixinFields1 := orderpaymentcontractMixin[1].Fields()
+	_ = orderpaymentcontractMixinFields1
+	orderpaymentcontractFields := schema.OrderPaymentContract{}.Fields()
+	_ = orderpaymentcontractFields
+	// orderpaymentcontractDescCreatedAt is the schema descriptor for created_at field.
+	orderpaymentcontractDescCreatedAt := orderpaymentcontractMixinFields0[0].Descriptor()
+	// orderpaymentcontract.DefaultCreatedAt holds the default value on creation for the created_at field.
+	orderpaymentcontract.DefaultCreatedAt = orderpaymentcontractDescCreatedAt.Default.(func() uint32)
+	// orderpaymentcontractDescUpdatedAt is the schema descriptor for updated_at field.
+	orderpaymentcontractDescUpdatedAt := orderpaymentcontractMixinFields0[1].Descriptor()
+	// orderpaymentcontract.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	orderpaymentcontract.DefaultUpdatedAt = orderpaymentcontractDescUpdatedAt.Default.(func() uint32)
+	// orderpaymentcontract.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	orderpaymentcontract.UpdateDefaultUpdatedAt = orderpaymentcontractDescUpdatedAt.UpdateDefault.(func() uint32)
+	// orderpaymentcontractDescDeletedAt is the schema descriptor for deleted_at field.
+	orderpaymentcontractDescDeletedAt := orderpaymentcontractMixinFields0[2].Descriptor()
+	// orderpaymentcontract.DefaultDeletedAt holds the default value on creation for the deleted_at field.
+	orderpaymentcontract.DefaultDeletedAt = orderpaymentcontractDescDeletedAt.Default.(func() uint32)
+	// orderpaymentcontractDescEntID is the schema descriptor for ent_id field.
+	orderpaymentcontractDescEntID := orderpaymentcontractMixinFields1[1].Descriptor()
+	// orderpaymentcontract.DefaultEntID holds the default value on creation for the ent_id field.
+	orderpaymentcontract.DefaultEntID = orderpaymentcontractDescEntID.Default.(func() uuid.UUID)
+	// orderpaymentcontractDescOrderID is the schema descriptor for order_id field.
+	orderpaymentcontractDescOrderID := orderpaymentcontractFields[0].Descriptor()
+	// orderpaymentcontract.DefaultOrderID holds the default value on creation for the order_id field.
+	orderpaymentcontract.DefaultOrderID = orderpaymentcontractDescOrderID.Default.(func() uuid.UUID)
+	// orderpaymentcontractDescCoinTypeID is the schema descriptor for coin_type_id field.
+	orderpaymentcontractDescCoinTypeID := orderpaymentcontractFields[1].Descriptor()
+	// orderpaymentcontract.DefaultCoinTypeID holds the default value on creation for the coin_type_id field.
+	orderpaymentcontract.DefaultCoinTypeID = orderpaymentcontractDescCoinTypeID.Default.(func() uuid.UUID)
+	// orderpaymentcontractDescAmount is the schema descriptor for amount field.
+	orderpaymentcontractDescAmount := orderpaymentcontractFields[2].Descriptor()
+	// orderpaymentcontract.DefaultAmount holds the default value on creation for the amount field.
+	orderpaymentcontract.DefaultAmount = orderpaymentcontractDescAmount.Default.(decimal.Decimal)
+	orderpaymenttransferMixin := schema.OrderPaymentTransfer{}.Mixin()
+	orderpaymenttransfer.Policy = privacy.NewPolicies(orderpaymenttransferMixin[0], schema.OrderPaymentTransfer{})
+	orderpaymenttransfer.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+			if err := orderpaymenttransfer.Policy.EvalMutation(ctx, m); err != nil {
+				return nil, err
+			}
+			return next.Mutate(ctx, m)
+		})
+	}
+	orderpaymenttransferMixinFields0 := orderpaymenttransferMixin[0].Fields()
+	_ = orderpaymenttransferMixinFields0
+	orderpaymenttransferMixinFields1 := orderpaymenttransferMixin[1].Fields()
+	_ = orderpaymenttransferMixinFields1
+	orderpaymenttransferFields := schema.OrderPaymentTransfer{}.Fields()
+	_ = orderpaymenttransferFields
+	// orderpaymenttransferDescCreatedAt is the schema descriptor for created_at field.
+	orderpaymenttransferDescCreatedAt := orderpaymenttransferMixinFields0[0].Descriptor()
+	// orderpaymenttransfer.DefaultCreatedAt holds the default value on creation for the created_at field.
+	orderpaymenttransfer.DefaultCreatedAt = orderpaymenttransferDescCreatedAt.Default.(func() uint32)
+	// orderpaymenttransferDescUpdatedAt is the schema descriptor for updated_at field.
+	orderpaymenttransferDescUpdatedAt := orderpaymenttransferMixinFields0[1].Descriptor()
+	// orderpaymenttransfer.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	orderpaymenttransfer.DefaultUpdatedAt = orderpaymenttransferDescUpdatedAt.Default.(func() uint32)
+	// orderpaymenttransfer.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	orderpaymenttransfer.UpdateDefaultUpdatedAt = orderpaymenttransferDescUpdatedAt.UpdateDefault.(func() uint32)
+	// orderpaymenttransferDescDeletedAt is the schema descriptor for deleted_at field.
+	orderpaymenttransferDescDeletedAt := orderpaymenttransferMixinFields0[2].Descriptor()
+	// orderpaymenttransfer.DefaultDeletedAt holds the default value on creation for the deleted_at field.
+	orderpaymenttransfer.DefaultDeletedAt = orderpaymenttransferDescDeletedAt.Default.(func() uint32)
+	// orderpaymenttransferDescEntID is the schema descriptor for ent_id field.
+	orderpaymenttransferDescEntID := orderpaymenttransferMixinFields1[1].Descriptor()
+	// orderpaymenttransfer.DefaultEntID holds the default value on creation for the ent_id field.
+	orderpaymenttransfer.DefaultEntID = orderpaymenttransferDescEntID.Default.(func() uuid.UUID)
+	// orderpaymenttransferDescOrderID is the schema descriptor for order_id field.
+	orderpaymenttransferDescOrderID := orderpaymenttransferFields[0].Descriptor()
+	// orderpaymenttransfer.DefaultOrderID holds the default value on creation for the order_id field.
+	orderpaymenttransfer.DefaultOrderID = orderpaymenttransferDescOrderID.Default.(func() uuid.UUID)
+	// orderpaymenttransferDescCoinTypeID is the schema descriptor for coin_type_id field.
+	orderpaymenttransferDescCoinTypeID := orderpaymenttransferFields[1].Descriptor()
+	// orderpaymenttransfer.DefaultCoinTypeID holds the default value on creation for the coin_type_id field.
+	orderpaymenttransfer.DefaultCoinTypeID = orderpaymenttransferDescCoinTypeID.Default.(func() uuid.UUID)
+	// orderpaymenttransferDescStartAmount is the schema descriptor for start_amount field.
+	orderpaymenttransferDescStartAmount := orderpaymenttransferFields[2].Descriptor()
+	// orderpaymenttransfer.DefaultStartAmount holds the default value on creation for the start_amount field.
+	orderpaymenttransfer.DefaultStartAmount = orderpaymenttransferDescStartAmount.Default.(decimal.Decimal)
 	orderstateMixin := schema.OrderState{}.Mixin()
 	orderstate.Policy = privacy.NewPolicies(orderstateMixin[0], schema.OrderState{})
 	orderstate.Hooks[0] = func(next ent.Mutator) ent.Mutator {
@@ -429,6 +693,80 @@ func init() {
 	paymentDescStartAmount := paymentFields[7].Descriptor()
 	// payment.DefaultStartAmount holds the default value on creation for the start_amount field.
 	payment.DefaultStartAmount = paymentDescStartAmount.Default.(decimal.Decimal)
+	powerrentalMixin := schema.PowerRental{}.Mixin()
+	powerrental.Policy = privacy.NewPolicies(powerrentalMixin[0], schema.PowerRental{})
+	powerrental.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+			if err := powerrental.Policy.EvalMutation(ctx, m); err != nil {
+				return nil, err
+			}
+			return next.Mutate(ctx, m)
+		})
+	}
+	powerrentalMixinFields0 := powerrentalMixin[0].Fields()
+	_ = powerrentalMixinFields0
+	powerrentalMixinFields1 := powerrentalMixin[1].Fields()
+	_ = powerrentalMixinFields1
+	powerrentalFields := schema.PowerRental{}.Fields()
+	_ = powerrentalFields
+	// powerrentalDescCreatedAt is the schema descriptor for created_at field.
+	powerrentalDescCreatedAt := powerrentalMixinFields0[0].Descriptor()
+	// powerrental.DefaultCreatedAt holds the default value on creation for the created_at field.
+	powerrental.DefaultCreatedAt = powerrentalDescCreatedAt.Default.(func() uint32)
+	// powerrentalDescUpdatedAt is the schema descriptor for updated_at field.
+	powerrentalDescUpdatedAt := powerrentalMixinFields0[1].Descriptor()
+	// powerrental.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	powerrental.DefaultUpdatedAt = powerrentalDescUpdatedAt.Default.(func() uint32)
+	// powerrental.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	powerrental.UpdateDefaultUpdatedAt = powerrentalDescUpdatedAt.UpdateDefault.(func() uint32)
+	// powerrentalDescDeletedAt is the schema descriptor for deleted_at field.
+	powerrentalDescDeletedAt := powerrentalMixinFields0[2].Descriptor()
+	// powerrental.DefaultDeletedAt holds the default value on creation for the deleted_at field.
+	powerrental.DefaultDeletedAt = powerrentalDescDeletedAt.Default.(func() uint32)
+	// powerrentalDescEntID is the schema descriptor for ent_id field.
+	powerrentalDescEntID := powerrentalMixinFields1[1].Descriptor()
+	// powerrental.DefaultEntID holds the default value on creation for the ent_id field.
+	powerrental.DefaultEntID = powerrentalDescEntID.Default.(func() uuid.UUID)
+	// powerrentalDescOrderID is the schema descriptor for order_id field.
+	powerrentalDescOrderID := powerrentalFields[0].Descriptor()
+	// powerrental.DefaultOrderID holds the default value on creation for the order_id field.
+	powerrental.DefaultOrderID = powerrentalDescOrderID.Default.(func() uuid.UUID)
+	// powerrentalDescUnits is the schema descriptor for units field.
+	powerrentalDescUnits := powerrentalFields[1].Descriptor()
+	// powerrental.DefaultUnits holds the default value on creation for the units field.
+	powerrental.DefaultUnits = powerrentalDescUnits.Default.(decimal.Decimal)
+	// powerrentalDescGoodValue is the schema descriptor for good_value field.
+	powerrentalDescGoodValue := powerrentalFields[2].Descriptor()
+	// powerrental.DefaultGoodValue holds the default value on creation for the good_value field.
+	powerrental.DefaultGoodValue = powerrentalDescGoodValue.Default.(decimal.Decimal)
+	// powerrentalDescGoodValueUsd is the schema descriptor for good_value_usd field.
+	powerrentalDescGoodValueUsd := powerrentalFields[3].Descriptor()
+	// powerrental.DefaultGoodValueUsd holds the default value on creation for the good_value_usd field.
+	powerrental.DefaultGoodValueUsd = powerrentalDescGoodValueUsd.Default.(decimal.Decimal)
+	// powerrentalDescPaymentAmount is the schema descriptor for payment_amount field.
+	powerrentalDescPaymentAmount := powerrentalFields[4].Descriptor()
+	// powerrental.DefaultPaymentAmount holds the default value on creation for the payment_amount field.
+	powerrental.DefaultPaymentAmount = powerrentalDescPaymentAmount.Default.(decimal.Decimal)
+	// powerrentalDescDiscountAmount is the schema descriptor for discount_amount field.
+	powerrentalDescDiscountAmount := powerrentalFields[5].Descriptor()
+	// powerrental.DefaultDiscountAmount holds the default value on creation for the discount_amount field.
+	powerrental.DefaultDiscountAmount = powerrentalDescDiscountAmount.Default.(decimal.Decimal)
+	// powerrentalDescPromotionID is the schema descriptor for promotion_id field.
+	powerrentalDescPromotionID := powerrentalFields[6].Descriptor()
+	// powerrental.DefaultPromotionID holds the default value on creation for the promotion_id field.
+	powerrental.DefaultPromotionID = powerrentalDescPromotionID.Default.(func() uuid.UUID)
+	// powerrentalDescDuration is the schema descriptor for duration field.
+	powerrentalDescDuration := powerrentalFields[7].Descriptor()
+	// powerrental.DefaultDuration holds the default value on creation for the duration field.
+	powerrental.DefaultDuration = powerrentalDescDuration.Default.(uint32)
+	// powerrentalDescInvestmentType is the schema descriptor for investment_type field.
+	powerrentalDescInvestmentType := powerrentalFields[8].Descriptor()
+	// powerrental.DefaultInvestmentType holds the default value on creation for the investment_type field.
+	powerrental.DefaultInvestmentType = powerrentalDescInvestmentType.Default.(string)
+	// powerrentalDescSimulate is the schema descriptor for simulate field.
+	powerrentalDescSimulate := powerrentalFields[9].Descriptor()
+	// powerrental.DefaultSimulate holds the default value on creation for the simulate field.
+	powerrental.DefaultSimulate = powerrentalDescSimulate.Default.(bool)
 	simulateconfigMixin := schema.SimulateConfig{}.Mixin()
 	simulateconfig.Policy = privacy.NewPolicies(simulateconfigMixin[0], schema.SimulateConfig{})
 	simulateconfig.Hooks[0] = func(next ent.Mutator) ent.Mutator {
