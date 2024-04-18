@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	basetypes "github.com/NpoolPlatform/message/npool/basetypes/order/v1"
+	types "github.com/NpoolPlatform/message/npool/basetypes/order/v1"
 	orderlockcrud "github.com/NpoolPlatform/order-middleware/pkg/crud/order/lock"
 
 	"github.com/google/uuid"
@@ -72,7 +72,7 @@ func WithOrderID(id *string, must bool) func(context.Context, *Handler) error {
 	}
 }
 
-func WithLockType(lockType *basetypes.OrderLockType, must bool) func(context.Context, *Handler) error {
+func WithLockType(lockType *types.OrderLockType, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if lockType == nil {
 			if must {
@@ -81,9 +81,9 @@ func WithLockType(lockType *basetypes.OrderLockType, must bool) func(context.Con
 			return nil
 		}
 		switch *lockType {
-		case basetypes.OrderLockType_LockStock:
-		case basetypes.OrderLockType_LockBalance:
-		case basetypes.OrderLockType_LockCommission:
+		case types.OrderLockType_LockStock:
+		case types.OrderLockType_LockBalance:
+		case types.OrderLockType_LockCommission:
 		default:
 			return fmt.Errorf("invalid locktype")
 		}
