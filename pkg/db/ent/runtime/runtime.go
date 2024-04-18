@@ -822,24 +822,20 @@ func init() {
 	paymenttransferDescStartAmount := paymenttransferFields[4].Descriptor()
 	// paymenttransfer.DefaultStartAmount holds the default value on creation for the start_amount field.
 	paymenttransfer.DefaultStartAmount = paymenttransferDescStartAmount.Default.(decimal.Decimal)
-	// paymenttransferDescTransactionID is the schema descriptor for transaction_id field.
-	paymenttransferDescTransactionID := paymenttransferFields[5].Descriptor()
-	// paymenttransfer.DefaultTransactionID holds the default value on creation for the transaction_id field.
-	paymenttransfer.DefaultTransactionID = paymenttransferDescTransactionID.Default.(string)
 	// paymenttransferDescFinishAmount is the schema descriptor for finish_amount field.
-	paymenttransferDescFinishAmount := paymenttransferFields[6].Descriptor()
+	paymenttransferDescFinishAmount := paymenttransferFields[5].Descriptor()
 	// paymenttransfer.DefaultFinishAmount holds the default value on creation for the finish_amount field.
 	paymenttransfer.DefaultFinishAmount = paymenttransferDescFinishAmount.Default.(decimal.Decimal)
 	// paymenttransferDescCoinUsdCurrency is the schema descriptor for coin_usd_currency field.
-	paymenttransferDescCoinUsdCurrency := paymenttransferFields[7].Descriptor()
+	paymenttransferDescCoinUsdCurrency := paymenttransferFields[6].Descriptor()
 	// paymenttransfer.DefaultCoinUsdCurrency holds the default value on creation for the coin_usd_currency field.
 	paymenttransfer.DefaultCoinUsdCurrency = paymenttransferDescCoinUsdCurrency.Default.(decimal.Decimal)
 	// paymenttransferDescLocalCoinUsdCurrency is the schema descriptor for local_coin_usd_currency field.
-	paymenttransferDescLocalCoinUsdCurrency := paymenttransferFields[8].Descriptor()
+	paymenttransferDescLocalCoinUsdCurrency := paymenttransferFields[7].Descriptor()
 	// paymenttransfer.DefaultLocalCoinUsdCurrency holds the default value on creation for the local_coin_usd_currency field.
 	paymenttransfer.DefaultLocalCoinUsdCurrency = paymenttransferDescLocalCoinUsdCurrency.Default.(decimal.Decimal)
 	// paymenttransferDescLiveCoinUsdCurrency is the schema descriptor for live_coin_usd_currency field.
-	paymenttransferDescLiveCoinUsdCurrency := paymenttransferFields[9].Descriptor()
+	paymenttransferDescLiveCoinUsdCurrency := paymenttransferFields[8].Descriptor()
 	// paymenttransfer.DefaultLiveCoinUsdCurrency holds the default value on creation for the live_coin_usd_currency field.
 	paymenttransfer.DefaultLiveCoinUsdCurrency = paymenttransferDescLiveCoinUsdCurrency.Default.(decimal.Decimal)
 	powerrentalMixin := schema.PowerRental{}.Mixin()

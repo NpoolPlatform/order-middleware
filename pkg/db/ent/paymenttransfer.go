@@ -35,8 +35,6 @@ type PaymentTransfer struct {
 	Amount decimal.Decimal `json:"amount,omitempty"`
 	// StartAmount holds the value of the "start_amount" field.
 	StartAmount decimal.Decimal `json:"start_amount,omitempty"`
-	// TransactionID holds the value of the "transaction_id" field.
-	TransactionID string `json:"transaction_id,omitempty"`
 	// FinishAmount holds the value of the "finish_amount" field.
 	FinishAmount decimal.Decimal `json:"finish_amount,omitempty"`
 	// CoinUsdCurrency holds the value of the "coin_usd_currency" field.
@@ -56,8 +54,6 @@ func (*PaymentTransfer) scanValues(columns []string) ([]interface{}, error) {
 			values[i] = new(decimal.Decimal)
 		case paymenttransfer.FieldID, paymenttransfer.FieldCreatedAt, paymenttransfer.FieldUpdatedAt, paymenttransfer.FieldDeletedAt:
 			values[i] = new(sql.NullInt64)
-		case paymenttransfer.FieldTransactionID:
-			values[i] = new(sql.NullString)
 		case paymenttransfer.FieldEntID, paymenttransfer.FieldOrderID, paymenttransfer.FieldCoinTypeID, paymenttransfer.FieldAccountID:
 			values[i] = new(uuid.UUID)
 		default:
@@ -134,12 +130,6 @@ func (pt *PaymentTransfer) assignValues(columns []string, values []interface{}) 
 				return fmt.Errorf("unexpected type %T for field start_amount", values[i])
 			} else if value != nil {
 				pt.StartAmount = *value
-			}
-		case paymenttransfer.FieldTransactionID:
-			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field transaction_id", values[i])
-			} else if value.Valid {
-				pt.TransactionID = value.String
 			}
 		case paymenttransfer.FieldFinishAmount:
 			if value, ok := values[i].(*decimal.Decimal); !ok {
@@ -219,9 +209,6 @@ func (pt *PaymentTransfer) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("start_amount=")
 	builder.WriteString(fmt.Sprintf("%v", pt.StartAmount))
-	builder.WriteString(", ")
-	builder.WriteString("transaction_id=")
-	builder.WriteString(pt.TransactionID)
 	builder.WriteString(", ")
 	builder.WriteString("finish_amount=")
 	builder.WriteString(fmt.Sprintf("%v", pt.FinishAmount))

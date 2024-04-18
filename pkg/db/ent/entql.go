@@ -347,7 +347,6 @@ var schemaGraph = func() *sqlgraph.Schema {
 			paymenttransfer.FieldAccountID:            {Type: field.TypeUUID, Column: paymenttransfer.FieldAccountID},
 			paymenttransfer.FieldAmount:               {Type: field.TypeOther, Column: paymenttransfer.FieldAmount},
 			paymenttransfer.FieldStartAmount:          {Type: field.TypeOther, Column: paymenttransfer.FieldStartAmount},
-			paymenttransfer.FieldTransactionID:        {Type: field.TypeString, Column: paymenttransfer.FieldTransactionID},
 			paymenttransfer.FieldFinishAmount:         {Type: field.TypeOther, Column: paymenttransfer.FieldFinishAmount},
 			paymenttransfer.FieldCoinUsdCurrency:      {Type: field.TypeOther, Column: paymenttransfer.FieldCoinUsdCurrency},
 			paymenttransfer.FieldLocalCoinUsdCurrency: {Type: field.TypeOther, Column: paymenttransfer.FieldLocalCoinUsdCurrency},
@@ -1695,11 +1694,6 @@ func (f *PaymentTransferFilter) WhereAmount(p entql.OtherP) {
 // WhereStartAmount applies the entql other predicate on the start_amount field.
 func (f *PaymentTransferFilter) WhereStartAmount(p entql.OtherP) {
 	f.Where(p.Field(paymenttransfer.FieldStartAmount))
-}
-
-// WhereTransactionID applies the entql string predicate on the transaction_id field.
-func (f *PaymentTransferFilter) WhereTransactionID(p entql.StringP) {
-	f.Where(p.Field(paymenttransfer.FieldTransactionID))
 }
 
 // WhereFinishAmount applies the entql other predicate on the finish_amount field.

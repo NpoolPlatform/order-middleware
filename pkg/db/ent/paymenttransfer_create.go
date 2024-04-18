@@ -149,20 +149,6 @@ func (ptc *PaymentTransferCreate) SetNillableStartAmount(d *decimal.Decimal) *Pa
 	return ptc
 }
 
-// SetTransactionID sets the "transaction_id" field.
-func (ptc *PaymentTransferCreate) SetTransactionID(s string) *PaymentTransferCreate {
-	ptc.mutation.SetTransactionID(s)
-	return ptc
-}
-
-// SetNillableTransactionID sets the "transaction_id" field if the given value is not nil.
-func (ptc *PaymentTransferCreate) SetNillableTransactionID(s *string) *PaymentTransferCreate {
-	if s != nil {
-		ptc.SetTransactionID(*s)
-	}
-	return ptc
-}
-
 // SetFinishAmount sets the "finish_amount" field.
 func (ptc *PaymentTransferCreate) SetFinishAmount(d decimal.Decimal) *PaymentTransferCreate {
 	ptc.mutation.SetFinishAmount(d)
@@ -361,10 +347,6 @@ func (ptc *PaymentTransferCreate) defaults() error {
 		v := paymenttransfer.DefaultStartAmount
 		ptc.mutation.SetStartAmount(v)
 	}
-	if _, ok := ptc.mutation.TransactionID(); !ok {
-		v := paymenttransfer.DefaultTransactionID
-		ptc.mutation.SetTransactionID(v)
-	}
 	if _, ok := ptc.mutation.FinishAmount(); !ok {
 		v := paymenttransfer.DefaultFinishAmount
 		ptc.mutation.SetFinishAmount(v)
@@ -503,14 +485,6 @@ func (ptc *PaymentTransferCreate) createSpec() (*PaymentTransfer, *sqlgraph.Crea
 			Column: paymenttransfer.FieldStartAmount,
 		})
 		_node.StartAmount = value
-	}
-	if value, ok := ptc.mutation.TransactionID(); ok {
-		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Value:  value,
-			Column: paymenttransfer.FieldTransactionID,
-		})
-		_node.TransactionID = value
 	}
 	if value, ok := ptc.mutation.FinishAmount(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -751,24 +725,6 @@ func (u *PaymentTransferUpsert) UpdateStartAmount() *PaymentTransferUpsert {
 // ClearStartAmount clears the value of the "start_amount" field.
 func (u *PaymentTransferUpsert) ClearStartAmount() *PaymentTransferUpsert {
 	u.SetNull(paymenttransfer.FieldStartAmount)
-	return u
-}
-
-// SetTransactionID sets the "transaction_id" field.
-func (u *PaymentTransferUpsert) SetTransactionID(v string) *PaymentTransferUpsert {
-	u.Set(paymenttransfer.FieldTransactionID, v)
-	return u
-}
-
-// UpdateTransactionID sets the "transaction_id" field to the value that was provided on create.
-func (u *PaymentTransferUpsert) UpdateTransactionID() *PaymentTransferUpsert {
-	u.SetExcluded(paymenttransfer.FieldTransactionID)
-	return u
-}
-
-// ClearTransactionID clears the value of the "transaction_id" field.
-func (u *PaymentTransferUpsert) ClearTransactionID() *PaymentTransferUpsert {
-	u.SetNull(paymenttransfer.FieldTransactionID)
 	return u
 }
 
@@ -1073,27 +1029,6 @@ func (u *PaymentTransferUpsertOne) UpdateStartAmount() *PaymentTransferUpsertOne
 func (u *PaymentTransferUpsertOne) ClearStartAmount() *PaymentTransferUpsertOne {
 	return u.Update(func(s *PaymentTransferUpsert) {
 		s.ClearStartAmount()
-	})
-}
-
-// SetTransactionID sets the "transaction_id" field.
-func (u *PaymentTransferUpsertOne) SetTransactionID(v string) *PaymentTransferUpsertOne {
-	return u.Update(func(s *PaymentTransferUpsert) {
-		s.SetTransactionID(v)
-	})
-}
-
-// UpdateTransactionID sets the "transaction_id" field to the value that was provided on create.
-func (u *PaymentTransferUpsertOne) UpdateTransactionID() *PaymentTransferUpsertOne {
-	return u.Update(func(s *PaymentTransferUpsert) {
-		s.UpdateTransactionID()
-	})
-}
-
-// ClearTransactionID clears the value of the "transaction_id" field.
-func (u *PaymentTransferUpsertOne) ClearTransactionID() *PaymentTransferUpsertOne {
-	return u.Update(func(s *PaymentTransferUpsert) {
-		s.ClearTransactionID()
 	})
 }
 
@@ -1575,27 +1510,6 @@ func (u *PaymentTransferUpsertBulk) UpdateStartAmount() *PaymentTransferUpsertBu
 func (u *PaymentTransferUpsertBulk) ClearStartAmount() *PaymentTransferUpsertBulk {
 	return u.Update(func(s *PaymentTransferUpsert) {
 		s.ClearStartAmount()
-	})
-}
-
-// SetTransactionID sets the "transaction_id" field.
-func (u *PaymentTransferUpsertBulk) SetTransactionID(v string) *PaymentTransferUpsertBulk {
-	return u.Update(func(s *PaymentTransferUpsert) {
-		s.SetTransactionID(v)
-	})
-}
-
-// UpdateTransactionID sets the "transaction_id" field to the value that was provided on create.
-func (u *PaymentTransferUpsertBulk) UpdateTransactionID() *PaymentTransferUpsertBulk {
-	return u.Update(func(s *PaymentTransferUpsert) {
-		s.UpdateTransactionID()
-	})
-}
-
-// ClearTransactionID clears the value of the "transaction_id" field.
-func (u *PaymentTransferUpsertBulk) ClearTransactionID() *PaymentTransferUpsertBulk {
-	return u.Update(func(s *PaymentTransferUpsert) {
-		s.ClearTransactionID()
 	})
 }
 

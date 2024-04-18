@@ -199,26 +199,6 @@ func (ptu *PaymentTransferUpdate) ClearStartAmount() *PaymentTransferUpdate {
 	return ptu
 }
 
-// SetTransactionID sets the "transaction_id" field.
-func (ptu *PaymentTransferUpdate) SetTransactionID(s string) *PaymentTransferUpdate {
-	ptu.mutation.SetTransactionID(s)
-	return ptu
-}
-
-// SetNillableTransactionID sets the "transaction_id" field if the given value is not nil.
-func (ptu *PaymentTransferUpdate) SetNillableTransactionID(s *string) *PaymentTransferUpdate {
-	if s != nil {
-		ptu.SetTransactionID(*s)
-	}
-	return ptu
-}
-
-// ClearTransactionID clears the value of the "transaction_id" field.
-func (ptu *PaymentTransferUpdate) ClearTransactionID() *PaymentTransferUpdate {
-	ptu.mutation.ClearTransactionID()
-	return ptu
-}
-
 // SetFinishAmount sets the "finish_amount" field.
 func (ptu *PaymentTransferUpdate) SetFinishAmount(d decimal.Decimal) *PaymentTransferUpdate {
 	ptu.mutation.SetFinishAmount(d)
@@ -511,19 +491,6 @@ func (ptu *PaymentTransferUpdate) sqlSave(ctx context.Context) (n int, err error
 			Column: paymenttransfer.FieldStartAmount,
 		})
 	}
-	if value, ok := ptu.mutation.TransactionID(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Value:  value,
-			Column: paymenttransfer.FieldTransactionID,
-		})
-	}
-	if ptu.mutation.TransactionIDCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Column: paymenttransfer.FieldTransactionID,
-		})
-	}
 	if value, ok := ptu.mutation.FinishAmount(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeOther,
@@ -763,26 +730,6 @@ func (ptuo *PaymentTransferUpdateOne) SetNillableStartAmount(d *decimal.Decimal)
 // ClearStartAmount clears the value of the "start_amount" field.
 func (ptuo *PaymentTransferUpdateOne) ClearStartAmount() *PaymentTransferUpdateOne {
 	ptuo.mutation.ClearStartAmount()
-	return ptuo
-}
-
-// SetTransactionID sets the "transaction_id" field.
-func (ptuo *PaymentTransferUpdateOne) SetTransactionID(s string) *PaymentTransferUpdateOne {
-	ptuo.mutation.SetTransactionID(s)
-	return ptuo
-}
-
-// SetNillableTransactionID sets the "transaction_id" field if the given value is not nil.
-func (ptuo *PaymentTransferUpdateOne) SetNillableTransactionID(s *string) *PaymentTransferUpdateOne {
-	if s != nil {
-		ptuo.SetTransactionID(*s)
-	}
-	return ptuo
-}
-
-// ClearTransactionID clears the value of the "transaction_id" field.
-func (ptuo *PaymentTransferUpdateOne) ClearTransactionID() *PaymentTransferUpdateOne {
-	ptuo.mutation.ClearTransactionID()
 	return ptuo
 }
 
@@ -1106,19 +1053,6 @@ func (ptuo *PaymentTransferUpdateOne) sqlSave(ctx context.Context) (_node *Payme
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeOther,
 			Column: paymenttransfer.FieldStartAmount,
-		})
-	}
-	if value, ok := ptuo.mutation.TransactionID(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Value:  value,
-			Column: paymenttransfer.FieldTransactionID,
-		})
-	}
-	if ptuo.mutation.TransactionIDCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Column: paymenttransfer.FieldTransactionID,
 		})
 	}
 	if value, ok := ptuo.mutation.FinishAmount(); ok {

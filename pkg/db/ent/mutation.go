@@ -14284,7 +14284,6 @@ type PaymentTransferMutation struct {
 	account_id              *uuid.UUID
 	amount                  *decimal.Decimal
 	start_amount            *decimal.Decimal
-	transaction_id          *string
 	finish_amount           *decimal.Decimal
 	coin_usd_currency       *decimal.Decimal
 	local_coin_usd_currency *decimal.Decimal
@@ -14848,55 +14847,6 @@ func (m *PaymentTransferMutation) ResetStartAmount() {
 	delete(m.clearedFields, paymenttransfer.FieldStartAmount)
 }
 
-// SetTransactionID sets the "transaction_id" field.
-func (m *PaymentTransferMutation) SetTransactionID(s string) {
-	m.transaction_id = &s
-}
-
-// TransactionID returns the value of the "transaction_id" field in the mutation.
-func (m *PaymentTransferMutation) TransactionID() (r string, exists bool) {
-	v := m.transaction_id
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldTransactionID returns the old "transaction_id" field's value of the PaymentTransfer entity.
-// If the PaymentTransfer object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *PaymentTransferMutation) OldTransactionID(ctx context.Context) (v string, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldTransactionID is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldTransactionID requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldTransactionID: %w", err)
-	}
-	return oldValue.TransactionID, nil
-}
-
-// ClearTransactionID clears the value of the "transaction_id" field.
-func (m *PaymentTransferMutation) ClearTransactionID() {
-	m.transaction_id = nil
-	m.clearedFields[paymenttransfer.FieldTransactionID] = struct{}{}
-}
-
-// TransactionIDCleared returns if the "transaction_id" field was cleared in this mutation.
-func (m *PaymentTransferMutation) TransactionIDCleared() bool {
-	_, ok := m.clearedFields[paymenttransfer.FieldTransactionID]
-	return ok
-}
-
-// ResetTransactionID resets all changes to the "transaction_id" field.
-func (m *PaymentTransferMutation) ResetTransactionID() {
-	m.transaction_id = nil
-	delete(m.clearedFields, paymenttransfer.FieldTransactionID)
-}
-
 // SetFinishAmount sets the "finish_amount" field.
 func (m *PaymentTransferMutation) SetFinishAmount(d decimal.Decimal) {
 	m.finish_amount = &d
@@ -15112,7 +15062,7 @@ func (m *PaymentTransferMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *PaymentTransferMutation) Fields() []string {
-	fields := make([]string, 0, 14)
+	fields := make([]string, 0, 13)
 	if m.created_at != nil {
 		fields = append(fields, paymenttransfer.FieldCreatedAt)
 	}
@@ -15139,9 +15089,6 @@ func (m *PaymentTransferMutation) Fields() []string {
 	}
 	if m.start_amount != nil {
 		fields = append(fields, paymenttransfer.FieldStartAmount)
-	}
-	if m.transaction_id != nil {
-		fields = append(fields, paymenttransfer.FieldTransactionID)
 	}
 	if m.finish_amount != nil {
 		fields = append(fields, paymenttransfer.FieldFinishAmount)
@@ -15181,8 +15128,6 @@ func (m *PaymentTransferMutation) Field(name string) (ent.Value, bool) {
 		return m.Amount()
 	case paymenttransfer.FieldStartAmount:
 		return m.StartAmount()
-	case paymenttransfer.FieldTransactionID:
-		return m.TransactionID()
 	case paymenttransfer.FieldFinishAmount:
 		return m.FinishAmount()
 	case paymenttransfer.FieldCoinUsdCurrency:
@@ -15218,8 +15163,6 @@ func (m *PaymentTransferMutation) OldField(ctx context.Context, name string) (en
 		return m.OldAmount(ctx)
 	case paymenttransfer.FieldStartAmount:
 		return m.OldStartAmount(ctx)
-	case paymenttransfer.FieldTransactionID:
-		return m.OldTransactionID(ctx)
 	case paymenttransfer.FieldFinishAmount:
 		return m.OldFinishAmount(ctx)
 	case paymenttransfer.FieldCoinUsdCurrency:
@@ -15299,13 +15242,6 @@ func (m *PaymentTransferMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetStartAmount(v)
-		return nil
-	case paymenttransfer.FieldTransactionID:
-		v, ok := value.(string)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetTransactionID(v)
 		return nil
 	case paymenttransfer.FieldFinishAmount:
 		v, ok := value.(decimal.Decimal)
@@ -15419,9 +15355,6 @@ func (m *PaymentTransferMutation) ClearedFields() []string {
 	if m.FieldCleared(paymenttransfer.FieldStartAmount) {
 		fields = append(fields, paymenttransfer.FieldStartAmount)
 	}
-	if m.FieldCleared(paymenttransfer.FieldTransactionID) {
-		fields = append(fields, paymenttransfer.FieldTransactionID)
-	}
 	if m.FieldCleared(paymenttransfer.FieldFinishAmount) {
 		fields = append(fields, paymenttransfer.FieldFinishAmount)
 	}
@@ -15462,9 +15395,6 @@ func (m *PaymentTransferMutation) ClearField(name string) error {
 		return nil
 	case paymenttransfer.FieldStartAmount:
 		m.ClearStartAmount()
-		return nil
-	case paymenttransfer.FieldTransactionID:
-		m.ClearTransactionID()
 		return nil
 	case paymenttransfer.FieldFinishAmount:
 		m.ClearFinishAmount()
@@ -15512,9 +15442,6 @@ func (m *PaymentTransferMutation) ResetField(name string) error {
 		return nil
 	case paymenttransfer.FieldStartAmount:
 		m.ResetStartAmount()
-		return nil
-	case paymenttransfer.FieldTransactionID:
-		m.ResetTransactionID()
 		return nil
 	case paymenttransfer.FieldFinishAmount:
 		m.ResetFinishAmount()

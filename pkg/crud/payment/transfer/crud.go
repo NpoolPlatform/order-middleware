@@ -17,7 +17,6 @@ type Req struct {
 	AccountID            *uuid.UUID
 	Amount               *decimal.Decimal
 	StartAmount          *decimal.Decimal
-	TransactionID        *string
 	FinishAmount         *decimal.Decimal
 	CoinUSDCurrency      *decimal.Decimal
 	LocalCoinUSDCurrency *decimal.Decimal
@@ -43,9 +42,6 @@ func CreateSet(c *ent.PaymentTransferCreate, req *Req) *ent.PaymentTransferCreat
 	}
 	if req.StartAmount != nil {
 		c.SetStartAmount(*req.StartAmount)
-	}
-	if req.TransactionID != nil {
-		c.SetTransactionID(*req.TransactionID)
 	}
 	if req.FinishAmount != nil {
 		c.SetFinishAmount(*req.FinishAmount)

@@ -143,13 +143,6 @@ func StartAmount(v decimal.Decimal) predicate.PaymentTransfer {
 	})
 }
 
-// TransactionID applies equality check predicate on the "transaction_id" field. It's identical to TransactionIDEQ.
-func TransactionID(v string) predicate.PaymentTransfer {
-	return predicate.PaymentTransfer(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldTransactionID), v))
-	})
-}
-
 // FinishAmount applies equality check predicate on the "finish_amount" field. It's identical to FinishAmountEQ.
 func FinishAmount(v decimal.Decimal) predicate.PaymentTransfer {
 	return predicate.PaymentTransfer(func(s *sql.Selector) {
@@ -821,119 +814,6 @@ func StartAmountIsNil() predicate.PaymentTransfer {
 func StartAmountNotNil() predicate.PaymentTransfer {
 	return predicate.PaymentTransfer(func(s *sql.Selector) {
 		s.Where(sql.NotNull(s.C(FieldStartAmount)))
-	})
-}
-
-// TransactionIDEQ applies the EQ predicate on the "transaction_id" field.
-func TransactionIDEQ(v string) predicate.PaymentTransfer {
-	return predicate.PaymentTransfer(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldTransactionID), v))
-	})
-}
-
-// TransactionIDNEQ applies the NEQ predicate on the "transaction_id" field.
-func TransactionIDNEQ(v string) predicate.PaymentTransfer {
-	return predicate.PaymentTransfer(func(s *sql.Selector) {
-		s.Where(sql.NEQ(s.C(FieldTransactionID), v))
-	})
-}
-
-// TransactionIDIn applies the In predicate on the "transaction_id" field.
-func TransactionIDIn(vs ...string) predicate.PaymentTransfer {
-	v := make([]interface{}, len(vs))
-	for i := range v {
-		v[i] = vs[i]
-	}
-	return predicate.PaymentTransfer(func(s *sql.Selector) {
-		s.Where(sql.In(s.C(FieldTransactionID), v...))
-	})
-}
-
-// TransactionIDNotIn applies the NotIn predicate on the "transaction_id" field.
-func TransactionIDNotIn(vs ...string) predicate.PaymentTransfer {
-	v := make([]interface{}, len(vs))
-	for i := range v {
-		v[i] = vs[i]
-	}
-	return predicate.PaymentTransfer(func(s *sql.Selector) {
-		s.Where(sql.NotIn(s.C(FieldTransactionID), v...))
-	})
-}
-
-// TransactionIDGT applies the GT predicate on the "transaction_id" field.
-func TransactionIDGT(v string) predicate.PaymentTransfer {
-	return predicate.PaymentTransfer(func(s *sql.Selector) {
-		s.Where(sql.GT(s.C(FieldTransactionID), v))
-	})
-}
-
-// TransactionIDGTE applies the GTE predicate on the "transaction_id" field.
-func TransactionIDGTE(v string) predicate.PaymentTransfer {
-	return predicate.PaymentTransfer(func(s *sql.Selector) {
-		s.Where(sql.GTE(s.C(FieldTransactionID), v))
-	})
-}
-
-// TransactionIDLT applies the LT predicate on the "transaction_id" field.
-func TransactionIDLT(v string) predicate.PaymentTransfer {
-	return predicate.PaymentTransfer(func(s *sql.Selector) {
-		s.Where(sql.LT(s.C(FieldTransactionID), v))
-	})
-}
-
-// TransactionIDLTE applies the LTE predicate on the "transaction_id" field.
-func TransactionIDLTE(v string) predicate.PaymentTransfer {
-	return predicate.PaymentTransfer(func(s *sql.Selector) {
-		s.Where(sql.LTE(s.C(FieldTransactionID), v))
-	})
-}
-
-// TransactionIDContains applies the Contains predicate on the "transaction_id" field.
-func TransactionIDContains(v string) predicate.PaymentTransfer {
-	return predicate.PaymentTransfer(func(s *sql.Selector) {
-		s.Where(sql.Contains(s.C(FieldTransactionID), v))
-	})
-}
-
-// TransactionIDHasPrefix applies the HasPrefix predicate on the "transaction_id" field.
-func TransactionIDHasPrefix(v string) predicate.PaymentTransfer {
-	return predicate.PaymentTransfer(func(s *sql.Selector) {
-		s.Where(sql.HasPrefix(s.C(FieldTransactionID), v))
-	})
-}
-
-// TransactionIDHasSuffix applies the HasSuffix predicate on the "transaction_id" field.
-func TransactionIDHasSuffix(v string) predicate.PaymentTransfer {
-	return predicate.PaymentTransfer(func(s *sql.Selector) {
-		s.Where(sql.HasSuffix(s.C(FieldTransactionID), v))
-	})
-}
-
-// TransactionIDIsNil applies the IsNil predicate on the "transaction_id" field.
-func TransactionIDIsNil() predicate.PaymentTransfer {
-	return predicate.PaymentTransfer(func(s *sql.Selector) {
-		s.Where(sql.IsNull(s.C(FieldTransactionID)))
-	})
-}
-
-// TransactionIDNotNil applies the NotNil predicate on the "transaction_id" field.
-func TransactionIDNotNil() predicate.PaymentTransfer {
-	return predicate.PaymentTransfer(func(s *sql.Selector) {
-		s.Where(sql.NotNull(s.C(FieldTransactionID)))
-	})
-}
-
-// TransactionIDEqualFold applies the EqualFold predicate on the "transaction_id" field.
-func TransactionIDEqualFold(v string) predicate.PaymentTransfer {
-	return predicate.PaymentTransfer(func(s *sql.Selector) {
-		s.Where(sql.EqualFold(s.C(FieldTransactionID), v))
-	})
-}
-
-// TransactionIDContainsFold applies the ContainsFold predicate on the "transaction_id" field.
-func TransactionIDContainsFold(v string) predicate.PaymentTransfer {
-	return predicate.PaymentTransfer(func(s *sql.Selector) {
-		s.Where(sql.ContainsFold(s.C(FieldTransactionID), v))
 	})
 }
 

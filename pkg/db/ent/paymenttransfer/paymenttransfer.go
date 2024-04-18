@@ -31,8 +31,6 @@ const (
 	FieldAmount = "amount"
 	// FieldStartAmount holds the string denoting the start_amount field in the database.
 	FieldStartAmount = "start_amount"
-	// FieldTransactionID holds the string denoting the transaction_id field in the database.
-	FieldTransactionID = "transaction_id"
 	// FieldFinishAmount holds the string denoting the finish_amount field in the database.
 	FieldFinishAmount = "finish_amount"
 	// FieldCoinUsdCurrency holds the string denoting the coin_usd_currency field in the database.
@@ -57,7 +55,6 @@ var Columns = []string{
 	FieldAccountID,
 	FieldAmount,
 	FieldStartAmount,
-	FieldTransactionID,
 	FieldFinishAmount,
 	FieldCoinUsdCurrency,
 	FieldLocalCoinUsdCurrency,
@@ -103,8 +100,6 @@ var (
 	DefaultAmount decimal.Decimal
 	// DefaultStartAmount holds the default value on creation for the "start_amount" field.
 	DefaultStartAmount decimal.Decimal
-	// DefaultTransactionID holds the default value on creation for the "transaction_id" field.
-	DefaultTransactionID string
 	// DefaultFinishAmount holds the default value on creation for the "finish_amount" field.
 	DefaultFinishAmount decimal.Decimal
 	// DefaultCoinUsdCurrency holds the default value on creation for the "coin_usd_currency" field.
