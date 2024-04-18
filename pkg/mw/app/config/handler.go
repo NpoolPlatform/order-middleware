@@ -156,6 +156,13 @@ func WithSimulateOrderCashableProfitProbability(s *string, must bool) func(conte
 	}
 }
 
+func WithMaxUnpaidOrders(u *uint32, must bool) func(context.Context, *Handler) error {
+	return func(ctx context.Context, h *Handler) error {
+		h.MaxUnpaidOrders = u
+		return nil
+	}
+}
+
 func (h *Handler) withAppConfigConds(conds *npool.Conds) error {
 	if conds.ID != nil {
 		h.AppConfigConds.ID = &cruder.Cond{

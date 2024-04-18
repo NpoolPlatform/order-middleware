@@ -28,7 +28,7 @@ func (h *queryHandler) selectAppConfig(stm *ent.AppConfigQuery) *ent.AppConfigSe
 }
 
 func (h *queryHandler) queryAppConfig(cli *ent.Client) error {
-	if h.ID == nil && h.EntID == nil {
+	if h.ID == nil && h.EntID == nil && h.AppID == nil {
 		return fmt.Errorf("invalid id")
 	}
 	stm := cli.AppConfig.Query().Where(entappconfig.DeletedAt(0))
@@ -37,6 +37,9 @@ func (h *queryHandler) queryAppConfig(cli *ent.Client) error {
 	}
 	if h.EntID != nil {
 		stm.Where(entappconfig.EntID(*h.EntID))
+	}
+	if h.AppID != nil {
+		stm.Where(entappconfig.AppID(*h.AppID))
 	}
 	h.stmSelect = h.selectAppConfig(stm)
 	return nil
