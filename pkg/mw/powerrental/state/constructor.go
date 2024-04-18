@@ -1,4 +1,4 @@
-package statebase
+package powerrentalstate
 
 import (
 	"fmt"
@@ -15,7 +15,7 @@ func (h *Handler) ConstructCreateSQL() string {
 	comma := ""
 	now := uint32(time.Now().Unix())
 
-	_sql := "insert into order_state_bases "
+	_sql := "insert into power_rental_states "
 	_sql += "("
 	if h.EntID != nil {
 		_sql += "ent_id"
@@ -23,13 +23,8 @@ func (h *Handler) ConstructCreateSQL() string {
 	}
 	_sql += comma + "order_id"
 	comma = ", "
-	_sql += comma + "order_state"
-	_sql += comma + "start_mode"
-	if h.StartAt != nil {
-		_sql += comma + "start_at"
-	}
-	_sql += comma + "last_benefit_at"
-	_sql += comma + "benefit_state"
+	_sql += comma + "cancel_state"
+	_sql += comma + "end_at"
 	_sql += comma + "created_at"
 	_sql += comma + "updated_at"
 	_sql += comma + "deleted_at"
@@ -42,19 +37,14 @@ func (h *Handler) ConstructCreateSQL() string {
 	}
 	_sql += fmt.Sprintf("%v'%v' as order_id", comma, *h.OrderID)
 	comma = ", "
-	_sql += fmt.Sprintf("%v'%v' as order_state", comma, h.OrderState.String())
-	_sql += fmt.Sprintf("%v'%v' as start_mode", comma, h.StartMode.String())
-	if h.StartAt != nil {
-		_sql += fmt.Sprintf("%v%v as start_at", comma, *h.StartAt)
-	}
-	_sql += fmt.Sprintf("%v%v as last_benefit_at", comma, *h.LastBenefitAt)
-	_sql += fmt.Sprintf("%v'%v' as benefit_state", comma, h.BenefitState.String())
+	_sql += fmt.Sprintf("%v'%v' as cancel_state", comma, h.CancelState.String())
+	_sql += fmt.Sprintf("%v'%v' as end_at", comma, *h.EndAt)
 	_sql += fmt.Sprintf("%v%v as created_at", comma, now)
 	_sql += fmt.Sprintf("%v%v as updated_at", comma, now)
 	_sql += fmt.Sprintf("%v0 as deleted_at", comma)
 	_sql += ") as tmp "
 	_sql += "where not exists ("
-	_sql += "select 1 from order_state_bases "
+	_sql += "select 1 from power_rental_states "
 	_sql += fmt.Sprintf("where order_id = '%v' ", *h.OrderID)
 	_sql += " limit 1) and exists ("
 	_sql += "select 1 from order_bases "
@@ -72,25 +62,49 @@ func (h *Handler) ConstructUpdateSQL() (string, error) {
 	set := "set "
 	now := uint32(time.Now().Unix())
 
-	_sql := "update order_state_bases "
-	if h.OrderState != nil {
-		_sql += fmt.Sprintf("%vorder_state = '%v', ", set, h.OrderState.String())
+	_sql := "update power_rental_states "
+	if h.CancelState != nil {
+		_sql += fmt.Sprintf("%vcancel_state = '%v', ", set, h.CancelState.String())
 		set = ""
 	}
-	if h.StartMode != nil {
-		_sql += fmt.Sprintf("%vstart_mode = '%v', ", set, h.StartMode.String())
+	if h.EndAt != nil {
+		_sql += fmt.Sprintf("%vend_at = %v, ", set, *h.EndAt)
 		set = ""
 	}
-	if h.StartAt != nil {
-		_sql += fmt.Sprintf("%vstart_at = %v, ", set, *h.StartAt)
+	if h.PaidAt != nil {
+		_sql += fmt.Sprintf("%vpaid_at = %v, ", set, *h.PaidAt)
 		set = ""
 	}
-	if h.LastBenefitAt != nil {
-		_sql += fmt.Sprintf("%vlast_benefit_at = %v, ", set, *h.LastBenefitAt)
+	if h.UserSetPaid != nil {
+		_sql += fmt.Sprintf("%vuser_set_paid = %v, ", set, *h.UserSetPaid)
 		set = ""
 	}
-	if h.BenefitState != nil {
-		_sql += fmt.Sprintf("%vbenefit_state = '%v', ", set, h.BenefitState.String())
+	if h.UserSetCanceled != nil {
+		_sql += fmt.Sprintf("%vuser_set_canceled = %v, ", set, *h.UserSetCanceled)
+		set = ""
+	}
+	if h.AdminSetCanceled != nil {
+		_sql += fmt.Sprintf("%vadmin_set_canceled = %v, ", set, *h.AdminSetCanceled)
+		set = ""
+	}
+	if h.PaymentState != nil {
+		_sql += fmt.Sprintf("%vpayment_state = '%v', ", set, h.PaymentState.String())
+		set = ""
+	}
+	if h.OutOfGasHours != nil {
+		_sql += fmt.Sprintf("%vout_of_gas_hours = %v, ", set, *h.OutOfGasHours)
+		set = ""
+	}
+	if h.CompensateHours != nil {
+		_sql += fmt.Sprintf("%vcompensate_hours = %v, ", set, *h.CompensateHours)
+		set = ""
+	}
+	if h.RenewState != nil {
+		_sql += fmt.Sprintf("%vrenew_state = '%v', ", set, h.RenewState.String())
+		set = ""
+	}
+	if h.RenewNotifyAt != nil {
+		_sql += fmt.Sprintf("%vrenew_notify_at = %v, ", set, *h.RenewNotifyAt)
 		set = ""
 	}
 	if set != "" {
