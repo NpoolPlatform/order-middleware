@@ -15,8 +15,7 @@ import (
 )
 
 type Handler struct {
-	ID    *uint32
-	EntID *uuid.UUID
+	ID *uint32
 	compensatecrud.Req
 	CompensateConds *compensatecrud.Conds
 	OrderBaseConds  *orderbasecrud.Conds
