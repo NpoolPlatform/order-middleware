@@ -1,7 +1,13 @@
-package order
+package orderbase
 
 import (
+	"context"
+	"fmt"
+
+	types "github.com/NpoolPlatform/message/npool/basetypes/order/v1"
 	orderbasecrud "github.com/NpoolPlatform/order-middleware/pkg/crud/order/orderbase"
+
+	"github.com/google/uuid"
 )
 
 type Handler struct {
@@ -10,9 +16,7 @@ type Handler struct {
 }
 
 func NewHandler(ctx context.Context, options ...func(context.Context, *Handler) error) (*Handler, error) {
-	handler := &Handler{
-		OrderBaseConds: &orderbasecrud.Conds{},
-	}
+	handler := &Handler{}
 	for _, opt := range options {
 		if err := opt(ctx, handler); err != nil {
 			return nil, err
