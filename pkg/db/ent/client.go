@@ -12,7 +12,7 @@ import (
 
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/appconfig"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/compensate"
-	entorder "github.com/NpoolPlatform/order-middleware/pkg/db/ent/order"
+	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/order"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/orderbase"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/ordercoupon"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/orderlock"
@@ -414,7 +414,7 @@ func NewOrderClient(c config) *OrderClient {
 }
 
 // Use adds a list of mutation hooks to the hooks stack.
-// A call to `Use(f, g, h)` equals to `entorder.Hooks(f(g(h())))`.
+// A call to `Use(f, g, h)` equals to `order.Hooks(f(g(h())))`.
 func (c *OrderClient) Use(hooks ...Hook) {
 	c.hooks.Order = append(c.hooks.Order, hooks...)
 }
@@ -461,7 +461,7 @@ func (c *OrderClient) DeleteOne(o *Order) *OrderDeleteOne {
 
 // DeleteOne returns a builder for deleting the given entity by its id.
 func (c *OrderClient) DeleteOneID(id uint32) *OrderDeleteOne {
-	builder := c.Delete().Where(entorder.ID(id))
+	builder := c.Delete().Where(order.ID(id))
 	builder.mutation.id = &id
 	builder.mutation.op = OpDeleteOne
 	return &OrderDeleteOne{builder}
@@ -476,7 +476,7 @@ func (c *OrderClient) Query() *OrderQuery {
 
 // Get returns a Order entity by its id.
 func (c *OrderClient) Get(ctx context.Context, id uint32) (*Order, error) {
-	return c.Query().Where(entorder.ID(id)).Only(ctx)
+	return c.Query().Where(order.ID(id)).Only(ctx)
 }
 
 // GetX is like Get, but panics if an error occurs.
@@ -491,7 +491,7 @@ func (c *OrderClient) GetX(ctx context.Context, id uint32) *Order {
 // Hooks returns the client hooks.
 func (c *OrderClient) Hooks() []Hook {
 	hooks := c.hooks.Order
-	return append(hooks[:len(hooks):len(hooks)], entorder.Hooks[:]...)
+	return append(hooks[:len(hooks):len(hooks)], order.Hooks[:]...)
 }
 
 // OrderBaseClient is a client for the OrderBase schema.

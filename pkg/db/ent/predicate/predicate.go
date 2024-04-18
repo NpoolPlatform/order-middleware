@@ -12,7 +12,7 @@ type AppConfig func(*sql.Selector)
 // Compensate is the predicate function for compensate builders.
 type Compensate func(*sql.Selector)
 
-// Order is the predicate function for entorder builders.
+// Order is the predicate function for order builders.
 type Order func(*sql.Selector)
 
 // OrderBase is the predicate function for orderbase builders.

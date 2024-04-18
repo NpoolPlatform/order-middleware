@@ -12,9 +12,8 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/order"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/predicate"
-
-	entorder "github.com/NpoolPlatform/order-middleware/pkg/db/ent/order"
 )
 
 // OrderQuery is the builder for querying Order entities.
@@ -71,7 +70,7 @@ func (oq *OrderQuery) First(ctx context.Context) (*Order, error) {
 		return nil, err
 	}
 	if len(nodes) == 0 {
-		return nil, &NotFoundError{entorder.Label}
+		return nil, &NotFoundError{order.Label}
 	}
 	return nodes[0], nil
 }
@@ -93,7 +92,7 @@ func (oq *OrderQuery) FirstID(ctx context.Context) (id uint32, err error) {
 		return
 	}
 	if len(ids) == 0 {
-		err = &NotFoundError{entorder.Label}
+		err = &NotFoundError{order.Label}
 		return
 	}
 	return ids[0], nil
@@ -120,9 +119,9 @@ func (oq *OrderQuery) Only(ctx context.Context) (*Order, error) {
 	case 1:
 		return nodes[0], nil
 	case 0:
-		return nil, &NotFoundError{entorder.Label}
+		return nil, &NotFoundError{order.Label}
 	default:
-		return nil, &NotSingularError{entorder.Label}
+		return nil, &NotSingularError{order.Label}
 	}
 }
 
@@ -147,9 +146,9 @@ func (oq *OrderQuery) OnlyID(ctx context.Context) (id uint32, err error) {
 	case 1:
 		id = ids[0]
 	case 0:
-		err = &NotFoundError{entorder.Label}
+		err = &NotFoundError{order.Label}
 	default:
-		err = &NotSingularError{entorder.Label}
+		err = &NotSingularError{order.Label}
 	}
 	return
 }
@@ -183,7 +182,7 @@ func (oq *OrderQuery) AllX(ctx context.Context) []*Order {
 // IDs executes the query and returns a list of Order IDs.
 func (oq *OrderQuery) IDs(ctx context.Context) ([]uint32, error) {
 	var ids []uint32
-	if err := oq.Select(entorder.FieldID).Scan(ctx, &ids); err != nil {
+	if err := oq.Select(order.FieldID).Scan(ctx, &ids); err != nil {
 		return nil, err
 	}
 	return ids, nil
@@ -262,7 +261,7 @@ func (oq *OrderQuery) Clone() *OrderQuery {
 //	}
 //
 //	client.Order.Query().
-//		GroupBy(entorder.FieldCreatedAt).
+//		GroupBy(order.FieldCreatedAt).
 //		Aggregate(ent.Count()).
 //		Scan(ctx, &v)
 //
@@ -275,7 +274,7 @@ func (oq *OrderQuery) GroupBy(field string, fields ...string) *OrderGroupBy {
 		}
 		return oq.sqlQuery(ctx), nil
 	}
-	grbuild.label = entorder.Label
+	grbuild.label = order.Label
 	grbuild.flds, grbuild.scan = &grbuild.fields, grbuild.Scan
 	return grbuild
 }
@@ -290,20 +289,20 @@ func (oq *OrderQuery) GroupBy(field string, fields ...string) *OrderGroupBy {
 //	}
 //
 //	client.Order.Query().
-//		Select(entorder.FieldCreatedAt).
+//		Select(order.FieldCreatedAt).
 //		Scan(ctx, &v)
 //
 func (oq *OrderQuery) Select(fields ...string) *OrderSelect {
 	oq.fields = append(oq.fields, fields...)
 	selbuild := &OrderSelect{OrderQuery: oq}
-	selbuild.label = entorder.Label
+	selbuild.label = order.Label
 	selbuild.flds, selbuild.scan = &oq.fields, selbuild.Scan
 	return selbuild
 }
 
 func (oq *OrderQuery) prepareQuery(ctx context.Context) error {
 	for _, f := range oq.fields {
-		if !entorder.ValidColumn(f) {
+		if !order.ValidColumn(f) {
 			return &ValidationError{Name: f, err: fmt.Errorf("ent: invalid field %q for query", f)}
 		}
 	}
@@ -314,10 +313,10 @@ func (oq *OrderQuery) prepareQuery(ctx context.Context) error {
 		}
 		oq.sql = prev
 	}
-	if entorder.Policy == nil {
-		return errors.New("ent: uninitialized entorder.Policy (forgotten import ent/runtime?)")
+	if order.Policy == nil {
+		return errors.New("ent: uninitialized order.Policy (forgotten import ent/runtime?)")
 	}
-	if err := entorder.Policy.EvalQuery(ctx, oq); err != nil {
+	if err := order.Policy.EvalQuery(ctx, oq); err != nil {
 		return err
 	}
 	return nil
@@ -374,11 +373,11 @@ func (oq *OrderQuery) sqlExist(ctx context.Context) (bool, error) {
 func (oq *OrderQuery) querySpec() *sqlgraph.QuerySpec {
 	_spec := &sqlgraph.QuerySpec{
 		Node: &sqlgraph.NodeSpec{
-			Table:   entorder.Table,
-			Columns: entorder.Columns,
+			Table:   order.Table,
+			Columns: order.Columns,
 			ID: &sqlgraph.FieldSpec{
 				Type:   field.TypeUint32,
-				Column: entorder.FieldID,
+				Column: order.FieldID,
 			},
 		},
 		From:   oq.sql,
@@ -389,9 +388,9 @@ func (oq *OrderQuery) querySpec() *sqlgraph.QuerySpec {
 	}
 	if fields := oq.fields; len(fields) > 0 {
 		_spec.Node.Columns = make([]string, 0, len(fields))
-		_spec.Node.Columns = append(_spec.Node.Columns, entorder.FieldID)
+		_spec.Node.Columns = append(_spec.Node.Columns, order.FieldID)
 		for i := range fields {
-			if fields[i] != entorder.FieldID {
+			if fields[i] != order.FieldID {
 				_spec.Node.Columns = append(_spec.Node.Columns, fields[i])
 			}
 		}
@@ -421,10 +420,10 @@ func (oq *OrderQuery) querySpec() *sqlgraph.QuerySpec {
 
 func (oq *OrderQuery) sqlQuery(ctx context.Context) *sql.Selector {
 	builder := sql.Dialect(oq.driver.Dialect())
-	t1 := builder.Table(entorder.Table)
+	t1 := builder.Table(order.Table)
 	columns := oq.fields
 	if len(columns) == 0 {
-		columns = entorder.Columns
+		columns = order.Columns
 	}
 	selector := builder.Select(t1.Columns(columns...)...).From(t1)
 	if oq.sql != nil {
@@ -515,7 +514,7 @@ func (ogb *OrderGroupBy) Scan(ctx context.Context, v interface{}) error {
 
 func (ogb *OrderGroupBy) sqlScan(ctx context.Context, v interface{}) error {
 	for _, f := range ogb.fields {
-		if !entorder.ValidColumn(f) {
+		if !order.ValidColumn(f) {
 			return &ValidationError{Name: f, err: fmt.Errorf("invalid field %q for group-by", f)}
 		}
 	}

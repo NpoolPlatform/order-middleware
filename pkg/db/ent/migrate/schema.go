@@ -101,7 +101,6 @@ var (
 		{Name: "simulate", Type: field.TypeBool, Nullable: true, Default: false},
 		{Name: "create_method", Type: field.TypeString, Nullable: true, Default: "OrderCreatedByPurchase"},
 		{Name: "multi_payment_coins", Type: field.TypeBool, Nullable: true, Default: false},
-		{Name: "payment_amounts", Type: field.TypeJSON, Nullable: true},
 	}
 	// OrdersTable holds the schema information for the "orders" table.
 	OrdersTable = &schema.Table{
