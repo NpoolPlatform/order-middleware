@@ -7,6 +7,7 @@ import (
 
 	types "github.com/NpoolPlatform/message/npool/basetypes/order/v1"
 	paymentmwpb "github.com/NpoolPlatform/message/npool/order/mw/v1/payment"
+	npool "github.com/NpoolPlatform/message/npool/order/mw/v1/powerrental"
 	orderlockcrud "github.com/NpoolPlatform/order-middleware/pkg/crud/order/lock"
 	orderbasecrud "github.com/NpoolPlatform/order-middleware/pkg/crud/order/orderbase"
 	orderstatebasecrud "github.com/NpoolPlatform/order-middleware/pkg/crud/order/statebase"
@@ -19,16 +20,16 @@ import (
 	"github.com/shopspring/decimal"
 )
 
-type SingleOrderReq struct {
+type ChildOrderReq struct {
 	ID *uint32
-	powerrentalcrud.Req
+	orderbasecrud.Req
 	OrderBaseReq *orderbasecrud.Req
 }
 
 type Handler struct {
-	OrderReqs             []*SingleOrderReq
-	CouponIDs             []uuid.UUID
-	Rollback              *bool
+	ID *uint32
+	powerrentalcrud.Req
+	OrderBaseReq          *orderbasecrud.Req
 	OrderStateBaseReq     *orderstatebasecrud.Req
 	OrderLockReqs         []*orderlockcrud.Req
 	PowerRentalStateReq   *powerrentalstatecrud.Req
@@ -40,15 +41,15 @@ type Handler struct {
 	PowerRentalStateConds *powerrentalstatecrud.Conds
 	Offset                int32
 	Limit                 int32
+
+	ChildOrderReqs []*ChildOrderReq
+	CouponIDs      []uuid.UUID
+	Rollback       *bool
 }
 
 func NewHandler(ctx context.Context, options ...func(context.Context, *Handler) error) (*Handler, error) {
 	handler := &Handler{
-		OrderReqs: []*SingleOrderReq{
-			{
-				OrderBaseReq: &orderbasecrud.Req{},
-			},
-		},
+		OrderBaseReq:          &orderbasecrud.Req{},
 		OrderStateBaseReq:     &orderstatebasecrud.Req{},
 		PowerRentalStateReq:   &powerrentalstatecrud.Req{},
 		PowerRentalConds:      &powerrentalcrud.Conds{},
@@ -72,7 +73,7 @@ func WithID(u *uint32, must bool) func(context.Context, *Handler) error {
 			}
 			return nil
 		}
-		h.OrderHandlers[0].ID = u
+		h.ID = u
 		return nil
 	}
 }
@@ -89,7 +90,7 @@ func WithEntID(id *string, must bool) func(context.Context, *Handler) error {
 		if err != nil {
 			return err
 		}
-		h.OrderHandlers[0].EntID = &_id
+		h.EntID = &_id
 		return nil
 	}
 }
@@ -106,7 +107,7 @@ func WithAppID(id *string, must bool) func(context.Context, *Handler) error {
 		if err != nil {
 			return err
 		}
-		h.OrderHandlers[0].OrderBaseReq.AppID = &_id
+		h.OrderBaseReq.AppID = &_id
 		return nil
 	}
 }
@@ -123,7 +124,7 @@ func WithUserID(id *string, must bool) func(context.Context, *Handler) error {
 		if err != nil {
 			return err
 		}
-		h.OrderHandlers[0].OrderBaseReq.UserID = &_id
+		h.OrderBaseReq.UserID = &_id
 		return nil
 	}
 }
@@ -140,7 +141,7 @@ func WithGoodID(id *string, must bool) func(context.Context, *Handler) error {
 		if err != nil {
 			return err
 		}
-		h.OrderHandlers[0].OrderBaseReq.GoodID = &_id
+		h.OrderBaseReq.GoodID = &_id
 		return nil
 	}
 }
@@ -157,7 +158,7 @@ func WithAppGoodID(id *string, must bool) func(context.Context, *Handler) error 
 		if err != nil {
 			return err
 		}
-		h.OrderHandlers[0].OrderBaseReq.AppGoodID = &_id
+		h.OrderBaseReq.AppGoodID = &_id
 		return nil
 	}
 }
@@ -174,8 +175,8 @@ func WithOrderID(id *string, must bool) func(context.Context, *Handler) error {
 		if err != nil {
 			return err
 		}
-		h.OrderHandlers[0].OrderID = &_id
-		h.OrderHandlers[0].OrderBaseReq.EntID = &_id
+		h.OrderID = &_id
+		h.OrderBaseReq.EntID = &_id
 		h.OrderStateBaseReq.OrderID = &_id
 		h.PowerRentalStateReq.OrderID = &_id
 		return nil
@@ -194,7 +195,7 @@ func WithParentOrderID(id *string, must bool) func(context.Context, *Handler) er
 		if err != nil {
 			return err
 		}
-		h.OrderHandlers[0].OrderBaseReq.ParentOrderID = &_id
+		h.OrderBaseReq.ParentOrderID = &_id
 		return nil
 	}
 }
@@ -214,7 +215,7 @@ func WithUnits(value *string, must bool) func(context.Context, *Handler) error {
 		if amount.Cmp(decimal.NewFromInt(0)) <= 0 {
 			return fmt.Errorf("units is less than or equal to 0")
 		}
-		h.OrderHandlers[0].Units = &amount
+		h.Units = &amount
 		return nil
 	}
 }
@@ -234,7 +235,7 @@ func WithGoodValueUSD(value *string, must bool) func(context.Context, *Handler) 
 		if amount.Cmp(decimal.NewFromInt(0)) < 0 {
 			return fmt.Errorf("invalid goodvalueusd")
 		}
-		h.OrderHandlers[0].GoodValueUSD = &amount
+		h.GoodValueUSD = &amount
 		return nil
 	}
 }
@@ -254,7 +255,7 @@ func WithPaymentAmountUSD(value *string, must bool) func(context.Context, *Handl
 		if amount.Cmp(decimal.NewFromInt(0)) < 0 {
 			return fmt.Errorf("invalid paymentamountusd")
 		}
-		h.OrderHandlers[0].PaymentAmountUSD = &amount
+		h.PaymentAmountUSD = &amount
 		return nil
 	}
 }
@@ -274,7 +275,7 @@ func WithDiscountAmountUSD(value *string, must bool) func(context.Context, *Hand
 		if amount.Cmp(decimal.NewFromInt(0)) < 0 {
 			return fmt.Errorf("invalid discountamountusd")
 		}
-		h.OrderHandlers[0].DiscountAmountUSD = &amount
+		h.DiscountAmountUSD = &amount
 		return nil
 	}
 }
@@ -291,7 +292,7 @@ func WithPromotionID(id *string, must bool) func(context.Context, *Handler) erro
 		if err != nil {
 			return err
 		}
-		h.OrderHandlers[0].PromotionID = &_id
+		h.PromotionID = &_id
 		return nil
 	}
 }
@@ -304,7 +305,7 @@ func WithDuration(duration *uint32, must bool) func(context.Context, *Handler) e
 			}
 			return nil
 		}
-		h.OrderHandlers[0].Duration = duration
+		h.Duration = duration
 		return nil
 	}
 }
@@ -324,7 +325,7 @@ func WithOrderType(orderType *types.OrderType, must bool) func(context.Context, 
 		default:
 			return fmt.Errorf("invalid ordertype")
 		}
-		h.OrderHandlers[0].OrderBaseReq.OrderType = orderType
+		h.OrderBaseReq.OrderType = orderType
 		return nil
 	}
 }
@@ -343,7 +344,7 @@ func WithInvestmentType(_type *types.InvestmentType, must bool) func(context.Con
 		default:
 			return fmt.Errorf("invalid investmenttype")
 		}
-		h.OrderHandlers[0].InvestmentType = _type
+		h.InvestmentType = _type
 		return nil
 	}
 }
@@ -366,7 +367,7 @@ func WithPaymentType(paymentType *types.PaymentType, must bool) func(context.Con
 		default:
 			return fmt.Errorf("invalid paymentType")
 		}
-		h.OrderHandlers[0].OrderBaseReq.PaymentType = paymentType
+		h.OrderBaseReq.PaymentType = paymentType
 		return nil
 	}
 }
@@ -435,7 +436,7 @@ func WithCreateMethod(e *types.OrderCreateMethod, must bool) func(context.Contex
 		default:
 			return fmt.Errorf("invalid createmethod")
 		}
-		h.OrderHandlers[0].OrderBaseReq.CreateMethod = e
+		h.OrderBaseReq.CreateMethod = e
 		return nil
 	}
 }
@@ -684,7 +685,7 @@ func WithRenewNotifyAt(n *uint32, must bool) func(context.Context, *Handler) err
 
 func WithSimulate(value *bool, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
-		h.OrderHandlers[0].OrderBaseReq.Simulate = value
+		h.OrderBaseReq.Simulate = value
 		return nil
 	}
 }
