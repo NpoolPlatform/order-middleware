@@ -181,6 +181,7 @@ func (h *Handler) withAppConfigConds(conds *npool.Conds) error {
 			Val: id,
 		}
 	}
+	return nil
 }
 
 func WithConds(conds *npool.Conds) func(context.Context, *Handler) error {

@@ -1,47 +1,99 @@
-package config
+package appconfig
 
 import (
 	"context"
+	"fmt"
+	"time"
 
-	npool "github.com/NpoolPlatform/message/npool/order/mw/v1/app/config"
-	configcrud "github.com/NpoolPlatform/order-middleware/pkg/crud/app/config"
+	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
 	"github.com/NpoolPlatform/order-middleware/pkg/db"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent"
 )
 
 type updateHandler struct {
 	*Handler
+	sql string
 }
 
-func (h *updateHandler) updateSimulateConfig(ctx context.Context, tx *ent.Tx) error {
-	if _, err := configcrud.UpdateSet(
-		tx.SimulateConfig.UpdateOneID(*h.ID),
-		&configcrud.Req{
-			CashableProfitProbability: h.CashableProfitProbability,
-			SendCouponMode:            h.SendCouponMode,
-			SendCouponProbability:     h.SendCouponProbability,
-			Enabled:                   h.Enabled,
-		},
-	).Save(ctx); err != nil {
+func (h *updateHandler) constructSQL() error {
+	if h.ID == nil && h.EntID == nil && h.AppID == nil {
+		return fmt.Errorf("invalid appconfigid")
+	}
+
+	set := "set "
+	now := uint32(time.Now().Unix())
+
+	_sql := "update app_configs "
+	if h.EnableSimulateOrder != nil {
+		_sql += fmt.Sprintf("%venable_simulate_order = %v, ", set, *h.EnableSimulateOrder)
+		set = ""
+	}
+	if h.SimulateOrderCouponMode != nil {
+		_sql += fmt.Sprintf("%vsimulate_order_coupon_mode = '%v', ", set, h.SimulateOrderCouponMode.String())
+		set = ""
+	}
+	if h.SimulateOrderCouponProbability != nil {
+		_sql += fmt.Sprintf(
+			"%vsimulate_order_coupon_probability = '%v', ",
+			set,
+			*h.SimulateOrderCouponProbability,
+		)
+		set = ""
+	}
+	if h.SimulateOrderCashableProfitProbability != nil {
+		_sql += fmt.Sprintf(
+			"%vsimulate_order_cashable_profit_probability = %v, ",
+			set,
+			*h.SimulateOrderCashableProfitProbability,
+		)
+		set = ""
+	}
+	if h.MaxUnpaidOrders != nil {
+		_sql += fmt.Sprintf("%vmax_unpaid_orders = %v, ", set, *h.MaxUnpaidOrders)
+		set = ""
+	}
+	if set != "" {
+		return cruder.ErrUpdateNothing
+	}
+
+	_sql += fmt.Sprintf("updated_at = %v ", now)
+
+	whereAnd := "where "
+	if h.ID != nil {
+		_sql += fmt.Sprintf("where id = %v ", *h.ID)
+		whereAnd = "and"
+	}
+	if h.EntID != nil {
+		_sql += fmt.Sprintf("%v ent_id = '%v'", whereAnd, *h.EntID)
+		whereAnd = "and"
+	}
+	if h.AppID != nil {
+		_sql += fmt.Sprintf("%v app_id = '%v'", whereAnd, *h.AppID)
+	}
+
+	h.sql = _sql
+	return nil
+}
+
+func (h *updateHandler) updateAppConfig(ctx context.Context, tx *ent.Tx) error {
+	rc, err := tx.ExecContext(ctx, h.sql)
+	if err != nil {
 		return err
+	}
+	if n, err := rc.RowsAffected(); err != nil || n != 1 {
+		return fmt.Errorf("fail update appconfig: %v", err)
 	}
 	return nil
 }
 
-func (h *Handler) UpdateSimulateConfig(ctx context.Context) (*npool.SimulateConfig, error) {
+func (h *Handler) UpdateAppConfig(ctx context.Context) error {
 	handler := &updateHandler{
 		Handler: h,
 	}
-	err := db.WithTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {
-		if err := handler.updateSimulateConfig(ctx, tx); err != nil {
-			return err
-		}
-
-		return nil
-	})
-	if err != nil {
-		return nil, err
+	if err := handler.constructSQL(); err != nil {
+		return err
 	}
-
-	return h.GetSimulateConfig(ctx)
+	return db.WithTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {
+		return handler.updateAppConfig(ctx, tx)
+	})
 }

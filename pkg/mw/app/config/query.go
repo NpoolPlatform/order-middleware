@@ -1,4 +1,4 @@
-package config
+package appconfig
 
 import (
 	"context"
@@ -8,76 +8,72 @@ import (
 	basetypes "github.com/NpoolPlatform/message/npool/basetypes/order/v1"
 	"github.com/NpoolPlatform/order-middleware/pkg/db"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent"
-	entconfig "github.com/NpoolPlatform/order-middleware/pkg/db/ent/appconfig"
+	entappconfig "github.com/NpoolPlatform/order-middleware/pkg/db/ent/appconfig"
 	"github.com/shopspring/decimal"
 
 	npool "github.com/NpoolPlatform/message/npool/order/mw/v1/app/config"
-	configcrud "github.com/NpoolPlatform/order-middleware/pkg/crud/app/config"
+	appconfigcrud "github.com/NpoolPlatform/order-middleware/pkg/crud/app/config"
 )
 
 type queryHandler struct {
 	*Handler
-	stmSelect *ent.SimulateConfigSelect
-	stmCount  *ent.SimulateConfigSelect
-	infos     []*npool.SimulateConfig
+	stmSelect *ent.AppConfigSelect
+	stmCount  *ent.AppConfigSelect
+	infos     []*npool.AppConfig
 	total     uint32
 }
 
-func (h *queryHandler) selectSimulateConfig(stm *ent.SimulateConfigQuery) *ent.SimulateConfigSelect {
-	return stm.Select(entconfig.FieldID)
+func (h *queryHandler) selectAppConfig(stm *ent.AppConfigQuery) *ent.AppConfigSelect {
+	return stm.Select(entappconfig.FieldID)
 }
 
-func (h *queryHandler) querySimulateConfig(cli *ent.Client) error {
+func (h *queryHandler) queryAppConfig(cli *ent.Client) error {
 	if h.ID == nil && h.EntID == nil {
 		return fmt.Errorf("invalid id")
 	}
-	stm := cli.SimulateConfig.Query().Where(entconfig.DeletedAt(0))
+	stm := cli.AppConfig.Query().Where(entappconfig.DeletedAt(0))
 	if h.ID != nil {
-		stm.Where(entconfig.ID(*h.ID))
+		stm.Where(entappconfig.ID(*h.ID))
 	}
 	if h.EntID != nil {
-		stm.Where(entconfig.EntID(*h.EntID))
+		stm.Where(entappconfig.EntID(*h.EntID))
 	}
-	h.stmSelect = h.selectSimulateConfig(stm)
+	h.stmSelect = h.selectAppConfig(stm)
 	return nil
 }
 
-func (h *queryHandler) querySimulateConfigs(cli *ent.Client) (*ent.SimulateConfigSelect, error) {
-	stm, err := configcrud.SetQueryConds(cli.SimulateConfig.Query(), h.Conds)
+func (h *queryHandler) queryAppConfigs(cli *ent.Client) (*ent.AppConfigSelect, error) {
+	stm, err := appconfigcrud.SetQueryConds(cli.AppConfig.Query(), h.AppConfigConds)
 	if err != nil {
 		return nil, err
 	}
-	return h.selectSimulateConfig(stm), nil
+	return h.selectAppConfig(stm), nil
 }
 
 func (h *queryHandler) queryJoinMyself(s *sql.Selector) {
-	t := sql.Table(entconfig.Table)
+	t := sql.Table(entappconfig.Table)
 	s.AppendSelect(
-		t.C(entconfig.FieldID),
-		t.C(entconfig.FieldEntID),
-		t.C(entconfig.FieldAppID),
-		t.C(entconfig.FieldSendCouponMode),
-		t.C(entconfig.FieldSendCouponProbability),
-		t.C(entconfig.FieldCashableProfitProbability),
-		t.C(entconfig.FieldEnabled),
-		t.C(entconfig.FieldCreatedAt),
-		t.C(entconfig.FieldUpdatedAt),
+		t.C(entappconfig.FieldID),
+		t.C(entappconfig.FieldEntID),
+		t.C(entappconfig.FieldAppID),
+		t.C(entappconfig.FieldEnableSimulateOrder),
+		t.C(entappconfig.FieldSimulateOrderCouponMode),
+		t.C(entappconfig.FieldSimulateOrderCouponProbability),
+		t.C(entappconfig.FieldSimulateOrderCashableProfitProbability),
+		t.C(entappconfig.FieldMaxUnpaidOrders),
+		t.C(entappconfig.FieldCreatedAt),
+		t.C(entappconfig.FieldUpdatedAt),
 	)
 }
 
-func (h *queryHandler) queryJoin() error {
-	var err error
+func (h *queryHandler) queryJoin() {
 	h.stmSelect.Modify(func(s *sql.Selector) {
 		h.queryJoinMyself(s)
 	})
-	if err != nil {
-		return err
-	}
 	if h.stmCount == nil {
-		return nil
+		return
 	}
 	h.stmCount.Modify(func(s *sql.Selector) {})
-	return err
 }
 
 func (h *queryHandler) scan(ctx context.Context) error {
@@ -86,34 +82,29 @@ func (h *queryHandler) scan(ctx context.Context) error {
 
 func (h *queryHandler) formalize() {
 	for _, info := range h.infos {
-		probability, err := decimal.NewFromString(info.SendCouponProbability)
-		if err != nil {
-			info.SendCouponProbability = decimal.NewFromInt(0).String()
-		} else {
-			info.SendCouponProbability = probability.String()
-		}
-		cashableProbability, err := decimal.NewFromString(info.CashableProfitProbability)
-		if err != nil {
-			info.CashableProfitProbability = decimal.NewFromInt(0).String()
-		} else {
-			info.CashableProfitProbability = cashableProbability.String()
-		}
-		info.SendCouponMode = basetypes.SendCouponMode(basetypes.SendCouponMode_value[info.SendCouponModeStr])
+		info.SimulateOrderCouponProbability = func() string {
+			amount, _ := decimal.NewFromString(info.SimulateOrderCouponProbability)
+			return amount.String()
+		}()
+		info.SimulateOrderCashableProfitProbability = func() string {
+			amount, _ := decimal.NewFromString(info.SimulateOrderCashableProfitProbability)
+			return amount.String()
+		}()
+		info.SimulateOrderCouponMode = basetypes.SimulateOrderCouponMode(
+			basetypes.SimulateOrderCouponMode_value[info.SimulateOrderCouponModeStr],
+		)
 	}
 }
 
-func (h *Handler) GetSimulateConfig(ctx context.Context) (*npool.SimulateConfig, error) {
+func (h *Handler) GetAppConfig(ctx context.Context) (*npool.AppConfig, error) {
 	handler := &queryHandler{
 		Handler: h,
 	}
-
 	err := db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
-		if err := handler.querySimulateConfig(cli); err != nil {
+		if err := handler.queryAppConfig(cli); err != nil {
 			return err
 		}
-		if err := handler.queryJoin(); err != nil {
-			return err
-		}
+		handler.queryJoin()
 		return handler.scan(_ctx)
 	})
 	if err != nil {
@@ -131,26 +122,19 @@ func (h *Handler) GetSimulateConfig(ctx context.Context) (*npool.SimulateConfig,
 	return handler.infos[0], nil
 }
 
-func (h *Handler) GetSimulateConfigs(ctx context.Context) ([]*npool.SimulateConfig, uint32, error) {
+func (h *Handler) GetAppConfigs(ctx context.Context) (infos []*npool.AppConfig, total uint32, err error) {
 	handler := &queryHandler{
 		Handler: h,
 	}
-
-	var err error
 	err = db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
-		handler.stmSelect, err = handler.querySimulateConfigs(cli)
-		if err != nil {
+		if handler.stmSelect, err = handler.queryAppConfigs(cli); err != nil {
 			return err
 		}
-		handler.stmCount, err = handler.querySimulateConfigs(cli)
-		if err != nil {
-			return err
-		}
-
-		if err := handler.queryJoin(); err != nil {
+		if handler.stmCount, err = handler.queryAppConfigs(cli); err != nil {
 			return err
 		}
 
+		handler.queryJoin()
 		_total, err := handler.stmCount.Count(_ctx)
 		if err != nil {
 			return err
@@ -160,7 +144,7 @@ func (h *Handler) GetSimulateConfigs(ctx context.Context) ([]*npool.SimulateConf
 		handler.stmSelect.
 			Offset(int(h.Offset)).
 			Limit(int(h.Limit)).
-			Order(ent.Desc(entconfig.FieldCreatedAt))
+			Order(ent.Desc(entappconfig.FieldCreatedAt))
 
 		return handler.scan(_ctx)
 	})

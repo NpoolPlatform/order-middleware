@@ -1,12 +1,10 @@
-package config
+package appconfig
 
 import (
 	"context"
 	"fmt"
+	"time"
 
-	cruder "github.com/NpoolPlatform/libent-cruder/pkg/cruder"
-	npool "github.com/NpoolPlatform/message/npool/order/mw/v1/app/config"
-	configcrud "github.com/NpoolPlatform/order-middleware/pkg/crud/app/config"
 	"github.com/NpoolPlatform/order-middleware/pkg/db"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent"
 
@@ -15,61 +13,75 @@ import (
 
 type createHandler struct {
 	*Handler
+	sql string
 }
 
-func (h *createHandler) checkSimulateConfig(ctx context.Context) error {
-	h.Conds = &configcrud.Conds{
-		AppID: &cruder.Cond{Op: cruder.EQ, Val: *h.AppID},
+func (h *createHandler) constructSQL() {
+	comma := ""
+	now := uint32(time.Now().Unix())
+
+	_sql := "insert into app_configs "
+	_sql += "("
+	if h.EntID != nil {
+		_sql += "ent_id"
+		comma = ", "
 	}
-	exist, err := h.ExistSimulateConfigConds(ctx)
+	_sql += comma + "app_id"
+	comma = ", "
+	_sql += comma + "enable_simulate_order"
+	_sql += comma + "simulate_order_coupon_mode"
+	_sql += comma + "simulate_order_coupon_probability"
+	_sql += comma + "simulate_order_cashable_profit_probability"
+	_sql += comma + "max_unpaid_orders"
+	_sql += comma + "created_at"
+	_sql += comma + "updated_at"
+	_sql += comma + "deleted_at"
+	_sql += ")"
+	comma = ""
+	_sql += " select * from (select "
+	if h.EntID != nil {
+		_sql += fmt.Sprintf("'%v' as ent_id ", *h.EntID)
+		comma = ", "
+	}
+	_sql += fmt.Sprintf("%v'%v' as app_id", comma, *h.AppID)
+	comma = ", "
+	_sql += fmt.Sprintf("%v%v as enable_simulate_order", comma, *h.EnableSimulateOrder)
+	_sql += fmt.Sprintf("%v'%v' as simulate_order_coupon_mode", comma, h.SimulateOrderCouponMode.String())
+	_sql += fmt.Sprintf("%v'%v' as simulate_order_coupon_probability", comma, *h.SimulateOrderCouponProbability)
+	_sql += fmt.Sprintf("%v'%v' as simulate_order_cashable_profit_probability", comma, *h.SimulateOrderCashableProfitProbability)
+	_sql += fmt.Sprintf("%v%v as max_unpaid_orders", comma, *h.MaxUnpaidOrders)
+	_sql += fmt.Sprintf("%v%v as created_at", comma, now)
+	_sql += fmt.Sprintf("%v%v as updated_at", comma, now)
+	_sql += fmt.Sprintf("%v0 as deleted_at", comma)
+	_sql += ") as tmp "
+	_sql += "where not exists ("
+	_sql += "select 1 from app_configs "
+	_sql += fmt.Sprintf("where app_id = '%v'", *h.AppID)
+	_sql += " limit 1)"
+
+	h.sql = _sql
+}
+
+func (h *createHandler) createAppConfig(ctx context.Context, tx *ent.Tx) error {
+	rc, err := tx.ExecContext(ctx, h.sql)
 	if err != nil {
 		return err
 	}
-	if exist {
-		return fmt.Errorf("repeated config")
+	if n, err := rc.RowsAffected(); err != nil || n != 1 {
+		return fmt.Errorf("fail create appconfig: %v", err)
 	}
 	return nil
 }
 
-func (h *createHandler) createSimulateConfig(ctx context.Context, tx *ent.Tx) error {
-	if _, err := configcrud.CreateSet(
-		tx.SimulateConfig.Create(),
-		&configcrud.Req{
-			EntID:                     h.EntID,
-			AppID:                     h.AppID,
-			SendCouponMode:            h.SendCouponMode,
-			SendCouponProbability:     h.SendCouponProbability,
-			CashableProfitProbability: h.CashableProfitProbability,
-			Enabled:                   h.Enabled,
-		},
-	).Save(ctx); err != nil {
-		return err
-	}
-	return nil
-}
-
-func (h *Handler) CreateSimulateConfig(ctx context.Context) (*npool.SimulateConfig, error) {
-	id := uuid.New()
+func (h *Handler) CreateAppConfig(ctx context.Context) error {
 	if h.EntID == nil {
-		h.EntID = &id
+		h.EntID = func() *uuid.UUID { uid := uuid.New(); return &uid }()
 	}
-
 	handler := &createHandler{
 		Handler: h,
 	}
-	if err := handler.checkSimulateConfig(ctx); err != nil {
-		return nil, err
-	}
-
-	err := db.WithTx(ctx, func(ctx context.Context, tx *ent.Tx) error {
-		if err := handler.createSimulateConfig(ctx, tx); err != nil {
-			return err
-		}
-		return nil
+	handler.constructSQL()
+	return db.WithTx(ctx, func(ctx context.Context, tx *ent.Tx) error {
+		return handler.createAppConfig(ctx, tx)
 	})
-	if err != nil {
-		return nil, err
-	}
-
-	return h.GetSimulateConfig(ctx)
 }

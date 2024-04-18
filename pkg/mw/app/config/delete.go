@@ -1,25 +1,24 @@
-package config
+package appconfig
 
 import (
 	"context"
 	"time"
 
-	npool "github.com/NpoolPlatform/message/npool/order/mw/v1/app/config"
-	configcrud "github.com/NpoolPlatform/order-middleware/pkg/crud/app/config"
+	appconfigcrud "github.com/NpoolPlatform/order-middleware/pkg/crud/app/config"
 	"github.com/NpoolPlatform/order-middleware/pkg/db"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent"
 )
 
 type deleteHandler struct {
 	*Handler
+	now uint32
 }
 
-func (h *deleteHandler) deleteSimulateConfig(ctx context.Context, tx *ent.Tx) error {
-	now := uint32(time.Now().Unix())
-	if _, err := configcrud.UpdateSet(
-		tx.SimulateConfig.UpdateOneID(*h.ID),
-		&configcrud.Req{
-			DeletedAt: &now,
+func (h *deleteHandler) deleteAppConfig(ctx context.Context, tx *ent.Tx) error {
+	if _, err := appconfigcrud.UpdateSet(
+		tx.AppConfig.UpdateOneID(*h.ID),
+		&appconfigcrud.Req{
+			DeletedAt: &h.now,
 		},
 	).Save(ctx); err != nil {
 		return err
@@ -27,27 +26,21 @@ func (h *deleteHandler) deleteSimulateConfig(ctx context.Context, tx *ent.Tx) er
 	return nil
 }
 
-func (h *Handler) DeleteSimulateConfig(ctx context.Context) (*npool.SimulateConfig, error) {
-	info, err := h.GetSimulateConfig(ctx)
+func (h *Handler) DeleteAppConfig(ctx context.Context) error {
+	info, err := h.GetAppConfig(ctx)
 	if err != nil {
-		return nil, err
+		return err
 	}
 	if info == nil {
-		return nil, nil
+		return nil
 	}
 
+	h.ID = &info.ID
 	handler := &deleteHandler{
 		Handler: h,
+		now:     uint32(time.Now().Unix()),
 	}
-	err = db.WithTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {
-		if err := handler.deleteSimulateConfig(ctx, tx); err != nil {
-			return err
-		}
-		return nil
+	return db.WithTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {
+		return handler.deleteAppConfig(ctx, tx)
 	})
-	if err != nil {
-		return nil, err
-	}
-
-	return info, nil
 }
