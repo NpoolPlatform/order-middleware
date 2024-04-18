@@ -308,6 +308,11 @@ var (
 				Unique:  true,
 				Columns: []*schema.Column{OutOfGasColumns[4]},
 			},
+			{
+				Name:    "outofgas_order_id",
+				Unique:  false,
+				Columns: []*schema.Column{OutOfGasColumns[5]},
+			},
 		},
 	}
 	// PaymentsColumns holds the columns for the "payments" table.
