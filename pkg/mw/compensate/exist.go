@@ -5,28 +5,25 @@ import (
 
 	"github.com/NpoolPlatform/order-middleware/pkg/db"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent"
-
-	compensatecrud "github.com/NpoolPlatform/order-middleware/pkg/crud/compensate"
-	entcompensate "github.com/NpoolPlatform/order-middleware/pkg/db/ent/compensate"
 )
 
-func (h *Handler) ExistCompensate(ctx context.Context) (bool, error) {
-	exist := false
-	var err error
+type existHandler struct {
+	*baseQueryHandler
+}
 
+func (h *Handler) ExistCompensate(ctx context.Context) (exist bool, err error) {
+	handler := &existHandler{
+		baseQueryHandler: &baseQueryHandler{
+			Handler: h,
+		},
+	}
 	err = db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
-		exist, err = cli.
-			Compensate.
-			Query().
-			Where(
-				entcompensate.EntID(*h.EntID),
-				entcompensate.DeletedAt(0),
-			).
-			Exist(_ctx)
-		if err != nil {
+		if err := handler.queryCompensate(cli); err != nil {
 			return err
 		}
-		return nil
+		handler.queryJoin()
+		exist, err = handler.stmSelect.Exist(_ctx)
+		return err
 	})
 	if err != nil {
 		return false, err
@@ -34,19 +31,20 @@ func (h *Handler) ExistCompensate(ctx context.Context) (bool, error) {
 	return exist, nil
 }
 
-func (h *Handler) ExistCompensateConds(ctx context.Context) (bool, error) {
-	exist := false
-
-	err := db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
-		stm, err := compensatecrud.SetQueryConds(cli.Compensate.Query(), h.Conds)
+func (h *Handler) ExistCompensateConds(ctx context.Context) (exist bool, err error) {
+	handler := &existHandler{
+		baseQueryHandler: &baseQueryHandler{
+			Handler: h,
+		},
+	}
+	err = db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
+		handler.stmSelect, err = handler.queryCompensates(cli)
 		if err != nil {
 			return err
 		}
-		exist, err = stm.Exist(_ctx)
-		if err != nil {
-			return err
-		}
-		return nil
+		handler.queryJoin()
+		exist, err = handler.stmSelect.Exist(_ctx)
+		return err
 	})
 	if err != nil {
 		return false, err

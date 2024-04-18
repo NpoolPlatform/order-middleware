@@ -1115,28 +1115,25 @@ func (m *AppConfigMutation) ResetEdge(name string) error {
 // CompensateMutation represents an operation that mutates the Compensate nodes in the graph.
 type CompensateMutation struct {
 	config
-	op              Op
-	typ             string
-	id              *uint32
-	created_at      *uint32
-	addcreated_at   *int32
-	updated_at      *uint32
-	addupdated_at   *int32
-	deleted_at      *uint32
-	adddeleted_at   *int32
-	ent_id          *uuid.UUID
-	order_id        *uuid.UUID
-	start_at        *uint32
-	addstart_at     *int32
-	end_at          *uint32
-	addend_at       *int32
-	compensate_type *string
-	title           *string
-	message         *string
-	clearedFields   map[string]struct{}
-	done            bool
-	oldValue        func(context.Context) (*Compensate, error)
-	predicates      []predicate.Compensate
+	op                    Op
+	typ                   string
+	id                    *uint32
+	created_at            *uint32
+	addcreated_at         *int32
+	updated_at            *uint32
+	addupdated_at         *int32
+	deleted_at            *uint32
+	adddeleted_at         *int32
+	ent_id                *uuid.UUID
+	order_id              *uuid.UUID
+	compensate_from_id    *uuid.UUID
+	compensate_type       *string
+	compensate_seconds    *uint32
+	addcompensate_seconds *int32
+	clearedFields         map[string]struct{}
+	done                  bool
+	oldValue              func(context.Context) (*Compensate, error)
+	predicates            []predicate.Compensate
 }
 
 var _ ent.Mutation = (*CompensateMutation)(nil)
@@ -1496,144 +1493,53 @@ func (m *CompensateMutation) ResetOrderID() {
 	delete(m.clearedFields, compensate.FieldOrderID)
 }
 
-// SetStartAt sets the "start_at" field.
-func (m *CompensateMutation) SetStartAt(u uint32) {
-	m.start_at = &u
-	m.addstart_at = nil
+// SetCompensateFromID sets the "compensate_from_id" field.
+func (m *CompensateMutation) SetCompensateFromID(u uuid.UUID) {
+	m.compensate_from_id = &u
 }
 
-// StartAt returns the value of the "start_at" field in the mutation.
-func (m *CompensateMutation) StartAt() (r uint32, exists bool) {
-	v := m.start_at
+// CompensateFromID returns the value of the "compensate_from_id" field in the mutation.
+func (m *CompensateMutation) CompensateFromID() (r uuid.UUID, exists bool) {
+	v := m.compensate_from_id
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// OldStartAt returns the old "start_at" field's value of the Compensate entity.
+// OldCompensateFromID returns the old "compensate_from_id" field's value of the Compensate entity.
 // If the Compensate object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *CompensateMutation) OldStartAt(ctx context.Context) (v uint32, err error) {
+func (m *CompensateMutation) OldCompensateFromID(ctx context.Context) (v uuid.UUID, err error) {
 	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldStartAt is only allowed on UpdateOne operations")
+		return v, errors.New("OldCompensateFromID is only allowed on UpdateOne operations")
 	}
 	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldStartAt requires an ID field in the mutation")
+		return v, errors.New("OldCompensateFromID requires an ID field in the mutation")
 	}
 	oldValue, err := m.oldValue(ctx)
 	if err != nil {
-		return v, fmt.Errorf("querying old value for OldStartAt: %w", err)
+		return v, fmt.Errorf("querying old value for OldCompensateFromID: %w", err)
 	}
-	return oldValue.StartAt, nil
+	return oldValue.CompensateFromID, nil
 }
 
-// AddStartAt adds u to the "start_at" field.
-func (m *CompensateMutation) AddStartAt(u int32) {
-	if m.addstart_at != nil {
-		*m.addstart_at += u
-	} else {
-		m.addstart_at = &u
-	}
+// ClearCompensateFromID clears the value of the "compensate_from_id" field.
+func (m *CompensateMutation) ClearCompensateFromID() {
+	m.compensate_from_id = nil
+	m.clearedFields[compensate.FieldCompensateFromID] = struct{}{}
 }
 
-// AddedStartAt returns the value that was added to the "start_at" field in this mutation.
-func (m *CompensateMutation) AddedStartAt() (r int32, exists bool) {
-	v := m.addstart_at
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// ClearStartAt clears the value of the "start_at" field.
-func (m *CompensateMutation) ClearStartAt() {
-	m.start_at = nil
-	m.addstart_at = nil
-	m.clearedFields[compensate.FieldStartAt] = struct{}{}
-}
-
-// StartAtCleared returns if the "start_at" field was cleared in this mutation.
-func (m *CompensateMutation) StartAtCleared() bool {
-	_, ok := m.clearedFields[compensate.FieldStartAt]
+// CompensateFromIDCleared returns if the "compensate_from_id" field was cleared in this mutation.
+func (m *CompensateMutation) CompensateFromIDCleared() bool {
+	_, ok := m.clearedFields[compensate.FieldCompensateFromID]
 	return ok
 }
 
-// ResetStartAt resets all changes to the "start_at" field.
-func (m *CompensateMutation) ResetStartAt() {
-	m.start_at = nil
-	m.addstart_at = nil
-	delete(m.clearedFields, compensate.FieldStartAt)
-}
-
-// SetEndAt sets the "end_at" field.
-func (m *CompensateMutation) SetEndAt(u uint32) {
-	m.end_at = &u
-	m.addend_at = nil
-}
-
-// EndAt returns the value of the "end_at" field in the mutation.
-func (m *CompensateMutation) EndAt() (r uint32, exists bool) {
-	v := m.end_at
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldEndAt returns the old "end_at" field's value of the Compensate entity.
-// If the Compensate object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *CompensateMutation) OldEndAt(ctx context.Context) (v uint32, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldEndAt is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldEndAt requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldEndAt: %w", err)
-	}
-	return oldValue.EndAt, nil
-}
-
-// AddEndAt adds u to the "end_at" field.
-func (m *CompensateMutation) AddEndAt(u int32) {
-	if m.addend_at != nil {
-		*m.addend_at += u
-	} else {
-		m.addend_at = &u
-	}
-}
-
-// AddedEndAt returns the value that was added to the "end_at" field in this mutation.
-func (m *CompensateMutation) AddedEndAt() (r int32, exists bool) {
-	v := m.addend_at
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// ClearEndAt clears the value of the "end_at" field.
-func (m *CompensateMutation) ClearEndAt() {
-	m.end_at = nil
-	m.addend_at = nil
-	m.clearedFields[compensate.FieldEndAt] = struct{}{}
-}
-
-// EndAtCleared returns if the "end_at" field was cleared in this mutation.
-func (m *CompensateMutation) EndAtCleared() bool {
-	_, ok := m.clearedFields[compensate.FieldEndAt]
-	return ok
-}
-
-// ResetEndAt resets all changes to the "end_at" field.
-func (m *CompensateMutation) ResetEndAt() {
-	m.end_at = nil
-	m.addend_at = nil
-	delete(m.clearedFields, compensate.FieldEndAt)
+// ResetCompensateFromID resets all changes to the "compensate_from_id" field.
+func (m *CompensateMutation) ResetCompensateFromID() {
+	m.compensate_from_id = nil
+	delete(m.clearedFields, compensate.FieldCompensateFromID)
 }
 
 // SetCompensateType sets the "compensate_type" field.
@@ -1685,102 +1591,74 @@ func (m *CompensateMutation) ResetCompensateType() {
 	delete(m.clearedFields, compensate.FieldCompensateType)
 }
 
-// SetTitle sets the "title" field.
-func (m *CompensateMutation) SetTitle(s string) {
-	m.title = &s
+// SetCompensateSeconds sets the "compensate_seconds" field.
+func (m *CompensateMutation) SetCompensateSeconds(u uint32) {
+	m.compensate_seconds = &u
+	m.addcompensate_seconds = nil
 }
 
-// Title returns the value of the "title" field in the mutation.
-func (m *CompensateMutation) Title() (r string, exists bool) {
-	v := m.title
+// CompensateSeconds returns the value of the "compensate_seconds" field in the mutation.
+func (m *CompensateMutation) CompensateSeconds() (r uint32, exists bool) {
+	v := m.compensate_seconds
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// OldTitle returns the old "title" field's value of the Compensate entity.
+// OldCompensateSeconds returns the old "compensate_seconds" field's value of the Compensate entity.
 // If the Compensate object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *CompensateMutation) OldTitle(ctx context.Context) (v string, err error) {
+func (m *CompensateMutation) OldCompensateSeconds(ctx context.Context) (v uint32, err error) {
 	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldTitle is only allowed on UpdateOne operations")
+		return v, errors.New("OldCompensateSeconds is only allowed on UpdateOne operations")
 	}
 	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldTitle requires an ID field in the mutation")
+		return v, errors.New("OldCompensateSeconds requires an ID field in the mutation")
 	}
 	oldValue, err := m.oldValue(ctx)
 	if err != nil {
-		return v, fmt.Errorf("querying old value for OldTitle: %w", err)
+		return v, fmt.Errorf("querying old value for OldCompensateSeconds: %w", err)
 	}
-	return oldValue.Title, nil
+	return oldValue.CompensateSeconds, nil
 }
 
-// ClearTitle clears the value of the "title" field.
-func (m *CompensateMutation) ClearTitle() {
-	m.title = nil
-	m.clearedFields[compensate.FieldTitle] = struct{}{}
+// AddCompensateSeconds adds u to the "compensate_seconds" field.
+func (m *CompensateMutation) AddCompensateSeconds(u int32) {
+	if m.addcompensate_seconds != nil {
+		*m.addcompensate_seconds += u
+	} else {
+		m.addcompensate_seconds = &u
+	}
 }
 
-// TitleCleared returns if the "title" field was cleared in this mutation.
-func (m *CompensateMutation) TitleCleared() bool {
-	_, ok := m.clearedFields[compensate.FieldTitle]
-	return ok
-}
-
-// ResetTitle resets all changes to the "title" field.
-func (m *CompensateMutation) ResetTitle() {
-	m.title = nil
-	delete(m.clearedFields, compensate.FieldTitle)
-}
-
-// SetMessage sets the "message" field.
-func (m *CompensateMutation) SetMessage(s string) {
-	m.message = &s
-}
-
-// Message returns the value of the "message" field in the mutation.
-func (m *CompensateMutation) Message() (r string, exists bool) {
-	v := m.message
+// AddedCompensateSeconds returns the value that was added to the "compensate_seconds" field in this mutation.
+func (m *CompensateMutation) AddedCompensateSeconds() (r int32, exists bool) {
+	v := m.addcompensate_seconds
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// OldMessage returns the old "message" field's value of the Compensate entity.
-// If the Compensate object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *CompensateMutation) OldMessage(ctx context.Context) (v string, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldMessage is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldMessage requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldMessage: %w", err)
-	}
-	return oldValue.Message, nil
+// ClearCompensateSeconds clears the value of the "compensate_seconds" field.
+func (m *CompensateMutation) ClearCompensateSeconds() {
+	m.compensate_seconds = nil
+	m.addcompensate_seconds = nil
+	m.clearedFields[compensate.FieldCompensateSeconds] = struct{}{}
 }
 
-// ClearMessage clears the value of the "message" field.
-func (m *CompensateMutation) ClearMessage() {
-	m.message = nil
-	m.clearedFields[compensate.FieldMessage] = struct{}{}
-}
-
-// MessageCleared returns if the "message" field was cleared in this mutation.
-func (m *CompensateMutation) MessageCleared() bool {
-	_, ok := m.clearedFields[compensate.FieldMessage]
+// CompensateSecondsCleared returns if the "compensate_seconds" field was cleared in this mutation.
+func (m *CompensateMutation) CompensateSecondsCleared() bool {
+	_, ok := m.clearedFields[compensate.FieldCompensateSeconds]
 	return ok
 }
 
-// ResetMessage resets all changes to the "message" field.
-func (m *CompensateMutation) ResetMessage() {
-	m.message = nil
-	delete(m.clearedFields, compensate.FieldMessage)
+// ResetCompensateSeconds resets all changes to the "compensate_seconds" field.
+func (m *CompensateMutation) ResetCompensateSeconds() {
+	m.compensate_seconds = nil
+	m.addcompensate_seconds = nil
+	delete(m.clearedFields, compensate.FieldCompensateSeconds)
 }
 
 // Where appends a list predicates to the CompensateMutation builder.
@@ -1802,7 +1680,7 @@ func (m *CompensateMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *CompensateMutation) Fields() []string {
-	fields := make([]string, 0, 10)
+	fields := make([]string, 0, 8)
 	if m.created_at != nil {
 		fields = append(fields, compensate.FieldCreatedAt)
 	}
@@ -1818,20 +1696,14 @@ func (m *CompensateMutation) Fields() []string {
 	if m.order_id != nil {
 		fields = append(fields, compensate.FieldOrderID)
 	}
-	if m.start_at != nil {
-		fields = append(fields, compensate.FieldStartAt)
-	}
-	if m.end_at != nil {
-		fields = append(fields, compensate.FieldEndAt)
+	if m.compensate_from_id != nil {
+		fields = append(fields, compensate.FieldCompensateFromID)
 	}
 	if m.compensate_type != nil {
 		fields = append(fields, compensate.FieldCompensateType)
 	}
-	if m.title != nil {
-		fields = append(fields, compensate.FieldTitle)
-	}
-	if m.message != nil {
-		fields = append(fields, compensate.FieldMessage)
+	if m.compensate_seconds != nil {
+		fields = append(fields, compensate.FieldCompensateSeconds)
 	}
 	return fields
 }
@@ -1851,16 +1723,12 @@ func (m *CompensateMutation) Field(name string) (ent.Value, bool) {
 		return m.EntID()
 	case compensate.FieldOrderID:
 		return m.OrderID()
-	case compensate.FieldStartAt:
-		return m.StartAt()
-	case compensate.FieldEndAt:
-		return m.EndAt()
+	case compensate.FieldCompensateFromID:
+		return m.CompensateFromID()
 	case compensate.FieldCompensateType:
 		return m.CompensateType()
-	case compensate.FieldTitle:
-		return m.Title()
-	case compensate.FieldMessage:
-		return m.Message()
+	case compensate.FieldCompensateSeconds:
+		return m.CompensateSeconds()
 	}
 	return nil, false
 }
@@ -1880,16 +1748,12 @@ func (m *CompensateMutation) OldField(ctx context.Context, name string) (ent.Val
 		return m.OldEntID(ctx)
 	case compensate.FieldOrderID:
 		return m.OldOrderID(ctx)
-	case compensate.FieldStartAt:
-		return m.OldStartAt(ctx)
-	case compensate.FieldEndAt:
-		return m.OldEndAt(ctx)
+	case compensate.FieldCompensateFromID:
+		return m.OldCompensateFromID(ctx)
 	case compensate.FieldCompensateType:
 		return m.OldCompensateType(ctx)
-	case compensate.FieldTitle:
-		return m.OldTitle(ctx)
-	case compensate.FieldMessage:
-		return m.OldMessage(ctx)
+	case compensate.FieldCompensateSeconds:
+		return m.OldCompensateSeconds(ctx)
 	}
 	return nil, fmt.Errorf("unknown Compensate field %s", name)
 }
@@ -1934,19 +1798,12 @@ func (m *CompensateMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetOrderID(v)
 		return nil
-	case compensate.FieldStartAt:
-		v, ok := value.(uint32)
+	case compensate.FieldCompensateFromID:
+		v, ok := value.(uuid.UUID)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.SetStartAt(v)
-		return nil
-	case compensate.FieldEndAt:
-		v, ok := value.(uint32)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetEndAt(v)
+		m.SetCompensateFromID(v)
 		return nil
 	case compensate.FieldCompensateType:
 		v, ok := value.(string)
@@ -1955,19 +1812,12 @@ func (m *CompensateMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetCompensateType(v)
 		return nil
-	case compensate.FieldTitle:
-		v, ok := value.(string)
+	case compensate.FieldCompensateSeconds:
+		v, ok := value.(uint32)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.SetTitle(v)
-		return nil
-	case compensate.FieldMessage:
-		v, ok := value.(string)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetMessage(v)
+		m.SetCompensateSeconds(v)
 		return nil
 	}
 	return fmt.Errorf("unknown Compensate field %s", name)
@@ -1986,11 +1836,8 @@ func (m *CompensateMutation) AddedFields() []string {
 	if m.adddeleted_at != nil {
 		fields = append(fields, compensate.FieldDeletedAt)
 	}
-	if m.addstart_at != nil {
-		fields = append(fields, compensate.FieldStartAt)
-	}
-	if m.addend_at != nil {
-		fields = append(fields, compensate.FieldEndAt)
+	if m.addcompensate_seconds != nil {
+		fields = append(fields, compensate.FieldCompensateSeconds)
 	}
 	return fields
 }
@@ -2006,10 +1853,8 @@ func (m *CompensateMutation) AddedField(name string) (ent.Value, bool) {
 		return m.AddedUpdatedAt()
 	case compensate.FieldDeletedAt:
 		return m.AddedDeletedAt()
-	case compensate.FieldStartAt:
-		return m.AddedStartAt()
-	case compensate.FieldEndAt:
-		return m.AddedEndAt()
+	case compensate.FieldCompensateSeconds:
+		return m.AddedCompensateSeconds()
 	}
 	return nil, false
 }
@@ -2040,19 +1885,12 @@ func (m *CompensateMutation) AddField(name string, value ent.Value) error {
 		}
 		m.AddDeletedAt(v)
 		return nil
-	case compensate.FieldStartAt:
+	case compensate.FieldCompensateSeconds:
 		v, ok := value.(int32)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.AddStartAt(v)
-		return nil
-	case compensate.FieldEndAt:
-		v, ok := value.(int32)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.AddEndAt(v)
+		m.AddCompensateSeconds(v)
 		return nil
 	}
 	return fmt.Errorf("unknown Compensate numeric field %s", name)
@@ -2065,20 +1903,14 @@ func (m *CompensateMutation) ClearedFields() []string {
 	if m.FieldCleared(compensate.FieldOrderID) {
 		fields = append(fields, compensate.FieldOrderID)
 	}
-	if m.FieldCleared(compensate.FieldStartAt) {
-		fields = append(fields, compensate.FieldStartAt)
-	}
-	if m.FieldCleared(compensate.FieldEndAt) {
-		fields = append(fields, compensate.FieldEndAt)
+	if m.FieldCleared(compensate.FieldCompensateFromID) {
+		fields = append(fields, compensate.FieldCompensateFromID)
 	}
 	if m.FieldCleared(compensate.FieldCompensateType) {
 		fields = append(fields, compensate.FieldCompensateType)
 	}
-	if m.FieldCleared(compensate.FieldTitle) {
-		fields = append(fields, compensate.FieldTitle)
-	}
-	if m.FieldCleared(compensate.FieldMessage) {
-		fields = append(fields, compensate.FieldMessage)
+	if m.FieldCleared(compensate.FieldCompensateSeconds) {
+		fields = append(fields, compensate.FieldCompensateSeconds)
 	}
 	return fields
 }
@@ -2097,20 +1929,14 @@ func (m *CompensateMutation) ClearField(name string) error {
 	case compensate.FieldOrderID:
 		m.ClearOrderID()
 		return nil
-	case compensate.FieldStartAt:
-		m.ClearStartAt()
-		return nil
-	case compensate.FieldEndAt:
-		m.ClearEndAt()
+	case compensate.FieldCompensateFromID:
+		m.ClearCompensateFromID()
 		return nil
 	case compensate.FieldCompensateType:
 		m.ClearCompensateType()
 		return nil
-	case compensate.FieldTitle:
-		m.ClearTitle()
-		return nil
-	case compensate.FieldMessage:
-		m.ClearMessage()
+	case compensate.FieldCompensateSeconds:
+		m.ClearCompensateSeconds()
 		return nil
 	}
 	return fmt.Errorf("unknown Compensate nullable field %s", name)
@@ -2135,20 +1961,14 @@ func (m *CompensateMutation) ResetField(name string) error {
 	case compensate.FieldOrderID:
 		m.ResetOrderID()
 		return nil
-	case compensate.FieldStartAt:
-		m.ResetStartAt()
-		return nil
-	case compensate.FieldEndAt:
-		m.ResetEndAt()
+	case compensate.FieldCompensateFromID:
+		m.ResetCompensateFromID()
 		return nil
 	case compensate.FieldCompensateType:
 		m.ResetCompensateType()
 		return nil
-	case compensate.FieldTitle:
-		m.ResetTitle()
-		return nil
-	case compensate.FieldMessage:
-		m.ResetMessage()
+	case compensate.FieldCompensateSeconds:
+		m.ResetCompensateSeconds()
 		return nil
 	}
 	return fmt.Errorf("unknown Compensate field %s", name)

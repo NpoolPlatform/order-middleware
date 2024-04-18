@@ -128,26 +128,18 @@ func init() {
 	compensateDescOrderID := compensateFields[0].Descriptor()
 	// compensate.DefaultOrderID holds the default value on creation for the order_id field.
 	compensate.DefaultOrderID = compensateDescOrderID.Default.(func() uuid.UUID)
-	// compensateDescStartAt is the schema descriptor for start_at field.
-	compensateDescStartAt := compensateFields[1].Descriptor()
-	// compensate.DefaultStartAt holds the default value on creation for the start_at field.
-	compensate.DefaultStartAt = compensateDescStartAt.Default.(uint32)
-	// compensateDescEndAt is the schema descriptor for end_at field.
-	compensateDescEndAt := compensateFields[2].Descriptor()
-	// compensate.DefaultEndAt holds the default value on creation for the end_at field.
-	compensate.DefaultEndAt = compensateDescEndAt.Default.(uint32)
+	// compensateDescCompensateFromID is the schema descriptor for compensate_from_id field.
+	compensateDescCompensateFromID := compensateFields[1].Descriptor()
+	// compensate.DefaultCompensateFromID holds the default value on creation for the compensate_from_id field.
+	compensate.DefaultCompensateFromID = compensateDescCompensateFromID.Default.(func() uuid.UUID)
 	// compensateDescCompensateType is the schema descriptor for compensate_type field.
-	compensateDescCompensateType := compensateFields[3].Descriptor()
+	compensateDescCompensateType := compensateFields[2].Descriptor()
 	// compensate.DefaultCompensateType holds the default value on creation for the compensate_type field.
 	compensate.DefaultCompensateType = compensateDescCompensateType.Default.(string)
-	// compensateDescTitle is the schema descriptor for title field.
-	compensateDescTitle := compensateFields[4].Descriptor()
-	// compensate.DefaultTitle holds the default value on creation for the title field.
-	compensate.DefaultTitle = compensateDescTitle.Default.(string)
-	// compensateDescMessage is the schema descriptor for message field.
-	compensateDescMessage := compensateFields[5].Descriptor()
-	// compensate.DefaultMessage holds the default value on creation for the message field.
-	compensate.DefaultMessage = compensateDescMessage.Default.(string)
+	// compensateDescCompensateSeconds is the schema descriptor for compensate_seconds field.
+	compensateDescCompensateSeconds := compensateFields[3].Descriptor()
+	// compensate.DefaultCompensateSeconds holds the default value on creation for the compensate_seconds field.
+	compensate.DefaultCompensateSeconds = compensateDescCompensateSeconds.Default.(uint32)
 	orderMixin := schema.Order{}.Mixin()
 	order.Policy = privacy.NewPolicies(orderMixin[0], schema.Order{})
 	order.Hooks[0] = func(next ent.Mutator) ent.Mutator {

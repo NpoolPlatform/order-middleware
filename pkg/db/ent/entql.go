@@ -62,16 +62,14 @@ var schemaGraph = func() *sqlgraph.Schema {
 		},
 		Type: "Compensate",
 		Fields: map[string]*sqlgraph.FieldSpec{
-			compensate.FieldCreatedAt:      {Type: field.TypeUint32, Column: compensate.FieldCreatedAt},
-			compensate.FieldUpdatedAt:      {Type: field.TypeUint32, Column: compensate.FieldUpdatedAt},
-			compensate.FieldDeletedAt:      {Type: field.TypeUint32, Column: compensate.FieldDeletedAt},
-			compensate.FieldEntID:          {Type: field.TypeUUID, Column: compensate.FieldEntID},
-			compensate.FieldOrderID:        {Type: field.TypeUUID, Column: compensate.FieldOrderID},
-			compensate.FieldStartAt:        {Type: field.TypeUint32, Column: compensate.FieldStartAt},
-			compensate.FieldEndAt:          {Type: field.TypeUint32, Column: compensate.FieldEndAt},
-			compensate.FieldCompensateType: {Type: field.TypeString, Column: compensate.FieldCompensateType},
-			compensate.FieldTitle:          {Type: field.TypeString, Column: compensate.FieldTitle},
-			compensate.FieldMessage:        {Type: field.TypeString, Column: compensate.FieldMessage},
+			compensate.FieldCreatedAt:         {Type: field.TypeUint32, Column: compensate.FieldCreatedAt},
+			compensate.FieldUpdatedAt:         {Type: field.TypeUint32, Column: compensate.FieldUpdatedAt},
+			compensate.FieldDeletedAt:         {Type: field.TypeUint32, Column: compensate.FieldDeletedAt},
+			compensate.FieldEntID:             {Type: field.TypeUUID, Column: compensate.FieldEntID},
+			compensate.FieldOrderID:           {Type: field.TypeUUID, Column: compensate.FieldOrderID},
+			compensate.FieldCompensateFromID:  {Type: field.TypeUUID, Column: compensate.FieldCompensateFromID},
+			compensate.FieldCompensateType:    {Type: field.TypeString, Column: compensate.FieldCompensateType},
+			compensate.FieldCompensateSeconds: {Type: field.TypeUint32, Column: compensate.FieldCompensateSeconds},
 		},
 	}
 	graph.Nodes[2] = &sqlgraph.Node{
@@ -574,14 +572,9 @@ func (f *CompensateFilter) WhereOrderID(p entql.ValueP) {
 	f.Where(p.Field(compensate.FieldOrderID))
 }
 
-// WhereStartAt applies the entql uint32 predicate on the start_at field.
-func (f *CompensateFilter) WhereStartAt(p entql.Uint32P) {
-	f.Where(p.Field(compensate.FieldStartAt))
-}
-
-// WhereEndAt applies the entql uint32 predicate on the end_at field.
-func (f *CompensateFilter) WhereEndAt(p entql.Uint32P) {
-	f.Where(p.Field(compensate.FieldEndAt))
+// WhereCompensateFromID applies the entql [16]byte predicate on the compensate_from_id field.
+func (f *CompensateFilter) WhereCompensateFromID(p entql.ValueP) {
+	f.Where(p.Field(compensate.FieldCompensateFromID))
 }
 
 // WhereCompensateType applies the entql string predicate on the compensate_type field.
@@ -589,14 +582,9 @@ func (f *CompensateFilter) WhereCompensateType(p entql.StringP) {
 	f.Where(p.Field(compensate.FieldCompensateType))
 }
 
-// WhereTitle applies the entql string predicate on the title field.
-func (f *CompensateFilter) WhereTitle(p entql.StringP) {
-	f.Where(p.Field(compensate.FieldTitle))
-}
-
-// WhereMessage applies the entql string predicate on the message field.
-func (f *CompensateFilter) WhereMessage(p entql.StringP) {
-	f.Where(p.Field(compensate.FieldMessage))
+// WhereCompensateSeconds applies the entql uint32 predicate on the compensate_seconds field.
+func (f *CompensateFilter) WhereCompensateSeconds(p entql.Uint32P) {
+	f.Where(p.Field(compensate.FieldCompensateSeconds))
 }
 
 // addPredicate implements the predicateAdder interface.

@@ -114,17 +114,10 @@ func OrderID(v uuid.UUID) predicate.Compensate {
 	})
 }
 
-// StartAt applies equality check predicate on the "start_at" field. It's identical to StartAtEQ.
-func StartAt(v uint32) predicate.Compensate {
+// CompensateFromID applies equality check predicate on the "compensate_from_id" field. It's identical to CompensateFromIDEQ.
+func CompensateFromID(v uuid.UUID) predicate.Compensate {
 	return predicate.Compensate(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldStartAt), v))
-	})
-}
-
-// EndAt applies equality check predicate on the "end_at" field. It's identical to EndAtEQ.
-func EndAt(v uint32) predicate.Compensate {
-	return predicate.Compensate(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldEndAt), v))
+		s.Where(sql.EQ(s.C(FieldCompensateFromID), v))
 	})
 }
 
@@ -135,17 +128,10 @@ func CompensateType(v string) predicate.Compensate {
 	})
 }
 
-// Title applies equality check predicate on the "title" field. It's identical to TitleEQ.
-func Title(v string) predicate.Compensate {
+// CompensateSeconds applies equality check predicate on the "compensate_seconds" field. It's identical to CompensateSecondsEQ.
+func CompensateSeconds(v uint32) predicate.Compensate {
 	return predicate.Compensate(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldTitle), v))
-	})
-}
-
-// Message applies equality check predicate on the "message" field. It's identical to MessageEQ.
-func Message(v string) predicate.Compensate {
-	return predicate.Compensate(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldMessage), v))
+		s.Where(sql.EQ(s.C(FieldCompensateSeconds), v))
 	})
 }
 
@@ -483,159 +469,81 @@ func OrderIDNotNil() predicate.Compensate {
 	})
 }
 
-// StartAtEQ applies the EQ predicate on the "start_at" field.
-func StartAtEQ(v uint32) predicate.Compensate {
+// CompensateFromIDEQ applies the EQ predicate on the "compensate_from_id" field.
+func CompensateFromIDEQ(v uuid.UUID) predicate.Compensate {
 	return predicate.Compensate(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldStartAt), v))
+		s.Where(sql.EQ(s.C(FieldCompensateFromID), v))
 	})
 }
 
-// StartAtNEQ applies the NEQ predicate on the "start_at" field.
-func StartAtNEQ(v uint32) predicate.Compensate {
+// CompensateFromIDNEQ applies the NEQ predicate on the "compensate_from_id" field.
+func CompensateFromIDNEQ(v uuid.UUID) predicate.Compensate {
 	return predicate.Compensate(func(s *sql.Selector) {
-		s.Where(sql.NEQ(s.C(FieldStartAt), v))
+		s.Where(sql.NEQ(s.C(FieldCompensateFromID), v))
 	})
 }
 
-// StartAtIn applies the In predicate on the "start_at" field.
-func StartAtIn(vs ...uint32) predicate.Compensate {
+// CompensateFromIDIn applies the In predicate on the "compensate_from_id" field.
+func CompensateFromIDIn(vs ...uuid.UUID) predicate.Compensate {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
 	}
 	return predicate.Compensate(func(s *sql.Selector) {
-		s.Where(sql.In(s.C(FieldStartAt), v...))
+		s.Where(sql.In(s.C(FieldCompensateFromID), v...))
 	})
 }
 
-// StartAtNotIn applies the NotIn predicate on the "start_at" field.
-func StartAtNotIn(vs ...uint32) predicate.Compensate {
+// CompensateFromIDNotIn applies the NotIn predicate on the "compensate_from_id" field.
+func CompensateFromIDNotIn(vs ...uuid.UUID) predicate.Compensate {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
 	}
 	return predicate.Compensate(func(s *sql.Selector) {
-		s.Where(sql.NotIn(s.C(FieldStartAt), v...))
+		s.Where(sql.NotIn(s.C(FieldCompensateFromID), v...))
 	})
 }
 
-// StartAtGT applies the GT predicate on the "start_at" field.
-func StartAtGT(v uint32) predicate.Compensate {
+// CompensateFromIDGT applies the GT predicate on the "compensate_from_id" field.
+func CompensateFromIDGT(v uuid.UUID) predicate.Compensate {
 	return predicate.Compensate(func(s *sql.Selector) {
-		s.Where(sql.GT(s.C(FieldStartAt), v))
+		s.Where(sql.GT(s.C(FieldCompensateFromID), v))
 	})
 }
 
-// StartAtGTE applies the GTE predicate on the "start_at" field.
-func StartAtGTE(v uint32) predicate.Compensate {
+// CompensateFromIDGTE applies the GTE predicate on the "compensate_from_id" field.
+func CompensateFromIDGTE(v uuid.UUID) predicate.Compensate {
 	return predicate.Compensate(func(s *sql.Selector) {
-		s.Where(sql.GTE(s.C(FieldStartAt), v))
+		s.Where(sql.GTE(s.C(FieldCompensateFromID), v))
 	})
 }
 
-// StartAtLT applies the LT predicate on the "start_at" field.
-func StartAtLT(v uint32) predicate.Compensate {
+// CompensateFromIDLT applies the LT predicate on the "compensate_from_id" field.
+func CompensateFromIDLT(v uuid.UUID) predicate.Compensate {
 	return predicate.Compensate(func(s *sql.Selector) {
-		s.Where(sql.LT(s.C(FieldStartAt), v))
+		s.Where(sql.LT(s.C(FieldCompensateFromID), v))
 	})
 }
 
-// StartAtLTE applies the LTE predicate on the "start_at" field.
-func StartAtLTE(v uint32) predicate.Compensate {
+// CompensateFromIDLTE applies the LTE predicate on the "compensate_from_id" field.
+func CompensateFromIDLTE(v uuid.UUID) predicate.Compensate {
 	return predicate.Compensate(func(s *sql.Selector) {
-		s.Where(sql.LTE(s.C(FieldStartAt), v))
+		s.Where(sql.LTE(s.C(FieldCompensateFromID), v))
 	})
 }
 
-// StartAtIsNil applies the IsNil predicate on the "start_at" field.
-func StartAtIsNil() predicate.Compensate {
+// CompensateFromIDIsNil applies the IsNil predicate on the "compensate_from_id" field.
+func CompensateFromIDIsNil() predicate.Compensate {
 	return predicate.Compensate(func(s *sql.Selector) {
-		s.Where(sql.IsNull(s.C(FieldStartAt)))
+		s.Where(sql.IsNull(s.C(FieldCompensateFromID)))
 	})
 }
 
-// StartAtNotNil applies the NotNil predicate on the "start_at" field.
-func StartAtNotNil() predicate.Compensate {
+// CompensateFromIDNotNil applies the NotNil predicate on the "compensate_from_id" field.
+func CompensateFromIDNotNil() predicate.Compensate {
 	return predicate.Compensate(func(s *sql.Selector) {
-		s.Where(sql.NotNull(s.C(FieldStartAt)))
-	})
-}
-
-// EndAtEQ applies the EQ predicate on the "end_at" field.
-func EndAtEQ(v uint32) predicate.Compensate {
-	return predicate.Compensate(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldEndAt), v))
-	})
-}
-
-// EndAtNEQ applies the NEQ predicate on the "end_at" field.
-func EndAtNEQ(v uint32) predicate.Compensate {
-	return predicate.Compensate(func(s *sql.Selector) {
-		s.Where(sql.NEQ(s.C(FieldEndAt), v))
-	})
-}
-
-// EndAtIn applies the In predicate on the "end_at" field.
-func EndAtIn(vs ...uint32) predicate.Compensate {
-	v := make([]interface{}, len(vs))
-	for i := range v {
-		v[i] = vs[i]
-	}
-	return predicate.Compensate(func(s *sql.Selector) {
-		s.Where(sql.In(s.C(FieldEndAt), v...))
-	})
-}
-
-// EndAtNotIn applies the NotIn predicate on the "end_at" field.
-func EndAtNotIn(vs ...uint32) predicate.Compensate {
-	v := make([]interface{}, len(vs))
-	for i := range v {
-		v[i] = vs[i]
-	}
-	return predicate.Compensate(func(s *sql.Selector) {
-		s.Where(sql.NotIn(s.C(FieldEndAt), v...))
-	})
-}
-
-// EndAtGT applies the GT predicate on the "end_at" field.
-func EndAtGT(v uint32) predicate.Compensate {
-	return predicate.Compensate(func(s *sql.Selector) {
-		s.Where(sql.GT(s.C(FieldEndAt), v))
-	})
-}
-
-// EndAtGTE applies the GTE predicate on the "end_at" field.
-func EndAtGTE(v uint32) predicate.Compensate {
-	return predicate.Compensate(func(s *sql.Selector) {
-		s.Where(sql.GTE(s.C(FieldEndAt), v))
-	})
-}
-
-// EndAtLT applies the LT predicate on the "end_at" field.
-func EndAtLT(v uint32) predicate.Compensate {
-	return predicate.Compensate(func(s *sql.Selector) {
-		s.Where(sql.LT(s.C(FieldEndAt), v))
-	})
-}
-
-// EndAtLTE applies the LTE predicate on the "end_at" field.
-func EndAtLTE(v uint32) predicate.Compensate {
-	return predicate.Compensate(func(s *sql.Selector) {
-		s.Where(sql.LTE(s.C(FieldEndAt), v))
-	})
-}
-
-// EndAtIsNil applies the IsNil predicate on the "end_at" field.
-func EndAtIsNil() predicate.Compensate {
-	return predicate.Compensate(func(s *sql.Selector) {
-		s.Where(sql.IsNull(s.C(FieldEndAt)))
-	})
-}
-
-// EndAtNotNil applies the NotNil predicate on the "end_at" field.
-func EndAtNotNil() predicate.Compensate {
-	return predicate.Compensate(func(s *sql.Selector) {
-		s.Where(sql.NotNull(s.C(FieldEndAt)))
+		s.Where(sql.NotNull(s.C(FieldCompensateFromID)))
 	})
 }
 
@@ -752,229 +660,81 @@ func CompensateTypeContainsFold(v string) predicate.Compensate {
 	})
 }
 
-// TitleEQ applies the EQ predicate on the "title" field.
-func TitleEQ(v string) predicate.Compensate {
+// CompensateSecondsEQ applies the EQ predicate on the "compensate_seconds" field.
+func CompensateSecondsEQ(v uint32) predicate.Compensate {
 	return predicate.Compensate(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldTitle), v))
+		s.Where(sql.EQ(s.C(FieldCompensateSeconds), v))
 	})
 }
 
-// TitleNEQ applies the NEQ predicate on the "title" field.
-func TitleNEQ(v string) predicate.Compensate {
+// CompensateSecondsNEQ applies the NEQ predicate on the "compensate_seconds" field.
+func CompensateSecondsNEQ(v uint32) predicate.Compensate {
 	return predicate.Compensate(func(s *sql.Selector) {
-		s.Where(sql.NEQ(s.C(FieldTitle), v))
+		s.Where(sql.NEQ(s.C(FieldCompensateSeconds), v))
 	})
 }
 
-// TitleIn applies the In predicate on the "title" field.
-func TitleIn(vs ...string) predicate.Compensate {
+// CompensateSecondsIn applies the In predicate on the "compensate_seconds" field.
+func CompensateSecondsIn(vs ...uint32) predicate.Compensate {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
 	}
 	return predicate.Compensate(func(s *sql.Selector) {
-		s.Where(sql.In(s.C(FieldTitle), v...))
+		s.Where(sql.In(s.C(FieldCompensateSeconds), v...))
 	})
 }
 
-// TitleNotIn applies the NotIn predicate on the "title" field.
-func TitleNotIn(vs ...string) predicate.Compensate {
+// CompensateSecondsNotIn applies the NotIn predicate on the "compensate_seconds" field.
+func CompensateSecondsNotIn(vs ...uint32) predicate.Compensate {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
 	}
 	return predicate.Compensate(func(s *sql.Selector) {
-		s.Where(sql.NotIn(s.C(FieldTitle), v...))
+		s.Where(sql.NotIn(s.C(FieldCompensateSeconds), v...))
 	})
 }
 
-// TitleGT applies the GT predicate on the "title" field.
-func TitleGT(v string) predicate.Compensate {
+// CompensateSecondsGT applies the GT predicate on the "compensate_seconds" field.
+func CompensateSecondsGT(v uint32) predicate.Compensate {
 	return predicate.Compensate(func(s *sql.Selector) {
-		s.Where(sql.GT(s.C(FieldTitle), v))
+		s.Where(sql.GT(s.C(FieldCompensateSeconds), v))
 	})
 }
 
-// TitleGTE applies the GTE predicate on the "title" field.
-func TitleGTE(v string) predicate.Compensate {
+// CompensateSecondsGTE applies the GTE predicate on the "compensate_seconds" field.
+func CompensateSecondsGTE(v uint32) predicate.Compensate {
 	return predicate.Compensate(func(s *sql.Selector) {
-		s.Where(sql.GTE(s.C(FieldTitle), v))
+		s.Where(sql.GTE(s.C(FieldCompensateSeconds), v))
 	})
 }
 
-// TitleLT applies the LT predicate on the "title" field.
-func TitleLT(v string) predicate.Compensate {
+// CompensateSecondsLT applies the LT predicate on the "compensate_seconds" field.
+func CompensateSecondsLT(v uint32) predicate.Compensate {
 	return predicate.Compensate(func(s *sql.Selector) {
-		s.Where(sql.LT(s.C(FieldTitle), v))
+		s.Where(sql.LT(s.C(FieldCompensateSeconds), v))
 	})
 }
 
-// TitleLTE applies the LTE predicate on the "title" field.
-func TitleLTE(v string) predicate.Compensate {
+// CompensateSecondsLTE applies the LTE predicate on the "compensate_seconds" field.
+func CompensateSecondsLTE(v uint32) predicate.Compensate {
 	return predicate.Compensate(func(s *sql.Selector) {
-		s.Where(sql.LTE(s.C(FieldTitle), v))
+		s.Where(sql.LTE(s.C(FieldCompensateSeconds), v))
 	})
 }
 
-// TitleContains applies the Contains predicate on the "title" field.
-func TitleContains(v string) predicate.Compensate {
+// CompensateSecondsIsNil applies the IsNil predicate on the "compensate_seconds" field.
+func CompensateSecondsIsNil() predicate.Compensate {
 	return predicate.Compensate(func(s *sql.Selector) {
-		s.Where(sql.Contains(s.C(FieldTitle), v))
+		s.Where(sql.IsNull(s.C(FieldCompensateSeconds)))
 	})
 }
 
-// TitleHasPrefix applies the HasPrefix predicate on the "title" field.
-func TitleHasPrefix(v string) predicate.Compensate {
+// CompensateSecondsNotNil applies the NotNil predicate on the "compensate_seconds" field.
+func CompensateSecondsNotNil() predicate.Compensate {
 	return predicate.Compensate(func(s *sql.Selector) {
-		s.Where(sql.HasPrefix(s.C(FieldTitle), v))
-	})
-}
-
-// TitleHasSuffix applies the HasSuffix predicate on the "title" field.
-func TitleHasSuffix(v string) predicate.Compensate {
-	return predicate.Compensate(func(s *sql.Selector) {
-		s.Where(sql.HasSuffix(s.C(FieldTitle), v))
-	})
-}
-
-// TitleIsNil applies the IsNil predicate on the "title" field.
-func TitleIsNil() predicate.Compensate {
-	return predicate.Compensate(func(s *sql.Selector) {
-		s.Where(sql.IsNull(s.C(FieldTitle)))
-	})
-}
-
-// TitleNotNil applies the NotNil predicate on the "title" field.
-func TitleNotNil() predicate.Compensate {
-	return predicate.Compensate(func(s *sql.Selector) {
-		s.Where(sql.NotNull(s.C(FieldTitle)))
-	})
-}
-
-// TitleEqualFold applies the EqualFold predicate on the "title" field.
-func TitleEqualFold(v string) predicate.Compensate {
-	return predicate.Compensate(func(s *sql.Selector) {
-		s.Where(sql.EqualFold(s.C(FieldTitle), v))
-	})
-}
-
-// TitleContainsFold applies the ContainsFold predicate on the "title" field.
-func TitleContainsFold(v string) predicate.Compensate {
-	return predicate.Compensate(func(s *sql.Selector) {
-		s.Where(sql.ContainsFold(s.C(FieldTitle), v))
-	})
-}
-
-// MessageEQ applies the EQ predicate on the "message" field.
-func MessageEQ(v string) predicate.Compensate {
-	return predicate.Compensate(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldMessage), v))
-	})
-}
-
-// MessageNEQ applies the NEQ predicate on the "message" field.
-func MessageNEQ(v string) predicate.Compensate {
-	return predicate.Compensate(func(s *sql.Selector) {
-		s.Where(sql.NEQ(s.C(FieldMessage), v))
-	})
-}
-
-// MessageIn applies the In predicate on the "message" field.
-func MessageIn(vs ...string) predicate.Compensate {
-	v := make([]interface{}, len(vs))
-	for i := range v {
-		v[i] = vs[i]
-	}
-	return predicate.Compensate(func(s *sql.Selector) {
-		s.Where(sql.In(s.C(FieldMessage), v...))
-	})
-}
-
-// MessageNotIn applies the NotIn predicate on the "message" field.
-func MessageNotIn(vs ...string) predicate.Compensate {
-	v := make([]interface{}, len(vs))
-	for i := range v {
-		v[i] = vs[i]
-	}
-	return predicate.Compensate(func(s *sql.Selector) {
-		s.Where(sql.NotIn(s.C(FieldMessage), v...))
-	})
-}
-
-// MessageGT applies the GT predicate on the "message" field.
-func MessageGT(v string) predicate.Compensate {
-	return predicate.Compensate(func(s *sql.Selector) {
-		s.Where(sql.GT(s.C(FieldMessage), v))
-	})
-}
-
-// MessageGTE applies the GTE predicate on the "message" field.
-func MessageGTE(v string) predicate.Compensate {
-	return predicate.Compensate(func(s *sql.Selector) {
-		s.Where(sql.GTE(s.C(FieldMessage), v))
-	})
-}
-
-// MessageLT applies the LT predicate on the "message" field.
-func MessageLT(v string) predicate.Compensate {
-	return predicate.Compensate(func(s *sql.Selector) {
-		s.Where(sql.LT(s.C(FieldMessage), v))
-	})
-}
-
-// MessageLTE applies the LTE predicate on the "message" field.
-func MessageLTE(v string) predicate.Compensate {
-	return predicate.Compensate(func(s *sql.Selector) {
-		s.Where(sql.LTE(s.C(FieldMessage), v))
-	})
-}
-
-// MessageContains applies the Contains predicate on the "message" field.
-func MessageContains(v string) predicate.Compensate {
-	return predicate.Compensate(func(s *sql.Selector) {
-		s.Where(sql.Contains(s.C(FieldMessage), v))
-	})
-}
-
-// MessageHasPrefix applies the HasPrefix predicate on the "message" field.
-func MessageHasPrefix(v string) predicate.Compensate {
-	return predicate.Compensate(func(s *sql.Selector) {
-		s.Where(sql.HasPrefix(s.C(FieldMessage), v))
-	})
-}
-
-// MessageHasSuffix applies the HasSuffix predicate on the "message" field.
-func MessageHasSuffix(v string) predicate.Compensate {
-	return predicate.Compensate(func(s *sql.Selector) {
-		s.Where(sql.HasSuffix(s.C(FieldMessage), v))
-	})
-}
-
-// MessageIsNil applies the IsNil predicate on the "message" field.
-func MessageIsNil() predicate.Compensate {
-	return predicate.Compensate(func(s *sql.Selector) {
-		s.Where(sql.IsNull(s.C(FieldMessage)))
-	})
-}
-
-// MessageNotNil applies the NotNil predicate on the "message" field.
-func MessageNotNil() predicate.Compensate {
-	return predicate.Compensate(func(s *sql.Selector) {
-		s.Where(sql.NotNull(s.C(FieldMessage)))
-	})
-}
-
-// MessageEqualFold applies the EqualFold predicate on the "message" field.
-func MessageEqualFold(v string) predicate.Compensate {
-	return predicate.Compensate(func(s *sql.Selector) {
-		s.Where(sql.EqualFold(s.C(FieldMessage), v))
-	})
-}
-
-// MessageContainsFold applies the ContainsFold predicate on the "message" field.
-func MessageContainsFold(v string) predicate.Compensate {
-	return predicate.Compensate(func(s *sql.Selector) {
-		s.Where(sql.ContainsFold(s.C(FieldMessage), v))
+		s.Where(sql.NotNull(s.C(FieldCompensateSeconds)))
 	})
 }
 

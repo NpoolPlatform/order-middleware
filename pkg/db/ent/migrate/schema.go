@@ -43,11 +43,9 @@ var (
 		{Name: "deleted_at", Type: field.TypeUint32},
 		{Name: "ent_id", Type: field.TypeUUID, Unique: true},
 		{Name: "order_id", Type: field.TypeUUID, Nullable: true},
-		{Name: "start_at", Type: field.TypeUint32, Nullable: true, Default: 0},
-		{Name: "end_at", Type: field.TypeUint32, Nullable: true, Default: 0},
+		{Name: "compensate_from_id", Type: field.TypeUUID, Nullable: true},
 		{Name: "compensate_type", Type: field.TypeString, Nullable: true, Default: "DefaultCompensateType"},
-		{Name: "title", Type: field.TypeString, Nullable: true, Default: ""},
-		{Name: "message", Type: field.TypeString, Nullable: true, Default: ""},
+		{Name: "compensate_seconds", Type: field.TypeUint32, Nullable: true, Default: 0},
 	}
 	// CompensatesTable holds the schema information for the "compensates" table.
 	CompensatesTable = &schema.Table{

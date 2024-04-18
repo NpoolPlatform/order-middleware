@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
+	types "github.com/NpoolPlatform/message/npool/basetypes/order/v1"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent"
 	entcompensate "github.com/NpoolPlatform/order-middleware/pkg/db/ent/compensate"
 
@@ -11,13 +12,12 @@ import (
 )
 
 type Req struct {
-	EntID     *uuid.UUID
-	OrderID   *uuid.UUID
-	StartAt   *uint32
-	EndAt     *uint32
-	Title     *string
-	Message   *string
-	DeletedAt *uint32
+	EntID             *uuid.UUID
+	OrderID           *uuid.UUID
+	CompensateFromID  *uuid.UUID
+	CompensateType    *types.CompensateType
+	CompensateSeconds *uint32
+	DeletedAt         *uint32
 }
 
 func CreateSet(c *ent.CompensateCreate, req *Req) *ent.CompensateCreate {
@@ -27,33 +27,21 @@ func CreateSet(c *ent.CompensateCreate, req *Req) *ent.CompensateCreate {
 	if req.OrderID != nil {
 		c.SetOrderID(*req.OrderID)
 	}
-	if req.StartAt != nil {
-		c.SetStartAt(*req.StartAt)
+	if req.CompensateFromID != nil {
+		c.SetCompensateFromID(*req.CompensateFromID)
 	}
-	if req.EndAt != nil {
-		c.SetEndAt(*req.EndAt)
+	if req.CompensateType != nil {
+		c.SetCompensateType(req.CompensateType.String())
 	}
-	if req.Title != nil {
-		c.SetTitle(*req.Title)
-	}
-	if req.Message != nil {
-		c.SetMessage(*req.Message)
+	if req.CompensateSeconds != nil {
+		c.SetCompensateSeconds(*req.CompensateSeconds)
 	}
 	return c
 }
 
 func UpdateSet(u *ent.CompensateUpdateOne, req *Req) *ent.CompensateUpdateOne {
-	if req.StartAt != nil {
-		u.SetStartAt(*req.StartAt)
-	}
-	if req.EndAt != nil {
-		u.SetEndAt(*req.EndAt)
-	}
-	if req.Title != nil {
-		u.SetTitle(*req.Title)
-	}
-	if req.Message != nil {
-		u.SetMessage(*req.Message)
+	if req.CompensateSeconds != nil {
+		u.SetCompensateSeconds(*req.CompensateSeconds)
 	}
 	if req.DeletedAt != nil {
 		u.SetDeletedAt(*req.DeletedAt)
@@ -62,14 +50,12 @@ func UpdateSet(u *ent.CompensateUpdateOne, req *Req) *ent.CompensateUpdateOne {
 }
 
 type Conds struct {
-	ID       *cruder.Cond
-	IDs      *cruder.Cond
-	EntID    *cruder.Cond
-	EntIDs   *cruder.Cond
-	OrderID  *cruder.Cond
-	StartAt  *cruder.Cond
-	EndAt    *cruder.Cond
-	StartEnd *cruder.Cond
+	ID               *cruder.Cond
+	IDs              *cruder.Cond
+	EntID            *cruder.Cond
+	EntIDs           *cruder.Cond
+	OrderID          *cruder.Cond
+	CompensateFromID *cruder.Cond
 }
 
 //nolint
@@ -146,69 +132,14 @@ func SetQueryConds(q *ent.CompensateQuery, conds *Conds) (*ent.CompensateQuery, 
 			return nil, fmt.Errorf("invalid compensate field")
 		}
 	}
-	if conds.StartAt != nil {
-		start, ok := conds.StartAt.Val.(uint32)
+	if conds.CompensateFromID != nil {
+		id, ok := conds.CompensateFromID.Val.(uuid.UUID)
 		if !ok {
-			return nil, fmt.Errorf("invalid startat")
+			return nil, fmt.Errorf("invalid compensateid")
 		}
-		switch conds.StartAt.Op {
-		case cruder.LT:
-			q.Where(entcompensate.StartAtLT(start))
-		case cruder.LTE:
-			q.Where(entcompensate.StartAtLTE(start))
-		case cruder.GT:
-			q.Where(entcompensate.StartAtGT(start))
-		case cruder.GTE:
-			q.Where(entcompensate.StartAtGTE(start))
+		switch conds.CompensateFromID.Op {
 		case cruder.EQ:
-			q.Where(entcompensate.StartAt(start))
-		default:
-			return nil, fmt.Errorf("invalid compensate field")
-		}
-	}
-	if conds.EndAt != nil {
-		end, ok := conds.EndAt.Val.(uint32)
-		if !ok {
-			return nil, fmt.Errorf("invalid endat")
-		}
-		switch conds.EndAt.Op {
-		case cruder.LT:
-			q.Where(entcompensate.EndAtLT(end))
-		case cruder.LTE:
-			q.Where(entcompensate.EndAtLTE(end))
-		case cruder.GT:
-			q.Where(entcompensate.EndAtGT(end))
-		case cruder.GTE:
-			q.Where(entcompensate.EndAtGTE(end))
-		case cruder.EQ:
-			q.Where(entcompensate.EndAtEQ(end))
-		default:
-			return nil, fmt.Errorf("invalid compensate field")
-		}
-	}
-	if conds.StartEnd != nil {
-		ats, ok := conds.StartEnd.Val.([]uint32)
-		if !ok || len(ats) != 2 {
-			return nil, fmt.Errorf("invalid startend")
-		}
-		switch conds.StartEnd.Op {
-		case cruder.OVERLAP:
-			q.Where(
-				entcompensate.Or(
-					entcompensate.And(
-						entcompensate.StartAtLTE(ats[0]),
-						entcompensate.EndAtGTE(ats[0]),
-					),
-					entcompensate.And(
-						entcompensate.StartAtLTE(ats[1]),
-						entcompensate.EndAtGTE(ats[1]),
-					),
-					entcompensate.And(
-						entcompensate.StartAtGTE(ats[0]),
-						entcompensate.EndAtLTE(ats[1]),
-					),
-				),
-			)
+			q.Where(entcompensate.CompensateFromID(id))
 		default:
 			return nil, fmt.Errorf("invalid compensate field")
 		}

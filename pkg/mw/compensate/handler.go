@@ -4,31 +4,31 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
 	npool "github.com/NpoolPlatform/message/npool/order/mw/v1/compensate"
 	constant "github.com/NpoolPlatform/order-middleware/pkg/const"
 	compensatecrud "github.com/NpoolPlatform/order-middleware/pkg/crud/compensate"
-
-	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
+	orderbasecrud "github.com/NpoolPlatform/order-middleware/pkg/crud/order/orderbase"
 
 	"github.com/google/uuid"
 )
 
 type Handler struct {
-	ID      *uint32
-	EntID   *uuid.UUID
-	OrderID *uuid.UUID
-	StartAt *uint32
-	EndAt   *uint32
-	Title   *string
-	Message *string
-	Reqs    []*npool.CompensateReq
-	Conds   *compensatecrud.Conds
-	Offset  int32
-	Limit   int32
+	ID    *uint32
+	EntID *uuid.UUID
+	compensatecrud.Req
+	Reqs            []*compensatecrud.Req
+	CompensateConds *compensatecrud.Conds
+	OrderBaseConds  *orderbasecrud.Conds
+	Offset          int32
+	Limit           int32
 }
 
 func NewHandler(ctx context.Context, options ...func(context.Context, *Handler) error) (*Handler, error) {
-	handler := &Handler{}
+	handler := &Handler{
+		CompensateConds: &compensatecrud.Conds{},
+		OrderBaseConds:  &orderbasecrud.Conds{},
+	}
 	for _, opt := range options {
 		if err := opt(ctx, handler); err != nil {
 			return nil, err
@@ -84,102 +84,111 @@ func WithOrderID(id *string, must bool) func(context.Context, *Handler) error {
 	}
 }
 
-func WithTitle(title *string, must bool) func(context.Context, *Handler) error {
+func WithCompensateFromID(id *string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
-		if title == nil {
+		if id == nil {
 			if must {
-				return fmt.Errorf("invalid title")
+				return fmt.Errorf("invalid compensatefromid")
 			}
 			return nil
 		}
-		h.Title = title
+		_id, err := uuid.Parse(*id)
+		if err != nil {
+			return err
+		}
+		h.CompensateFromID = &_id
 		return nil
 	}
 }
 
-func WithMessage(message *string, must bool) func(context.Context, *Handler) error {
+func WithCompensateSeconds(startAt *uint32, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
-		if message == nil {
-			if must {
-				return fmt.Errorf("invalid message")
-			}
-			return nil
-		}
-		h.Message = message
+		h.CompensateSeconds = startAt
 		return nil
 	}
 }
 
-func WithStartAt(startAt *uint32, must bool) func(context.Context, *Handler) error {
-	return func(ctx context.Context, h *Handler) error {
-		if startAt == nil {
-			if must {
-				return fmt.Errorf("invalid start")
-			}
-			return nil
+func (h *Handler) withCompensateConds(conds *npool.Conds) error {
+	if conds.ID != nil {
+		h.CompensateConds.ID = &cruder.Cond{
+			Op: conds.GetID().GetOp(), Val: conds.GetID().GetValue(),
 		}
-		h.StartAt = startAt
-		return nil
 	}
+	if conds.EntID != nil {
+		id, err := uuid.Parse(conds.GetEntID().GetValue())
+		if err != nil {
+			return err
+		}
+		h.CompensateConds.EntID = &cruder.Cond{
+			Op: conds.GetEntID().GetOp(), Val: id,
+		}
+	}
+	if conds.OrderID != nil {
+		id, err := uuid.Parse(conds.GetOrderID().GetValue())
+		if err != nil {
+			return err
+		}
+		h.CompensateConds.OrderID = &cruder.Cond{
+			Op:  conds.GetOrderID().GetOp(),
+			Val: id,
+		}
+	}
+	if conds.CompensateFromID != nil {
+		id, err := uuid.Parse(conds.GetCompensateFromID().GetValue())
+		if err != nil {
+			return err
+		}
+		h.CompensateConds.CompensateFromID = &cruder.Cond{
+			Op:  conds.GetCompensateFromID().GetOp(),
+			Val: id,
+		}
+	}
+	return nil
 }
 
-func WithEndAt(endAt *uint32, must bool) func(context.Context, *Handler) error {
-	return func(ctx context.Context, h *Handler) error {
-		if endAt == nil {
-			if must {
-				return fmt.Errorf("invalid end")
-			}
-			return nil
+func (h *Handler) withOrderBaseConds(conds *npool.Conds) error {
+	if conds.OrderID != nil {
+		id, err := uuid.Parse(conds.GetOrderID().GetValue())
+		if err != nil {
+			return err
 		}
-		h.EndAt = endAt
-		return nil
+		h.OrderBaseConds.EntID = &cruder.Cond{
+			Op:  conds.GetOrderID().GetOp(),
+			Val: id,
+		}
 	}
+	if conds.AppID != nil {
+		id, err := uuid.Parse(conds.GetAppID().GetValue())
+		if err != nil {
+			return err
+		}
+		h.OrderBaseConds.AppID = &cruder.Cond{
+			Op:  conds.GetAppID().GetOp(),
+			Val: id,
+		}
+	}
+	if conds.UserID != nil {
+		id, err := uuid.Parse(conds.GetUserID().GetValue())
+		if err != nil {
+			return err
+		}
+		h.OrderBaseConds.UserID = &cruder.Cond{
+			Op:  conds.GetUserID().GetOp(),
+			Val: id,
+		}
+	}
+	return nil
 }
 
 func WithConds(conds *npool.Conds) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
-		h.Conds = &compensatecrud.Conds{}
 		if conds == nil {
 			return nil
 		}
-		if conds.ID != nil {
-			h.Conds.ID = &cruder.Cond{
-				Op: conds.GetID().GetOp(), Val: conds.GetID().GetValue(),
-			}
+		if err := h.withCompensateConds(conds); err != nil {
+			return err
 		}
-		if conds.EntID != nil {
-			id, err := uuid.Parse(conds.GetEntID().GetValue())
-			if err != nil {
-				return err
-			}
-			h.Conds.EntID = &cruder.Cond{
-				Op: conds.GetEntID().GetOp(), Val: id,
-			}
-		}
-		if conds.OrderID != nil {
-			id, err := uuid.Parse(conds.GetOrderID().GetValue())
-			if err != nil {
-				return err
-			}
-			h.Conds.OrderID = &cruder.Cond{
-				Op:  conds.GetOrderID().GetOp(),
-				Val: id,
-			}
-		}
-		if conds.StartAt != nil {
-			h.Conds.StartAt = &cruder.Cond{
-				Op:  conds.GetStartAt().GetOp(),
-				Val: conds.GetStartAt().GetValue(),
-			}
-		}
-		if conds.EndAt != nil {
-			h.Conds.EndAt = &cruder.Cond{
-				Op:  conds.GetEndAt().GetOp(),
-				Val: conds.GetEndAt().GetValue(),
-			}
-		}
-
-		return nil
+		return h.withOrderBaseConds(conds)
 	}
 }
 
