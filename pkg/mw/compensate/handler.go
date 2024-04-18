@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
+	types "github.com/NpoolPlatform/message/npool/basetypes/order/v1"
 	npool "github.com/NpoolPlatform/message/npool/order/mw/v1/compensate"
 	constant "github.com/NpoolPlatform/order-middleware/pkg/const"
 	compensatecrud "github.com/NpoolPlatform/order-middleware/pkg/crud/compensate"
@@ -97,6 +98,26 @@ func WithCompensateFromID(id *string, must bool) func(context.Context, *Handler)
 			return err
 		}
 		h.CompensateFromID = &_id
+		return nil
+	}
+}
+
+func WithCompensateType(e *types.CompensateType, must bool) func(context.Context, *Handler) error {
+	return func(ctx context.Context, h *Handler) error {
+		if e == nil {
+			if must {
+				return fmt.Errorf("invalid compensatetype")
+			}
+			return nil
+		}
+		switch *e {
+		case types.CompensateType_CompensateMalfunction:
+		case types.CompensateType_CompensateWalfare:
+		case types.CompensateType_CompensateStarterDelay:
+		default:
+			return fmt.Errorf("invalid compensatetype")
+		}
+		h.CompensateType = e
 		return nil
 	}
 }

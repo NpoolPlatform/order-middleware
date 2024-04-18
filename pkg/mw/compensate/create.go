@@ -55,7 +55,10 @@ func (h *createHandler) constructSQL() {
 	_sql += fmt.Sprintf("where order_id = '%v' ", *h.OrderID)
 	_sql += fmt.Sprintf("and compensate_from_id = '%v' ", *h.CompensateFromID)
 	_sql += fmt.Sprintf("and compensate_type = '%v' ", h.CompensateType.String())
-	_sql += " limit 1)"
+	_sql += " limit 1) and exists ("
+	_sql += "select 1 from order_bases "
+	_sql += fmt.Sprintf("where ent_id = '%v' ", *h.OrderID)
+	_sql += "limit 1)"
 
 	h.sql = _sql
 }

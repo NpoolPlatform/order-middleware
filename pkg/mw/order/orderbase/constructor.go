@@ -27,7 +27,9 @@ func (h *Handler) ConstructCreateSQL() string {
 	_sql += comma + "order_type"
 	_sql += comma + "payment_type"
 	_sql += comma + "create_method"
-	_sql += comma + "simulate"
+	if h.Simulate != nil {
+		_sql += comma + "simulate"
+	}
 	_sql += comma + "created_at"
 	_sql += comma + "updated_at"
 	_sql += comma + "deleted_at"
@@ -49,7 +51,9 @@ func (h *Handler) ConstructCreateSQL() string {
 	_sql += fmt.Sprintf("%v'%v' as order_type", comma, h.OrderType.String())
 	_sql += fmt.Sprintf("%v'%v' as payment_type", comma, h.PaymentType.String())
 	_sql += fmt.Sprintf("%v'%v' as create_method", comma, h.CreateMethod.String())
-	_sql += fmt.Sprintf("%v%v as simulate", comma, *h.Simulate)
+	if h.Simulate != nil {
+		_sql += fmt.Sprintf("%v%v as simulate", comma, *h.Simulate)
+	}
 	_sql += fmt.Sprintf("%v%v as created_at", comma, now)
 	_sql += fmt.Sprintf("%v%v as updated_at", comma, now)
 	_sql += fmt.Sprintf("%v0 as deleted_at", comma)

@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"entgo.io/ent/dialect/sql"
+	types "github.com/NpoolPlatform/message/npool/basetypes/order/v1"
 	npool "github.com/NpoolPlatform/message/npool/order/mw/v1/compensate"
 	"github.com/NpoolPlatform/order-middleware/pkg/db"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent"
@@ -33,7 +34,9 @@ func (h *queryHandler) scan(ctx context.Context) error {
 }
 
 func (h *queryHandler) formalize() {
-	// TODO: do nothing
+	for _, info := range h.infos {
+		info.CompensateType = types.CompensateType(types.CompensateType_value[info.CompensateTypeStr])
+	}
 }
 
 func (h *Handler) GetCompensate(ctx context.Context) (*npool.Compensate, error) {
