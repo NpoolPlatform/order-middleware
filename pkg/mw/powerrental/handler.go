@@ -5,7 +5,9 @@ import (
 	"fmt"
 	"time"
 
+	goodtypes "github.com/NpoolPlatform/message/npool/basetypes/good/v1"
 	types "github.com/NpoolPlatform/message/npool/basetypes/order/v1"
+	ordermwpb "github.com/NpoolPlatform/message/npool/order/mw/v1/order"
 	paymentmwpb "github.com/NpoolPlatform/message/npool/order/mw/v1/payment"
 	npool "github.com/NpoolPlatform/message/npool/order/mw/v1/powerrental"
 	orderlockcrud "github.com/NpoolPlatform/order-middleware/pkg/crud/order/lock"
@@ -15,6 +17,7 @@ import (
 	paymenttransfercrud "github.com/NpoolPlatform/order-middleware/pkg/crud/payment/transfer"
 	powerrentalcrud "github.com/NpoolPlatform/order-middleware/pkg/crud/powerrental"
 	powerrentalstatecrud "github.com/NpoolPlatform/order-middleware/pkg/crud/powerrental/state"
+	orderbase1 "github.com/NpoolPlatform/order-middleware/pkg/mw/order/orderbase"
 
 	"github.com/google/uuid"
 	"github.com/shopspring/decimal"
@@ -23,7 +26,7 @@ import (
 type ChildOrderReq struct {
 	ID *uint32
 	orderbasecrud.Req
-	OrderBaseReq *orderbasecrud.Req
+	GoodType *goodtypes.GoodType
 }
 
 type Handler struct {
@@ -42,7 +45,7 @@ type Handler struct {
 	Offset                int32
 	Limit                 int32
 
-	ChildOrderReqs []*ChildOrderReq
+	ChildOrderReqs []*OrderReq
 	CouponIDs      []uuid.UUID
 	Rollback       *bool
 }
@@ -795,8 +798,11 @@ func WithPaymentTransfers(bs []*paymentmwpb.PaymentTransferReq, must bool) func(
 	}
 }
 
-func WithReqs(reqs []*npool.PowerRentalOrderReq, must bool) func(context.Context, *Handler) error {
+func WithChildOrders(childOrders []*ordermwpb.OrderReq, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
+		for _, childOrder := range childOrders {
+
+		}
 		return nil
 	}
 }
