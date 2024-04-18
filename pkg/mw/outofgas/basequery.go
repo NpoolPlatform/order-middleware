@@ -1,60 +1,58 @@
-package ordercoupon
+package outofgas
 
 import (
 	"fmt"
 
 	"entgo.io/ent/dialect/sql"
-	ordercouponcrud "github.com/NpoolPlatform/order-middleware/pkg/crud/order/coupon"
+	outofgascrud "github.com/NpoolPlatform/order-middleware/pkg/crud/outofgas"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent"
 	entorderbase "github.com/NpoolPlatform/order-middleware/pkg/db/ent/orderbase"
-	entordercoupon "github.com/NpoolPlatform/order-middleware/pkg/db/ent/ordercoupon"
+	entoutofgas "github.com/NpoolPlatform/order-middleware/pkg/db/ent/outofgas"
 
 	"github.com/google/uuid"
 )
 
 type baseQueryHandler struct {
 	*Handler
-	stmSelect *ent.OrderCouponSelect
+	stmSelect *ent.OutOfGasSelect
 }
 
-func (h *baseQueryHandler) selectOrderCoupon(stm *ent.OrderCouponQuery) *ent.OrderCouponSelect {
-	return stm.Select(entordercoupon.FieldID)
+func (h *baseQueryHandler) selectOutOfGas(stm *ent.OutOfGasQuery) *ent.OutOfGasSelect {
+	return stm.Select(entoutofgas.FieldID)
 }
 
-func (h *baseQueryHandler) queryOrderCoupon(cli *ent.Client) error {
-	if h.ID == nil && h.EntID == nil && h.CouponID == nil {
+func (h *baseQueryHandler) queryOutOfGas(cli *ent.Client) error {
+	if h.ID == nil && h.EntID == nil {
 		return fmt.Errorf("invalid id")
 	}
-	stm := cli.OrderCoupon.Query().Where(entordercoupon.DeletedAt(0))
+	stm := cli.OutOfGas.Query().Where(entoutofgas.DeletedAt(0))
 	if h.ID != nil {
-		stm.Where(entordercoupon.ID(*h.ID))
+		stm.Where(entoutofgas.ID(*h.ID))
 	}
 	if h.EntID != nil {
-		stm.Where(entordercoupon.EntID(*h.EntID))
+		stm.Where(entoutofgas.EntID(*h.EntID))
 	}
-	if h.CouponID != nil {
-		stm.Where(entordercoupon.CouponID(*h.CouponID))
-	}
-	h.stmSelect = h.selectOrderCoupon(stm)
+	h.stmSelect = h.selectOutOfGas(stm)
 	return nil
 }
 
-func (h *baseQueryHandler) queryOrderCoupons(cli *ent.Client) (*ent.OrderCouponSelect, error) {
-	stm, err := ordercouponcrud.SetQueryConds(cli.OrderCoupon.Query(), h.OrderCouponConds)
+func (h *baseQueryHandler) queryOutOfGases(cli *ent.Client) (*ent.OutOfGasSelect, error) {
+	stm, err := outofgascrud.SetQueryConds(cli.OutOfGas.Query(), h.OutOfGasConds)
 	if err != nil {
 		return nil, err
 	}
-	return h.selectOrderCoupon(stm), nil
+	return h.selectOutOfGas(stm), nil
 }
 
 func (h *baseQueryHandler) queryJoinMyself(s *sql.Selector) {
-	t := sql.Table(entordercoupon.Table)
+	t := sql.Table(entoutofgas.Table)
 	s.AppendSelect(
-		t.C(entordercoupon.FieldEntID),
-		t.C(entordercoupon.FieldOrderID),
-		t.C(entordercoupon.FieldCouponID),
-		t.C(entordercoupon.FieldCreatedAt),
-		t.C(entordercoupon.FieldUpdatedAt),
+		t.C(entoutofgas.FieldEntID),
+		t.C(entoutofgas.FieldOrderID),
+		t.C(entoutofgas.FieldStartAt),
+		t.C(entoutofgas.FieldEndAt),
+		t.C(entoutofgas.FieldCreatedAt),
+		t.C(entoutofgas.FieldUpdatedAt),
 	)
 }
 
@@ -62,7 +60,7 @@ func (h *baseQueryHandler) queryJoinOrder(s *sql.Selector) error { //nolint
 	t := sql.Table(entorderbase.Table)
 	s.Join(t).
 		On(
-			s.C(entordercoupon.FieldOrderID),
+			s.C(entoutofgas.FieldOrderID),
 			t.C(entorderbase.FieldEntID),
 		).
 		OnP(
