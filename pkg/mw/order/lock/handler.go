@@ -5,9 +5,8 @@ import (
 	"fmt"
 
 	basetypes "github.com/NpoolPlatform/message/npool/basetypes/order/v1"
-	npool "github.com/NpoolPlatform/message/npool/order/mw/v1/order/orderlock"
 	constant "github.com/NpoolPlatform/order-middleware/pkg/const"
-	orderlockcrud "github.com/NpoolPlatform/order-middleware/pkg/crud/order/orderlock"
+	orderlockcrud "github.com/NpoolPlatform/order-middleware/pkg/crud/order/lock"
 
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
 

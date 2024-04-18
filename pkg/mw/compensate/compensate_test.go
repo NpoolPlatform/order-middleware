@@ -13,7 +13,7 @@ import (
 	basetypes "github.com/NpoolPlatform/message/npool/basetypes/v1"
 	npool "github.com/NpoolPlatform/message/npool/order/mw/v1/compensate"
 	ordermwpb "github.com/NpoolPlatform/message/npool/order/mw/v1/order"
-	order1 "github.com/NpoolPlatform/order-middleware/pkg/mw/order"
+	// order1 "github.com/NpoolPlatform/order-middleware/pkg/mw/order"
 
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"

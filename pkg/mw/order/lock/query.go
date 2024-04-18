@@ -5,12 +5,10 @@ import (
 	"fmt"
 
 	basetypes "github.com/NpoolPlatform/message/npool/basetypes/order/v1"
+	orderlockcrud "github.com/NpoolPlatform/order-middleware/pkg/crud/order/lock"
 	"github.com/NpoolPlatform/order-middleware/pkg/db"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent"
 	entorderlock "github.com/NpoolPlatform/order-middleware/pkg/db/ent/orderlock"
-
-	npool "github.com/NpoolPlatform/message/npool/order/mw/v1/order/orderlock"
-	orderlockcrud "github.com/NpoolPlatform/order-middleware/pkg/crud/order/orderlock"
 )
 
 type queryHandler struct {

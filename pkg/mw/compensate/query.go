@@ -13,7 +13,7 @@ import (
 	npool "github.com/NpoolPlatform/message/npool/order/mw/v1/compensate"
 	compensatecrud "github.com/NpoolPlatform/order-middleware/pkg/crud/compensate"
 	entorder "github.com/NpoolPlatform/order-middleware/pkg/db/ent/order"
-	entorderstate "github.com/NpoolPlatform/order-middleware/pkg/db/ent/orderstate"
+	entorderstatebase "github.com/NpoolPlatform/order-middleware/pkg/db/ent/orderstatebase"
 )
 
 type queryHandler struct {

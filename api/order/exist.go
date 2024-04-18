@@ -9,7 +9,7 @@ import (
 	"google.golang.org/grpc/status"
 
 	npool "github.com/NpoolPlatform/message/npool/order/mw/v1/order"
-	order1 "github.com/NpoolPlatform/order-middleware/pkg/mw/order"
+	// order1 "github.com/NpoolPlatform/order-middleware/pkg/mw/order"
 )
 
 func (s *Server) ExistOrder(ctx context.Context, in *npool.ExistOrderRequest) (*npool.ExistOrderResponse, error) {

@@ -9,8 +9,7 @@ import (
 
 	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
 	npool "github.com/NpoolPlatform/message/npool/order/mw/v1/order"
-
-	order1 "github.com/NpoolPlatform/order-middleware/pkg/mw/order"
+	// order1 "github.com/NpoolPlatform/order-middleware/pkg/mw/order"
 )
 
 func (s *Server) GetOrder(ctx context.Context, in *npool.GetOrderRequest) (*npool.GetOrderResponse, error) {

@@ -6,8 +6,7 @@ import (
 
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
 	basetypes "github.com/NpoolPlatform/message/npool/basetypes/order/v1"
-	npool "github.com/NpoolPlatform/message/npool/order/mw/v1/order/orderlock"
-	orderlockcrud "github.com/NpoolPlatform/order-middleware/pkg/crud/order/orderlock"
+	orderlockcrud "github.com/NpoolPlatform/order-middleware/pkg/crud/order/lock"
 	"github.com/NpoolPlatform/order-middleware/pkg/db"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent"
 	entorder "github.com/NpoolPlatform/order-middleware/pkg/db/ent/order"

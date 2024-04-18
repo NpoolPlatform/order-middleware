@@ -7,11 +7,11 @@ import (
 	timedef "github.com/NpoolPlatform/go-service-framework/pkg/const/time"
 	types "github.com/NpoolPlatform/message/npool/basetypes/order/v1"
 	npool "github.com/NpoolPlatform/message/npool/order/mw/v1/outofgas"
-	orderstatecrud "github.com/NpoolPlatform/order-middleware/pkg/crud/orderstate"
+	orderstatebasecrud "github.com/NpoolPlatform/order-middleware/pkg/crud/order/statebase"
 	outofgascrud "github.com/NpoolPlatform/order-middleware/pkg/crud/outofgas"
 	"github.com/NpoolPlatform/order-middleware/pkg/db"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent"
-	entorderstate "github.com/NpoolPlatform/order-middleware/pkg/db/ent/orderstate"
+	entorderstatebase "github.com/NpoolPlatform/order-middleware/pkg/db/ent/orderstatebase"
 
 	"github.com/google/uuid"
 )

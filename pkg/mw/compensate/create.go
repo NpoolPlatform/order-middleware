@@ -8,10 +8,10 @@ import (
 	types "github.com/NpoolPlatform/message/npool/basetypes/order/v1"
 	npool "github.com/NpoolPlatform/message/npool/order/mw/v1/compensate"
 	compensatecrud "github.com/NpoolPlatform/order-middleware/pkg/crud/compensate"
-	orderstatecrud "github.com/NpoolPlatform/order-middleware/pkg/crud/orderstate"
+	orderstatebasecrud "github.com/NpoolPlatform/order-middleware/pkg/crud/order/statebase"
 	"github.com/NpoolPlatform/order-middleware/pkg/db"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent"
-	entorderstate "github.com/NpoolPlatform/order-middleware/pkg/db/ent/orderstate"
+	entorderstate "github.com/NpoolPlatform/order-middleware/pkg/db/ent/orderstatebase"
 
 	"github.com/google/uuid"
 )
