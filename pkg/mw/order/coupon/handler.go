@@ -1,4 +1,4 @@
-package compensate
+package coupon
 
 import (
 	"context"
@@ -6,9 +6,9 @@ import (
 
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
 	types "github.com/NpoolPlatform/message/npool/basetypes/order/v1"
-	npool "github.com/NpoolPlatform/message/npool/order/mw/v1/compensate"
+	npool "github.com/NpoolPlatform/message/npool/order/mw/v1/order/coupon"
 	constant "github.com/NpoolPlatform/order-middleware/pkg/const"
-	compensatecrud "github.com/NpoolPlatform/order-middleware/pkg/crud/compensate"
+	ordercouponcrud "github.com/NpoolPlatform/order-middleware/pkg/crud/order/coupon"
 	orderbasecrud "github.com/NpoolPlatform/order-middleware/pkg/crud/order/orderbase"
 
 	"github.com/google/uuid"
@@ -17,17 +17,18 @@ import (
 type Handler struct {
 	ID    *uint32
 	EntID *uuid.UUID
-	compensatecrud.Req
-	CompensateConds *compensatecrud.Conds
-	OrderBaseConds  *orderbasecrud.Conds
-	Offset          int32
-	Limit           int32
+	ordercouponcrud.Req
+	Reqs             []*ordercouponcrud.Req
+	OrderCouponConds *ordercouponcrud.Conds
+	OrderBaseConds   *orderbasecrud.Conds
+	Offset           int32
+	Limit            int32
 }
 
 func NewHandler(ctx context.Context, options ...func(context.Context, *Handler) error) (*Handler, error) {
 	handler := &Handler{
-		CompensateConds: &compensatecrud.Conds{},
-		OrderBaseConds:  &orderbasecrud.Conds{},
+		OrderCouponConds: &ordercouponcrud.Conds{},
+		OrderBaseConds:   &orderbasecrud.Conds{},
 	}
 	for _, opt := range options {
 		if err := opt(ctx, handler); err != nil {
@@ -88,7 +89,7 @@ func WithCompensateFromID(id *string, must bool) func(context.Context, *Handler)
 	return func(ctx context.Context, h *Handler) error {
 		if id == nil {
 			if must {
-				return fmt.Errorf("invalid compensatefromid")
+				return fmt.Errorf("invalid couponfromid")
 			}
 			return nil
 		}
@@ -105,7 +106,7 @@ func WithCompensateType(e *types.CompensateType, must bool) func(context.Context
 	return func(ctx context.Context, h *Handler) error {
 		if e == nil {
 			if must {
-				return fmt.Errorf("invalid compensatetype")
+				return fmt.Errorf("invalid coupontype")
 			}
 			return nil
 		}
@@ -114,7 +115,7 @@ func WithCompensateType(e *types.CompensateType, must bool) func(context.Context
 		case types.CompensateType_CompensateWalfare:
 		case types.CompensateType_CompensateStarterDelay:
 		default:
-			return fmt.Errorf("invalid compensatetype")
+			return fmt.Errorf("invalid coupontype")
 		}
 		h.CompensateType = e
 		return nil
@@ -128,9 +129,9 @@ func WithCompensateSeconds(startAt *uint32, must bool) func(context.Context, *Ha
 	}
 }
 
-func (h *Handler) withCompensateConds(conds *npool.Conds) error {
+func (h *Handler) withOrderCouponConds(conds *npool.Conds) error {
 	if conds.ID != nil {
-		h.CompensateConds.ID = &cruder.Cond{
+		h.OrderCouponConds.ID = &cruder.Cond{
 			Op: conds.GetID().GetOp(), Val: conds.GetID().GetValue(),
 		}
 	}
@@ -139,7 +140,7 @@ func (h *Handler) withCompensateConds(conds *npool.Conds) error {
 		if err != nil {
 			return err
 		}
-		h.CompensateConds.EntID = &cruder.Cond{
+		h.OrderCouponConds.EntID = &cruder.Cond{
 			Op: conds.GetEntID().GetOp(), Val: id,
 		}
 	}
@@ -148,7 +149,7 @@ func (h *Handler) withCompensateConds(conds *npool.Conds) error {
 		if err != nil {
 			return err
 		}
-		h.CompensateConds.OrderID = &cruder.Cond{
+		h.OrderCouponConds.OrderID = &cruder.Cond{
 			Op:  conds.GetOrderID().GetOp(),
 			Val: id,
 		}
@@ -158,7 +159,7 @@ func (h *Handler) withCompensateConds(conds *npool.Conds) error {
 		if err != nil {
 			return err
 		}
-		h.CompensateConds.CompensateFromID = &cruder.Cond{
+		h.OrderCouponConds.CompensateFromID = &cruder.Cond{
 			Op:  conds.GetCompensateFromID().GetOp(),
 			Val: id,
 		}
@@ -205,7 +206,7 @@ func WithConds(conds *npool.Conds) func(context.Context, *Handler) error {
 		if conds == nil {
 			return nil
 		}
-		if err := h.withCompensateConds(conds); err != nil {
+		if err := h.withOrderCouponConds(conds); err != nil {
 			return err
 		}
 		return h.withOrderBaseConds(conds)
