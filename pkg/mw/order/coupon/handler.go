@@ -1,11 +1,10 @@
-package coupon
+package ordercoupon
 
 import (
 	"context"
 	"fmt"
 
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
-	types "github.com/NpoolPlatform/message/npool/basetypes/order/v1"
 	npool "github.com/NpoolPlatform/message/npool/order/mw/v1/order/coupon"
 	constant "github.com/NpoolPlatform/order-middleware/pkg/const"
 	ordercouponcrud "github.com/NpoolPlatform/order-middleware/pkg/crud/order/coupon"
@@ -15,10 +14,8 @@ import (
 )
 
 type Handler struct {
-	ID    *uint32
-	EntID *uuid.UUID
+	ID *uint32
 	ordercouponcrud.Req
-	Reqs             []*ordercouponcrud.Req
 	OrderCouponConds *ordercouponcrud.Conds
 	OrderBaseConds   *orderbasecrud.Conds
 	Offset           int32
@@ -85,11 +82,11 @@ func WithOrderID(id *string, must bool) func(context.Context, *Handler) error {
 	}
 }
 
-func WithCompensateFromID(id *string, must bool) func(context.Context, *Handler) error {
+func WithCouponID(id *string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if id == nil {
 			if must {
-				return fmt.Errorf("invalid couponfromid")
+				return fmt.Errorf("invalid couponid")
 			}
 			return nil
 		}
@@ -97,34 +94,7 @@ func WithCompensateFromID(id *string, must bool) func(context.Context, *Handler)
 		if err != nil {
 			return err
 		}
-		h.CompensateFromID = &_id
-		return nil
-	}
-}
-
-func WithCompensateType(e *types.CompensateType, must bool) func(context.Context, *Handler) error {
-	return func(ctx context.Context, h *Handler) error {
-		if e == nil {
-			if must {
-				return fmt.Errorf("invalid coupontype")
-			}
-			return nil
-		}
-		switch *e {
-		case types.CompensateType_CompensateMalfunction:
-		case types.CompensateType_CompensateWalfare:
-		case types.CompensateType_CompensateStarterDelay:
-		default:
-			return fmt.Errorf("invalid coupontype")
-		}
-		h.CompensateType = e
-		return nil
-	}
-}
-
-func WithCompensateSeconds(startAt *uint32, must bool) func(context.Context, *Handler) error {
-	return func(ctx context.Context, h *Handler) error {
-		h.CompensateSeconds = startAt
+		h.CouponID = &_id
 		return nil
 	}
 }
@@ -154,13 +124,13 @@ func (h *Handler) withOrderCouponConds(conds *npool.Conds) error {
 			Val: id,
 		}
 	}
-	if conds.CompensateFromID != nil {
-		id, err := uuid.Parse(conds.GetCompensateFromID().GetValue())
+	if conds.CouponID != nil {
+		id, err := uuid.Parse(conds.GetCouponID().GetValue())
 		if err != nil {
 			return err
 		}
-		h.OrderCouponConds.CompensateFromID = &cruder.Cond{
-			Op:  conds.GetCompensateFromID().GetOp(),
+		h.OrderCouponConds.CouponID = &cruder.Cond{
+			Op:  conds.GetCouponID().GetOp(),
 			Val: id,
 		}
 	}
