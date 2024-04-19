@@ -23,6 +23,7 @@ import (
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/outofgas"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/payment"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/paymentbalance"
+	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/paymentbalancelock"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/paymentbase"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/paymentcontract"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/paymenttransfer"
@@ -64,6 +65,8 @@ type Client struct {
 	Payment *PaymentClient
 	// PaymentBalance is the client for interacting with the PaymentBalance builders.
 	PaymentBalance *PaymentBalanceClient
+	// PaymentBalanceLock is the client for interacting with the PaymentBalanceLock builders.
+	PaymentBalanceLock *PaymentBalanceLockClient
 	// PaymentBase is the client for interacting with the PaymentBase builders.
 	PaymentBase *PaymentBaseClient
 	// PaymentContract is the client for interacting with the PaymentContract builders.
@@ -100,6 +103,7 @@ func (c *Client) init() {
 	c.OutOfGas = NewOutOfGasClient(c.config)
 	c.Payment = NewPaymentClient(c.config)
 	c.PaymentBalance = NewPaymentBalanceClient(c.config)
+	c.PaymentBalanceLock = NewPaymentBalanceLockClient(c.config)
 	c.PaymentBase = NewPaymentBaseClient(c.config)
 	c.PaymentContract = NewPaymentContractClient(c.config)
 	c.PaymentTransfer = NewPaymentTransferClient(c.config)
@@ -136,26 +140,27 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 	cfg := c.config
 	cfg.driver = tx
 	return &Tx{
-		ctx:              ctx,
-		config:           cfg,
-		AppConfig:        NewAppConfigClient(cfg),
-		Compensate:       NewCompensateClient(cfg),
-		FeeOrder:         NewFeeOrderClient(cfg),
-		FeeOrderState:    NewFeeOrderStateClient(cfg),
-		Order:            NewOrderClient(cfg),
-		OrderBase:        NewOrderBaseClient(cfg),
-		OrderCoupon:      NewOrderCouponClient(cfg),
-		OrderLock:        NewOrderLockClient(cfg),
-		OrderState:       NewOrderStateClient(cfg),
-		OrderStateBase:   NewOrderStateBaseClient(cfg),
-		OutOfGas:         NewOutOfGasClient(cfg),
-		Payment:          NewPaymentClient(cfg),
-		PaymentBalance:   NewPaymentBalanceClient(cfg),
-		PaymentBase:      NewPaymentBaseClient(cfg),
-		PaymentContract:  NewPaymentContractClient(cfg),
-		PaymentTransfer:  NewPaymentTransferClient(cfg),
-		PowerRental:      NewPowerRentalClient(cfg),
-		PowerRentalState: NewPowerRentalStateClient(cfg),
+		ctx:                ctx,
+		config:             cfg,
+		AppConfig:          NewAppConfigClient(cfg),
+		Compensate:         NewCompensateClient(cfg),
+		FeeOrder:           NewFeeOrderClient(cfg),
+		FeeOrderState:      NewFeeOrderStateClient(cfg),
+		Order:              NewOrderClient(cfg),
+		OrderBase:          NewOrderBaseClient(cfg),
+		OrderCoupon:        NewOrderCouponClient(cfg),
+		OrderLock:          NewOrderLockClient(cfg),
+		OrderState:         NewOrderStateClient(cfg),
+		OrderStateBase:     NewOrderStateBaseClient(cfg),
+		OutOfGas:           NewOutOfGasClient(cfg),
+		Payment:            NewPaymentClient(cfg),
+		PaymentBalance:     NewPaymentBalanceClient(cfg),
+		PaymentBalanceLock: NewPaymentBalanceLockClient(cfg),
+		PaymentBase:        NewPaymentBaseClient(cfg),
+		PaymentContract:    NewPaymentContractClient(cfg),
+		PaymentTransfer:    NewPaymentTransferClient(cfg),
+		PowerRental:        NewPowerRentalClient(cfg),
+		PowerRentalState:   NewPowerRentalStateClient(cfg),
 	}, nil
 }
 
@@ -173,26 +178,27 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 	cfg := c.config
 	cfg.driver = &txDriver{tx: tx, drv: c.driver}
 	return &Tx{
-		ctx:              ctx,
-		config:           cfg,
-		AppConfig:        NewAppConfigClient(cfg),
-		Compensate:       NewCompensateClient(cfg),
-		FeeOrder:         NewFeeOrderClient(cfg),
-		FeeOrderState:    NewFeeOrderStateClient(cfg),
-		Order:            NewOrderClient(cfg),
-		OrderBase:        NewOrderBaseClient(cfg),
-		OrderCoupon:      NewOrderCouponClient(cfg),
-		OrderLock:        NewOrderLockClient(cfg),
-		OrderState:       NewOrderStateClient(cfg),
-		OrderStateBase:   NewOrderStateBaseClient(cfg),
-		OutOfGas:         NewOutOfGasClient(cfg),
-		Payment:          NewPaymentClient(cfg),
-		PaymentBalance:   NewPaymentBalanceClient(cfg),
-		PaymentBase:      NewPaymentBaseClient(cfg),
-		PaymentContract:  NewPaymentContractClient(cfg),
-		PaymentTransfer:  NewPaymentTransferClient(cfg),
-		PowerRental:      NewPowerRentalClient(cfg),
-		PowerRentalState: NewPowerRentalStateClient(cfg),
+		ctx:                ctx,
+		config:             cfg,
+		AppConfig:          NewAppConfigClient(cfg),
+		Compensate:         NewCompensateClient(cfg),
+		FeeOrder:           NewFeeOrderClient(cfg),
+		FeeOrderState:      NewFeeOrderStateClient(cfg),
+		Order:              NewOrderClient(cfg),
+		OrderBase:          NewOrderBaseClient(cfg),
+		OrderCoupon:        NewOrderCouponClient(cfg),
+		OrderLock:          NewOrderLockClient(cfg),
+		OrderState:         NewOrderStateClient(cfg),
+		OrderStateBase:     NewOrderStateBaseClient(cfg),
+		OutOfGas:           NewOutOfGasClient(cfg),
+		Payment:            NewPaymentClient(cfg),
+		PaymentBalance:     NewPaymentBalanceClient(cfg),
+		PaymentBalanceLock: NewPaymentBalanceLockClient(cfg),
+		PaymentBase:        NewPaymentBaseClient(cfg),
+		PaymentContract:    NewPaymentContractClient(cfg),
+		PaymentTransfer:    NewPaymentTransferClient(cfg),
+		PowerRental:        NewPowerRentalClient(cfg),
+		PowerRentalState:   NewPowerRentalStateClient(cfg),
 	}, nil
 }
 
@@ -235,6 +241,7 @@ func (c *Client) Use(hooks ...Hook) {
 	c.OutOfGas.Use(hooks...)
 	c.Payment.Use(hooks...)
 	c.PaymentBalance.Use(hooks...)
+	c.PaymentBalanceLock.Use(hooks...)
 	c.PaymentBase.Use(hooks...)
 	c.PaymentContract.Use(hooks...)
 	c.PaymentTransfer.Use(hooks...)
@@ -1423,6 +1430,97 @@ func (c *PaymentBalanceClient) GetX(ctx context.Context, id uint32) *PaymentBala
 func (c *PaymentBalanceClient) Hooks() []Hook {
 	hooks := c.hooks.PaymentBalance
 	return append(hooks[:len(hooks):len(hooks)], paymentbalance.Hooks[:]...)
+}
+
+// PaymentBalanceLockClient is a client for the PaymentBalanceLock schema.
+type PaymentBalanceLockClient struct {
+	config
+}
+
+// NewPaymentBalanceLockClient returns a client for the PaymentBalanceLock from the given config.
+func NewPaymentBalanceLockClient(c config) *PaymentBalanceLockClient {
+	return &PaymentBalanceLockClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `paymentbalancelock.Hooks(f(g(h())))`.
+func (c *PaymentBalanceLockClient) Use(hooks ...Hook) {
+	c.hooks.PaymentBalanceLock = append(c.hooks.PaymentBalanceLock, hooks...)
+}
+
+// Create returns a builder for creating a PaymentBalanceLock entity.
+func (c *PaymentBalanceLockClient) Create() *PaymentBalanceLockCreate {
+	mutation := newPaymentBalanceLockMutation(c.config, OpCreate)
+	return &PaymentBalanceLockCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of PaymentBalanceLock entities.
+func (c *PaymentBalanceLockClient) CreateBulk(builders ...*PaymentBalanceLockCreate) *PaymentBalanceLockCreateBulk {
+	return &PaymentBalanceLockCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for PaymentBalanceLock.
+func (c *PaymentBalanceLockClient) Update() *PaymentBalanceLockUpdate {
+	mutation := newPaymentBalanceLockMutation(c.config, OpUpdate)
+	return &PaymentBalanceLockUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *PaymentBalanceLockClient) UpdateOne(pbl *PaymentBalanceLock) *PaymentBalanceLockUpdateOne {
+	mutation := newPaymentBalanceLockMutation(c.config, OpUpdateOne, withPaymentBalanceLock(pbl))
+	return &PaymentBalanceLockUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *PaymentBalanceLockClient) UpdateOneID(id uint32) *PaymentBalanceLockUpdateOne {
+	mutation := newPaymentBalanceLockMutation(c.config, OpUpdateOne, withPaymentBalanceLockID(id))
+	return &PaymentBalanceLockUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for PaymentBalanceLock.
+func (c *PaymentBalanceLockClient) Delete() *PaymentBalanceLockDelete {
+	mutation := newPaymentBalanceLockMutation(c.config, OpDelete)
+	return &PaymentBalanceLockDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *PaymentBalanceLockClient) DeleteOne(pbl *PaymentBalanceLock) *PaymentBalanceLockDeleteOne {
+	return c.DeleteOneID(pbl.ID)
+}
+
+// DeleteOne returns a builder for deleting the given entity by its id.
+func (c *PaymentBalanceLockClient) DeleteOneID(id uint32) *PaymentBalanceLockDeleteOne {
+	builder := c.Delete().Where(paymentbalancelock.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &PaymentBalanceLockDeleteOne{builder}
+}
+
+// Query returns a query builder for PaymentBalanceLock.
+func (c *PaymentBalanceLockClient) Query() *PaymentBalanceLockQuery {
+	return &PaymentBalanceLockQuery{
+		config: c.config,
+	}
+}
+
+// Get returns a PaymentBalanceLock entity by its id.
+func (c *PaymentBalanceLockClient) Get(ctx context.Context, id uint32) (*PaymentBalanceLock, error) {
+	return c.Query().Where(paymentbalancelock.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *PaymentBalanceLockClient) GetX(ctx context.Context, id uint32) *PaymentBalanceLock {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *PaymentBalanceLockClient) Hooks() []Hook {
+	hooks := c.hooks.PaymentBalanceLock
+	return append(hooks[:len(hooks):len(hooks)], paymentbalancelock.Hooks[:]...)
 }
 
 // PaymentBaseClient is a client for the PaymentBase schema.

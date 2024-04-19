@@ -448,6 +448,34 @@ var (
 			},
 		},
 	}
+	// PaymentBalanceLocksColumns holds the columns for the "payment_balance_locks" table.
+	PaymentBalanceLocksColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true},
+		{Name: "created_at", Type: field.TypeUint32},
+		{Name: "updated_at", Type: field.TypeUint32},
+		{Name: "deleted_at", Type: field.TypeUint32},
+		{Name: "ent_id", Type: field.TypeUUID, Unique: true},
+		{Name: "payment_id", Type: field.TypeUUID, Nullable: true},
+		{Name: "ledger_lock_id", Type: field.TypeUUID, Nullable: true},
+	}
+	// PaymentBalanceLocksTable holds the schema information for the "payment_balance_locks" table.
+	PaymentBalanceLocksTable = &schema.Table{
+		Name:       "payment_balance_locks",
+		Columns:    PaymentBalanceLocksColumns,
+		PrimaryKey: []*schema.Column{PaymentBalanceLocksColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "paymentbalancelock_ent_id",
+				Unique:  true,
+				Columns: []*schema.Column{PaymentBalanceLocksColumns[4]},
+			},
+			{
+				Name:    "paymentbalancelock_payment_id",
+				Unique:  false,
+				Columns: []*schema.Column{PaymentBalanceLocksColumns[5]},
+			},
+		},
+	}
 	// PaymentBasesColumns holds the columns for the "payment_bases" table.
 	PaymentBasesColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUint32, Increment: true},
@@ -628,6 +656,7 @@ var (
 		OutOfGasTable,
 		PaymentsTable,
 		PaymentBalancesTable,
+		PaymentBalanceLocksTable,
 		PaymentBasesTable,
 		PaymentContractsTable,
 		PaymentTransfersTable,

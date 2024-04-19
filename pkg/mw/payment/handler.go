@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 
+	types "github.com/NpoolPlatform/message/npool/basetypes/order/v1"
 	paymentbasecrud "github.com/NpoolPlatform/order-middleware/pkg/crud/payment"
 
 	"github.com/google/uuid"
@@ -71,9 +72,24 @@ func WithOrderID(id *string, must bool) func(context.Context, *Handler) error {
 	}
 }
 
-func WithObseleted(b *bool, must bool) func(context.Context, *Handler) error {
+func WithObseleteState(e *types.PaymentObseleteState, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
-		h.Obseleted = b
+		if e == nil {
+			if must {
+				return fmt.Errorf("invalid obseletestate")
+			}
+			return nil
+		}
+		switch *e {
+		case types.PaymentObseleteState_PaymentObseleteNone:
+		case types.PaymentObseleteState_PaymentObseleteWait:
+		case types.PaymentObseleteState_PaymentObseleteUnlock:
+		case types.PaymentObseleteState_PaymentObseleted:
+		case types.PaymentObseleteState_PaymentObseleteFail:
+		default:
+			return fmt.Errorf("invalid obseletestate")
+		}
+		h.ObseleteState = e
 		return nil
 	}
 }

@@ -55,8 +55,8 @@ func (h *Handler) ConstructUpdateSQL() (string, error) {
 	now := uint32(time.Now().Unix())
 
 	_sql := "update payment_bases "
-	if h.Obseleted != nil {
-		_sql += fmt.Sprintf("%vobseleted = '%v', ", set, *h.Obseleted)
+	if h.ObseleteState != nil {
+		_sql += fmt.Sprintf("%vobselete_state = '%v', ", set, *h.ObseleteState)
 		set = ""
 	}
 	if set != "" {

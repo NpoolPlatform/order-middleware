@@ -16,6 +16,7 @@ import (
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/outofgas"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/payment"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/paymentbalance"
+	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/paymentbalancelock"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/paymentbase"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/paymentcontract"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/paymenttransfer"
@@ -30,7 +31,7 @@ import (
 
 // schemaGraph holds a representation of ent/schema at runtime.
 var schemaGraph = func() *sqlgraph.Schema {
-	graph := &sqlgraph.Schema{Nodes: make([]*sqlgraph.Node, 18)}
+	graph := &sqlgraph.Schema{Nodes: make([]*sqlgraph.Node, 19)}
 	graph.Nodes[0] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   appconfig.Table,
@@ -361,6 +362,25 @@ var schemaGraph = func() *sqlgraph.Schema {
 	}
 	graph.Nodes[13] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
+			Table:   paymentbalancelock.Table,
+			Columns: paymentbalancelock.Columns,
+			ID: &sqlgraph.FieldSpec{
+				Type:   field.TypeUint32,
+				Column: paymentbalancelock.FieldID,
+			},
+		},
+		Type: "PaymentBalanceLock",
+		Fields: map[string]*sqlgraph.FieldSpec{
+			paymentbalancelock.FieldCreatedAt:    {Type: field.TypeUint32, Column: paymentbalancelock.FieldCreatedAt},
+			paymentbalancelock.FieldUpdatedAt:    {Type: field.TypeUint32, Column: paymentbalancelock.FieldUpdatedAt},
+			paymentbalancelock.FieldDeletedAt:    {Type: field.TypeUint32, Column: paymentbalancelock.FieldDeletedAt},
+			paymentbalancelock.FieldEntID:        {Type: field.TypeUUID, Column: paymentbalancelock.FieldEntID},
+			paymentbalancelock.FieldPaymentID:    {Type: field.TypeUUID, Column: paymentbalancelock.FieldPaymentID},
+			paymentbalancelock.FieldLedgerLockID: {Type: field.TypeUUID, Column: paymentbalancelock.FieldLedgerLockID},
+		},
+	}
+	graph.Nodes[14] = &sqlgraph.Node{
+		NodeSpec: sqlgraph.NodeSpec{
 			Table:   paymentbase.Table,
 			Columns: paymentbase.Columns,
 			ID: &sqlgraph.FieldSpec{
@@ -378,7 +398,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			paymentbase.FieldObseleteState: {Type: field.TypeString, Column: paymentbase.FieldObseleteState},
 		},
 	}
-	graph.Nodes[14] = &sqlgraph.Node{
+	graph.Nodes[15] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   paymentcontract.Table,
 			Columns: paymentcontract.Columns,
@@ -398,7 +418,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			paymentcontract.FieldAmount:     {Type: field.TypeOther, Column: paymentcontract.FieldAmount},
 		},
 	}
-	graph.Nodes[15] = &sqlgraph.Node{
+	graph.Nodes[16] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   paymenttransfer.Table,
 			Columns: paymenttransfer.Columns,
@@ -424,7 +444,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			paymenttransfer.FieldLiveCoinUsdCurrency:  {Type: field.TypeOther, Column: paymenttransfer.FieldLiveCoinUsdCurrency},
 		},
 	}
-	graph.Nodes[16] = &sqlgraph.Node{
+	graph.Nodes[17] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   powerrental.Table,
 			Columns: powerrental.Columns,
@@ -449,7 +469,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			powerrental.FieldInvestmentType:    {Type: field.TypeString, Column: powerrental.FieldInvestmentType},
 		},
 	}
-	graph.Nodes[17] = &sqlgraph.Node{
+	graph.Nodes[18] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   powerrentalstate.Table,
 			Columns: powerrentalstate.Columns,
@@ -1804,6 +1824,76 @@ func (f *PaymentBalanceFilter) WhereLiveCoinUsdCurrency(p entql.OtherP) {
 }
 
 // addPredicate implements the predicateAdder interface.
+func (pblq *PaymentBalanceLockQuery) addPredicate(pred func(s *sql.Selector)) {
+	pblq.predicates = append(pblq.predicates, pred)
+}
+
+// Filter returns a Filter implementation to apply filters on the PaymentBalanceLockQuery builder.
+func (pblq *PaymentBalanceLockQuery) Filter() *PaymentBalanceLockFilter {
+	return &PaymentBalanceLockFilter{config: pblq.config, predicateAdder: pblq}
+}
+
+// addPredicate implements the predicateAdder interface.
+func (m *PaymentBalanceLockMutation) addPredicate(pred func(s *sql.Selector)) {
+	m.predicates = append(m.predicates, pred)
+}
+
+// Filter returns an entql.Where implementation to apply filters on the PaymentBalanceLockMutation builder.
+func (m *PaymentBalanceLockMutation) Filter() *PaymentBalanceLockFilter {
+	return &PaymentBalanceLockFilter{config: m.config, predicateAdder: m}
+}
+
+// PaymentBalanceLockFilter provides a generic filtering capability at runtime for PaymentBalanceLockQuery.
+type PaymentBalanceLockFilter struct {
+	predicateAdder
+	config
+}
+
+// Where applies the entql predicate on the query filter.
+func (f *PaymentBalanceLockFilter) Where(p entql.P) {
+	f.addPredicate(func(s *sql.Selector) {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[13].Type, p, s); err != nil {
+			s.AddError(err)
+		}
+	})
+}
+
+// WhereID applies the entql uint32 predicate on the id field.
+func (f *PaymentBalanceLockFilter) WhereID(p entql.Uint32P) {
+	f.Where(p.Field(paymentbalancelock.FieldID))
+}
+
+// WhereCreatedAt applies the entql uint32 predicate on the created_at field.
+func (f *PaymentBalanceLockFilter) WhereCreatedAt(p entql.Uint32P) {
+	f.Where(p.Field(paymentbalancelock.FieldCreatedAt))
+}
+
+// WhereUpdatedAt applies the entql uint32 predicate on the updated_at field.
+func (f *PaymentBalanceLockFilter) WhereUpdatedAt(p entql.Uint32P) {
+	f.Where(p.Field(paymentbalancelock.FieldUpdatedAt))
+}
+
+// WhereDeletedAt applies the entql uint32 predicate on the deleted_at field.
+func (f *PaymentBalanceLockFilter) WhereDeletedAt(p entql.Uint32P) {
+	f.Where(p.Field(paymentbalancelock.FieldDeletedAt))
+}
+
+// WhereEntID applies the entql [16]byte predicate on the ent_id field.
+func (f *PaymentBalanceLockFilter) WhereEntID(p entql.ValueP) {
+	f.Where(p.Field(paymentbalancelock.FieldEntID))
+}
+
+// WherePaymentID applies the entql [16]byte predicate on the payment_id field.
+func (f *PaymentBalanceLockFilter) WherePaymentID(p entql.ValueP) {
+	f.Where(p.Field(paymentbalancelock.FieldPaymentID))
+}
+
+// WhereLedgerLockID applies the entql [16]byte predicate on the ledger_lock_id field.
+func (f *PaymentBalanceLockFilter) WhereLedgerLockID(p entql.ValueP) {
+	f.Where(p.Field(paymentbalancelock.FieldLedgerLockID))
+}
+
+// addPredicate implements the predicateAdder interface.
 func (pbq *PaymentBaseQuery) addPredicate(pred func(s *sql.Selector)) {
 	pbq.predicates = append(pbq.predicates, pred)
 }
@@ -1832,7 +1922,7 @@ type PaymentBaseFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *PaymentBaseFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[13].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[14].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})
@@ -1902,7 +1992,7 @@ type PaymentContractFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *PaymentContractFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[14].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[15].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})
@@ -1977,7 +2067,7 @@ type PaymentTransferFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *PaymentTransferFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[15].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[16].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})
@@ -2082,7 +2172,7 @@ type PowerRentalFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *PowerRentalFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[16].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[17].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})
@@ -2182,7 +2272,7 @@ type PowerRentalStateFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *PowerRentalStateFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[17].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[18].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})

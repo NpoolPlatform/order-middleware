@@ -40,6 +40,8 @@ type Tx struct {
 	Payment *PaymentClient
 	// PaymentBalance is the client for interacting with the PaymentBalance builders.
 	PaymentBalance *PaymentBalanceClient
+	// PaymentBalanceLock is the client for interacting with the PaymentBalanceLock builders.
+	PaymentBalanceLock *PaymentBalanceLockClient
 	// PaymentBase is the client for interacting with the PaymentBase builders.
 	PaymentBase *PaymentBaseClient
 	// PaymentContract is the client for interacting with the PaymentContract builders.
@@ -198,6 +200,7 @@ func (tx *Tx) init() {
 	tx.OutOfGas = NewOutOfGasClient(tx.config)
 	tx.Payment = NewPaymentClient(tx.config)
 	tx.PaymentBalance = NewPaymentBalanceClient(tx.config)
+	tx.PaymentBalanceLock = NewPaymentBalanceLockClient(tx.config)
 	tx.PaymentBase = NewPaymentBaseClient(tx.config)
 	tx.PaymentContract = NewPaymentContractClient(tx.config)
 	tx.PaymentTransfer = NewPaymentTransferClient(tx.config)

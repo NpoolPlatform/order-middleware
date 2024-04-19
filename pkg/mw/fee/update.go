@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	types "github.com/NpoolPlatform/message/npool/basetypes/order/v1"
+	paymentbasecrud "github.com/NpoolPlatform/order-middleware/pkg/crud/payment"
 	"github.com/NpoolPlatform/order-middleware/pkg/db"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent"
 	feeorderstate1 "github.com/NpoolPlatform/order-middleware/pkg/mw/fee/state"
@@ -21,12 +22,15 @@ import (
 
 type updateHandler struct {
 	*feeOrderQueryHandler
-	sql                 string
-	sqlOrderStateBase   string
-	sqlFeeOrderState    string
-	sqlPaymentBase      string
-	sqlPaymentBalances  []string
-	sqlPaymentTransfers []string
+	obseletePaymentBaseReq *paymentbasecrud.Req
+	newPayment             bool
+	sql                    string
+	sqlOrderStateBase      string
+	sqlFeeOrderState       string
+	sqlPaymentObselete     string
+	sqlPaymentBase         string
+	sqlPaymentBalances     []string
+	sqlPaymentTransfers    []string
 }
 
 func (h *updateHandler) constructSQL() {
@@ -95,6 +99,7 @@ func (h *updateHandler) updateFeeOrder(ctx context.Context, tx *ent.Tx) error {
 
 func (h *updateHandler) formalizeOrderID() {
 	if h.OrderID != nil {
+		return
 	}
 	h.OrderID = func() *uuid.UUID { uid := h._ent.OrderID(); return &uid }()
 	h.OrderBaseReq.EntID = h.OrderID
@@ -104,31 +109,10 @@ func (h *updateHandler) formalizeOrderID() {
 	h.PaymentBaseReq.OrderID = h.OrderID
 }
 
-func (h *updateHandler) formalizeEntIDs() {
-	if h.OrderStateBaseReq.EntID == nil {
-		h.OrderStateBaseReq.EntID = func() *uuid.UUID { uid := uuid.New(); return &uid }()
-	}
-	if h.FeeOrderStateReq.EntID == nil {
-		h.FeeOrderStateReq.EntID = func() *uuid.UUID { uid := uuid.New(); return &uid }()
-	}
-	if h.LedgerLockReq.EntID == nil {
-		h.LedgerLockReq.EntID = func() *uuid.UUID { uid := uuid.New(); return &uid }()
-	}
-	if h.PaymentBaseReq.EntID == nil {
-		h.PaymentBaseReq.EntID = func() *uuid.UUID { uid := uuid.New(); return &uid }()
-	}
-}
-
-func (h *updateHandler) formalizeOrderCoupons() {
-	for _, req := range h.OrderCouponReqs {
-		req.OrderID = h.OrderID
-		if req.EntID == nil {
-			req.EntID = func() *uuid.UUID { uid := uuid.New(); return &uid }()
-		}
-	}
-}
-
 func (h *updateHandler) formalizePaymentBalances() {
+	if !h.newPayment {
+		return
+	}
 	for _, req := range h.PaymentBalanceReqs {
 		req.PaymentID = h.PaymentBaseReq.EntID
 		if req.EntID == nil {
@@ -138,6 +122,9 @@ func (h *updateHandler) formalizePaymentBalances() {
 }
 
 func (h *updateHandler) formalizePaymentTransfers() {
+	if !h.newPayment {
+		return
+	}
 	for _, req := range h.PaymentTransferReqs {
 		req.PaymentID = h.PaymentBaseReq.EntID
 		if req.EntID == nil {
@@ -147,10 +134,14 @@ func (h *updateHandler) formalizePaymentTransfers() {
 }
 
 func (h *updateHandler) formalizePaymentID() {
-	if h.PaymentBaseReq.EntID != nil {
+	if h.PaymentBaseReq.EntID == nil || h._ent.PaymentID() == *h.PaymentBaseReq.EntID {
 		return
 	}
-	h.PaymentBaseReq.EntID = func() *uuid.UUID { uid := uuid.New(); return &uid }()
+
+	h.newPayment = true
+	h.obseletePaymentBaseReq.EntID = func() *uuid.UUID { uid := h._ent.PaymentID(); return &uid }()
+	h.obseletePaymentBaseReq.ObseleteState = func() *types.PaymentObseleteState { e := types.PaymentObseleteState_PaymentObseleteWait; return &e }()
+
 	h.FeeOrderStateReq.PaymentID = h.PaymentBaseReq.EntID
 }
 
@@ -159,6 +150,7 @@ func (h *Handler) UpdateFeeOrder(ctx context.Context) error {
 		feeOrderQueryHandler: &feeOrderQueryHandler{
 			Handler: h,
 		},
+		obseletePaymentBaseReq: &paymentbasecrud.Req{},
 	}
 
 	if err := handler.requireFeeOrder(ctx); err != nil {
@@ -166,8 +158,6 @@ func (h *Handler) UpdateFeeOrder(ctx context.Context) error {
 	}
 
 	handler.formalizeOrderID()
-	handler.formalizeEntIDs()
-	handler.formalizeOrderCoupons()
 	handler.formalizePaymentID()
 	handler.formalizePaymentBalances()
 	handler.formalizePaymentTransfers()

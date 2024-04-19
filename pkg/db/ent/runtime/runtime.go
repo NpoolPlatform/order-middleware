@@ -18,6 +18,7 @@ import (
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/outofgas"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/payment"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/paymentbalance"
+	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/paymentbalancelock"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/paymentbase"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/paymentcontract"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/paymenttransfer"
@@ -853,6 +854,48 @@ func init() {
 	paymentbalanceDescLiveCoinUsdCurrency := paymentbalanceFields[5].Descriptor()
 	// paymentbalance.DefaultLiveCoinUsdCurrency holds the default value on creation for the live_coin_usd_currency field.
 	paymentbalance.DefaultLiveCoinUsdCurrency = paymentbalanceDescLiveCoinUsdCurrency.Default.(decimal.Decimal)
+	paymentbalancelockMixin := schema.PaymentBalanceLock{}.Mixin()
+	paymentbalancelock.Policy = privacy.NewPolicies(paymentbalancelockMixin[0], schema.PaymentBalanceLock{})
+	paymentbalancelock.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+			if err := paymentbalancelock.Policy.EvalMutation(ctx, m); err != nil {
+				return nil, err
+			}
+			return next.Mutate(ctx, m)
+		})
+	}
+	paymentbalancelockMixinFields0 := paymentbalancelockMixin[0].Fields()
+	_ = paymentbalancelockMixinFields0
+	paymentbalancelockMixinFields1 := paymentbalancelockMixin[1].Fields()
+	_ = paymentbalancelockMixinFields1
+	paymentbalancelockFields := schema.PaymentBalanceLock{}.Fields()
+	_ = paymentbalancelockFields
+	// paymentbalancelockDescCreatedAt is the schema descriptor for created_at field.
+	paymentbalancelockDescCreatedAt := paymentbalancelockMixinFields0[0].Descriptor()
+	// paymentbalancelock.DefaultCreatedAt holds the default value on creation for the created_at field.
+	paymentbalancelock.DefaultCreatedAt = paymentbalancelockDescCreatedAt.Default.(func() uint32)
+	// paymentbalancelockDescUpdatedAt is the schema descriptor for updated_at field.
+	paymentbalancelockDescUpdatedAt := paymentbalancelockMixinFields0[1].Descriptor()
+	// paymentbalancelock.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	paymentbalancelock.DefaultUpdatedAt = paymentbalancelockDescUpdatedAt.Default.(func() uint32)
+	// paymentbalancelock.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	paymentbalancelock.UpdateDefaultUpdatedAt = paymentbalancelockDescUpdatedAt.UpdateDefault.(func() uint32)
+	// paymentbalancelockDescDeletedAt is the schema descriptor for deleted_at field.
+	paymentbalancelockDescDeletedAt := paymentbalancelockMixinFields0[2].Descriptor()
+	// paymentbalancelock.DefaultDeletedAt holds the default value on creation for the deleted_at field.
+	paymentbalancelock.DefaultDeletedAt = paymentbalancelockDescDeletedAt.Default.(func() uint32)
+	// paymentbalancelockDescEntID is the schema descriptor for ent_id field.
+	paymentbalancelockDescEntID := paymentbalancelockMixinFields1[1].Descriptor()
+	// paymentbalancelock.DefaultEntID holds the default value on creation for the ent_id field.
+	paymentbalancelock.DefaultEntID = paymentbalancelockDescEntID.Default.(func() uuid.UUID)
+	// paymentbalancelockDescPaymentID is the schema descriptor for payment_id field.
+	paymentbalancelockDescPaymentID := paymentbalancelockFields[0].Descriptor()
+	// paymentbalancelock.DefaultPaymentID holds the default value on creation for the payment_id field.
+	paymentbalancelock.DefaultPaymentID = paymentbalancelockDescPaymentID.Default.(func() uuid.UUID)
+	// paymentbalancelockDescLedgerLockID is the schema descriptor for ledger_lock_id field.
+	paymentbalancelockDescLedgerLockID := paymentbalancelockFields[1].Descriptor()
+	// paymentbalancelock.DefaultLedgerLockID holds the default value on creation for the ledger_lock_id field.
+	paymentbalancelock.DefaultLedgerLockID = paymentbalancelockDescLedgerLockID.Default.(func() uuid.UUID)
 	paymentbaseMixin := schema.PaymentBase{}.Mixin()
 	paymentbase.Policy = privacy.NewPolicies(paymentbaseMixin[0], schema.PaymentBase{})
 	paymentbase.Hooks[0] = func(next ent.Mutator) ent.Mutator {

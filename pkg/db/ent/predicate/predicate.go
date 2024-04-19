@@ -45,6 +45,9 @@ type Payment func(*sql.Selector)
 // PaymentBalance is the predicate function for paymentbalance builders.
 type PaymentBalance func(*sql.Selector)
 
+// PaymentBalanceLock is the predicate function for paymentbalancelock builders.
+type PaymentBalanceLock func(*sql.Selector)
+
 // PaymentBase is the predicate function for paymentbase builders.
 type PaymentBase func(*sql.Selector)
 

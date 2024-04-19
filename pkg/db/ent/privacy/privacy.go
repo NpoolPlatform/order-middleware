@@ -462,6 +462,30 @@ func (f PaymentBalanceMutationRuleFunc) EvalMutation(ctx context.Context, m ent.
 	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.PaymentBalanceMutation", m)
 }
 
+// The PaymentBalanceLockQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type PaymentBalanceLockQueryRuleFunc func(context.Context, *ent.PaymentBalanceLockQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f PaymentBalanceLockQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.PaymentBalanceLockQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("ent/privacy: unexpected query type %T, expect *ent.PaymentBalanceLockQuery", q)
+}
+
+// The PaymentBalanceLockMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type PaymentBalanceLockMutationRuleFunc func(context.Context, *ent.PaymentBalanceLockMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f PaymentBalanceLockMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
+	if m, ok := m.(*ent.PaymentBalanceLockMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.PaymentBalanceLockMutation", m)
+}
+
 // The PaymentBaseQueryRuleFunc type is an adapter to allow the use of ordinary
 // functions as a query rule.
 type PaymentBaseQueryRuleFunc func(context.Context, *ent.PaymentBaseQuery) error
@@ -643,6 +667,8 @@ func queryFilter(q ent.Query) (Filter, error) {
 		return q.Filter(), nil
 	case *ent.PaymentBalanceQuery:
 		return q.Filter(), nil
+	case *ent.PaymentBalanceLockQuery:
+		return q.Filter(), nil
 	case *ent.PaymentBaseQuery:
 		return q.Filter(), nil
 	case *ent.PaymentContractQuery:
@@ -685,6 +711,8 @@ func mutationFilter(m ent.Mutation) (Filter, error) {
 	case *ent.PaymentMutation:
 		return m.Filter(), nil
 	case *ent.PaymentBalanceMutation:
+		return m.Filter(), nil
+	case *ent.PaymentBalanceLockMutation:
 		return m.Filter(), nil
 	case *ent.PaymentBaseMutation:
 		return m.Filter(), nil
