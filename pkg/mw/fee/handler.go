@@ -17,6 +17,7 @@ import (
 	orderstatebasecrud "github.com/NpoolPlatform/order-middleware/pkg/crud/order/statebase"
 	paymentbasecrud "github.com/NpoolPlatform/order-middleware/pkg/crud/payment"
 	paymentbalancecrud "github.com/NpoolPlatform/order-middleware/pkg/crud/payment/balance"
+	paymentbalancelockcrud "github.com/NpoolPlatform/order-middleware/pkg/crud/payment/balance/lock"
 	paymenttransfercrud "github.com/NpoolPlatform/order-middleware/pkg/crud/payment/transfer"
 
 	"github.com/google/uuid"
@@ -27,20 +28,21 @@ type Handler struct {
 	ID       *uint32
 	Rollback *bool
 	feeordercrud.Req
-	OrderBaseReq        *orderbasecrud.Req
-	OrderStateBaseReq   *orderstatebasecrud.Req
-	FeeOrderStateReq    *feeorderstatecrud.Req
-	PaymentBaseReq      *paymentbasecrud.Req
-	PaymentBalanceReqs  []*paymentbalancecrud.Req
-	PaymentTransferReqs []*paymenttransfercrud.Req
-	LedgerLockReq       *orderlockcrud.Req
-	OrderCouponReqs     []*ordercouponcrud.Req
-	FeeOrderConds       *feeordercrud.Conds
-	OrderBaseConds      *orderbasecrud.Conds
-	OrderStateBaseConds *orderstatebasecrud.Conds
-	FeeOrderStateConds  *feeorderstatecrud.Conds
-	Offset              int32
-	Limit               int32
+	OrderBaseReq          *orderbasecrud.Req
+	OrderStateBaseReq     *orderstatebasecrud.Req
+	FeeOrderStateReq      *feeorderstatecrud.Req
+	PaymentBaseReq        *paymentbasecrud.Req
+	PaymentBalanceReqs    []*paymentbalancecrud.Req
+	PaymentTransferReqs   []*paymenttransfercrud.Req
+	LedgerLockReq         *orderlockcrud.Req
+	PaymentBalanceLockReq *paymentbalancelockcrud.Req
+	OrderCouponReqs       []*ordercouponcrud.Req
+	FeeOrderConds         *feeordercrud.Conds
+	OrderBaseConds        *orderbasecrud.Conds
+	OrderStateBaseConds   *orderstatebasecrud.Conds
+	FeeOrderStateConds    *feeorderstatecrud.Conds
+	Offset                int32
+	Limit                 int32
 }
 
 func NewHandler(ctx context.Context, options ...func(context.Context, *Handler) error) (*Handler, error) {
@@ -51,11 +53,12 @@ func NewHandler(ctx context.Context, options ...func(context.Context, *Handler) 
 		LedgerLockReq: &orderlockcrud.Req{
 			LockType: func() *types.OrderLockType { e := types.OrderLockType_LockBalance; return &e }(),
 		},
-		PaymentBaseReq:      &paymentbasecrud.Req{},
-		FeeOrderConds:       &feeordercrud.Conds{},
-		OrderBaseConds:      &orderbasecrud.Conds{},
-		OrderStateBaseConds: &orderstatebasecrud.Conds{},
-		FeeOrderStateConds:  &feeorderstatecrud.Conds{},
+		PaymentBaseReq:        &paymentbasecrud.Req{},
+		PaymentBalanceLockReq: &paymentbalancelockcrud.Req{},
+		FeeOrderConds:         &feeordercrud.Conds{},
+		OrderBaseConds:        &orderbasecrud.Conds{},
+		OrderStateBaseConds:   &orderstatebasecrud.Conds{},
+		FeeOrderStateConds:    &feeorderstatecrud.Conds{},
 	}
 	for _, opt := range options {
 		if err := opt(ctx, handler); err != nil {
@@ -514,6 +517,7 @@ func WithLedgerLockID(id *string, must bool) func(context.Context, *Handler) err
 			return err
 		}
 		h.LedgerLockReq.EntID = &_id
+		h.PaymentBalanceLockReq.LedgerLockID = &_id
 		return nil
 	}
 }
@@ -532,6 +536,7 @@ func WithPaymentID(id *string, must bool) func(context.Context, *Handler) error 
 		}
 		h.PaymentBaseReq.EntID = &_id
 		h.FeeOrderStateReq.PaymentID = &_id
+		h.PaymentBalanceLockReq.PaymentID = &_id
 		return nil
 	}
 }
