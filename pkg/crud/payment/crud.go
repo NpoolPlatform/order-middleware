@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
+	types "github.com/NpoolPlatform/message/npool/basetypes/order/v1"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent"
 	entpaymentbase "github.com/NpoolPlatform/order-middleware/pkg/db/ent/paymentbase"
 
@@ -11,10 +12,10 @@ import (
 )
 
 type Req struct {
-	EntID     *uuid.UUID
-	OrderID   *uuid.UUID
-	Obseleted *bool
-	DeletedAt *uint32
+	EntID         *uuid.UUID
+	OrderID       *uuid.UUID
+	ObseleteState *types.PaymentObseleteState
+	DeletedAt     *uint32
 }
 
 func CreateSet(c *ent.PaymentBaseCreate, req *Req) *ent.PaymentBaseCreate {
@@ -24,15 +25,12 @@ func CreateSet(c *ent.PaymentBaseCreate, req *Req) *ent.PaymentBaseCreate {
 	if req.OrderID != nil {
 		c.SetOrderID(*req.OrderID)
 	}
-	if req.Obseleted != nil {
-		c.SetObseleted(*req.Obseleted)
-	}
 	return c
 }
 
 func UpdateSet(u *ent.PaymentBaseUpdateOne, req *Req) *ent.PaymentBaseUpdateOne {
-	if req.Obseleted != nil {
-		u.SetObseleted(*req.Obseleted)
+	if req.ObseleteState != nil {
+		u.SetObseleteState(req.ObseleteState.String())
 	}
 	if req.DeletedAt != nil {
 		u.SetDeletedAt(*req.DeletedAt)
@@ -41,11 +39,12 @@ func UpdateSet(u *ent.PaymentBaseUpdateOne, req *Req) *ent.PaymentBaseUpdateOne 
 }
 
 type Conds struct {
-	ID      *cruder.Cond
-	IDs     *cruder.Cond
-	EntID   *cruder.Cond
-	EntIDs  *cruder.Cond
-	OrderID *cruder.Cond
+	ID            *cruder.Cond
+	IDs           *cruder.Cond
+	EntID         *cruder.Cond
+	EntIDs        *cruder.Cond
+	OrderID       *cruder.Cond
+	ObseleteState *cruder.Cond
 }
 
 //nolint
@@ -116,6 +115,18 @@ func SetQueryConds(q *ent.PaymentBaseQuery, conds *Conds) (*ent.PaymentBaseQuery
 		switch conds.OrderID.Op {
 		case cruder.EQ:
 			q.Where(entpaymentbase.OrderID(id))
+		default:
+			return nil, fmt.Errorf("invalid payment field")
+		}
+	}
+	if conds.ObseleteState != nil {
+		_state, ok := conds.ObseleteState.Val.(types.PaymentObseleteState)
+		if !ok {
+			return nil, fmt.Errorf("invalid obseletestate")
+		}
+		switch conds.ObseleteState.Op {
+		case cruder.EQ:
+			q.Where(entpaymentbase.ObseleteState(_state.String()))
 		default:
 			return nil, fmt.Errorf("invalid payment field")
 		}
