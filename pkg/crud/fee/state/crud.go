@@ -12,14 +12,15 @@ import (
 )
 
 type Req struct {
-	EntID           *uuid.UUID
-	OrderID         *uuid.UUID
-	PaidAt          *uint32
-	UserSetPaid     *bool
-	UserSetCanceled *bool
-	PaymentState    *types.PaymentState
-	CancelState     *types.OrderState
-	DeletedAt       *uint32
+	EntID            *uuid.UUID
+	OrderID          *uuid.UUID
+	PaidAt           *uint32
+	UserSetPaid      *bool
+	UserSetCanceled  *bool
+	AdminSetCanceled *bool
+	PaymentState     *types.PaymentState
+	CancelState      *types.OrderState
+	DeletedAt        *uint32
 }
 
 //nolint:gocyclo
@@ -35,6 +36,9 @@ func CreateSet(c *ent.FeeOrderStateCreate, req *Req) *ent.FeeOrderStateCreate {
 	}
 	if req.UserSetCanceled != nil {
 		c.SetUserSetCanceled(*req.UserSetCanceled)
+	}
+	if req.AdminSetCanceled != nil {
+		c.SetAdminSetCanceled(*req.AdminSetCanceled)
 	}
 	if req.PaymentState != nil {
 		c.SetPaymentState(req.PaymentState.String())
@@ -52,6 +56,9 @@ func UpdateSet(u *ent.FeeOrderStateUpdateOne, req *Req) *ent.FeeOrderStateUpdate
 	}
 	if req.UserSetCanceled != nil {
 		u.SetUserSetCanceled(*req.UserSetCanceled)
+	}
+	if req.AdminSetCanceled != nil {
+		u.SetAdminSetCanceled(*req.AdminSetCanceled)
 	}
 	if req.PaymentState != nil {
 		u.SetPaymentState(req.PaymentState.String())

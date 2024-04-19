@@ -32,6 +32,8 @@ type FeeOrderState struct {
 	UserSetPaid bool `json:"user_set_paid,omitempty"`
 	// UserSetCanceled holds the value of the "user_set_canceled" field.
 	UserSetCanceled bool `json:"user_set_canceled,omitempty"`
+	// AdminSetCanceled holds the value of the "admin_set_canceled" field.
+	AdminSetCanceled bool `json:"admin_set_canceled,omitempty"`
 	// PaymentState holds the value of the "payment_state" field.
 	PaymentState string `json:"payment_state,omitempty"`
 	// CancelState holds the value of the "cancel_state" field.
@@ -43,7 +45,7 @@ func (*FeeOrderState) scanValues(columns []string) ([]interface{}, error) {
 	values := make([]interface{}, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case feeorderstate.FieldUserSetPaid, feeorderstate.FieldUserSetCanceled:
+		case feeorderstate.FieldUserSetPaid, feeorderstate.FieldUserSetCanceled, feeorderstate.FieldAdminSetCanceled:
 			values[i] = new(sql.NullBool)
 		case feeorderstate.FieldID, feeorderstate.FieldCreatedAt, feeorderstate.FieldUpdatedAt, feeorderstate.FieldDeletedAt, feeorderstate.FieldPaidAt:
 			values[i] = new(sql.NullInt64)
@@ -120,6 +122,12 @@ func (fos *FeeOrderState) assignValues(columns []string, values []interface{}) e
 			} else if value.Valid {
 				fos.UserSetCanceled = value.Bool
 			}
+		case feeorderstate.FieldAdminSetCanceled:
+			if value, ok := values[i].(*sql.NullBool); !ok {
+				return fmt.Errorf("unexpected type %T for field admin_set_canceled", values[i])
+			} else if value.Valid {
+				fos.AdminSetCanceled = value.Bool
+			}
 		case feeorderstate.FieldPaymentState:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field payment_state", values[i])
@@ -183,6 +191,9 @@ func (fos *FeeOrderState) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("user_set_canceled=")
 	builder.WriteString(fmt.Sprintf("%v", fos.UserSetCanceled))
+	builder.WriteString(", ")
+	builder.WriteString("admin_set_canceled=")
+	builder.WriteString(fmt.Sprintf("%v", fos.AdminSetCanceled))
 	builder.WriteString(", ")
 	builder.WriteString("payment_state=")
 	builder.WriteString(fos.PaymentState)

@@ -135,6 +135,13 @@ func UserSetCanceled(v bool) predicate.FeeOrderState {
 	})
 }
 
+// AdminSetCanceled applies equality check predicate on the "admin_set_canceled" field. It's identical to AdminSetCanceledEQ.
+func AdminSetCanceled(v bool) predicate.FeeOrderState {
+	return predicate.FeeOrderState(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldAdminSetCanceled), v))
+	})
+}
+
 // PaymentState applies equality check predicate on the "payment_state" field. It's identical to PaymentStateEQ.
 func PaymentState(v string) predicate.FeeOrderState {
 	return predicate.FeeOrderState(func(s *sql.Selector) {
@@ -614,6 +621,34 @@ func UserSetCanceledIsNil() predicate.FeeOrderState {
 func UserSetCanceledNotNil() predicate.FeeOrderState {
 	return predicate.FeeOrderState(func(s *sql.Selector) {
 		s.Where(sql.NotNull(s.C(FieldUserSetCanceled)))
+	})
+}
+
+// AdminSetCanceledEQ applies the EQ predicate on the "admin_set_canceled" field.
+func AdminSetCanceledEQ(v bool) predicate.FeeOrderState {
+	return predicate.FeeOrderState(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldAdminSetCanceled), v))
+	})
+}
+
+// AdminSetCanceledNEQ applies the NEQ predicate on the "admin_set_canceled" field.
+func AdminSetCanceledNEQ(v bool) predicate.FeeOrderState {
+	return predicate.FeeOrderState(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldAdminSetCanceled), v))
+	})
+}
+
+// AdminSetCanceledIsNil applies the IsNil predicate on the "admin_set_canceled" field.
+func AdminSetCanceledIsNil() predicate.FeeOrderState {
+	return predicate.FeeOrderState(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldAdminSetCanceled)))
+	})
+}
+
+// AdminSetCanceledNotNil applies the NotNil predicate on the "admin_set_canceled" field.
+func AdminSetCanceledNotNil() predicate.FeeOrderState {
+	return predicate.FeeOrderState(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldAdminSetCanceled)))
 	})
 }
 

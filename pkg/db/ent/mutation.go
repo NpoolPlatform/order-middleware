@@ -3085,27 +3085,28 @@ func (m *FeeOrderMutation) ResetEdge(name string) error {
 // FeeOrderStateMutation represents an operation that mutates the FeeOrderState nodes in the graph.
 type FeeOrderStateMutation struct {
 	config
-	op                Op
-	typ               string
-	id                *uint32
-	created_at        *uint32
-	addcreated_at     *int32
-	updated_at        *uint32
-	addupdated_at     *int32
-	deleted_at        *uint32
-	adddeleted_at     *int32
-	ent_id            *uuid.UUID
-	order_id          *uuid.UUID
-	paid_at           *uint32
-	addpaid_at        *int32
-	user_set_paid     *bool
-	user_set_canceled *bool
-	payment_state     *string
-	cancel_state      *string
-	clearedFields     map[string]struct{}
-	done              bool
-	oldValue          func(context.Context) (*FeeOrderState, error)
-	predicates        []predicate.FeeOrderState
+	op                 Op
+	typ                string
+	id                 *uint32
+	created_at         *uint32
+	addcreated_at      *int32
+	updated_at         *uint32
+	addupdated_at      *int32
+	deleted_at         *uint32
+	adddeleted_at      *int32
+	ent_id             *uuid.UUID
+	order_id           *uuid.UUID
+	paid_at            *uint32
+	addpaid_at         *int32
+	user_set_paid      *bool
+	user_set_canceled  *bool
+	admin_set_canceled *bool
+	payment_state      *string
+	cancel_state       *string
+	clearedFields      map[string]struct{}
+	done               bool
+	oldValue           func(context.Context) (*FeeOrderState, error)
+	predicates         []predicate.FeeOrderState
 }
 
 var _ ent.Mutation = (*FeeOrderStateMutation)(nil)
@@ -3633,6 +3634,55 @@ func (m *FeeOrderStateMutation) ResetUserSetCanceled() {
 	delete(m.clearedFields, feeorderstate.FieldUserSetCanceled)
 }
 
+// SetAdminSetCanceled sets the "admin_set_canceled" field.
+func (m *FeeOrderStateMutation) SetAdminSetCanceled(b bool) {
+	m.admin_set_canceled = &b
+}
+
+// AdminSetCanceled returns the value of the "admin_set_canceled" field in the mutation.
+func (m *FeeOrderStateMutation) AdminSetCanceled() (r bool, exists bool) {
+	v := m.admin_set_canceled
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldAdminSetCanceled returns the old "admin_set_canceled" field's value of the FeeOrderState entity.
+// If the FeeOrderState object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *FeeOrderStateMutation) OldAdminSetCanceled(ctx context.Context) (v bool, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldAdminSetCanceled is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldAdminSetCanceled requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldAdminSetCanceled: %w", err)
+	}
+	return oldValue.AdminSetCanceled, nil
+}
+
+// ClearAdminSetCanceled clears the value of the "admin_set_canceled" field.
+func (m *FeeOrderStateMutation) ClearAdminSetCanceled() {
+	m.admin_set_canceled = nil
+	m.clearedFields[feeorderstate.FieldAdminSetCanceled] = struct{}{}
+}
+
+// AdminSetCanceledCleared returns if the "admin_set_canceled" field was cleared in this mutation.
+func (m *FeeOrderStateMutation) AdminSetCanceledCleared() bool {
+	_, ok := m.clearedFields[feeorderstate.FieldAdminSetCanceled]
+	return ok
+}
+
+// ResetAdminSetCanceled resets all changes to the "admin_set_canceled" field.
+func (m *FeeOrderStateMutation) ResetAdminSetCanceled() {
+	m.admin_set_canceled = nil
+	delete(m.clearedFields, feeorderstate.FieldAdminSetCanceled)
+}
+
 // SetPaymentState sets the "payment_state" field.
 func (m *FeeOrderStateMutation) SetPaymentState(s string) {
 	m.payment_state = &s
@@ -3750,7 +3800,7 @@ func (m *FeeOrderStateMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *FeeOrderStateMutation) Fields() []string {
-	fields := make([]string, 0, 10)
+	fields := make([]string, 0, 11)
 	if m.created_at != nil {
 		fields = append(fields, feeorderstate.FieldCreatedAt)
 	}
@@ -3774,6 +3824,9 @@ func (m *FeeOrderStateMutation) Fields() []string {
 	}
 	if m.user_set_canceled != nil {
 		fields = append(fields, feeorderstate.FieldUserSetCanceled)
+	}
+	if m.admin_set_canceled != nil {
+		fields = append(fields, feeorderstate.FieldAdminSetCanceled)
 	}
 	if m.payment_state != nil {
 		fields = append(fields, feeorderstate.FieldPaymentState)
@@ -3805,6 +3858,8 @@ func (m *FeeOrderStateMutation) Field(name string) (ent.Value, bool) {
 		return m.UserSetPaid()
 	case feeorderstate.FieldUserSetCanceled:
 		return m.UserSetCanceled()
+	case feeorderstate.FieldAdminSetCanceled:
+		return m.AdminSetCanceled()
 	case feeorderstate.FieldPaymentState:
 		return m.PaymentState()
 	case feeorderstate.FieldCancelState:
@@ -3834,6 +3889,8 @@ func (m *FeeOrderStateMutation) OldField(ctx context.Context, name string) (ent.
 		return m.OldUserSetPaid(ctx)
 	case feeorderstate.FieldUserSetCanceled:
 		return m.OldUserSetCanceled(ctx)
+	case feeorderstate.FieldAdminSetCanceled:
+		return m.OldAdminSetCanceled(ctx)
 	case feeorderstate.FieldPaymentState:
 		return m.OldPaymentState(ctx)
 	case feeorderstate.FieldCancelState:
@@ -3902,6 +3959,13 @@ func (m *FeeOrderStateMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetUserSetCanceled(v)
+		return nil
+	case feeorderstate.FieldAdminSetCanceled:
+		v, ok := value.(bool)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetAdminSetCanceled(v)
 		return nil
 	case feeorderstate.FieldPaymentState:
 		v, ok := value.(string)
@@ -4010,6 +4074,9 @@ func (m *FeeOrderStateMutation) ClearedFields() []string {
 	if m.FieldCleared(feeorderstate.FieldUserSetCanceled) {
 		fields = append(fields, feeorderstate.FieldUserSetCanceled)
 	}
+	if m.FieldCleared(feeorderstate.FieldAdminSetCanceled) {
+		fields = append(fields, feeorderstate.FieldAdminSetCanceled)
+	}
 	if m.FieldCleared(feeorderstate.FieldPaymentState) {
 		fields = append(fields, feeorderstate.FieldPaymentState)
 	}
@@ -4041,6 +4108,9 @@ func (m *FeeOrderStateMutation) ClearField(name string) error {
 		return nil
 	case feeorderstate.FieldUserSetCanceled:
 		m.ClearUserSetCanceled()
+		return nil
+	case feeorderstate.FieldAdminSetCanceled:
+		m.ClearAdminSetCanceled()
 		return nil
 	case feeorderstate.FieldPaymentState:
 		m.ClearPaymentState()
@@ -4079,6 +4149,9 @@ func (m *FeeOrderStateMutation) ResetField(name string) error {
 		return nil
 	case feeorderstate.FieldUserSetCanceled:
 		m.ResetUserSetCanceled()
+		return nil
+	case feeorderstate.FieldAdminSetCanceled:
+		m.ResetAdminSetCanceled()
 		return nil
 	case feeorderstate.FieldPaymentState:
 		m.ResetPaymentState()

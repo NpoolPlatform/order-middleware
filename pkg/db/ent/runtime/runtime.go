@@ -250,12 +250,16 @@ func init() {
 	feeorderstateDescUserSetCanceled := feeorderstateFields[3].Descriptor()
 	// feeorderstate.DefaultUserSetCanceled holds the default value on creation for the user_set_canceled field.
 	feeorderstate.DefaultUserSetCanceled = feeorderstateDescUserSetCanceled.Default.(bool)
+	// feeorderstateDescAdminSetCanceled is the schema descriptor for admin_set_canceled field.
+	feeorderstateDescAdminSetCanceled := feeorderstateFields[4].Descriptor()
+	// feeorderstate.DefaultAdminSetCanceled holds the default value on creation for the admin_set_canceled field.
+	feeorderstate.DefaultAdminSetCanceled = feeorderstateDescAdminSetCanceled.Default.(bool)
 	// feeorderstateDescPaymentState is the schema descriptor for payment_state field.
-	feeorderstateDescPaymentState := feeorderstateFields[4].Descriptor()
+	feeorderstateDescPaymentState := feeorderstateFields[5].Descriptor()
 	// feeorderstate.DefaultPaymentState holds the default value on creation for the payment_state field.
 	feeorderstate.DefaultPaymentState = feeorderstateDescPaymentState.Default.(string)
 	// feeorderstateDescCancelState is the schema descriptor for cancel_state field.
-	feeorderstateDescCancelState := feeorderstateFields[5].Descriptor()
+	feeorderstateDescCancelState := feeorderstateFields[6].Descriptor()
 	// feeorderstate.DefaultCancelState holds the default value on creation for the cancel_state field.
 	feeorderstate.DefaultCancelState = feeorderstateDescCancelState.Default.(string)
 	orderMixin := schema.Order{}.Mixin()

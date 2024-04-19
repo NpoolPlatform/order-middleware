@@ -108,16 +108,17 @@ var schemaGraph = func() *sqlgraph.Schema {
 		},
 		Type: "FeeOrderState",
 		Fields: map[string]*sqlgraph.FieldSpec{
-			feeorderstate.FieldCreatedAt:       {Type: field.TypeUint32, Column: feeorderstate.FieldCreatedAt},
-			feeorderstate.FieldUpdatedAt:       {Type: field.TypeUint32, Column: feeorderstate.FieldUpdatedAt},
-			feeorderstate.FieldDeletedAt:       {Type: field.TypeUint32, Column: feeorderstate.FieldDeletedAt},
-			feeorderstate.FieldEntID:           {Type: field.TypeUUID, Column: feeorderstate.FieldEntID},
-			feeorderstate.FieldOrderID:         {Type: field.TypeUUID, Column: feeorderstate.FieldOrderID},
-			feeorderstate.FieldPaidAt:          {Type: field.TypeUint32, Column: feeorderstate.FieldPaidAt},
-			feeorderstate.FieldUserSetPaid:     {Type: field.TypeBool, Column: feeorderstate.FieldUserSetPaid},
-			feeorderstate.FieldUserSetCanceled: {Type: field.TypeBool, Column: feeorderstate.FieldUserSetCanceled},
-			feeorderstate.FieldPaymentState:    {Type: field.TypeString, Column: feeorderstate.FieldPaymentState},
-			feeorderstate.FieldCancelState:     {Type: field.TypeString, Column: feeorderstate.FieldCancelState},
+			feeorderstate.FieldCreatedAt:        {Type: field.TypeUint32, Column: feeorderstate.FieldCreatedAt},
+			feeorderstate.FieldUpdatedAt:        {Type: field.TypeUint32, Column: feeorderstate.FieldUpdatedAt},
+			feeorderstate.FieldDeletedAt:        {Type: field.TypeUint32, Column: feeorderstate.FieldDeletedAt},
+			feeorderstate.FieldEntID:            {Type: field.TypeUUID, Column: feeorderstate.FieldEntID},
+			feeorderstate.FieldOrderID:          {Type: field.TypeUUID, Column: feeorderstate.FieldOrderID},
+			feeorderstate.FieldPaidAt:           {Type: field.TypeUint32, Column: feeorderstate.FieldPaidAt},
+			feeorderstate.FieldUserSetPaid:      {Type: field.TypeBool, Column: feeorderstate.FieldUserSetPaid},
+			feeorderstate.FieldUserSetCanceled:  {Type: field.TypeBool, Column: feeorderstate.FieldUserSetCanceled},
+			feeorderstate.FieldAdminSetCanceled: {Type: field.TypeBool, Column: feeorderstate.FieldAdminSetCanceled},
+			feeorderstate.FieldPaymentState:     {Type: field.TypeString, Column: feeorderstate.FieldPaymentState},
+			feeorderstate.FieldCancelState:      {Type: field.TypeString, Column: feeorderstate.FieldCancelState},
 		},
 	}
 	graph.Nodes[4] = &sqlgraph.Node{
@@ -803,6 +804,11 @@ func (f *FeeOrderStateFilter) WhereUserSetPaid(p entql.BoolP) {
 // WhereUserSetCanceled applies the entql bool predicate on the user_set_canceled field.
 func (f *FeeOrderStateFilter) WhereUserSetCanceled(p entql.BoolP) {
 	f.Where(p.Field(feeorderstate.FieldUserSetCanceled))
+}
+
+// WhereAdminSetCanceled applies the entql bool predicate on the admin_set_canceled field.
+func (f *FeeOrderStateFilter) WhereAdminSetCanceled(p entql.BoolP) {
+	f.Where(p.Field(feeorderstate.FieldAdminSetCanceled))
 }
 
 // WherePaymentState applies the entql string predicate on the payment_state field.

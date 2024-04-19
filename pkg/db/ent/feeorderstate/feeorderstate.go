@@ -28,6 +28,8 @@ const (
 	FieldUserSetPaid = "user_set_paid"
 	// FieldUserSetCanceled holds the string denoting the user_set_canceled field in the database.
 	FieldUserSetCanceled = "user_set_canceled"
+	// FieldAdminSetCanceled holds the string denoting the admin_set_canceled field in the database.
+	FieldAdminSetCanceled = "admin_set_canceled"
 	// FieldPaymentState holds the string denoting the payment_state field in the database.
 	FieldPaymentState = "payment_state"
 	// FieldCancelState holds the string denoting the cancel_state field in the database.
@@ -47,6 +49,7 @@ var Columns = []string{
 	FieldPaidAt,
 	FieldUserSetPaid,
 	FieldUserSetCanceled,
+	FieldAdminSetCanceled,
 	FieldPaymentState,
 	FieldCancelState,
 }
@@ -88,6 +91,8 @@ var (
 	DefaultUserSetPaid bool
 	// DefaultUserSetCanceled holds the default value on creation for the "user_set_canceled" field.
 	DefaultUserSetCanceled bool
+	// DefaultAdminSetCanceled holds the default value on creation for the "admin_set_canceled" field.
+	DefaultAdminSetCanceled bool
 	// DefaultPaymentState holds the default value on creation for the "payment_state" field.
 	DefaultPaymentState string
 	// DefaultCancelState holds the default value on creation for the "cancel_state" field.

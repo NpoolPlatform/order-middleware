@@ -108,6 +108,7 @@ var (
 		{Name: "paid_at", Type: field.TypeUint32, Nullable: true, Default: 0},
 		{Name: "user_set_paid", Type: field.TypeBool, Nullable: true, Default: false},
 		{Name: "user_set_canceled", Type: field.TypeBool, Nullable: true, Default: false},
+		{Name: "admin_set_canceled", Type: field.TypeBool, Nullable: true, Default: false},
 		{Name: "payment_state", Type: field.TypeString, Nullable: true, Default: "PaymentStateWait"},
 		{Name: "cancel_state", Type: field.TypeString, Nullable: true, Default: "DefaultOrderState"},
 	}

@@ -185,6 +185,26 @@ func (fosu *FeeOrderStateUpdate) ClearUserSetCanceled() *FeeOrderStateUpdate {
 	return fosu
 }
 
+// SetAdminSetCanceled sets the "admin_set_canceled" field.
+func (fosu *FeeOrderStateUpdate) SetAdminSetCanceled(b bool) *FeeOrderStateUpdate {
+	fosu.mutation.SetAdminSetCanceled(b)
+	return fosu
+}
+
+// SetNillableAdminSetCanceled sets the "admin_set_canceled" field if the given value is not nil.
+func (fosu *FeeOrderStateUpdate) SetNillableAdminSetCanceled(b *bool) *FeeOrderStateUpdate {
+	if b != nil {
+		fosu.SetAdminSetCanceled(*b)
+	}
+	return fosu
+}
+
+// ClearAdminSetCanceled clears the value of the "admin_set_canceled" field.
+func (fosu *FeeOrderStateUpdate) ClearAdminSetCanceled() *FeeOrderStateUpdate {
+	fosu.mutation.ClearAdminSetCanceled()
+	return fosu
+}
+
 // SetPaymentState sets the "payment_state" field.
 func (fosu *FeeOrderStateUpdate) SetPaymentState(s string) *FeeOrderStateUpdate {
 	fosu.mutation.SetPaymentState(s)
@@ -431,6 +451,19 @@ func (fosu *FeeOrderStateUpdate) sqlSave(ctx context.Context) (n int, err error)
 			Column: feeorderstate.FieldUserSetCanceled,
 		})
 	}
+	if value, ok := fosu.mutation.AdminSetCanceled(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Value:  value,
+			Column: feeorderstate.FieldAdminSetCanceled,
+		})
+	}
+	if fosu.mutation.AdminSetCanceledCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Column: feeorderstate.FieldAdminSetCanceled,
+		})
+	}
 	if value, ok := fosu.mutation.PaymentState(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
@@ -631,6 +664,26 @@ func (fosuo *FeeOrderStateUpdateOne) SetNillableUserSetCanceled(b *bool) *FeeOrd
 // ClearUserSetCanceled clears the value of the "user_set_canceled" field.
 func (fosuo *FeeOrderStateUpdateOne) ClearUserSetCanceled() *FeeOrderStateUpdateOne {
 	fosuo.mutation.ClearUserSetCanceled()
+	return fosuo
+}
+
+// SetAdminSetCanceled sets the "admin_set_canceled" field.
+func (fosuo *FeeOrderStateUpdateOne) SetAdminSetCanceled(b bool) *FeeOrderStateUpdateOne {
+	fosuo.mutation.SetAdminSetCanceled(b)
+	return fosuo
+}
+
+// SetNillableAdminSetCanceled sets the "admin_set_canceled" field if the given value is not nil.
+func (fosuo *FeeOrderStateUpdateOne) SetNillableAdminSetCanceled(b *bool) *FeeOrderStateUpdateOne {
+	if b != nil {
+		fosuo.SetAdminSetCanceled(*b)
+	}
+	return fosuo
+}
+
+// ClearAdminSetCanceled clears the value of the "admin_set_canceled" field.
+func (fosuo *FeeOrderStateUpdateOne) ClearAdminSetCanceled() *FeeOrderStateUpdateOne {
+	fosuo.mutation.ClearAdminSetCanceled()
 	return fosuo
 }
 
@@ -908,6 +961,19 @@ func (fosuo *FeeOrderStateUpdateOne) sqlSave(ctx context.Context) (_node *FeeOrd
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeBool,
 			Column: feeorderstate.FieldUserSetCanceled,
+		})
+	}
+	if value, ok := fosuo.mutation.AdminSetCanceled(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Value:  value,
+			Column: feeorderstate.FieldAdminSetCanceled,
+		})
+	}
+	if fosuo.mutation.AdminSetCanceledCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Column: feeorderstate.FieldAdminSetCanceled,
 		})
 	}
 	if value, ok := fosuo.mutation.PaymentState(); ok {
