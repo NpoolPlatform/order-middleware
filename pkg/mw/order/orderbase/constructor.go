@@ -57,7 +57,13 @@ func (h *Handler) ConstructCreateSQL() string {
 	_sql += fmt.Sprintf("%v%v as created_at", comma, now)
 	_sql += fmt.Sprintf("%v%v as updated_at", comma, now)
 	_sql += fmt.Sprintf("%v0 as deleted_at", comma)
-	_sql += ") as tmp"
+	_sql += ") as tmp "
+	if h.ParentOrderID != nil {
+		_sql += "where exists ("
+		_sql += "select 1 from order_bases "
+		_sql += fmt.Sprintf("where ent_id = '%v' ", *h.ParentOrderID)
+		_sql += "limit 1)"
+	}
 
 	return _sql
 }

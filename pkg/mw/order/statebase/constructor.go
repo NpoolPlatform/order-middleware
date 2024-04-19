@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
+	types "github.com/NpoolPlatform/message/npool/basetypes/order/v1"
 )
 
 type constructorHandler struct {
@@ -28,8 +29,6 @@ func (h *Handler) ConstructCreateSQL() string {
 	if h.StartAt != nil {
 		_sql += comma + "start_at"
 	}
-	_sql += comma + "last_benefit_at"
-	_sql += comma + "benefit_state"
 	_sql += comma + "created_at"
 	_sql += comma + "updated_at"
 	_sql += comma + "deleted_at"
@@ -42,13 +41,11 @@ func (h *Handler) ConstructCreateSQL() string {
 	}
 	_sql += fmt.Sprintf("%v'%v' as order_id", comma, *h.OrderID)
 	comma = ", "
-	_sql += fmt.Sprintf("%v'%v' as order_state", comma, h.OrderState.String())
+	_sql += fmt.Sprintf("%v'%v' as order_state", comma, types.OrderState_OrderStateCreated.String())
 	_sql += fmt.Sprintf("%v'%v' as start_mode", comma, h.StartMode.String())
 	if h.StartAt != nil {
 		_sql += fmt.Sprintf("%v%v as start_at", comma, *h.StartAt)
 	}
-	_sql += fmt.Sprintf("%v%v as last_benefit_at", comma, *h.LastBenefitAt)
-	_sql += fmt.Sprintf("%v'%v' as benefit_state", comma, h.BenefitState.String())
 	_sql += fmt.Sprintf("%v%v as created_at", comma, now)
 	_sql += fmt.Sprintf("%v%v as updated_at", comma, now)
 	_sql += fmt.Sprintf("%v0 as deleted_at", comma)

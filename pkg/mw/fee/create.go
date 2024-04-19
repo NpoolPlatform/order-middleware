@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 
+	types "github.com/NpoolPlatform/message/npool/basetypes/order/v1"
 	"github.com/NpoolPlatform/order-middleware/pkg/db"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent"
 	feeorderstate1 "github.com/NpoolPlatform/order-middleware/pkg/mw/fee/state"
@@ -13,6 +14,8 @@ import (
 	orderstatebase1 "github.com/NpoolPlatform/order-middleware/pkg/mw/order/statebase"
 	paymentbalance1 "github.com/NpoolPlatform/order-middleware/pkg/mw/payment/balance"
 	paymenttransfer1 "github.com/NpoolPlatform/order-middleware/pkg/mw/payment/transfer"
+
+	"github.com/google/uuid"
 )
 
 type createHandler struct {
@@ -40,6 +43,7 @@ func (h *createHandler) constructOrderBaseSQL(ctx context.Context) {
 func (h *createHandler) constructOrderStateBaseSQL(ctx context.Context) {
 	handler, _ := orderstatebase1.NewHandler(ctx)
 	handler.Req = *h.OrderStateBaseReq
+	handler.Req.StartMode = func() *types.OrderStartMode { e := types.OrderStartMode_OrderStartInstantly; return &e }()
 	h.sqlOrderStateBase = handler.ConstructCreateSQL()
 }
 
@@ -138,10 +142,70 @@ func (h *createHandler) createFeeOrder(ctx context.Context, tx *ent.Tx) error {
 	return h.execSQL(ctx, tx, h.sql)
 }
 
+func (h *createHandler) formalizeOrderID() {
+	if h.OrderID != nil {
+		return
+	}
+	h.OrderID = func() *uuid.UUID { uid := uuid.New(); return &uid }()
+	h.OrderBaseReq.EntID = h.OrderID
+	h.OrderStateBaseReq.OrderID = h.OrderID
+	h.FeeOrderStateReq.OrderID = h.OrderID
+	h.LedgerLockReq.OrderID = h.OrderID
+}
+
+func (h *createHandler) formalizeEntIDs() {
+	if h.OrderStateBaseReq.EntID == nil {
+		h.OrderStateBaseReq.EntID = func() *uuid.UUID { uid := uuid.New(); return &uid }()
+	}
+	if h.FeeOrderStateReq.EntID == nil {
+		h.FeeOrderStateReq.EntID = func() *uuid.UUID { uid := uuid.New(); return &uid }()
+	}
+	if h.LedgerLockReq.EntID == nil {
+		h.LedgerLockReq.EntID = func() *uuid.UUID { uid := uuid.New(); return &uid }()
+	}
+}
+
+func (h *createHandler) formalizeOrderCoupons() {
+	for _, req := range h.OrderCouponReqs {
+		req.OrderID = h.OrderID
+		if req.EntID == nil {
+			req.EntID = func() *uuid.UUID { uid := uuid.New(); return &uid }()
+		}
+	}
+}
+
+func (h *createHandler) formalizePaymentBalances() {
+	for _, req := range h.PaymentBalanceReqs {
+		req.OrderID = h.OrderID
+		if req.EntID == nil {
+			req.EntID = func() *uuid.UUID { uid := uuid.New(); return &uid }()
+		}
+	}
+}
+
+func (h *createHandler) formalizePaymentTransfers() {
+	for _, req := range h.PaymentTransferReqs {
+		req.OrderID = h.OrderID
+		if req.EntID == nil {
+			req.EntID = func() *uuid.UUID { uid := uuid.New(); return &uid }()
+		}
+	}
+}
+
 func (h *Handler) CreateFeeOrder(ctx context.Context) error {
 	handler := &createHandler{
 		Handler: h,
 	}
+
+	if h.EntID == nil {
+		h.EntID = func() *uuid.UUID { uid := uuid.New(); return &uid }()
+	}
+
+	handler.formalizeOrderID()
+	handler.formalizeEntIDs()
+	handler.formalizeOrderCoupons()
+	handler.formalizePaymentBalances()
+	handler.formalizePaymentTransfers()
 
 	handler.constructOrderBaseSQL(ctx)
 	handler.constructOrderStateBaseSQL(ctx)

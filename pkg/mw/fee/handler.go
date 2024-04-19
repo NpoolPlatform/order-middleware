@@ -43,9 +43,12 @@ type Handler struct {
 
 func NewHandler(ctx context.Context, options ...func(context.Context, *Handler) error) (*Handler, error) {
 	handler := &Handler{
-		OrderBaseReq:        &orderbasecrud.Req{},
-		OrderStateBaseReq:   &orderstatebasecrud.Req{},
-		FeeOrderStateReq:    &feeorderstatecrud.Req{},
+		OrderBaseReq:      &orderbasecrud.Req{},
+		OrderStateBaseReq: &orderstatebasecrud.Req{},
+		FeeOrderStateReq:  &feeorderstatecrud.Req{},
+		LedgerLockReq: &orderlockcrud.Req{
+			LockType: func() *types.OrderLockType { e := types.OrderLockType_LockBalance; return &e }(),
+		},
 		FeeOrderConds:       &feeordercrud.Conds{},
 		OrderBaseConds:      &orderbasecrud.Conds{},
 		OrderStateBaseConds: &orderstatebasecrud.Conds{},
@@ -190,6 +193,9 @@ func WithOrderID(id *string, must bool) func(context.Context, *Handler) error {
 		}
 		h.OrderID = &_id
 		h.OrderBaseReq.EntID = &_id
+		h.OrderStateBaseReq.OrderID = &_id
+		h.FeeOrderStateReq.OrderID = &_id
+		h.LedgerLockReq.OrderID = &_id
 		return nil
 	}
 }

@@ -25,11 +25,12 @@ func client() (*ent.Client, error) {
 	return ent.NewClient(ent.Driver(drv)), nil
 }
 
-func Init() error {
+func Init(hooks ...ent.Hook) error {
 	cli, err := client()
 	if err != nil {
 		return err
 	}
+	cli.Use(hooks...)
 	return cli.Schema.Create(context.Background())
 }
 
@@ -37,17 +38,7 @@ func Client() (*ent.Client, error) {
 	return client()
 }
 
-func WithTx(ctx context.Context, fn func(ctx context.Context, tx *ent.Tx) error) error {
-	cli, err := Client()
-	if err != nil {
-		return err
-	}
-
-	tx, err := cli.Tx(ctx)
-	if err != nil {
-		return fmt.Errorf("fail get client transaction: %v", err)
-	}
-
+func txRun(ctx context.Context, tx *ent.Tx, fn func(ctx context.Context, tx *ent.Tx) error) error {
 	succ := false
 	defer func() {
 		if !succ {
@@ -69,6 +60,30 @@ func WithTx(ctx context.Context, fn func(ctx context.Context, tx *ent.Tx) error)
 
 	succ = true
 	return nil
+}
+
+func WithTx(ctx context.Context, fn func(ctx context.Context, tx *ent.Tx) error) error {
+	cli, err := Client()
+	if err != nil {
+		return err
+	}
+	tx, err := cli.Tx(ctx)
+	if err != nil {
+		return fmt.Errorf("fail get client transaction: %v", err)
+	}
+	return txRun(ctx, tx, fn)
+}
+
+func WithDebugTx(ctx context.Context, fn func(ctx context.Context, tx *ent.Tx) error) error {
+	cli, err := Client()
+	if err != nil {
+		return err
+	}
+	tx, err := cli.Debug().Tx(ctx)
+	if err != nil {
+		return fmt.Errorf("fail get client transaction: %v", err)
+	}
+	return txRun(ctx, tx, fn)
 }
 
 func WithClient(ctx context.Context, fn func(ctx context.Context, cli *ent.Client) error) error {
