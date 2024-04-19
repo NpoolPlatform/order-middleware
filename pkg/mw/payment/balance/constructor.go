@@ -23,7 +23,7 @@ func (h *Handler) ConstructCreateSQL() string {
 		_sql += "ent_id"
 		comma = ", "
 	}
-	_sql += comma + "order_id"
+	_sql += comma + "payment_id"
 	comma = ", "
 	_sql += comma + "coin_type_id"
 	_sql += comma + "amount"
@@ -42,7 +42,7 @@ func (h *Handler) ConstructCreateSQL() string {
 		_sql += fmt.Sprintf("'%v' as ent_id ", *h.EntID)
 		comma = ", "
 	}
-	_sql += fmt.Sprintf("%v'%v' as order_id", comma, *h.OrderID)
+	_sql += fmt.Sprintf("%v'%v' as order_id", comma, *h.PaymentID)
 	comma = ", "
 	_sql += fmt.Sprintf("%v'%v' as coin_type_id", comma, *h.CoinTypeID)
 	_sql += fmt.Sprintf("%v'%v' as amount", comma, *h.Amount)
@@ -57,11 +57,11 @@ func (h *Handler) ConstructCreateSQL() string {
 	_sql += ") as tmp "
 	_sql += "where not exists ("
 	_sql += "select 1 from payment_balances "
-	_sql += fmt.Sprintf("where order_id = '%v' ", *h.OrderID)
+	_sql += fmt.Sprintf("where payment_id = '%v' ", *h.PaymentID)
 	_sql += fmt.Sprintf("and coin_type_id = '%v' ", h.CoinTypeID)
 	_sql += " limit 1) and exists ("
-	_sql += "select 1 from order_bases "
-	_sql += fmt.Sprintf("where ent_id = '%v' ", *h.OrderID)
+	_sql += "select 1 from payment_bases "
+	_sql += fmt.Sprintf("where ent_id = '%v' ", *h.PaymentID)
 	_sql += "limit 1)"
 
 	return _sql

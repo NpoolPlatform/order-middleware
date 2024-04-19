@@ -1,4 +1,4 @@
-package orderstate
+package orderstatebase
 
 import (
 	"fmt"
@@ -6,7 +6,7 @@ import (
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
 	types "github.com/NpoolPlatform/message/npool/basetypes/order/v1"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent"
-	entorderstate "github.com/NpoolPlatform/order-middleware/pkg/db/ent/orderstate"
+	entorderstatebase "github.com/NpoolPlatform/order-middleware/pkg/db/ent/orderstatebase"
 
 	"github.com/google/uuid"
 )
@@ -19,11 +19,12 @@ type Req struct {
 	StartAt       *uint32
 	LastBenefitAt *uint32
 	BenefitState  *types.BenefitState
+	PaymentType   *types.PaymentType
 	DeletedAt     *uint32
 }
 
 //nolint:gocyclo
-func CreateSet(c *ent.OrderStateCreate, req *Req) *ent.OrderStateCreate {
+func CreateSet(c *ent.OrderStateBaseCreate, req *Req) *ent.OrderStateBaseCreate {
 	if req.EntID != nil {
 		c.SetEntID(*req.EntID)
 	}
@@ -45,11 +46,14 @@ func CreateSet(c *ent.OrderStateCreate, req *Req) *ent.OrderStateCreate {
 	if req.BenefitState != nil {
 		c.SetBenefitState(req.BenefitState.String())
 	}
+	if req.PaymentType != nil {
+		c.SetPaymentType(req.PaymentType.String())
+	}
 	return c
 }
 
 //nolint:gocyclo
-func UpdateSet(u *ent.OrderStateUpdateOne, req *Req) *ent.OrderStateUpdateOne {
+func UpdateSet(u *ent.OrderStateBaseUpdateOne, req *Req) *ent.OrderStateBaseUpdateOne {
 	if req.OrderState != nil {
 		u.SetOrderState(req.OrderState.String())
 	}
@@ -65,6 +69,12 @@ func UpdateSet(u *ent.OrderStateUpdateOne, req *Req) *ent.OrderStateUpdateOne {
 	if req.BenefitState != nil {
 		u.SetBenefitState(req.BenefitState.String())
 	}
+	if req.PaymentType != nil {
+		u.SetPaymentType(req.PaymentType.String())
+	}
+	if req.DeletedAt != nil {
+		u.SetDeletedAt(*req.DeletedAt)
+	}
 	return u
 }
 
@@ -78,11 +88,13 @@ type Conds struct {
 	StartMode     *cruder.Cond
 	LastBenefitAt *cruder.Cond
 	BenefitState  *cruder.Cond
+	PaymentType   *cruder.Cond
+	PaymentTypes  *cruder.Cond
 }
 
 //nolint
-func SetQueryConds(q *ent.OrderStateQuery, conds *Conds) (*ent.OrderStateQuery, error) {
-	q.Where(entorderstate.DeletedAt(0))
+func SetQueryConds(q *ent.OrderStateBaseQuery, conds *Conds) (*ent.OrderStateBaseQuery, error) {
+	q.Where(entorderstatebase.DeletedAt(0))
 	if conds == nil {
 		return q, nil
 	}
@@ -93,7 +105,7 @@ func SetQueryConds(q *ent.OrderStateQuery, conds *Conds) (*ent.OrderStateQuery, 
 		}
 		switch conds.ID.Op {
 		case cruder.EQ:
-			q.Where(entorderstate.ID(id))
+			q.Where(entorderstatebase.ID(id))
 		default:
 			return nil, fmt.Errorf("invalid order field")
 		}
@@ -106,7 +118,7 @@ func SetQueryConds(q *ent.OrderStateQuery, conds *Conds) (*ent.OrderStateQuery, 
 		if len(ids) > 0 {
 			switch conds.IDs.Op {
 			case cruder.IN:
-				q.Where(entorderstate.IDIn(ids...))
+				q.Where(entorderstatebase.IDIn(ids...))
 			default:
 				return nil, fmt.Errorf("invalid order field")
 			}
@@ -119,9 +131,9 @@ func SetQueryConds(q *ent.OrderStateQuery, conds *Conds) (*ent.OrderStateQuery, 
 		}
 		switch conds.EntID.Op {
 		case cruder.EQ:
-			q.Where(entorderstate.EntID(id))
+			q.Where(entorderstatebase.EntID(id))
 		case cruder.NEQ:
-			q.Where(entorderstate.EntIDNEQ(id))
+			q.Where(entorderstatebase.EntIDNEQ(id))
 		default:
 			return nil, fmt.Errorf("invalid order field")
 		}
@@ -134,7 +146,7 @@ func SetQueryConds(q *ent.OrderStateQuery, conds *Conds) (*ent.OrderStateQuery, 
 		if len(ids) > 0 {
 			switch conds.EntIDs.Op {
 			case cruder.IN:
-				q.Where(entorderstate.EntIDIn(ids...))
+				q.Where(entorderstatebase.EntIDIn(ids...))
 			default:
 				return nil, fmt.Errorf("invalid order field")
 			}
@@ -147,7 +159,7 @@ func SetQueryConds(q *ent.OrderStateQuery, conds *Conds) (*ent.OrderStateQuery, 
 		}
 		switch conds.OrderID.Op {
 		case cruder.EQ:
-			q.Where(entorderstate.OrderID(id))
+			q.Where(entorderstatebase.OrderID(id))
 		default:
 			return nil, fmt.Errorf("invalid order field")
 		}
@@ -159,7 +171,7 @@ func SetQueryConds(q *ent.OrderStateQuery, conds *Conds) (*ent.OrderStateQuery, 
 		}
 		switch conds.OrderState.Op {
 		case cruder.EQ:
-			q.Where(entorderstate.OrderState(state.String()))
+			q.Where(entorderstatebase.OrderState(state.String()))
 		default:
 			return nil, fmt.Errorf("invalid order field")
 		}
@@ -171,7 +183,7 @@ func SetQueryConds(q *ent.OrderStateQuery, conds *Conds) (*ent.OrderStateQuery, 
 		}
 		switch conds.StartMode.Op {
 		case cruder.EQ:
-			q.Where(entorderstate.StartMode(startmode.String()))
+			q.Where(entorderstatebase.StartMode(startmode.String()))
 		default:
 			return nil, fmt.Errorf("invalid order field")
 		}
@@ -183,7 +195,37 @@ func SetQueryConds(q *ent.OrderStateQuery, conds *Conds) (*ent.OrderStateQuery, 
 		}
 		switch conds.BenefitState.Op {
 		case cruder.EQ:
-			q.Where(entorderstate.BenefitState(state.String()))
+			q.Where(entorderstatebase.BenefitState(state.String()))
+		default:
+			return nil, fmt.Errorf("invalid order field")
+		}
+	}
+	if conds.PaymentType != nil {
+		paymenttype, ok := conds.PaymentType.Val.(types.PaymentType)
+		if !ok {
+			return nil, fmt.Errorf("invalid paymenttype")
+		}
+		switch conds.PaymentType.Op {
+		case cruder.EQ:
+			q.Where(entorderstatebase.PaymentType(paymenttype.String()))
+		case cruder.NEQ:
+			q.Where(entorderstatebase.PaymentTypeNEQ(paymenttype.String()))
+		default:
+			return nil, fmt.Errorf("invalid order field")
+		}
+	}
+	if conds.PaymentTypes != nil {
+		paymenttypes, ok := conds.PaymentTypes.Val.([]types.PaymentType)
+		if !ok {
+			return nil, fmt.Errorf("invalid paymenttypes")
+		}
+		_types := []string{}
+		for _, _type := range paymenttypes {
+			_types = append(_types, _type.String())
+		}
+		switch conds.PaymentTypes.Op {
+		case cruder.IN:
+			q.Where(entorderstatebase.PaymentTypeIn(_types...))
 		default:
 			return nil, fmt.Errorf("invalid order field")
 		}

@@ -12,6 +12,7 @@ import (
 	orderlock1 "github.com/NpoolPlatform/order-middleware/pkg/mw/order/lock"
 	orderbase1 "github.com/NpoolPlatform/order-middleware/pkg/mw/order/orderbase"
 	orderstatebase1 "github.com/NpoolPlatform/order-middleware/pkg/mw/order/statebase"
+	paymentbase1 "github.com/NpoolPlatform/order-middleware/pkg/mw/payment"
 	paymentbalance1 "github.com/NpoolPlatform/order-middleware/pkg/mw/payment/balance"
 	paymenttransfer1 "github.com/NpoolPlatform/order-middleware/pkg/mw/payment/transfer"
 
@@ -26,6 +27,7 @@ type createHandler struct {
 	sqlFeeOrderState    string
 	sqlLedgerLock       string
 	sqlOrderCoupons     []string
+	sqlPaymentBase      string
 	sqlPaymentBalances  []string
 	sqlPaymentTransfers []string
 }
@@ -65,6 +67,12 @@ func (h *createHandler) constructOrderCouponSQLs(ctx context.Context) {
 		handler.Req = *req
 		h.sqlOrderCoupons = append(h.sqlOrderCoupons, handler.ConstructCreateSQL())
 	}
+}
+
+func (h *createHandler) constructPaymentBaseSQL(ctx context.Context) {
+	handler, _ := paymentbase1.NewHandler(ctx)
+	handler.Req = *h.PaymentBaseReq
+	h.sqlPaymentBase = handler.ConstructCreateSQL()
 }
 
 func (h *createHandler) constructPaymentBalanceSQLs(ctx context.Context) {
@@ -120,6 +128,10 @@ func (h *createHandler) createOrderCoupons(ctx context.Context, tx *ent.Tx) erro
 	return nil
 }
 
+func (h *createHandler) createPaymentBase(ctx context.Context, tx *ent.Tx) error {
+	return h.execSQL(ctx, tx, h.sqlPaymentBase)
+}
+
 func (h *createHandler) createPaymentBalances(ctx context.Context, tx *ent.Tx) error {
 	for _, sql := range h.sqlPaymentBalances {
 		if err := h.execSQL(ctx, tx, sql); err != nil {
@@ -151,6 +163,7 @@ func (h *createHandler) formalizeOrderID() {
 	h.OrderStateBaseReq.OrderID = h.OrderID
 	h.FeeOrderStateReq.OrderID = h.OrderID
 	h.LedgerLockReq.OrderID = h.OrderID
+	h.PaymentBaseReq.OrderID = h.OrderID
 }
 
 func (h *createHandler) formalizeEntIDs() {
@@ -162,6 +175,9 @@ func (h *createHandler) formalizeEntIDs() {
 	}
 	if h.LedgerLockReq.EntID == nil {
 		h.LedgerLockReq.EntID = func() *uuid.UUID { uid := uuid.New(); return &uid }()
+	}
+	if h.PaymentBaseReq.EntID == nil {
+		h.PaymentBaseReq.EntID = func() *uuid.UUID { uid := uuid.New(); return &uid }()
 	}
 }
 
@@ -176,7 +192,7 @@ func (h *createHandler) formalizeOrderCoupons() {
 
 func (h *createHandler) formalizePaymentBalances() {
 	for _, req := range h.PaymentBalanceReqs {
-		req.OrderID = h.OrderID
+		req.PaymentID = h.PaymentID
 		if req.EntID == nil {
 			req.EntID = func() *uuid.UUID { uid := uuid.New(); return &uid }()
 		}
@@ -185,11 +201,20 @@ func (h *createHandler) formalizePaymentBalances() {
 
 func (h *createHandler) formalizePaymentTransfers() {
 	for _, req := range h.PaymentTransferReqs {
-		req.OrderID = h.OrderID
+		req.PaymentID = h.PaymentID
 		if req.EntID == nil {
 			req.EntID = func() *uuid.UUID { uid := uuid.New(); return &uid }()
 		}
 	}
+}
+
+func (h *createHandler) formalizePaymentID() {
+	if h.PaymentID != nil {
+		return
+	}
+	h.PaymentID = func() *uuid.UUID { uid := uuid.New(); return &uid }()
+	handler.formalizePaymentBalances()
+	handler.formalizePaymentTransfers()
 }
 
 func (h *Handler) CreateFeeOrder(ctx context.Context) error {
@@ -204,14 +229,14 @@ func (h *Handler) CreateFeeOrder(ctx context.Context) error {
 	handler.formalizeOrderID()
 	handler.formalizeEntIDs()
 	handler.formalizeOrderCoupons()
-	handler.formalizePaymentBalances()
-	handler.formalizePaymentTransfers()
+	handler.formalizePaymentID()
 
 	handler.constructOrderBaseSQL(ctx)
 	handler.constructOrderStateBaseSQL(ctx)
 	handler.constructFeeOrderStateSQL(ctx)
 	handler.constructLedgerLockSQL(ctx)
 	handler.constructOrderCouponSQLs(ctx)
+	handler.constructPaymentBaseSQL(ctx)
 	handler.constructPaymentBalanceSQLs(ctx)
 	handler.constructPaymentTransferSQLs(ctx)
 	handler.constructSQL()
@@ -230,6 +255,9 @@ func (h *Handler) CreateFeeOrder(ctx context.Context) error {
 			return err
 		}
 		if err := handler.createOrderCoupons(_ctx, tx); err != nil {
+			return err
+		}
+		if err := handler.createPaymentBase(_ctx, tx); err != nil {
 			return err
 		}
 		if err := handler.createPaymentBalances(_ctx, tx); err != nil {

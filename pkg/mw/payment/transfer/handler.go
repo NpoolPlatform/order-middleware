@@ -55,11 +55,11 @@ func WithEntID(id *string, must bool) func(context.Context, *Handler) error {
 	}
 }
 
-func WithOrderID(id *string, must bool) func(context.Context, *Handler) error {
+func WithPaymentID(id *string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if id == nil {
 			if must {
-				return fmt.Errorf("invalid orderid")
+				return fmt.Errorf("invalid paymentid")
 			}
 			return nil
 		}
@@ -67,7 +67,7 @@ func WithOrderID(id *string, must bool) func(context.Context, *Handler) error {
 		if err != nil {
 			return err
 		}
-		h.OrderID = &_id
+		h.PaymentID = &_id
 		return nil
 	}
 }

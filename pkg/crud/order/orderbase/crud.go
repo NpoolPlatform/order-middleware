@@ -21,7 +21,6 @@ type Req struct {
 	GoodType      *goodtypes.GoodType
 	ParentOrderID *uuid.UUID
 	OrderType     *types.OrderType
-	PaymentType   *types.PaymentType
 	CreateMethod  *types.OrderCreateMethod
 	Simulate      *bool
 	DeletedAt     *uint32
@@ -53,9 +52,6 @@ func CreateSet(c *ent.OrderBaseCreate, req *Req) *ent.OrderBaseCreate {
 	if req.OrderType != nil {
 		c.SetOrderType(req.OrderType.String())
 	}
-	if req.PaymentType != nil {
-		c.SetPaymentType(req.PaymentType.String())
-	}
 	if req.Simulate != nil {
 		c.SetSimulate(*req.Simulate)
 	}
@@ -67,9 +63,6 @@ func CreateSet(c *ent.OrderBaseCreate, req *Req) *ent.OrderBaseCreate {
 }
 
 func UpdateSet(u *ent.OrderBaseUpdateOne, req *Req) *ent.OrderBaseUpdateOne {
-	if req.PaymentType != nil {
-		u.SetPaymentType(req.PaymentType.String())
-	}
 	if req.DeletedAt != nil {
 		u.SetDeletedAt(*req.DeletedAt)
 	}
@@ -90,8 +83,6 @@ type Conds struct {
 	ParentOrderID  *cruder.Cond
 	ParentOrderIDs *cruder.Cond
 	OrderType      *cruder.Cond
-	PaymentType    *cruder.Cond
-	PaymentTypes   *cruder.Cond
 	Simulate       *cruder.Cond
 	CreatedAt      *cruder.Cond
 	UpdatedAt      *cruder.Cond
@@ -267,36 +258,6 @@ func SetQueryConds(q *ent.OrderBaseQuery, conds *Conds) (*ent.OrderBaseQuery, er
 		switch conds.OrderType.Op {
 		case cruder.EQ:
 			q.Where(entorderbase.OrderType(ordertype.String()))
-		default:
-			return nil, fmt.Errorf("invalid order field")
-		}
-	}
-	if conds.PaymentType != nil {
-		paymenttype, ok := conds.PaymentType.Val.(types.PaymentType)
-		if !ok {
-			return nil, fmt.Errorf("invalid paymenttype")
-		}
-		switch conds.PaymentType.Op {
-		case cruder.EQ:
-			q.Where(entorderbase.PaymentType(paymenttype.String()))
-		case cruder.NEQ:
-			q.Where(entorderbase.PaymentTypeNEQ(paymenttype.String()))
-		default:
-			return nil, fmt.Errorf("invalid order field")
-		}
-	}
-	if conds.PaymentTypes != nil {
-		paymenttypes, ok := conds.PaymentTypes.Val.([]types.PaymentType)
-		if !ok {
-			return nil, fmt.Errorf("invalid paymenttypes")
-		}
-		_types := []string{}
-		for _, _type := range paymenttypes {
-			_types = append(_types, _type.String())
-		}
-		switch conds.PaymentTypes.Op {
-		case cruder.IN:
-			q.Where(entorderbase.PaymentTypeIn(_types...))
 		default:
 			return nil, fmt.Errorf("invalid order field")
 		}

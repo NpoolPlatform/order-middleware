@@ -15,6 +15,7 @@ import (
 	orderlockcrud "github.com/NpoolPlatform/order-middleware/pkg/crud/order/lock"
 	orderbasecrud "github.com/NpoolPlatform/order-middleware/pkg/crud/order/orderbase"
 	orderstatebasecrud "github.com/NpoolPlatform/order-middleware/pkg/crud/order/statebase"
+	paymentbasecrud "github.com/NpoolPlatform/order-middleware/pkg/crud/payment"
 	paymentbalancecrud "github.com/NpoolPlatform/order-middleware/pkg/crud/payment/balance"
 	paymenttransfercrud "github.com/NpoolPlatform/order-middleware/pkg/crud/payment/transfer"
 
@@ -29,6 +30,7 @@ type Handler struct {
 	OrderBaseReq        *orderbasecrud.Req
 	OrderStateBaseReq   *orderstatebasecrud.Req
 	FeeOrderStateReq    *feeorderstatecrud.Req
+	PaymentBaseReq      *paymentbasecrud.Req
 	PaymentBalanceReqs  []*paymentbalancecrud.Req
 	PaymentTransferReqs []*paymenttransfercrud.Req
 	LedgerLockReq       *orderlockcrud.Req
@@ -49,6 +51,7 @@ func NewHandler(ctx context.Context, options ...func(context.Context, *Handler) 
 		LedgerLockReq: &orderlockcrud.Req{
 			LockType: func() *types.OrderLockType { e := types.OrderLockType_LockBalance; return &e }(),
 		},
+		PaymentBaseReq:      &paymentbasecrud.Req{},
 		FeeOrderConds:       &feeordercrud.Conds{},
 		OrderBaseConds:      &orderbasecrud.Conds{},
 		OrderStateBaseConds: &orderstatebasecrud.Conds{},
@@ -196,6 +199,7 @@ func WithOrderID(id *string, must bool) func(context.Context, *Handler) error {
 		h.OrderStateBaseReq.OrderID = &_id
 		h.FeeOrderStateReq.OrderID = &_id
 		h.LedgerLockReq.OrderID = &_id
+		h.PaymentBaseReq.OrderID = &_id
 		return nil
 	}
 }
@@ -510,6 +514,23 @@ func WithLedgerLockID(id *string, must bool) func(context.Context, *Handler) err
 			return err
 		}
 		h.LedgerLockReq.EntID = &_id
+		return nil
+	}
+}
+
+func WithPaymentID(id *string, must bool) func(context.Context, *Handler) error {
+	return func(ctx context.Context, h *Handler) error {
+		if id == nil {
+			if must {
+				return fmt.Errorf("invalid paymentid")
+			}
+			return nil
+		}
+		_id, err := uuid.Parse(*id)
+		if err != nil {
+			return err
+		}
+		h.PaymentBaseReq.EntID = &_id
 		return nil
 	}
 }
