@@ -12,7 +12,7 @@ import (
 
 type Req struct {
 	EntID                *uuid.UUID
-	OrderID              *uuid.UUID
+	PaymentID            *uuid.UUID
 	CoinTypeID           *uuid.UUID
 	Amount               *decimal.Decimal
 	CoinUSDCurrency      *decimal.Decimal
@@ -25,8 +25,8 @@ func CreateSet(c *ent.PaymentBalanceCreate, req *Req) *ent.PaymentBalanceCreate 
 	if req.EntID != nil {
 		c.SetEntID(*req.EntID)
 	}
-	if req.OrderID != nil {
-		c.SetOrderID(*req.OrderID)
+	if req.PaymentID != nil {
+		c.SetPaymentID(*req.PaymentID)
 	}
 	if req.CoinTypeID != nil {
 		c.SetCoinTypeID(*req.CoinTypeID)
@@ -58,7 +58,7 @@ type Conds struct {
 	IDs        *cruder.Cond
 	EntID      *cruder.Cond
 	EntIDs     *cruder.Cond
-	OrderID    *cruder.Cond
+	PaymentID  *cruder.Cond
 	CoinTypeID *cruder.Cond
 }
 
@@ -122,14 +122,14 @@ func SetQueryConds(q *ent.PaymentBalanceQuery, conds *Conds) (*ent.PaymentBalanc
 			}
 		}
 	}
-	if conds.OrderID != nil {
-		id, ok := conds.OrderID.Val.(uuid.UUID)
+	if conds.PaymentID != nil {
+		id, ok := conds.PaymentID.Val.(uuid.UUID)
 		if !ok {
 			return nil, fmt.Errorf("invalid orderid")
 		}
-		switch conds.OrderID.Op {
+		switch conds.PaymentID.Op {
 		case cruder.EQ:
-			q.Where(entpaymentbalance.OrderID(id))
+			q.Where(entpaymentbalance.PaymentID(id))
 		default:
 			return nil, fmt.Errorf("invalid payment field")
 		}
