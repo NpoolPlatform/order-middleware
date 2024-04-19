@@ -2,6 +2,7 @@ package feeorder
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/NpoolPlatform/order-middleware/pkg/db"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent"
@@ -78,6 +79,65 @@ func (h *createHandler) constructPaymentTransferSQLs(ctx context.Context) {
 	}
 }
 
+func (h *createHandler) execSQL(ctx context.Context, tx *ent.Tx, sql string) error {
+	rc, err := tx.ExecContext(ctx, sql)
+	if err != nil {
+		return err
+	}
+	n, err := rc.RowsAffected()
+	if err != nil || n != 1 {
+		return fmt.Errorf("fail create powerrental: %v", err)
+	}
+	return nil
+}
+
+func (h *createHandler) createOrderBase(ctx context.Context, tx *ent.Tx) error {
+	return h.execSQL(ctx, tx, h.sqlOrderBase)
+}
+
+func (h *createHandler) createOrderStateBase(ctx context.Context, tx *ent.Tx) error {
+	return h.execSQL(ctx, tx, h.sqlOrderStateBase)
+}
+
+func (h *createHandler) createFeeOrderState(ctx context.Context, tx *ent.Tx) error {
+	return h.execSQL(ctx, tx, h.sqlFeeOrderState)
+}
+
+func (h *createHandler) createLedgerLock(ctx context.Context, tx *ent.Tx) error {
+	return h.execSQL(ctx, tx, h.sqlLedgerLock)
+}
+
+func (h *createHandler) createOrderCoupons(ctx context.Context, tx *ent.Tx) error {
+	for _, sql := range h.sqlOrderCoupons {
+		if err := h.execSQL(ctx, tx, sql); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func (h *createHandler) createPaymentBalances(ctx context.Context, tx *ent.Tx) error {
+	for _, sql := range h.sqlPaymentBalances {
+		if err := h.execSQL(ctx, tx, sql); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func (h *createHandler) createPaymentTransfers(ctx context.Context, tx *ent.Tx) error {
+	for _, sql := range h.sqlPaymentTransfers {
+		if err := h.execSQL(ctx, tx, sql); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func (h *createHandler) createFeeOrder(ctx context.Context, tx *ent.Tx) error {
+	return h.execSQL(ctx, tx, h.sql)
+}
+
 func (h *Handler) CreateFeeOrder(ctx context.Context) error {
 	handler := &createHandler{
 		Handler: h,
@@ -93,6 +153,27 @@ func (h *Handler) CreateFeeOrder(ctx context.Context) error {
 	handler.constructSQL()
 
 	return db.WithTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {
-		return nil
+		if err := handler.createOrderBase(_ctx, tx); err != nil {
+			return err
+		}
+		if err := handler.createOrderStateBase(_ctx, tx); err != nil {
+			return err
+		}
+		if err := handler.createFeeOrderState(_ctx, tx); err != nil {
+			return err
+		}
+		if err := handler.createLedgerLock(_ctx, tx); err != nil {
+			return err
+		}
+		if err := handler.createOrderCoupons(_ctx, tx); err != nil {
+			return err
+		}
+		if err := handler.createPaymentBalances(_ctx, tx); err != nil {
+			return err
+		}
+		if err := handler.createPaymentTransfers(_ctx, tx); err != nil {
+			return err
+		}
+		return handler.createFeeOrder(_ctx, tx)
 	})
 }
