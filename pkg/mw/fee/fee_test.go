@@ -145,27 +145,53 @@ func createFeeOrder(t *testing.T) {
 	}
 }
 
-/*
 func updateFeeOrder(t *testing.T) {
-	ret.FeeOrderSeconds = 180
 	handler, err := NewHandler(
 		context.Background(),
 		WithID(&ret.ID, true),
 		WithEntID(&ret.EntID, false),
-		WithFeeOrderSeconds(&ret.FeeOrderSeconds, true),
+		WithOrderID(&ret.OrderID, true),
+		WithGoodValueUSD(&ret.GoodValueUSD, true),
+		WithPaymentAmountUSD(&ret.PaymentAmountUSD, true),
+		WithDiscountAmountUSD(&ret.DiscountAmountUSD, true),
+		WithPromotionID(&ret.PromotionID, true),
+		WithDurationSeconds(&ret.DurationSeconds, true),
+		WithLedgerLockID(&ret.LedgerLockID, true),
+		WithPaymentID(&ret.PaymentID, true),
+		WithCouponIDs(func() (_couponIDs []string) {
+			for _, coupon := range ret.Coupons {
+				_couponIDs = append(_couponIDs, coupon.CouponID)
+			}
+			return
+		}(), true),
+		WithPaymentBalances(func() (_reqs []*paymentmwpb.PaymentBalanceReq) {
+			for _, req := range ret.PaymentBalances {
+				_reqs = append(_reqs, &paymentmwpb.PaymentBalanceReq{
+					CoinTypeID:           &req.CoinTypeID,
+					Amount:               &req.Amount,
+					LocalCoinUSDCurrency: &req.LocalCoinUSDCurrency,
+					LiveCoinUSDCurrency:  &req.LiveCoinUSDCurrency,
+				})
+			}
+			return
+		}(), true),
+		WithPaymentTransfers([]*paymentmwpb.PaymentTransferReq{}, true),
 	)
 	if assert.Nil(t, err) {
 		err = handler.UpdateFeeOrder(context.Background())
 		if assert.Nil(t, err) {
-			info, err := handler.GetFeeOrder(context.Background())
-			if assert.Nil(t, err) {
-				ret.UpdatedAt = info.UpdatedAt
-				assert.Equal(t, &ret, info)
-			}
+			/*
+				info, err := handler.GetFeeOrder(context.Background())
+				if assert.Nil(t, err) {
+					ret.UpdatedAt = info.UpdatedAt
+					assert.Equal(t, &ret, info)
+				}
+			*/
 		}
 	}
 }
 
+/*
 func getFeeOrder(t *testing.T) {
 	handler, err := NewHandler(
 		context.Background(),
@@ -224,7 +250,7 @@ func TestFeeOrder(t *testing.T) {
 	defer teardown(t)
 
 	t.Run("createFeeOrder", createFeeOrder)
-	// t.Run("updateFeeOrder", updateFeeOrder)
+	t.Run("updateFeeOrder", updateFeeOrder)
 	// t.Run("getFeeOrder", getFeeOrder)
 	// t.Run("getFeeOrders", getFeeOrders)
 	// t.Run("deleteFeeOrder", deleteFeeOrder)

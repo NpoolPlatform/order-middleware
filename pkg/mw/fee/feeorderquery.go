@@ -79,14 +79,19 @@ func (h *feeOrderQueryHandler) getOrderStateBase(ctx context.Context, cli *ent.C
 }
 
 func (h *feeOrderQueryHandler) getPaymentBase(ctx context.Context, cli *ent.Client) (err error) {
-	h._ent.entPaymentBase, err = cli.
+	if h._ent.entPaymentBase, err = cli.
 		PaymentBase.
 		Query().
 		Where(
 			entpaymentbase.OrderID(h._ent.entFeeOrder.OrderID),
+			entpaymentbase.EntID(h._ent.entFeeOrderState.PaymentID),
 			entpaymentbase.DeletedAt(0),
 		).
-		Only(ctx)
+		Only(ctx); err != nil {
+		if ent.IsNotFound(err) {
+			return nil
+		}
+	}
 	return err
 }
 
@@ -111,7 +116,7 @@ func (h *feeOrderQueryHandler) getPaymentBalances(ctx context.Context, cli *ent.
 		PaymentBalance.
 		Query().
 		Where(
-			entpaymentbalance.PaymentID(h._ent.entPaymentBase.EntID),
+			entpaymentbalance.PaymentID(h._ent.entFeeOrderState.PaymentID),
 			entpaymentbalance.DeletedAt(0),
 		).
 		All(ctx)
@@ -123,7 +128,7 @@ func (h *feeOrderQueryHandler) getPaymentTransfers(ctx context.Context, cli *ent
 		PaymentTransfer.
 		Query().
 		Where(
-			entpaymenttransfer.PaymentID(h._ent.entPaymentBase.EntID),
+			entpaymenttransfer.PaymentID(h._ent.entFeeOrderState.PaymentID),
 			entpaymenttransfer.DeletedAt(0),
 		).
 		All(ctx)
