@@ -23,6 +23,7 @@ import (
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/outofgas"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/payment"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/paymentbalance"
+	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/paymentbase"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/paymentcontract"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/paymenttransfer"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/powerrental"
@@ -63,6 +64,8 @@ type Client struct {
 	Payment *PaymentClient
 	// PaymentBalance is the client for interacting with the PaymentBalance builders.
 	PaymentBalance *PaymentBalanceClient
+	// PaymentBase is the client for interacting with the PaymentBase builders.
+	PaymentBase *PaymentBaseClient
 	// PaymentContract is the client for interacting with the PaymentContract builders.
 	PaymentContract *PaymentContractClient
 	// PaymentTransfer is the client for interacting with the PaymentTransfer builders.
@@ -97,6 +100,7 @@ func (c *Client) init() {
 	c.OutOfGas = NewOutOfGasClient(c.config)
 	c.Payment = NewPaymentClient(c.config)
 	c.PaymentBalance = NewPaymentBalanceClient(c.config)
+	c.PaymentBase = NewPaymentBaseClient(c.config)
 	c.PaymentContract = NewPaymentContractClient(c.config)
 	c.PaymentTransfer = NewPaymentTransferClient(c.config)
 	c.PowerRental = NewPowerRentalClient(c.config)
@@ -147,6 +151,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		OutOfGas:         NewOutOfGasClient(cfg),
 		Payment:          NewPaymentClient(cfg),
 		PaymentBalance:   NewPaymentBalanceClient(cfg),
+		PaymentBase:      NewPaymentBaseClient(cfg),
 		PaymentContract:  NewPaymentContractClient(cfg),
 		PaymentTransfer:  NewPaymentTransferClient(cfg),
 		PowerRental:      NewPowerRentalClient(cfg),
@@ -183,6 +188,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		OutOfGas:         NewOutOfGasClient(cfg),
 		Payment:          NewPaymentClient(cfg),
 		PaymentBalance:   NewPaymentBalanceClient(cfg),
+		PaymentBase:      NewPaymentBaseClient(cfg),
 		PaymentContract:  NewPaymentContractClient(cfg),
 		PaymentTransfer:  NewPaymentTransferClient(cfg),
 		PowerRental:      NewPowerRentalClient(cfg),
@@ -229,6 +235,7 @@ func (c *Client) Use(hooks ...Hook) {
 	c.OutOfGas.Use(hooks...)
 	c.Payment.Use(hooks...)
 	c.PaymentBalance.Use(hooks...)
+	c.PaymentBase.Use(hooks...)
 	c.PaymentContract.Use(hooks...)
 	c.PaymentTransfer.Use(hooks...)
 	c.PowerRental.Use(hooks...)
@@ -1416,6 +1423,97 @@ func (c *PaymentBalanceClient) GetX(ctx context.Context, id uint32) *PaymentBala
 func (c *PaymentBalanceClient) Hooks() []Hook {
 	hooks := c.hooks.PaymentBalance
 	return append(hooks[:len(hooks):len(hooks)], paymentbalance.Hooks[:]...)
+}
+
+// PaymentBaseClient is a client for the PaymentBase schema.
+type PaymentBaseClient struct {
+	config
+}
+
+// NewPaymentBaseClient returns a client for the PaymentBase from the given config.
+func NewPaymentBaseClient(c config) *PaymentBaseClient {
+	return &PaymentBaseClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `paymentbase.Hooks(f(g(h())))`.
+func (c *PaymentBaseClient) Use(hooks ...Hook) {
+	c.hooks.PaymentBase = append(c.hooks.PaymentBase, hooks...)
+}
+
+// Create returns a builder for creating a PaymentBase entity.
+func (c *PaymentBaseClient) Create() *PaymentBaseCreate {
+	mutation := newPaymentBaseMutation(c.config, OpCreate)
+	return &PaymentBaseCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of PaymentBase entities.
+func (c *PaymentBaseClient) CreateBulk(builders ...*PaymentBaseCreate) *PaymentBaseCreateBulk {
+	return &PaymentBaseCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for PaymentBase.
+func (c *PaymentBaseClient) Update() *PaymentBaseUpdate {
+	mutation := newPaymentBaseMutation(c.config, OpUpdate)
+	return &PaymentBaseUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *PaymentBaseClient) UpdateOne(pb *PaymentBase) *PaymentBaseUpdateOne {
+	mutation := newPaymentBaseMutation(c.config, OpUpdateOne, withPaymentBase(pb))
+	return &PaymentBaseUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *PaymentBaseClient) UpdateOneID(id uint32) *PaymentBaseUpdateOne {
+	mutation := newPaymentBaseMutation(c.config, OpUpdateOne, withPaymentBaseID(id))
+	return &PaymentBaseUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for PaymentBase.
+func (c *PaymentBaseClient) Delete() *PaymentBaseDelete {
+	mutation := newPaymentBaseMutation(c.config, OpDelete)
+	return &PaymentBaseDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *PaymentBaseClient) DeleteOne(pb *PaymentBase) *PaymentBaseDeleteOne {
+	return c.DeleteOneID(pb.ID)
+}
+
+// DeleteOne returns a builder for deleting the given entity by its id.
+func (c *PaymentBaseClient) DeleteOneID(id uint32) *PaymentBaseDeleteOne {
+	builder := c.Delete().Where(paymentbase.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &PaymentBaseDeleteOne{builder}
+}
+
+// Query returns a query builder for PaymentBase.
+func (c *PaymentBaseClient) Query() *PaymentBaseQuery {
+	return &PaymentBaseQuery{
+		config: c.config,
+	}
+}
+
+// Get returns a PaymentBase entity by its id.
+func (c *PaymentBaseClient) Get(ctx context.Context, id uint32) (*PaymentBase, error) {
+	return c.Query().Where(paymentbase.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *PaymentBaseClient) GetX(ctx context.Context, id uint32) *PaymentBase {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *PaymentBaseClient) Hooks() []Hook {
+	hooks := c.hooks.PaymentBase
+	return append(hooks[:len(hooks):len(hooks)], paymentbase.Hooks[:]...)
 }
 
 // PaymentContractClient is a client for the PaymentContract schema.

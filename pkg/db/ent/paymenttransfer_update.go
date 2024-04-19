@@ -99,23 +99,23 @@ func (ptu *PaymentTransferUpdate) SetNillableEntID(u *uuid.UUID) *PaymentTransfe
 	return ptu
 }
 
-// SetOrderID sets the "order_id" field.
-func (ptu *PaymentTransferUpdate) SetOrderID(u uuid.UUID) *PaymentTransferUpdate {
-	ptu.mutation.SetOrderID(u)
+// SetPaymentID sets the "payment_id" field.
+func (ptu *PaymentTransferUpdate) SetPaymentID(u uuid.UUID) *PaymentTransferUpdate {
+	ptu.mutation.SetPaymentID(u)
 	return ptu
 }
 
-// SetNillableOrderID sets the "order_id" field if the given value is not nil.
-func (ptu *PaymentTransferUpdate) SetNillableOrderID(u *uuid.UUID) *PaymentTransferUpdate {
+// SetNillablePaymentID sets the "payment_id" field if the given value is not nil.
+func (ptu *PaymentTransferUpdate) SetNillablePaymentID(u *uuid.UUID) *PaymentTransferUpdate {
 	if u != nil {
-		ptu.SetOrderID(*u)
+		ptu.SetPaymentID(*u)
 	}
 	return ptu
 }
 
-// ClearOrderID clears the value of the "order_id" field.
-func (ptu *PaymentTransferUpdate) ClearOrderID() *PaymentTransferUpdate {
-	ptu.mutation.ClearOrderID()
+// ClearPaymentID clears the value of the "payment_id" field.
+func (ptu *PaymentTransferUpdate) ClearPaymentID() *PaymentTransferUpdate {
+	ptu.mutation.ClearPaymentID()
 	return ptu
 }
 
@@ -426,17 +426,17 @@ func (ptu *PaymentTransferUpdate) sqlSave(ctx context.Context) (n int, err error
 			Column: paymenttransfer.FieldEntID,
 		})
 	}
-	if value, ok := ptu.mutation.OrderID(); ok {
+	if value, ok := ptu.mutation.PaymentID(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeUUID,
 			Value:  value,
-			Column: paymenttransfer.FieldOrderID,
+			Column: paymenttransfer.FieldPaymentID,
 		})
 	}
-	if ptu.mutation.OrderIDCleared() {
+	if ptu.mutation.PaymentIDCleared() {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeUUID,
-			Column: paymenttransfer.FieldOrderID,
+			Column: paymenttransfer.FieldPaymentID,
 		})
 	}
 	if value, ok := ptu.mutation.CoinTypeID(); ok {
@@ -633,23 +633,23 @@ func (ptuo *PaymentTransferUpdateOne) SetNillableEntID(u *uuid.UUID) *PaymentTra
 	return ptuo
 }
 
-// SetOrderID sets the "order_id" field.
-func (ptuo *PaymentTransferUpdateOne) SetOrderID(u uuid.UUID) *PaymentTransferUpdateOne {
-	ptuo.mutation.SetOrderID(u)
+// SetPaymentID sets the "payment_id" field.
+func (ptuo *PaymentTransferUpdateOne) SetPaymentID(u uuid.UUID) *PaymentTransferUpdateOne {
+	ptuo.mutation.SetPaymentID(u)
 	return ptuo
 }
 
-// SetNillableOrderID sets the "order_id" field if the given value is not nil.
-func (ptuo *PaymentTransferUpdateOne) SetNillableOrderID(u *uuid.UUID) *PaymentTransferUpdateOne {
+// SetNillablePaymentID sets the "payment_id" field if the given value is not nil.
+func (ptuo *PaymentTransferUpdateOne) SetNillablePaymentID(u *uuid.UUID) *PaymentTransferUpdateOne {
 	if u != nil {
-		ptuo.SetOrderID(*u)
+		ptuo.SetPaymentID(*u)
 	}
 	return ptuo
 }
 
-// ClearOrderID clears the value of the "order_id" field.
-func (ptuo *PaymentTransferUpdateOne) ClearOrderID() *PaymentTransferUpdateOne {
-	ptuo.mutation.ClearOrderID()
+// ClearPaymentID clears the value of the "payment_id" field.
+func (ptuo *PaymentTransferUpdateOne) ClearPaymentID() *PaymentTransferUpdateOne {
+	ptuo.mutation.ClearPaymentID()
 	return ptuo
 }
 
@@ -990,17 +990,17 @@ func (ptuo *PaymentTransferUpdateOne) sqlSave(ctx context.Context) (_node *Payme
 			Column: paymenttransfer.FieldEntID,
 		})
 	}
-	if value, ok := ptuo.mutation.OrderID(); ok {
+	if value, ok := ptuo.mutation.PaymentID(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeUUID,
 			Value:  value,
-			Column: paymenttransfer.FieldOrderID,
+			Column: paymenttransfer.FieldPaymentID,
 		})
 	}
-	if ptuo.mutation.OrderIDCleared() {
+	if ptuo.mutation.PaymentIDCleared() {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeUUID,
-			Column: paymenttransfer.FieldOrderID,
+			Column: paymenttransfer.FieldPaymentID,
 		})
 	}
 	if value, ok := ptuo.mutation.CoinTypeID(); ok {

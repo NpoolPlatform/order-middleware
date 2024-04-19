@@ -33,6 +33,12 @@ func (FeeOrderState) Fields() []ent.Field {
 				return uuid.Nil
 			}),
 		field.
+			UUID("payment_id", uuid.UUID{}).
+			Optional().
+			Default(func() uuid.UUID {
+				return uuid.UUID{}
+			}),
+		field.
 			Uint32("paid_at").
 			Optional().
 			Default(0),

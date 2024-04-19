@@ -30,6 +30,8 @@ type PowerRentalState struct {
 	CancelState string `json:"cancel_state,omitempty"`
 	// DurationSeconds holds the value of the "duration_seconds" field.
 	DurationSeconds uint32 `json:"duration_seconds,omitempty"`
+	// PaymentID holds the value of the "payment_id" field.
+	PaymentID uuid.UUID `json:"payment_id,omitempty"`
 	// PaidAt holds the value of the "paid_at" field.
 	PaidAt uint32 `json:"paid_at,omitempty"`
 	// UserSetPaid holds the value of the "user_set_paid" field.
@@ -61,7 +63,7 @@ func (*PowerRentalState) scanValues(columns []string) ([]interface{}, error) {
 			values[i] = new(sql.NullInt64)
 		case powerrentalstate.FieldCancelState, powerrentalstate.FieldPaymentState, powerrentalstate.FieldRenewState:
 			values[i] = new(sql.NullString)
-		case powerrentalstate.FieldEntID, powerrentalstate.FieldOrderID:
+		case powerrentalstate.FieldEntID, powerrentalstate.FieldOrderID, powerrentalstate.FieldPaymentID:
 			values[i] = new(uuid.UUID)
 		default:
 			return nil, fmt.Errorf("unexpected column %q for type PowerRentalState", columns[i])
@@ -125,6 +127,12 @@ func (prs *PowerRentalState) assignValues(columns []string, values []interface{}
 				return fmt.Errorf("unexpected type %T for field duration_seconds", values[i])
 			} else if value.Valid {
 				prs.DurationSeconds = uint32(value.Int64)
+			}
+		case powerrentalstate.FieldPaymentID:
+			if value, ok := values[i].(*uuid.UUID); !ok {
+				return fmt.Errorf("unexpected type %T for field payment_id", values[i])
+			} else if value != nil {
+				prs.PaymentID = *value
 			}
 		case powerrentalstate.FieldPaidAt:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
@@ -228,6 +236,9 @@ func (prs *PowerRentalState) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("duration_seconds=")
 	builder.WriteString(fmt.Sprintf("%v", prs.DurationSeconds))
+	builder.WriteString(", ")
+	builder.WriteString("payment_id=")
+	builder.WriteString(fmt.Sprintf("%v", prs.PaymentID))
 	builder.WriteString(", ")
 	builder.WriteString("paid_at=")
 	builder.WriteString(fmt.Sprintf("%v", prs.PaidAt))

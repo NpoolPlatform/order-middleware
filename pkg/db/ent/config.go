@@ -41,6 +41,7 @@ type hooks struct {
 	OutOfGas         []ent.Hook
 	Payment          []ent.Hook
 	PaymentBalance   []ent.Hook
+	PaymentBase      []ent.Hook
 	PaymentContract  []ent.Hook
 	PaymentTransfer  []ent.Hook
 	PowerRental      []ent.Hook

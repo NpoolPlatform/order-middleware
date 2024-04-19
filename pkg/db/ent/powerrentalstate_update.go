@@ -165,6 +165,26 @@ func (prsu *PowerRentalStateUpdate) ClearDurationSeconds() *PowerRentalStateUpda
 	return prsu
 }
 
+// SetPaymentID sets the "payment_id" field.
+func (prsu *PowerRentalStateUpdate) SetPaymentID(u uuid.UUID) *PowerRentalStateUpdate {
+	prsu.mutation.SetPaymentID(u)
+	return prsu
+}
+
+// SetNillablePaymentID sets the "payment_id" field if the given value is not nil.
+func (prsu *PowerRentalStateUpdate) SetNillablePaymentID(u *uuid.UUID) *PowerRentalStateUpdate {
+	if u != nil {
+		prsu.SetPaymentID(*u)
+	}
+	return prsu
+}
+
+// ClearPaymentID clears the value of the "payment_id" field.
+func (prsu *PowerRentalStateUpdate) ClearPaymentID() *PowerRentalStateUpdate {
+	prsu.mutation.ClearPaymentID()
+	return prsu
+}
+
 // SetPaidAt sets the "paid_at" field.
 func (prsu *PowerRentalStateUpdate) SetPaidAt(u uint32) *PowerRentalStateUpdate {
 	prsu.mutation.ResetPaidAt()
@@ -566,6 +586,19 @@ func (prsu *PowerRentalStateUpdate) sqlSave(ctx context.Context) (n int, err err
 			Column: powerrentalstate.FieldDurationSeconds,
 		})
 	}
+	if value, ok := prsu.mutation.PaymentID(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Value:  value,
+			Column: powerrentalstate.FieldPaymentID,
+		})
+	}
+	if prsu.mutation.PaymentIDCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Column: powerrentalstate.FieldPaymentID,
+		})
+	}
 	if value, ok := prsu.mutation.PaidAt(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeUint32,
@@ -865,6 +898,26 @@ func (prsuo *PowerRentalStateUpdateOne) AddDurationSeconds(u int32) *PowerRental
 // ClearDurationSeconds clears the value of the "duration_seconds" field.
 func (prsuo *PowerRentalStateUpdateOne) ClearDurationSeconds() *PowerRentalStateUpdateOne {
 	prsuo.mutation.ClearDurationSeconds()
+	return prsuo
+}
+
+// SetPaymentID sets the "payment_id" field.
+func (prsuo *PowerRentalStateUpdateOne) SetPaymentID(u uuid.UUID) *PowerRentalStateUpdateOne {
+	prsuo.mutation.SetPaymentID(u)
+	return prsuo
+}
+
+// SetNillablePaymentID sets the "payment_id" field if the given value is not nil.
+func (prsuo *PowerRentalStateUpdateOne) SetNillablePaymentID(u *uuid.UUID) *PowerRentalStateUpdateOne {
+	if u != nil {
+		prsuo.SetPaymentID(*u)
+	}
+	return prsuo
+}
+
+// ClearPaymentID clears the value of the "payment_id" field.
+func (prsuo *PowerRentalStateUpdateOne) ClearPaymentID() *PowerRentalStateUpdateOne {
+	prsuo.mutation.ClearPaymentID()
 	return prsuo
 }
 
@@ -1297,6 +1350,19 @@ func (prsuo *PowerRentalStateUpdateOne) sqlSave(ctx context.Context) (_node *Pow
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeUint32,
 			Column: powerrentalstate.FieldDurationSeconds,
+		})
+	}
+	if value, ok := prsuo.mutation.PaymentID(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Value:  value,
+			Column: powerrentalstate.FieldPaymentID,
+		})
+	}
+	if prsuo.mutation.PaymentIDCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Column: powerrentalstate.FieldPaymentID,
 		})
 	}
 	if value, ok := prsuo.mutation.PaidAt(); ok {

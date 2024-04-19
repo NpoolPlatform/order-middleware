@@ -27,10 +27,10 @@ func (PaymentBalance) Mixin() []ent.Mixin {
 func (PaymentBalance) Fields() []ent.Field {
 	return []ent.Field{
 		field.
-			UUID("order_id", uuid.UUID{}).
+			UUID("payment_id", uuid.UUID{}).
 			Optional().
 			Default(func() uuid.UUID {
-				return uuid.Nil
+				return uuid.UUID{}
 			}),
 		field.
 			UUID("coin_type_id", uuid.UUID{}).
@@ -76,6 +76,6 @@ func (PaymentBalance) Edges() []ent.Edge {
 
 func (PaymentBalance) Indexes() []ent.Index {
 	return []ent.Index{
-		index.Fields("order_id"),
+		index.Fields("payment_id"),
 	}
 }

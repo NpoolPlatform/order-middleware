@@ -462,6 +462,30 @@ func (f PaymentBalanceMutationRuleFunc) EvalMutation(ctx context.Context, m ent.
 	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.PaymentBalanceMutation", m)
 }
 
+// The PaymentBaseQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type PaymentBaseQueryRuleFunc func(context.Context, *ent.PaymentBaseQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f PaymentBaseQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.PaymentBaseQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("ent/privacy: unexpected query type %T, expect *ent.PaymentBaseQuery", q)
+}
+
+// The PaymentBaseMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type PaymentBaseMutationRuleFunc func(context.Context, *ent.PaymentBaseMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f PaymentBaseMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
+	if m, ok := m.(*ent.PaymentBaseMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.PaymentBaseMutation", m)
+}
+
 // The PaymentContractQueryRuleFunc type is an adapter to allow the use of ordinary
 // functions as a query rule.
 type PaymentContractQueryRuleFunc func(context.Context, *ent.PaymentContractQuery) error
@@ -619,6 +643,8 @@ func queryFilter(q ent.Query) (Filter, error) {
 		return q.Filter(), nil
 	case *ent.PaymentBalanceQuery:
 		return q.Filter(), nil
+	case *ent.PaymentBaseQuery:
+		return q.Filter(), nil
 	case *ent.PaymentContractQuery:
 		return q.Filter(), nil
 	case *ent.PaymentTransferQuery:
@@ -659,6 +685,8 @@ func mutationFilter(m ent.Mutation) (Filter, error) {
 	case *ent.PaymentMutation:
 		return m.Filter(), nil
 	case *ent.PaymentBalanceMutation:
+		return m.Filter(), nil
+	case *ent.PaymentBaseMutation:
 		return m.Filter(), nil
 	case *ent.PaymentContractMutation:
 		return m.Filter(), nil

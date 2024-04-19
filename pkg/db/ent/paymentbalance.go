@@ -25,8 +25,8 @@ type PaymentBalance struct {
 	DeletedAt uint32 `json:"deleted_at,omitempty"`
 	// EntID holds the value of the "ent_id" field.
 	EntID uuid.UUID `json:"ent_id,omitempty"`
-	// OrderID holds the value of the "order_id" field.
-	OrderID uuid.UUID `json:"order_id,omitempty"`
+	// PaymentID holds the value of the "payment_id" field.
+	PaymentID uuid.UUID `json:"payment_id,omitempty"`
 	// CoinTypeID holds the value of the "coin_type_id" field.
 	CoinTypeID uuid.UUID `json:"coin_type_id,omitempty"`
 	// Amount holds the value of the "amount" field.
@@ -48,7 +48,7 @@ func (*PaymentBalance) scanValues(columns []string) ([]interface{}, error) {
 			values[i] = new(decimal.Decimal)
 		case paymentbalance.FieldID, paymentbalance.FieldCreatedAt, paymentbalance.FieldUpdatedAt, paymentbalance.FieldDeletedAt:
 			values[i] = new(sql.NullInt64)
-		case paymentbalance.FieldEntID, paymentbalance.FieldOrderID, paymentbalance.FieldCoinTypeID:
+		case paymentbalance.FieldEntID, paymentbalance.FieldPaymentID, paymentbalance.FieldCoinTypeID:
 			values[i] = new(uuid.UUID)
 		default:
 			return nil, fmt.Errorf("unexpected column %q for type PaymentBalance", columns[i])
@@ -95,11 +95,11 @@ func (pb *PaymentBalance) assignValues(columns []string, values []interface{}) e
 			} else if value != nil {
 				pb.EntID = *value
 			}
-		case paymentbalance.FieldOrderID:
+		case paymentbalance.FieldPaymentID:
 			if value, ok := values[i].(*uuid.UUID); !ok {
-				return fmt.Errorf("unexpected type %T for field order_id", values[i])
+				return fmt.Errorf("unexpected type %T for field payment_id", values[i])
 			} else if value != nil {
-				pb.OrderID = *value
+				pb.PaymentID = *value
 			}
 		case paymentbalance.FieldCoinTypeID:
 			if value, ok := values[i].(*uuid.UUID); !ok {
@@ -171,8 +171,8 @@ func (pb *PaymentBalance) String() string {
 	builder.WriteString("ent_id=")
 	builder.WriteString(fmt.Sprintf("%v", pb.EntID))
 	builder.WriteString(", ")
-	builder.WriteString("order_id=")
-	builder.WriteString(fmt.Sprintf("%v", pb.OrderID))
+	builder.WriteString("payment_id=")
+	builder.WriteString(fmt.Sprintf("%v", pb.PaymentID))
 	builder.WriteString(", ")
 	builder.WriteString("coin_type_id=")
 	builder.WriteString(fmt.Sprintf("%v", pb.CoinTypeID))

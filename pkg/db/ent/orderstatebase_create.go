@@ -162,6 +162,20 @@ func (osbc *OrderStateBaseCreate) SetNillableBenefitState(s *string) *OrderState
 	return osbc
 }
 
+// SetPaymentType sets the "payment_type" field.
+func (osbc *OrderStateBaseCreate) SetPaymentType(s string) *OrderStateBaseCreate {
+	osbc.mutation.SetPaymentType(s)
+	return osbc
+}
+
+// SetNillablePaymentType sets the "payment_type" field if the given value is not nil.
+func (osbc *OrderStateBaseCreate) SetNillablePaymentType(s *string) *OrderStateBaseCreate {
+	if s != nil {
+		osbc.SetPaymentType(*s)
+	}
+	return osbc
+}
+
 // SetID sets the "id" field.
 func (osbc *OrderStateBaseCreate) SetID(u uint32) *OrderStateBaseCreate {
 	osbc.mutation.SetID(u)
@@ -302,6 +316,10 @@ func (osbc *OrderStateBaseCreate) defaults() error {
 		v := orderstatebase.DefaultBenefitState
 		osbc.mutation.SetBenefitState(v)
 	}
+	if _, ok := osbc.mutation.PaymentType(); !ok {
+		v := orderstatebase.DefaultPaymentType
+		osbc.mutation.SetPaymentType(v)
+	}
 	return nil
 }
 
@@ -432,6 +450,14 @@ func (osbc *OrderStateBaseCreate) createSpec() (*OrderStateBase, *sqlgraph.Creat
 			Column: orderstatebase.FieldBenefitState,
 		})
 		_node.BenefitState = value
+	}
+	if value, ok := osbc.mutation.PaymentType(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: orderstatebase.FieldPaymentType,
+		})
+		_node.PaymentType = value
 	}
 	return _node, _spec
 }
@@ -670,6 +696,24 @@ func (u *OrderStateBaseUpsert) UpdateBenefitState() *OrderStateBaseUpsert {
 // ClearBenefitState clears the value of the "benefit_state" field.
 func (u *OrderStateBaseUpsert) ClearBenefitState() *OrderStateBaseUpsert {
 	u.SetNull(orderstatebase.FieldBenefitState)
+	return u
+}
+
+// SetPaymentType sets the "payment_type" field.
+func (u *OrderStateBaseUpsert) SetPaymentType(v string) *OrderStateBaseUpsert {
+	u.Set(orderstatebase.FieldPaymentType, v)
+	return u
+}
+
+// UpdatePaymentType sets the "payment_type" field to the value that was provided on create.
+func (u *OrderStateBaseUpsert) UpdatePaymentType() *OrderStateBaseUpsert {
+	u.SetExcluded(orderstatebase.FieldPaymentType)
+	return u
+}
+
+// ClearPaymentType clears the value of the "payment_type" field.
+func (u *OrderStateBaseUpsert) ClearPaymentType() *OrderStateBaseUpsert {
+	u.SetNull(orderstatebase.FieldPaymentType)
 	return u
 }
 
@@ -937,6 +981,27 @@ func (u *OrderStateBaseUpsertOne) UpdateBenefitState() *OrderStateBaseUpsertOne 
 func (u *OrderStateBaseUpsertOne) ClearBenefitState() *OrderStateBaseUpsertOne {
 	return u.Update(func(s *OrderStateBaseUpsert) {
 		s.ClearBenefitState()
+	})
+}
+
+// SetPaymentType sets the "payment_type" field.
+func (u *OrderStateBaseUpsertOne) SetPaymentType(v string) *OrderStateBaseUpsertOne {
+	return u.Update(func(s *OrderStateBaseUpsert) {
+		s.SetPaymentType(v)
+	})
+}
+
+// UpdatePaymentType sets the "payment_type" field to the value that was provided on create.
+func (u *OrderStateBaseUpsertOne) UpdatePaymentType() *OrderStateBaseUpsertOne {
+	return u.Update(func(s *OrderStateBaseUpsert) {
+		s.UpdatePaymentType()
+	})
+}
+
+// ClearPaymentType clears the value of the "payment_type" field.
+func (u *OrderStateBaseUpsertOne) ClearPaymentType() *OrderStateBaseUpsertOne {
+	return u.Update(func(s *OrderStateBaseUpsert) {
+		s.ClearPaymentType()
 	})
 }
 
@@ -1369,6 +1434,27 @@ func (u *OrderStateBaseUpsertBulk) UpdateBenefitState() *OrderStateBaseUpsertBul
 func (u *OrderStateBaseUpsertBulk) ClearBenefitState() *OrderStateBaseUpsertBulk {
 	return u.Update(func(s *OrderStateBaseUpsert) {
 		s.ClearBenefitState()
+	})
+}
+
+// SetPaymentType sets the "payment_type" field.
+func (u *OrderStateBaseUpsertBulk) SetPaymentType(v string) *OrderStateBaseUpsertBulk {
+	return u.Update(func(s *OrderStateBaseUpsert) {
+		s.SetPaymentType(v)
+	})
+}
+
+// UpdatePaymentType sets the "payment_type" field to the value that was provided on create.
+func (u *OrderStateBaseUpsertBulk) UpdatePaymentType() *OrderStateBaseUpsertBulk {
+	return u.Update(func(s *OrderStateBaseUpsert) {
+		s.UpdatePaymentType()
+	})
+}
+
+// ClearPaymentType clears the value of the "payment_type" field.
+func (u *OrderStateBaseUpsertBulk) ClearPaymentType() *OrderStateBaseUpsertBulk {
+	return u.Update(func(s *OrderStateBaseUpsert) {
+		s.ClearPaymentType()
 	})
 }
 

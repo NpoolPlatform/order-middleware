@@ -34,8 +34,6 @@ const (
 	FieldParentOrderID = "parent_order_id"
 	// FieldOrderType holds the string denoting the order_type field in the database.
 	FieldOrderType = "order_type"
-	// FieldPaymentType holds the string denoting the payment_type field in the database.
-	FieldPaymentType = "payment_type"
 	// FieldCreateMethod holds the string denoting the create_method field in the database.
 	FieldCreateMethod = "create_method"
 	// FieldSimulate holds the string denoting the simulate field in the database.
@@ -58,7 +56,6 @@ var Columns = []string{
 	FieldGoodType,
 	FieldParentOrderID,
 	FieldOrderType,
-	FieldPaymentType,
 	FieldCreateMethod,
 	FieldSimulate,
 }
@@ -106,8 +103,6 @@ var (
 	DefaultParentOrderID func() uuid.UUID
 	// DefaultOrderType holds the default value on creation for the "order_type" field.
 	DefaultOrderType string
-	// DefaultPaymentType holds the default value on creation for the "payment_type" field.
-	DefaultPaymentType string
 	// DefaultCreateMethod holds the default value on creation for the "create_method" field.
 	DefaultCreateMethod string
 	// DefaultSimulate holds the default value on creation for the "simulate" field.

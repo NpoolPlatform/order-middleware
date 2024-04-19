@@ -27,7 +27,7 @@ func (PaymentTransfer) Mixin() []ent.Mixin {
 func (PaymentTransfer) Fields() []ent.Field {
 	return []ent.Field{
 		field.
-			UUID("order_id", uuid.UUID{}).
+			UUID("payment_id", uuid.UUID{}).
 			Optional().
 			Default(func() uuid.UUID {
 				return uuid.Nil
@@ -96,6 +96,6 @@ func (PaymentTransfer) Edges() []ent.Edge {
 
 func (PaymentTransfer) Indexes() []ent.Index {
 	return []ent.Index{
-		index.Fields("order_id"),
+		index.Fields("payment_id"),
 	}
 }

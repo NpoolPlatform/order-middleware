@@ -25,8 +25,8 @@ type PaymentTransfer struct {
 	DeletedAt uint32 `json:"deleted_at,omitempty"`
 	// EntID holds the value of the "ent_id" field.
 	EntID uuid.UUID `json:"ent_id,omitempty"`
-	// OrderID holds the value of the "order_id" field.
-	OrderID uuid.UUID `json:"order_id,omitempty"`
+	// PaymentID holds the value of the "payment_id" field.
+	PaymentID uuid.UUID `json:"payment_id,omitempty"`
 	// CoinTypeID holds the value of the "coin_type_id" field.
 	CoinTypeID uuid.UUID `json:"coin_type_id,omitempty"`
 	// AccountID holds the value of the "account_id" field.
@@ -54,7 +54,7 @@ func (*PaymentTransfer) scanValues(columns []string) ([]interface{}, error) {
 			values[i] = new(decimal.Decimal)
 		case paymenttransfer.FieldID, paymenttransfer.FieldCreatedAt, paymenttransfer.FieldUpdatedAt, paymenttransfer.FieldDeletedAt:
 			values[i] = new(sql.NullInt64)
-		case paymenttransfer.FieldEntID, paymenttransfer.FieldOrderID, paymenttransfer.FieldCoinTypeID, paymenttransfer.FieldAccountID:
+		case paymenttransfer.FieldEntID, paymenttransfer.FieldPaymentID, paymenttransfer.FieldCoinTypeID, paymenttransfer.FieldAccountID:
 			values[i] = new(uuid.UUID)
 		default:
 			return nil, fmt.Errorf("unexpected column %q for type PaymentTransfer", columns[i])
@@ -101,11 +101,11 @@ func (pt *PaymentTransfer) assignValues(columns []string, values []interface{}) 
 			} else if value != nil {
 				pt.EntID = *value
 			}
-		case paymenttransfer.FieldOrderID:
+		case paymenttransfer.FieldPaymentID:
 			if value, ok := values[i].(*uuid.UUID); !ok {
-				return fmt.Errorf("unexpected type %T for field order_id", values[i])
+				return fmt.Errorf("unexpected type %T for field payment_id", values[i])
 			} else if value != nil {
-				pt.OrderID = *value
+				pt.PaymentID = *value
 			}
 		case paymenttransfer.FieldCoinTypeID:
 			if value, ok := values[i].(*uuid.UUID); !ok {
@@ -195,8 +195,8 @@ func (pt *PaymentTransfer) String() string {
 	builder.WriteString("ent_id=")
 	builder.WriteString(fmt.Sprintf("%v", pt.EntID))
 	builder.WriteString(", ")
-	builder.WriteString("order_id=")
-	builder.WriteString(fmt.Sprintf("%v", pt.OrderID))
+	builder.WriteString("payment_id=")
+	builder.WriteString(fmt.Sprintf("%v", pt.PaymentID))
 	builder.WriteString(", ")
 	builder.WriteString("coin_type_id=")
 	builder.WriteString(fmt.Sprintf("%v", pt.CoinTypeID))

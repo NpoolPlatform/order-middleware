@@ -65,10 +65,6 @@ func (OrderBase) Fields() []ent.Field {
 			Optional().
 			Default(types.OrderType_Normal.String()),
 		field.
-			String("payment_type").
-			Optional().
-			Default(types.PaymentType_PayWithBalanceOnly.String()),
-		field.
 			String("create_method").
 			Optional().
 			Default(types.OrderCreateMethod_OrderCreatedByPurchase.String()),

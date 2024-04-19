@@ -51,6 +51,10 @@ func (OrderStateBase) Fields() []ent.Field {
 			String("benefit_state").
 			Optional().
 			Default(types.BenefitState_BenefitWait.String()),
+		field.
+			String("payment_type").
+			Optional().
+			Default(types.PaymentType_PayWithBalanceOnly.String()),
 	}
 }
 

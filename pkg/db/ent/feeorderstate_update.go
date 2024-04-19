@@ -118,6 +118,26 @@ func (fosu *FeeOrderStateUpdate) ClearOrderID() *FeeOrderStateUpdate {
 	return fosu
 }
 
+// SetPaymentID sets the "payment_id" field.
+func (fosu *FeeOrderStateUpdate) SetPaymentID(u uuid.UUID) *FeeOrderStateUpdate {
+	fosu.mutation.SetPaymentID(u)
+	return fosu
+}
+
+// SetNillablePaymentID sets the "payment_id" field if the given value is not nil.
+func (fosu *FeeOrderStateUpdate) SetNillablePaymentID(u *uuid.UUID) *FeeOrderStateUpdate {
+	if u != nil {
+		fosu.SetPaymentID(*u)
+	}
+	return fosu
+}
+
+// ClearPaymentID clears the value of the "payment_id" field.
+func (fosu *FeeOrderStateUpdate) ClearPaymentID() *FeeOrderStateUpdate {
+	fosu.mutation.ClearPaymentID()
+	return fosu
+}
+
 // SetPaidAt sets the "paid_at" field.
 func (fosu *FeeOrderStateUpdate) SetPaidAt(u uint32) *FeeOrderStateUpdate {
 	fosu.mutation.ResetPaidAt()
@@ -405,6 +425,19 @@ func (fosu *FeeOrderStateUpdate) sqlSave(ctx context.Context) (n int, err error)
 			Column: feeorderstate.FieldOrderID,
 		})
 	}
+	if value, ok := fosu.mutation.PaymentID(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Value:  value,
+			Column: feeorderstate.FieldPaymentID,
+		})
+	}
+	if fosu.mutation.PaymentIDCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Column: feeorderstate.FieldPaymentID,
+		})
+	}
 	if value, ok := fosu.mutation.PaidAt(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeUint32,
@@ -597,6 +630,26 @@ func (fosuo *FeeOrderStateUpdateOne) SetNillableOrderID(u *uuid.UUID) *FeeOrderS
 // ClearOrderID clears the value of the "order_id" field.
 func (fosuo *FeeOrderStateUpdateOne) ClearOrderID() *FeeOrderStateUpdateOne {
 	fosuo.mutation.ClearOrderID()
+	return fosuo
+}
+
+// SetPaymentID sets the "payment_id" field.
+func (fosuo *FeeOrderStateUpdateOne) SetPaymentID(u uuid.UUID) *FeeOrderStateUpdateOne {
+	fosuo.mutation.SetPaymentID(u)
+	return fosuo
+}
+
+// SetNillablePaymentID sets the "payment_id" field if the given value is not nil.
+func (fosuo *FeeOrderStateUpdateOne) SetNillablePaymentID(u *uuid.UUID) *FeeOrderStateUpdateOne {
+	if u != nil {
+		fosuo.SetPaymentID(*u)
+	}
+	return fosuo
+}
+
+// ClearPaymentID clears the value of the "payment_id" field.
+func (fosuo *FeeOrderStateUpdateOne) ClearPaymentID() *FeeOrderStateUpdateOne {
+	fosuo.mutation.ClearPaymentID()
 	return fosuo
 }
 
@@ -915,6 +968,19 @@ func (fosuo *FeeOrderStateUpdateOne) sqlSave(ctx context.Context) (_node *FeeOrd
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeUUID,
 			Column: feeorderstate.FieldOrderID,
+		})
+	}
+	if value, ok := fosuo.mutation.PaymentID(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Value:  value,
+			Column: feeorderstate.FieldPaymentID,
+		})
+	}
+	if fosuo.mutation.PaymentIDCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Column: feeorderstate.FieldPaymentID,
 		})
 	}
 	if value, ok := fosuo.mutation.PaidAt(); ok {

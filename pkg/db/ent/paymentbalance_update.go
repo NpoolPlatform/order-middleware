@@ -99,23 +99,23 @@ func (pbu *PaymentBalanceUpdate) SetNillableEntID(u *uuid.UUID) *PaymentBalanceU
 	return pbu
 }
 
-// SetOrderID sets the "order_id" field.
-func (pbu *PaymentBalanceUpdate) SetOrderID(u uuid.UUID) *PaymentBalanceUpdate {
-	pbu.mutation.SetOrderID(u)
+// SetPaymentID sets the "payment_id" field.
+func (pbu *PaymentBalanceUpdate) SetPaymentID(u uuid.UUID) *PaymentBalanceUpdate {
+	pbu.mutation.SetPaymentID(u)
 	return pbu
 }
 
-// SetNillableOrderID sets the "order_id" field if the given value is not nil.
-func (pbu *PaymentBalanceUpdate) SetNillableOrderID(u *uuid.UUID) *PaymentBalanceUpdate {
+// SetNillablePaymentID sets the "payment_id" field if the given value is not nil.
+func (pbu *PaymentBalanceUpdate) SetNillablePaymentID(u *uuid.UUID) *PaymentBalanceUpdate {
 	if u != nil {
-		pbu.SetOrderID(*u)
+		pbu.SetPaymentID(*u)
 	}
 	return pbu
 }
 
-// ClearOrderID clears the value of the "order_id" field.
-func (pbu *PaymentBalanceUpdate) ClearOrderID() *PaymentBalanceUpdate {
-	pbu.mutation.ClearOrderID()
+// ClearPaymentID clears the value of the "payment_id" field.
+func (pbu *PaymentBalanceUpdate) ClearPaymentID() *PaymentBalanceUpdate {
+	pbu.mutation.ClearPaymentID()
 	return pbu
 }
 
@@ -366,17 +366,17 @@ func (pbu *PaymentBalanceUpdate) sqlSave(ctx context.Context) (n int, err error)
 			Column: paymentbalance.FieldEntID,
 		})
 	}
-	if value, ok := pbu.mutation.OrderID(); ok {
+	if value, ok := pbu.mutation.PaymentID(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeUUID,
 			Value:  value,
-			Column: paymentbalance.FieldOrderID,
+			Column: paymentbalance.FieldPaymentID,
 		})
 	}
-	if pbu.mutation.OrderIDCleared() {
+	if pbu.mutation.PaymentIDCleared() {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeUUID,
-			Column: paymentbalance.FieldOrderID,
+			Column: paymentbalance.FieldPaymentID,
 		})
 	}
 	if value, ok := pbu.mutation.CoinTypeID(); ok {
@@ -534,23 +534,23 @@ func (pbuo *PaymentBalanceUpdateOne) SetNillableEntID(u *uuid.UUID) *PaymentBala
 	return pbuo
 }
 
-// SetOrderID sets the "order_id" field.
-func (pbuo *PaymentBalanceUpdateOne) SetOrderID(u uuid.UUID) *PaymentBalanceUpdateOne {
-	pbuo.mutation.SetOrderID(u)
+// SetPaymentID sets the "payment_id" field.
+func (pbuo *PaymentBalanceUpdateOne) SetPaymentID(u uuid.UUID) *PaymentBalanceUpdateOne {
+	pbuo.mutation.SetPaymentID(u)
 	return pbuo
 }
 
-// SetNillableOrderID sets the "order_id" field if the given value is not nil.
-func (pbuo *PaymentBalanceUpdateOne) SetNillableOrderID(u *uuid.UUID) *PaymentBalanceUpdateOne {
+// SetNillablePaymentID sets the "payment_id" field if the given value is not nil.
+func (pbuo *PaymentBalanceUpdateOne) SetNillablePaymentID(u *uuid.UUID) *PaymentBalanceUpdateOne {
 	if u != nil {
-		pbuo.SetOrderID(*u)
+		pbuo.SetPaymentID(*u)
 	}
 	return pbuo
 }
 
-// ClearOrderID clears the value of the "order_id" field.
-func (pbuo *PaymentBalanceUpdateOne) ClearOrderID() *PaymentBalanceUpdateOne {
-	pbuo.mutation.ClearOrderID()
+// ClearPaymentID clears the value of the "payment_id" field.
+func (pbuo *PaymentBalanceUpdateOne) ClearPaymentID() *PaymentBalanceUpdateOne {
+	pbuo.mutation.ClearPaymentID()
 	return pbuo
 }
 
@@ -831,17 +831,17 @@ func (pbuo *PaymentBalanceUpdateOne) sqlSave(ctx context.Context) (_node *Paymen
 			Column: paymentbalance.FieldEntID,
 		})
 	}
-	if value, ok := pbuo.mutation.OrderID(); ok {
+	if value, ok := pbuo.mutation.PaymentID(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeUUID,
 			Value:  value,
-			Column: paymentbalance.FieldOrderID,
+			Column: paymentbalance.FieldPaymentID,
 		})
 	}
-	if pbuo.mutation.OrderIDCleared() {
+	if pbuo.mutation.PaymentIDCleared() {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeUUID,
-			Column: paymentbalance.FieldOrderID,
+			Column: paymentbalance.FieldPaymentID,
 		})
 	}
 	if value, ok := pbuo.mutation.CoinTypeID(); ok {

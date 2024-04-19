@@ -36,6 +36,8 @@ type OrderStateBase struct {
 	LastBenefitAt uint32 `json:"last_benefit_at,omitempty"`
 	// BenefitState holds the value of the "benefit_state" field.
 	BenefitState string `json:"benefit_state,omitempty"`
+	// PaymentType holds the value of the "payment_type" field.
+	PaymentType string `json:"payment_type,omitempty"`
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -45,7 +47,7 @@ func (*OrderStateBase) scanValues(columns []string) ([]interface{}, error) {
 		switch columns[i] {
 		case orderstatebase.FieldID, orderstatebase.FieldCreatedAt, orderstatebase.FieldUpdatedAt, orderstatebase.FieldDeletedAt, orderstatebase.FieldStartAt, orderstatebase.FieldLastBenefitAt:
 			values[i] = new(sql.NullInt64)
-		case orderstatebase.FieldOrderState, orderstatebase.FieldStartMode, orderstatebase.FieldBenefitState:
+		case orderstatebase.FieldOrderState, orderstatebase.FieldStartMode, orderstatebase.FieldBenefitState, orderstatebase.FieldPaymentType:
 			values[i] = new(sql.NullString)
 		case orderstatebase.FieldEntID, orderstatebase.FieldOrderID:
 			values[i] = new(uuid.UUID)
@@ -130,6 +132,12 @@ func (osb *OrderStateBase) assignValues(columns []string, values []interface{}) 
 			} else if value.Valid {
 				osb.BenefitState = value.String
 			}
+		case orderstatebase.FieldPaymentType:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field payment_type", values[i])
+			} else if value.Valid {
+				osb.PaymentType = value.String
+			}
 		}
 	}
 	return nil
@@ -187,6 +195,9 @@ func (osb *OrderStateBase) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("benefit_state=")
 	builder.WriteString(osb.BenefitState)
+	builder.WriteString(", ")
+	builder.WriteString("payment_type=")
+	builder.WriteString(osb.PaymentType)
 	builder.WriteByte(')')
 	return builder.String()
 }

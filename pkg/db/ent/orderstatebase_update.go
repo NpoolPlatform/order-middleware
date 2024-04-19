@@ -232,6 +232,26 @@ func (osbu *OrderStateBaseUpdate) ClearBenefitState() *OrderStateBaseUpdate {
 	return osbu
 }
 
+// SetPaymentType sets the "payment_type" field.
+func (osbu *OrderStateBaseUpdate) SetPaymentType(s string) *OrderStateBaseUpdate {
+	osbu.mutation.SetPaymentType(s)
+	return osbu
+}
+
+// SetNillablePaymentType sets the "payment_type" field if the given value is not nil.
+func (osbu *OrderStateBaseUpdate) SetNillablePaymentType(s *string) *OrderStateBaseUpdate {
+	if s != nil {
+		osbu.SetPaymentType(*s)
+	}
+	return osbu
+}
+
+// ClearPaymentType clears the value of the "payment_type" field.
+func (osbu *OrderStateBaseUpdate) ClearPaymentType() *OrderStateBaseUpdate {
+	osbu.mutation.ClearPaymentType()
+	return osbu
+}
+
 // Mutation returns the OrderStateBaseMutation object of the builder.
 func (osbu *OrderStateBaseUpdate) Mutation() *OrderStateBaseMutation {
 	return osbu.mutation
@@ -471,6 +491,19 @@ func (osbu *OrderStateBaseUpdate) sqlSave(ctx context.Context) (n int, err error
 			Column: orderstatebase.FieldBenefitState,
 		})
 	}
+	if value, ok := osbu.mutation.PaymentType(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: orderstatebase.FieldPaymentType,
+		})
+	}
+	if osbu.mutation.PaymentTypeCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Column: orderstatebase.FieldPaymentType,
+		})
+	}
 	_spec.Modifiers = osbu.modifiers
 	if n, err = sqlgraph.UpdateNodes(ctx, osbu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
@@ -692,6 +725,26 @@ func (osbuo *OrderStateBaseUpdateOne) SetNillableBenefitState(s *string) *OrderS
 // ClearBenefitState clears the value of the "benefit_state" field.
 func (osbuo *OrderStateBaseUpdateOne) ClearBenefitState() *OrderStateBaseUpdateOne {
 	osbuo.mutation.ClearBenefitState()
+	return osbuo
+}
+
+// SetPaymentType sets the "payment_type" field.
+func (osbuo *OrderStateBaseUpdateOne) SetPaymentType(s string) *OrderStateBaseUpdateOne {
+	osbuo.mutation.SetPaymentType(s)
+	return osbuo
+}
+
+// SetNillablePaymentType sets the "payment_type" field if the given value is not nil.
+func (osbuo *OrderStateBaseUpdateOne) SetNillablePaymentType(s *string) *OrderStateBaseUpdateOne {
+	if s != nil {
+		osbuo.SetPaymentType(*s)
+	}
+	return osbuo
+}
+
+// ClearPaymentType clears the value of the "payment_type" field.
+func (osbuo *OrderStateBaseUpdateOne) ClearPaymentType() *OrderStateBaseUpdateOne {
+	osbuo.mutation.ClearPaymentType()
 	return osbuo
 }
 
@@ -962,6 +1015,19 @@ func (osbuo *OrderStateBaseUpdateOne) sqlSave(ctx context.Context) (_node *Order
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
 			Column: orderstatebase.FieldBenefitState,
+		})
+	}
+	if value, ok := osbuo.mutation.PaymentType(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: orderstatebase.FieldPaymentType,
+		})
+	}
+	if osbuo.mutation.PaymentTypeCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Column: orderstatebase.FieldPaymentType,
 		})
 	}
 	_spec.Modifiers = osbuo.modifiers

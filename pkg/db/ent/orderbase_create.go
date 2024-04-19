@@ -176,20 +176,6 @@ func (obc *OrderBaseCreate) SetNillableOrderType(s *string) *OrderBaseCreate {
 	return obc
 }
 
-// SetPaymentType sets the "payment_type" field.
-func (obc *OrderBaseCreate) SetPaymentType(s string) *OrderBaseCreate {
-	obc.mutation.SetPaymentType(s)
-	return obc
-}
-
-// SetNillablePaymentType sets the "payment_type" field if the given value is not nil.
-func (obc *OrderBaseCreate) SetNillablePaymentType(s *string) *OrderBaseCreate {
-	if s != nil {
-		obc.SetPaymentType(*s)
-	}
-	return obc
-}
-
 // SetCreateMethod sets the "create_method" field.
 func (obc *OrderBaseCreate) SetCreateMethod(s string) *OrderBaseCreate {
 	obc.mutation.SetCreateMethod(s)
@@ -374,10 +360,6 @@ func (obc *OrderBaseCreate) defaults() error {
 		v := orderbase.DefaultOrderType
 		obc.mutation.SetOrderType(v)
 	}
-	if _, ok := obc.mutation.PaymentType(); !ok {
-		v := orderbase.DefaultPaymentType
-		obc.mutation.SetPaymentType(v)
-	}
 	if _, ok := obc.mutation.CreateMethod(); !ok {
 		v := orderbase.DefaultCreateMethod
 		obc.mutation.SetCreateMethod(v)
@@ -524,14 +506,6 @@ func (obc *OrderBaseCreate) createSpec() (*OrderBase, *sqlgraph.CreateSpec) {
 			Column: orderbase.FieldOrderType,
 		})
 		_node.OrderType = value
-	}
-	if value, ok := obc.mutation.PaymentType(); ok {
-		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Value:  value,
-			Column: orderbase.FieldPaymentType,
-		})
-		_node.PaymentType = value
 	}
 	if value, ok := obc.mutation.CreateMethod(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -792,24 +766,6 @@ func (u *OrderBaseUpsert) UpdateOrderType() *OrderBaseUpsert {
 // ClearOrderType clears the value of the "order_type" field.
 func (u *OrderBaseUpsert) ClearOrderType() *OrderBaseUpsert {
 	u.SetNull(orderbase.FieldOrderType)
-	return u
-}
-
-// SetPaymentType sets the "payment_type" field.
-func (u *OrderBaseUpsert) SetPaymentType(v string) *OrderBaseUpsert {
-	u.Set(orderbase.FieldPaymentType, v)
-	return u
-}
-
-// UpdatePaymentType sets the "payment_type" field to the value that was provided on create.
-func (u *OrderBaseUpsert) UpdatePaymentType() *OrderBaseUpsert {
-	u.SetExcluded(orderbase.FieldPaymentType)
-	return u
-}
-
-// ClearPaymentType clears the value of the "payment_type" field.
-func (u *OrderBaseUpsert) ClearPaymentType() *OrderBaseUpsert {
-	u.SetNull(orderbase.FieldPaymentType)
 	return u
 }
 
@@ -1120,27 +1076,6 @@ func (u *OrderBaseUpsertOne) UpdateOrderType() *OrderBaseUpsertOne {
 func (u *OrderBaseUpsertOne) ClearOrderType() *OrderBaseUpsertOne {
 	return u.Update(func(s *OrderBaseUpsert) {
 		s.ClearOrderType()
-	})
-}
-
-// SetPaymentType sets the "payment_type" field.
-func (u *OrderBaseUpsertOne) SetPaymentType(v string) *OrderBaseUpsertOne {
-	return u.Update(func(s *OrderBaseUpsert) {
-		s.SetPaymentType(v)
-	})
-}
-
-// UpdatePaymentType sets the "payment_type" field to the value that was provided on create.
-func (u *OrderBaseUpsertOne) UpdatePaymentType() *OrderBaseUpsertOne {
-	return u.Update(func(s *OrderBaseUpsert) {
-		s.UpdatePaymentType()
-	})
-}
-
-// ClearPaymentType clears the value of the "payment_type" field.
-func (u *OrderBaseUpsertOne) ClearPaymentType() *OrderBaseUpsertOne {
-	return u.Update(func(s *OrderBaseUpsert) {
-		s.ClearPaymentType()
 	})
 }
 
@@ -1622,27 +1557,6 @@ func (u *OrderBaseUpsertBulk) UpdateOrderType() *OrderBaseUpsertBulk {
 func (u *OrderBaseUpsertBulk) ClearOrderType() *OrderBaseUpsertBulk {
 	return u.Update(func(s *OrderBaseUpsert) {
 		s.ClearOrderType()
-	})
-}
-
-// SetPaymentType sets the "payment_type" field.
-func (u *OrderBaseUpsertBulk) SetPaymentType(v string) *OrderBaseUpsertBulk {
-	return u.Update(func(s *OrderBaseUpsert) {
-		s.SetPaymentType(v)
-	})
-}
-
-// UpdatePaymentType sets the "payment_type" field to the value that was provided on create.
-func (u *OrderBaseUpsertBulk) UpdatePaymentType() *OrderBaseUpsertBulk {
-	return u.Update(func(s *OrderBaseUpsert) {
-		s.UpdatePaymentType()
-	})
-}
-
-// ClearPaymentType clears the value of the "payment_type" field.
-func (u *OrderBaseUpsertBulk) ClearPaymentType() *OrderBaseUpsertBulk {
-	return u.Update(func(s *OrderBaseUpsert) {
-		s.ClearPaymentType()
 	})
 }
 

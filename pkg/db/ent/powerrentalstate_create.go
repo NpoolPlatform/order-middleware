@@ -120,6 +120,20 @@ func (prsc *PowerRentalStateCreate) SetNillableDurationSeconds(u *uint32) *Power
 	return prsc
 }
 
+// SetPaymentID sets the "payment_id" field.
+func (prsc *PowerRentalStateCreate) SetPaymentID(u uuid.UUID) *PowerRentalStateCreate {
+	prsc.mutation.SetPaymentID(u)
+	return prsc
+}
+
+// SetNillablePaymentID sets the "payment_id" field if the given value is not nil.
+func (prsc *PowerRentalStateCreate) SetNillablePaymentID(u *uuid.UUID) *PowerRentalStateCreate {
+	if u != nil {
+		prsc.SetPaymentID(*u)
+	}
+	return prsc
+}
+
 // SetPaidAt sets the "paid_at" field.
 func (prsc *PowerRentalStateCreate) SetPaidAt(u uint32) *PowerRentalStateCreate {
 	prsc.mutation.SetPaidAt(u)
@@ -374,6 +388,13 @@ func (prsc *PowerRentalStateCreate) defaults() error {
 		v := powerrentalstate.DefaultDurationSeconds
 		prsc.mutation.SetDurationSeconds(v)
 	}
+	if _, ok := prsc.mutation.PaymentID(); !ok {
+		if powerrentalstate.DefaultPaymentID == nil {
+			return fmt.Errorf("ent: uninitialized powerrentalstate.DefaultPaymentID (forgotten import ent/runtime?)")
+		}
+		v := powerrentalstate.DefaultPaymentID()
+		prsc.mutation.SetPaymentID(v)
+	}
 	if _, ok := prsc.mutation.PaidAt(); !ok {
 		v := powerrentalstate.DefaultPaidAt
 		prsc.mutation.SetPaidAt(v)
@@ -516,6 +537,14 @@ func (prsc *PowerRentalStateCreate) createSpec() (*PowerRentalState, *sqlgraph.C
 			Column: powerrentalstate.FieldDurationSeconds,
 		})
 		_node.DurationSeconds = value
+	}
+	if value, ok := prsc.mutation.PaymentID(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Value:  value,
+			Column: powerrentalstate.FieldPaymentID,
+		})
+		_node.PaymentID = value
 	}
 	if value, ok := prsc.mutation.PaidAt(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -766,6 +795,24 @@ func (u *PowerRentalStateUpsert) AddDurationSeconds(v uint32) *PowerRentalStateU
 // ClearDurationSeconds clears the value of the "duration_seconds" field.
 func (u *PowerRentalStateUpsert) ClearDurationSeconds() *PowerRentalStateUpsert {
 	u.SetNull(powerrentalstate.FieldDurationSeconds)
+	return u
+}
+
+// SetPaymentID sets the "payment_id" field.
+func (u *PowerRentalStateUpsert) SetPaymentID(v uuid.UUID) *PowerRentalStateUpsert {
+	u.Set(powerrentalstate.FieldPaymentID, v)
+	return u
+}
+
+// UpdatePaymentID sets the "payment_id" field to the value that was provided on create.
+func (u *PowerRentalStateUpsert) UpdatePaymentID() *PowerRentalStateUpsert {
+	u.SetExcluded(powerrentalstate.FieldPaymentID)
+	return u
+}
+
+// ClearPaymentID clears the value of the "payment_id" field.
+func (u *PowerRentalStateUpsert) ClearPaymentID() *PowerRentalStateUpsert {
+	u.SetNull(powerrentalstate.FieldPaymentID)
 	return u
 }
 
@@ -1149,6 +1196,27 @@ func (u *PowerRentalStateUpsertOne) UpdateDurationSeconds() *PowerRentalStateUps
 func (u *PowerRentalStateUpsertOne) ClearDurationSeconds() *PowerRentalStateUpsertOne {
 	return u.Update(func(s *PowerRentalStateUpsert) {
 		s.ClearDurationSeconds()
+	})
+}
+
+// SetPaymentID sets the "payment_id" field.
+func (u *PowerRentalStateUpsertOne) SetPaymentID(v uuid.UUID) *PowerRentalStateUpsertOne {
+	return u.Update(func(s *PowerRentalStateUpsert) {
+		s.SetPaymentID(v)
+	})
+}
+
+// UpdatePaymentID sets the "payment_id" field to the value that was provided on create.
+func (u *PowerRentalStateUpsertOne) UpdatePaymentID() *PowerRentalStateUpsertOne {
+	return u.Update(func(s *PowerRentalStateUpsert) {
+		s.UpdatePaymentID()
+	})
+}
+
+// ClearPaymentID clears the value of the "payment_id" field.
+func (u *PowerRentalStateUpsertOne) ClearPaymentID() *PowerRentalStateUpsertOne {
+	return u.Update(func(s *PowerRentalStateUpsert) {
+		s.ClearPaymentID()
 	})
 }
 
@@ -1728,6 +1796,27 @@ func (u *PowerRentalStateUpsertBulk) UpdateDurationSeconds() *PowerRentalStateUp
 func (u *PowerRentalStateUpsertBulk) ClearDurationSeconds() *PowerRentalStateUpsertBulk {
 	return u.Update(func(s *PowerRentalStateUpsert) {
 		s.ClearDurationSeconds()
+	})
+}
+
+// SetPaymentID sets the "payment_id" field.
+func (u *PowerRentalStateUpsertBulk) SetPaymentID(v uuid.UUID) *PowerRentalStateUpsertBulk {
+	return u.Update(func(s *PowerRentalStateUpsert) {
+		s.SetPaymentID(v)
+	})
+}
+
+// UpdatePaymentID sets the "payment_id" field to the value that was provided on create.
+func (u *PowerRentalStateUpsertBulk) UpdatePaymentID() *PowerRentalStateUpsertBulk {
+	return u.Update(func(s *PowerRentalStateUpsert) {
+		s.UpdatePaymentID()
+	})
+}
+
+// ClearPaymentID clears the value of the "payment_id" field.
+func (u *PowerRentalStateUpsertBulk) ClearPaymentID() *PowerRentalStateUpsertBulk {
+	return u.Update(func(s *PowerRentalStateUpsert) {
+		s.ClearPaymentID()
 	})
 }
 

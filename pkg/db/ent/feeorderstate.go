@@ -26,6 +26,8 @@ type FeeOrderState struct {
 	EntID uuid.UUID `json:"ent_id,omitempty"`
 	// OrderID holds the value of the "order_id" field.
 	OrderID uuid.UUID `json:"order_id,omitempty"`
+	// PaymentID holds the value of the "payment_id" field.
+	PaymentID uuid.UUID `json:"payment_id,omitempty"`
 	// PaidAt holds the value of the "paid_at" field.
 	PaidAt uint32 `json:"paid_at,omitempty"`
 	// UserSetPaid holds the value of the "user_set_paid" field.
@@ -51,7 +53,7 @@ func (*FeeOrderState) scanValues(columns []string) ([]interface{}, error) {
 			values[i] = new(sql.NullInt64)
 		case feeorderstate.FieldPaymentState, feeorderstate.FieldCancelState:
 			values[i] = new(sql.NullString)
-		case feeorderstate.FieldEntID, feeorderstate.FieldOrderID:
+		case feeorderstate.FieldEntID, feeorderstate.FieldOrderID, feeorderstate.FieldPaymentID:
 			values[i] = new(uuid.UUID)
 		default:
 			return nil, fmt.Errorf("unexpected column %q for type FeeOrderState", columns[i])
@@ -103,6 +105,12 @@ func (fos *FeeOrderState) assignValues(columns []string, values []interface{}) e
 				return fmt.Errorf("unexpected type %T for field order_id", values[i])
 			} else if value != nil {
 				fos.OrderID = *value
+			}
+		case feeorderstate.FieldPaymentID:
+			if value, ok := values[i].(*uuid.UUID); !ok {
+				return fmt.Errorf("unexpected type %T for field payment_id", values[i])
+			} else if value != nil {
+				fos.PaymentID = *value
 			}
 		case feeorderstate.FieldPaidAt:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
@@ -182,6 +190,9 @@ func (fos *FeeOrderState) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("order_id=")
 	builder.WriteString(fmt.Sprintf("%v", fos.OrderID))
+	builder.WriteString(", ")
+	builder.WriteString("payment_id=")
+	builder.WriteString(fmt.Sprintf("%v", fos.PaymentID))
 	builder.WriteString(", ")
 	builder.WriteString("paid_at=")
 	builder.WriteString(fmt.Sprintf("%v", fos.PaidAt))

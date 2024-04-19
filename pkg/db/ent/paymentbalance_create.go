@@ -79,16 +79,16 @@ func (pbc *PaymentBalanceCreate) SetNillableEntID(u *uuid.UUID) *PaymentBalanceC
 	return pbc
 }
 
-// SetOrderID sets the "order_id" field.
-func (pbc *PaymentBalanceCreate) SetOrderID(u uuid.UUID) *PaymentBalanceCreate {
-	pbc.mutation.SetOrderID(u)
+// SetPaymentID sets the "payment_id" field.
+func (pbc *PaymentBalanceCreate) SetPaymentID(u uuid.UUID) *PaymentBalanceCreate {
+	pbc.mutation.SetPaymentID(u)
 	return pbc
 }
 
-// SetNillableOrderID sets the "order_id" field if the given value is not nil.
-func (pbc *PaymentBalanceCreate) SetNillableOrderID(u *uuid.UUID) *PaymentBalanceCreate {
+// SetNillablePaymentID sets the "payment_id" field if the given value is not nil.
+func (pbc *PaymentBalanceCreate) SetNillablePaymentID(u *uuid.UUID) *PaymentBalanceCreate {
 	if u != nil {
-		pbc.SetOrderID(*u)
+		pbc.SetPaymentID(*u)
 	}
 	return pbc
 }
@@ -276,12 +276,12 @@ func (pbc *PaymentBalanceCreate) defaults() error {
 		v := paymentbalance.DefaultEntID()
 		pbc.mutation.SetEntID(v)
 	}
-	if _, ok := pbc.mutation.OrderID(); !ok {
-		if paymentbalance.DefaultOrderID == nil {
-			return fmt.Errorf("ent: uninitialized paymentbalance.DefaultOrderID (forgotten import ent/runtime?)")
+	if _, ok := pbc.mutation.PaymentID(); !ok {
+		if paymentbalance.DefaultPaymentID == nil {
+			return fmt.Errorf("ent: uninitialized paymentbalance.DefaultPaymentID (forgotten import ent/runtime?)")
 		}
-		v := paymentbalance.DefaultOrderID()
-		pbc.mutation.SetOrderID(v)
+		v := paymentbalance.DefaultPaymentID()
+		pbc.mutation.SetPaymentID(v)
 	}
 	if _, ok := pbc.mutation.CoinTypeID(); !ok {
 		if paymentbalance.DefaultCoinTypeID == nil {
@@ -389,13 +389,13 @@ func (pbc *PaymentBalanceCreate) createSpec() (*PaymentBalance, *sqlgraph.Create
 		})
 		_node.EntID = value
 	}
-	if value, ok := pbc.mutation.OrderID(); ok {
+	if value, ok := pbc.mutation.PaymentID(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
 			Type:   field.TypeUUID,
 			Value:  value,
-			Column: paymentbalance.FieldOrderID,
+			Column: paymentbalance.FieldPaymentID,
 		})
-		_node.OrderID = value
+		_node.PaymentID = value
 	}
 	if value, ok := pbc.mutation.CoinTypeID(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -557,21 +557,21 @@ func (u *PaymentBalanceUpsert) UpdateEntID() *PaymentBalanceUpsert {
 	return u
 }
 
-// SetOrderID sets the "order_id" field.
-func (u *PaymentBalanceUpsert) SetOrderID(v uuid.UUID) *PaymentBalanceUpsert {
-	u.Set(paymentbalance.FieldOrderID, v)
+// SetPaymentID sets the "payment_id" field.
+func (u *PaymentBalanceUpsert) SetPaymentID(v uuid.UUID) *PaymentBalanceUpsert {
+	u.Set(paymentbalance.FieldPaymentID, v)
 	return u
 }
 
-// UpdateOrderID sets the "order_id" field to the value that was provided on create.
-func (u *PaymentBalanceUpsert) UpdateOrderID() *PaymentBalanceUpsert {
-	u.SetExcluded(paymentbalance.FieldOrderID)
+// UpdatePaymentID sets the "payment_id" field to the value that was provided on create.
+func (u *PaymentBalanceUpsert) UpdatePaymentID() *PaymentBalanceUpsert {
+	u.SetExcluded(paymentbalance.FieldPaymentID)
 	return u
 }
 
-// ClearOrderID clears the value of the "order_id" field.
-func (u *PaymentBalanceUpsert) ClearOrderID() *PaymentBalanceUpsert {
-	u.SetNull(paymentbalance.FieldOrderID)
+// ClearPaymentID clears the value of the "payment_id" field.
+func (u *PaymentBalanceUpsert) ClearPaymentID() *PaymentBalanceUpsert {
+	u.SetNull(paymentbalance.FieldPaymentID)
 	return u
 }
 
@@ -792,24 +792,24 @@ func (u *PaymentBalanceUpsertOne) UpdateEntID() *PaymentBalanceUpsertOne {
 	})
 }
 
-// SetOrderID sets the "order_id" field.
-func (u *PaymentBalanceUpsertOne) SetOrderID(v uuid.UUID) *PaymentBalanceUpsertOne {
+// SetPaymentID sets the "payment_id" field.
+func (u *PaymentBalanceUpsertOne) SetPaymentID(v uuid.UUID) *PaymentBalanceUpsertOne {
 	return u.Update(func(s *PaymentBalanceUpsert) {
-		s.SetOrderID(v)
+		s.SetPaymentID(v)
 	})
 }
 
-// UpdateOrderID sets the "order_id" field to the value that was provided on create.
-func (u *PaymentBalanceUpsertOne) UpdateOrderID() *PaymentBalanceUpsertOne {
+// UpdatePaymentID sets the "payment_id" field to the value that was provided on create.
+func (u *PaymentBalanceUpsertOne) UpdatePaymentID() *PaymentBalanceUpsertOne {
 	return u.Update(func(s *PaymentBalanceUpsert) {
-		s.UpdateOrderID()
+		s.UpdatePaymentID()
 	})
 }
 
-// ClearOrderID clears the value of the "order_id" field.
-func (u *PaymentBalanceUpsertOne) ClearOrderID() *PaymentBalanceUpsertOne {
+// ClearPaymentID clears the value of the "payment_id" field.
+func (u *PaymentBalanceUpsertOne) ClearPaymentID() *PaymentBalanceUpsertOne {
 	return u.Update(func(s *PaymentBalanceUpsert) {
-		s.ClearOrderID()
+		s.ClearPaymentID()
 	})
 }
 
@@ -1210,24 +1210,24 @@ func (u *PaymentBalanceUpsertBulk) UpdateEntID() *PaymentBalanceUpsertBulk {
 	})
 }
 
-// SetOrderID sets the "order_id" field.
-func (u *PaymentBalanceUpsertBulk) SetOrderID(v uuid.UUID) *PaymentBalanceUpsertBulk {
+// SetPaymentID sets the "payment_id" field.
+func (u *PaymentBalanceUpsertBulk) SetPaymentID(v uuid.UUID) *PaymentBalanceUpsertBulk {
 	return u.Update(func(s *PaymentBalanceUpsert) {
-		s.SetOrderID(v)
+		s.SetPaymentID(v)
 	})
 }
 
-// UpdateOrderID sets the "order_id" field to the value that was provided on create.
-func (u *PaymentBalanceUpsertBulk) UpdateOrderID() *PaymentBalanceUpsertBulk {
+// UpdatePaymentID sets the "payment_id" field to the value that was provided on create.
+func (u *PaymentBalanceUpsertBulk) UpdatePaymentID() *PaymentBalanceUpsertBulk {
 	return u.Update(func(s *PaymentBalanceUpsert) {
-		s.UpdateOrderID()
+		s.UpdatePaymentID()
 	})
 }
 
-// ClearOrderID clears the value of the "order_id" field.
-func (u *PaymentBalanceUpsertBulk) ClearOrderID() *PaymentBalanceUpsertBulk {
+// ClearPaymentID clears the value of the "payment_id" field.
+func (u *PaymentBalanceUpsertBulk) ClearPaymentID() *PaymentBalanceUpsertBulk {
 	return u.Update(func(s *PaymentBalanceUpsert) {
-		s.ClearOrderID()
+		s.ClearPaymentID()
 	})
 }
 

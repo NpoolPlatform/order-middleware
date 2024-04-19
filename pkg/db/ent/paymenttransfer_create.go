@@ -79,16 +79,16 @@ func (ptc *PaymentTransferCreate) SetNillableEntID(u *uuid.UUID) *PaymentTransfe
 	return ptc
 }
 
-// SetOrderID sets the "order_id" field.
-func (ptc *PaymentTransferCreate) SetOrderID(u uuid.UUID) *PaymentTransferCreate {
-	ptc.mutation.SetOrderID(u)
+// SetPaymentID sets the "payment_id" field.
+func (ptc *PaymentTransferCreate) SetPaymentID(u uuid.UUID) *PaymentTransferCreate {
+	ptc.mutation.SetPaymentID(u)
 	return ptc
 }
 
-// SetNillableOrderID sets the "order_id" field if the given value is not nil.
-func (ptc *PaymentTransferCreate) SetNillableOrderID(u *uuid.UUID) *PaymentTransferCreate {
+// SetNillablePaymentID sets the "payment_id" field if the given value is not nil.
+func (ptc *PaymentTransferCreate) SetNillablePaymentID(u *uuid.UUID) *PaymentTransferCreate {
 	if u != nil {
-		ptc.SetOrderID(*u)
+		ptc.SetPaymentID(*u)
 	}
 	return ptc
 }
@@ -318,12 +318,12 @@ func (ptc *PaymentTransferCreate) defaults() error {
 		v := paymenttransfer.DefaultEntID()
 		ptc.mutation.SetEntID(v)
 	}
-	if _, ok := ptc.mutation.OrderID(); !ok {
-		if paymenttransfer.DefaultOrderID == nil {
-			return fmt.Errorf("ent: uninitialized paymenttransfer.DefaultOrderID (forgotten import ent/runtime?)")
+	if _, ok := ptc.mutation.PaymentID(); !ok {
+		if paymenttransfer.DefaultPaymentID == nil {
+			return fmt.Errorf("ent: uninitialized paymenttransfer.DefaultPaymentID (forgotten import ent/runtime?)")
 		}
-		v := paymenttransfer.DefaultOrderID()
-		ptc.mutation.SetOrderID(v)
+		v := paymenttransfer.DefaultPaymentID()
+		ptc.mutation.SetPaymentID(v)
 	}
 	if _, ok := ptc.mutation.CoinTypeID(); !ok {
 		if paymenttransfer.DefaultCoinTypeID == nil {
@@ -446,13 +446,13 @@ func (ptc *PaymentTransferCreate) createSpec() (*PaymentTransfer, *sqlgraph.Crea
 		})
 		_node.EntID = value
 	}
-	if value, ok := ptc.mutation.OrderID(); ok {
+	if value, ok := ptc.mutation.PaymentID(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
 			Type:   field.TypeUUID,
 			Value:  value,
-			Column: paymenttransfer.FieldOrderID,
+			Column: paymenttransfer.FieldPaymentID,
 		})
-		_node.OrderID = value
+		_node.PaymentID = value
 	}
 	if value, ok := ptc.mutation.CoinTypeID(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -638,21 +638,21 @@ func (u *PaymentTransferUpsert) UpdateEntID() *PaymentTransferUpsert {
 	return u
 }
 
-// SetOrderID sets the "order_id" field.
-func (u *PaymentTransferUpsert) SetOrderID(v uuid.UUID) *PaymentTransferUpsert {
-	u.Set(paymenttransfer.FieldOrderID, v)
+// SetPaymentID sets the "payment_id" field.
+func (u *PaymentTransferUpsert) SetPaymentID(v uuid.UUID) *PaymentTransferUpsert {
+	u.Set(paymenttransfer.FieldPaymentID, v)
 	return u
 }
 
-// UpdateOrderID sets the "order_id" field to the value that was provided on create.
-func (u *PaymentTransferUpsert) UpdateOrderID() *PaymentTransferUpsert {
-	u.SetExcluded(paymenttransfer.FieldOrderID)
+// UpdatePaymentID sets the "payment_id" field to the value that was provided on create.
+func (u *PaymentTransferUpsert) UpdatePaymentID() *PaymentTransferUpsert {
+	u.SetExcluded(paymenttransfer.FieldPaymentID)
 	return u
 }
 
-// ClearOrderID clears the value of the "order_id" field.
-func (u *PaymentTransferUpsert) ClearOrderID() *PaymentTransferUpsert {
-	u.SetNull(paymenttransfer.FieldOrderID)
+// ClearPaymentID clears the value of the "payment_id" field.
+func (u *PaymentTransferUpsert) ClearPaymentID() *PaymentTransferUpsert {
+	u.SetNull(paymenttransfer.FieldPaymentID)
 	return u
 }
 
@@ -927,24 +927,24 @@ func (u *PaymentTransferUpsertOne) UpdateEntID() *PaymentTransferUpsertOne {
 	})
 }
 
-// SetOrderID sets the "order_id" field.
-func (u *PaymentTransferUpsertOne) SetOrderID(v uuid.UUID) *PaymentTransferUpsertOne {
+// SetPaymentID sets the "payment_id" field.
+func (u *PaymentTransferUpsertOne) SetPaymentID(v uuid.UUID) *PaymentTransferUpsertOne {
 	return u.Update(func(s *PaymentTransferUpsert) {
-		s.SetOrderID(v)
+		s.SetPaymentID(v)
 	})
 }
 
-// UpdateOrderID sets the "order_id" field to the value that was provided on create.
-func (u *PaymentTransferUpsertOne) UpdateOrderID() *PaymentTransferUpsertOne {
+// UpdatePaymentID sets the "payment_id" field to the value that was provided on create.
+func (u *PaymentTransferUpsertOne) UpdatePaymentID() *PaymentTransferUpsertOne {
 	return u.Update(func(s *PaymentTransferUpsert) {
-		s.UpdateOrderID()
+		s.UpdatePaymentID()
 	})
 }
 
-// ClearOrderID clears the value of the "order_id" field.
-func (u *PaymentTransferUpsertOne) ClearOrderID() *PaymentTransferUpsertOne {
+// ClearPaymentID clears the value of the "payment_id" field.
+func (u *PaymentTransferUpsertOne) ClearPaymentID() *PaymentTransferUpsertOne {
 	return u.Update(func(s *PaymentTransferUpsert) {
-		s.ClearOrderID()
+		s.ClearPaymentID()
 	})
 }
 
@@ -1408,24 +1408,24 @@ func (u *PaymentTransferUpsertBulk) UpdateEntID() *PaymentTransferUpsertBulk {
 	})
 }
 
-// SetOrderID sets the "order_id" field.
-func (u *PaymentTransferUpsertBulk) SetOrderID(v uuid.UUID) *PaymentTransferUpsertBulk {
+// SetPaymentID sets the "payment_id" field.
+func (u *PaymentTransferUpsertBulk) SetPaymentID(v uuid.UUID) *PaymentTransferUpsertBulk {
 	return u.Update(func(s *PaymentTransferUpsert) {
-		s.SetOrderID(v)
+		s.SetPaymentID(v)
 	})
 }
 
-// UpdateOrderID sets the "order_id" field to the value that was provided on create.
-func (u *PaymentTransferUpsertBulk) UpdateOrderID() *PaymentTransferUpsertBulk {
+// UpdatePaymentID sets the "payment_id" field to the value that was provided on create.
+func (u *PaymentTransferUpsertBulk) UpdatePaymentID() *PaymentTransferUpsertBulk {
 	return u.Update(func(s *PaymentTransferUpsert) {
-		s.UpdateOrderID()
+		s.UpdatePaymentID()
 	})
 }
 
-// ClearOrderID clears the value of the "order_id" field.
-func (u *PaymentTransferUpsertBulk) ClearOrderID() *PaymentTransferUpsertBulk {
+// ClearPaymentID clears the value of the "payment_id" field.
+func (u *PaymentTransferUpsertBulk) ClearPaymentID() *PaymentTransferUpsertBulk {
 	return u.Update(func(s *PaymentTransferUpsert) {
-		s.ClearOrderID()
+		s.ClearPaymentID()
 	})
 }
 

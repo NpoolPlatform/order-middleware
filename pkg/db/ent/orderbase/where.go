@@ -156,13 +156,6 @@ func OrderType(v string) predicate.OrderBase {
 	})
 }
 
-// PaymentType applies equality check predicate on the "payment_type" field. It's identical to PaymentTypeEQ.
-func PaymentType(v string) predicate.OrderBase {
-	return predicate.OrderBase(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldPaymentType), v))
-	})
-}
-
 // CreateMethod applies equality check predicate on the "create_method" field. It's identical to CreateMethodEQ.
 func CreateMethod(v string) predicate.OrderBase {
 	return predicate.OrderBase(func(s *sql.Selector) {
@@ -1046,119 +1039,6 @@ func OrderTypeEqualFold(v string) predicate.OrderBase {
 func OrderTypeContainsFold(v string) predicate.OrderBase {
 	return predicate.OrderBase(func(s *sql.Selector) {
 		s.Where(sql.ContainsFold(s.C(FieldOrderType), v))
-	})
-}
-
-// PaymentTypeEQ applies the EQ predicate on the "payment_type" field.
-func PaymentTypeEQ(v string) predicate.OrderBase {
-	return predicate.OrderBase(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldPaymentType), v))
-	})
-}
-
-// PaymentTypeNEQ applies the NEQ predicate on the "payment_type" field.
-func PaymentTypeNEQ(v string) predicate.OrderBase {
-	return predicate.OrderBase(func(s *sql.Selector) {
-		s.Where(sql.NEQ(s.C(FieldPaymentType), v))
-	})
-}
-
-// PaymentTypeIn applies the In predicate on the "payment_type" field.
-func PaymentTypeIn(vs ...string) predicate.OrderBase {
-	v := make([]interface{}, len(vs))
-	for i := range v {
-		v[i] = vs[i]
-	}
-	return predicate.OrderBase(func(s *sql.Selector) {
-		s.Where(sql.In(s.C(FieldPaymentType), v...))
-	})
-}
-
-// PaymentTypeNotIn applies the NotIn predicate on the "payment_type" field.
-func PaymentTypeNotIn(vs ...string) predicate.OrderBase {
-	v := make([]interface{}, len(vs))
-	for i := range v {
-		v[i] = vs[i]
-	}
-	return predicate.OrderBase(func(s *sql.Selector) {
-		s.Where(sql.NotIn(s.C(FieldPaymentType), v...))
-	})
-}
-
-// PaymentTypeGT applies the GT predicate on the "payment_type" field.
-func PaymentTypeGT(v string) predicate.OrderBase {
-	return predicate.OrderBase(func(s *sql.Selector) {
-		s.Where(sql.GT(s.C(FieldPaymentType), v))
-	})
-}
-
-// PaymentTypeGTE applies the GTE predicate on the "payment_type" field.
-func PaymentTypeGTE(v string) predicate.OrderBase {
-	return predicate.OrderBase(func(s *sql.Selector) {
-		s.Where(sql.GTE(s.C(FieldPaymentType), v))
-	})
-}
-
-// PaymentTypeLT applies the LT predicate on the "payment_type" field.
-func PaymentTypeLT(v string) predicate.OrderBase {
-	return predicate.OrderBase(func(s *sql.Selector) {
-		s.Where(sql.LT(s.C(FieldPaymentType), v))
-	})
-}
-
-// PaymentTypeLTE applies the LTE predicate on the "payment_type" field.
-func PaymentTypeLTE(v string) predicate.OrderBase {
-	return predicate.OrderBase(func(s *sql.Selector) {
-		s.Where(sql.LTE(s.C(FieldPaymentType), v))
-	})
-}
-
-// PaymentTypeContains applies the Contains predicate on the "payment_type" field.
-func PaymentTypeContains(v string) predicate.OrderBase {
-	return predicate.OrderBase(func(s *sql.Selector) {
-		s.Where(sql.Contains(s.C(FieldPaymentType), v))
-	})
-}
-
-// PaymentTypeHasPrefix applies the HasPrefix predicate on the "payment_type" field.
-func PaymentTypeHasPrefix(v string) predicate.OrderBase {
-	return predicate.OrderBase(func(s *sql.Selector) {
-		s.Where(sql.HasPrefix(s.C(FieldPaymentType), v))
-	})
-}
-
-// PaymentTypeHasSuffix applies the HasSuffix predicate on the "payment_type" field.
-func PaymentTypeHasSuffix(v string) predicate.OrderBase {
-	return predicate.OrderBase(func(s *sql.Selector) {
-		s.Where(sql.HasSuffix(s.C(FieldPaymentType), v))
-	})
-}
-
-// PaymentTypeIsNil applies the IsNil predicate on the "payment_type" field.
-func PaymentTypeIsNil() predicate.OrderBase {
-	return predicate.OrderBase(func(s *sql.Selector) {
-		s.Where(sql.IsNull(s.C(FieldPaymentType)))
-	})
-}
-
-// PaymentTypeNotNil applies the NotNil predicate on the "payment_type" field.
-func PaymentTypeNotNil() predicate.OrderBase {
-	return predicate.OrderBase(func(s *sql.Selector) {
-		s.Where(sql.NotNull(s.C(FieldPaymentType)))
-	})
-}
-
-// PaymentTypeEqualFold applies the EqualFold predicate on the "payment_type" field.
-func PaymentTypeEqualFold(v string) predicate.OrderBase {
-	return predicate.OrderBase(func(s *sql.Selector) {
-		s.Where(sql.EqualFold(s.C(FieldPaymentType), v))
-	})
-}
-
-// PaymentTypeContainsFold applies the ContainsFold predicate on the "payment_type" field.
-func PaymentTypeContainsFold(v string) predicate.OrderBase {
-	return predicate.OrderBase(func(s *sql.Selector) {
-		s.Where(sql.ContainsFold(s.C(FieldPaymentType), v))
 	})
 }
 

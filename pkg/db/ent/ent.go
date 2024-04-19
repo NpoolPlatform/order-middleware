@@ -23,6 +23,7 @@ import (
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/outofgas"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/payment"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/paymentbalance"
+	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/paymentbase"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/paymentcontract"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/paymenttransfer"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/powerrental"
@@ -60,6 +61,7 @@ func columnChecker(table string) func(string) error {
 		outofgas.Table:         outofgas.ValidColumn,
 		payment.Table:          payment.ValidColumn,
 		paymentbalance.Table:   paymentbalance.ValidColumn,
+		paymentbase.Table:      paymentbase.ValidColumn,
 		paymentcontract.Table:  paymentcontract.ValidColumn,
 		paymenttransfer.Table:  paymenttransfer.ValidColumn,
 		powerrental.Table:      powerrental.ValidColumn,

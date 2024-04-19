@@ -40,6 +40,12 @@ func (PowerRentalState) Fields() []ent.Field {
 			Optional().
 			Default(0),
 		field.
+			UUID("payment_id", uuid.UUID{}).
+			Optional().
+			Default(func() uuid.UUID {
+				return uuid.UUID{}
+			}),
+		field.
 			Uint32("paid_at").
 			Optional().
 			Default(0),

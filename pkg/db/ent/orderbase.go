@@ -38,8 +38,6 @@ type OrderBase struct {
 	ParentOrderID uuid.UUID `json:"parent_order_id,omitempty"`
 	// OrderType holds the value of the "order_type" field.
 	OrderType string `json:"order_type,omitempty"`
-	// PaymentType holds the value of the "payment_type" field.
-	PaymentType string `json:"payment_type,omitempty"`
 	// CreateMethod holds the value of the "create_method" field.
 	CreateMethod string `json:"create_method,omitempty"`
 	// Simulate holds the value of the "simulate" field.
@@ -55,7 +53,7 @@ func (*OrderBase) scanValues(columns []string) ([]interface{}, error) {
 			values[i] = new(sql.NullBool)
 		case orderbase.FieldID, orderbase.FieldCreatedAt, orderbase.FieldUpdatedAt, orderbase.FieldDeletedAt:
 			values[i] = new(sql.NullInt64)
-		case orderbase.FieldGoodType, orderbase.FieldOrderType, orderbase.FieldPaymentType, orderbase.FieldCreateMethod:
+		case orderbase.FieldGoodType, orderbase.FieldOrderType, orderbase.FieldCreateMethod:
 			values[i] = new(sql.NullString)
 		case orderbase.FieldEntID, orderbase.FieldAppID, orderbase.FieldUserID, orderbase.FieldGoodID, orderbase.FieldAppGoodID, orderbase.FieldParentOrderID:
 			values[i] = new(uuid.UUID)
@@ -146,12 +144,6 @@ func (ob *OrderBase) assignValues(columns []string, values []interface{}) error 
 			} else if value.Valid {
 				ob.OrderType = value.String
 			}
-		case orderbase.FieldPaymentType:
-			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field payment_type", values[i])
-			} else if value.Valid {
-				ob.PaymentType = value.String
-			}
 		case orderbase.FieldCreateMethod:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field create_method", values[i])
@@ -224,9 +216,6 @@ func (ob *OrderBase) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("order_type=")
 	builder.WriteString(ob.OrderType)
-	builder.WriteString(", ")
-	builder.WriteString("payment_type=")
-	builder.WriteString(ob.PaymentType)
 	builder.WriteString(", ")
 	builder.WriteString("create_method=")
 	builder.WriteString(ob.CreateMethod)

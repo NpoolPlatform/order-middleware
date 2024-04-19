@@ -105,6 +105,7 @@ var (
 		{Name: "deleted_at", Type: field.TypeUint32},
 		{Name: "ent_id", Type: field.TypeUUID, Unique: true},
 		{Name: "order_id", Type: field.TypeUUID, Nullable: true},
+		{Name: "payment_id", Type: field.TypeUUID, Nullable: true},
 		{Name: "paid_at", Type: field.TypeUint32, Nullable: true, Default: 0},
 		{Name: "user_set_paid", Type: field.TypeBool, Nullable: true, Default: false},
 		{Name: "user_set_canceled", Type: field.TypeBool, Nullable: true, Default: false},
@@ -197,7 +198,6 @@ var (
 		{Name: "good_type", Type: field.TypeString, Nullable: true, Default: ""},
 		{Name: "parent_order_id", Type: field.TypeUUID, Nullable: true},
 		{Name: "order_type", Type: field.TypeString, Nullable: true, Default: "Normal"},
-		{Name: "payment_type", Type: field.TypeString, Nullable: true, Default: "PayWithBalanceOnly"},
 		{Name: "create_method", Type: field.TypeString, Nullable: true, Default: "OrderCreatedByPurchase"},
 		{Name: "simulate", Type: field.TypeBool, Nullable: true, Default: false},
 	}
@@ -333,6 +333,7 @@ var (
 		{Name: "start_at", Type: field.TypeUint32, Nullable: true, Default: 0},
 		{Name: "last_benefit_at", Type: field.TypeUint32, Nullable: true, Default: 0},
 		{Name: "benefit_state", Type: field.TypeString, Nullable: true, Default: "BenefitWait"},
+		{Name: "payment_type", Type: field.TypeString, Nullable: true, Default: "PayWithBalanceOnly"},
 	}
 	// OrderStateBasesTable holds the schema information for the "order_state_bases" table.
 	OrderStateBasesTable = &schema.Table{
@@ -422,7 +423,7 @@ var (
 		{Name: "updated_at", Type: field.TypeUint32},
 		{Name: "deleted_at", Type: field.TypeUint32},
 		{Name: "ent_id", Type: field.TypeUUID, Unique: true},
-		{Name: "order_id", Type: field.TypeUUID, Nullable: true},
+		{Name: "payment_id", Type: field.TypeUUID, Nullable: true},
 		{Name: "coin_type_id", Type: field.TypeUUID, Nullable: true},
 		{Name: "amount", Type: field.TypeOther, Nullable: true, SchemaType: map[string]string{"mysql": "decimal(37,18)"}},
 		{Name: "coin_usd_currency", Type: field.TypeOther, Nullable: true, SchemaType: map[string]string{"mysql": "decimal(37, 18)"}},
@@ -441,9 +442,37 @@ var (
 				Columns: []*schema.Column{PaymentBalancesColumns[4]},
 			},
 			{
-				Name:    "paymentbalance_order_id",
+				Name:    "paymentbalance_payment_id",
 				Unique:  false,
 				Columns: []*schema.Column{PaymentBalancesColumns[5]},
+			},
+		},
+	}
+	// PaymentBasesColumns holds the columns for the "payment_bases" table.
+	PaymentBasesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true},
+		{Name: "created_at", Type: field.TypeUint32},
+		{Name: "updated_at", Type: field.TypeUint32},
+		{Name: "deleted_at", Type: field.TypeUint32},
+		{Name: "ent_id", Type: field.TypeUUID, Unique: true},
+		{Name: "order_id", Type: field.TypeUUID, Nullable: true},
+		{Name: "obseleted", Type: field.TypeBool, Nullable: true, Default: false},
+	}
+	// PaymentBasesTable holds the schema information for the "payment_bases" table.
+	PaymentBasesTable = &schema.Table{
+		Name:       "payment_bases",
+		Columns:    PaymentBasesColumns,
+		PrimaryKey: []*schema.Column{PaymentBasesColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "paymentbase_ent_id",
+				Unique:  true,
+				Columns: []*schema.Column{PaymentBasesColumns[4]},
+			},
+			{
+				Name:    "paymentbase_order_id",
+				Unique:  false,
+				Columns: []*schema.Column{PaymentBasesColumns[5]},
 			},
 		},
 	}
@@ -483,7 +512,7 @@ var (
 		{Name: "updated_at", Type: field.TypeUint32},
 		{Name: "deleted_at", Type: field.TypeUint32},
 		{Name: "ent_id", Type: field.TypeUUID, Unique: true},
-		{Name: "order_id", Type: field.TypeUUID, Nullable: true},
+		{Name: "payment_id", Type: field.TypeUUID, Nullable: true},
 		{Name: "coin_type_id", Type: field.TypeUUID, Nullable: true},
 		{Name: "account_id", Type: field.TypeUUID, Nullable: true},
 		{Name: "amount", Type: field.TypeOther, Nullable: true, SchemaType: map[string]string{"mysql": "decimal(37,18)"}},
@@ -505,7 +534,7 @@ var (
 				Columns: []*schema.Column{PaymentTransfersColumns[4]},
 			},
 			{
-				Name:    "paymenttransfer_order_id",
+				Name:    "paymenttransfer_payment_id",
 				Unique:  false,
 				Columns: []*schema.Column{PaymentTransfersColumns[5]},
 			},
@@ -555,6 +584,7 @@ var (
 		{Name: "order_id", Type: field.TypeUUID, Nullable: true},
 		{Name: "cancel_state", Type: field.TypeString, Nullable: true, Default: "DefaultOrderState"},
 		{Name: "duration_seconds", Type: field.TypeUint32, Nullable: true, Default: 0},
+		{Name: "payment_id", Type: field.TypeUUID, Nullable: true},
 		{Name: "paid_at", Type: field.TypeUint32, Nullable: true, Default: 0},
 		{Name: "user_set_paid", Type: field.TypeBool, Nullable: true, Default: false},
 		{Name: "user_set_canceled", Type: field.TypeBool, Nullable: true, Default: false},
@@ -598,6 +628,7 @@ var (
 		OutOfGasTable,
 		PaymentsTable,
 		PaymentBalancesTable,
+		PaymentBasesTable,
 		PaymentContractsTable,
 		PaymentTransfersTable,
 		PowerRentalsTable,

@@ -238,26 +238,6 @@ func (obu *OrderBaseUpdate) ClearOrderType() *OrderBaseUpdate {
 	return obu
 }
 
-// SetPaymentType sets the "payment_type" field.
-func (obu *OrderBaseUpdate) SetPaymentType(s string) *OrderBaseUpdate {
-	obu.mutation.SetPaymentType(s)
-	return obu
-}
-
-// SetNillablePaymentType sets the "payment_type" field if the given value is not nil.
-func (obu *OrderBaseUpdate) SetNillablePaymentType(s *string) *OrderBaseUpdate {
-	if s != nil {
-		obu.SetPaymentType(*s)
-	}
-	return obu
-}
-
-// ClearPaymentType clears the value of the "payment_type" field.
-func (obu *OrderBaseUpdate) ClearPaymentType() *OrderBaseUpdate {
-	obu.mutation.ClearPaymentType()
-	return obu
-}
-
 // SetCreateMethod sets the "create_method" field.
 func (obu *OrderBaseUpdate) SetCreateMethod(s string) *OrderBaseUpdate {
 	obu.mutation.SetCreateMethod(s)
@@ -536,19 +516,6 @@ func (obu *OrderBaseUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: orderbase.FieldOrderType,
 		})
 	}
-	if value, ok := obu.mutation.PaymentType(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Value:  value,
-			Column: orderbase.FieldPaymentType,
-		})
-	}
-	if obu.mutation.PaymentTypeCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Column: orderbase.FieldPaymentType,
-		})
-	}
 	if value, ok := obu.mutation.CreateMethod(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
@@ -802,26 +769,6 @@ func (obuo *OrderBaseUpdateOne) SetNillableOrderType(s *string) *OrderBaseUpdate
 // ClearOrderType clears the value of the "order_type" field.
 func (obuo *OrderBaseUpdateOne) ClearOrderType() *OrderBaseUpdateOne {
 	obuo.mutation.ClearOrderType()
-	return obuo
-}
-
-// SetPaymentType sets the "payment_type" field.
-func (obuo *OrderBaseUpdateOne) SetPaymentType(s string) *OrderBaseUpdateOne {
-	obuo.mutation.SetPaymentType(s)
-	return obuo
-}
-
-// SetNillablePaymentType sets the "payment_type" field if the given value is not nil.
-func (obuo *OrderBaseUpdateOne) SetNillablePaymentType(s *string) *OrderBaseUpdateOne {
-	if s != nil {
-		obuo.SetPaymentType(*s)
-	}
-	return obuo
-}
-
-// ClearPaymentType clears the value of the "payment_type" field.
-func (obuo *OrderBaseUpdateOne) ClearPaymentType() *OrderBaseUpdateOne {
-	obuo.mutation.ClearPaymentType()
 	return obuo
 }
 
@@ -1131,19 +1078,6 @@ func (obuo *OrderBaseUpdateOne) sqlSave(ctx context.Context) (_node *OrderBase, 
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
 			Column: orderbase.FieldOrderType,
-		})
-	}
-	if value, ok := obuo.mutation.PaymentType(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Value:  value,
-			Column: orderbase.FieldPaymentType,
-		})
-	}
-	if obuo.mutation.PaymentTypeCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Column: orderbase.FieldPaymentType,
 		})
 	}
 	if value, ok := obuo.mutation.CreateMethod(); ok {

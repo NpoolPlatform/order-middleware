@@ -22,6 +22,8 @@ const (
 	FieldEntID = "ent_id"
 	// FieldOrderID holds the string denoting the order_id field in the database.
 	FieldOrderID = "order_id"
+	// FieldPaymentID holds the string denoting the payment_id field in the database.
+	FieldPaymentID = "payment_id"
 	// FieldPaidAt holds the string denoting the paid_at field in the database.
 	FieldPaidAt = "paid_at"
 	// FieldUserSetPaid holds the string denoting the user_set_paid field in the database.
@@ -46,6 +48,7 @@ var Columns = []string{
 	FieldDeletedAt,
 	FieldEntID,
 	FieldOrderID,
+	FieldPaymentID,
 	FieldPaidAt,
 	FieldUserSetPaid,
 	FieldUserSetCanceled,
@@ -85,6 +88,8 @@ var (
 	DefaultEntID func() uuid.UUID
 	// DefaultOrderID holds the default value on creation for the "order_id" field.
 	DefaultOrderID func() uuid.UUID
+	// DefaultPaymentID holds the default value on creation for the "payment_id" field.
+	DefaultPaymentID func() uuid.UUID
 	// DefaultPaidAt holds the default value on creation for the "paid_at" field.
 	DefaultPaidAt uint32
 	// DefaultUserSetPaid holds the default value on creation for the "user_set_paid" field.

@@ -92,6 +92,20 @@ func (fosc *FeeOrderStateCreate) SetNillableOrderID(u *uuid.UUID) *FeeOrderState
 	return fosc
 }
 
+// SetPaymentID sets the "payment_id" field.
+func (fosc *FeeOrderStateCreate) SetPaymentID(u uuid.UUID) *FeeOrderStateCreate {
+	fosc.mutation.SetPaymentID(u)
+	return fosc
+}
+
+// SetNillablePaymentID sets the "payment_id" field if the given value is not nil.
+func (fosc *FeeOrderStateCreate) SetNillablePaymentID(u *uuid.UUID) *FeeOrderStateCreate {
+	if u != nil {
+		fosc.SetPaymentID(*u)
+	}
+	return fosc
+}
+
 // SetPaidAt sets the "paid_at" field.
 func (fosc *FeeOrderStateCreate) SetPaidAt(u uint32) *FeeOrderStateCreate {
 	fosc.mutation.SetPaidAt(u)
@@ -296,6 +310,13 @@ func (fosc *FeeOrderStateCreate) defaults() error {
 		v := feeorderstate.DefaultOrderID()
 		fosc.mutation.SetOrderID(v)
 	}
+	if _, ok := fosc.mutation.PaymentID(); !ok {
+		if feeorderstate.DefaultPaymentID == nil {
+			return fmt.Errorf("ent: uninitialized feeorderstate.DefaultPaymentID (forgotten import ent/runtime?)")
+		}
+		v := feeorderstate.DefaultPaymentID()
+		fosc.mutation.SetPaymentID(v)
+	}
 	if _, ok := fosc.mutation.PaidAt(); !ok {
 		v := feeorderstate.DefaultPaidAt
 		fosc.mutation.SetPaidAt(v)
@@ -410,6 +431,14 @@ func (fosc *FeeOrderStateCreate) createSpec() (*FeeOrderState, *sqlgraph.CreateS
 			Column: feeorderstate.FieldOrderID,
 		})
 		_node.OrderID = value
+	}
+	if value, ok := fosc.mutation.PaymentID(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Value:  value,
+			Column: feeorderstate.FieldPaymentID,
+		})
+		_node.PaymentID = value
 	}
 	if value, ok := fosc.mutation.PaidAt(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -594,6 +623,24 @@ func (u *FeeOrderStateUpsert) UpdateOrderID() *FeeOrderStateUpsert {
 // ClearOrderID clears the value of the "order_id" field.
 func (u *FeeOrderStateUpsert) ClearOrderID() *FeeOrderStateUpsert {
 	u.SetNull(feeorderstate.FieldOrderID)
+	return u
+}
+
+// SetPaymentID sets the "payment_id" field.
+func (u *FeeOrderStateUpsert) SetPaymentID(v uuid.UUID) *FeeOrderStateUpsert {
+	u.Set(feeorderstate.FieldPaymentID, v)
+	return u
+}
+
+// UpdatePaymentID sets the "payment_id" field to the value that was provided on create.
+func (u *FeeOrderStateUpsert) UpdatePaymentID() *FeeOrderStateUpsert {
+	u.SetExcluded(feeorderstate.FieldPaymentID)
+	return u
+}
+
+// ClearPaymentID clears the value of the "payment_id" field.
+func (u *FeeOrderStateUpsert) ClearPaymentID() *FeeOrderStateUpsert {
+	u.SetNull(feeorderstate.FieldPaymentID)
 	return u
 }
 
@@ -856,6 +903,27 @@ func (u *FeeOrderStateUpsertOne) UpdateOrderID() *FeeOrderStateUpsertOne {
 func (u *FeeOrderStateUpsertOne) ClearOrderID() *FeeOrderStateUpsertOne {
 	return u.Update(func(s *FeeOrderStateUpsert) {
 		s.ClearOrderID()
+	})
+}
+
+// SetPaymentID sets the "payment_id" field.
+func (u *FeeOrderStateUpsertOne) SetPaymentID(v uuid.UUID) *FeeOrderStateUpsertOne {
+	return u.Update(func(s *FeeOrderStateUpsert) {
+		s.SetPaymentID(v)
+	})
+}
+
+// UpdatePaymentID sets the "payment_id" field to the value that was provided on create.
+func (u *FeeOrderStateUpsertOne) UpdatePaymentID() *FeeOrderStateUpsertOne {
+	return u.Update(func(s *FeeOrderStateUpsert) {
+		s.UpdatePaymentID()
+	})
+}
+
+// ClearPaymentID clears the value of the "payment_id" field.
+func (u *FeeOrderStateUpsertOne) ClearPaymentID() *FeeOrderStateUpsertOne {
+	return u.Update(func(s *FeeOrderStateUpsert) {
+		s.ClearPaymentID()
 	})
 }
 
@@ -1302,6 +1370,27 @@ func (u *FeeOrderStateUpsertBulk) UpdateOrderID() *FeeOrderStateUpsertBulk {
 func (u *FeeOrderStateUpsertBulk) ClearOrderID() *FeeOrderStateUpsertBulk {
 	return u.Update(func(s *FeeOrderStateUpsert) {
 		s.ClearOrderID()
+	})
+}
+
+// SetPaymentID sets the "payment_id" field.
+func (u *FeeOrderStateUpsertBulk) SetPaymentID(v uuid.UUID) *FeeOrderStateUpsertBulk {
+	return u.Update(func(s *FeeOrderStateUpsert) {
+		s.SetPaymentID(v)
+	})
+}
+
+// UpdatePaymentID sets the "payment_id" field to the value that was provided on create.
+func (u *FeeOrderStateUpsertBulk) UpdatePaymentID() *FeeOrderStateUpsertBulk {
+	return u.Update(func(s *FeeOrderStateUpsert) {
+		s.UpdatePaymentID()
+	})
+}
+
+// ClearPaymentID clears the value of the "payment_id" field.
+func (u *FeeOrderStateUpsertBulk) ClearPaymentID() *FeeOrderStateUpsertBulk {
+	return u.Update(func(s *FeeOrderStateUpsert) {
+		s.ClearPaymentID()
 	})
 }
 

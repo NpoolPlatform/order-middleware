@@ -114,6 +114,13 @@ func OrderID(v uuid.UUID) predicate.FeeOrderState {
 	})
 }
 
+// PaymentID applies equality check predicate on the "payment_id" field. It's identical to PaymentIDEQ.
+func PaymentID(v uuid.UUID) predicate.FeeOrderState {
+	return predicate.FeeOrderState(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldPaymentID), v))
+	})
+}
+
 // PaidAt applies equality check predicate on the "paid_at" field. It's identical to PaidAtEQ.
 func PaidAt(v uint32) predicate.FeeOrderState {
 	return predicate.FeeOrderState(func(s *sql.Selector) {
@@ -487,6 +494,84 @@ func OrderIDIsNil() predicate.FeeOrderState {
 func OrderIDNotNil() predicate.FeeOrderState {
 	return predicate.FeeOrderState(func(s *sql.Selector) {
 		s.Where(sql.NotNull(s.C(FieldOrderID)))
+	})
+}
+
+// PaymentIDEQ applies the EQ predicate on the "payment_id" field.
+func PaymentIDEQ(v uuid.UUID) predicate.FeeOrderState {
+	return predicate.FeeOrderState(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldPaymentID), v))
+	})
+}
+
+// PaymentIDNEQ applies the NEQ predicate on the "payment_id" field.
+func PaymentIDNEQ(v uuid.UUID) predicate.FeeOrderState {
+	return predicate.FeeOrderState(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldPaymentID), v))
+	})
+}
+
+// PaymentIDIn applies the In predicate on the "payment_id" field.
+func PaymentIDIn(vs ...uuid.UUID) predicate.FeeOrderState {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.FeeOrderState(func(s *sql.Selector) {
+		s.Where(sql.In(s.C(FieldPaymentID), v...))
+	})
+}
+
+// PaymentIDNotIn applies the NotIn predicate on the "payment_id" field.
+func PaymentIDNotIn(vs ...uuid.UUID) predicate.FeeOrderState {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.FeeOrderState(func(s *sql.Selector) {
+		s.Where(sql.NotIn(s.C(FieldPaymentID), v...))
+	})
+}
+
+// PaymentIDGT applies the GT predicate on the "payment_id" field.
+func PaymentIDGT(v uuid.UUID) predicate.FeeOrderState {
+	return predicate.FeeOrderState(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldPaymentID), v))
+	})
+}
+
+// PaymentIDGTE applies the GTE predicate on the "payment_id" field.
+func PaymentIDGTE(v uuid.UUID) predicate.FeeOrderState {
+	return predicate.FeeOrderState(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldPaymentID), v))
+	})
+}
+
+// PaymentIDLT applies the LT predicate on the "payment_id" field.
+func PaymentIDLT(v uuid.UUID) predicate.FeeOrderState {
+	return predicate.FeeOrderState(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldPaymentID), v))
+	})
+}
+
+// PaymentIDLTE applies the LTE predicate on the "payment_id" field.
+func PaymentIDLTE(v uuid.UUID) predicate.FeeOrderState {
+	return predicate.FeeOrderState(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldPaymentID), v))
+	})
+}
+
+// PaymentIDIsNil applies the IsNil predicate on the "payment_id" field.
+func PaymentIDIsNil() predicate.FeeOrderState {
+	return predicate.FeeOrderState(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldPaymentID)))
+	})
+}
+
+// PaymentIDNotNil applies the NotNil predicate on the "payment_id" field.
+func PaymentIDNotNil() predicate.FeeOrderState {
+	return predicate.FeeOrderState(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldPaymentID)))
 	})
 }
 
