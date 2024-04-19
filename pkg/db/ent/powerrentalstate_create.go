@@ -190,30 +190,30 @@ func (prsc *PowerRentalStateCreate) SetNillablePaymentState(s *string) *PowerRen
 	return prsc
 }
 
-// SetOutofgasHours sets the "outofgas_hours" field.
-func (prsc *PowerRentalStateCreate) SetOutofgasHours(u uint32) *PowerRentalStateCreate {
-	prsc.mutation.SetOutofgasHours(u)
+// SetOutofgasSceonds sets the "outofgas_sceonds" field.
+func (prsc *PowerRentalStateCreate) SetOutofgasSceonds(u uint32) *PowerRentalStateCreate {
+	prsc.mutation.SetOutofgasSceonds(u)
 	return prsc
 }
 
-// SetNillableOutofgasHours sets the "outofgas_hours" field if the given value is not nil.
-func (prsc *PowerRentalStateCreate) SetNillableOutofgasHours(u *uint32) *PowerRentalStateCreate {
+// SetNillableOutofgasSceonds sets the "outofgas_sceonds" field if the given value is not nil.
+func (prsc *PowerRentalStateCreate) SetNillableOutofgasSceonds(u *uint32) *PowerRentalStateCreate {
 	if u != nil {
-		prsc.SetOutofgasHours(*u)
+		prsc.SetOutofgasSceonds(*u)
 	}
 	return prsc
 }
 
-// SetCompensateHours sets the "compensate_hours" field.
-func (prsc *PowerRentalStateCreate) SetCompensateHours(u uint32) *PowerRentalStateCreate {
-	prsc.mutation.SetCompensateHours(u)
+// SetCompensateSeconds sets the "compensate_seconds" field.
+func (prsc *PowerRentalStateCreate) SetCompensateSeconds(u uint32) *PowerRentalStateCreate {
+	prsc.mutation.SetCompensateSeconds(u)
 	return prsc
 }
 
-// SetNillableCompensateHours sets the "compensate_hours" field if the given value is not nil.
-func (prsc *PowerRentalStateCreate) SetNillableCompensateHours(u *uint32) *PowerRentalStateCreate {
+// SetNillableCompensateSeconds sets the "compensate_seconds" field if the given value is not nil.
+func (prsc *PowerRentalStateCreate) SetNillableCompensateSeconds(u *uint32) *PowerRentalStateCreate {
 	if u != nil {
-		prsc.SetCompensateHours(*u)
+		prsc.SetCompensateSeconds(*u)
 	}
 	return prsc
 }
@@ -394,13 +394,13 @@ func (prsc *PowerRentalStateCreate) defaults() error {
 		v := powerrentalstate.DefaultPaymentState
 		prsc.mutation.SetPaymentState(v)
 	}
-	if _, ok := prsc.mutation.OutofgasHours(); !ok {
-		v := powerrentalstate.DefaultOutofgasHours
-		prsc.mutation.SetOutofgasHours(v)
+	if _, ok := prsc.mutation.OutofgasSceonds(); !ok {
+		v := powerrentalstate.DefaultOutofgasSceonds
+		prsc.mutation.SetOutofgasSceonds(v)
 	}
-	if _, ok := prsc.mutation.CompensateHours(); !ok {
-		v := powerrentalstate.DefaultCompensateHours
-		prsc.mutation.SetCompensateHours(v)
+	if _, ok := prsc.mutation.CompensateSeconds(); !ok {
+		v := powerrentalstate.DefaultCompensateSeconds
+		prsc.mutation.SetCompensateSeconds(v)
 	}
 	if _, ok := prsc.mutation.RenewState(); !ok {
 		v := powerrentalstate.DefaultRenewState
@@ -557,21 +557,21 @@ func (prsc *PowerRentalStateCreate) createSpec() (*PowerRentalState, *sqlgraph.C
 		})
 		_node.PaymentState = value
 	}
-	if value, ok := prsc.mutation.OutofgasHours(); ok {
+	if value, ok := prsc.mutation.OutofgasSceonds(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
 			Type:   field.TypeUint32,
 			Value:  value,
-			Column: powerrentalstate.FieldOutofgasHours,
+			Column: powerrentalstate.FieldOutofgasSceonds,
 		})
-		_node.OutofgasHours = value
+		_node.OutofgasSceonds = value
 	}
-	if value, ok := prsc.mutation.CompensateHours(); ok {
+	if value, ok := prsc.mutation.CompensateSeconds(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
 			Type:   field.TypeUint32,
 			Value:  value,
-			Column: powerrentalstate.FieldCompensateHours,
+			Column: powerrentalstate.FieldCompensateSeconds,
 		})
-		_node.CompensateHours = value
+		_node.CompensateSeconds = value
 	}
 	if value, ok := prsc.mutation.RenewState(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -865,51 +865,51 @@ func (u *PowerRentalStateUpsert) ClearPaymentState() *PowerRentalStateUpsert {
 	return u
 }
 
-// SetOutofgasHours sets the "outofgas_hours" field.
-func (u *PowerRentalStateUpsert) SetOutofgasHours(v uint32) *PowerRentalStateUpsert {
-	u.Set(powerrentalstate.FieldOutofgasHours, v)
+// SetOutofgasSceonds sets the "outofgas_sceonds" field.
+func (u *PowerRentalStateUpsert) SetOutofgasSceonds(v uint32) *PowerRentalStateUpsert {
+	u.Set(powerrentalstate.FieldOutofgasSceonds, v)
 	return u
 }
 
-// UpdateOutofgasHours sets the "outofgas_hours" field to the value that was provided on create.
-func (u *PowerRentalStateUpsert) UpdateOutofgasHours() *PowerRentalStateUpsert {
-	u.SetExcluded(powerrentalstate.FieldOutofgasHours)
+// UpdateOutofgasSceonds sets the "outofgas_sceonds" field to the value that was provided on create.
+func (u *PowerRentalStateUpsert) UpdateOutofgasSceonds() *PowerRentalStateUpsert {
+	u.SetExcluded(powerrentalstate.FieldOutofgasSceonds)
 	return u
 }
 
-// AddOutofgasHours adds v to the "outofgas_hours" field.
-func (u *PowerRentalStateUpsert) AddOutofgasHours(v uint32) *PowerRentalStateUpsert {
-	u.Add(powerrentalstate.FieldOutofgasHours, v)
+// AddOutofgasSceonds adds v to the "outofgas_sceonds" field.
+func (u *PowerRentalStateUpsert) AddOutofgasSceonds(v uint32) *PowerRentalStateUpsert {
+	u.Add(powerrentalstate.FieldOutofgasSceonds, v)
 	return u
 }
 
-// ClearOutofgasHours clears the value of the "outofgas_hours" field.
-func (u *PowerRentalStateUpsert) ClearOutofgasHours() *PowerRentalStateUpsert {
-	u.SetNull(powerrentalstate.FieldOutofgasHours)
+// ClearOutofgasSceonds clears the value of the "outofgas_sceonds" field.
+func (u *PowerRentalStateUpsert) ClearOutofgasSceonds() *PowerRentalStateUpsert {
+	u.SetNull(powerrentalstate.FieldOutofgasSceonds)
 	return u
 }
 
-// SetCompensateHours sets the "compensate_hours" field.
-func (u *PowerRentalStateUpsert) SetCompensateHours(v uint32) *PowerRentalStateUpsert {
-	u.Set(powerrentalstate.FieldCompensateHours, v)
+// SetCompensateSeconds sets the "compensate_seconds" field.
+func (u *PowerRentalStateUpsert) SetCompensateSeconds(v uint32) *PowerRentalStateUpsert {
+	u.Set(powerrentalstate.FieldCompensateSeconds, v)
 	return u
 }
 
-// UpdateCompensateHours sets the "compensate_hours" field to the value that was provided on create.
-func (u *PowerRentalStateUpsert) UpdateCompensateHours() *PowerRentalStateUpsert {
-	u.SetExcluded(powerrentalstate.FieldCompensateHours)
+// UpdateCompensateSeconds sets the "compensate_seconds" field to the value that was provided on create.
+func (u *PowerRentalStateUpsert) UpdateCompensateSeconds() *PowerRentalStateUpsert {
+	u.SetExcluded(powerrentalstate.FieldCompensateSeconds)
 	return u
 }
 
-// AddCompensateHours adds v to the "compensate_hours" field.
-func (u *PowerRentalStateUpsert) AddCompensateHours(v uint32) *PowerRentalStateUpsert {
-	u.Add(powerrentalstate.FieldCompensateHours, v)
+// AddCompensateSeconds adds v to the "compensate_seconds" field.
+func (u *PowerRentalStateUpsert) AddCompensateSeconds(v uint32) *PowerRentalStateUpsert {
+	u.Add(powerrentalstate.FieldCompensateSeconds, v)
 	return u
 }
 
-// ClearCompensateHours clears the value of the "compensate_hours" field.
-func (u *PowerRentalStateUpsert) ClearCompensateHours() *PowerRentalStateUpsert {
-	u.SetNull(powerrentalstate.FieldCompensateHours)
+// ClearCompensateSeconds clears the value of the "compensate_seconds" field.
+func (u *PowerRentalStateUpsert) ClearCompensateSeconds() *PowerRentalStateUpsert {
+	u.SetNull(powerrentalstate.FieldCompensateSeconds)
 	return u
 }
 
@@ -1264,59 +1264,59 @@ func (u *PowerRentalStateUpsertOne) ClearPaymentState() *PowerRentalStateUpsertO
 	})
 }
 
-// SetOutofgasHours sets the "outofgas_hours" field.
-func (u *PowerRentalStateUpsertOne) SetOutofgasHours(v uint32) *PowerRentalStateUpsertOne {
+// SetOutofgasSceonds sets the "outofgas_sceonds" field.
+func (u *PowerRentalStateUpsertOne) SetOutofgasSceonds(v uint32) *PowerRentalStateUpsertOne {
 	return u.Update(func(s *PowerRentalStateUpsert) {
-		s.SetOutofgasHours(v)
+		s.SetOutofgasSceonds(v)
 	})
 }
 
-// AddOutofgasHours adds v to the "outofgas_hours" field.
-func (u *PowerRentalStateUpsertOne) AddOutofgasHours(v uint32) *PowerRentalStateUpsertOne {
+// AddOutofgasSceonds adds v to the "outofgas_sceonds" field.
+func (u *PowerRentalStateUpsertOne) AddOutofgasSceonds(v uint32) *PowerRentalStateUpsertOne {
 	return u.Update(func(s *PowerRentalStateUpsert) {
-		s.AddOutofgasHours(v)
+		s.AddOutofgasSceonds(v)
 	})
 }
 
-// UpdateOutofgasHours sets the "outofgas_hours" field to the value that was provided on create.
-func (u *PowerRentalStateUpsertOne) UpdateOutofgasHours() *PowerRentalStateUpsertOne {
+// UpdateOutofgasSceonds sets the "outofgas_sceonds" field to the value that was provided on create.
+func (u *PowerRentalStateUpsertOne) UpdateOutofgasSceonds() *PowerRentalStateUpsertOne {
 	return u.Update(func(s *PowerRentalStateUpsert) {
-		s.UpdateOutofgasHours()
+		s.UpdateOutofgasSceonds()
 	})
 }
 
-// ClearOutofgasHours clears the value of the "outofgas_hours" field.
-func (u *PowerRentalStateUpsertOne) ClearOutofgasHours() *PowerRentalStateUpsertOne {
+// ClearOutofgasSceonds clears the value of the "outofgas_sceonds" field.
+func (u *PowerRentalStateUpsertOne) ClearOutofgasSceonds() *PowerRentalStateUpsertOne {
 	return u.Update(func(s *PowerRentalStateUpsert) {
-		s.ClearOutofgasHours()
+		s.ClearOutofgasSceonds()
 	})
 }
 
-// SetCompensateHours sets the "compensate_hours" field.
-func (u *PowerRentalStateUpsertOne) SetCompensateHours(v uint32) *PowerRentalStateUpsertOne {
+// SetCompensateSeconds sets the "compensate_seconds" field.
+func (u *PowerRentalStateUpsertOne) SetCompensateSeconds(v uint32) *PowerRentalStateUpsertOne {
 	return u.Update(func(s *PowerRentalStateUpsert) {
-		s.SetCompensateHours(v)
+		s.SetCompensateSeconds(v)
 	})
 }
 
-// AddCompensateHours adds v to the "compensate_hours" field.
-func (u *PowerRentalStateUpsertOne) AddCompensateHours(v uint32) *PowerRentalStateUpsertOne {
+// AddCompensateSeconds adds v to the "compensate_seconds" field.
+func (u *PowerRentalStateUpsertOne) AddCompensateSeconds(v uint32) *PowerRentalStateUpsertOne {
 	return u.Update(func(s *PowerRentalStateUpsert) {
-		s.AddCompensateHours(v)
+		s.AddCompensateSeconds(v)
 	})
 }
 
-// UpdateCompensateHours sets the "compensate_hours" field to the value that was provided on create.
-func (u *PowerRentalStateUpsertOne) UpdateCompensateHours() *PowerRentalStateUpsertOne {
+// UpdateCompensateSeconds sets the "compensate_seconds" field to the value that was provided on create.
+func (u *PowerRentalStateUpsertOne) UpdateCompensateSeconds() *PowerRentalStateUpsertOne {
 	return u.Update(func(s *PowerRentalStateUpsert) {
-		s.UpdateCompensateHours()
+		s.UpdateCompensateSeconds()
 	})
 }
 
-// ClearCompensateHours clears the value of the "compensate_hours" field.
-func (u *PowerRentalStateUpsertOne) ClearCompensateHours() *PowerRentalStateUpsertOne {
+// ClearCompensateSeconds clears the value of the "compensate_seconds" field.
+func (u *PowerRentalStateUpsertOne) ClearCompensateSeconds() *PowerRentalStateUpsertOne {
 	return u.Update(func(s *PowerRentalStateUpsert) {
-		s.ClearCompensateHours()
+		s.ClearCompensateSeconds()
 	})
 }
 
@@ -1843,59 +1843,59 @@ func (u *PowerRentalStateUpsertBulk) ClearPaymentState() *PowerRentalStateUpsert
 	})
 }
 
-// SetOutofgasHours sets the "outofgas_hours" field.
-func (u *PowerRentalStateUpsertBulk) SetOutofgasHours(v uint32) *PowerRentalStateUpsertBulk {
+// SetOutofgasSceonds sets the "outofgas_sceonds" field.
+func (u *PowerRentalStateUpsertBulk) SetOutofgasSceonds(v uint32) *PowerRentalStateUpsertBulk {
 	return u.Update(func(s *PowerRentalStateUpsert) {
-		s.SetOutofgasHours(v)
+		s.SetOutofgasSceonds(v)
 	})
 }
 
-// AddOutofgasHours adds v to the "outofgas_hours" field.
-func (u *PowerRentalStateUpsertBulk) AddOutofgasHours(v uint32) *PowerRentalStateUpsertBulk {
+// AddOutofgasSceonds adds v to the "outofgas_sceonds" field.
+func (u *PowerRentalStateUpsertBulk) AddOutofgasSceonds(v uint32) *PowerRentalStateUpsertBulk {
 	return u.Update(func(s *PowerRentalStateUpsert) {
-		s.AddOutofgasHours(v)
+		s.AddOutofgasSceonds(v)
 	})
 }
 
-// UpdateOutofgasHours sets the "outofgas_hours" field to the value that was provided on create.
-func (u *PowerRentalStateUpsertBulk) UpdateOutofgasHours() *PowerRentalStateUpsertBulk {
+// UpdateOutofgasSceonds sets the "outofgas_sceonds" field to the value that was provided on create.
+func (u *PowerRentalStateUpsertBulk) UpdateOutofgasSceonds() *PowerRentalStateUpsertBulk {
 	return u.Update(func(s *PowerRentalStateUpsert) {
-		s.UpdateOutofgasHours()
+		s.UpdateOutofgasSceonds()
 	})
 }
 
-// ClearOutofgasHours clears the value of the "outofgas_hours" field.
-func (u *PowerRentalStateUpsertBulk) ClearOutofgasHours() *PowerRentalStateUpsertBulk {
+// ClearOutofgasSceonds clears the value of the "outofgas_sceonds" field.
+func (u *PowerRentalStateUpsertBulk) ClearOutofgasSceonds() *PowerRentalStateUpsertBulk {
 	return u.Update(func(s *PowerRentalStateUpsert) {
-		s.ClearOutofgasHours()
+		s.ClearOutofgasSceonds()
 	})
 }
 
-// SetCompensateHours sets the "compensate_hours" field.
-func (u *PowerRentalStateUpsertBulk) SetCompensateHours(v uint32) *PowerRentalStateUpsertBulk {
+// SetCompensateSeconds sets the "compensate_seconds" field.
+func (u *PowerRentalStateUpsertBulk) SetCompensateSeconds(v uint32) *PowerRentalStateUpsertBulk {
 	return u.Update(func(s *PowerRentalStateUpsert) {
-		s.SetCompensateHours(v)
+		s.SetCompensateSeconds(v)
 	})
 }
 
-// AddCompensateHours adds v to the "compensate_hours" field.
-func (u *PowerRentalStateUpsertBulk) AddCompensateHours(v uint32) *PowerRentalStateUpsertBulk {
+// AddCompensateSeconds adds v to the "compensate_seconds" field.
+func (u *PowerRentalStateUpsertBulk) AddCompensateSeconds(v uint32) *PowerRentalStateUpsertBulk {
 	return u.Update(func(s *PowerRentalStateUpsert) {
-		s.AddCompensateHours(v)
+		s.AddCompensateSeconds(v)
 	})
 }
 
-// UpdateCompensateHours sets the "compensate_hours" field to the value that was provided on create.
-func (u *PowerRentalStateUpsertBulk) UpdateCompensateHours() *PowerRentalStateUpsertBulk {
+// UpdateCompensateSeconds sets the "compensate_seconds" field to the value that was provided on create.
+func (u *PowerRentalStateUpsertBulk) UpdateCompensateSeconds() *PowerRentalStateUpsertBulk {
 	return u.Update(func(s *PowerRentalStateUpsert) {
-		s.UpdateCompensateHours()
+		s.UpdateCompensateSeconds()
 	})
 }
 
-// ClearCompensateHours clears the value of the "compensate_hours" field.
-func (u *PowerRentalStateUpsertBulk) ClearCompensateHours() *PowerRentalStateUpsertBulk {
+// ClearCompensateSeconds clears the value of the "compensate_seconds" field.
+func (u *PowerRentalStateUpsertBulk) ClearCompensateSeconds() *PowerRentalStateUpsertBulk {
 	return u.Update(func(s *PowerRentalStateUpsert) {
-		s.ClearCompensateHours()
+		s.ClearCompensateSeconds()
 	})
 }
 

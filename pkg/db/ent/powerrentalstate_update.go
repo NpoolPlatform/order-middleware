@@ -272,57 +272,57 @@ func (prsu *PowerRentalStateUpdate) ClearPaymentState() *PowerRentalStateUpdate 
 	return prsu
 }
 
-// SetOutofgasHours sets the "outofgas_hours" field.
-func (prsu *PowerRentalStateUpdate) SetOutofgasHours(u uint32) *PowerRentalStateUpdate {
-	prsu.mutation.ResetOutofgasHours()
-	prsu.mutation.SetOutofgasHours(u)
+// SetOutofgasSceonds sets the "outofgas_sceonds" field.
+func (prsu *PowerRentalStateUpdate) SetOutofgasSceonds(u uint32) *PowerRentalStateUpdate {
+	prsu.mutation.ResetOutofgasSceonds()
+	prsu.mutation.SetOutofgasSceonds(u)
 	return prsu
 }
 
-// SetNillableOutofgasHours sets the "outofgas_hours" field if the given value is not nil.
-func (prsu *PowerRentalStateUpdate) SetNillableOutofgasHours(u *uint32) *PowerRentalStateUpdate {
+// SetNillableOutofgasSceonds sets the "outofgas_sceonds" field if the given value is not nil.
+func (prsu *PowerRentalStateUpdate) SetNillableOutofgasSceonds(u *uint32) *PowerRentalStateUpdate {
 	if u != nil {
-		prsu.SetOutofgasHours(*u)
+		prsu.SetOutofgasSceonds(*u)
 	}
 	return prsu
 }
 
-// AddOutofgasHours adds u to the "outofgas_hours" field.
-func (prsu *PowerRentalStateUpdate) AddOutofgasHours(u int32) *PowerRentalStateUpdate {
-	prsu.mutation.AddOutofgasHours(u)
+// AddOutofgasSceonds adds u to the "outofgas_sceonds" field.
+func (prsu *PowerRentalStateUpdate) AddOutofgasSceonds(u int32) *PowerRentalStateUpdate {
+	prsu.mutation.AddOutofgasSceonds(u)
 	return prsu
 }
 
-// ClearOutofgasHours clears the value of the "outofgas_hours" field.
-func (prsu *PowerRentalStateUpdate) ClearOutofgasHours() *PowerRentalStateUpdate {
-	prsu.mutation.ClearOutofgasHours()
+// ClearOutofgasSceonds clears the value of the "outofgas_sceonds" field.
+func (prsu *PowerRentalStateUpdate) ClearOutofgasSceonds() *PowerRentalStateUpdate {
+	prsu.mutation.ClearOutofgasSceonds()
 	return prsu
 }
 
-// SetCompensateHours sets the "compensate_hours" field.
-func (prsu *PowerRentalStateUpdate) SetCompensateHours(u uint32) *PowerRentalStateUpdate {
-	prsu.mutation.ResetCompensateHours()
-	prsu.mutation.SetCompensateHours(u)
+// SetCompensateSeconds sets the "compensate_seconds" field.
+func (prsu *PowerRentalStateUpdate) SetCompensateSeconds(u uint32) *PowerRentalStateUpdate {
+	prsu.mutation.ResetCompensateSeconds()
+	prsu.mutation.SetCompensateSeconds(u)
 	return prsu
 }
 
-// SetNillableCompensateHours sets the "compensate_hours" field if the given value is not nil.
-func (prsu *PowerRentalStateUpdate) SetNillableCompensateHours(u *uint32) *PowerRentalStateUpdate {
+// SetNillableCompensateSeconds sets the "compensate_seconds" field if the given value is not nil.
+func (prsu *PowerRentalStateUpdate) SetNillableCompensateSeconds(u *uint32) *PowerRentalStateUpdate {
 	if u != nil {
-		prsu.SetCompensateHours(*u)
+		prsu.SetCompensateSeconds(*u)
 	}
 	return prsu
 }
 
-// AddCompensateHours adds u to the "compensate_hours" field.
-func (prsu *PowerRentalStateUpdate) AddCompensateHours(u int32) *PowerRentalStateUpdate {
-	prsu.mutation.AddCompensateHours(u)
+// AddCompensateSeconds adds u to the "compensate_seconds" field.
+func (prsu *PowerRentalStateUpdate) AddCompensateSeconds(u int32) *PowerRentalStateUpdate {
+	prsu.mutation.AddCompensateSeconds(u)
 	return prsu
 }
 
-// ClearCompensateHours clears the value of the "compensate_hours" field.
-func (prsu *PowerRentalStateUpdate) ClearCompensateHours() *PowerRentalStateUpdate {
-	prsu.mutation.ClearCompensateHours()
+// ClearCompensateSeconds clears the value of the "compensate_seconds" field.
+func (prsu *PowerRentalStateUpdate) ClearCompensateSeconds() *PowerRentalStateUpdate {
+	prsu.mutation.ClearCompensateSeconds()
 	return prsu
 }
 
@@ -638,44 +638,44 @@ func (prsu *PowerRentalStateUpdate) sqlSave(ctx context.Context) (n int, err err
 			Column: powerrentalstate.FieldPaymentState,
 		})
 	}
-	if value, ok := prsu.mutation.OutofgasHours(); ok {
+	if value, ok := prsu.mutation.OutofgasSceonds(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeUint32,
 			Value:  value,
-			Column: powerrentalstate.FieldOutofgasHours,
+			Column: powerrentalstate.FieldOutofgasSceonds,
 		})
 	}
-	if value, ok := prsu.mutation.AddedOutofgasHours(); ok {
+	if value, ok := prsu.mutation.AddedOutofgasSceonds(); ok {
 		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
 			Type:   field.TypeUint32,
 			Value:  value,
-			Column: powerrentalstate.FieldOutofgasHours,
+			Column: powerrentalstate.FieldOutofgasSceonds,
 		})
 	}
-	if prsu.mutation.OutofgasHoursCleared() {
+	if prsu.mutation.OutofgasSceondsCleared() {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeUint32,
-			Column: powerrentalstate.FieldOutofgasHours,
+			Column: powerrentalstate.FieldOutofgasSceonds,
 		})
 	}
-	if value, ok := prsu.mutation.CompensateHours(); ok {
+	if value, ok := prsu.mutation.CompensateSeconds(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeUint32,
 			Value:  value,
-			Column: powerrentalstate.FieldCompensateHours,
+			Column: powerrentalstate.FieldCompensateSeconds,
 		})
 	}
-	if value, ok := prsu.mutation.AddedCompensateHours(); ok {
+	if value, ok := prsu.mutation.AddedCompensateSeconds(); ok {
 		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
 			Type:   field.TypeUint32,
 			Value:  value,
-			Column: powerrentalstate.FieldCompensateHours,
+			Column: powerrentalstate.FieldCompensateSeconds,
 		})
 	}
-	if prsu.mutation.CompensateHoursCleared() {
+	if prsu.mutation.CompensateSecondsCleared() {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeUint32,
-			Column: powerrentalstate.FieldCompensateHours,
+			Column: powerrentalstate.FieldCompensateSeconds,
 		})
 	}
 	if value, ok := prsu.mutation.RenewState(); ok {
@@ -975,57 +975,57 @@ func (prsuo *PowerRentalStateUpdateOne) ClearPaymentState() *PowerRentalStateUpd
 	return prsuo
 }
 
-// SetOutofgasHours sets the "outofgas_hours" field.
-func (prsuo *PowerRentalStateUpdateOne) SetOutofgasHours(u uint32) *PowerRentalStateUpdateOne {
-	prsuo.mutation.ResetOutofgasHours()
-	prsuo.mutation.SetOutofgasHours(u)
+// SetOutofgasSceonds sets the "outofgas_sceonds" field.
+func (prsuo *PowerRentalStateUpdateOne) SetOutofgasSceonds(u uint32) *PowerRentalStateUpdateOne {
+	prsuo.mutation.ResetOutofgasSceonds()
+	prsuo.mutation.SetOutofgasSceonds(u)
 	return prsuo
 }
 
-// SetNillableOutofgasHours sets the "outofgas_hours" field if the given value is not nil.
-func (prsuo *PowerRentalStateUpdateOne) SetNillableOutofgasHours(u *uint32) *PowerRentalStateUpdateOne {
+// SetNillableOutofgasSceonds sets the "outofgas_sceonds" field if the given value is not nil.
+func (prsuo *PowerRentalStateUpdateOne) SetNillableOutofgasSceonds(u *uint32) *PowerRentalStateUpdateOne {
 	if u != nil {
-		prsuo.SetOutofgasHours(*u)
+		prsuo.SetOutofgasSceonds(*u)
 	}
 	return prsuo
 }
 
-// AddOutofgasHours adds u to the "outofgas_hours" field.
-func (prsuo *PowerRentalStateUpdateOne) AddOutofgasHours(u int32) *PowerRentalStateUpdateOne {
-	prsuo.mutation.AddOutofgasHours(u)
+// AddOutofgasSceonds adds u to the "outofgas_sceonds" field.
+func (prsuo *PowerRentalStateUpdateOne) AddOutofgasSceonds(u int32) *PowerRentalStateUpdateOne {
+	prsuo.mutation.AddOutofgasSceonds(u)
 	return prsuo
 }
 
-// ClearOutofgasHours clears the value of the "outofgas_hours" field.
-func (prsuo *PowerRentalStateUpdateOne) ClearOutofgasHours() *PowerRentalStateUpdateOne {
-	prsuo.mutation.ClearOutofgasHours()
+// ClearOutofgasSceonds clears the value of the "outofgas_sceonds" field.
+func (prsuo *PowerRentalStateUpdateOne) ClearOutofgasSceonds() *PowerRentalStateUpdateOne {
+	prsuo.mutation.ClearOutofgasSceonds()
 	return prsuo
 }
 
-// SetCompensateHours sets the "compensate_hours" field.
-func (prsuo *PowerRentalStateUpdateOne) SetCompensateHours(u uint32) *PowerRentalStateUpdateOne {
-	prsuo.mutation.ResetCompensateHours()
-	prsuo.mutation.SetCompensateHours(u)
+// SetCompensateSeconds sets the "compensate_seconds" field.
+func (prsuo *PowerRentalStateUpdateOne) SetCompensateSeconds(u uint32) *PowerRentalStateUpdateOne {
+	prsuo.mutation.ResetCompensateSeconds()
+	prsuo.mutation.SetCompensateSeconds(u)
 	return prsuo
 }
 
-// SetNillableCompensateHours sets the "compensate_hours" field if the given value is not nil.
-func (prsuo *PowerRentalStateUpdateOne) SetNillableCompensateHours(u *uint32) *PowerRentalStateUpdateOne {
+// SetNillableCompensateSeconds sets the "compensate_seconds" field if the given value is not nil.
+func (prsuo *PowerRentalStateUpdateOne) SetNillableCompensateSeconds(u *uint32) *PowerRentalStateUpdateOne {
 	if u != nil {
-		prsuo.SetCompensateHours(*u)
+		prsuo.SetCompensateSeconds(*u)
 	}
 	return prsuo
 }
 
-// AddCompensateHours adds u to the "compensate_hours" field.
-func (prsuo *PowerRentalStateUpdateOne) AddCompensateHours(u int32) *PowerRentalStateUpdateOne {
-	prsuo.mutation.AddCompensateHours(u)
+// AddCompensateSeconds adds u to the "compensate_seconds" field.
+func (prsuo *PowerRentalStateUpdateOne) AddCompensateSeconds(u int32) *PowerRentalStateUpdateOne {
+	prsuo.mutation.AddCompensateSeconds(u)
 	return prsuo
 }
 
-// ClearCompensateHours clears the value of the "compensate_hours" field.
-func (prsuo *PowerRentalStateUpdateOne) ClearCompensateHours() *PowerRentalStateUpdateOne {
-	prsuo.mutation.ClearCompensateHours()
+// ClearCompensateSeconds clears the value of the "compensate_seconds" field.
+func (prsuo *PowerRentalStateUpdateOne) ClearCompensateSeconds() *PowerRentalStateUpdateOne {
+	prsuo.mutation.ClearCompensateSeconds()
 	return prsuo
 }
 
@@ -1371,44 +1371,44 @@ func (prsuo *PowerRentalStateUpdateOne) sqlSave(ctx context.Context) (_node *Pow
 			Column: powerrentalstate.FieldPaymentState,
 		})
 	}
-	if value, ok := prsuo.mutation.OutofgasHours(); ok {
+	if value, ok := prsuo.mutation.OutofgasSceonds(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeUint32,
 			Value:  value,
-			Column: powerrentalstate.FieldOutofgasHours,
+			Column: powerrentalstate.FieldOutofgasSceonds,
 		})
 	}
-	if value, ok := prsuo.mutation.AddedOutofgasHours(); ok {
+	if value, ok := prsuo.mutation.AddedOutofgasSceonds(); ok {
 		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
 			Type:   field.TypeUint32,
 			Value:  value,
-			Column: powerrentalstate.FieldOutofgasHours,
+			Column: powerrentalstate.FieldOutofgasSceonds,
 		})
 	}
-	if prsuo.mutation.OutofgasHoursCleared() {
+	if prsuo.mutation.OutofgasSceondsCleared() {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeUint32,
-			Column: powerrentalstate.FieldOutofgasHours,
+			Column: powerrentalstate.FieldOutofgasSceonds,
 		})
 	}
-	if value, ok := prsuo.mutation.CompensateHours(); ok {
+	if value, ok := prsuo.mutation.CompensateSeconds(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeUint32,
 			Value:  value,
-			Column: powerrentalstate.FieldCompensateHours,
+			Column: powerrentalstate.FieldCompensateSeconds,
 		})
 	}
-	if value, ok := prsuo.mutation.AddedCompensateHours(); ok {
+	if value, ok := prsuo.mutation.AddedCompensateSeconds(); ok {
 		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
 			Type:   field.TypeUint32,
 			Value:  value,
-			Column: powerrentalstate.FieldCompensateHours,
+			Column: powerrentalstate.FieldCompensateSeconds,
 		})
 	}
-	if prsuo.mutation.CompensateHoursCleared() {
+	if prsuo.mutation.CompensateSecondsCleared() {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeUint32,
-			Column: powerrentalstate.FieldCompensateHours,
+			Column: powerrentalstate.FieldCompensateSeconds,
 		})
 	}
 	if value, ok := prsuo.mutation.RenewState(); ok {

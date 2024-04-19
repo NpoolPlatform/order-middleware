@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
+	goodtypes "github.com/NpoolPlatform/message/npool/basetypes/good/v1"
 	types "github.com/NpoolPlatform/message/npool/basetypes/order/v1"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent"
 	entorderbase "github.com/NpoolPlatform/order-middleware/pkg/db/ent/orderbase"
@@ -17,6 +18,7 @@ type Req struct {
 	UserID        *uuid.UUID
 	GoodID        *uuid.UUID
 	AppGoodID     *uuid.UUID
+	GoodType      *goodtypes.GoodType
 	ParentOrderID *uuid.UUID
 	OrderType     *types.OrderType
 	PaymentType   *types.PaymentType
@@ -41,6 +43,9 @@ func CreateSet(c *ent.OrderBaseCreate, req *Req) *ent.OrderBaseCreate {
 	}
 	if req.AppGoodID != nil {
 		c.SetAppGoodID(*req.AppGoodID)
+	}
+	if req.GoodType != nil {
+		c.SetGoodType(req.GoodType.String())
 	}
 	if req.ParentOrderID != nil {
 		c.SetParentOrderID(*req.ParentOrderID)

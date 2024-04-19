@@ -30,6 +30,8 @@ type config struct {
 type hooks struct {
 	AppConfig        []ent.Hook
 	Compensate       []ent.Hook
+	FeeOrder         []ent.Hook
+	FeeOrderState    []ent.Hook
 	Order            []ent.Hook
 	OrderBase        []ent.Hook
 	OrderCoupon      []ent.Hook

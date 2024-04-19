@@ -178,6 +178,26 @@ func (obu *OrderBaseUpdate) ClearAppGoodID() *OrderBaseUpdate {
 	return obu
 }
 
+// SetGoodType sets the "good_type" field.
+func (obu *OrderBaseUpdate) SetGoodType(s string) *OrderBaseUpdate {
+	obu.mutation.SetGoodType(s)
+	return obu
+}
+
+// SetNillableGoodType sets the "good_type" field if the given value is not nil.
+func (obu *OrderBaseUpdate) SetNillableGoodType(s *string) *OrderBaseUpdate {
+	if s != nil {
+		obu.SetGoodType(*s)
+	}
+	return obu
+}
+
+// ClearGoodType clears the value of the "good_type" field.
+func (obu *OrderBaseUpdate) ClearGoodType() *OrderBaseUpdate {
+	obu.mutation.ClearGoodType()
+	return obu
+}
+
 // SetParentOrderID sets the "parent_order_id" field.
 func (obu *OrderBaseUpdate) SetParentOrderID(u uuid.UUID) *OrderBaseUpdate {
 	obu.mutation.SetParentOrderID(u)
@@ -477,6 +497,19 @@ func (obu *OrderBaseUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: orderbase.FieldAppGoodID,
 		})
 	}
+	if value, ok := obu.mutation.GoodType(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: orderbase.FieldGoodType,
+		})
+	}
+	if obu.mutation.GoodTypeCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Column: orderbase.FieldGoodType,
+		})
+	}
 	if value, ok := obu.mutation.ParentOrderID(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeUUID,
@@ -709,6 +742,26 @@ func (obuo *OrderBaseUpdateOne) SetNillableAppGoodID(u *uuid.UUID) *OrderBaseUpd
 // ClearAppGoodID clears the value of the "app_good_id" field.
 func (obuo *OrderBaseUpdateOne) ClearAppGoodID() *OrderBaseUpdateOne {
 	obuo.mutation.ClearAppGoodID()
+	return obuo
+}
+
+// SetGoodType sets the "good_type" field.
+func (obuo *OrderBaseUpdateOne) SetGoodType(s string) *OrderBaseUpdateOne {
+	obuo.mutation.SetGoodType(s)
+	return obuo
+}
+
+// SetNillableGoodType sets the "good_type" field if the given value is not nil.
+func (obuo *OrderBaseUpdateOne) SetNillableGoodType(s *string) *OrderBaseUpdateOne {
+	if s != nil {
+		obuo.SetGoodType(*s)
+	}
+	return obuo
+}
+
+// ClearGoodType clears the value of the "good_type" field.
+func (obuo *OrderBaseUpdateOne) ClearGoodType() *OrderBaseUpdateOne {
+	obuo.mutation.ClearGoodType()
 	return obuo
 }
 
@@ -1039,6 +1092,19 @@ func (obuo *OrderBaseUpdateOne) sqlSave(ctx context.Context) (_node *OrderBase, 
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeUUID,
 			Column: orderbase.FieldAppGoodID,
+		})
+	}
+	if value, ok := obuo.mutation.GoodType(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: orderbase.FieldGoodType,
+		})
+	}
+	if obuo.mutation.GoodTypeCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Column: orderbase.FieldGoodType,
 		})
 	}
 	if value, ok := obuo.mutation.ParentOrderID(); ok {

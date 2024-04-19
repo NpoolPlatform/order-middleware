@@ -135,6 +135,13 @@ func AppGoodID(v uuid.UUID) predicate.OrderBase {
 	})
 }
 
+// GoodType applies equality check predicate on the "good_type" field. It's identical to GoodTypeEQ.
+func GoodType(v string) predicate.OrderBase {
+	return predicate.OrderBase(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldGoodType), v))
+	})
+}
+
 // ParentOrderID applies equality check predicate on the "parent_order_id" field. It's identical to ParentOrderIDEQ.
 func ParentOrderID(v uuid.UUID) predicate.OrderBase {
 	return predicate.OrderBase(func(s *sql.Selector) {
@@ -735,6 +742,119 @@ func AppGoodIDIsNil() predicate.OrderBase {
 func AppGoodIDNotNil() predicate.OrderBase {
 	return predicate.OrderBase(func(s *sql.Selector) {
 		s.Where(sql.NotNull(s.C(FieldAppGoodID)))
+	})
+}
+
+// GoodTypeEQ applies the EQ predicate on the "good_type" field.
+func GoodTypeEQ(v string) predicate.OrderBase {
+	return predicate.OrderBase(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldGoodType), v))
+	})
+}
+
+// GoodTypeNEQ applies the NEQ predicate on the "good_type" field.
+func GoodTypeNEQ(v string) predicate.OrderBase {
+	return predicate.OrderBase(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldGoodType), v))
+	})
+}
+
+// GoodTypeIn applies the In predicate on the "good_type" field.
+func GoodTypeIn(vs ...string) predicate.OrderBase {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.OrderBase(func(s *sql.Selector) {
+		s.Where(sql.In(s.C(FieldGoodType), v...))
+	})
+}
+
+// GoodTypeNotIn applies the NotIn predicate on the "good_type" field.
+func GoodTypeNotIn(vs ...string) predicate.OrderBase {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.OrderBase(func(s *sql.Selector) {
+		s.Where(sql.NotIn(s.C(FieldGoodType), v...))
+	})
+}
+
+// GoodTypeGT applies the GT predicate on the "good_type" field.
+func GoodTypeGT(v string) predicate.OrderBase {
+	return predicate.OrderBase(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldGoodType), v))
+	})
+}
+
+// GoodTypeGTE applies the GTE predicate on the "good_type" field.
+func GoodTypeGTE(v string) predicate.OrderBase {
+	return predicate.OrderBase(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldGoodType), v))
+	})
+}
+
+// GoodTypeLT applies the LT predicate on the "good_type" field.
+func GoodTypeLT(v string) predicate.OrderBase {
+	return predicate.OrderBase(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldGoodType), v))
+	})
+}
+
+// GoodTypeLTE applies the LTE predicate on the "good_type" field.
+func GoodTypeLTE(v string) predicate.OrderBase {
+	return predicate.OrderBase(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldGoodType), v))
+	})
+}
+
+// GoodTypeContains applies the Contains predicate on the "good_type" field.
+func GoodTypeContains(v string) predicate.OrderBase {
+	return predicate.OrderBase(func(s *sql.Selector) {
+		s.Where(sql.Contains(s.C(FieldGoodType), v))
+	})
+}
+
+// GoodTypeHasPrefix applies the HasPrefix predicate on the "good_type" field.
+func GoodTypeHasPrefix(v string) predicate.OrderBase {
+	return predicate.OrderBase(func(s *sql.Selector) {
+		s.Where(sql.HasPrefix(s.C(FieldGoodType), v))
+	})
+}
+
+// GoodTypeHasSuffix applies the HasSuffix predicate on the "good_type" field.
+func GoodTypeHasSuffix(v string) predicate.OrderBase {
+	return predicate.OrderBase(func(s *sql.Selector) {
+		s.Where(sql.HasSuffix(s.C(FieldGoodType), v))
+	})
+}
+
+// GoodTypeIsNil applies the IsNil predicate on the "good_type" field.
+func GoodTypeIsNil() predicate.OrderBase {
+	return predicate.OrderBase(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldGoodType)))
+	})
+}
+
+// GoodTypeNotNil applies the NotNil predicate on the "good_type" field.
+func GoodTypeNotNil() predicate.OrderBase {
+	return predicate.OrderBase(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldGoodType)))
+	})
+}
+
+// GoodTypeEqualFold applies the EqualFold predicate on the "good_type" field.
+func GoodTypeEqualFold(v string) predicate.OrderBase {
+	return predicate.OrderBase(func(s *sql.Selector) {
+		s.Where(sql.EqualFold(s.C(FieldGoodType), v))
+	})
+}
+
+// GoodTypeContainsFold applies the ContainsFold predicate on the "good_type" field.
+func GoodTypeContainsFold(v string) predicate.OrderBase {
+	return predicate.OrderBase(func(s *sql.Selector) {
+		s.Where(sql.ContainsFold(s.C(FieldGoodType), v))
 	})
 }
 

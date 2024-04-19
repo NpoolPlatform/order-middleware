@@ -12,6 +12,8 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/appconfig"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/compensate"
+	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/feeorder"
+	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/feeorderstate"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/order"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/orderbase"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/ordercoupon"
@@ -47,6 +49,8 @@ func columnChecker(table string) func(string) error {
 	checks := map[string]func(string) bool{
 		appconfig.Table:        appconfig.ValidColumn,
 		compensate.Table:       compensate.ValidColumn,
+		feeorder.Table:         feeorder.ValidColumn,
+		feeorderstate.Table:    feeorderstate.ValidColumn,
 		order.Table:            order.ValidColumn,
 		orderbase.Table:        orderbase.ValidColumn,
 		ordercoupon.Table:      ordercoupon.ValidColumn,

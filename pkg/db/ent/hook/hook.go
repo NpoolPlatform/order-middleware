@@ -35,6 +35,32 @@ func (f CompensateFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, 
 	return f(ctx, mv)
 }
 
+// The FeeOrderFunc type is an adapter to allow the use of ordinary
+// function as FeeOrder mutator.
+type FeeOrderFunc func(context.Context, *ent.FeeOrderMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f FeeOrderFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	mv, ok := m.(*ent.FeeOrderMutation)
+	if !ok {
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.FeeOrderMutation", m)
+	}
+	return f(ctx, mv)
+}
+
+// The FeeOrderStateFunc type is an adapter to allow the use of ordinary
+// function as FeeOrderState mutator.
+type FeeOrderStateFunc func(context.Context, *ent.FeeOrderStateMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f FeeOrderStateFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	mv, ok := m.(*ent.FeeOrderStateMutation)
+	if !ok {
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.FeeOrderStateMutation", m)
+	}
+	return f(ctx, mv)
+}
+
 // The OrderFunc type is an adapter to allow the use of ordinary
 // function as Order mutator.
 type OrderFunc func(context.Context, *ent.OrderMutation) (ent.Value, error)

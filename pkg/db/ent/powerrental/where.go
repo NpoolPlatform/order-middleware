@@ -115,6 +115,13 @@ func OrderID(v uuid.UUID) predicate.PowerRental {
 	})
 }
 
+// AppGoodStockID applies equality check predicate on the "app_good_stock_id" field. It's identical to AppGoodStockIDEQ.
+func AppGoodStockID(v uuid.UUID) predicate.PowerRental {
+	return predicate.PowerRental(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldAppGoodStockID), v))
+	})
+}
+
 // Units applies equality check predicate on the "units" field. It's identical to UnitsEQ.
 func Units(v decimal.Decimal) predicate.PowerRental {
 	return predicate.PowerRental(func(s *sql.Selector) {
@@ -150,10 +157,10 @@ func PromotionID(v uuid.UUID) predicate.PowerRental {
 	})
 }
 
-// Duration applies equality check predicate on the "duration" field. It's identical to DurationEQ.
-func Duration(v uint32) predicate.PowerRental {
+// DurationSeconds applies equality check predicate on the "duration_seconds" field. It's identical to DurationSecondsEQ.
+func DurationSeconds(v uint32) predicate.PowerRental {
 	return predicate.PowerRental(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldDuration), v))
+		s.Where(sql.EQ(s.C(FieldDurationSeconds), v))
 	})
 }
 
@@ -495,6 +502,84 @@ func OrderIDIsNil() predicate.PowerRental {
 func OrderIDNotNil() predicate.PowerRental {
 	return predicate.PowerRental(func(s *sql.Selector) {
 		s.Where(sql.NotNull(s.C(FieldOrderID)))
+	})
+}
+
+// AppGoodStockIDEQ applies the EQ predicate on the "app_good_stock_id" field.
+func AppGoodStockIDEQ(v uuid.UUID) predicate.PowerRental {
+	return predicate.PowerRental(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldAppGoodStockID), v))
+	})
+}
+
+// AppGoodStockIDNEQ applies the NEQ predicate on the "app_good_stock_id" field.
+func AppGoodStockIDNEQ(v uuid.UUID) predicate.PowerRental {
+	return predicate.PowerRental(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldAppGoodStockID), v))
+	})
+}
+
+// AppGoodStockIDIn applies the In predicate on the "app_good_stock_id" field.
+func AppGoodStockIDIn(vs ...uuid.UUID) predicate.PowerRental {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.PowerRental(func(s *sql.Selector) {
+		s.Where(sql.In(s.C(FieldAppGoodStockID), v...))
+	})
+}
+
+// AppGoodStockIDNotIn applies the NotIn predicate on the "app_good_stock_id" field.
+func AppGoodStockIDNotIn(vs ...uuid.UUID) predicate.PowerRental {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.PowerRental(func(s *sql.Selector) {
+		s.Where(sql.NotIn(s.C(FieldAppGoodStockID), v...))
+	})
+}
+
+// AppGoodStockIDGT applies the GT predicate on the "app_good_stock_id" field.
+func AppGoodStockIDGT(v uuid.UUID) predicate.PowerRental {
+	return predicate.PowerRental(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldAppGoodStockID), v))
+	})
+}
+
+// AppGoodStockIDGTE applies the GTE predicate on the "app_good_stock_id" field.
+func AppGoodStockIDGTE(v uuid.UUID) predicate.PowerRental {
+	return predicate.PowerRental(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldAppGoodStockID), v))
+	})
+}
+
+// AppGoodStockIDLT applies the LT predicate on the "app_good_stock_id" field.
+func AppGoodStockIDLT(v uuid.UUID) predicate.PowerRental {
+	return predicate.PowerRental(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldAppGoodStockID), v))
+	})
+}
+
+// AppGoodStockIDLTE applies the LTE predicate on the "app_good_stock_id" field.
+func AppGoodStockIDLTE(v uuid.UUID) predicate.PowerRental {
+	return predicate.PowerRental(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldAppGoodStockID), v))
+	})
+}
+
+// AppGoodStockIDIsNil applies the IsNil predicate on the "app_good_stock_id" field.
+func AppGoodStockIDIsNil() predicate.PowerRental {
+	return predicate.PowerRental(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldAppGoodStockID)))
+	})
+}
+
+// AppGoodStockIDNotNil applies the NotNil predicate on the "app_good_stock_id" field.
+func AppGoodStockIDNotNil() predicate.PowerRental {
+	return predicate.PowerRental(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldAppGoodStockID)))
 	})
 }
 
@@ -888,81 +973,81 @@ func PromotionIDNotNil() predicate.PowerRental {
 	})
 }
 
-// DurationEQ applies the EQ predicate on the "duration" field.
-func DurationEQ(v uint32) predicate.PowerRental {
+// DurationSecondsEQ applies the EQ predicate on the "duration_seconds" field.
+func DurationSecondsEQ(v uint32) predicate.PowerRental {
 	return predicate.PowerRental(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldDuration), v))
+		s.Where(sql.EQ(s.C(FieldDurationSeconds), v))
 	})
 }
 
-// DurationNEQ applies the NEQ predicate on the "duration" field.
-func DurationNEQ(v uint32) predicate.PowerRental {
+// DurationSecondsNEQ applies the NEQ predicate on the "duration_seconds" field.
+func DurationSecondsNEQ(v uint32) predicate.PowerRental {
 	return predicate.PowerRental(func(s *sql.Selector) {
-		s.Where(sql.NEQ(s.C(FieldDuration), v))
+		s.Where(sql.NEQ(s.C(FieldDurationSeconds), v))
 	})
 }
 
-// DurationIn applies the In predicate on the "duration" field.
-func DurationIn(vs ...uint32) predicate.PowerRental {
+// DurationSecondsIn applies the In predicate on the "duration_seconds" field.
+func DurationSecondsIn(vs ...uint32) predicate.PowerRental {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
 	}
 	return predicate.PowerRental(func(s *sql.Selector) {
-		s.Where(sql.In(s.C(FieldDuration), v...))
+		s.Where(sql.In(s.C(FieldDurationSeconds), v...))
 	})
 }
 
-// DurationNotIn applies the NotIn predicate on the "duration" field.
-func DurationNotIn(vs ...uint32) predicate.PowerRental {
+// DurationSecondsNotIn applies the NotIn predicate on the "duration_seconds" field.
+func DurationSecondsNotIn(vs ...uint32) predicate.PowerRental {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
 	}
 	return predicate.PowerRental(func(s *sql.Selector) {
-		s.Where(sql.NotIn(s.C(FieldDuration), v...))
+		s.Where(sql.NotIn(s.C(FieldDurationSeconds), v...))
 	})
 }
 
-// DurationGT applies the GT predicate on the "duration" field.
-func DurationGT(v uint32) predicate.PowerRental {
+// DurationSecondsGT applies the GT predicate on the "duration_seconds" field.
+func DurationSecondsGT(v uint32) predicate.PowerRental {
 	return predicate.PowerRental(func(s *sql.Selector) {
-		s.Where(sql.GT(s.C(FieldDuration), v))
+		s.Where(sql.GT(s.C(FieldDurationSeconds), v))
 	})
 }
 
-// DurationGTE applies the GTE predicate on the "duration" field.
-func DurationGTE(v uint32) predicate.PowerRental {
+// DurationSecondsGTE applies the GTE predicate on the "duration_seconds" field.
+func DurationSecondsGTE(v uint32) predicate.PowerRental {
 	return predicate.PowerRental(func(s *sql.Selector) {
-		s.Where(sql.GTE(s.C(FieldDuration), v))
+		s.Where(sql.GTE(s.C(FieldDurationSeconds), v))
 	})
 }
 
-// DurationLT applies the LT predicate on the "duration" field.
-func DurationLT(v uint32) predicate.PowerRental {
+// DurationSecondsLT applies the LT predicate on the "duration_seconds" field.
+func DurationSecondsLT(v uint32) predicate.PowerRental {
 	return predicate.PowerRental(func(s *sql.Selector) {
-		s.Where(sql.LT(s.C(FieldDuration), v))
+		s.Where(sql.LT(s.C(FieldDurationSeconds), v))
 	})
 }
 
-// DurationLTE applies the LTE predicate on the "duration" field.
-func DurationLTE(v uint32) predicate.PowerRental {
+// DurationSecondsLTE applies the LTE predicate on the "duration_seconds" field.
+func DurationSecondsLTE(v uint32) predicate.PowerRental {
 	return predicate.PowerRental(func(s *sql.Selector) {
-		s.Where(sql.LTE(s.C(FieldDuration), v))
+		s.Where(sql.LTE(s.C(FieldDurationSeconds), v))
 	})
 }
 
-// DurationIsNil applies the IsNil predicate on the "duration" field.
-func DurationIsNil() predicate.PowerRental {
+// DurationSecondsIsNil applies the IsNil predicate on the "duration_seconds" field.
+func DurationSecondsIsNil() predicate.PowerRental {
 	return predicate.PowerRental(func(s *sql.Selector) {
-		s.Where(sql.IsNull(s.C(FieldDuration)))
+		s.Where(sql.IsNull(s.C(FieldDurationSeconds)))
 	})
 }
 
-// DurationNotNil applies the NotNil predicate on the "duration" field.
-func DurationNotNil() predicate.PowerRental {
+// DurationSecondsNotNil applies the NotNil predicate on the "duration_seconds" field.
+func DurationSecondsNotNil() predicate.PowerRental {
 	return predicate.PowerRental(func(s *sql.Selector) {
-		s.Where(sql.NotNull(s.C(FieldDuration)))
+		s.Where(sql.NotNull(s.C(FieldDurationSeconds)))
 	})
 }
 

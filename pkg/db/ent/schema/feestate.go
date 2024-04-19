@@ -10,20 +10,21 @@ import (
 	"github.com/google/uuid"
 )
 
-// PowerRentalState holds the schema definition for the PowerRentalState entity.
-type PowerRentalState struct {
+// FeeOrderState holds the schema definition for the FeeOrderState entity.
+type FeeOrderState struct {
 	ent.Schema
 }
 
-func (PowerRentalState) Mixin() []ent.Mixin {
+func (FeeOrderState) Mixin() []ent.Mixin {
 	return []ent.Mixin{
 		mixin.TimeMixin{},
 		crudermixin.AutoIDMixin{},
 	}
 }
 
-// Fields of the PowerRentalState.
-func (PowerRentalState) Fields() []ent.Field {
+// Fields of the FeeOrderState.
+//nolint:funlen
+func (FeeOrderState) Fields() []ent.Field {
 	return []ent.Field{
 		field.
 			UUID("order_id", uuid.UUID{}).
@@ -31,15 +32,6 @@ func (PowerRentalState) Fields() []ent.Field {
 			Default(func() uuid.UUID {
 				return uuid.Nil
 			}),
-		field.
-			String("cancel_state").
-			Optional().
-			Default(types.OrderState_DefaultOrderState.String()),
-		// Will be changed when compensate happen
-		field.
-			Uint32("end_at").
-			Optional().
-			Default(0),
 		field.
 			Uint32("paid_at").
 			Optional().
@@ -53,38 +45,22 @@ func (PowerRentalState) Fields() []ent.Field {
 			Optional().
 			Default(false),
 		field.
-			Bool("admin_set_canceled").
-			Optional().
-			Default(false),
-		field.
 			String("payment_state").
 			Optional().
 			Default(types.PaymentState_PaymentStateWait.String()),
 		field.
-			Uint32("outofgas_sceonds").
+			String("cancel_state").
 			Optional().
-			Default(0),
-		field.
-			Uint32("compensate_seconds").
-			Optional().
-			Default(0),
-		field.
-			String("renew_state").
-			Optional().
-			Default(types.OrderRenewState_OrderRenewWait.String()),
-		field.
-			Uint32("renew_notify_at").
-			Optional().
-			Default(0),
+			Default(types.OrderState_DefaultOrderState.String()),
 	}
 }
 
-// Edges of the PowerRentalState.
-func (PowerRentalState) Edges() []ent.Edge {
+// Edges of the FeeOrderState.
+func (FeeOrderState) Edges() []ent.Edge {
 	return nil
 }
 
-func (PowerRentalState) Indexes() []ent.Index {
+func (FeeOrderState) Indexes() []ent.Index {
 	return []ent.Index{
 		index.Fields("order_id"),
 	}

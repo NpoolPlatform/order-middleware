@@ -32,6 +32,8 @@ type OrderBase struct {
 	GoodID uuid.UUID `json:"good_id,omitempty"`
 	// AppGoodID holds the value of the "app_good_id" field.
 	AppGoodID uuid.UUID `json:"app_good_id,omitempty"`
+	// GoodType holds the value of the "good_type" field.
+	GoodType string `json:"good_type,omitempty"`
 	// ParentOrderID holds the value of the "parent_order_id" field.
 	ParentOrderID uuid.UUID `json:"parent_order_id,omitempty"`
 	// OrderType holds the value of the "order_type" field.
@@ -53,7 +55,7 @@ func (*OrderBase) scanValues(columns []string) ([]interface{}, error) {
 			values[i] = new(sql.NullBool)
 		case orderbase.FieldID, orderbase.FieldCreatedAt, orderbase.FieldUpdatedAt, orderbase.FieldDeletedAt:
 			values[i] = new(sql.NullInt64)
-		case orderbase.FieldOrderType, orderbase.FieldPaymentType, orderbase.FieldCreateMethod:
+		case orderbase.FieldGoodType, orderbase.FieldOrderType, orderbase.FieldPaymentType, orderbase.FieldCreateMethod:
 			values[i] = new(sql.NullString)
 		case orderbase.FieldEntID, orderbase.FieldAppID, orderbase.FieldUserID, orderbase.FieldGoodID, orderbase.FieldAppGoodID, orderbase.FieldParentOrderID:
 			values[i] = new(uuid.UUID)
@@ -125,6 +127,12 @@ func (ob *OrderBase) assignValues(columns []string, values []interface{}) error 
 				return fmt.Errorf("unexpected type %T for field app_good_id", values[i])
 			} else if value != nil {
 				ob.AppGoodID = *value
+			}
+		case orderbase.FieldGoodType:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field good_type", values[i])
+			} else if value.Valid {
+				ob.GoodType = value.String
 			}
 		case orderbase.FieldParentOrderID:
 			if value, ok := values[i].(*uuid.UUID); !ok {
@@ -207,6 +215,9 @@ func (ob *OrderBase) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("app_good_id=")
 	builder.WriteString(fmt.Sprintf("%v", ob.AppGoodID))
+	builder.WriteString(", ")
+	builder.WriteString("good_type=")
+	builder.WriteString(ob.GoodType)
 	builder.WriteString(", ")
 	builder.WriteString("parent_order_id=")
 	builder.WriteString(fmt.Sprintf("%v", ob.ParentOrderID))

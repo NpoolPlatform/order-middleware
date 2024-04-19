@@ -18,6 +18,10 @@ type Tx struct {
 	AppConfig *AppConfigClient
 	// Compensate is the client for interacting with the Compensate builders.
 	Compensate *CompensateClient
+	// FeeOrder is the client for interacting with the FeeOrder builders.
+	FeeOrder *FeeOrderClient
+	// FeeOrderState is the client for interacting with the FeeOrderState builders.
+	FeeOrderState *FeeOrderStateClient
 	// Order is the client for interacting with the Order builders.
 	Order *OrderClient
 	// OrderBase is the client for interacting with the OrderBase builders.
@@ -181,6 +185,8 @@ func (tx *Tx) Client() *Client {
 func (tx *Tx) init() {
 	tx.AppConfig = NewAppConfigClient(tx.config)
 	tx.Compensate = NewCompensateClient(tx.config)
+	tx.FeeOrder = NewFeeOrderClient(tx.config)
+	tx.FeeOrderState = NewFeeOrderStateClient(tx.config)
 	tx.Order = NewOrderClient(tx.config)
 	tx.OrderBase = NewOrderBaseClient(tx.config)
 	tx.OrderCoupon = NewOrderCouponClient(tx.config)

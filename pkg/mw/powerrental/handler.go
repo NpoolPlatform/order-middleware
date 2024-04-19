@@ -10,6 +10,7 @@ import (
 	ordermwpb "github.com/NpoolPlatform/message/npool/order/mw/v1/order"
 	paymentmwpb "github.com/NpoolPlatform/message/npool/order/mw/v1/payment"
 	npool "github.com/NpoolPlatform/message/npool/order/mw/v1/powerrental"
+	constant "github.com/NpoolPlatform/order-middleware/pkg/const"
 	orderlockcrud "github.com/NpoolPlatform/order-middleware/pkg/crud/order/lock"
 	orderbasecrud "github.com/NpoolPlatform/order-middleware/pkg/crud/order/orderbase"
 	orderstatebasecrud "github.com/NpoolPlatform/order-middleware/pkg/crud/order/statebase"
@@ -22,12 +23,6 @@ import (
 	"github.com/google/uuid"
 	"github.com/shopspring/decimal"
 )
-
-type ChildOrderReq struct {
-	ID *uint32
-	orderbasecrud.Req
-	GoodType *goodtypes.GoodType
-}
 
 type Handler struct {
 	ID *uint32
@@ -45,7 +40,7 @@ type Handler struct {
 	Offset                int32
 	Limit                 int32
 
-	ChildOrderReqs []*OrderReq
+	ChildOrderReqs []*orderbasecrud.Req
 	CouponIDs      []uuid.UUID
 	Rollback       *bool
 }
@@ -149,6 +144,25 @@ func WithGoodID(id *string, must bool) func(context.Context, *Handler) error {
 	}
 }
 
+func WithGoodType(e *goodtypes.GoodType, must bool) func(context.Context, *Handler) error {
+	return func(ctx context.Context, h *Handler) error {
+		if e == nil {
+			if must {
+				return fmt.Errorf("invalid goodtype")
+			}
+			return nil
+		}
+		switch *e {
+		case goodtypes.GoodType_PowerRental:
+		case goodtypes.GoodType_LegacyPowerRental:
+		default:
+			return fmt.Errorf("invalid goodtype")
+		}
+		h.OrderBaseReq.GoodType = e
+		return nil
+	}
+}
+
 func WithAppGoodID(id *string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if id == nil {
@@ -199,6 +213,23 @@ func WithParentOrderID(id *string, must bool) func(context.Context, *Handler) er
 			return err
 		}
 		h.OrderBaseReq.ParentOrderID = &_id
+		return nil
+	}
+}
+
+func WithAppGoodStockID(id *string, must bool) func(context.Context, *Handler) error {
+	return func(ctx context.Context, h *Handler) error {
+		if id == nil {
+			if must {
+				return fmt.Errorf("invalid appgoodstockid")
+			}
+			return nil
+		}
+		_id, err := uuid.Parse(*id)
+		if err != nil {
+			return err
+		}
+		h.AppGoodStockID = &_id
 		return nil
 	}
 }
@@ -801,8 +832,43 @@ func WithPaymentTransfers(bs []*paymentmwpb.PaymentTransferReq, must bool) func(
 func WithChildOrders(childOrders []*ordermwpb.OrderReq, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		for _, childOrder := range childOrders {
-
+			// Fill app id, user id later
+			h1, err := orderbase1.NewHandler(
+				ctx,
+				orderbase1.WithEntID(childOrder.EntID, false),
+				orderbase1.WithGoodID(childOrder.GoodID, true),
+				orderbase1.WithAppGoodID(childOrder.AppGoodID, true),
+				orderbase1.WithDuration(childOrder.Duration, true),
+				orderbase1.WithGoodType(childOrder.GoodType, true),
+			)
+			if err != nil {
+				return err
+			}
+			h.ChildOrderReqs = append(h.ChildOrderReqs, &h1.Req)
 		}
+		return nil
+	}
+}
+
+func WithConds(conds *npool.Conds) func(context.Context, *Handler) error {
+	return func(ctx context.Context, h *Handler) error {
+		return nil
+	}
+}
+
+func WithOffset(offset int32) func(context.Context, *Handler) error {
+	return func(ctx context.Context, h *Handler) error {
+		h.Offset = offset
+		return nil
+	}
+}
+
+func WithLimit(limit int32) func(context.Context, *Handler) error {
+	return func(ctx context.Context, h *Handler) error {
+		if limit == 0 {
+			limit = constant.DefaultRowLimit
+		}
+		h.Limit = limit
 		return nil
 	}
 }

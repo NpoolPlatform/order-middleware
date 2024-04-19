@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 
+	goodtypes "github.com/NpoolPlatform/message/npool/basetypes/good/v1"
 	types "github.com/NpoolPlatform/message/npool/basetypes/order/v1"
 	orderbasecrud "github.com/NpoolPlatform/order-middleware/pkg/crud/order/orderbase"
 
@@ -102,6 +103,29 @@ func WithGoodID(id *string, must bool) func(context.Context, *Handler) error {
 			return err
 		}
 		h.GoodID = &_id
+		return nil
+	}
+}
+
+func WithGoodType(e *goodtypes.GoodType, must bool) func(context.Context, *Handler) error {
+	return func(ctx context.Context, h *Handler) error {
+		if e == nil {
+			if must {
+				return fmt.Errorf("invalid goodtype")
+			}
+			return nil
+		}
+		switch *e {
+		case goodtypes.GoodType_PowerRental:
+		case goodtypes.GoodType_MachineRental:
+		case goodtypes.GoodType_MachineCustody:
+		case goodtypes.GoodType_LegacyPowerRental:
+		case goodtypes.GoodType_TechniqueServiceFee:
+		case goodtypes.GoodType_ElectricityFee:
+		default:
+			return fmt.Errorf("invalid goodtype")
+		}
+		h.GoodType = e
 		return nil
 	}
 }

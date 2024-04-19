@@ -16,6 +16,7 @@ type Req struct {
 	ID                *uint32
 	EntID             *uuid.UUID
 	OrderID           *uuid.UUID
+	AppGoodStockID    *uuid.UUID
 	Units             *decimal.Decimal
 	GoodValueUSD      *decimal.Decimal
 	PaymentAmountUSD  *decimal.Decimal
@@ -32,6 +33,9 @@ func CreateSet(c *ent.PowerRentalCreate, req *Req) *ent.PowerRentalCreate {
 	}
 	if req.OrderID != nil {
 		c.SetOrderID(*req.OrderID)
+	}
+	if req.AppGoodStockID != nil {
+		c.SetAppGoodStockID(*req.AppGoodStockID)
 	}
 	if req.Units != nil {
 		c.SetUnits(*req.Units)

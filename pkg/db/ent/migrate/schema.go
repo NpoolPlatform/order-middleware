@@ -65,6 +65,70 @@ var (
 			},
 		},
 	}
+	// FeeOrdersColumns holds the columns for the "fee_orders" table.
+	FeeOrdersColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true},
+		{Name: "created_at", Type: field.TypeUint32},
+		{Name: "updated_at", Type: field.TypeUint32},
+		{Name: "deleted_at", Type: field.TypeUint32},
+		{Name: "ent_id", Type: field.TypeUUID, Unique: true},
+		{Name: "order_id", Type: field.TypeUUID, Nullable: true},
+		{Name: "good_value_usd", Type: field.TypeOther, Nullable: true, SchemaType: map[string]string{"mysql": "decimal(37,18)"}},
+		{Name: "payment_amount_usd", Type: field.TypeOther, Nullable: true, SchemaType: map[string]string{"mysql": "decimal(37,18)"}},
+		{Name: "discount_amount_usd", Type: field.TypeOther, Nullable: true, SchemaType: map[string]string{"mysql": "decimal(37,18)"}},
+		{Name: "promotion_id", Type: field.TypeUUID, Nullable: true},
+		{Name: "duration_seconds", Type: field.TypeUint32, Nullable: true, Default: 0},
+	}
+	// FeeOrdersTable holds the schema information for the "fee_orders" table.
+	FeeOrdersTable = &schema.Table{
+		Name:       "fee_orders",
+		Columns:    FeeOrdersColumns,
+		PrimaryKey: []*schema.Column{FeeOrdersColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "feeorder_ent_id",
+				Unique:  true,
+				Columns: []*schema.Column{FeeOrdersColumns[4]},
+			},
+			{
+				Name:    "feeorder_order_id",
+				Unique:  false,
+				Columns: []*schema.Column{FeeOrdersColumns[5]},
+			},
+		},
+	}
+	// FeeOrderStatesColumns holds the columns for the "fee_order_states" table.
+	FeeOrderStatesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true},
+		{Name: "created_at", Type: field.TypeUint32},
+		{Name: "updated_at", Type: field.TypeUint32},
+		{Name: "deleted_at", Type: field.TypeUint32},
+		{Name: "ent_id", Type: field.TypeUUID, Unique: true},
+		{Name: "order_id", Type: field.TypeUUID, Nullable: true},
+		{Name: "paid_at", Type: field.TypeUint32, Nullable: true, Default: 0},
+		{Name: "user_set_paid", Type: field.TypeBool, Nullable: true, Default: false},
+		{Name: "user_set_canceled", Type: field.TypeBool, Nullable: true, Default: false},
+		{Name: "payment_state", Type: field.TypeString, Nullable: true, Default: "PaymentStateWait"},
+		{Name: "cancel_state", Type: field.TypeString, Nullable: true, Default: "DefaultOrderState"},
+	}
+	// FeeOrderStatesTable holds the schema information for the "fee_order_states" table.
+	FeeOrderStatesTable = &schema.Table{
+		Name:       "fee_order_states",
+		Columns:    FeeOrderStatesColumns,
+		PrimaryKey: []*schema.Column{FeeOrderStatesColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "feeorderstate_ent_id",
+				Unique:  true,
+				Columns: []*schema.Column{FeeOrderStatesColumns[4]},
+			},
+			{
+				Name:    "feeorderstate_order_id",
+				Unique:  false,
+				Columns: []*schema.Column{FeeOrderStatesColumns[5]},
+			},
+		},
+	}
 	// OrdersColumns holds the columns for the "orders" table.
 	OrdersColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUint32, Increment: true},
@@ -129,6 +193,7 @@ var (
 		{Name: "user_id", Type: field.TypeUUID, Nullable: true},
 		{Name: "good_id", Type: field.TypeUUID, Nullable: true},
 		{Name: "app_good_id", Type: field.TypeUUID, Nullable: true},
+		{Name: "good_type", Type: field.TypeString, Nullable: true, Default: ""},
 		{Name: "parent_order_id", Type: field.TypeUUID, Nullable: true},
 		{Name: "order_type", Type: field.TypeString, Nullable: true, Default: "Normal"},
 		{Name: "payment_type", Type: field.TypeString, Nullable: true, Default: "PayWithBalanceOnly"},
@@ -453,12 +518,13 @@ var (
 		{Name: "deleted_at", Type: field.TypeUint32},
 		{Name: "ent_id", Type: field.TypeUUID, Unique: true},
 		{Name: "order_id", Type: field.TypeUUID, Nullable: true},
+		{Name: "app_good_stock_id", Type: field.TypeUUID, Nullable: true},
 		{Name: "units", Type: field.TypeOther, Nullable: true, SchemaType: map[string]string{"mysql": "decimal(37,18)"}},
 		{Name: "good_value_usd", Type: field.TypeOther, Nullable: true, SchemaType: map[string]string{"mysql": "decimal(37,18)"}},
 		{Name: "payment_amount_usd", Type: field.TypeOther, Nullable: true, SchemaType: map[string]string{"mysql": "decimal(37,18)"}},
 		{Name: "discount_amount_usd", Type: field.TypeOther, Nullable: true, SchemaType: map[string]string{"mysql": "decimal(37,18)"}},
 		{Name: "promotion_id", Type: field.TypeUUID, Nullable: true},
-		{Name: "duration", Type: field.TypeUint32, Nullable: true, Default: 0},
+		{Name: "duration_seconds", Type: field.TypeUint32, Nullable: true, Default: 0},
 		{Name: "investment_type", Type: field.TypeString, Nullable: true, Default: "FullPayment"},
 	}
 	// PowerRentalsTable holds the schema information for the "power_rentals" table.
@@ -494,8 +560,8 @@ var (
 		{Name: "user_set_canceled", Type: field.TypeBool, Nullable: true, Default: false},
 		{Name: "admin_set_canceled", Type: field.TypeBool, Nullable: true, Default: false},
 		{Name: "payment_state", Type: field.TypeString, Nullable: true, Default: "PaymentStateWait"},
-		{Name: "outofgas_hours", Type: field.TypeUint32, Nullable: true, Default: 0},
-		{Name: "compensate_hours", Type: field.TypeUint32, Nullable: true, Default: 0},
+		{Name: "outofgas_sceonds", Type: field.TypeUint32, Nullable: true, Default: 0},
+		{Name: "compensate_seconds", Type: field.TypeUint32, Nullable: true, Default: 0},
 		{Name: "renew_state", Type: field.TypeString, Nullable: true, Default: "OrderRenewWait"},
 		{Name: "renew_notify_at", Type: field.TypeUint32, Nullable: true, Default: 0},
 	}
@@ -521,6 +587,8 @@ var (
 	Tables = []*schema.Table{
 		AppConfigsTable,
 		CompensatesTable,
+		FeeOrdersTable,
+		FeeOrderStatesTable,
 		OrdersTable,
 		OrderBasesTable,
 		OrderCouponsTable,

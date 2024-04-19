@@ -163,17 +163,17 @@ func PaymentState(v string) predicate.PowerRentalState {
 	})
 }
 
-// OutofgasHours applies equality check predicate on the "outofgas_hours" field. It's identical to OutofgasHoursEQ.
-func OutofgasHours(v uint32) predicate.PowerRentalState {
+// OutofgasSceonds applies equality check predicate on the "outofgas_sceonds" field. It's identical to OutofgasSceondsEQ.
+func OutofgasSceonds(v uint32) predicate.PowerRentalState {
 	return predicate.PowerRentalState(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldOutofgasHours), v))
+		s.Where(sql.EQ(s.C(FieldOutofgasSceonds), v))
 	})
 }
 
-// CompensateHours applies equality check predicate on the "compensate_hours" field. It's identical to CompensateHoursEQ.
-func CompensateHours(v uint32) predicate.PowerRentalState {
+// CompensateSeconds applies equality check predicate on the "compensate_seconds" field. It's identical to CompensateSecondsEQ.
+func CompensateSeconds(v uint32) predicate.PowerRentalState {
 	return predicate.PowerRentalState(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldCompensateHours), v))
+		s.Where(sql.EQ(s.C(FieldCompensateSeconds), v))
 	})
 }
 
@@ -991,159 +991,159 @@ func PaymentStateContainsFold(v string) predicate.PowerRentalState {
 	})
 }
 
-// OutofgasHoursEQ applies the EQ predicate on the "outofgas_hours" field.
-func OutofgasHoursEQ(v uint32) predicate.PowerRentalState {
+// OutofgasSceondsEQ applies the EQ predicate on the "outofgas_sceonds" field.
+func OutofgasSceondsEQ(v uint32) predicate.PowerRentalState {
 	return predicate.PowerRentalState(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldOutofgasHours), v))
+		s.Where(sql.EQ(s.C(FieldOutofgasSceonds), v))
 	})
 }
 
-// OutofgasHoursNEQ applies the NEQ predicate on the "outofgas_hours" field.
-func OutofgasHoursNEQ(v uint32) predicate.PowerRentalState {
+// OutofgasSceondsNEQ applies the NEQ predicate on the "outofgas_sceonds" field.
+func OutofgasSceondsNEQ(v uint32) predicate.PowerRentalState {
 	return predicate.PowerRentalState(func(s *sql.Selector) {
-		s.Where(sql.NEQ(s.C(FieldOutofgasHours), v))
+		s.Where(sql.NEQ(s.C(FieldOutofgasSceonds), v))
 	})
 }
 
-// OutofgasHoursIn applies the In predicate on the "outofgas_hours" field.
-func OutofgasHoursIn(vs ...uint32) predicate.PowerRentalState {
+// OutofgasSceondsIn applies the In predicate on the "outofgas_sceonds" field.
+func OutofgasSceondsIn(vs ...uint32) predicate.PowerRentalState {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
 	}
 	return predicate.PowerRentalState(func(s *sql.Selector) {
-		s.Where(sql.In(s.C(FieldOutofgasHours), v...))
+		s.Where(sql.In(s.C(FieldOutofgasSceonds), v...))
 	})
 }
 
-// OutofgasHoursNotIn applies the NotIn predicate on the "outofgas_hours" field.
-func OutofgasHoursNotIn(vs ...uint32) predicate.PowerRentalState {
+// OutofgasSceondsNotIn applies the NotIn predicate on the "outofgas_sceonds" field.
+func OutofgasSceondsNotIn(vs ...uint32) predicate.PowerRentalState {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
 	}
 	return predicate.PowerRentalState(func(s *sql.Selector) {
-		s.Where(sql.NotIn(s.C(FieldOutofgasHours), v...))
+		s.Where(sql.NotIn(s.C(FieldOutofgasSceonds), v...))
 	})
 }
 
-// OutofgasHoursGT applies the GT predicate on the "outofgas_hours" field.
-func OutofgasHoursGT(v uint32) predicate.PowerRentalState {
+// OutofgasSceondsGT applies the GT predicate on the "outofgas_sceonds" field.
+func OutofgasSceondsGT(v uint32) predicate.PowerRentalState {
 	return predicate.PowerRentalState(func(s *sql.Selector) {
-		s.Where(sql.GT(s.C(FieldOutofgasHours), v))
+		s.Where(sql.GT(s.C(FieldOutofgasSceonds), v))
 	})
 }
 
-// OutofgasHoursGTE applies the GTE predicate on the "outofgas_hours" field.
-func OutofgasHoursGTE(v uint32) predicate.PowerRentalState {
+// OutofgasSceondsGTE applies the GTE predicate on the "outofgas_sceonds" field.
+func OutofgasSceondsGTE(v uint32) predicate.PowerRentalState {
 	return predicate.PowerRentalState(func(s *sql.Selector) {
-		s.Where(sql.GTE(s.C(FieldOutofgasHours), v))
+		s.Where(sql.GTE(s.C(FieldOutofgasSceonds), v))
 	})
 }
 
-// OutofgasHoursLT applies the LT predicate on the "outofgas_hours" field.
-func OutofgasHoursLT(v uint32) predicate.PowerRentalState {
+// OutofgasSceondsLT applies the LT predicate on the "outofgas_sceonds" field.
+func OutofgasSceondsLT(v uint32) predicate.PowerRentalState {
 	return predicate.PowerRentalState(func(s *sql.Selector) {
-		s.Where(sql.LT(s.C(FieldOutofgasHours), v))
+		s.Where(sql.LT(s.C(FieldOutofgasSceonds), v))
 	})
 }
 
-// OutofgasHoursLTE applies the LTE predicate on the "outofgas_hours" field.
-func OutofgasHoursLTE(v uint32) predicate.PowerRentalState {
+// OutofgasSceondsLTE applies the LTE predicate on the "outofgas_sceonds" field.
+func OutofgasSceondsLTE(v uint32) predicate.PowerRentalState {
 	return predicate.PowerRentalState(func(s *sql.Selector) {
-		s.Where(sql.LTE(s.C(FieldOutofgasHours), v))
+		s.Where(sql.LTE(s.C(FieldOutofgasSceonds), v))
 	})
 }
 
-// OutofgasHoursIsNil applies the IsNil predicate on the "outofgas_hours" field.
-func OutofgasHoursIsNil() predicate.PowerRentalState {
+// OutofgasSceondsIsNil applies the IsNil predicate on the "outofgas_sceonds" field.
+func OutofgasSceondsIsNil() predicate.PowerRentalState {
 	return predicate.PowerRentalState(func(s *sql.Selector) {
-		s.Where(sql.IsNull(s.C(FieldOutofgasHours)))
+		s.Where(sql.IsNull(s.C(FieldOutofgasSceonds)))
 	})
 }
 
-// OutofgasHoursNotNil applies the NotNil predicate on the "outofgas_hours" field.
-func OutofgasHoursNotNil() predicate.PowerRentalState {
+// OutofgasSceondsNotNil applies the NotNil predicate on the "outofgas_sceonds" field.
+func OutofgasSceondsNotNil() predicate.PowerRentalState {
 	return predicate.PowerRentalState(func(s *sql.Selector) {
-		s.Where(sql.NotNull(s.C(FieldOutofgasHours)))
+		s.Where(sql.NotNull(s.C(FieldOutofgasSceonds)))
 	})
 }
 
-// CompensateHoursEQ applies the EQ predicate on the "compensate_hours" field.
-func CompensateHoursEQ(v uint32) predicate.PowerRentalState {
+// CompensateSecondsEQ applies the EQ predicate on the "compensate_seconds" field.
+func CompensateSecondsEQ(v uint32) predicate.PowerRentalState {
 	return predicate.PowerRentalState(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldCompensateHours), v))
+		s.Where(sql.EQ(s.C(FieldCompensateSeconds), v))
 	})
 }
 
-// CompensateHoursNEQ applies the NEQ predicate on the "compensate_hours" field.
-func CompensateHoursNEQ(v uint32) predicate.PowerRentalState {
+// CompensateSecondsNEQ applies the NEQ predicate on the "compensate_seconds" field.
+func CompensateSecondsNEQ(v uint32) predicate.PowerRentalState {
 	return predicate.PowerRentalState(func(s *sql.Selector) {
-		s.Where(sql.NEQ(s.C(FieldCompensateHours), v))
+		s.Where(sql.NEQ(s.C(FieldCompensateSeconds), v))
 	})
 }
 
-// CompensateHoursIn applies the In predicate on the "compensate_hours" field.
-func CompensateHoursIn(vs ...uint32) predicate.PowerRentalState {
+// CompensateSecondsIn applies the In predicate on the "compensate_seconds" field.
+func CompensateSecondsIn(vs ...uint32) predicate.PowerRentalState {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
 	}
 	return predicate.PowerRentalState(func(s *sql.Selector) {
-		s.Where(sql.In(s.C(FieldCompensateHours), v...))
+		s.Where(sql.In(s.C(FieldCompensateSeconds), v...))
 	})
 }
 
-// CompensateHoursNotIn applies the NotIn predicate on the "compensate_hours" field.
-func CompensateHoursNotIn(vs ...uint32) predicate.PowerRentalState {
+// CompensateSecondsNotIn applies the NotIn predicate on the "compensate_seconds" field.
+func CompensateSecondsNotIn(vs ...uint32) predicate.PowerRentalState {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
 	}
 	return predicate.PowerRentalState(func(s *sql.Selector) {
-		s.Where(sql.NotIn(s.C(FieldCompensateHours), v...))
+		s.Where(sql.NotIn(s.C(FieldCompensateSeconds), v...))
 	})
 }
 
-// CompensateHoursGT applies the GT predicate on the "compensate_hours" field.
-func CompensateHoursGT(v uint32) predicate.PowerRentalState {
+// CompensateSecondsGT applies the GT predicate on the "compensate_seconds" field.
+func CompensateSecondsGT(v uint32) predicate.PowerRentalState {
 	return predicate.PowerRentalState(func(s *sql.Selector) {
-		s.Where(sql.GT(s.C(FieldCompensateHours), v))
+		s.Where(sql.GT(s.C(FieldCompensateSeconds), v))
 	})
 }
 
-// CompensateHoursGTE applies the GTE predicate on the "compensate_hours" field.
-func CompensateHoursGTE(v uint32) predicate.PowerRentalState {
+// CompensateSecondsGTE applies the GTE predicate on the "compensate_seconds" field.
+func CompensateSecondsGTE(v uint32) predicate.PowerRentalState {
 	return predicate.PowerRentalState(func(s *sql.Selector) {
-		s.Where(sql.GTE(s.C(FieldCompensateHours), v))
+		s.Where(sql.GTE(s.C(FieldCompensateSeconds), v))
 	})
 }
 
-// CompensateHoursLT applies the LT predicate on the "compensate_hours" field.
-func CompensateHoursLT(v uint32) predicate.PowerRentalState {
+// CompensateSecondsLT applies the LT predicate on the "compensate_seconds" field.
+func CompensateSecondsLT(v uint32) predicate.PowerRentalState {
 	return predicate.PowerRentalState(func(s *sql.Selector) {
-		s.Where(sql.LT(s.C(FieldCompensateHours), v))
+		s.Where(sql.LT(s.C(FieldCompensateSeconds), v))
 	})
 }
 
-// CompensateHoursLTE applies the LTE predicate on the "compensate_hours" field.
-func CompensateHoursLTE(v uint32) predicate.PowerRentalState {
+// CompensateSecondsLTE applies the LTE predicate on the "compensate_seconds" field.
+func CompensateSecondsLTE(v uint32) predicate.PowerRentalState {
 	return predicate.PowerRentalState(func(s *sql.Selector) {
-		s.Where(sql.LTE(s.C(FieldCompensateHours), v))
+		s.Where(sql.LTE(s.C(FieldCompensateSeconds), v))
 	})
 }
 
-// CompensateHoursIsNil applies the IsNil predicate on the "compensate_hours" field.
-func CompensateHoursIsNil() predicate.PowerRentalState {
+// CompensateSecondsIsNil applies the IsNil predicate on the "compensate_seconds" field.
+func CompensateSecondsIsNil() predicate.PowerRentalState {
 	return predicate.PowerRentalState(func(s *sql.Selector) {
-		s.Where(sql.IsNull(s.C(FieldCompensateHours)))
+		s.Where(sql.IsNull(s.C(FieldCompensateSeconds)))
 	})
 }
 
-// CompensateHoursNotNil applies the NotNil predicate on the "compensate_hours" field.
-func CompensateHoursNotNil() predicate.PowerRentalState {
+// CompensateSecondsNotNil applies the NotNil predicate on the "compensate_seconds" field.
+func CompensateSecondsNotNil() predicate.PowerRentalState {
 	return predicate.PowerRentalState(func(s *sql.Selector) {
-		s.Where(sql.NotNull(s.C(FieldCompensateHours)))
+		s.Where(sql.NotNull(s.C(FieldCompensateSeconds)))
 	})
 }
 

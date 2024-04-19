@@ -28,6 +28,8 @@ const (
 	FieldGoodID = "good_id"
 	// FieldAppGoodID holds the string denoting the app_good_id field in the database.
 	FieldAppGoodID = "app_good_id"
+	// FieldGoodType holds the string denoting the good_type field in the database.
+	FieldGoodType = "good_type"
 	// FieldParentOrderID holds the string denoting the parent_order_id field in the database.
 	FieldParentOrderID = "parent_order_id"
 	// FieldOrderType holds the string denoting the order_type field in the database.
@@ -53,6 +55,7 @@ var Columns = []string{
 	FieldUserID,
 	FieldGoodID,
 	FieldAppGoodID,
+	FieldGoodType,
 	FieldParentOrderID,
 	FieldOrderType,
 	FieldPaymentType,
@@ -97,6 +100,8 @@ var (
 	DefaultGoodID func() uuid.UUID
 	// DefaultAppGoodID holds the default value on creation for the "app_good_id" field.
 	DefaultAppGoodID func() uuid.UUID
+	// DefaultGoodType holds the default value on creation for the "good_type" field.
+	DefaultGoodType string
 	// DefaultParentOrderID holds the default value on creation for the "parent_order_id" field.
 	DefaultParentOrderID func() uuid.UUID
 	// DefaultOrderType holds the default value on creation for the "order_type" field.

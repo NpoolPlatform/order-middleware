@@ -198,6 +198,54 @@ func (f CompensateMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Muta
 	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.CompensateMutation", m)
 }
 
+// The FeeOrderQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type FeeOrderQueryRuleFunc func(context.Context, *ent.FeeOrderQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f FeeOrderQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.FeeOrderQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("ent/privacy: unexpected query type %T, expect *ent.FeeOrderQuery", q)
+}
+
+// The FeeOrderMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type FeeOrderMutationRuleFunc func(context.Context, *ent.FeeOrderMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f FeeOrderMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
+	if m, ok := m.(*ent.FeeOrderMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.FeeOrderMutation", m)
+}
+
+// The FeeOrderStateQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type FeeOrderStateQueryRuleFunc func(context.Context, *ent.FeeOrderStateQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f FeeOrderStateQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.FeeOrderStateQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("ent/privacy: unexpected query type %T, expect *ent.FeeOrderStateQuery", q)
+}
+
+// The FeeOrderStateMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type FeeOrderStateMutationRuleFunc func(context.Context, *ent.FeeOrderStateMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f FeeOrderStateMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
+	if m, ok := m.(*ent.FeeOrderStateMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.FeeOrderStateMutation", m)
+}
+
 // The OrderQueryRuleFunc type is an adapter to allow the use of ordinary
 // functions as a query rule.
 type OrderQueryRuleFunc func(context.Context, *ent.OrderQuery) error
@@ -549,6 +597,10 @@ func queryFilter(q ent.Query) (Filter, error) {
 		return q.Filter(), nil
 	case *ent.CompensateQuery:
 		return q.Filter(), nil
+	case *ent.FeeOrderQuery:
+		return q.Filter(), nil
+	case *ent.FeeOrderStateQuery:
+		return q.Filter(), nil
 	case *ent.OrderQuery:
 		return q.Filter(), nil
 	case *ent.OrderBaseQuery:
@@ -585,6 +637,10 @@ func mutationFilter(m ent.Mutation) (Filter, error) {
 	case *ent.AppConfigMutation:
 		return m.Filter(), nil
 	case *ent.CompensateMutation:
+		return m.Filter(), nil
+	case *ent.FeeOrderMutation:
+		return m.Filter(), nil
+	case *ent.FeeOrderStateMutation:
 		return m.Filter(), nil
 	case *ent.OrderMutation:
 		return m.Filter(), nil

@@ -7,6 +7,8 @@ import (
 
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/appconfig"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/compensate"
+	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/feeorder"
+	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/feeorderstate"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/order"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/orderbase"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/ordercoupon"
@@ -140,6 +142,122 @@ func init() {
 	compensateDescCompensateSeconds := compensateFields[3].Descriptor()
 	// compensate.DefaultCompensateSeconds holds the default value on creation for the compensate_seconds field.
 	compensate.DefaultCompensateSeconds = compensateDescCompensateSeconds.Default.(uint32)
+	feeorderMixin := schema.FeeOrder{}.Mixin()
+	feeorder.Policy = privacy.NewPolicies(feeorderMixin[0], schema.FeeOrder{})
+	feeorder.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+			if err := feeorder.Policy.EvalMutation(ctx, m); err != nil {
+				return nil, err
+			}
+			return next.Mutate(ctx, m)
+		})
+	}
+	feeorderMixinFields0 := feeorderMixin[0].Fields()
+	_ = feeorderMixinFields0
+	feeorderMixinFields1 := feeorderMixin[1].Fields()
+	_ = feeorderMixinFields1
+	feeorderFields := schema.FeeOrder{}.Fields()
+	_ = feeorderFields
+	// feeorderDescCreatedAt is the schema descriptor for created_at field.
+	feeorderDescCreatedAt := feeorderMixinFields0[0].Descriptor()
+	// feeorder.DefaultCreatedAt holds the default value on creation for the created_at field.
+	feeorder.DefaultCreatedAt = feeorderDescCreatedAt.Default.(func() uint32)
+	// feeorderDescUpdatedAt is the schema descriptor for updated_at field.
+	feeorderDescUpdatedAt := feeorderMixinFields0[1].Descriptor()
+	// feeorder.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	feeorder.DefaultUpdatedAt = feeorderDescUpdatedAt.Default.(func() uint32)
+	// feeorder.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	feeorder.UpdateDefaultUpdatedAt = feeorderDescUpdatedAt.UpdateDefault.(func() uint32)
+	// feeorderDescDeletedAt is the schema descriptor for deleted_at field.
+	feeorderDescDeletedAt := feeorderMixinFields0[2].Descriptor()
+	// feeorder.DefaultDeletedAt holds the default value on creation for the deleted_at field.
+	feeorder.DefaultDeletedAt = feeorderDescDeletedAt.Default.(func() uint32)
+	// feeorderDescEntID is the schema descriptor for ent_id field.
+	feeorderDescEntID := feeorderMixinFields1[1].Descriptor()
+	// feeorder.DefaultEntID holds the default value on creation for the ent_id field.
+	feeorder.DefaultEntID = feeorderDescEntID.Default.(func() uuid.UUID)
+	// feeorderDescOrderID is the schema descriptor for order_id field.
+	feeorderDescOrderID := feeorderFields[0].Descriptor()
+	// feeorder.DefaultOrderID holds the default value on creation for the order_id field.
+	feeorder.DefaultOrderID = feeorderDescOrderID.Default.(func() uuid.UUID)
+	// feeorderDescGoodValueUsd is the schema descriptor for good_value_usd field.
+	feeorderDescGoodValueUsd := feeorderFields[1].Descriptor()
+	// feeorder.DefaultGoodValueUsd holds the default value on creation for the good_value_usd field.
+	feeorder.DefaultGoodValueUsd = feeorderDescGoodValueUsd.Default.(decimal.Decimal)
+	// feeorderDescPaymentAmountUsd is the schema descriptor for payment_amount_usd field.
+	feeorderDescPaymentAmountUsd := feeorderFields[2].Descriptor()
+	// feeorder.DefaultPaymentAmountUsd holds the default value on creation for the payment_amount_usd field.
+	feeorder.DefaultPaymentAmountUsd = feeorderDescPaymentAmountUsd.Default.(decimal.Decimal)
+	// feeorderDescDiscountAmountUsd is the schema descriptor for discount_amount_usd field.
+	feeorderDescDiscountAmountUsd := feeorderFields[3].Descriptor()
+	// feeorder.DefaultDiscountAmountUsd holds the default value on creation for the discount_amount_usd field.
+	feeorder.DefaultDiscountAmountUsd = feeorderDescDiscountAmountUsd.Default.(decimal.Decimal)
+	// feeorderDescPromotionID is the schema descriptor for promotion_id field.
+	feeorderDescPromotionID := feeorderFields[4].Descriptor()
+	// feeorder.DefaultPromotionID holds the default value on creation for the promotion_id field.
+	feeorder.DefaultPromotionID = feeorderDescPromotionID.Default.(func() uuid.UUID)
+	// feeorderDescDurationSeconds is the schema descriptor for duration_seconds field.
+	feeorderDescDurationSeconds := feeorderFields[5].Descriptor()
+	// feeorder.DefaultDurationSeconds holds the default value on creation for the duration_seconds field.
+	feeorder.DefaultDurationSeconds = feeorderDescDurationSeconds.Default.(uint32)
+	feeorderstateMixin := schema.FeeOrderState{}.Mixin()
+	feeorderstate.Policy = privacy.NewPolicies(feeorderstateMixin[0], schema.FeeOrderState{})
+	feeorderstate.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+			if err := feeorderstate.Policy.EvalMutation(ctx, m); err != nil {
+				return nil, err
+			}
+			return next.Mutate(ctx, m)
+		})
+	}
+	feeorderstateMixinFields0 := feeorderstateMixin[0].Fields()
+	_ = feeorderstateMixinFields0
+	feeorderstateMixinFields1 := feeorderstateMixin[1].Fields()
+	_ = feeorderstateMixinFields1
+	feeorderstateFields := schema.FeeOrderState{}.Fields()
+	_ = feeorderstateFields
+	// feeorderstateDescCreatedAt is the schema descriptor for created_at field.
+	feeorderstateDescCreatedAt := feeorderstateMixinFields0[0].Descriptor()
+	// feeorderstate.DefaultCreatedAt holds the default value on creation for the created_at field.
+	feeorderstate.DefaultCreatedAt = feeorderstateDescCreatedAt.Default.(func() uint32)
+	// feeorderstateDescUpdatedAt is the schema descriptor for updated_at field.
+	feeorderstateDescUpdatedAt := feeorderstateMixinFields0[1].Descriptor()
+	// feeorderstate.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	feeorderstate.DefaultUpdatedAt = feeorderstateDescUpdatedAt.Default.(func() uint32)
+	// feeorderstate.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	feeorderstate.UpdateDefaultUpdatedAt = feeorderstateDescUpdatedAt.UpdateDefault.(func() uint32)
+	// feeorderstateDescDeletedAt is the schema descriptor for deleted_at field.
+	feeorderstateDescDeletedAt := feeorderstateMixinFields0[2].Descriptor()
+	// feeorderstate.DefaultDeletedAt holds the default value on creation for the deleted_at field.
+	feeorderstate.DefaultDeletedAt = feeorderstateDescDeletedAt.Default.(func() uint32)
+	// feeorderstateDescEntID is the schema descriptor for ent_id field.
+	feeorderstateDescEntID := feeorderstateMixinFields1[1].Descriptor()
+	// feeorderstate.DefaultEntID holds the default value on creation for the ent_id field.
+	feeorderstate.DefaultEntID = feeorderstateDescEntID.Default.(func() uuid.UUID)
+	// feeorderstateDescOrderID is the schema descriptor for order_id field.
+	feeorderstateDescOrderID := feeorderstateFields[0].Descriptor()
+	// feeorderstate.DefaultOrderID holds the default value on creation for the order_id field.
+	feeorderstate.DefaultOrderID = feeorderstateDescOrderID.Default.(func() uuid.UUID)
+	// feeorderstateDescPaidAt is the schema descriptor for paid_at field.
+	feeorderstateDescPaidAt := feeorderstateFields[1].Descriptor()
+	// feeorderstate.DefaultPaidAt holds the default value on creation for the paid_at field.
+	feeorderstate.DefaultPaidAt = feeorderstateDescPaidAt.Default.(uint32)
+	// feeorderstateDescUserSetPaid is the schema descriptor for user_set_paid field.
+	feeorderstateDescUserSetPaid := feeorderstateFields[2].Descriptor()
+	// feeorderstate.DefaultUserSetPaid holds the default value on creation for the user_set_paid field.
+	feeorderstate.DefaultUserSetPaid = feeorderstateDescUserSetPaid.Default.(bool)
+	// feeorderstateDescUserSetCanceled is the schema descriptor for user_set_canceled field.
+	feeorderstateDescUserSetCanceled := feeorderstateFields[3].Descriptor()
+	// feeorderstate.DefaultUserSetCanceled holds the default value on creation for the user_set_canceled field.
+	feeorderstate.DefaultUserSetCanceled = feeorderstateDescUserSetCanceled.Default.(bool)
+	// feeorderstateDescPaymentState is the schema descriptor for payment_state field.
+	feeorderstateDescPaymentState := feeorderstateFields[4].Descriptor()
+	// feeorderstate.DefaultPaymentState holds the default value on creation for the payment_state field.
+	feeorderstate.DefaultPaymentState = feeorderstateDescPaymentState.Default.(string)
+	// feeorderstateDescCancelState is the schema descriptor for cancel_state field.
+	feeorderstateDescCancelState := feeorderstateFields[5].Descriptor()
+	// feeorderstate.DefaultCancelState holds the default value on creation for the cancel_state field.
+	feeorderstate.DefaultCancelState = feeorderstateDescCancelState.Default.(string)
 	orderMixin := schema.Order{}.Mixin()
 	order.Policy = privacy.NewPolicies(orderMixin[0], schema.Order{})
 	order.Hooks[0] = func(next ent.Mutator) ent.Mutator {
@@ -312,24 +430,28 @@ func init() {
 	orderbaseDescAppGoodID := orderbaseFields[3].Descriptor()
 	// orderbase.DefaultAppGoodID holds the default value on creation for the app_good_id field.
 	orderbase.DefaultAppGoodID = orderbaseDescAppGoodID.Default.(func() uuid.UUID)
+	// orderbaseDescGoodType is the schema descriptor for good_type field.
+	orderbaseDescGoodType := orderbaseFields[4].Descriptor()
+	// orderbase.DefaultGoodType holds the default value on creation for the good_type field.
+	orderbase.DefaultGoodType = orderbaseDescGoodType.Default.(string)
 	// orderbaseDescParentOrderID is the schema descriptor for parent_order_id field.
-	orderbaseDescParentOrderID := orderbaseFields[4].Descriptor()
+	orderbaseDescParentOrderID := orderbaseFields[5].Descriptor()
 	// orderbase.DefaultParentOrderID holds the default value on creation for the parent_order_id field.
 	orderbase.DefaultParentOrderID = orderbaseDescParentOrderID.Default.(func() uuid.UUID)
 	// orderbaseDescOrderType is the schema descriptor for order_type field.
-	orderbaseDescOrderType := orderbaseFields[5].Descriptor()
+	orderbaseDescOrderType := orderbaseFields[6].Descriptor()
 	// orderbase.DefaultOrderType holds the default value on creation for the order_type field.
 	orderbase.DefaultOrderType = orderbaseDescOrderType.Default.(string)
 	// orderbaseDescPaymentType is the schema descriptor for payment_type field.
-	orderbaseDescPaymentType := orderbaseFields[6].Descriptor()
+	orderbaseDescPaymentType := orderbaseFields[7].Descriptor()
 	// orderbase.DefaultPaymentType holds the default value on creation for the payment_type field.
 	orderbase.DefaultPaymentType = orderbaseDescPaymentType.Default.(string)
 	// orderbaseDescCreateMethod is the schema descriptor for create_method field.
-	orderbaseDescCreateMethod := orderbaseFields[7].Descriptor()
+	orderbaseDescCreateMethod := orderbaseFields[8].Descriptor()
 	// orderbase.DefaultCreateMethod holds the default value on creation for the create_method field.
 	orderbase.DefaultCreateMethod = orderbaseDescCreateMethod.Default.(string)
 	// orderbaseDescSimulate is the schema descriptor for simulate field.
-	orderbaseDescSimulate := orderbaseFields[8].Descriptor()
+	orderbaseDescSimulate := orderbaseFields[9].Descriptor()
 	// orderbase.DefaultSimulate holds the default value on creation for the simulate field.
 	orderbase.DefaultSimulate = orderbaseDescSimulate.Default.(bool)
 	ordercouponMixin := schema.OrderCoupon{}.Mixin()
@@ -876,32 +998,36 @@ func init() {
 	powerrentalDescOrderID := powerrentalFields[0].Descriptor()
 	// powerrental.DefaultOrderID holds the default value on creation for the order_id field.
 	powerrental.DefaultOrderID = powerrentalDescOrderID.Default.(func() uuid.UUID)
+	// powerrentalDescAppGoodStockID is the schema descriptor for app_good_stock_id field.
+	powerrentalDescAppGoodStockID := powerrentalFields[1].Descriptor()
+	// powerrental.DefaultAppGoodStockID holds the default value on creation for the app_good_stock_id field.
+	powerrental.DefaultAppGoodStockID = powerrentalDescAppGoodStockID.Default.(func() uuid.UUID)
 	// powerrentalDescUnits is the schema descriptor for units field.
-	powerrentalDescUnits := powerrentalFields[1].Descriptor()
+	powerrentalDescUnits := powerrentalFields[2].Descriptor()
 	// powerrental.DefaultUnits holds the default value on creation for the units field.
 	powerrental.DefaultUnits = powerrentalDescUnits.Default.(decimal.Decimal)
 	// powerrentalDescGoodValueUsd is the schema descriptor for good_value_usd field.
-	powerrentalDescGoodValueUsd := powerrentalFields[2].Descriptor()
+	powerrentalDescGoodValueUsd := powerrentalFields[3].Descriptor()
 	// powerrental.DefaultGoodValueUsd holds the default value on creation for the good_value_usd field.
 	powerrental.DefaultGoodValueUsd = powerrentalDescGoodValueUsd.Default.(decimal.Decimal)
 	// powerrentalDescPaymentAmountUsd is the schema descriptor for payment_amount_usd field.
-	powerrentalDescPaymentAmountUsd := powerrentalFields[3].Descriptor()
+	powerrentalDescPaymentAmountUsd := powerrentalFields[4].Descriptor()
 	// powerrental.DefaultPaymentAmountUsd holds the default value on creation for the payment_amount_usd field.
 	powerrental.DefaultPaymentAmountUsd = powerrentalDescPaymentAmountUsd.Default.(decimal.Decimal)
 	// powerrentalDescDiscountAmountUsd is the schema descriptor for discount_amount_usd field.
-	powerrentalDescDiscountAmountUsd := powerrentalFields[4].Descriptor()
+	powerrentalDescDiscountAmountUsd := powerrentalFields[5].Descriptor()
 	// powerrental.DefaultDiscountAmountUsd holds the default value on creation for the discount_amount_usd field.
 	powerrental.DefaultDiscountAmountUsd = powerrentalDescDiscountAmountUsd.Default.(decimal.Decimal)
 	// powerrentalDescPromotionID is the schema descriptor for promotion_id field.
-	powerrentalDescPromotionID := powerrentalFields[5].Descriptor()
+	powerrentalDescPromotionID := powerrentalFields[6].Descriptor()
 	// powerrental.DefaultPromotionID holds the default value on creation for the promotion_id field.
 	powerrental.DefaultPromotionID = powerrentalDescPromotionID.Default.(func() uuid.UUID)
-	// powerrentalDescDuration is the schema descriptor for duration field.
-	powerrentalDescDuration := powerrentalFields[6].Descriptor()
-	// powerrental.DefaultDuration holds the default value on creation for the duration field.
-	powerrental.DefaultDuration = powerrentalDescDuration.Default.(uint32)
+	// powerrentalDescDurationSeconds is the schema descriptor for duration_seconds field.
+	powerrentalDescDurationSeconds := powerrentalFields[7].Descriptor()
+	// powerrental.DefaultDurationSeconds holds the default value on creation for the duration_seconds field.
+	powerrental.DefaultDurationSeconds = powerrentalDescDurationSeconds.Default.(uint32)
 	// powerrentalDescInvestmentType is the schema descriptor for investment_type field.
-	powerrentalDescInvestmentType := powerrentalFields[7].Descriptor()
+	powerrentalDescInvestmentType := powerrentalFields[8].Descriptor()
 	// powerrental.DefaultInvestmentType holds the default value on creation for the investment_type field.
 	powerrental.DefaultInvestmentType = powerrentalDescInvestmentType.Default.(string)
 	powerrentalstateMixin := schema.PowerRentalState{}.Mixin()
@@ -970,14 +1096,14 @@ func init() {
 	powerrentalstateDescPaymentState := powerrentalstateFields[7].Descriptor()
 	// powerrentalstate.DefaultPaymentState holds the default value on creation for the payment_state field.
 	powerrentalstate.DefaultPaymentState = powerrentalstateDescPaymentState.Default.(string)
-	// powerrentalstateDescOutofgasHours is the schema descriptor for outofgas_hours field.
-	powerrentalstateDescOutofgasHours := powerrentalstateFields[8].Descriptor()
-	// powerrentalstate.DefaultOutofgasHours holds the default value on creation for the outofgas_hours field.
-	powerrentalstate.DefaultOutofgasHours = powerrentalstateDescOutofgasHours.Default.(uint32)
-	// powerrentalstateDescCompensateHours is the schema descriptor for compensate_hours field.
-	powerrentalstateDescCompensateHours := powerrentalstateFields[9].Descriptor()
-	// powerrentalstate.DefaultCompensateHours holds the default value on creation for the compensate_hours field.
-	powerrentalstate.DefaultCompensateHours = powerrentalstateDescCompensateHours.Default.(uint32)
+	// powerrentalstateDescOutofgasSceonds is the schema descriptor for outofgas_sceonds field.
+	powerrentalstateDescOutofgasSceonds := powerrentalstateFields[8].Descriptor()
+	// powerrentalstate.DefaultOutofgasSceonds holds the default value on creation for the outofgas_sceonds field.
+	powerrentalstate.DefaultOutofgasSceonds = powerrentalstateDescOutofgasSceonds.Default.(uint32)
+	// powerrentalstateDescCompensateSeconds is the schema descriptor for compensate_seconds field.
+	powerrentalstateDescCompensateSeconds := powerrentalstateFields[9].Descriptor()
+	// powerrentalstate.DefaultCompensateSeconds holds the default value on creation for the compensate_seconds field.
+	powerrentalstate.DefaultCompensateSeconds = powerrentalstateDescCompensateSeconds.Default.(uint32)
 	// powerrentalstateDescRenewState is the schema descriptor for renew_state field.
 	powerrentalstateDescRenewState := powerrentalstateFields[10].Descriptor()
 	// powerrentalstate.DefaultRenewState holds the default value on creation for the renew_state field.

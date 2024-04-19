@@ -134,6 +134,20 @@ func (obc *OrderBaseCreate) SetNillableAppGoodID(u *uuid.UUID) *OrderBaseCreate 
 	return obc
 }
 
+// SetGoodType sets the "good_type" field.
+func (obc *OrderBaseCreate) SetGoodType(s string) *OrderBaseCreate {
+	obc.mutation.SetGoodType(s)
+	return obc
+}
+
+// SetNillableGoodType sets the "good_type" field if the given value is not nil.
+func (obc *OrderBaseCreate) SetNillableGoodType(s *string) *OrderBaseCreate {
+	if s != nil {
+		obc.SetGoodType(*s)
+	}
+	return obc
+}
+
 // SetParentOrderID sets the "parent_order_id" field.
 func (obc *OrderBaseCreate) SetParentOrderID(u uuid.UUID) *OrderBaseCreate {
 	obc.mutation.SetParentOrderID(u)
@@ -345,6 +359,10 @@ func (obc *OrderBaseCreate) defaults() error {
 		v := orderbase.DefaultAppGoodID()
 		obc.mutation.SetAppGoodID(v)
 	}
+	if _, ok := obc.mutation.GoodType(); !ok {
+		v := orderbase.DefaultGoodType
+		obc.mutation.SetGoodType(v)
+	}
 	if _, ok := obc.mutation.ParentOrderID(); !ok {
 		if orderbase.DefaultParentOrderID == nil {
 			return fmt.Errorf("ent: uninitialized orderbase.DefaultParentOrderID (forgotten import ent/runtime?)")
@@ -482,6 +500,14 @@ func (obc *OrderBaseCreate) createSpec() (*OrderBase, *sqlgraph.CreateSpec) {
 			Column: orderbase.FieldAppGoodID,
 		})
 		_node.AppGoodID = value
+	}
+	if value, ok := obc.mutation.GoodType(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: orderbase.FieldGoodType,
+		})
+		_node.GoodType = value
 	}
 	if value, ok := obc.mutation.ParentOrderID(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -712,6 +738,24 @@ func (u *OrderBaseUpsert) UpdateAppGoodID() *OrderBaseUpsert {
 // ClearAppGoodID clears the value of the "app_good_id" field.
 func (u *OrderBaseUpsert) ClearAppGoodID() *OrderBaseUpsert {
 	u.SetNull(orderbase.FieldAppGoodID)
+	return u
+}
+
+// SetGoodType sets the "good_type" field.
+func (u *OrderBaseUpsert) SetGoodType(v string) *OrderBaseUpsert {
+	u.Set(orderbase.FieldGoodType, v)
+	return u
+}
+
+// UpdateGoodType sets the "good_type" field to the value that was provided on create.
+func (u *OrderBaseUpsert) UpdateGoodType() *OrderBaseUpsert {
+	u.SetExcluded(orderbase.FieldGoodType)
+	return u
+}
+
+// ClearGoodType clears the value of the "good_type" field.
+func (u *OrderBaseUpsert) ClearGoodType() *OrderBaseUpsert {
+	u.SetNull(orderbase.FieldGoodType)
 	return u
 }
 
@@ -1013,6 +1057,27 @@ func (u *OrderBaseUpsertOne) UpdateAppGoodID() *OrderBaseUpsertOne {
 func (u *OrderBaseUpsertOne) ClearAppGoodID() *OrderBaseUpsertOne {
 	return u.Update(func(s *OrderBaseUpsert) {
 		s.ClearAppGoodID()
+	})
+}
+
+// SetGoodType sets the "good_type" field.
+func (u *OrderBaseUpsertOne) SetGoodType(v string) *OrderBaseUpsertOne {
+	return u.Update(func(s *OrderBaseUpsert) {
+		s.SetGoodType(v)
+	})
+}
+
+// UpdateGoodType sets the "good_type" field to the value that was provided on create.
+func (u *OrderBaseUpsertOne) UpdateGoodType() *OrderBaseUpsertOne {
+	return u.Update(func(s *OrderBaseUpsert) {
+		s.UpdateGoodType()
+	})
+}
+
+// ClearGoodType clears the value of the "good_type" field.
+func (u *OrderBaseUpsertOne) ClearGoodType() *OrderBaseUpsertOne {
+	return u.Update(func(s *OrderBaseUpsert) {
+		s.ClearGoodType()
 	})
 }
 
@@ -1494,6 +1559,27 @@ func (u *OrderBaseUpsertBulk) UpdateAppGoodID() *OrderBaseUpsertBulk {
 func (u *OrderBaseUpsertBulk) ClearAppGoodID() *OrderBaseUpsertBulk {
 	return u.Update(func(s *OrderBaseUpsert) {
 		s.ClearAppGoodID()
+	})
+}
+
+// SetGoodType sets the "good_type" field.
+func (u *OrderBaseUpsertBulk) SetGoodType(v string) *OrderBaseUpsertBulk {
+	return u.Update(func(s *OrderBaseUpsert) {
+		s.SetGoodType(v)
+	})
+}
+
+// UpdateGoodType sets the "good_type" field to the value that was provided on create.
+func (u *OrderBaseUpsertBulk) UpdateGoodType() *OrderBaseUpsertBulk {
+	return u.Update(func(s *OrderBaseUpsert) {
+		s.UpdateGoodType()
+	})
+}
+
+// ClearGoodType clears the value of the "good_type" field.
+func (u *OrderBaseUpsertBulk) ClearGoodType() *OrderBaseUpsertBulk {
+	return u.Update(func(s *OrderBaseUpsert) {
+		s.ClearGoodType()
 	})
 }
 

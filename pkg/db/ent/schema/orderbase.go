@@ -51,6 +51,10 @@ func (OrderBase) Fields() []ent.Field {
 				return uuid.Nil
 			}),
 		field.
+			String("good_type").
+			Optional().
+			Default(""),
+		field.
 			UUID("parent_order_id", uuid.UUID{}).
 			Optional().
 			Default(func() uuid.UUID {

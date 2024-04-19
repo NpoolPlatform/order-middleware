@@ -119,6 +119,26 @@ func (pru *PowerRentalUpdate) ClearOrderID() *PowerRentalUpdate {
 	return pru
 }
 
+// SetAppGoodStockID sets the "app_good_stock_id" field.
+func (pru *PowerRentalUpdate) SetAppGoodStockID(u uuid.UUID) *PowerRentalUpdate {
+	pru.mutation.SetAppGoodStockID(u)
+	return pru
+}
+
+// SetNillableAppGoodStockID sets the "app_good_stock_id" field if the given value is not nil.
+func (pru *PowerRentalUpdate) SetNillableAppGoodStockID(u *uuid.UUID) *PowerRentalUpdate {
+	if u != nil {
+		pru.SetAppGoodStockID(*u)
+	}
+	return pru
+}
+
+// ClearAppGoodStockID clears the value of the "app_good_stock_id" field.
+func (pru *PowerRentalUpdate) ClearAppGoodStockID() *PowerRentalUpdate {
+	pru.mutation.ClearAppGoodStockID()
+	return pru
+}
+
 // SetUnits sets the "units" field.
 func (pru *PowerRentalUpdate) SetUnits(d decimal.Decimal) *PowerRentalUpdate {
 	pru.mutation.SetUnits(d)
@@ -219,30 +239,30 @@ func (pru *PowerRentalUpdate) ClearPromotionID() *PowerRentalUpdate {
 	return pru
 }
 
-// SetDuration sets the "duration" field.
-func (pru *PowerRentalUpdate) SetDuration(u uint32) *PowerRentalUpdate {
-	pru.mutation.ResetDuration()
-	pru.mutation.SetDuration(u)
+// SetDurationSeconds sets the "duration_seconds" field.
+func (pru *PowerRentalUpdate) SetDurationSeconds(u uint32) *PowerRentalUpdate {
+	pru.mutation.ResetDurationSeconds()
+	pru.mutation.SetDurationSeconds(u)
 	return pru
 }
 
-// SetNillableDuration sets the "duration" field if the given value is not nil.
-func (pru *PowerRentalUpdate) SetNillableDuration(u *uint32) *PowerRentalUpdate {
+// SetNillableDurationSeconds sets the "duration_seconds" field if the given value is not nil.
+func (pru *PowerRentalUpdate) SetNillableDurationSeconds(u *uint32) *PowerRentalUpdate {
 	if u != nil {
-		pru.SetDuration(*u)
+		pru.SetDurationSeconds(*u)
 	}
 	return pru
 }
 
-// AddDuration adds u to the "duration" field.
-func (pru *PowerRentalUpdate) AddDuration(u int32) *PowerRentalUpdate {
-	pru.mutation.AddDuration(u)
+// AddDurationSeconds adds u to the "duration_seconds" field.
+func (pru *PowerRentalUpdate) AddDurationSeconds(u int32) *PowerRentalUpdate {
+	pru.mutation.AddDurationSeconds(u)
 	return pru
 }
 
-// ClearDuration clears the value of the "duration" field.
-func (pru *PowerRentalUpdate) ClearDuration() *PowerRentalUpdate {
-	pru.mutation.ClearDuration()
+// ClearDurationSeconds clears the value of the "duration_seconds" field.
+func (pru *PowerRentalUpdate) ClearDurationSeconds() *PowerRentalUpdate {
+	pru.mutation.ClearDurationSeconds()
 	return pru
 }
 
@@ -426,6 +446,19 @@ func (pru *PowerRentalUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: powerrental.FieldOrderID,
 		})
 	}
+	if value, ok := pru.mutation.AppGoodStockID(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Value:  value,
+			Column: powerrental.FieldAppGoodStockID,
+		})
+	}
+	if pru.mutation.AppGoodStockIDCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Column: powerrental.FieldAppGoodStockID,
+		})
+	}
 	if value, ok := pru.mutation.Units(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeOther,
@@ -491,24 +524,24 @@ func (pru *PowerRentalUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: powerrental.FieldPromotionID,
 		})
 	}
-	if value, ok := pru.mutation.Duration(); ok {
+	if value, ok := pru.mutation.DurationSeconds(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeUint32,
 			Value:  value,
-			Column: powerrental.FieldDuration,
+			Column: powerrental.FieldDurationSeconds,
 		})
 	}
-	if value, ok := pru.mutation.AddedDuration(); ok {
+	if value, ok := pru.mutation.AddedDurationSeconds(); ok {
 		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
 			Type:   field.TypeUint32,
 			Value:  value,
-			Column: powerrental.FieldDuration,
+			Column: powerrental.FieldDurationSeconds,
 		})
 	}
-	if pru.mutation.DurationCleared() {
+	if pru.mutation.DurationSecondsCleared() {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeUint32,
-			Column: powerrental.FieldDuration,
+			Column: powerrental.FieldDurationSeconds,
 		})
 	}
 	if value, ok := pru.mutation.InvestmentType(); ok {
@@ -634,6 +667,26 @@ func (pruo *PowerRentalUpdateOne) ClearOrderID() *PowerRentalUpdateOne {
 	return pruo
 }
 
+// SetAppGoodStockID sets the "app_good_stock_id" field.
+func (pruo *PowerRentalUpdateOne) SetAppGoodStockID(u uuid.UUID) *PowerRentalUpdateOne {
+	pruo.mutation.SetAppGoodStockID(u)
+	return pruo
+}
+
+// SetNillableAppGoodStockID sets the "app_good_stock_id" field if the given value is not nil.
+func (pruo *PowerRentalUpdateOne) SetNillableAppGoodStockID(u *uuid.UUID) *PowerRentalUpdateOne {
+	if u != nil {
+		pruo.SetAppGoodStockID(*u)
+	}
+	return pruo
+}
+
+// ClearAppGoodStockID clears the value of the "app_good_stock_id" field.
+func (pruo *PowerRentalUpdateOne) ClearAppGoodStockID() *PowerRentalUpdateOne {
+	pruo.mutation.ClearAppGoodStockID()
+	return pruo
+}
+
 // SetUnits sets the "units" field.
 func (pruo *PowerRentalUpdateOne) SetUnits(d decimal.Decimal) *PowerRentalUpdateOne {
 	pruo.mutation.SetUnits(d)
@@ -734,30 +787,30 @@ func (pruo *PowerRentalUpdateOne) ClearPromotionID() *PowerRentalUpdateOne {
 	return pruo
 }
 
-// SetDuration sets the "duration" field.
-func (pruo *PowerRentalUpdateOne) SetDuration(u uint32) *PowerRentalUpdateOne {
-	pruo.mutation.ResetDuration()
-	pruo.mutation.SetDuration(u)
+// SetDurationSeconds sets the "duration_seconds" field.
+func (pruo *PowerRentalUpdateOne) SetDurationSeconds(u uint32) *PowerRentalUpdateOne {
+	pruo.mutation.ResetDurationSeconds()
+	pruo.mutation.SetDurationSeconds(u)
 	return pruo
 }
 
-// SetNillableDuration sets the "duration" field if the given value is not nil.
-func (pruo *PowerRentalUpdateOne) SetNillableDuration(u *uint32) *PowerRentalUpdateOne {
+// SetNillableDurationSeconds sets the "duration_seconds" field if the given value is not nil.
+func (pruo *PowerRentalUpdateOne) SetNillableDurationSeconds(u *uint32) *PowerRentalUpdateOne {
 	if u != nil {
-		pruo.SetDuration(*u)
+		pruo.SetDurationSeconds(*u)
 	}
 	return pruo
 }
 
-// AddDuration adds u to the "duration" field.
-func (pruo *PowerRentalUpdateOne) AddDuration(u int32) *PowerRentalUpdateOne {
-	pruo.mutation.AddDuration(u)
+// AddDurationSeconds adds u to the "duration_seconds" field.
+func (pruo *PowerRentalUpdateOne) AddDurationSeconds(u int32) *PowerRentalUpdateOne {
+	pruo.mutation.AddDurationSeconds(u)
 	return pruo
 }
 
-// ClearDuration clears the value of the "duration" field.
-func (pruo *PowerRentalUpdateOne) ClearDuration() *PowerRentalUpdateOne {
-	pruo.mutation.ClearDuration()
+// ClearDurationSeconds clears the value of the "duration_seconds" field.
+func (pruo *PowerRentalUpdateOne) ClearDurationSeconds() *PowerRentalUpdateOne {
+	pruo.mutation.ClearDurationSeconds()
 	return pruo
 }
 
@@ -971,6 +1024,19 @@ func (pruo *PowerRentalUpdateOne) sqlSave(ctx context.Context) (_node *PowerRent
 			Column: powerrental.FieldOrderID,
 		})
 	}
+	if value, ok := pruo.mutation.AppGoodStockID(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Value:  value,
+			Column: powerrental.FieldAppGoodStockID,
+		})
+	}
+	if pruo.mutation.AppGoodStockIDCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Column: powerrental.FieldAppGoodStockID,
+		})
+	}
 	if value, ok := pruo.mutation.Units(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeOther,
@@ -1036,24 +1102,24 @@ func (pruo *PowerRentalUpdateOne) sqlSave(ctx context.Context) (_node *PowerRent
 			Column: powerrental.FieldPromotionID,
 		})
 	}
-	if value, ok := pruo.mutation.Duration(); ok {
+	if value, ok := pruo.mutation.DurationSeconds(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeUint32,
 			Value:  value,
-			Column: powerrental.FieldDuration,
+			Column: powerrental.FieldDurationSeconds,
 		})
 	}
-	if value, ok := pruo.mutation.AddedDuration(); ok {
+	if value, ok := pruo.mutation.AddedDurationSeconds(); ok {
 		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
 			Type:   field.TypeUint32,
 			Value:  value,
-			Column: powerrental.FieldDuration,
+			Column: powerrental.FieldDurationSeconds,
 		})
 	}
-	if pruo.mutation.DurationCleared() {
+	if pruo.mutation.DurationSecondsCleared() {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeUint32,
-			Column: powerrental.FieldDuration,
+			Column: powerrental.FieldDurationSeconds,
 		})
 	}
 	if value, ok := pruo.mutation.InvestmentType(); ok {
