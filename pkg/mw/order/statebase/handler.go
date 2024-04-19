@@ -123,6 +123,30 @@ func WithOrderState(state *types.OrderState, must bool) func(context.Context, *H
 	}
 }
 
+func WithPaymentType(paymentType *types.PaymentType, must bool) func(context.Context, *Handler) error {
+	return func(ctx context.Context, h *Handler) error {
+		if paymentType == nil {
+			if must {
+				return fmt.Errorf("invalid paymenttype")
+			}
+			return nil
+		}
+		switch *paymentType {
+		case types.PaymentType_PayWithBalanceOnly:
+		case types.PaymentType_PayWithTransferOnly:
+		case types.PaymentType_PayWithTransferAndBalance:
+		case types.PaymentType_PayWithParentOrder:
+		case types.PaymentType_PayWithContract:
+		case types.PaymentType_PayWithOffline:
+		case types.PaymentType_PayWithNoPayment:
+		default:
+			return fmt.Errorf("invalid paymentType")
+		}
+		h.PaymentType = paymentType
+		return nil
+	}
+}
+
 func WithStartMode(startMode *types.OrderStartMode, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if startMode == nil {

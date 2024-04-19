@@ -260,7 +260,7 @@ func WithPaymentType(paymentType *types.PaymentType, must bool) func(context.Con
 		default:
 			return fmt.Errorf("invalid paymentType")
 		}
-		h.OrderBaseReq.PaymentType = paymentType
+		h.OrderStateBaseReq.PaymentType = paymentType
 		return nil
 	}
 }
@@ -531,6 +531,7 @@ func WithPaymentID(id *string, must bool) func(context.Context, *Handler) error 
 			return err
 		}
 		h.PaymentBaseReq.EntID = &_id
+		h.FeeOrderStateReq.PaymentID = &_id
 		return nil
 	}
 }

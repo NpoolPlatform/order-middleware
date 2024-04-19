@@ -192,7 +192,7 @@ func (h *createHandler) formalizeOrderCoupons() {
 
 func (h *createHandler) formalizePaymentBalances() {
 	for _, req := range h.PaymentBalanceReqs {
-		req.PaymentID = h.PaymentID
+		req.PaymentID = h.PaymentBaseReq.EntID
 		if req.EntID == nil {
 			req.EntID = func() *uuid.UUID { uid := uuid.New(); return &uid }()
 		}
@@ -201,7 +201,7 @@ func (h *createHandler) formalizePaymentBalances() {
 
 func (h *createHandler) formalizePaymentTransfers() {
 	for _, req := range h.PaymentTransferReqs {
-		req.PaymentID = h.PaymentID
+		req.PaymentID = h.PaymentBaseReq.EntID
 		if req.EntID == nil {
 			req.EntID = func() *uuid.UUID { uid := uuid.New(); return &uid }()
 		}
@@ -209,12 +209,13 @@ func (h *createHandler) formalizePaymentTransfers() {
 }
 
 func (h *createHandler) formalizePaymentID() {
-	if h.PaymentID != nil {
+	if h.PaymentBaseReq.EntID != nil {
 		return
 	}
-	h.PaymentID = func() *uuid.UUID { uid := uuid.New(); return &uid }()
-	handler.formalizePaymentBalances()
-	handler.formalizePaymentTransfers()
+	h.PaymentBaseReq.EntID = func() *uuid.UUID { uid := uuid.New(); return &uid }()
+	h.FeeOrderStateReq.PaymentID = h.PaymentBaseReq.EntID
+	h.formalizePaymentBalances()
+	h.formalizePaymentTransfers()
 }
 
 func (h *Handler) CreateFeeOrder(ctx context.Context) error {

@@ -25,7 +25,6 @@ func (h *Handler) ConstructCreateSQL() string {
 		_sql += comma + "parent_order_id"
 	}
 	_sql += comma + "order_type"
-	_sql += comma + "payment_type"
 	_sql += comma + "create_method"
 	if h.Simulate != nil {
 		_sql += comma + "simulate"
@@ -49,7 +48,6 @@ func (h *Handler) ConstructCreateSQL() string {
 		_sql += fmt.Sprintf("%v'%v' as parent_order_id", comma, *h.ParentOrderID)
 	}
 	_sql += fmt.Sprintf("%v'%v' as order_type", comma, h.OrderType.String())
-	_sql += fmt.Sprintf("%v'%v' as payment_type", comma, h.PaymentType.String())
 	_sql += fmt.Sprintf("%v'%v' as create_method", comma, h.CreateMethod.String())
 	if h.Simulate != nil {
 		_sql += fmt.Sprintf("%v%v as simulate", comma, *h.Simulate)

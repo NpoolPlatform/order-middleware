@@ -14,6 +14,7 @@ import (
 type Req struct {
 	EntID            *uuid.UUID
 	OrderID          *uuid.UUID
+	PaymentID        *uuid.UUID
 	PaidAt           *uint32
 	UserSetPaid      *bool
 	UserSetCanceled  *bool
@@ -30,6 +31,9 @@ func CreateSet(c *ent.FeeOrderStateCreate, req *Req) *ent.FeeOrderStateCreate {
 	}
 	if req.OrderID != nil {
 		c.SetOrderID(*req.OrderID)
+	}
+	if req.PaymentID != nil {
+		c.SetPaymentID(*req.PaymentID)
 	}
 	if req.UserSetPaid != nil {
 		c.SetUserSetPaid(*req.UserSetPaid)
@@ -48,6 +52,9 @@ func CreateSet(c *ent.FeeOrderStateCreate, req *Req) *ent.FeeOrderStateCreate {
 
 //nolint:gocyclo
 func UpdateSet(u *ent.FeeOrderStateUpdateOne, req *Req) *ent.FeeOrderStateUpdateOne {
+	if req.OrderID != nil {
+		u.SetOrderID(*req.OrderID)
+	}
 	if req.PaidAt != nil {
 		u.SetPaidAt(*req.PaidAt)
 	}
