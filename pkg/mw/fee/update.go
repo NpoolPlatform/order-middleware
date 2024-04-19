@@ -4,17 +4,17 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
 	types "github.com/NpoolPlatform/message/npool/basetypes/order/v1"
 	paymentbasecrud "github.com/NpoolPlatform/order-middleware/pkg/crud/payment"
 	"github.com/NpoolPlatform/order-middleware/pkg/db"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent"
 	feeorderstate1 "github.com/NpoolPlatform/order-middleware/pkg/mw/fee/state"
-	ordercoupon1 "github.com/NpoolPlatform/order-middleware/pkg/mw/order/coupon"
 	orderlock1 "github.com/NpoolPlatform/order-middleware/pkg/mw/order/lock"
-	orderbase1 "github.com/NpoolPlatform/order-middleware/pkg/mw/order/orderbase"
 	orderstatebase1 "github.com/NpoolPlatform/order-middleware/pkg/mw/order/statebase"
 	paymentbase1 "github.com/NpoolPlatform/order-middleware/pkg/mw/payment"
 	paymentbalance1 "github.com/NpoolPlatform/order-middleware/pkg/mw/payment/balance"
+	paymentbalancelock1 "github.com/NpoolPlatform/order-middleware/pkg/mw/payment/balance/lock"
 	paymenttransfer1 "github.com/NpoolPlatform/order-middleware/pkg/mw/payment/transfer"
 
 	"github.com/google/uuid"
@@ -22,46 +22,108 @@ import (
 
 type updateHandler struct {
 	*feeOrderQueryHandler
-	obseletePaymentBaseReq *paymentbasecrud.Req
+
 	newPayment             bool
-	sql                    string
-	sqlOrderStateBase      string
-	sqlFeeOrderState       string
-	sqlPaymentObselete     string
-	sqlPaymentBase         string
-	sqlPaymentBalances     []string
-	sqlPaymentTransfers    []string
+	newPaymentBalance      bool
+	obseletePaymentBaseReq *paymentbasecrud.Req
+	sqlObseletePaymentBase string
+
+	sqlOrderStateBase     string
+	sqlFeeOrderState      string
+	sqlPaymentBase        string
+	sqlLedgerLock         string
+	sqlPaymentBalanceLock string
+	sqlPaymentBalances    []string
+	sqlPaymentTransfers   []string
 }
 
-func (h *updateHandler) constructSQL() {
-	h.sql = h.ConstructUpdateSQL()
-}
-
-func (h *updateHandler) constructOrderStateBaseSQL(ctx context.Context) {
+func (h *updateHandler) constructOrderStateBaseSQL(ctx context.Context) (err error) {
 	handler, _ := orderstatebase1.NewHandler(ctx)
 	handler.Req = *h.OrderStateBaseReq
 	handler.Req.StartMode = func() *types.OrderStartMode { e := types.OrderStartMode_OrderStartInstantly; return &e }()
-	h.sqlOrderStateBase = handler.ConstructUpdateSQL()
+	if h.sqlOrderStateBase, err = handler.ConstructUpdateSQL(); err == cruder.ErrUpdateNothing {
+		return nil
+	}
+	return err
 }
 
-func (h *createHandler) constructFeeOrderStateSQL(ctx context.Context) {
+func (h *updateHandler) constructFeeOrderStateSQL(ctx context.Context) (err error) {
 	handler, _ := feeorderstate1.NewHandler(ctx)
 	handler.Req = *h.FeeOrderStateReq
-	h.sqlFeeOrderState = handler.ConstructCreateSQL()
+	if h.sqlFeeOrderState, err = handler.ConstructUpdateSQL(); err == cruder.ErrUpdateNothing {
+		return nil
+	}
+	return err
+}
+
+func (h *updateHandler) constructLedgerLockSQL(ctx context.Context) {
+	if !h.newPaymentBalance {
+		return
+	}
+	handler, _ := orderlock1.NewHandler(ctx)
+	handler.Req = *h.LedgerLockReq
+	h.sqlLedgerLock = handler.ConstructCreateSQL()
+}
+
+func (h *updateHandler) constructPaymentBalanceLockSQL(ctx context.Context) {
+	if h.newPaymentBalance {
+		return
+	}
+	handler, _ := paymentbalancelock1.NewHandler(ctx)
+	handler.Req = *h.PaymentBalanceLockReq
+	h.sqlPaymentBalanceLock = handler.ConstructCreateSQL()
 }
 
 func (h *updateHandler) constructPaymentBaseSQL(ctx context.Context) {
+	if !h.newPayment {
+		return
+	}
 	handler, _ := paymentbase1.NewHandler(ctx)
 	handler.Req = *h.PaymentBaseReq
-	h.sqlPaymentBase = handler.ConstructUpdateSQL()
+	h.sqlPaymentBase = handler.ConstructCreateSQL()
 }
 
-func (h *updateHandler) constructPaymentTransferSQLs(ctx context.Context) {
+func (h *updateHandler) constructObseletePaymentBaseSQL(ctx context.Context) (err error) {
+	if !h.newPayment {
+		return
+	}
+	handler, _ := paymentbase1.NewHandler(ctx)
+	handler.Req = *h.obseletePaymentBaseReq
+	if h.sqlObseletePaymentBase, err = handler.ConstructUpdateSQL(); err == cruder.ErrUpdateNothing {
+		return nil
+	}
+	return err
+}
+
+func (h *updateHandler) constructPaymentBalanceSQLs(ctx context.Context) {
+	if !h.newPaymentBalance {
+		return
+	}
+	for _, req := range h.PaymentBalanceReqs {
+		handler, _ := paymentbalance1.NewHandler(ctx)
+		handler.Req = *req
+		h.sqlPaymentBalances = append(h.sqlPaymentBalances, handler.ConstructCreateSQL())
+	}
+}
+
+func (h *updateHandler) constructPaymentTransferSQLs(ctx context.Context) error {
 	for _, req := range h.PaymentTransferReqs {
 		handler, _ := paymenttransfer1.NewHandler(ctx)
 		handler.Req = *req
-		h.sqlPaymentTransfers = append(h.sqlPaymentTransfers, handler.ConstructUpdateSQL())
+		if h.newPayment {
+			h.sqlPaymentTransfers = append(h.sqlPaymentTransfers, handler.ConstructCreateSQL())
+		} else {
+			sql, err := handler.ConstructUpdateSQL()
+			if err == cruder.ErrUpdateNothing {
+				continue
+			}
+			if err != nil {
+				return err
+			}
+			h.sqlPaymentTransfers = append(h.sqlPaymentTransfers, sql)
+		}
 	}
+	return nil
 }
 
 func (h *updateHandler) execSQL(ctx context.Context, tx *ent.Tx, sql string) error {
@@ -77,15 +139,49 @@ func (h *updateHandler) execSQL(ctx context.Context, tx *ent.Tx, sql string) err
 }
 
 func (h *updateHandler) updateOrderStateBase(ctx context.Context, tx *ent.Tx) error {
+	if h.sqlOrderStateBase == "" {
+		return nil
+	}
 	return h.execSQL(ctx, tx, h.sqlOrderStateBase)
 }
 
-func (h *updateHandler) updatePaymentBase(ctx context.Context, tx *ent.Tx) error {
+func (h *updateHandler) updateFeeOrderState(ctx context.Context, tx *ent.Tx) error {
+	if h.sqlFeeOrderState == "" {
+		return nil
+	}
+	return h.execSQL(ctx, tx, h.sqlFeeOrderState)
+}
+
+func (h *updateHandler) createLedgerLock(ctx context.Context, tx *ent.Tx) error {
+	if !h.newPaymentBalance {
+		return nil
+	}
+	return h.execSQL(ctx, tx, h.sqlLedgerLock)
+}
+
+func (h *updateHandler) createPaymentBalanceLock(ctx context.Context, tx *ent.Tx) error {
+	if !h.newPaymentBalance {
+		return nil
+	}
+	return h.execSQL(ctx, tx, h.sqlPaymentBalanceLock)
+}
+
+func (h *updateHandler) createPaymentBase(ctx context.Context, tx *ent.Tx) error {
+	if !h.newPayment {
+		return nil
+	}
 	return h.execSQL(ctx, tx, h.sqlPaymentBase)
 }
 
-func (h *updateHandler) updatePaymentTransfers(ctx context.Context, tx *ent.Tx) error {
-	for _, sql := range h.sqlPaymentTransfers {
+func (h *updateHandler) updateObseletePaymentBase(ctx context.Context, tx *ent.Tx) error {
+	if !h.newPayment {
+		return nil
+	}
+	return h.execSQL(ctx, tx, h.sqlObseletePaymentBase)
+}
+
+func (h *updateHandler) createOrUpdatePaymentBalances(ctx context.Context, tx *ent.Tx) error {
+	for _, sql := range h.sqlPaymentBalances {
 		if err := h.execSQL(ctx, tx, sql); err != nil {
 			return err
 		}
@@ -93,8 +189,13 @@ func (h *updateHandler) updatePaymentTransfers(ctx context.Context, tx *ent.Tx) 
 	return nil
 }
 
-func (h *updateHandler) updateFeeOrder(ctx context.Context, tx *ent.Tx) error {
-	return h.execSQL(ctx, tx, h.sql)
+func (h *updateHandler) createOrUpdatePaymentTransfers(ctx context.Context, tx *ent.Tx) error {
+	for _, sql := range h.sqlPaymentTransfers {
+		if err := h.execSQL(ctx, tx, sql); err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
 func (h *updateHandler) formalizeOrderID() {
@@ -110,7 +211,7 @@ func (h *updateHandler) formalizeOrderID() {
 }
 
 func (h *updateHandler) formalizePaymentBalances() {
-	if !h.newPayment {
+	if !h.newPaymentBalance {
 		return
 	}
 	for _, req := range h.PaymentBalanceReqs {
@@ -133,16 +234,23 @@ func (h *updateHandler) formalizePaymentTransfers() {
 	}
 }
 
-func (h *updateHandler) formalizePaymentID() {
+func (h *updateHandler) formalizePaymentID() error {
 	if h.PaymentBaseReq.EntID == nil || h._ent.PaymentID() == *h.PaymentBaseReq.EntID {
-		return
+		return nil
 	}
 
 	h.newPayment = true
+	h.newPaymentBalance = h.LedgerLockReq.EntID != nil
+
+	if h.newPaymentBalance && *h.LedgerLockReq.EntID == h._ent.LedgerLockID() {
+		return fmt.Errorf("invalid ledgerlock")
+	}
+
 	h.obseletePaymentBaseReq.EntID = func() *uuid.UUID { uid := h._ent.PaymentID(); return &uid }()
 	h.obseletePaymentBaseReq.ObseleteState = func() *types.PaymentObseleteState { e := types.PaymentObseleteState_PaymentObseleteWait; return &e }()
 
 	h.FeeOrderStateReq.PaymentID = h.PaymentBaseReq.EntID
+	return nil
 }
 
 func (h *Handler) UpdateFeeOrder(ctx context.Context) error {
@@ -165,37 +273,34 @@ func (h *Handler) UpdateFeeOrder(ctx context.Context) error {
 	handler.constructOrderStateBaseSQL(ctx)
 	handler.constructFeeOrderStateSQL(ctx)
 	handler.constructLedgerLockSQL(ctx)
-	handler.constructOrderCouponSQLs(ctx)
+	handler.constructPaymentBalanceLockSQL(ctx)
 	handler.constructPaymentBaseSQL(ctx)
 	handler.constructPaymentBalanceSQLs(ctx)
 	handler.constructPaymentTransferSQLs(ctx)
-	handler.constructSQL()
+	handler.constructObseletePaymentBaseSQL(ctx)
 
 	return db.WithTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {
-		if err := handler.updateOrderBase(_ctx, tx); err != nil {
-			return err
-		}
 		if err := handler.updateOrderStateBase(_ctx, tx); err != nil {
 			return err
 		}
 		if err := handler.updateFeeOrderState(_ctx, tx); err != nil {
 			return err
 		}
-		if err := handler.updateLedgerLock(_ctx, tx); err != nil {
+		if err := handler.createLedgerLock(_ctx, tx); err != nil {
 			return err
 		}
-		if err := handler.updateOrderCoupons(_ctx, tx); err != nil {
+		if err := handler.createPaymentBase(_ctx, tx); err != nil {
 			return err
 		}
-		if err := handler.updatePaymentBase(_ctx, tx); err != nil {
+		if err := handler.createPaymentBalanceLock(_ctx, tx); err != nil {
 			return err
 		}
-		if err := handler.updatePaymentBalances(_ctx, tx); err != nil {
+		if err := handler.createOrUpdatePaymentBalances(_ctx, tx); err != nil {
 			return err
 		}
-		if err := handler.updatePaymentTransfers(_ctx, tx); err != nil {
+		if err := handler.updateObseletePaymentBase(_ctx, tx); err != nil {
 			return err
 		}
-		return handler.updateFeeOrder(_ctx, tx)
+		return handler.createOrUpdatePaymentTransfers(_ctx, tx)
 	})
 }

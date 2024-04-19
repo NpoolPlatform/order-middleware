@@ -9,6 +9,7 @@ import (
 type FeeOrder interface {
 	OrderID() uuid.UUID
 	PaymentID() uuid.UUID
+	LedgerLockID() uuid.UUID
 }
 
 type feeOrder struct {
@@ -29,4 +30,11 @@ func (f *feeOrder) OrderID() uuid.UUID {
 
 func (f *feeOrder) PaymentID() uuid.UUID {
 	return f.entPaymentBase.EntID
+}
+
+func (f *feeOrder) LedgerLockID() uuid.UUID {
+	if f.entLedgerLock == nil {
+		return uuid.Nil
+	}
+	return f.entLedgerLock.EntID
 }

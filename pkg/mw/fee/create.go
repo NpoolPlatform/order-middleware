@@ -22,6 +22,7 @@ import (
 
 type createHandler struct {
 	*Handler
+	payWithBalance        bool
 	sql                   string
 	sqlOrderBase          string
 	sqlOrderStateBase     string
@@ -73,6 +74,7 @@ func (h *createHandler) constructPaymentBalanceLockSQL(ctx context.Context) {
 	handler, _ := paymentbalancelock1.NewHandler(ctx)
 	handler.Req = *h.PaymentBalanceLockReq
 	h.sqlPaymentBalanceLock = handler.ConstructCreateSQL()
+	h.payWithBalance = true
 }
 
 func (h *createHandler) constructOrderCouponSQLs(ctx context.Context) {
@@ -130,14 +132,14 @@ func (h *createHandler) createFeeOrderState(ctx context.Context, tx *ent.Tx) err
 }
 
 func (h *createHandler) createLedgerLock(ctx context.Context, tx *ent.Tx) error {
-	if h.sqlLedgerLock == "" {
+	if !h.payWithBalance {
 		return nil
 	}
 	return h.execSQL(ctx, tx, h.sqlLedgerLock)
 }
 
 func (h *createHandler) createPaymentBalanceLock(ctx context.Context, tx *ent.Tx) error {
-	if h.sqlPaymentBalanceLock == "" {
+	if !h.payWithBalance {
 		return nil
 	}
 	return h.execSQL(ctx, tx, h.sqlPaymentBalanceLock)

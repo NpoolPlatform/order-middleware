@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
 	paymentcommon "github.com/NpoolPlatform/order-middleware/pkg/mw/payment/common"
 )
 
@@ -29,7 +30,6 @@ func (h *Handler) ConstructCreateSQL() string {
 	_sql += comma + "account_id"
 	_sql += comma + "amount"
 	_sql += comma + "start_amount"
-	_sql += comma + "finish_amount"
 	_sql += comma + "coin_usd_currency"
 	if h.LocalCoinUSDCurrency != nil {
 		_sql += comma + "local_coin_usd_currency"
@@ -51,7 +51,6 @@ func (h *Handler) ConstructCreateSQL() string {
 	_sql += fmt.Sprintf("%v'%v' as account_id", comma, *h.AccountID)
 	_sql += fmt.Sprintf("%v'%v' as amount", comma, *h.Amount)
 	_sql += fmt.Sprintf("%v'%v' as start_amount", comma, *h.StartAmount)
-	_sql += fmt.Sprintf("%v'%v' as finish_amount", comma, *h.FinishAmount)
 	_sql += fmt.Sprintf("%v'%v' as coin_usd_currency", comma, *h.CoinUSDCurrency)
 	if h.LocalCoinUSDCurrency != nil {
 		_sql += fmt.Sprintf("%v'%v' as local_coin_usd_currency", comma, *h.LocalCoinUSDCurrency)
@@ -70,4 +69,38 @@ func (h *Handler) ConstructCreateSQL() string {
 	_sql += "limit 1)"
 
 	return _sql
+}
+
+func (h *Handler) ConstructUpdateSQL() (string, error) {
+	// For each payment, we only have one payment transfer
+	if h.ID == nil && h.EntID == nil && h.PaymentID == nil {
+		return "", fmt.Errorf("invalid id")
+	}
+
+	set := "set "
+	now := uint32(time.Now().Unix())
+
+	_sql := "update payment_transfers "
+	if h.FinishAmount != nil {
+		_sql += fmt.Sprintf("%vfinish_amount = '%v', ", set, *h.FinishAmount)
+		set = ""
+	}
+	if set != "" {
+		return "", cruder.ErrUpdateNothing
+	}
+	_sql += fmt.Sprintf("updated_at = %v ", now)
+	whereAnd := "where"
+	if h.ID != nil {
+		_sql += fmt.Sprintf("where id = %v ", *h.ID)
+		whereAnd = "and"
+	}
+	if h.EntID != nil {
+		_sql += fmt.Sprintf("%v ent_id = '%v'", whereAnd, *h.EntID)
+		whereAnd = "and"
+	}
+	if h.PaymentID != nil {
+		_sql += fmt.Sprintf("%v payment_id = '%v'", whereAnd, *h.PaymentID)
+	}
+
+	return _sql, nil
 }

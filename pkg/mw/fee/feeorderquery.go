@@ -91,14 +91,18 @@ func (h *feeOrderQueryHandler) getPaymentBase(ctx context.Context, cli *ent.Clie
 }
 
 func (h *feeOrderQueryHandler) getLedgerLock(ctx context.Context, cli *ent.Client) (err error) {
-	h._ent.entLedgerLock, err = cli.
+	if h._ent.entLedgerLock, err = cli.
 		OrderLock.
 		Query().
 		Where(
 			entorderlock.OrderID(h._ent.entFeeOrder.OrderID),
 			entorderlock.DeletedAt(0),
 		).
-		Only(ctx)
+		Only(ctx); err != nil {
+		if ent.IsNotFound(err); err != nil {
+			return nil
+		}
+	}
 	return err
 }
 
