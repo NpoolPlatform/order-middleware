@@ -214,8 +214,6 @@ func (h *createHandler) formalizePaymentID() {
 	}
 	h.PaymentBaseReq.EntID = func() *uuid.UUID { uid := uuid.New(); return &uid }()
 	h.FeeOrderStateReq.PaymentID = h.PaymentBaseReq.EntID
-	h.formalizePaymentBalances()
-	h.formalizePaymentTransfers()
 }
 
 func (h *Handler) CreateFeeOrder(ctx context.Context) error {
@@ -231,6 +229,8 @@ func (h *Handler) CreateFeeOrder(ctx context.Context) error {
 	handler.formalizeEntIDs()
 	handler.formalizeOrderCoupons()
 	handler.formalizePaymentID()
+	handler.formalizePaymentBalances()
+	handler.formalizePaymentTransfers()
 
 	handler.constructOrderBaseSQL(ctx)
 	handler.constructOrderStateBaseSQL(ctx)

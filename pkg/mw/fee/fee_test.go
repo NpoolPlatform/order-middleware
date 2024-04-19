@@ -50,6 +50,7 @@ var ret = npool.FeeOrder{
 	PromotionID:       uuid.NewString(),
 	DurationSeconds:   100000,
 	LedgerLockID:      uuid.NewString(),
+	PaymentID:         uuid.NewString(),
 	Coupons: []*ordercouponmwpb.OrderCouponInfo{
 		{
 			CouponID: uuid.NewString(),
@@ -76,7 +77,6 @@ func setup(t *testing.T) func(*testing.T) {
 		orderbase1.WithGoodType(&ret.GoodType, true),
 		orderbase1.WithAppGoodID(func() *string { s := uuid.NewString(); return &s }(), true),
 		orderbase1.WithOrderType(func() *types.OrderType { e := types.OrderType_Offline; return &e }(), true),
-		orderbase1.WithPaymentType(func() *types.PaymentType { e := types.PaymentType_PayWithBalanceOnly; return &e }(), true),
 		orderbase1.WithCreateMethod(func() *types.OrderCreateMethod { e := types.OrderCreateMethod_OrderCreatedByAdmin; return &e }(), true),
 	)
 	assert.Nil(t, err)
@@ -108,6 +108,8 @@ func createFeeOrder(t *testing.T) {
 		WithDiscountAmountUSD(&ret.DiscountAmountUSD, true),
 		WithPromotionID(&ret.PromotionID, true),
 		WithDurationSeconds(&ret.DurationSeconds, true),
+		WithLedgerLockID(&ret.LedgerLockID, true),
+		WithPaymentID(&ret.PaymentID, true),
 		WithCouponIDs(func() (_couponIDs []string) {
 			for _, coupon := range ret.Coupons {
 				_couponIDs = append(_couponIDs, coupon.CouponID)

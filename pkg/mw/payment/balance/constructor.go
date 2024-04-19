@@ -42,7 +42,7 @@ func (h *Handler) ConstructCreateSQL() string {
 		_sql += fmt.Sprintf("'%v' as ent_id ", *h.EntID)
 		comma = ", "
 	}
-	_sql += fmt.Sprintf("%v'%v' as order_id", comma, *h.PaymentID)
+	_sql += fmt.Sprintf("%v'%v' as payment_id", comma, *h.PaymentID)
 	comma = ", "
 	_sql += fmt.Sprintf("%v'%v' as coin_type_id", comma, *h.CoinTypeID)
 	_sql += fmt.Sprintf("%v'%v' as amount", comma, *h.Amount)
