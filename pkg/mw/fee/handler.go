@@ -176,6 +176,24 @@ func WithAppGoodID(id *string, must bool) func(context.Context, *Handler) error 
 	}
 }
 
+func WithOrderID(id *string, must bool) func(context.Context, *Handler) error {
+	return func(ctx context.Context, h *Handler) error {
+		if id == nil {
+			if must {
+				return fmt.Errorf("invalid orderid")
+			}
+			return nil
+		}
+		_id, err := uuid.Parse(*id)
+		if err != nil {
+			return err
+		}
+		h.OrderID = &_id
+		h.OrderBaseReq.EntID = &_id
+		return nil
+	}
+}
+
 func WithParentOrderID(id *string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if id == nil {
@@ -184,11 +202,11 @@ func WithParentOrderID(id *string, must bool) func(context.Context, *Handler) er
 			}
 			return nil
 		}
-		id, err := uuid.Parse(*id)
+		_id, err := uuid.Parse(*id)
 		if err != nil {
 			return err
 		}
-		h.OrderBaseReq.ParentOrderID = &id
+		h.OrderBaseReq.ParentOrderID = &_id
 		return nil
 	}
 }
