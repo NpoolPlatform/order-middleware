@@ -35,8 +35,6 @@ const (
 	FieldDiscountAmountUsd = "discount_amount_usd"
 	// FieldPromotionID holds the string denoting the promotion_id field in the database.
 	FieldPromotionID = "promotion_id"
-	// FieldDurationSeconds holds the string denoting the duration_seconds field in the database.
-	FieldDurationSeconds = "duration_seconds"
 	// FieldInvestmentType holds the string denoting the investment_type field in the database.
 	FieldInvestmentType = "investment_type"
 	// Table holds the table name of the powerrental in the database.
@@ -57,7 +55,6 @@ var Columns = []string{
 	FieldPaymentAmountUsd,
 	FieldDiscountAmountUsd,
 	FieldPromotionID,
-	FieldDurationSeconds,
 	FieldInvestmentType,
 }
 
@@ -104,8 +101,6 @@ var (
 	DefaultDiscountAmountUsd decimal.Decimal
 	// DefaultPromotionID holds the default value on creation for the "promotion_id" field.
 	DefaultPromotionID func() uuid.UUID
-	// DefaultDurationSeconds holds the default value on creation for the "duration_seconds" field.
-	DefaultDurationSeconds uint32
 	// DefaultInvestmentType holds the default value on creation for the "investment_type" field.
 	DefaultInvestmentType string
 )

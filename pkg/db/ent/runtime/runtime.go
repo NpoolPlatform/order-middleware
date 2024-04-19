@@ -1022,12 +1022,8 @@ func init() {
 	powerrentalDescPromotionID := powerrentalFields[6].Descriptor()
 	// powerrental.DefaultPromotionID holds the default value on creation for the promotion_id field.
 	powerrental.DefaultPromotionID = powerrentalDescPromotionID.Default.(func() uuid.UUID)
-	// powerrentalDescDurationSeconds is the schema descriptor for duration_seconds field.
-	powerrentalDescDurationSeconds := powerrentalFields[7].Descriptor()
-	// powerrental.DefaultDurationSeconds holds the default value on creation for the duration_seconds field.
-	powerrental.DefaultDurationSeconds = powerrentalDescDurationSeconds.Default.(uint32)
 	// powerrentalDescInvestmentType is the schema descriptor for investment_type field.
-	powerrentalDescInvestmentType := powerrentalFields[8].Descriptor()
+	powerrentalDescInvestmentType := powerrentalFields[7].Descriptor()
 	// powerrental.DefaultInvestmentType holds the default value on creation for the investment_type field.
 	powerrental.DefaultInvestmentType = powerrentalDescInvestmentType.Default.(string)
 	powerrentalstateMixin := schema.PowerRentalState{}.Mixin()
@@ -1072,10 +1068,10 @@ func init() {
 	powerrentalstateDescCancelState := powerrentalstateFields[1].Descriptor()
 	// powerrentalstate.DefaultCancelState holds the default value on creation for the cancel_state field.
 	powerrentalstate.DefaultCancelState = powerrentalstateDescCancelState.Default.(string)
-	// powerrentalstateDescEndAt is the schema descriptor for end_at field.
-	powerrentalstateDescEndAt := powerrentalstateFields[2].Descriptor()
-	// powerrentalstate.DefaultEndAt holds the default value on creation for the end_at field.
-	powerrentalstate.DefaultEndAt = powerrentalstateDescEndAt.Default.(uint32)
+	// powerrentalstateDescDurationSeconds is the schema descriptor for duration_seconds field.
+	powerrentalstateDescDurationSeconds := powerrentalstateFields[2].Descriptor()
+	// powerrentalstate.DefaultDurationSeconds holds the default value on creation for the duration_seconds field.
+	powerrentalstate.DefaultDurationSeconds = powerrentalstateDescDurationSeconds.Default.(uint32)
 	// powerrentalstateDescPaidAt is the schema descriptor for paid_at field.
 	powerrentalstateDescPaidAt := powerrentalstateFields[3].Descriptor()
 	// powerrentalstate.DefaultPaidAt holds the default value on creation for the paid_at field.
@@ -1096,10 +1092,10 @@ func init() {
 	powerrentalstateDescPaymentState := powerrentalstateFields[7].Descriptor()
 	// powerrentalstate.DefaultPaymentState holds the default value on creation for the payment_state field.
 	powerrentalstate.DefaultPaymentState = powerrentalstateDescPaymentState.Default.(string)
-	// powerrentalstateDescOutofgasSceonds is the schema descriptor for outofgas_sceonds field.
-	powerrentalstateDescOutofgasSceonds := powerrentalstateFields[8].Descriptor()
-	// powerrentalstate.DefaultOutofgasSceonds holds the default value on creation for the outofgas_sceonds field.
-	powerrentalstate.DefaultOutofgasSceonds = powerrentalstateDescOutofgasSceonds.Default.(uint32)
+	// powerrentalstateDescOutofgasSeconds is the schema descriptor for outofgas_seconds field.
+	powerrentalstateDescOutofgasSeconds := powerrentalstateFields[8].Descriptor()
+	// powerrentalstate.DefaultOutofgasSeconds holds the default value on creation for the outofgas_seconds field.
+	powerrentalstate.DefaultOutofgasSeconds = powerrentalstateDescOutofgasSeconds.Default.(uint32)
 	// powerrentalstateDescCompensateSeconds is the schema descriptor for compensate_seconds field.
 	powerrentalstateDescCompensateSeconds := powerrentalstateFields[9].Descriptor()
 	// powerrentalstate.DefaultCompensateSeconds holds the default value on creation for the compensate_seconds field.

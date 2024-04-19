@@ -524,7 +524,6 @@ var (
 		{Name: "payment_amount_usd", Type: field.TypeOther, Nullable: true, SchemaType: map[string]string{"mysql": "decimal(37,18)"}},
 		{Name: "discount_amount_usd", Type: field.TypeOther, Nullable: true, SchemaType: map[string]string{"mysql": "decimal(37,18)"}},
 		{Name: "promotion_id", Type: field.TypeUUID, Nullable: true},
-		{Name: "duration_seconds", Type: field.TypeUint32, Nullable: true, Default: 0},
 		{Name: "investment_type", Type: field.TypeString, Nullable: true, Default: "FullPayment"},
 	}
 	// PowerRentalsTable holds the schema information for the "power_rentals" table.
@@ -554,13 +553,13 @@ var (
 		{Name: "ent_id", Type: field.TypeUUID, Unique: true},
 		{Name: "order_id", Type: field.TypeUUID, Nullable: true},
 		{Name: "cancel_state", Type: field.TypeString, Nullable: true, Default: "DefaultOrderState"},
-		{Name: "end_at", Type: field.TypeUint32, Nullable: true, Default: 0},
+		{Name: "duration_seconds", Type: field.TypeUint32, Nullable: true, Default: 0},
 		{Name: "paid_at", Type: field.TypeUint32, Nullable: true, Default: 0},
 		{Name: "user_set_paid", Type: field.TypeBool, Nullable: true, Default: false},
 		{Name: "user_set_canceled", Type: field.TypeBool, Nullable: true, Default: false},
 		{Name: "admin_set_canceled", Type: field.TypeBool, Nullable: true, Default: false},
 		{Name: "payment_state", Type: field.TypeString, Nullable: true, Default: "PaymentStateWait"},
-		{Name: "outofgas_sceonds", Type: field.TypeUint32, Nullable: true, Default: 0},
+		{Name: "outofgas_seconds", Type: field.TypeUint32, Nullable: true, Default: 0},
 		{Name: "compensate_seconds", Type: field.TypeUint32, Nullable: true, Default: 0},
 		{Name: "renew_state", Type: field.TypeString, Nullable: true, Default: "OrderRenewWait"},
 		{Name: "renew_notify_at", Type: field.TypeUint32, Nullable: true, Default: 0},

@@ -12,20 +12,20 @@ import (
 )
 
 type Req struct {
-	EntID            *uuid.UUID
-	OrderID          *uuid.UUID
-	CancelState      *types.OrderState
-	EndAt            *uint32
-	PaidAt           *uint32
-	UserSetPaid      *bool
-	UserSetCanceled  *bool
-	AdminSetCanceled *bool
-	PaymentState     *types.PaymentState
-	OutOfGasHours    *uint32
-	CompensateHours  *uint32
-	RenewState       *types.OrderRenewState
-	RenewNotifyAt    *uint32
-	DeletedAt        *uint32
+	EntID             *uuid.UUID
+	OrderID           *uuid.UUID
+	CancelState       *types.OrderState
+	PaidAt            *uint32
+	UserSetPaid       *bool
+	UserSetCanceled   *bool
+	AdminSetCanceled  *bool
+	PaymentState      *types.PaymentState
+	OutOfGasSeconds   *uint32
+	CompensateSeconds *uint32
+	DurationSeconds   *uint32
+	RenewState        *types.OrderRenewState
+	RenewNotifyAt     *uint32
+	DeletedAt         *uint32
 }
 
 //nolint:gocyclo
@@ -39,9 +39,6 @@ func CreateSet(c *ent.PowerRentalStateCreate, req *Req) *ent.PowerRentalStateCre
 	if req.CancelState != nil {
 		c.SetCancelState(req.CancelState.String())
 	}
-	if req.EndAt != nil {
-		c.SetEndAt(*req.EndAt)
-	}
 	if req.UserSetPaid != nil {
 		c.SetUserSetPaid(*req.UserSetPaid)
 	}
@@ -54,17 +51,14 @@ func CreateSet(c *ent.PowerRentalStateCreate, req *Req) *ent.PowerRentalStateCre
 	if req.PaymentState != nil {
 		c.SetPaymentState(req.PaymentState.String())
 	}
-	if req.OutOfGasHours != nil {
-		c.SetOutofgasHours(*req.OutOfGasHours)
-	}
-	if req.CompensateHours != nil {
-		c.SetCompensateHours(*req.CompensateHours)
-	}
 	if req.RenewState != nil {
 		c.SetRenewState(req.RenewState.String())
 	}
 	if req.RenewNotifyAt != nil {
 		c.SetRenewNotifyAt(*req.RenewNotifyAt)
+	}
+	if req.DurationSeconds != nil {
+		c.SetDurationSeconds(*req.DurationSeconds)
 	}
 	return c
 }
@@ -73,9 +67,6 @@ func CreateSet(c *ent.PowerRentalStateCreate, req *Req) *ent.PowerRentalStateCre
 func UpdateSet(u *ent.PowerRentalStateUpdateOne, req *Req) *ent.PowerRentalStateUpdateOne {
 	if req.CancelState != nil {
 		u.SetCancelState(req.CancelState.String())
-	}
-	if req.EndAt != nil {
-		u.SetEndAt(*req.EndAt)
 	}
 	if req.PaidAt != nil {
 		u.SetPaidAt(*req.PaidAt)
@@ -92,17 +83,20 @@ func UpdateSet(u *ent.PowerRentalStateUpdateOne, req *Req) *ent.PowerRentalState
 	if req.PaymentState != nil {
 		u.SetPaymentState(req.PaymentState.String())
 	}
-	if req.OutOfGasHours != nil {
-		u.SetOutofgasHours(*req.OutOfGasHours)
+	if req.OutOfGasSeconds != nil {
+		u.SetOutofgasSeconds(*req.OutOfGasSeconds)
 	}
-	if req.CompensateHours != nil {
-		u.SetCompensateHours(*req.CompensateHours)
+	if req.CompensateSeconds != nil {
+		u.SetCompensateSeconds(*req.CompensateSeconds)
 	}
 	if req.RenewState != nil {
 		u.SetRenewState(req.RenewState.String())
 	}
 	if req.RenewNotifyAt != nil {
 		u.SetRenewNotifyAt(*req.RenewNotifyAt)
+	}
+	if req.DurationSeconds != nil {
+		u.SetDurationSeconds(*req.DurationSeconds)
 	}
 	if req.DeletedAt != nil {
 		u.SetDeletedAt(*req.DeletedAt)

@@ -424,7 +424,6 @@ var schemaGraph = func() *sqlgraph.Schema {
 			powerrental.FieldPaymentAmountUsd:  {Type: field.TypeOther, Column: powerrental.FieldPaymentAmountUsd},
 			powerrental.FieldDiscountAmountUsd: {Type: field.TypeOther, Column: powerrental.FieldDiscountAmountUsd},
 			powerrental.FieldPromotionID:       {Type: field.TypeUUID, Column: powerrental.FieldPromotionID},
-			powerrental.FieldDurationSeconds:   {Type: field.TypeUint32, Column: powerrental.FieldDurationSeconds},
 			powerrental.FieldInvestmentType:    {Type: field.TypeString, Column: powerrental.FieldInvestmentType},
 		},
 	}
@@ -445,13 +444,13 @@ var schemaGraph = func() *sqlgraph.Schema {
 			powerrentalstate.FieldEntID:             {Type: field.TypeUUID, Column: powerrentalstate.FieldEntID},
 			powerrentalstate.FieldOrderID:           {Type: field.TypeUUID, Column: powerrentalstate.FieldOrderID},
 			powerrentalstate.FieldCancelState:       {Type: field.TypeString, Column: powerrentalstate.FieldCancelState},
-			powerrentalstate.FieldEndAt:             {Type: field.TypeUint32, Column: powerrentalstate.FieldEndAt},
+			powerrentalstate.FieldDurationSeconds:   {Type: field.TypeUint32, Column: powerrentalstate.FieldDurationSeconds},
 			powerrentalstate.FieldPaidAt:            {Type: field.TypeUint32, Column: powerrentalstate.FieldPaidAt},
 			powerrentalstate.FieldUserSetPaid:       {Type: field.TypeBool, Column: powerrentalstate.FieldUserSetPaid},
 			powerrentalstate.FieldUserSetCanceled:   {Type: field.TypeBool, Column: powerrentalstate.FieldUserSetCanceled},
 			powerrentalstate.FieldAdminSetCanceled:  {Type: field.TypeBool, Column: powerrentalstate.FieldAdminSetCanceled},
 			powerrentalstate.FieldPaymentState:      {Type: field.TypeString, Column: powerrentalstate.FieldPaymentState},
-			powerrentalstate.FieldOutofgasSceonds:   {Type: field.TypeUint32, Column: powerrentalstate.FieldOutofgasSceonds},
+			powerrentalstate.FieldOutofgasSeconds:   {Type: field.TypeUint32, Column: powerrentalstate.FieldOutofgasSeconds},
 			powerrentalstate.FieldCompensateSeconds: {Type: field.TypeUint32, Column: powerrentalstate.FieldCompensateSeconds},
 			powerrentalstate.FieldRenewState:        {Type: field.TypeString, Column: powerrentalstate.FieldRenewState},
 			powerrentalstate.FieldRenewNotifyAt:     {Type: field.TypeUint32, Column: powerrentalstate.FieldRenewNotifyAt},
@@ -2046,11 +2045,6 @@ func (f *PowerRentalFilter) WherePromotionID(p entql.ValueP) {
 	f.Where(p.Field(powerrental.FieldPromotionID))
 }
 
-// WhereDurationSeconds applies the entql uint32 predicate on the duration_seconds field.
-func (f *PowerRentalFilter) WhereDurationSeconds(p entql.Uint32P) {
-	f.Where(p.Field(powerrental.FieldDurationSeconds))
-}
-
 // WhereInvestmentType applies the entql string predicate on the investment_type field.
 func (f *PowerRentalFilter) WhereInvestmentType(p entql.StringP) {
 	f.Where(p.Field(powerrental.FieldInvestmentType))
@@ -2126,9 +2120,9 @@ func (f *PowerRentalStateFilter) WhereCancelState(p entql.StringP) {
 	f.Where(p.Field(powerrentalstate.FieldCancelState))
 }
 
-// WhereEndAt applies the entql uint32 predicate on the end_at field.
-func (f *PowerRentalStateFilter) WhereEndAt(p entql.Uint32P) {
-	f.Where(p.Field(powerrentalstate.FieldEndAt))
+// WhereDurationSeconds applies the entql uint32 predicate on the duration_seconds field.
+func (f *PowerRentalStateFilter) WhereDurationSeconds(p entql.Uint32P) {
+	f.Where(p.Field(powerrentalstate.FieldDurationSeconds))
 }
 
 // WherePaidAt applies the entql uint32 predicate on the paid_at field.
@@ -2156,9 +2150,9 @@ func (f *PowerRentalStateFilter) WherePaymentState(p entql.StringP) {
 	f.Where(p.Field(powerrentalstate.FieldPaymentState))
 }
 
-// WhereOutofgasSceonds applies the entql uint32 predicate on the outofgas_sceonds field.
-func (f *PowerRentalStateFilter) WhereOutofgasSceonds(p entql.Uint32P) {
-	f.Where(p.Field(powerrentalstate.FieldOutofgasSceonds))
+// WhereOutofgasSeconds applies the entql uint32 predicate on the outofgas_seconds field.
+func (f *PowerRentalStateFilter) WhereOutofgasSeconds(p entql.Uint32P) {
+	f.Where(p.Field(powerrentalstate.FieldOutofgasSeconds))
 }
 
 // WhereCompensateSeconds applies the entql uint32 predicate on the compensate_seconds field.

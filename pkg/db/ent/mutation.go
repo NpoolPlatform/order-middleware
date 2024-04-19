@@ -17716,8 +17716,6 @@ type PowerRentalMutation struct {
 	payment_amount_usd  *decimal.Decimal
 	discount_amount_usd *decimal.Decimal
 	promotion_id        *uuid.UUID
-	duration_seconds    *uint32
-	addduration_seconds *int32
 	investment_type     *string
 	clearedFields       map[string]struct{}
 	done                bool
@@ -18376,76 +18374,6 @@ func (m *PowerRentalMutation) ResetPromotionID() {
 	delete(m.clearedFields, powerrental.FieldPromotionID)
 }
 
-// SetDurationSeconds sets the "duration_seconds" field.
-func (m *PowerRentalMutation) SetDurationSeconds(u uint32) {
-	m.duration_seconds = &u
-	m.addduration_seconds = nil
-}
-
-// DurationSeconds returns the value of the "duration_seconds" field in the mutation.
-func (m *PowerRentalMutation) DurationSeconds() (r uint32, exists bool) {
-	v := m.duration_seconds
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldDurationSeconds returns the old "duration_seconds" field's value of the PowerRental entity.
-// If the PowerRental object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *PowerRentalMutation) OldDurationSeconds(ctx context.Context) (v uint32, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldDurationSeconds is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldDurationSeconds requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldDurationSeconds: %w", err)
-	}
-	return oldValue.DurationSeconds, nil
-}
-
-// AddDurationSeconds adds u to the "duration_seconds" field.
-func (m *PowerRentalMutation) AddDurationSeconds(u int32) {
-	if m.addduration_seconds != nil {
-		*m.addduration_seconds += u
-	} else {
-		m.addduration_seconds = &u
-	}
-}
-
-// AddedDurationSeconds returns the value that was added to the "duration_seconds" field in this mutation.
-func (m *PowerRentalMutation) AddedDurationSeconds() (r int32, exists bool) {
-	v := m.addduration_seconds
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// ClearDurationSeconds clears the value of the "duration_seconds" field.
-func (m *PowerRentalMutation) ClearDurationSeconds() {
-	m.duration_seconds = nil
-	m.addduration_seconds = nil
-	m.clearedFields[powerrental.FieldDurationSeconds] = struct{}{}
-}
-
-// DurationSecondsCleared returns if the "duration_seconds" field was cleared in this mutation.
-func (m *PowerRentalMutation) DurationSecondsCleared() bool {
-	_, ok := m.clearedFields[powerrental.FieldDurationSeconds]
-	return ok
-}
-
-// ResetDurationSeconds resets all changes to the "duration_seconds" field.
-func (m *PowerRentalMutation) ResetDurationSeconds() {
-	m.duration_seconds = nil
-	m.addduration_seconds = nil
-	delete(m.clearedFields, powerrental.FieldDurationSeconds)
-}
-
 // SetInvestmentType sets the "investment_type" field.
 func (m *PowerRentalMutation) SetInvestmentType(s string) {
 	m.investment_type = &s
@@ -18514,7 +18442,7 @@ func (m *PowerRentalMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *PowerRentalMutation) Fields() []string {
-	fields := make([]string, 0, 13)
+	fields := make([]string, 0, 12)
 	if m.created_at != nil {
 		fields = append(fields, powerrental.FieldCreatedAt)
 	}
@@ -18547,9 +18475,6 @@ func (m *PowerRentalMutation) Fields() []string {
 	}
 	if m.promotion_id != nil {
 		fields = append(fields, powerrental.FieldPromotionID)
-	}
-	if m.duration_seconds != nil {
-		fields = append(fields, powerrental.FieldDurationSeconds)
 	}
 	if m.investment_type != nil {
 		fields = append(fields, powerrental.FieldInvestmentType)
@@ -18584,8 +18509,6 @@ func (m *PowerRentalMutation) Field(name string) (ent.Value, bool) {
 		return m.DiscountAmountUsd()
 	case powerrental.FieldPromotionID:
 		return m.PromotionID()
-	case powerrental.FieldDurationSeconds:
-		return m.DurationSeconds()
 	case powerrental.FieldInvestmentType:
 		return m.InvestmentType()
 	}
@@ -18619,8 +18542,6 @@ func (m *PowerRentalMutation) OldField(ctx context.Context, name string) (ent.Va
 		return m.OldDiscountAmountUsd(ctx)
 	case powerrental.FieldPromotionID:
 		return m.OldPromotionID(ctx)
-	case powerrental.FieldDurationSeconds:
-		return m.OldDurationSeconds(ctx)
 	case powerrental.FieldInvestmentType:
 		return m.OldInvestmentType(ctx)
 	}
@@ -18709,13 +18630,6 @@ func (m *PowerRentalMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetPromotionID(v)
 		return nil
-	case powerrental.FieldDurationSeconds:
-		v, ok := value.(uint32)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetDurationSeconds(v)
-		return nil
 	case powerrental.FieldInvestmentType:
 		v, ok := value.(string)
 		if !ok {
@@ -18740,9 +18654,6 @@ func (m *PowerRentalMutation) AddedFields() []string {
 	if m.adddeleted_at != nil {
 		fields = append(fields, powerrental.FieldDeletedAt)
 	}
-	if m.addduration_seconds != nil {
-		fields = append(fields, powerrental.FieldDurationSeconds)
-	}
 	return fields
 }
 
@@ -18757,8 +18668,6 @@ func (m *PowerRentalMutation) AddedField(name string) (ent.Value, bool) {
 		return m.AddedUpdatedAt()
 	case powerrental.FieldDeletedAt:
 		return m.AddedDeletedAt()
-	case powerrental.FieldDurationSeconds:
-		return m.AddedDurationSeconds()
 	}
 	return nil, false
 }
@@ -18789,13 +18698,6 @@ func (m *PowerRentalMutation) AddField(name string, value ent.Value) error {
 		}
 		m.AddDeletedAt(v)
 		return nil
-	case powerrental.FieldDurationSeconds:
-		v, ok := value.(int32)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.AddDurationSeconds(v)
-		return nil
 	}
 	return fmt.Errorf("unknown PowerRental numeric field %s", name)
 }
@@ -18824,9 +18726,6 @@ func (m *PowerRentalMutation) ClearedFields() []string {
 	}
 	if m.FieldCleared(powerrental.FieldPromotionID) {
 		fields = append(fields, powerrental.FieldPromotionID)
-	}
-	if m.FieldCleared(powerrental.FieldDurationSeconds) {
-		fields = append(fields, powerrental.FieldDurationSeconds)
 	}
 	if m.FieldCleared(powerrental.FieldInvestmentType) {
 		fields = append(fields, powerrental.FieldInvestmentType)
@@ -18865,9 +18764,6 @@ func (m *PowerRentalMutation) ClearField(name string) error {
 		return nil
 	case powerrental.FieldPromotionID:
 		m.ClearPromotionID()
-		return nil
-	case powerrental.FieldDurationSeconds:
-		m.ClearDurationSeconds()
 		return nil
 	case powerrental.FieldInvestmentType:
 		m.ClearInvestmentType()
@@ -18912,9 +18808,6 @@ func (m *PowerRentalMutation) ResetField(name string) error {
 		return nil
 	case powerrental.FieldPromotionID:
 		m.ResetPromotionID()
-		return nil
-	case powerrental.FieldDurationSeconds:
-		m.ResetDurationSeconds()
 		return nil
 	case powerrental.FieldInvestmentType:
 		m.ResetInvestmentType()
@@ -18986,16 +18879,16 @@ type PowerRentalStateMutation struct {
 	ent_id                *uuid.UUID
 	order_id              *uuid.UUID
 	cancel_state          *string
-	end_at                *uint32
-	addend_at             *int32
+	duration_seconds      *uint32
+	addduration_seconds   *int32
 	paid_at               *uint32
 	addpaid_at            *int32
 	user_set_paid         *bool
 	user_set_canceled     *bool
 	admin_set_canceled    *bool
 	payment_state         *string
-	outofgas_sceonds      *uint32
-	addoutofgas_sceonds   *int32
+	outofgas_seconds      *uint32
+	addoutofgas_seconds   *int32
 	compensate_seconds    *uint32
 	addcompensate_seconds *int32
 	renew_state           *string
@@ -19413,74 +19306,74 @@ func (m *PowerRentalStateMutation) ResetCancelState() {
 	delete(m.clearedFields, powerrentalstate.FieldCancelState)
 }
 
-// SetEndAt sets the "end_at" field.
-func (m *PowerRentalStateMutation) SetEndAt(u uint32) {
-	m.end_at = &u
-	m.addend_at = nil
+// SetDurationSeconds sets the "duration_seconds" field.
+func (m *PowerRentalStateMutation) SetDurationSeconds(u uint32) {
+	m.duration_seconds = &u
+	m.addduration_seconds = nil
 }
 
-// EndAt returns the value of the "end_at" field in the mutation.
-func (m *PowerRentalStateMutation) EndAt() (r uint32, exists bool) {
-	v := m.end_at
+// DurationSeconds returns the value of the "duration_seconds" field in the mutation.
+func (m *PowerRentalStateMutation) DurationSeconds() (r uint32, exists bool) {
+	v := m.duration_seconds
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// OldEndAt returns the old "end_at" field's value of the PowerRentalState entity.
+// OldDurationSeconds returns the old "duration_seconds" field's value of the PowerRentalState entity.
 // If the PowerRentalState object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *PowerRentalStateMutation) OldEndAt(ctx context.Context) (v uint32, err error) {
+func (m *PowerRentalStateMutation) OldDurationSeconds(ctx context.Context) (v uint32, err error) {
 	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldEndAt is only allowed on UpdateOne operations")
+		return v, errors.New("OldDurationSeconds is only allowed on UpdateOne operations")
 	}
 	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldEndAt requires an ID field in the mutation")
+		return v, errors.New("OldDurationSeconds requires an ID field in the mutation")
 	}
 	oldValue, err := m.oldValue(ctx)
 	if err != nil {
-		return v, fmt.Errorf("querying old value for OldEndAt: %w", err)
+		return v, fmt.Errorf("querying old value for OldDurationSeconds: %w", err)
 	}
-	return oldValue.EndAt, nil
+	return oldValue.DurationSeconds, nil
 }
 
-// AddEndAt adds u to the "end_at" field.
-func (m *PowerRentalStateMutation) AddEndAt(u int32) {
-	if m.addend_at != nil {
-		*m.addend_at += u
+// AddDurationSeconds adds u to the "duration_seconds" field.
+func (m *PowerRentalStateMutation) AddDurationSeconds(u int32) {
+	if m.addduration_seconds != nil {
+		*m.addduration_seconds += u
 	} else {
-		m.addend_at = &u
+		m.addduration_seconds = &u
 	}
 }
 
-// AddedEndAt returns the value that was added to the "end_at" field in this mutation.
-func (m *PowerRentalStateMutation) AddedEndAt() (r int32, exists bool) {
-	v := m.addend_at
+// AddedDurationSeconds returns the value that was added to the "duration_seconds" field in this mutation.
+func (m *PowerRentalStateMutation) AddedDurationSeconds() (r int32, exists bool) {
+	v := m.addduration_seconds
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// ClearEndAt clears the value of the "end_at" field.
-func (m *PowerRentalStateMutation) ClearEndAt() {
-	m.end_at = nil
-	m.addend_at = nil
-	m.clearedFields[powerrentalstate.FieldEndAt] = struct{}{}
+// ClearDurationSeconds clears the value of the "duration_seconds" field.
+func (m *PowerRentalStateMutation) ClearDurationSeconds() {
+	m.duration_seconds = nil
+	m.addduration_seconds = nil
+	m.clearedFields[powerrentalstate.FieldDurationSeconds] = struct{}{}
 }
 
-// EndAtCleared returns if the "end_at" field was cleared in this mutation.
-func (m *PowerRentalStateMutation) EndAtCleared() bool {
-	_, ok := m.clearedFields[powerrentalstate.FieldEndAt]
+// DurationSecondsCleared returns if the "duration_seconds" field was cleared in this mutation.
+func (m *PowerRentalStateMutation) DurationSecondsCleared() bool {
+	_, ok := m.clearedFields[powerrentalstate.FieldDurationSeconds]
 	return ok
 }
 
-// ResetEndAt resets all changes to the "end_at" field.
-func (m *PowerRentalStateMutation) ResetEndAt() {
-	m.end_at = nil
-	m.addend_at = nil
-	delete(m.clearedFields, powerrentalstate.FieldEndAt)
+// ResetDurationSeconds resets all changes to the "duration_seconds" field.
+func (m *PowerRentalStateMutation) ResetDurationSeconds() {
+	m.duration_seconds = nil
+	m.addduration_seconds = nil
+	delete(m.clearedFields, powerrentalstate.FieldDurationSeconds)
 }
 
 // SetPaidAt sets the "paid_at" field.
@@ -19749,74 +19642,74 @@ func (m *PowerRentalStateMutation) ResetPaymentState() {
 	delete(m.clearedFields, powerrentalstate.FieldPaymentState)
 }
 
-// SetOutofgasSceonds sets the "outofgas_sceonds" field.
-func (m *PowerRentalStateMutation) SetOutofgasSceonds(u uint32) {
-	m.outofgas_sceonds = &u
-	m.addoutofgas_sceonds = nil
+// SetOutofgasSeconds sets the "outofgas_seconds" field.
+func (m *PowerRentalStateMutation) SetOutofgasSeconds(u uint32) {
+	m.outofgas_seconds = &u
+	m.addoutofgas_seconds = nil
 }
 
-// OutofgasSceonds returns the value of the "outofgas_sceonds" field in the mutation.
-func (m *PowerRentalStateMutation) OutofgasSceonds() (r uint32, exists bool) {
-	v := m.outofgas_sceonds
+// OutofgasSeconds returns the value of the "outofgas_seconds" field in the mutation.
+func (m *PowerRentalStateMutation) OutofgasSeconds() (r uint32, exists bool) {
+	v := m.outofgas_seconds
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// OldOutofgasSceonds returns the old "outofgas_sceonds" field's value of the PowerRentalState entity.
+// OldOutofgasSeconds returns the old "outofgas_seconds" field's value of the PowerRentalState entity.
 // If the PowerRentalState object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *PowerRentalStateMutation) OldOutofgasSceonds(ctx context.Context) (v uint32, err error) {
+func (m *PowerRentalStateMutation) OldOutofgasSeconds(ctx context.Context) (v uint32, err error) {
 	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldOutofgasSceonds is only allowed on UpdateOne operations")
+		return v, errors.New("OldOutofgasSeconds is only allowed on UpdateOne operations")
 	}
 	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldOutofgasSceonds requires an ID field in the mutation")
+		return v, errors.New("OldOutofgasSeconds requires an ID field in the mutation")
 	}
 	oldValue, err := m.oldValue(ctx)
 	if err != nil {
-		return v, fmt.Errorf("querying old value for OldOutofgasSceonds: %w", err)
+		return v, fmt.Errorf("querying old value for OldOutofgasSeconds: %w", err)
 	}
-	return oldValue.OutofgasSceonds, nil
+	return oldValue.OutofgasSeconds, nil
 }
 
-// AddOutofgasSceonds adds u to the "outofgas_sceonds" field.
-func (m *PowerRentalStateMutation) AddOutofgasSceonds(u int32) {
-	if m.addoutofgas_sceonds != nil {
-		*m.addoutofgas_sceonds += u
+// AddOutofgasSeconds adds u to the "outofgas_seconds" field.
+func (m *PowerRentalStateMutation) AddOutofgasSeconds(u int32) {
+	if m.addoutofgas_seconds != nil {
+		*m.addoutofgas_seconds += u
 	} else {
-		m.addoutofgas_sceonds = &u
+		m.addoutofgas_seconds = &u
 	}
 }
 
-// AddedOutofgasSceonds returns the value that was added to the "outofgas_sceonds" field in this mutation.
-func (m *PowerRentalStateMutation) AddedOutofgasSceonds() (r int32, exists bool) {
-	v := m.addoutofgas_sceonds
+// AddedOutofgasSeconds returns the value that was added to the "outofgas_seconds" field in this mutation.
+func (m *PowerRentalStateMutation) AddedOutofgasSeconds() (r int32, exists bool) {
+	v := m.addoutofgas_seconds
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// ClearOutofgasSceonds clears the value of the "outofgas_sceonds" field.
-func (m *PowerRentalStateMutation) ClearOutofgasSceonds() {
-	m.outofgas_sceonds = nil
-	m.addoutofgas_sceonds = nil
-	m.clearedFields[powerrentalstate.FieldOutofgasSceonds] = struct{}{}
+// ClearOutofgasSeconds clears the value of the "outofgas_seconds" field.
+func (m *PowerRentalStateMutation) ClearOutofgasSeconds() {
+	m.outofgas_seconds = nil
+	m.addoutofgas_seconds = nil
+	m.clearedFields[powerrentalstate.FieldOutofgasSeconds] = struct{}{}
 }
 
-// OutofgasSceondsCleared returns if the "outofgas_sceonds" field was cleared in this mutation.
-func (m *PowerRentalStateMutation) OutofgasSceondsCleared() bool {
-	_, ok := m.clearedFields[powerrentalstate.FieldOutofgasSceonds]
+// OutofgasSecondsCleared returns if the "outofgas_seconds" field was cleared in this mutation.
+func (m *PowerRentalStateMutation) OutofgasSecondsCleared() bool {
+	_, ok := m.clearedFields[powerrentalstate.FieldOutofgasSeconds]
 	return ok
 }
 
-// ResetOutofgasSceonds resets all changes to the "outofgas_sceonds" field.
-func (m *PowerRentalStateMutation) ResetOutofgasSceonds() {
-	m.outofgas_sceonds = nil
-	m.addoutofgas_sceonds = nil
-	delete(m.clearedFields, powerrentalstate.FieldOutofgasSceonds)
+// ResetOutofgasSeconds resets all changes to the "outofgas_seconds" field.
+func (m *PowerRentalStateMutation) ResetOutofgasSeconds() {
+	m.outofgas_seconds = nil
+	m.addoutofgas_seconds = nil
+	delete(m.clearedFields, powerrentalstate.FieldOutofgasSeconds)
 }
 
 // SetCompensateSeconds sets the "compensate_seconds" field.
@@ -20046,8 +19939,8 @@ func (m *PowerRentalStateMutation) Fields() []string {
 	if m.cancel_state != nil {
 		fields = append(fields, powerrentalstate.FieldCancelState)
 	}
-	if m.end_at != nil {
-		fields = append(fields, powerrentalstate.FieldEndAt)
+	if m.duration_seconds != nil {
+		fields = append(fields, powerrentalstate.FieldDurationSeconds)
 	}
 	if m.paid_at != nil {
 		fields = append(fields, powerrentalstate.FieldPaidAt)
@@ -20064,8 +19957,8 @@ func (m *PowerRentalStateMutation) Fields() []string {
 	if m.payment_state != nil {
 		fields = append(fields, powerrentalstate.FieldPaymentState)
 	}
-	if m.outofgas_sceonds != nil {
-		fields = append(fields, powerrentalstate.FieldOutofgasSceonds)
+	if m.outofgas_seconds != nil {
+		fields = append(fields, powerrentalstate.FieldOutofgasSeconds)
 	}
 	if m.compensate_seconds != nil {
 		fields = append(fields, powerrentalstate.FieldCompensateSeconds)
@@ -20096,8 +19989,8 @@ func (m *PowerRentalStateMutation) Field(name string) (ent.Value, bool) {
 		return m.OrderID()
 	case powerrentalstate.FieldCancelState:
 		return m.CancelState()
-	case powerrentalstate.FieldEndAt:
-		return m.EndAt()
+	case powerrentalstate.FieldDurationSeconds:
+		return m.DurationSeconds()
 	case powerrentalstate.FieldPaidAt:
 		return m.PaidAt()
 	case powerrentalstate.FieldUserSetPaid:
@@ -20108,8 +20001,8 @@ func (m *PowerRentalStateMutation) Field(name string) (ent.Value, bool) {
 		return m.AdminSetCanceled()
 	case powerrentalstate.FieldPaymentState:
 		return m.PaymentState()
-	case powerrentalstate.FieldOutofgasSceonds:
-		return m.OutofgasSceonds()
+	case powerrentalstate.FieldOutofgasSeconds:
+		return m.OutofgasSeconds()
 	case powerrentalstate.FieldCompensateSeconds:
 		return m.CompensateSeconds()
 	case powerrentalstate.FieldRenewState:
@@ -20137,8 +20030,8 @@ func (m *PowerRentalStateMutation) OldField(ctx context.Context, name string) (e
 		return m.OldOrderID(ctx)
 	case powerrentalstate.FieldCancelState:
 		return m.OldCancelState(ctx)
-	case powerrentalstate.FieldEndAt:
-		return m.OldEndAt(ctx)
+	case powerrentalstate.FieldDurationSeconds:
+		return m.OldDurationSeconds(ctx)
 	case powerrentalstate.FieldPaidAt:
 		return m.OldPaidAt(ctx)
 	case powerrentalstate.FieldUserSetPaid:
@@ -20149,8 +20042,8 @@ func (m *PowerRentalStateMutation) OldField(ctx context.Context, name string) (e
 		return m.OldAdminSetCanceled(ctx)
 	case powerrentalstate.FieldPaymentState:
 		return m.OldPaymentState(ctx)
-	case powerrentalstate.FieldOutofgasSceonds:
-		return m.OldOutofgasSceonds(ctx)
+	case powerrentalstate.FieldOutofgasSeconds:
+		return m.OldOutofgasSeconds(ctx)
 	case powerrentalstate.FieldCompensateSeconds:
 		return m.OldCompensateSeconds(ctx)
 	case powerrentalstate.FieldRenewState:
@@ -20208,12 +20101,12 @@ func (m *PowerRentalStateMutation) SetField(name string, value ent.Value) error 
 		}
 		m.SetCancelState(v)
 		return nil
-	case powerrentalstate.FieldEndAt:
+	case powerrentalstate.FieldDurationSeconds:
 		v, ok := value.(uint32)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.SetEndAt(v)
+		m.SetDurationSeconds(v)
 		return nil
 	case powerrentalstate.FieldPaidAt:
 		v, ok := value.(uint32)
@@ -20250,12 +20143,12 @@ func (m *PowerRentalStateMutation) SetField(name string, value ent.Value) error 
 		}
 		m.SetPaymentState(v)
 		return nil
-	case powerrentalstate.FieldOutofgasSceonds:
+	case powerrentalstate.FieldOutofgasSeconds:
 		v, ok := value.(uint32)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.SetOutofgasSceonds(v)
+		m.SetOutofgasSeconds(v)
 		return nil
 	case powerrentalstate.FieldCompensateSeconds:
 		v, ok := value.(uint32)
@@ -20295,14 +20188,14 @@ func (m *PowerRentalStateMutation) AddedFields() []string {
 	if m.adddeleted_at != nil {
 		fields = append(fields, powerrentalstate.FieldDeletedAt)
 	}
-	if m.addend_at != nil {
-		fields = append(fields, powerrentalstate.FieldEndAt)
+	if m.addduration_seconds != nil {
+		fields = append(fields, powerrentalstate.FieldDurationSeconds)
 	}
 	if m.addpaid_at != nil {
 		fields = append(fields, powerrentalstate.FieldPaidAt)
 	}
-	if m.addoutofgas_sceonds != nil {
-		fields = append(fields, powerrentalstate.FieldOutofgasSceonds)
+	if m.addoutofgas_seconds != nil {
+		fields = append(fields, powerrentalstate.FieldOutofgasSeconds)
 	}
 	if m.addcompensate_seconds != nil {
 		fields = append(fields, powerrentalstate.FieldCompensateSeconds)
@@ -20324,12 +20217,12 @@ func (m *PowerRentalStateMutation) AddedField(name string) (ent.Value, bool) {
 		return m.AddedUpdatedAt()
 	case powerrentalstate.FieldDeletedAt:
 		return m.AddedDeletedAt()
-	case powerrentalstate.FieldEndAt:
-		return m.AddedEndAt()
+	case powerrentalstate.FieldDurationSeconds:
+		return m.AddedDurationSeconds()
 	case powerrentalstate.FieldPaidAt:
 		return m.AddedPaidAt()
-	case powerrentalstate.FieldOutofgasSceonds:
-		return m.AddedOutofgasSceonds()
+	case powerrentalstate.FieldOutofgasSeconds:
+		return m.AddedOutofgasSeconds()
 	case powerrentalstate.FieldCompensateSeconds:
 		return m.AddedCompensateSeconds()
 	case powerrentalstate.FieldRenewNotifyAt:
@@ -20364,12 +20257,12 @@ func (m *PowerRentalStateMutation) AddField(name string, value ent.Value) error 
 		}
 		m.AddDeletedAt(v)
 		return nil
-	case powerrentalstate.FieldEndAt:
+	case powerrentalstate.FieldDurationSeconds:
 		v, ok := value.(int32)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.AddEndAt(v)
+		m.AddDurationSeconds(v)
 		return nil
 	case powerrentalstate.FieldPaidAt:
 		v, ok := value.(int32)
@@ -20378,12 +20271,12 @@ func (m *PowerRentalStateMutation) AddField(name string, value ent.Value) error 
 		}
 		m.AddPaidAt(v)
 		return nil
-	case powerrentalstate.FieldOutofgasSceonds:
+	case powerrentalstate.FieldOutofgasSeconds:
 		v, ok := value.(int32)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.AddOutofgasSceonds(v)
+		m.AddOutofgasSeconds(v)
 		return nil
 	case powerrentalstate.FieldCompensateSeconds:
 		v, ok := value.(int32)
@@ -20413,8 +20306,8 @@ func (m *PowerRentalStateMutation) ClearedFields() []string {
 	if m.FieldCleared(powerrentalstate.FieldCancelState) {
 		fields = append(fields, powerrentalstate.FieldCancelState)
 	}
-	if m.FieldCleared(powerrentalstate.FieldEndAt) {
-		fields = append(fields, powerrentalstate.FieldEndAt)
+	if m.FieldCleared(powerrentalstate.FieldDurationSeconds) {
+		fields = append(fields, powerrentalstate.FieldDurationSeconds)
 	}
 	if m.FieldCleared(powerrentalstate.FieldPaidAt) {
 		fields = append(fields, powerrentalstate.FieldPaidAt)
@@ -20431,8 +20324,8 @@ func (m *PowerRentalStateMutation) ClearedFields() []string {
 	if m.FieldCleared(powerrentalstate.FieldPaymentState) {
 		fields = append(fields, powerrentalstate.FieldPaymentState)
 	}
-	if m.FieldCleared(powerrentalstate.FieldOutofgasSceonds) {
-		fields = append(fields, powerrentalstate.FieldOutofgasSceonds)
+	if m.FieldCleared(powerrentalstate.FieldOutofgasSeconds) {
+		fields = append(fields, powerrentalstate.FieldOutofgasSeconds)
 	}
 	if m.FieldCleared(powerrentalstate.FieldCompensateSeconds) {
 		fields = append(fields, powerrentalstate.FieldCompensateSeconds)
@@ -20463,8 +20356,8 @@ func (m *PowerRentalStateMutation) ClearField(name string) error {
 	case powerrentalstate.FieldCancelState:
 		m.ClearCancelState()
 		return nil
-	case powerrentalstate.FieldEndAt:
-		m.ClearEndAt()
+	case powerrentalstate.FieldDurationSeconds:
+		m.ClearDurationSeconds()
 		return nil
 	case powerrentalstate.FieldPaidAt:
 		m.ClearPaidAt()
@@ -20481,8 +20374,8 @@ func (m *PowerRentalStateMutation) ClearField(name string) error {
 	case powerrentalstate.FieldPaymentState:
 		m.ClearPaymentState()
 		return nil
-	case powerrentalstate.FieldOutofgasSceonds:
-		m.ClearOutofgasSceonds()
+	case powerrentalstate.FieldOutofgasSeconds:
+		m.ClearOutofgasSeconds()
 		return nil
 	case powerrentalstate.FieldCompensateSeconds:
 		m.ClearCompensateSeconds()
@@ -20519,8 +20412,8 @@ func (m *PowerRentalStateMutation) ResetField(name string) error {
 	case powerrentalstate.FieldCancelState:
 		m.ResetCancelState()
 		return nil
-	case powerrentalstate.FieldEndAt:
-		m.ResetEndAt()
+	case powerrentalstate.FieldDurationSeconds:
+		m.ResetDurationSeconds()
 		return nil
 	case powerrentalstate.FieldPaidAt:
 		m.ResetPaidAt()
@@ -20537,8 +20430,8 @@ func (m *PowerRentalStateMutation) ResetField(name string) error {
 	case powerrentalstate.FieldPaymentState:
 		m.ResetPaymentState()
 		return nil
-	case powerrentalstate.FieldOutofgasSceonds:
-		m.ResetOutofgasSceonds()
+	case powerrentalstate.FieldOutofgasSeconds:
+		m.ResetOutofgasSeconds()
 		return nil
 	case powerrentalstate.FieldCompensateSeconds:
 		m.ResetCompensateSeconds()

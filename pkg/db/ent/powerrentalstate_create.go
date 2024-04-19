@@ -106,16 +106,16 @@ func (prsc *PowerRentalStateCreate) SetNillableCancelState(s *string) *PowerRent
 	return prsc
 }
 
-// SetEndAt sets the "end_at" field.
-func (prsc *PowerRentalStateCreate) SetEndAt(u uint32) *PowerRentalStateCreate {
-	prsc.mutation.SetEndAt(u)
+// SetDurationSeconds sets the "duration_seconds" field.
+func (prsc *PowerRentalStateCreate) SetDurationSeconds(u uint32) *PowerRentalStateCreate {
+	prsc.mutation.SetDurationSeconds(u)
 	return prsc
 }
 
-// SetNillableEndAt sets the "end_at" field if the given value is not nil.
-func (prsc *PowerRentalStateCreate) SetNillableEndAt(u *uint32) *PowerRentalStateCreate {
+// SetNillableDurationSeconds sets the "duration_seconds" field if the given value is not nil.
+func (prsc *PowerRentalStateCreate) SetNillableDurationSeconds(u *uint32) *PowerRentalStateCreate {
 	if u != nil {
-		prsc.SetEndAt(*u)
+		prsc.SetDurationSeconds(*u)
 	}
 	return prsc
 }
@@ -190,16 +190,16 @@ func (prsc *PowerRentalStateCreate) SetNillablePaymentState(s *string) *PowerRen
 	return prsc
 }
 
-// SetOutofgasSceonds sets the "outofgas_sceonds" field.
-func (prsc *PowerRentalStateCreate) SetOutofgasSceonds(u uint32) *PowerRentalStateCreate {
-	prsc.mutation.SetOutofgasSceonds(u)
+// SetOutofgasSeconds sets the "outofgas_seconds" field.
+func (prsc *PowerRentalStateCreate) SetOutofgasSeconds(u uint32) *PowerRentalStateCreate {
+	prsc.mutation.SetOutofgasSeconds(u)
 	return prsc
 }
 
-// SetNillableOutofgasSceonds sets the "outofgas_sceonds" field if the given value is not nil.
-func (prsc *PowerRentalStateCreate) SetNillableOutofgasSceonds(u *uint32) *PowerRentalStateCreate {
+// SetNillableOutofgasSeconds sets the "outofgas_seconds" field if the given value is not nil.
+func (prsc *PowerRentalStateCreate) SetNillableOutofgasSeconds(u *uint32) *PowerRentalStateCreate {
 	if u != nil {
-		prsc.SetOutofgasSceonds(*u)
+		prsc.SetOutofgasSeconds(*u)
 	}
 	return prsc
 }
@@ -370,9 +370,9 @@ func (prsc *PowerRentalStateCreate) defaults() error {
 		v := powerrentalstate.DefaultCancelState
 		prsc.mutation.SetCancelState(v)
 	}
-	if _, ok := prsc.mutation.EndAt(); !ok {
-		v := powerrentalstate.DefaultEndAt
-		prsc.mutation.SetEndAt(v)
+	if _, ok := prsc.mutation.DurationSeconds(); !ok {
+		v := powerrentalstate.DefaultDurationSeconds
+		prsc.mutation.SetDurationSeconds(v)
 	}
 	if _, ok := prsc.mutation.PaidAt(); !ok {
 		v := powerrentalstate.DefaultPaidAt
@@ -394,9 +394,9 @@ func (prsc *PowerRentalStateCreate) defaults() error {
 		v := powerrentalstate.DefaultPaymentState
 		prsc.mutation.SetPaymentState(v)
 	}
-	if _, ok := prsc.mutation.OutofgasSceonds(); !ok {
-		v := powerrentalstate.DefaultOutofgasSceonds
-		prsc.mutation.SetOutofgasSceonds(v)
+	if _, ok := prsc.mutation.OutofgasSeconds(); !ok {
+		v := powerrentalstate.DefaultOutofgasSeconds
+		prsc.mutation.SetOutofgasSeconds(v)
 	}
 	if _, ok := prsc.mutation.CompensateSeconds(); !ok {
 		v := powerrentalstate.DefaultCompensateSeconds
@@ -509,13 +509,13 @@ func (prsc *PowerRentalStateCreate) createSpec() (*PowerRentalState, *sqlgraph.C
 		})
 		_node.CancelState = value
 	}
-	if value, ok := prsc.mutation.EndAt(); ok {
+	if value, ok := prsc.mutation.DurationSeconds(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
 			Type:   field.TypeUint32,
 			Value:  value,
-			Column: powerrentalstate.FieldEndAt,
+			Column: powerrentalstate.FieldDurationSeconds,
 		})
-		_node.EndAt = value
+		_node.DurationSeconds = value
 	}
 	if value, ok := prsc.mutation.PaidAt(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -557,13 +557,13 @@ func (prsc *PowerRentalStateCreate) createSpec() (*PowerRentalState, *sqlgraph.C
 		})
 		_node.PaymentState = value
 	}
-	if value, ok := prsc.mutation.OutofgasSceonds(); ok {
+	if value, ok := prsc.mutation.OutofgasSeconds(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
 			Type:   field.TypeUint32,
 			Value:  value,
-			Column: powerrentalstate.FieldOutofgasSceonds,
+			Column: powerrentalstate.FieldOutofgasSeconds,
 		})
-		_node.OutofgasSceonds = value
+		_node.OutofgasSeconds = value
 	}
 	if value, ok := prsc.mutation.CompensateSeconds(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -745,27 +745,27 @@ func (u *PowerRentalStateUpsert) ClearCancelState() *PowerRentalStateUpsert {
 	return u
 }
 
-// SetEndAt sets the "end_at" field.
-func (u *PowerRentalStateUpsert) SetEndAt(v uint32) *PowerRentalStateUpsert {
-	u.Set(powerrentalstate.FieldEndAt, v)
+// SetDurationSeconds sets the "duration_seconds" field.
+func (u *PowerRentalStateUpsert) SetDurationSeconds(v uint32) *PowerRentalStateUpsert {
+	u.Set(powerrentalstate.FieldDurationSeconds, v)
 	return u
 }
 
-// UpdateEndAt sets the "end_at" field to the value that was provided on create.
-func (u *PowerRentalStateUpsert) UpdateEndAt() *PowerRentalStateUpsert {
-	u.SetExcluded(powerrentalstate.FieldEndAt)
+// UpdateDurationSeconds sets the "duration_seconds" field to the value that was provided on create.
+func (u *PowerRentalStateUpsert) UpdateDurationSeconds() *PowerRentalStateUpsert {
+	u.SetExcluded(powerrentalstate.FieldDurationSeconds)
 	return u
 }
 
-// AddEndAt adds v to the "end_at" field.
-func (u *PowerRentalStateUpsert) AddEndAt(v uint32) *PowerRentalStateUpsert {
-	u.Add(powerrentalstate.FieldEndAt, v)
+// AddDurationSeconds adds v to the "duration_seconds" field.
+func (u *PowerRentalStateUpsert) AddDurationSeconds(v uint32) *PowerRentalStateUpsert {
+	u.Add(powerrentalstate.FieldDurationSeconds, v)
 	return u
 }
 
-// ClearEndAt clears the value of the "end_at" field.
-func (u *PowerRentalStateUpsert) ClearEndAt() *PowerRentalStateUpsert {
-	u.SetNull(powerrentalstate.FieldEndAt)
+// ClearDurationSeconds clears the value of the "duration_seconds" field.
+func (u *PowerRentalStateUpsert) ClearDurationSeconds() *PowerRentalStateUpsert {
+	u.SetNull(powerrentalstate.FieldDurationSeconds)
 	return u
 }
 
@@ -865,27 +865,27 @@ func (u *PowerRentalStateUpsert) ClearPaymentState() *PowerRentalStateUpsert {
 	return u
 }
 
-// SetOutofgasSceonds sets the "outofgas_sceonds" field.
-func (u *PowerRentalStateUpsert) SetOutofgasSceonds(v uint32) *PowerRentalStateUpsert {
-	u.Set(powerrentalstate.FieldOutofgasSceonds, v)
+// SetOutofgasSeconds sets the "outofgas_seconds" field.
+func (u *PowerRentalStateUpsert) SetOutofgasSeconds(v uint32) *PowerRentalStateUpsert {
+	u.Set(powerrentalstate.FieldOutofgasSeconds, v)
 	return u
 }
 
-// UpdateOutofgasSceonds sets the "outofgas_sceonds" field to the value that was provided on create.
-func (u *PowerRentalStateUpsert) UpdateOutofgasSceonds() *PowerRentalStateUpsert {
-	u.SetExcluded(powerrentalstate.FieldOutofgasSceonds)
+// UpdateOutofgasSeconds sets the "outofgas_seconds" field to the value that was provided on create.
+func (u *PowerRentalStateUpsert) UpdateOutofgasSeconds() *PowerRentalStateUpsert {
+	u.SetExcluded(powerrentalstate.FieldOutofgasSeconds)
 	return u
 }
 
-// AddOutofgasSceonds adds v to the "outofgas_sceonds" field.
-func (u *PowerRentalStateUpsert) AddOutofgasSceonds(v uint32) *PowerRentalStateUpsert {
-	u.Add(powerrentalstate.FieldOutofgasSceonds, v)
+// AddOutofgasSeconds adds v to the "outofgas_seconds" field.
+func (u *PowerRentalStateUpsert) AddOutofgasSeconds(v uint32) *PowerRentalStateUpsert {
+	u.Add(powerrentalstate.FieldOutofgasSeconds, v)
 	return u
 }
 
-// ClearOutofgasSceonds clears the value of the "outofgas_sceonds" field.
-func (u *PowerRentalStateUpsert) ClearOutofgasSceonds() *PowerRentalStateUpsert {
-	u.SetNull(powerrentalstate.FieldOutofgasSceonds)
+// ClearOutofgasSeconds clears the value of the "outofgas_seconds" field.
+func (u *PowerRentalStateUpsert) ClearOutofgasSeconds() *PowerRentalStateUpsert {
+	u.SetNull(powerrentalstate.FieldOutofgasSeconds)
 	return u
 }
 
@@ -1124,31 +1124,31 @@ func (u *PowerRentalStateUpsertOne) ClearCancelState() *PowerRentalStateUpsertOn
 	})
 }
 
-// SetEndAt sets the "end_at" field.
-func (u *PowerRentalStateUpsertOne) SetEndAt(v uint32) *PowerRentalStateUpsertOne {
+// SetDurationSeconds sets the "duration_seconds" field.
+func (u *PowerRentalStateUpsertOne) SetDurationSeconds(v uint32) *PowerRentalStateUpsertOne {
 	return u.Update(func(s *PowerRentalStateUpsert) {
-		s.SetEndAt(v)
+		s.SetDurationSeconds(v)
 	})
 }
 
-// AddEndAt adds v to the "end_at" field.
-func (u *PowerRentalStateUpsertOne) AddEndAt(v uint32) *PowerRentalStateUpsertOne {
+// AddDurationSeconds adds v to the "duration_seconds" field.
+func (u *PowerRentalStateUpsertOne) AddDurationSeconds(v uint32) *PowerRentalStateUpsertOne {
 	return u.Update(func(s *PowerRentalStateUpsert) {
-		s.AddEndAt(v)
+		s.AddDurationSeconds(v)
 	})
 }
 
-// UpdateEndAt sets the "end_at" field to the value that was provided on create.
-func (u *PowerRentalStateUpsertOne) UpdateEndAt() *PowerRentalStateUpsertOne {
+// UpdateDurationSeconds sets the "duration_seconds" field to the value that was provided on create.
+func (u *PowerRentalStateUpsertOne) UpdateDurationSeconds() *PowerRentalStateUpsertOne {
 	return u.Update(func(s *PowerRentalStateUpsert) {
-		s.UpdateEndAt()
+		s.UpdateDurationSeconds()
 	})
 }
 
-// ClearEndAt clears the value of the "end_at" field.
-func (u *PowerRentalStateUpsertOne) ClearEndAt() *PowerRentalStateUpsertOne {
+// ClearDurationSeconds clears the value of the "duration_seconds" field.
+func (u *PowerRentalStateUpsertOne) ClearDurationSeconds() *PowerRentalStateUpsertOne {
 	return u.Update(func(s *PowerRentalStateUpsert) {
-		s.ClearEndAt()
+		s.ClearDurationSeconds()
 	})
 }
 
@@ -1264,31 +1264,31 @@ func (u *PowerRentalStateUpsertOne) ClearPaymentState() *PowerRentalStateUpsertO
 	})
 }
 
-// SetOutofgasSceonds sets the "outofgas_sceonds" field.
-func (u *PowerRentalStateUpsertOne) SetOutofgasSceonds(v uint32) *PowerRentalStateUpsertOne {
+// SetOutofgasSeconds sets the "outofgas_seconds" field.
+func (u *PowerRentalStateUpsertOne) SetOutofgasSeconds(v uint32) *PowerRentalStateUpsertOne {
 	return u.Update(func(s *PowerRentalStateUpsert) {
-		s.SetOutofgasSceonds(v)
+		s.SetOutofgasSeconds(v)
 	})
 }
 
-// AddOutofgasSceonds adds v to the "outofgas_sceonds" field.
-func (u *PowerRentalStateUpsertOne) AddOutofgasSceonds(v uint32) *PowerRentalStateUpsertOne {
+// AddOutofgasSeconds adds v to the "outofgas_seconds" field.
+func (u *PowerRentalStateUpsertOne) AddOutofgasSeconds(v uint32) *PowerRentalStateUpsertOne {
 	return u.Update(func(s *PowerRentalStateUpsert) {
-		s.AddOutofgasSceonds(v)
+		s.AddOutofgasSeconds(v)
 	})
 }
 
-// UpdateOutofgasSceonds sets the "outofgas_sceonds" field to the value that was provided on create.
-func (u *PowerRentalStateUpsertOne) UpdateOutofgasSceonds() *PowerRentalStateUpsertOne {
+// UpdateOutofgasSeconds sets the "outofgas_seconds" field to the value that was provided on create.
+func (u *PowerRentalStateUpsertOne) UpdateOutofgasSeconds() *PowerRentalStateUpsertOne {
 	return u.Update(func(s *PowerRentalStateUpsert) {
-		s.UpdateOutofgasSceonds()
+		s.UpdateOutofgasSeconds()
 	})
 }
 
-// ClearOutofgasSceonds clears the value of the "outofgas_sceonds" field.
-func (u *PowerRentalStateUpsertOne) ClearOutofgasSceonds() *PowerRentalStateUpsertOne {
+// ClearOutofgasSeconds clears the value of the "outofgas_seconds" field.
+func (u *PowerRentalStateUpsertOne) ClearOutofgasSeconds() *PowerRentalStateUpsertOne {
 	return u.Update(func(s *PowerRentalStateUpsert) {
-		s.ClearOutofgasSceonds()
+		s.ClearOutofgasSeconds()
 	})
 }
 
@@ -1703,31 +1703,31 @@ func (u *PowerRentalStateUpsertBulk) ClearCancelState() *PowerRentalStateUpsertB
 	})
 }
 
-// SetEndAt sets the "end_at" field.
-func (u *PowerRentalStateUpsertBulk) SetEndAt(v uint32) *PowerRentalStateUpsertBulk {
+// SetDurationSeconds sets the "duration_seconds" field.
+func (u *PowerRentalStateUpsertBulk) SetDurationSeconds(v uint32) *PowerRentalStateUpsertBulk {
 	return u.Update(func(s *PowerRentalStateUpsert) {
-		s.SetEndAt(v)
+		s.SetDurationSeconds(v)
 	})
 }
 
-// AddEndAt adds v to the "end_at" field.
-func (u *PowerRentalStateUpsertBulk) AddEndAt(v uint32) *PowerRentalStateUpsertBulk {
+// AddDurationSeconds adds v to the "duration_seconds" field.
+func (u *PowerRentalStateUpsertBulk) AddDurationSeconds(v uint32) *PowerRentalStateUpsertBulk {
 	return u.Update(func(s *PowerRentalStateUpsert) {
-		s.AddEndAt(v)
+		s.AddDurationSeconds(v)
 	})
 }
 
-// UpdateEndAt sets the "end_at" field to the value that was provided on create.
-func (u *PowerRentalStateUpsertBulk) UpdateEndAt() *PowerRentalStateUpsertBulk {
+// UpdateDurationSeconds sets the "duration_seconds" field to the value that was provided on create.
+func (u *PowerRentalStateUpsertBulk) UpdateDurationSeconds() *PowerRentalStateUpsertBulk {
 	return u.Update(func(s *PowerRentalStateUpsert) {
-		s.UpdateEndAt()
+		s.UpdateDurationSeconds()
 	})
 }
 
-// ClearEndAt clears the value of the "end_at" field.
-func (u *PowerRentalStateUpsertBulk) ClearEndAt() *PowerRentalStateUpsertBulk {
+// ClearDurationSeconds clears the value of the "duration_seconds" field.
+func (u *PowerRentalStateUpsertBulk) ClearDurationSeconds() *PowerRentalStateUpsertBulk {
 	return u.Update(func(s *PowerRentalStateUpsert) {
-		s.ClearEndAt()
+		s.ClearDurationSeconds()
 	})
 }
 
@@ -1843,31 +1843,31 @@ func (u *PowerRentalStateUpsertBulk) ClearPaymentState() *PowerRentalStateUpsert
 	})
 }
 
-// SetOutofgasSceonds sets the "outofgas_sceonds" field.
-func (u *PowerRentalStateUpsertBulk) SetOutofgasSceonds(v uint32) *PowerRentalStateUpsertBulk {
+// SetOutofgasSeconds sets the "outofgas_seconds" field.
+func (u *PowerRentalStateUpsertBulk) SetOutofgasSeconds(v uint32) *PowerRentalStateUpsertBulk {
 	return u.Update(func(s *PowerRentalStateUpsert) {
-		s.SetOutofgasSceonds(v)
+		s.SetOutofgasSeconds(v)
 	})
 }
 
-// AddOutofgasSceonds adds v to the "outofgas_sceonds" field.
-func (u *PowerRentalStateUpsertBulk) AddOutofgasSceonds(v uint32) *PowerRentalStateUpsertBulk {
+// AddOutofgasSeconds adds v to the "outofgas_seconds" field.
+func (u *PowerRentalStateUpsertBulk) AddOutofgasSeconds(v uint32) *PowerRentalStateUpsertBulk {
 	return u.Update(func(s *PowerRentalStateUpsert) {
-		s.AddOutofgasSceonds(v)
+		s.AddOutofgasSeconds(v)
 	})
 }
 
-// UpdateOutofgasSceonds sets the "outofgas_sceonds" field to the value that was provided on create.
-func (u *PowerRentalStateUpsertBulk) UpdateOutofgasSceonds() *PowerRentalStateUpsertBulk {
+// UpdateOutofgasSeconds sets the "outofgas_seconds" field to the value that was provided on create.
+func (u *PowerRentalStateUpsertBulk) UpdateOutofgasSeconds() *PowerRentalStateUpsertBulk {
 	return u.Update(func(s *PowerRentalStateUpsert) {
-		s.UpdateOutofgasSceonds()
+		s.UpdateOutofgasSeconds()
 	})
 }
 
-// ClearOutofgasSceonds clears the value of the "outofgas_sceonds" field.
-func (u *PowerRentalStateUpsertBulk) ClearOutofgasSceonds() *PowerRentalStateUpsertBulk {
+// ClearOutofgasSeconds clears the value of the "outofgas_seconds" field.
+func (u *PowerRentalStateUpsertBulk) ClearOutofgasSeconds() *PowerRentalStateUpsertBulk {
 	return u.Update(func(s *PowerRentalStateUpsert) {
-		s.ClearOutofgasSceonds()
+		s.ClearOutofgasSeconds()
 	})
 }
 

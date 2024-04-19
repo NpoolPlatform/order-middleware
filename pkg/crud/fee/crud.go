@@ -1,12 +1,11 @@
-package powerrental
+package fee
 
 import (
 	"fmt"
 
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
-	types "github.com/NpoolPlatform/message/npool/basetypes/order/v1"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent"
-	entpowerrental "github.com/NpoolPlatform/order-middleware/pkg/db/ent/powerrental"
+	entfeeorder "github.com/NpoolPlatform/order-middleware/pkg/db/ent/feeorder"
 
 	"github.com/google/uuid"
 	"github.com/shopspring/decimal"
@@ -16,28 +15,20 @@ type Req struct {
 	ID                *uint32
 	EntID             *uuid.UUID
 	OrderID           *uuid.UUID
-	AppGoodStockID    *uuid.UUID
-	Units             *decimal.Decimal
 	GoodValueUSD      *decimal.Decimal
 	PaymentAmountUSD  *decimal.Decimal
 	DiscountAmountUSD *decimal.Decimal
 	PromotionID       *uuid.UUID
-	InvestmentType    *types.InvestmentType
+	DurationSeconds   *uint32
 	DeletedAt         *uint32
 }
 
-func CreateSet(c *ent.PowerRentalCreate, req *Req) *ent.PowerRentalCreate {
+func CreateSet(c *ent.FeeOrderCreate, req *Req) *ent.FeeOrderCreate {
 	if req.EntID != nil {
 		c.SetEntID(*req.EntID)
 	}
 	if req.OrderID != nil {
 		c.SetOrderID(*req.OrderID)
-	}
-	if req.AppGoodStockID != nil {
-		c.SetAppGoodStockID(*req.AppGoodStockID)
-	}
-	if req.Units != nil {
-		c.SetUnits(*req.Units)
 	}
 	if req.GoodValueUSD != nil {
 		c.SetGoodValueUsd(*req.GoodValueUSD)
@@ -51,13 +42,13 @@ func CreateSet(c *ent.PowerRentalCreate, req *Req) *ent.PowerRentalCreate {
 	if req.PromotionID != nil {
 		c.SetPromotionID(*req.PromotionID)
 	}
-	if req.InvestmentType != nil {
-		c.SetInvestmentType(req.InvestmentType.String())
+	if req.DurationSeconds != nil {
+		c.SetDurationSeconds(*req.DurationSeconds)
 	}
 	return c
 }
 
-func UpdateSet(u *ent.PowerRentalUpdateOne, req *Req) *ent.PowerRentalUpdateOne {
+func UpdateSet(u *ent.FeeOrderUpdateOne, req *Req) *ent.FeeOrderUpdateOne {
 	if req.DeletedAt != nil {
 		u.SetDeletedAt(*req.DeletedAt)
 	}
@@ -65,18 +56,17 @@ func UpdateSet(u *ent.PowerRentalUpdateOne, req *Req) *ent.PowerRentalUpdateOne 
 }
 
 type Conds struct {
-	ID             *cruder.Cond
-	IDs            *cruder.Cond
-	EntID          *cruder.Cond
-	EntIDs         *cruder.Cond
-	OrderID        *cruder.Cond
-	OrderIDs       *cruder.Cond
-	InvestmentType *cruder.Cond
+	ID       *cruder.Cond
+	IDs      *cruder.Cond
+	EntID    *cruder.Cond
+	EntIDs   *cruder.Cond
+	OrderID  *cruder.Cond
+	OrderIDs *cruder.Cond
 }
 
 //nolint
-func SetQueryConds(q *ent.PowerRentalQuery, conds *Conds) (*ent.PowerRentalQuery, error) {
-	q.Where(entpowerrental.DeletedAt(0))
+func SetQueryConds(q *ent.FeeOrderQuery, conds *Conds) (*ent.FeeOrderQuery, error) {
+	q.Where(entfeeorder.DeletedAt(0))
 	if conds == nil {
 		return q, nil
 	}
@@ -87,9 +77,9 @@ func SetQueryConds(q *ent.PowerRentalQuery, conds *Conds) (*ent.PowerRentalQuery
 		}
 		switch conds.ID.Op {
 		case cruder.EQ:
-			q.Where(entpowerrental.ID(id))
+			q.Where(entfeeorder.ID(id))
 		default:
-			return nil, fmt.Errorf("invalid powerrental field")
+			return nil, fmt.Errorf("invalid fee field")
 		}
 	}
 	if conds.IDs != nil {
@@ -100,9 +90,9 @@ func SetQueryConds(q *ent.PowerRentalQuery, conds *Conds) (*ent.PowerRentalQuery
 		if len(ids) > 0 {
 			switch conds.IDs.Op {
 			case cruder.IN:
-				q.Where(entpowerrental.IDIn(ids...))
+				q.Where(entfeeorder.IDIn(ids...))
 			default:
-				return nil, fmt.Errorf("invalid powerrental field")
+				return nil, fmt.Errorf("invalid fee field")
 			}
 		}
 	}
@@ -113,11 +103,11 @@ func SetQueryConds(q *ent.PowerRentalQuery, conds *Conds) (*ent.PowerRentalQuery
 		}
 		switch conds.EntID.Op {
 		case cruder.EQ:
-			q.Where(entpowerrental.EntID(id))
+			q.Where(entfeeorder.EntID(id))
 		case cruder.NEQ:
-			q.Where(entpowerrental.EntIDNEQ(id))
+			q.Where(entfeeorder.EntIDNEQ(id))
 		default:
-			return nil, fmt.Errorf("invalid powerrental field")
+			return nil, fmt.Errorf("invalid fee field")
 		}
 	}
 	if conds.EntIDs != nil {
@@ -128,9 +118,9 @@ func SetQueryConds(q *ent.PowerRentalQuery, conds *Conds) (*ent.PowerRentalQuery
 		if len(ids) > 0 {
 			switch conds.EntIDs.Op {
 			case cruder.IN:
-				q.Where(entpowerrental.EntIDIn(ids...))
+				q.Where(entfeeorder.EntIDIn(ids...))
 			default:
-				return nil, fmt.Errorf("invalid powerrental field")
+				return nil, fmt.Errorf("invalid fee field")
 			}
 		}
 	}
@@ -141,9 +131,9 @@ func SetQueryConds(q *ent.PowerRentalQuery, conds *Conds) (*ent.PowerRentalQuery
 		}
 		switch conds.OrderID.Op {
 		case cruder.EQ:
-			q.Where(entpowerrental.OrderID(id))
+			q.Where(entfeeorder.OrderID(id))
 		default:
-			return nil, fmt.Errorf("invalid powerrental field")
+			return nil, fmt.Errorf("invalid fee field")
 		}
 	}
 	if conds.OrderIDs != nil {
@@ -154,22 +144,10 @@ func SetQueryConds(q *ent.PowerRentalQuery, conds *Conds) (*ent.PowerRentalQuery
 		if len(ids) > 0 {
 			switch conds.OrderIDs.Op {
 			case cruder.IN:
-				q.Where(entpowerrental.OrderIDIn(ids...))
+				q.Where(entfeeorder.OrderIDIn(ids...))
 			default:
-				return nil, fmt.Errorf("invalid powerrental field")
+				return nil, fmt.Errorf("invalid fee field")
 			}
-		}
-	}
-	if conds.InvestmentType != nil {
-		_type, ok := conds.InvestmentType.Val.(types.InvestmentType)
-		if !ok {
-			return nil, fmt.Errorf("invalid investmenttype")
-		}
-		switch conds.InvestmentType.Op {
-		case cruder.EQ:
-			q.Where(entpowerrental.InvestmentType(_type.String()))
-		default:
-			return nil, fmt.Errorf("invalid powerrental field")
 		}
 	}
 	return q, nil

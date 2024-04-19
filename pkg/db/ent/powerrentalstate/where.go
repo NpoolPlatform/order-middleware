@@ -121,10 +121,10 @@ func CancelState(v string) predicate.PowerRentalState {
 	})
 }
 
-// EndAt applies equality check predicate on the "end_at" field. It's identical to EndAtEQ.
-func EndAt(v uint32) predicate.PowerRentalState {
+// DurationSeconds applies equality check predicate on the "duration_seconds" field. It's identical to DurationSecondsEQ.
+func DurationSeconds(v uint32) predicate.PowerRentalState {
 	return predicate.PowerRentalState(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldEndAt), v))
+		s.Where(sql.EQ(s.C(FieldDurationSeconds), v))
 	})
 }
 
@@ -163,10 +163,10 @@ func PaymentState(v string) predicate.PowerRentalState {
 	})
 }
 
-// OutofgasSceonds applies equality check predicate on the "outofgas_sceonds" field. It's identical to OutofgasSceondsEQ.
-func OutofgasSceonds(v uint32) predicate.PowerRentalState {
+// OutofgasSeconds applies equality check predicate on the "outofgas_seconds" field. It's identical to OutofgasSecondsEQ.
+func OutofgasSeconds(v uint32) predicate.PowerRentalState {
 	return predicate.PowerRentalState(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldOutofgasSceonds), v))
+		s.Where(sql.EQ(s.C(FieldOutofgasSeconds), v))
 	})
 }
 
@@ -638,81 +638,81 @@ func CancelStateContainsFold(v string) predicate.PowerRentalState {
 	})
 }
 
-// EndAtEQ applies the EQ predicate on the "end_at" field.
-func EndAtEQ(v uint32) predicate.PowerRentalState {
+// DurationSecondsEQ applies the EQ predicate on the "duration_seconds" field.
+func DurationSecondsEQ(v uint32) predicate.PowerRentalState {
 	return predicate.PowerRentalState(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldEndAt), v))
+		s.Where(sql.EQ(s.C(FieldDurationSeconds), v))
 	})
 }
 
-// EndAtNEQ applies the NEQ predicate on the "end_at" field.
-func EndAtNEQ(v uint32) predicate.PowerRentalState {
+// DurationSecondsNEQ applies the NEQ predicate on the "duration_seconds" field.
+func DurationSecondsNEQ(v uint32) predicate.PowerRentalState {
 	return predicate.PowerRentalState(func(s *sql.Selector) {
-		s.Where(sql.NEQ(s.C(FieldEndAt), v))
+		s.Where(sql.NEQ(s.C(FieldDurationSeconds), v))
 	})
 }
 
-// EndAtIn applies the In predicate on the "end_at" field.
-func EndAtIn(vs ...uint32) predicate.PowerRentalState {
+// DurationSecondsIn applies the In predicate on the "duration_seconds" field.
+func DurationSecondsIn(vs ...uint32) predicate.PowerRentalState {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
 	}
 	return predicate.PowerRentalState(func(s *sql.Selector) {
-		s.Where(sql.In(s.C(FieldEndAt), v...))
+		s.Where(sql.In(s.C(FieldDurationSeconds), v...))
 	})
 }
 
-// EndAtNotIn applies the NotIn predicate on the "end_at" field.
-func EndAtNotIn(vs ...uint32) predicate.PowerRentalState {
+// DurationSecondsNotIn applies the NotIn predicate on the "duration_seconds" field.
+func DurationSecondsNotIn(vs ...uint32) predicate.PowerRentalState {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
 	}
 	return predicate.PowerRentalState(func(s *sql.Selector) {
-		s.Where(sql.NotIn(s.C(FieldEndAt), v...))
+		s.Where(sql.NotIn(s.C(FieldDurationSeconds), v...))
 	})
 }
 
-// EndAtGT applies the GT predicate on the "end_at" field.
-func EndAtGT(v uint32) predicate.PowerRentalState {
+// DurationSecondsGT applies the GT predicate on the "duration_seconds" field.
+func DurationSecondsGT(v uint32) predicate.PowerRentalState {
 	return predicate.PowerRentalState(func(s *sql.Selector) {
-		s.Where(sql.GT(s.C(FieldEndAt), v))
+		s.Where(sql.GT(s.C(FieldDurationSeconds), v))
 	})
 }
 
-// EndAtGTE applies the GTE predicate on the "end_at" field.
-func EndAtGTE(v uint32) predicate.PowerRentalState {
+// DurationSecondsGTE applies the GTE predicate on the "duration_seconds" field.
+func DurationSecondsGTE(v uint32) predicate.PowerRentalState {
 	return predicate.PowerRentalState(func(s *sql.Selector) {
-		s.Where(sql.GTE(s.C(FieldEndAt), v))
+		s.Where(sql.GTE(s.C(FieldDurationSeconds), v))
 	})
 }
 
-// EndAtLT applies the LT predicate on the "end_at" field.
-func EndAtLT(v uint32) predicate.PowerRentalState {
+// DurationSecondsLT applies the LT predicate on the "duration_seconds" field.
+func DurationSecondsLT(v uint32) predicate.PowerRentalState {
 	return predicate.PowerRentalState(func(s *sql.Selector) {
-		s.Where(sql.LT(s.C(FieldEndAt), v))
+		s.Where(sql.LT(s.C(FieldDurationSeconds), v))
 	})
 }
 
-// EndAtLTE applies the LTE predicate on the "end_at" field.
-func EndAtLTE(v uint32) predicate.PowerRentalState {
+// DurationSecondsLTE applies the LTE predicate on the "duration_seconds" field.
+func DurationSecondsLTE(v uint32) predicate.PowerRentalState {
 	return predicate.PowerRentalState(func(s *sql.Selector) {
-		s.Where(sql.LTE(s.C(FieldEndAt), v))
+		s.Where(sql.LTE(s.C(FieldDurationSeconds), v))
 	})
 }
 
-// EndAtIsNil applies the IsNil predicate on the "end_at" field.
-func EndAtIsNil() predicate.PowerRentalState {
+// DurationSecondsIsNil applies the IsNil predicate on the "duration_seconds" field.
+func DurationSecondsIsNil() predicate.PowerRentalState {
 	return predicate.PowerRentalState(func(s *sql.Selector) {
-		s.Where(sql.IsNull(s.C(FieldEndAt)))
+		s.Where(sql.IsNull(s.C(FieldDurationSeconds)))
 	})
 }
 
-// EndAtNotNil applies the NotNil predicate on the "end_at" field.
-func EndAtNotNil() predicate.PowerRentalState {
+// DurationSecondsNotNil applies the NotNil predicate on the "duration_seconds" field.
+func DurationSecondsNotNil() predicate.PowerRentalState {
 	return predicate.PowerRentalState(func(s *sql.Selector) {
-		s.Where(sql.NotNull(s.C(FieldEndAt)))
+		s.Where(sql.NotNull(s.C(FieldDurationSeconds)))
 	})
 }
 
@@ -991,81 +991,81 @@ func PaymentStateContainsFold(v string) predicate.PowerRentalState {
 	})
 }
 
-// OutofgasSceondsEQ applies the EQ predicate on the "outofgas_sceonds" field.
-func OutofgasSceondsEQ(v uint32) predicate.PowerRentalState {
+// OutofgasSecondsEQ applies the EQ predicate on the "outofgas_seconds" field.
+func OutofgasSecondsEQ(v uint32) predicate.PowerRentalState {
 	return predicate.PowerRentalState(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldOutofgasSceonds), v))
+		s.Where(sql.EQ(s.C(FieldOutofgasSeconds), v))
 	})
 }
 
-// OutofgasSceondsNEQ applies the NEQ predicate on the "outofgas_sceonds" field.
-func OutofgasSceondsNEQ(v uint32) predicate.PowerRentalState {
+// OutofgasSecondsNEQ applies the NEQ predicate on the "outofgas_seconds" field.
+func OutofgasSecondsNEQ(v uint32) predicate.PowerRentalState {
 	return predicate.PowerRentalState(func(s *sql.Selector) {
-		s.Where(sql.NEQ(s.C(FieldOutofgasSceonds), v))
+		s.Where(sql.NEQ(s.C(FieldOutofgasSeconds), v))
 	})
 }
 
-// OutofgasSceondsIn applies the In predicate on the "outofgas_sceonds" field.
-func OutofgasSceondsIn(vs ...uint32) predicate.PowerRentalState {
+// OutofgasSecondsIn applies the In predicate on the "outofgas_seconds" field.
+func OutofgasSecondsIn(vs ...uint32) predicate.PowerRentalState {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
 	}
 	return predicate.PowerRentalState(func(s *sql.Selector) {
-		s.Where(sql.In(s.C(FieldOutofgasSceonds), v...))
+		s.Where(sql.In(s.C(FieldOutofgasSeconds), v...))
 	})
 }
 
-// OutofgasSceondsNotIn applies the NotIn predicate on the "outofgas_sceonds" field.
-func OutofgasSceondsNotIn(vs ...uint32) predicate.PowerRentalState {
+// OutofgasSecondsNotIn applies the NotIn predicate on the "outofgas_seconds" field.
+func OutofgasSecondsNotIn(vs ...uint32) predicate.PowerRentalState {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
 	}
 	return predicate.PowerRentalState(func(s *sql.Selector) {
-		s.Where(sql.NotIn(s.C(FieldOutofgasSceonds), v...))
+		s.Where(sql.NotIn(s.C(FieldOutofgasSeconds), v...))
 	})
 }
 
-// OutofgasSceondsGT applies the GT predicate on the "outofgas_sceonds" field.
-func OutofgasSceondsGT(v uint32) predicate.PowerRentalState {
+// OutofgasSecondsGT applies the GT predicate on the "outofgas_seconds" field.
+func OutofgasSecondsGT(v uint32) predicate.PowerRentalState {
 	return predicate.PowerRentalState(func(s *sql.Selector) {
-		s.Where(sql.GT(s.C(FieldOutofgasSceonds), v))
+		s.Where(sql.GT(s.C(FieldOutofgasSeconds), v))
 	})
 }
 
-// OutofgasSceondsGTE applies the GTE predicate on the "outofgas_sceonds" field.
-func OutofgasSceondsGTE(v uint32) predicate.PowerRentalState {
+// OutofgasSecondsGTE applies the GTE predicate on the "outofgas_seconds" field.
+func OutofgasSecondsGTE(v uint32) predicate.PowerRentalState {
 	return predicate.PowerRentalState(func(s *sql.Selector) {
-		s.Where(sql.GTE(s.C(FieldOutofgasSceonds), v))
+		s.Where(sql.GTE(s.C(FieldOutofgasSeconds), v))
 	})
 }
 
-// OutofgasSceondsLT applies the LT predicate on the "outofgas_sceonds" field.
-func OutofgasSceondsLT(v uint32) predicate.PowerRentalState {
+// OutofgasSecondsLT applies the LT predicate on the "outofgas_seconds" field.
+func OutofgasSecondsLT(v uint32) predicate.PowerRentalState {
 	return predicate.PowerRentalState(func(s *sql.Selector) {
-		s.Where(sql.LT(s.C(FieldOutofgasSceonds), v))
+		s.Where(sql.LT(s.C(FieldOutofgasSeconds), v))
 	})
 }
 
-// OutofgasSceondsLTE applies the LTE predicate on the "outofgas_sceonds" field.
-func OutofgasSceondsLTE(v uint32) predicate.PowerRentalState {
+// OutofgasSecondsLTE applies the LTE predicate on the "outofgas_seconds" field.
+func OutofgasSecondsLTE(v uint32) predicate.PowerRentalState {
 	return predicate.PowerRentalState(func(s *sql.Selector) {
-		s.Where(sql.LTE(s.C(FieldOutofgasSceonds), v))
+		s.Where(sql.LTE(s.C(FieldOutofgasSeconds), v))
 	})
 }
 
-// OutofgasSceondsIsNil applies the IsNil predicate on the "outofgas_sceonds" field.
-func OutofgasSceondsIsNil() predicate.PowerRentalState {
+// OutofgasSecondsIsNil applies the IsNil predicate on the "outofgas_seconds" field.
+func OutofgasSecondsIsNil() predicate.PowerRentalState {
 	return predicate.PowerRentalState(func(s *sql.Selector) {
-		s.Where(sql.IsNull(s.C(FieldOutofgasSceonds)))
+		s.Where(sql.IsNull(s.C(FieldOutofgasSeconds)))
 	})
 }
 
-// OutofgasSceondsNotNil applies the NotNil predicate on the "outofgas_sceonds" field.
-func OutofgasSceondsNotNil() predicate.PowerRentalState {
+// OutofgasSecondsNotNil applies the NotNil predicate on the "outofgas_seconds" field.
+func OutofgasSecondsNotNil() predicate.PowerRentalState {
 	return predicate.PowerRentalState(func(s *sql.Selector) {
-		s.Where(sql.NotNull(s.C(FieldOutofgasSceonds)))
+		s.Where(sql.NotNull(s.C(FieldOutofgasSeconds)))
 	})
 }
 

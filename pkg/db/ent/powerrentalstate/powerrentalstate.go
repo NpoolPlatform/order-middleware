@@ -24,8 +24,8 @@ const (
 	FieldOrderID = "order_id"
 	// FieldCancelState holds the string denoting the cancel_state field in the database.
 	FieldCancelState = "cancel_state"
-	// FieldEndAt holds the string denoting the end_at field in the database.
-	FieldEndAt = "end_at"
+	// FieldDurationSeconds holds the string denoting the duration_seconds field in the database.
+	FieldDurationSeconds = "duration_seconds"
 	// FieldPaidAt holds the string denoting the paid_at field in the database.
 	FieldPaidAt = "paid_at"
 	// FieldUserSetPaid holds the string denoting the user_set_paid field in the database.
@@ -36,8 +36,8 @@ const (
 	FieldAdminSetCanceled = "admin_set_canceled"
 	// FieldPaymentState holds the string denoting the payment_state field in the database.
 	FieldPaymentState = "payment_state"
-	// FieldOutofgasSceonds holds the string denoting the outofgas_sceonds field in the database.
-	FieldOutofgasSceonds = "outofgas_sceonds"
+	// FieldOutofgasSeconds holds the string denoting the outofgas_seconds field in the database.
+	FieldOutofgasSeconds = "outofgas_seconds"
 	// FieldCompensateSeconds holds the string denoting the compensate_seconds field in the database.
 	FieldCompensateSeconds = "compensate_seconds"
 	// FieldRenewState holds the string denoting the renew_state field in the database.
@@ -57,13 +57,13 @@ var Columns = []string{
 	FieldEntID,
 	FieldOrderID,
 	FieldCancelState,
-	FieldEndAt,
+	FieldDurationSeconds,
 	FieldPaidAt,
 	FieldUserSetPaid,
 	FieldUserSetCanceled,
 	FieldAdminSetCanceled,
 	FieldPaymentState,
-	FieldOutofgasSceonds,
+	FieldOutofgasSeconds,
 	FieldCompensateSeconds,
 	FieldRenewState,
 	FieldRenewNotifyAt,
@@ -102,8 +102,8 @@ var (
 	DefaultOrderID func() uuid.UUID
 	// DefaultCancelState holds the default value on creation for the "cancel_state" field.
 	DefaultCancelState string
-	// DefaultEndAt holds the default value on creation for the "end_at" field.
-	DefaultEndAt uint32
+	// DefaultDurationSeconds holds the default value on creation for the "duration_seconds" field.
+	DefaultDurationSeconds uint32
 	// DefaultPaidAt holds the default value on creation for the "paid_at" field.
 	DefaultPaidAt uint32
 	// DefaultUserSetPaid holds the default value on creation for the "user_set_paid" field.
@@ -114,8 +114,8 @@ var (
 	DefaultAdminSetCanceled bool
 	// DefaultPaymentState holds the default value on creation for the "payment_state" field.
 	DefaultPaymentState string
-	// DefaultOutofgasSceonds holds the default value on creation for the "outofgas_sceonds" field.
-	DefaultOutofgasSceonds uint32
+	// DefaultOutofgasSeconds holds the default value on creation for the "outofgas_seconds" field.
+	DefaultOutofgasSeconds uint32
 	// DefaultCompensateSeconds holds the default value on creation for the "compensate_seconds" field.
 	DefaultCompensateSeconds uint32
 	// DefaultRenewState holds the default value on creation for the "renew_state" field.

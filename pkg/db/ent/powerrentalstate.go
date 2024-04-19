@@ -28,8 +28,8 @@ type PowerRentalState struct {
 	OrderID uuid.UUID `json:"order_id,omitempty"`
 	// CancelState holds the value of the "cancel_state" field.
 	CancelState string `json:"cancel_state,omitempty"`
-	// EndAt holds the value of the "end_at" field.
-	EndAt uint32 `json:"end_at,omitempty"`
+	// DurationSeconds holds the value of the "duration_seconds" field.
+	DurationSeconds uint32 `json:"duration_seconds,omitempty"`
 	// PaidAt holds the value of the "paid_at" field.
 	PaidAt uint32 `json:"paid_at,omitempty"`
 	// UserSetPaid holds the value of the "user_set_paid" field.
@@ -40,8 +40,8 @@ type PowerRentalState struct {
 	AdminSetCanceled bool `json:"admin_set_canceled,omitempty"`
 	// PaymentState holds the value of the "payment_state" field.
 	PaymentState string `json:"payment_state,omitempty"`
-	// OutofgasSceonds holds the value of the "outofgas_sceonds" field.
-	OutofgasSceonds uint32 `json:"outofgas_sceonds,omitempty"`
+	// OutofgasSeconds holds the value of the "outofgas_seconds" field.
+	OutofgasSeconds uint32 `json:"outofgas_seconds,omitempty"`
 	// CompensateSeconds holds the value of the "compensate_seconds" field.
 	CompensateSeconds uint32 `json:"compensate_seconds,omitempty"`
 	// RenewState holds the value of the "renew_state" field.
@@ -57,7 +57,7 @@ func (*PowerRentalState) scanValues(columns []string) ([]interface{}, error) {
 		switch columns[i] {
 		case powerrentalstate.FieldUserSetPaid, powerrentalstate.FieldUserSetCanceled, powerrentalstate.FieldAdminSetCanceled:
 			values[i] = new(sql.NullBool)
-		case powerrentalstate.FieldID, powerrentalstate.FieldCreatedAt, powerrentalstate.FieldUpdatedAt, powerrentalstate.FieldDeletedAt, powerrentalstate.FieldEndAt, powerrentalstate.FieldPaidAt, powerrentalstate.FieldOutofgasSceonds, powerrentalstate.FieldCompensateSeconds, powerrentalstate.FieldRenewNotifyAt:
+		case powerrentalstate.FieldID, powerrentalstate.FieldCreatedAt, powerrentalstate.FieldUpdatedAt, powerrentalstate.FieldDeletedAt, powerrentalstate.FieldDurationSeconds, powerrentalstate.FieldPaidAt, powerrentalstate.FieldOutofgasSeconds, powerrentalstate.FieldCompensateSeconds, powerrentalstate.FieldRenewNotifyAt:
 			values[i] = new(sql.NullInt64)
 		case powerrentalstate.FieldCancelState, powerrentalstate.FieldPaymentState, powerrentalstate.FieldRenewState:
 			values[i] = new(sql.NullString)
@@ -120,11 +120,11 @@ func (prs *PowerRentalState) assignValues(columns []string, values []interface{}
 			} else if value.Valid {
 				prs.CancelState = value.String
 			}
-		case powerrentalstate.FieldEndAt:
+		case powerrentalstate.FieldDurationSeconds:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for field end_at", values[i])
+				return fmt.Errorf("unexpected type %T for field duration_seconds", values[i])
 			} else if value.Valid {
-				prs.EndAt = uint32(value.Int64)
+				prs.DurationSeconds = uint32(value.Int64)
 			}
 		case powerrentalstate.FieldPaidAt:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
@@ -156,11 +156,11 @@ func (prs *PowerRentalState) assignValues(columns []string, values []interface{}
 			} else if value.Valid {
 				prs.PaymentState = value.String
 			}
-		case powerrentalstate.FieldOutofgasSceonds:
+		case powerrentalstate.FieldOutofgasSeconds:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for field outofgas_sceonds", values[i])
+				return fmt.Errorf("unexpected type %T for field outofgas_seconds", values[i])
 			} else if value.Valid {
-				prs.OutofgasSceonds = uint32(value.Int64)
+				prs.OutofgasSeconds = uint32(value.Int64)
 			}
 		case powerrentalstate.FieldCompensateSeconds:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
@@ -226,8 +226,8 @@ func (prs *PowerRentalState) String() string {
 	builder.WriteString("cancel_state=")
 	builder.WriteString(prs.CancelState)
 	builder.WriteString(", ")
-	builder.WriteString("end_at=")
-	builder.WriteString(fmt.Sprintf("%v", prs.EndAt))
+	builder.WriteString("duration_seconds=")
+	builder.WriteString(fmt.Sprintf("%v", prs.DurationSeconds))
 	builder.WriteString(", ")
 	builder.WriteString("paid_at=")
 	builder.WriteString(fmt.Sprintf("%v", prs.PaidAt))
@@ -244,8 +244,8 @@ func (prs *PowerRentalState) String() string {
 	builder.WriteString("payment_state=")
 	builder.WriteString(prs.PaymentState)
 	builder.WriteString(", ")
-	builder.WriteString("outofgas_sceonds=")
-	builder.WriteString(fmt.Sprintf("%v", prs.OutofgasSceonds))
+	builder.WriteString("outofgas_seconds=")
+	builder.WriteString(fmt.Sprintf("%v", prs.OutofgasSeconds))
 	builder.WriteString(", ")
 	builder.WriteString("compensate_seconds=")
 	builder.WriteString(fmt.Sprintf("%v", prs.CompensateSeconds))

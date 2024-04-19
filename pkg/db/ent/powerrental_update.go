@@ -239,33 +239,6 @@ func (pru *PowerRentalUpdate) ClearPromotionID() *PowerRentalUpdate {
 	return pru
 }
 
-// SetDurationSeconds sets the "duration_seconds" field.
-func (pru *PowerRentalUpdate) SetDurationSeconds(u uint32) *PowerRentalUpdate {
-	pru.mutation.ResetDurationSeconds()
-	pru.mutation.SetDurationSeconds(u)
-	return pru
-}
-
-// SetNillableDurationSeconds sets the "duration_seconds" field if the given value is not nil.
-func (pru *PowerRentalUpdate) SetNillableDurationSeconds(u *uint32) *PowerRentalUpdate {
-	if u != nil {
-		pru.SetDurationSeconds(*u)
-	}
-	return pru
-}
-
-// AddDurationSeconds adds u to the "duration_seconds" field.
-func (pru *PowerRentalUpdate) AddDurationSeconds(u int32) *PowerRentalUpdate {
-	pru.mutation.AddDurationSeconds(u)
-	return pru
-}
-
-// ClearDurationSeconds clears the value of the "duration_seconds" field.
-func (pru *PowerRentalUpdate) ClearDurationSeconds() *PowerRentalUpdate {
-	pru.mutation.ClearDurationSeconds()
-	return pru
-}
-
 // SetInvestmentType sets the "investment_type" field.
 func (pru *PowerRentalUpdate) SetInvestmentType(s string) *PowerRentalUpdate {
 	pru.mutation.SetInvestmentType(s)
@@ -524,26 +497,6 @@ func (pru *PowerRentalUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: powerrental.FieldPromotionID,
 		})
 	}
-	if value, ok := pru.mutation.DurationSeconds(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeUint32,
-			Value:  value,
-			Column: powerrental.FieldDurationSeconds,
-		})
-	}
-	if value, ok := pru.mutation.AddedDurationSeconds(); ok {
-		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
-			Type:   field.TypeUint32,
-			Value:  value,
-			Column: powerrental.FieldDurationSeconds,
-		})
-	}
-	if pru.mutation.DurationSecondsCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeUint32,
-			Column: powerrental.FieldDurationSeconds,
-		})
-	}
 	if value, ok := pru.mutation.InvestmentType(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
@@ -784,33 +737,6 @@ func (pruo *PowerRentalUpdateOne) SetNillablePromotionID(u *uuid.UUID) *PowerRen
 // ClearPromotionID clears the value of the "promotion_id" field.
 func (pruo *PowerRentalUpdateOne) ClearPromotionID() *PowerRentalUpdateOne {
 	pruo.mutation.ClearPromotionID()
-	return pruo
-}
-
-// SetDurationSeconds sets the "duration_seconds" field.
-func (pruo *PowerRentalUpdateOne) SetDurationSeconds(u uint32) *PowerRentalUpdateOne {
-	pruo.mutation.ResetDurationSeconds()
-	pruo.mutation.SetDurationSeconds(u)
-	return pruo
-}
-
-// SetNillableDurationSeconds sets the "duration_seconds" field if the given value is not nil.
-func (pruo *PowerRentalUpdateOne) SetNillableDurationSeconds(u *uint32) *PowerRentalUpdateOne {
-	if u != nil {
-		pruo.SetDurationSeconds(*u)
-	}
-	return pruo
-}
-
-// AddDurationSeconds adds u to the "duration_seconds" field.
-func (pruo *PowerRentalUpdateOne) AddDurationSeconds(u int32) *PowerRentalUpdateOne {
-	pruo.mutation.AddDurationSeconds(u)
-	return pruo
-}
-
-// ClearDurationSeconds clears the value of the "duration_seconds" field.
-func (pruo *PowerRentalUpdateOne) ClearDurationSeconds() *PowerRentalUpdateOne {
-	pruo.mutation.ClearDurationSeconds()
 	return pruo
 }
 
@@ -1100,26 +1026,6 @@ func (pruo *PowerRentalUpdateOne) sqlSave(ctx context.Context) (_node *PowerRent
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeUUID,
 			Column: powerrental.FieldPromotionID,
-		})
-	}
-	if value, ok := pruo.mutation.DurationSeconds(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeUint32,
-			Value:  value,
-			Column: powerrental.FieldDurationSeconds,
-		})
-	}
-	if value, ok := pruo.mutation.AddedDurationSeconds(); ok {
-		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
-			Type:   field.TypeUint32,
-			Value:  value,
-			Column: powerrental.FieldDurationSeconds,
-		})
-	}
-	if pruo.mutation.DurationSecondsCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeUint32,
-			Column: powerrental.FieldDurationSeconds,
 		})
 	}
 	if value, ok := pruo.mutation.InvestmentType(); ok {

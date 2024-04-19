@@ -177,20 +177,6 @@ func (prc *PowerRentalCreate) SetNillablePromotionID(u *uuid.UUID) *PowerRentalC
 	return prc
 }
 
-// SetDurationSeconds sets the "duration_seconds" field.
-func (prc *PowerRentalCreate) SetDurationSeconds(u uint32) *PowerRentalCreate {
-	prc.mutation.SetDurationSeconds(u)
-	return prc
-}
-
-// SetNillableDurationSeconds sets the "duration_seconds" field if the given value is not nil.
-func (prc *PowerRentalCreate) SetNillableDurationSeconds(u *uint32) *PowerRentalCreate {
-	if u != nil {
-		prc.SetDurationSeconds(*u)
-	}
-	return prc
-}
-
 // SetInvestmentType sets the "investment_type" field.
 func (prc *PowerRentalCreate) SetInvestmentType(s string) *PowerRentalCreate {
 	prc.mutation.SetInvestmentType(s)
@@ -355,10 +341,6 @@ func (prc *PowerRentalCreate) defaults() error {
 		v := powerrental.DefaultPromotionID()
 		prc.mutation.SetPromotionID(v)
 	}
-	if _, ok := prc.mutation.DurationSeconds(); !ok {
-		v := powerrental.DefaultDurationSeconds
-		prc.mutation.SetDurationSeconds(v)
-	}
 	if _, ok := prc.mutation.InvestmentType(); !ok {
 		v := powerrental.DefaultInvestmentType
 		prc.mutation.SetInvestmentType(v)
@@ -501,14 +483,6 @@ func (prc *PowerRentalCreate) createSpec() (*PowerRental, *sqlgraph.CreateSpec) 
 			Column: powerrental.FieldPromotionID,
 		})
 		_node.PromotionID = value
-	}
-	if value, ok := prc.mutation.DurationSeconds(); ok {
-		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
-			Type:   field.TypeUint32,
-			Value:  value,
-			Column: powerrental.FieldDurationSeconds,
-		})
-		_node.DurationSeconds = value
 	}
 	if value, ok := prc.mutation.InvestmentType(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -761,30 +735,6 @@ func (u *PowerRentalUpsert) UpdatePromotionID() *PowerRentalUpsert {
 // ClearPromotionID clears the value of the "promotion_id" field.
 func (u *PowerRentalUpsert) ClearPromotionID() *PowerRentalUpsert {
 	u.SetNull(powerrental.FieldPromotionID)
-	return u
-}
-
-// SetDurationSeconds sets the "duration_seconds" field.
-func (u *PowerRentalUpsert) SetDurationSeconds(v uint32) *PowerRentalUpsert {
-	u.Set(powerrental.FieldDurationSeconds, v)
-	return u
-}
-
-// UpdateDurationSeconds sets the "duration_seconds" field to the value that was provided on create.
-func (u *PowerRentalUpsert) UpdateDurationSeconds() *PowerRentalUpsert {
-	u.SetExcluded(powerrental.FieldDurationSeconds)
-	return u
-}
-
-// AddDurationSeconds adds v to the "duration_seconds" field.
-func (u *PowerRentalUpsert) AddDurationSeconds(v uint32) *PowerRentalUpsert {
-	u.Add(powerrental.FieldDurationSeconds, v)
-	return u
-}
-
-// ClearDurationSeconds clears the value of the "duration_seconds" field.
-func (u *PowerRentalUpsert) ClearDurationSeconds() *PowerRentalUpsert {
-	u.SetNull(powerrental.FieldDurationSeconds)
 	return u
 }
 
@@ -1077,34 +1027,6 @@ func (u *PowerRentalUpsertOne) UpdatePromotionID() *PowerRentalUpsertOne {
 func (u *PowerRentalUpsertOne) ClearPromotionID() *PowerRentalUpsertOne {
 	return u.Update(func(s *PowerRentalUpsert) {
 		s.ClearPromotionID()
-	})
-}
-
-// SetDurationSeconds sets the "duration_seconds" field.
-func (u *PowerRentalUpsertOne) SetDurationSeconds(v uint32) *PowerRentalUpsertOne {
-	return u.Update(func(s *PowerRentalUpsert) {
-		s.SetDurationSeconds(v)
-	})
-}
-
-// AddDurationSeconds adds v to the "duration_seconds" field.
-func (u *PowerRentalUpsertOne) AddDurationSeconds(v uint32) *PowerRentalUpsertOne {
-	return u.Update(func(s *PowerRentalUpsert) {
-		s.AddDurationSeconds(v)
-	})
-}
-
-// UpdateDurationSeconds sets the "duration_seconds" field to the value that was provided on create.
-func (u *PowerRentalUpsertOne) UpdateDurationSeconds() *PowerRentalUpsertOne {
-	return u.Update(func(s *PowerRentalUpsert) {
-		s.UpdateDurationSeconds()
-	})
-}
-
-// ClearDurationSeconds clears the value of the "duration_seconds" field.
-func (u *PowerRentalUpsertOne) ClearDurationSeconds() *PowerRentalUpsertOne {
-	return u.Update(func(s *PowerRentalUpsert) {
-		s.ClearDurationSeconds()
 	})
 }
 
@@ -1565,34 +1487,6 @@ func (u *PowerRentalUpsertBulk) UpdatePromotionID() *PowerRentalUpsertBulk {
 func (u *PowerRentalUpsertBulk) ClearPromotionID() *PowerRentalUpsertBulk {
 	return u.Update(func(s *PowerRentalUpsert) {
 		s.ClearPromotionID()
-	})
-}
-
-// SetDurationSeconds sets the "duration_seconds" field.
-func (u *PowerRentalUpsertBulk) SetDurationSeconds(v uint32) *PowerRentalUpsertBulk {
-	return u.Update(func(s *PowerRentalUpsert) {
-		s.SetDurationSeconds(v)
-	})
-}
-
-// AddDurationSeconds adds v to the "duration_seconds" field.
-func (u *PowerRentalUpsertBulk) AddDurationSeconds(v uint32) *PowerRentalUpsertBulk {
-	return u.Update(func(s *PowerRentalUpsert) {
-		s.AddDurationSeconds(v)
-	})
-}
-
-// UpdateDurationSeconds sets the "duration_seconds" field to the value that was provided on create.
-func (u *PowerRentalUpsertBulk) UpdateDurationSeconds() *PowerRentalUpsertBulk {
-	return u.Update(func(s *PowerRentalUpsert) {
-		s.UpdateDurationSeconds()
-	})
-}
-
-// ClearDurationSeconds clears the value of the "duration_seconds" field.
-func (u *PowerRentalUpsertBulk) ClearDurationSeconds() *PowerRentalUpsertBulk {
-	return u.Update(func(s *PowerRentalUpsert) {
-		s.ClearDurationSeconds()
 	})
 }
 

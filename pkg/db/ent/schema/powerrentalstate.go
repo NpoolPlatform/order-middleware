@@ -35,9 +35,8 @@ func (PowerRentalState) Fields() []ent.Field {
 			String("cancel_state").
 			Optional().
 			Default(types.OrderState_DefaultOrderState.String()),
-		// Will be changed when compensate happen
 		field.
-			Uint32("end_at").
+			Uint32("duration_seconds").
 			Optional().
 			Default(0),
 		field.
@@ -61,7 +60,7 @@ func (PowerRentalState) Fields() []ent.Field {
 			Optional().
 			Default(types.PaymentState_PaymentStateWait.String()),
 		field.
-			Uint32("outofgas_sceonds").
+			Uint32("outofgas_seconds").
 			Optional().
 			Default(0),
 		field.

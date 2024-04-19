@@ -76,10 +76,6 @@ func (PowerRental) Fields() []ent.Field {
 				return uuid.UUID{}
 			}),
 		field.
-			Uint32("duration_seconds").
-			Optional().
-			Default(0),
-		field.
 			String("investment_type").
 			Optional().
 			Default(types.InvestmentType_FullPayment.String()),
