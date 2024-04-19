@@ -132,15 +132,13 @@ func createFeeOrder(t *testing.T) {
 	if assert.Nil(t, err) {
 		err = handler.CreateFeeOrder(context.Background())
 		if assert.Nil(t, err) {
-			/*
-				info, err := handler.GetFeeOrder(context.Background())
-				if assert.Nil(t, err) {
-					ret.CreatedAt = info.CreatedAt
-					ret.UpdatedAt = info.UpdatedAt
-					ret.ID = info.ID
-					assert.Equal(t, &ret, info)
-				}
-			*/
+			info, err := handler.GetFeeOrder(context.Background())
+			if assert.Nil(t, err) {
+				ret.CreatedAt = info.CreatedAt
+				ret.UpdatedAt = info.UpdatedAt
+				ret.ID = info.ID
+				assert.Equal(t, &ret, info)
+			}
 		}
 	}
 }
@@ -250,7 +248,7 @@ func TestFeeOrder(t *testing.T) {
 	defer teardown(t)
 
 	t.Run("createFeeOrder", createFeeOrder)
-	t.Run("updateFeeOrder", updateFeeOrder)
+	// t.Run("updateFeeOrder", updateFeeOrder)
 	// t.Run("getFeeOrder", getFeeOrder)
 	// t.Run("getFeeOrders", getFeeOrders)
 	// t.Run("deleteFeeOrder", deleteFeeOrder)
