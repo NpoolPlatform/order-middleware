@@ -114,10 +114,10 @@ func OrderID(v uuid.UUID) predicate.PaymentBase {
 	})
 }
 
-// Obseleted applies equality check predicate on the "obseleted" field. It's identical to ObseletedEQ.
-func Obseleted(v bool) predicate.PaymentBase {
+// ObseleteState applies equality check predicate on the "obselete_state" field. It's identical to ObseleteStateEQ.
+func ObseleteState(v string) predicate.PaymentBase {
 	return predicate.PaymentBase(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldObseleted), v))
+		s.Where(sql.EQ(s.C(FieldObseleteState), v))
 	})
 }
 
@@ -455,31 +455,116 @@ func OrderIDNotNil() predicate.PaymentBase {
 	})
 }
 
-// ObseletedEQ applies the EQ predicate on the "obseleted" field.
-func ObseletedEQ(v bool) predicate.PaymentBase {
+// ObseleteStateEQ applies the EQ predicate on the "obselete_state" field.
+func ObseleteStateEQ(v string) predicate.PaymentBase {
 	return predicate.PaymentBase(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldObseleted), v))
+		s.Where(sql.EQ(s.C(FieldObseleteState), v))
 	})
 }
 
-// ObseletedNEQ applies the NEQ predicate on the "obseleted" field.
-func ObseletedNEQ(v bool) predicate.PaymentBase {
+// ObseleteStateNEQ applies the NEQ predicate on the "obselete_state" field.
+func ObseleteStateNEQ(v string) predicate.PaymentBase {
 	return predicate.PaymentBase(func(s *sql.Selector) {
-		s.Where(sql.NEQ(s.C(FieldObseleted), v))
+		s.Where(sql.NEQ(s.C(FieldObseleteState), v))
 	})
 }
 
-// ObseletedIsNil applies the IsNil predicate on the "obseleted" field.
-func ObseletedIsNil() predicate.PaymentBase {
+// ObseleteStateIn applies the In predicate on the "obselete_state" field.
+func ObseleteStateIn(vs ...string) predicate.PaymentBase {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
 	return predicate.PaymentBase(func(s *sql.Selector) {
-		s.Where(sql.IsNull(s.C(FieldObseleted)))
+		s.Where(sql.In(s.C(FieldObseleteState), v...))
 	})
 }
 
-// ObseletedNotNil applies the NotNil predicate on the "obseleted" field.
-func ObseletedNotNil() predicate.PaymentBase {
+// ObseleteStateNotIn applies the NotIn predicate on the "obselete_state" field.
+func ObseleteStateNotIn(vs ...string) predicate.PaymentBase {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
 	return predicate.PaymentBase(func(s *sql.Selector) {
-		s.Where(sql.NotNull(s.C(FieldObseleted)))
+		s.Where(sql.NotIn(s.C(FieldObseleteState), v...))
+	})
+}
+
+// ObseleteStateGT applies the GT predicate on the "obselete_state" field.
+func ObseleteStateGT(v string) predicate.PaymentBase {
+	return predicate.PaymentBase(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldObseleteState), v))
+	})
+}
+
+// ObseleteStateGTE applies the GTE predicate on the "obselete_state" field.
+func ObseleteStateGTE(v string) predicate.PaymentBase {
+	return predicate.PaymentBase(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldObseleteState), v))
+	})
+}
+
+// ObseleteStateLT applies the LT predicate on the "obselete_state" field.
+func ObseleteStateLT(v string) predicate.PaymentBase {
+	return predicate.PaymentBase(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldObseleteState), v))
+	})
+}
+
+// ObseleteStateLTE applies the LTE predicate on the "obselete_state" field.
+func ObseleteStateLTE(v string) predicate.PaymentBase {
+	return predicate.PaymentBase(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldObseleteState), v))
+	})
+}
+
+// ObseleteStateContains applies the Contains predicate on the "obselete_state" field.
+func ObseleteStateContains(v string) predicate.PaymentBase {
+	return predicate.PaymentBase(func(s *sql.Selector) {
+		s.Where(sql.Contains(s.C(FieldObseleteState), v))
+	})
+}
+
+// ObseleteStateHasPrefix applies the HasPrefix predicate on the "obselete_state" field.
+func ObseleteStateHasPrefix(v string) predicate.PaymentBase {
+	return predicate.PaymentBase(func(s *sql.Selector) {
+		s.Where(sql.HasPrefix(s.C(FieldObseleteState), v))
+	})
+}
+
+// ObseleteStateHasSuffix applies the HasSuffix predicate on the "obselete_state" field.
+func ObseleteStateHasSuffix(v string) predicate.PaymentBase {
+	return predicate.PaymentBase(func(s *sql.Selector) {
+		s.Where(sql.HasSuffix(s.C(FieldObseleteState), v))
+	})
+}
+
+// ObseleteStateIsNil applies the IsNil predicate on the "obselete_state" field.
+func ObseleteStateIsNil() predicate.PaymentBase {
+	return predicate.PaymentBase(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldObseleteState)))
+	})
+}
+
+// ObseleteStateNotNil applies the NotNil predicate on the "obselete_state" field.
+func ObseleteStateNotNil() predicate.PaymentBase {
+	return predicate.PaymentBase(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldObseleteState)))
+	})
+}
+
+// ObseleteStateEqualFold applies the EqualFold predicate on the "obselete_state" field.
+func ObseleteStateEqualFold(v string) predicate.PaymentBase {
+	return predicate.PaymentBase(func(s *sql.Selector) {
+		s.Where(sql.EqualFold(s.C(FieldObseleteState), v))
+	})
+}
+
+// ObseleteStateContainsFold applies the ContainsFold predicate on the "obselete_state" field.
+func ObseleteStateContainsFold(v string) predicate.PaymentBase {
+	return predicate.PaymentBase(func(s *sql.Selector) {
+		s.Where(sql.ContainsFold(s.C(FieldObseleteState), v))
 	})
 }
 

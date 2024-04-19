@@ -19,7 +19,7 @@ import (
 
 type feeOrderQueryHandler struct {
 	*Handler
-	feeOrder
+	_ent feeOrder
 }
 
 func (h *feeOrderQueryHandler) getFeeOrderEnt(ctx context.Context, cli *ent.Client, must bool) (err error) {
@@ -33,7 +33,7 @@ func (h *feeOrderQueryHandler) getFeeOrderEnt(ctx context.Context, cli *ent.Clie
 	if h.OrderID != nil {
 		stm.Where(entfeeorder.OrderID(*h.OrderID))
 	}
-	if h.entFeeOrder, err = stm.Only(ctx); err != nil {
+	if h._ent.entFeeOrder, err = stm.Only(ctx); err != nil {
 		if ent.IsNotFound(err) && !must {
 			return nil
 		}
@@ -43,11 +43,11 @@ func (h *feeOrderQueryHandler) getFeeOrderEnt(ctx context.Context, cli *ent.Clie
 }
 
 func (h *feeOrderQueryHandler) getFeeOrderState(ctx context.Context, cli *ent.Client) (err error) {
-	h.entFeeOrderState, err = cli.
+	h._ent.entFeeOrderState, err = cli.
 		FeeOrderState.
 		Query().
 		Where(
-			entfeeorderstate.OrderID(h.entFeeOrder.OrderID),
+			entfeeorderstate.OrderID(h._ent.entFeeOrder.OrderID),
 			entfeeorderstate.DeletedAt(0),
 		).
 		Only(ctx)
@@ -55,11 +55,11 @@ func (h *feeOrderQueryHandler) getFeeOrderState(ctx context.Context, cli *ent.Cl
 }
 
 func (h *feeOrderQueryHandler) getOrderBase(ctx context.Context, cli *ent.Client) (err error) {
-	h.entOrderBase, err = cli.
+	h._ent.entOrderBase, err = cli.
 		OrderBase.
 		Query().
 		Where(
-			entorderbase.EntID(h.entFeeOrder.OrderID),
+			entorderbase.EntID(h._ent.entFeeOrder.OrderID),
 			entorderbase.DeletedAt(0),
 		).
 		Only(ctx)
@@ -67,11 +67,11 @@ func (h *feeOrderQueryHandler) getOrderBase(ctx context.Context, cli *ent.Client
 }
 
 func (h *feeOrderQueryHandler) getOrderStateBase(ctx context.Context, cli *ent.Client) (err error) {
-	h.entOrderStateBase, err = cli.
+	h._ent.entOrderStateBase, err = cli.
 		OrderStateBase.
 		Query().
 		Where(
-			entorderstatebase.OrderID(h.entFeeOrder.OrderID),
+			entorderstatebase.OrderID(h._ent.entFeeOrder.OrderID),
 			entorderstatebase.DeletedAt(0),
 		).
 		Only(ctx)
@@ -79,11 +79,11 @@ func (h *feeOrderQueryHandler) getOrderStateBase(ctx context.Context, cli *ent.C
 }
 
 func (h *feeOrderQueryHandler) getPaymentBase(ctx context.Context, cli *ent.Client) (err error) {
-	h.entPaymentBase, err = cli.
+	h._ent.entPaymentBase, err = cli.
 		PaymentBase.
 		Query().
 		Where(
-			entpaymentbase.OrderID(h.entFeeOrder.OrderID),
+			entpaymentbase.OrderID(h._ent.entFeeOrder.OrderID),
 			entpaymentbase.DeletedAt(0),
 		).
 		Only(ctx)
@@ -91,11 +91,11 @@ func (h *feeOrderQueryHandler) getPaymentBase(ctx context.Context, cli *ent.Clie
 }
 
 func (h *feeOrderQueryHandler) getLedgerLock(ctx context.Context, cli *ent.Client) (err error) {
-	h.entLedgerLock, err = cli.
+	h._ent.entLedgerLock, err = cli.
 		OrderLock.
 		Query().
 		Where(
-			entorderlock.OrderID(h.entFeeOrder.OrderID),
+			entorderlock.OrderID(h._ent.entFeeOrder.OrderID),
 			entorderlock.DeletedAt(0),
 		).
 		Only(ctx)
@@ -103,11 +103,11 @@ func (h *feeOrderQueryHandler) getLedgerLock(ctx context.Context, cli *ent.Clien
 }
 
 func (h *feeOrderQueryHandler) getPaymentBalances(ctx context.Context, cli *ent.Client) (err error) {
-	h.entPaymentBalances, err = cli.
+	h._ent.entPaymentBalances, err = cli.
 		PaymentBalance.
 		Query().
 		Where(
-			entpaymentbalance.PaymentID(h.entPaymentBase.EntID),
+			entpaymentbalance.PaymentID(h._ent.entPaymentBase.EntID),
 			entpaymentbalance.DeletedAt(0),
 		).
 		All(ctx)
@@ -115,11 +115,11 @@ func (h *feeOrderQueryHandler) getPaymentBalances(ctx context.Context, cli *ent.
 }
 
 func (h *feeOrderQueryHandler) getPaymentTransfers(ctx context.Context, cli *ent.Client) (err error) {
-	h.entPaymentTransfers, err = cli.
+	h._ent.entPaymentTransfers, err = cli.
 		PaymentTransfer.
 		Query().
 		Where(
-			entpaymenttransfer.PaymentID(h.entPaymentBase.EntID),
+			entpaymenttransfer.PaymentID(h._ent.entPaymentBase.EntID),
 			entpaymenttransfer.DeletedAt(0),
 		).
 		All(ctx)
@@ -127,11 +127,11 @@ func (h *feeOrderQueryHandler) getPaymentTransfers(ctx context.Context, cli *ent
 }
 
 func (h *feeOrderQueryHandler) getOrderCoupons(ctx context.Context, cli *ent.Client) (err error) {
-	h.entOrderCoupons, err = cli.
+	h._ent.entOrderCoupons, err = cli.
 		OrderCoupon.
 		Query().
 		Where(
-			entordercoupon.OrderID(h.entFeeOrder.OrderID),
+			entordercoupon.OrderID(h._ent.entFeeOrder.OrderID),
 			entordercoupon.DeletedAt(0),
 		).
 		All(ctx)
@@ -146,7 +146,7 @@ func (h *feeOrderQueryHandler) _getFeeOrder(ctx context.Context, must bool) erro
 		if err := h.getFeeOrderEnt(_ctx, cli, must); err != nil {
 			return err
 		}
-		if h.entFeeOrder == nil {
+		if h._ent.entFeeOrder == nil {
 			return nil
 		}
 		if err := h.getFeeOrderState(_ctx, cli); err != nil {

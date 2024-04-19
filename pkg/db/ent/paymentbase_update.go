@@ -118,23 +118,23 @@ func (pbu *PaymentBaseUpdate) ClearOrderID() *PaymentBaseUpdate {
 	return pbu
 }
 
-// SetObseleted sets the "obseleted" field.
-func (pbu *PaymentBaseUpdate) SetObseleted(b bool) *PaymentBaseUpdate {
-	pbu.mutation.SetObseleted(b)
+// SetObseleteState sets the "obselete_state" field.
+func (pbu *PaymentBaseUpdate) SetObseleteState(s string) *PaymentBaseUpdate {
+	pbu.mutation.SetObseleteState(s)
 	return pbu
 }
 
-// SetNillableObseleted sets the "obseleted" field if the given value is not nil.
-func (pbu *PaymentBaseUpdate) SetNillableObseleted(b *bool) *PaymentBaseUpdate {
-	if b != nil {
-		pbu.SetObseleted(*b)
+// SetNillableObseleteState sets the "obselete_state" field if the given value is not nil.
+func (pbu *PaymentBaseUpdate) SetNillableObseleteState(s *string) *PaymentBaseUpdate {
+	if s != nil {
+		pbu.SetObseleteState(*s)
 	}
 	return pbu
 }
 
-// ClearObseleted clears the value of the "obseleted" field.
-func (pbu *PaymentBaseUpdate) ClearObseleted() *PaymentBaseUpdate {
-	pbu.mutation.ClearObseleted()
+// ClearObseleteState clears the value of the "obselete_state" field.
+func (pbu *PaymentBaseUpdate) ClearObseleteState() *PaymentBaseUpdate {
+	pbu.mutation.ClearObseleteState()
 	return pbu
 }
 
@@ -298,17 +298,17 @@ func (pbu *PaymentBaseUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: paymentbase.FieldOrderID,
 		})
 	}
-	if value, ok := pbu.mutation.Obseleted(); ok {
+	if value, ok := pbu.mutation.ObseleteState(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeBool,
+			Type:   field.TypeString,
 			Value:  value,
-			Column: paymentbase.FieldObseleted,
+			Column: paymentbase.FieldObseleteState,
 		})
 	}
-	if pbu.mutation.ObseletedCleared() {
+	if pbu.mutation.ObseleteStateCleared() {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeBool,
-			Column: paymentbase.FieldObseleted,
+			Type:   field.TypeString,
+			Column: paymentbase.FieldObseleteState,
 		})
 	}
 	_spec.Modifiers = pbu.modifiers
@@ -421,23 +421,23 @@ func (pbuo *PaymentBaseUpdateOne) ClearOrderID() *PaymentBaseUpdateOne {
 	return pbuo
 }
 
-// SetObseleted sets the "obseleted" field.
-func (pbuo *PaymentBaseUpdateOne) SetObseleted(b bool) *PaymentBaseUpdateOne {
-	pbuo.mutation.SetObseleted(b)
+// SetObseleteState sets the "obselete_state" field.
+func (pbuo *PaymentBaseUpdateOne) SetObseleteState(s string) *PaymentBaseUpdateOne {
+	pbuo.mutation.SetObseleteState(s)
 	return pbuo
 }
 
-// SetNillableObseleted sets the "obseleted" field if the given value is not nil.
-func (pbuo *PaymentBaseUpdateOne) SetNillableObseleted(b *bool) *PaymentBaseUpdateOne {
-	if b != nil {
-		pbuo.SetObseleted(*b)
+// SetNillableObseleteState sets the "obselete_state" field if the given value is not nil.
+func (pbuo *PaymentBaseUpdateOne) SetNillableObseleteState(s *string) *PaymentBaseUpdateOne {
+	if s != nil {
+		pbuo.SetObseleteState(*s)
 	}
 	return pbuo
 }
 
-// ClearObseleted clears the value of the "obseleted" field.
-func (pbuo *PaymentBaseUpdateOne) ClearObseleted() *PaymentBaseUpdateOne {
-	pbuo.mutation.ClearObseleted()
+// ClearObseleteState clears the value of the "obselete_state" field.
+func (pbuo *PaymentBaseUpdateOne) ClearObseleteState() *PaymentBaseUpdateOne {
+	pbuo.mutation.ClearObseleteState()
 	return pbuo
 }
 
@@ -631,17 +631,17 @@ func (pbuo *PaymentBaseUpdateOne) sqlSave(ctx context.Context) (_node *PaymentBa
 			Column: paymentbase.FieldOrderID,
 		})
 	}
-	if value, ok := pbuo.mutation.Obseleted(); ok {
+	if value, ok := pbuo.mutation.ObseleteState(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeBool,
+			Type:   field.TypeString,
 			Value:  value,
-			Column: paymentbase.FieldObseleted,
+			Column: paymentbase.FieldObseleteState,
 		})
 	}
-	if pbuo.mutation.ObseletedCleared() {
+	if pbuo.mutation.ObseleteStateCleared() {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeBool,
-			Column: paymentbase.FieldObseleted,
+			Type:   field.TypeString,
+			Column: paymentbase.FieldObseleteState,
 		})
 	}
 	_spec.Modifiers = pbuo.modifiers

@@ -456,7 +456,7 @@ var (
 		{Name: "deleted_at", Type: field.TypeUint32},
 		{Name: "ent_id", Type: field.TypeUUID, Unique: true},
 		{Name: "order_id", Type: field.TypeUUID, Nullable: true},
-		{Name: "obseleted", Type: field.TypeBool, Nullable: true, Default: false},
+		{Name: "obselete_state", Type: field.TypeString, Nullable: true, Default: "PaymentObseleteNone"},
 	}
 	// PaymentBasesTable holds the schema information for the "payment_bases" table.
 	PaymentBasesTable = &schema.Table{

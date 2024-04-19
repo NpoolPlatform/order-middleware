@@ -15803,22 +15803,22 @@ func (m *PaymentBalanceMutation) ResetEdge(name string) error {
 // PaymentBaseMutation represents an operation that mutates the PaymentBase nodes in the graph.
 type PaymentBaseMutation struct {
 	config
-	op            Op
-	typ           string
-	id            *uint32
-	created_at    *uint32
-	addcreated_at *int32
-	updated_at    *uint32
-	addupdated_at *int32
-	deleted_at    *uint32
-	adddeleted_at *int32
-	ent_id        *uuid.UUID
-	order_id      *uuid.UUID
-	obseleted     *bool
-	clearedFields map[string]struct{}
-	done          bool
-	oldValue      func(context.Context) (*PaymentBase, error)
-	predicates    []predicate.PaymentBase
+	op             Op
+	typ            string
+	id             *uint32
+	created_at     *uint32
+	addcreated_at  *int32
+	updated_at     *uint32
+	addupdated_at  *int32
+	deleted_at     *uint32
+	adddeleted_at  *int32
+	ent_id         *uuid.UUID
+	order_id       *uuid.UUID
+	obselete_state *string
+	clearedFields  map[string]struct{}
+	done           bool
+	oldValue       func(context.Context) (*PaymentBase, error)
+	predicates     []predicate.PaymentBase
 }
 
 var _ ent.Mutation = (*PaymentBaseMutation)(nil)
@@ -16178,53 +16178,53 @@ func (m *PaymentBaseMutation) ResetOrderID() {
 	delete(m.clearedFields, paymentbase.FieldOrderID)
 }
 
-// SetObseleted sets the "obseleted" field.
-func (m *PaymentBaseMutation) SetObseleted(b bool) {
-	m.obseleted = &b
+// SetObseleteState sets the "obselete_state" field.
+func (m *PaymentBaseMutation) SetObseleteState(s string) {
+	m.obselete_state = &s
 }
 
-// Obseleted returns the value of the "obseleted" field in the mutation.
-func (m *PaymentBaseMutation) Obseleted() (r bool, exists bool) {
-	v := m.obseleted
+// ObseleteState returns the value of the "obselete_state" field in the mutation.
+func (m *PaymentBaseMutation) ObseleteState() (r string, exists bool) {
+	v := m.obselete_state
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// OldObseleted returns the old "obseleted" field's value of the PaymentBase entity.
+// OldObseleteState returns the old "obselete_state" field's value of the PaymentBase entity.
 // If the PaymentBase object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *PaymentBaseMutation) OldObseleted(ctx context.Context) (v bool, err error) {
+func (m *PaymentBaseMutation) OldObseleteState(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldObseleted is only allowed on UpdateOne operations")
+		return v, errors.New("OldObseleteState is only allowed on UpdateOne operations")
 	}
 	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldObseleted requires an ID field in the mutation")
+		return v, errors.New("OldObseleteState requires an ID field in the mutation")
 	}
 	oldValue, err := m.oldValue(ctx)
 	if err != nil {
-		return v, fmt.Errorf("querying old value for OldObseleted: %w", err)
+		return v, fmt.Errorf("querying old value for OldObseleteState: %w", err)
 	}
-	return oldValue.Obseleted, nil
+	return oldValue.ObseleteState, nil
 }
 
-// ClearObseleted clears the value of the "obseleted" field.
-func (m *PaymentBaseMutation) ClearObseleted() {
-	m.obseleted = nil
-	m.clearedFields[paymentbase.FieldObseleted] = struct{}{}
+// ClearObseleteState clears the value of the "obselete_state" field.
+func (m *PaymentBaseMutation) ClearObseleteState() {
+	m.obselete_state = nil
+	m.clearedFields[paymentbase.FieldObseleteState] = struct{}{}
 }
 
-// ObseletedCleared returns if the "obseleted" field was cleared in this mutation.
-func (m *PaymentBaseMutation) ObseletedCleared() bool {
-	_, ok := m.clearedFields[paymentbase.FieldObseleted]
+// ObseleteStateCleared returns if the "obselete_state" field was cleared in this mutation.
+func (m *PaymentBaseMutation) ObseleteStateCleared() bool {
+	_, ok := m.clearedFields[paymentbase.FieldObseleteState]
 	return ok
 }
 
-// ResetObseleted resets all changes to the "obseleted" field.
-func (m *PaymentBaseMutation) ResetObseleted() {
-	m.obseleted = nil
-	delete(m.clearedFields, paymentbase.FieldObseleted)
+// ResetObseleteState resets all changes to the "obselete_state" field.
+func (m *PaymentBaseMutation) ResetObseleteState() {
+	m.obselete_state = nil
+	delete(m.clearedFields, paymentbase.FieldObseleteState)
 }
 
 // Where appends a list predicates to the PaymentBaseMutation builder.
@@ -16262,8 +16262,8 @@ func (m *PaymentBaseMutation) Fields() []string {
 	if m.order_id != nil {
 		fields = append(fields, paymentbase.FieldOrderID)
 	}
-	if m.obseleted != nil {
-		fields = append(fields, paymentbase.FieldObseleted)
+	if m.obselete_state != nil {
+		fields = append(fields, paymentbase.FieldObseleteState)
 	}
 	return fields
 }
@@ -16283,8 +16283,8 @@ func (m *PaymentBaseMutation) Field(name string) (ent.Value, bool) {
 		return m.EntID()
 	case paymentbase.FieldOrderID:
 		return m.OrderID()
-	case paymentbase.FieldObseleted:
-		return m.Obseleted()
+	case paymentbase.FieldObseleteState:
+		return m.ObseleteState()
 	}
 	return nil, false
 }
@@ -16304,8 +16304,8 @@ func (m *PaymentBaseMutation) OldField(ctx context.Context, name string) (ent.Va
 		return m.OldEntID(ctx)
 	case paymentbase.FieldOrderID:
 		return m.OldOrderID(ctx)
-	case paymentbase.FieldObseleted:
-		return m.OldObseleted(ctx)
+	case paymentbase.FieldObseleteState:
+		return m.OldObseleteState(ctx)
 	}
 	return nil, fmt.Errorf("unknown PaymentBase field %s", name)
 }
@@ -16350,12 +16350,12 @@ func (m *PaymentBaseMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetOrderID(v)
 		return nil
-	case paymentbase.FieldObseleted:
-		v, ok := value.(bool)
+	case paymentbase.FieldObseleteState:
+		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.SetObseleted(v)
+		m.SetObseleteState(v)
 		return nil
 	}
 	return fmt.Errorf("unknown PaymentBase field %s", name)
@@ -16429,8 +16429,8 @@ func (m *PaymentBaseMutation) ClearedFields() []string {
 	if m.FieldCleared(paymentbase.FieldOrderID) {
 		fields = append(fields, paymentbase.FieldOrderID)
 	}
-	if m.FieldCleared(paymentbase.FieldObseleted) {
-		fields = append(fields, paymentbase.FieldObseleted)
+	if m.FieldCleared(paymentbase.FieldObseleteState) {
+		fields = append(fields, paymentbase.FieldObseleteState)
 	}
 	return fields
 }
@@ -16449,8 +16449,8 @@ func (m *PaymentBaseMutation) ClearField(name string) error {
 	case paymentbase.FieldOrderID:
 		m.ClearOrderID()
 		return nil
-	case paymentbase.FieldObseleted:
-		m.ClearObseleted()
+	case paymentbase.FieldObseleteState:
+		m.ClearObseleteState()
 		return nil
 	}
 	return fmt.Errorf("unknown PaymentBase nullable field %s", name)
@@ -16475,8 +16475,8 @@ func (m *PaymentBaseMutation) ResetField(name string) error {
 	case paymentbase.FieldOrderID:
 		m.ResetOrderID()
 		return nil
-	case paymentbase.FieldObseleted:
-		m.ResetObseleted()
+	case paymentbase.FieldObseleteState:
+		m.ResetObseleteState()
 		return nil
 	}
 	return fmt.Errorf("unknown PaymentBase field %s", name)

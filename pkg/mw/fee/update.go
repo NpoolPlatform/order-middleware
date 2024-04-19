@@ -20,13 +20,10 @@ import (
 )
 
 type updateHandler struct {
-	*Handler
+	*feeOrderQueryHandler
 	sql                 string
-	sqlOrderBase        string
 	sqlOrderStateBase   string
 	sqlFeeOrderState    string
-	sqlLedgerLock       string
-	sqlOrderCoupons     []string
 	sqlPaymentBase      string
 	sqlPaymentBalances  []string
 	sqlPaymentTransfers []string
@@ -36,12 +33,6 @@ func (h *updateHandler) constructSQL() {
 	h.sql = h.ConstructUpdateSQL()
 }
 
-func (h *updateHandler) constructOrderBaseSQL(ctx context.Context) {
-	handler, _ := orderbase1.NewHandler(ctx)
-	handler.Req = *h.OrderBaseReq
-	h.sqlOrderBase = handler.ConstructUpdateSQL()
-}
-
 func (h *updateHandler) constructOrderStateBaseSQL(ctx context.Context) {
 	handler, _ := orderstatebase1.NewHandler(ctx)
 	handler.Req = *h.OrderStateBaseReq
@@ -49,38 +40,16 @@ func (h *updateHandler) constructOrderStateBaseSQL(ctx context.Context) {
 	h.sqlOrderStateBase = handler.ConstructUpdateSQL()
 }
 
-func (h *updateHandler) constructFeeOrderStateSQL(ctx context.Context) {
+func (h *createHandler) constructFeeOrderStateSQL(ctx context.Context) {
 	handler, _ := feeorderstate1.NewHandler(ctx)
 	handler.Req = *h.FeeOrderStateReq
-	h.sqlFeeOrderState = handler.ConstructUpdateSQL()
-}
-
-func (h *updateHandler) constructLedgerLockSQL(ctx context.Context) {
-	handler, _ := orderlock1.NewHandler(ctx)
-	handler.Req = *h.LedgerLockReq
-	h.sqlLedgerLock = handler.ConstructUpdateSQL()
-}
-
-func (h *updateHandler) constructOrderCouponSQLs(ctx context.Context) {
-	for _, req := range h.OrderCouponReqs {
-		handler, _ := ordercoupon1.NewHandler(ctx)
-		handler.Req = *req
-		h.sqlOrderCoupons = append(h.sqlOrderCoupons, handler.ConstructUpdateSQL())
-	}
+	h.sqlFeeOrderState = handler.ConstructCreateSQL()
 }
 
 func (h *updateHandler) constructPaymentBaseSQL(ctx context.Context) {
 	handler, _ := paymentbase1.NewHandler(ctx)
 	handler.Req = *h.PaymentBaseReq
 	h.sqlPaymentBase = handler.ConstructUpdateSQL()
-}
-
-func (h *updateHandler) constructPaymentBalanceSQLs(ctx context.Context) {
-	for _, req := range h.PaymentBalanceReqs {
-		handler, _ := paymentbalance1.NewHandler(ctx)
-		handler.Req = *req
-		h.sqlPaymentBalances = append(h.sqlPaymentBalances, handler.ConstructUpdateSQL())
-	}
 }
 
 func (h *updateHandler) constructPaymentTransferSQLs(ctx context.Context) {
@@ -103,42 +72,12 @@ func (h *updateHandler) execSQL(ctx context.Context, tx *ent.Tx, sql string) err
 	return nil
 }
 
-func (h *updateHandler) updateOrderBase(ctx context.Context, tx *ent.Tx) error {
-	return h.execSQL(ctx, tx, h.sqlOrderBase)
-}
-
 func (h *updateHandler) updateOrderStateBase(ctx context.Context, tx *ent.Tx) error {
 	return h.execSQL(ctx, tx, h.sqlOrderStateBase)
 }
 
-func (h *updateHandler) updateFeeOrderState(ctx context.Context, tx *ent.Tx) error {
-	return h.execSQL(ctx, tx, h.sqlFeeOrderState)
-}
-
-func (h *updateHandler) updateLedgerLock(ctx context.Context, tx *ent.Tx) error {
-	return h.execSQL(ctx, tx, h.sqlLedgerLock)
-}
-
-func (h *updateHandler) updateOrderCoupons(ctx context.Context, tx *ent.Tx) error {
-	for _, sql := range h.sqlOrderCoupons {
-		if err := h.execSQL(ctx, tx, sql); err != nil {
-			return err
-		}
-	}
-	return nil
-}
-
 func (h *updateHandler) updatePaymentBase(ctx context.Context, tx *ent.Tx) error {
 	return h.execSQL(ctx, tx, h.sqlPaymentBase)
-}
-
-func (h *updateHandler) updatePaymentBalances(ctx context.Context, tx *ent.Tx) error {
-	for _, sql := range h.sqlPaymentBalances {
-		if err := h.execSQL(ctx, tx, sql); err != nil {
-			return err
-		}
-	}
-	return nil
 }
 
 func (h *updateHandler) updatePaymentTransfers(ctx context.Context, tx *ent.Tx) error {
@@ -156,9 +95,8 @@ func (h *updateHandler) updateFeeOrder(ctx context.Context, tx *ent.Tx) error {
 
 func (h *updateHandler) formalizeOrderID() {
 	if h.OrderID != nil {
-		return
 	}
-	h.OrderID = func() *uuid.UUID { uid := uuid.New(); return &uid }()
+	h.OrderID = func() *uuid.UUID { uid := h._ent.OrderID(); return &uid }()
 	h.OrderBaseReq.EntID = h.OrderID
 	h.OrderStateBaseReq.OrderID = h.OrderID
 	h.FeeOrderStateReq.OrderID = h.OrderID
@@ -218,11 +156,13 @@ func (h *updateHandler) formalizePaymentID() {
 
 func (h *Handler) UpdateFeeOrder(ctx context.Context) error {
 	handler := &updateHandler{
-		Handler: h,
+		feeOrderQueryHandler: &feeOrderQueryHandler{
+			Handler: h,
+		},
 	}
 
-	if h.EntID == nil {
-		h.EntID = func() *uuid.UUID { uid := uuid.New(); return &uid }()
+	if err := handler.requireFeeOrder(ctx); err != nil {
+		return err
 	}
 
 	handler.formalizeOrderID()
@@ -232,7 +172,6 @@ func (h *Handler) UpdateFeeOrder(ctx context.Context) error {
 	handler.formalizePaymentBalances()
 	handler.formalizePaymentTransfers()
 
-	handler.constructOrderBaseSQL(ctx)
 	handler.constructOrderStateBaseSQL(ctx)
 	handler.constructFeeOrderStateSQL(ctx)
 	handler.constructLedgerLockSQL(ctx)

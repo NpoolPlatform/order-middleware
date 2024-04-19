@@ -7,6 +7,7 @@ import (
 )
 
 type FeeOrder interface {
+	OrderID() uuid.UUID
 	PaymentID() uuid.UUID
 }
 
@@ -20,6 +21,10 @@ type feeOrder struct {
 	entPaymentTransfers []*ent.PaymentTransfer
 	entLedgerLock       *ent.OrderLock
 	entOrderCoupons     []*ent.OrderCoupon
+}
+
+func (f *feeOrder) OrderID() uuid.UUID {
+	return f.entFeeOrder.OrderID
 }
 
 func (f *feeOrder) PaymentID() uuid.UUID {

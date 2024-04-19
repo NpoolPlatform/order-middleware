@@ -891,10 +891,10 @@ func init() {
 	paymentbaseDescOrderID := paymentbaseFields[0].Descriptor()
 	// paymentbase.DefaultOrderID holds the default value on creation for the order_id field.
 	paymentbase.DefaultOrderID = paymentbaseDescOrderID.Default.(func() uuid.UUID)
-	// paymentbaseDescObseleted is the schema descriptor for obseleted field.
-	paymentbaseDescObseleted := paymentbaseFields[1].Descriptor()
-	// paymentbase.DefaultObseleted holds the default value on creation for the obseleted field.
-	paymentbase.DefaultObseleted = paymentbaseDescObseleted.Default.(bool)
+	// paymentbaseDescObseleteState is the schema descriptor for obselete_state field.
+	paymentbaseDescObseleteState := paymentbaseFields[1].Descriptor()
+	// paymentbase.DefaultObseleteState holds the default value on creation for the obselete_state field.
+	paymentbase.DefaultObseleteState = paymentbaseDescObseleteState.Default.(string)
 	paymentcontractMixin := schema.PaymentContract{}.Mixin()
 	paymentcontract.Policy = privacy.NewPolicies(paymentcontractMixin[0], schema.PaymentContract{})
 	paymentcontract.Hooks[0] = func(next ent.Mutator) ent.Mutator {

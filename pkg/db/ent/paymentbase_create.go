@@ -92,16 +92,16 @@ func (pbc *PaymentBaseCreate) SetNillableOrderID(u *uuid.UUID) *PaymentBaseCreat
 	return pbc
 }
 
-// SetObseleted sets the "obseleted" field.
-func (pbc *PaymentBaseCreate) SetObseleted(b bool) *PaymentBaseCreate {
-	pbc.mutation.SetObseleted(b)
+// SetObseleteState sets the "obselete_state" field.
+func (pbc *PaymentBaseCreate) SetObseleteState(s string) *PaymentBaseCreate {
+	pbc.mutation.SetObseleteState(s)
 	return pbc
 }
 
-// SetNillableObseleted sets the "obseleted" field if the given value is not nil.
-func (pbc *PaymentBaseCreate) SetNillableObseleted(b *bool) *PaymentBaseCreate {
-	if b != nil {
-		pbc.SetObseleted(*b)
+// SetNillableObseleteState sets the "obselete_state" field if the given value is not nil.
+func (pbc *PaymentBaseCreate) SetNillableObseleteState(s *string) *PaymentBaseCreate {
+	if s != nil {
+		pbc.SetObseleteState(*s)
 	}
 	return pbc
 }
@@ -226,9 +226,9 @@ func (pbc *PaymentBaseCreate) defaults() error {
 		v := paymentbase.DefaultOrderID()
 		pbc.mutation.SetOrderID(v)
 	}
-	if _, ok := pbc.mutation.Obseleted(); !ok {
-		v := paymentbase.DefaultObseleted
-		pbc.mutation.SetObseleted(v)
+	if _, ok := pbc.mutation.ObseleteState(); !ok {
+		v := paymentbase.DefaultObseleteState
+		pbc.mutation.SetObseleteState(v)
 	}
 	return nil
 }
@@ -321,13 +321,13 @@ func (pbc *PaymentBaseCreate) createSpec() (*PaymentBase, *sqlgraph.CreateSpec) 
 		})
 		_node.OrderID = value
 	}
-	if value, ok := pbc.mutation.Obseleted(); ok {
+	if value, ok := pbc.mutation.ObseleteState(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
-			Type:   field.TypeBool,
+			Type:   field.TypeString,
 			Value:  value,
-			Column: paymentbase.FieldObseleted,
+			Column: paymentbase.FieldObseleteState,
 		})
-		_node.Obseleted = value
+		_node.ObseleteState = value
 	}
 	return _node, _spec
 }
@@ -467,21 +467,21 @@ func (u *PaymentBaseUpsert) ClearOrderID() *PaymentBaseUpsert {
 	return u
 }
 
-// SetObseleted sets the "obseleted" field.
-func (u *PaymentBaseUpsert) SetObseleted(v bool) *PaymentBaseUpsert {
-	u.Set(paymentbase.FieldObseleted, v)
+// SetObseleteState sets the "obselete_state" field.
+func (u *PaymentBaseUpsert) SetObseleteState(v string) *PaymentBaseUpsert {
+	u.Set(paymentbase.FieldObseleteState, v)
 	return u
 }
 
-// UpdateObseleted sets the "obseleted" field to the value that was provided on create.
-func (u *PaymentBaseUpsert) UpdateObseleted() *PaymentBaseUpsert {
-	u.SetExcluded(paymentbase.FieldObseleted)
+// UpdateObseleteState sets the "obselete_state" field to the value that was provided on create.
+func (u *PaymentBaseUpsert) UpdateObseleteState() *PaymentBaseUpsert {
+	u.SetExcluded(paymentbase.FieldObseleteState)
 	return u
 }
 
-// ClearObseleted clears the value of the "obseleted" field.
-func (u *PaymentBaseUpsert) ClearObseleted() *PaymentBaseUpsert {
-	u.SetNull(paymentbase.FieldObseleted)
+// ClearObseleteState clears the value of the "obselete_state" field.
+func (u *PaymentBaseUpsert) ClearObseleteState() *PaymentBaseUpsert {
+	u.SetNull(paymentbase.FieldObseleteState)
 	return u
 }
 
@@ -633,24 +633,24 @@ func (u *PaymentBaseUpsertOne) ClearOrderID() *PaymentBaseUpsertOne {
 	})
 }
 
-// SetObseleted sets the "obseleted" field.
-func (u *PaymentBaseUpsertOne) SetObseleted(v bool) *PaymentBaseUpsertOne {
+// SetObseleteState sets the "obselete_state" field.
+func (u *PaymentBaseUpsertOne) SetObseleteState(v string) *PaymentBaseUpsertOne {
 	return u.Update(func(s *PaymentBaseUpsert) {
-		s.SetObseleted(v)
+		s.SetObseleteState(v)
 	})
 }
 
-// UpdateObseleted sets the "obseleted" field to the value that was provided on create.
-func (u *PaymentBaseUpsertOne) UpdateObseleted() *PaymentBaseUpsertOne {
+// UpdateObseleteState sets the "obselete_state" field to the value that was provided on create.
+func (u *PaymentBaseUpsertOne) UpdateObseleteState() *PaymentBaseUpsertOne {
 	return u.Update(func(s *PaymentBaseUpsert) {
-		s.UpdateObseleted()
+		s.UpdateObseleteState()
 	})
 }
 
-// ClearObseleted clears the value of the "obseleted" field.
-func (u *PaymentBaseUpsertOne) ClearObseleted() *PaymentBaseUpsertOne {
+// ClearObseleteState clears the value of the "obselete_state" field.
+func (u *PaymentBaseUpsertOne) ClearObseleteState() *PaymentBaseUpsertOne {
 	return u.Update(func(s *PaymentBaseUpsert) {
-		s.ClearObseleted()
+		s.ClearObseleteState()
 	})
 }
 
@@ -967,24 +967,24 @@ func (u *PaymentBaseUpsertBulk) ClearOrderID() *PaymentBaseUpsertBulk {
 	})
 }
 
-// SetObseleted sets the "obseleted" field.
-func (u *PaymentBaseUpsertBulk) SetObseleted(v bool) *PaymentBaseUpsertBulk {
+// SetObseleteState sets the "obselete_state" field.
+func (u *PaymentBaseUpsertBulk) SetObseleteState(v string) *PaymentBaseUpsertBulk {
 	return u.Update(func(s *PaymentBaseUpsert) {
-		s.SetObseleted(v)
+		s.SetObseleteState(v)
 	})
 }
 
-// UpdateObseleted sets the "obseleted" field to the value that was provided on create.
-func (u *PaymentBaseUpsertBulk) UpdateObseleted() *PaymentBaseUpsertBulk {
+// UpdateObseleteState sets the "obselete_state" field to the value that was provided on create.
+func (u *PaymentBaseUpsertBulk) UpdateObseleteState() *PaymentBaseUpsertBulk {
 	return u.Update(func(s *PaymentBaseUpsert) {
-		s.UpdateObseleted()
+		s.UpdateObseleteState()
 	})
 }
 
-// ClearObseleted clears the value of the "obseleted" field.
-func (u *PaymentBaseUpsertBulk) ClearObseleted() *PaymentBaseUpsertBulk {
+// ClearObseleteState clears the value of the "obselete_state" field.
+func (u *PaymentBaseUpsertBulk) ClearObseleteState() *PaymentBaseUpsertBulk {
 	return u.Update(func(s *PaymentBaseUpsert) {
-		s.ClearObseleted()
+		s.ClearObseleteState()
 	})
 }
 

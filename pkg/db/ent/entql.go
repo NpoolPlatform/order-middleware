@@ -370,12 +370,12 @@ var schemaGraph = func() *sqlgraph.Schema {
 		},
 		Type: "PaymentBase",
 		Fields: map[string]*sqlgraph.FieldSpec{
-			paymentbase.FieldCreatedAt: {Type: field.TypeUint32, Column: paymentbase.FieldCreatedAt},
-			paymentbase.FieldUpdatedAt: {Type: field.TypeUint32, Column: paymentbase.FieldUpdatedAt},
-			paymentbase.FieldDeletedAt: {Type: field.TypeUint32, Column: paymentbase.FieldDeletedAt},
-			paymentbase.FieldEntID:     {Type: field.TypeUUID, Column: paymentbase.FieldEntID},
-			paymentbase.FieldOrderID:   {Type: field.TypeUUID, Column: paymentbase.FieldOrderID},
-			paymentbase.FieldObseleted: {Type: field.TypeBool, Column: paymentbase.FieldObseleted},
+			paymentbase.FieldCreatedAt:     {Type: field.TypeUint32, Column: paymentbase.FieldCreatedAt},
+			paymentbase.FieldUpdatedAt:     {Type: field.TypeUint32, Column: paymentbase.FieldUpdatedAt},
+			paymentbase.FieldDeletedAt:     {Type: field.TypeUint32, Column: paymentbase.FieldDeletedAt},
+			paymentbase.FieldEntID:         {Type: field.TypeUUID, Column: paymentbase.FieldEntID},
+			paymentbase.FieldOrderID:       {Type: field.TypeUUID, Column: paymentbase.FieldOrderID},
+			paymentbase.FieldObseleteState: {Type: field.TypeString, Column: paymentbase.FieldObseleteState},
 		},
 	}
 	graph.Nodes[14] = &sqlgraph.Node{
@@ -1868,9 +1868,9 @@ func (f *PaymentBaseFilter) WhereOrderID(p entql.ValueP) {
 	f.Where(p.Field(paymentbase.FieldOrderID))
 }
 
-// WhereObseleted applies the entql bool predicate on the obseleted field.
-func (f *PaymentBaseFilter) WhereObseleted(p entql.BoolP) {
-	f.Where(p.Field(paymentbase.FieldObseleted))
+// WhereObseleteState applies the entql string predicate on the obselete_state field.
+func (f *PaymentBaseFilter) WhereObseleteState(p entql.StringP) {
+	f.Where(p.Field(paymentbase.FieldObseleteState))
 }
 
 // addPredicate implements the predicateAdder interface.

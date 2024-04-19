@@ -63,8 +63,7 @@ func (h *Handler) ConstructCreateSQL() string {
 	_sql += ") as tmp "
 	_sql += "where not exists ("
 	_sql += "select 1 from payment_transfers "
-	_sql += fmt.Sprintf("where payment_id = '%v' ", *h.PaymentID)
-	_sql += fmt.Sprintf("and coin_type_id = '%v' ", h.CoinTypeID)
+	_sql += fmt.Sprintf("where payment_id = '%v' ", *h.PaymentID) // For each transfer we only allow one transfer payment
 	_sql += " limit 1) and exists ("
 	_sql += "select 1 from payment_bases "
 	_sql += fmt.Sprintf("where ent_id = '%v' ", *h.PaymentID)

@@ -22,8 +22,8 @@ const (
 	FieldEntID = "ent_id"
 	// FieldOrderID holds the string denoting the order_id field in the database.
 	FieldOrderID = "order_id"
-	// FieldObseleted holds the string denoting the obseleted field in the database.
-	FieldObseleted = "obseleted"
+	// FieldObseleteState holds the string denoting the obselete_state field in the database.
+	FieldObseleteState = "obselete_state"
 	// Table holds the table name of the paymentbase in the database.
 	Table = "payment_bases"
 )
@@ -36,7 +36,7 @@ var Columns = []string{
 	FieldDeletedAt,
 	FieldEntID,
 	FieldOrderID,
-	FieldObseleted,
+	FieldObseleteState,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -70,6 +70,6 @@ var (
 	DefaultEntID func() uuid.UUID
 	// DefaultOrderID holds the default value on creation for the "order_id" field.
 	DefaultOrderID func() uuid.UUID
-	// DefaultObseleted holds the default value on creation for the "obseleted" field.
-	DefaultObseleted bool
+	// DefaultObseleteState holds the default value on creation for the "obselete_state" field.
+	DefaultObseleteState string
 )

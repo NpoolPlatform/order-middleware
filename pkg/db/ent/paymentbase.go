@@ -26,8 +26,8 @@ type PaymentBase struct {
 	EntID uuid.UUID `json:"ent_id,omitempty"`
 	// OrderID holds the value of the "order_id" field.
 	OrderID uuid.UUID `json:"order_id,omitempty"`
-	// Obseleted holds the value of the "obseleted" field.
-	Obseleted bool `json:"obseleted,omitempty"`
+	// ObseleteState holds the value of the "obselete_state" field.
+	ObseleteState string `json:"obselete_state,omitempty"`
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -35,10 +35,10 @@ func (*PaymentBase) scanValues(columns []string) ([]interface{}, error) {
 	values := make([]interface{}, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case paymentbase.FieldObseleted:
-			values[i] = new(sql.NullBool)
 		case paymentbase.FieldID, paymentbase.FieldCreatedAt, paymentbase.FieldUpdatedAt, paymentbase.FieldDeletedAt:
 			values[i] = new(sql.NullInt64)
+		case paymentbase.FieldObseleteState:
+			values[i] = new(sql.NullString)
 		case paymentbase.FieldEntID, paymentbase.FieldOrderID:
 			values[i] = new(uuid.UUID)
 		default:
@@ -92,11 +92,11 @@ func (pb *PaymentBase) assignValues(columns []string, values []interface{}) erro
 			} else if value != nil {
 				pb.OrderID = *value
 			}
-		case paymentbase.FieldObseleted:
-			if value, ok := values[i].(*sql.NullBool); !ok {
-				return fmt.Errorf("unexpected type %T for field obseleted", values[i])
+		case paymentbase.FieldObseleteState:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field obselete_state", values[i])
 			} else if value.Valid {
-				pb.Obseleted = value.Bool
+				pb.ObseleteState = value.String
 			}
 		}
 	}
@@ -141,8 +141,8 @@ func (pb *PaymentBase) String() string {
 	builder.WriteString("order_id=")
 	builder.WriteString(fmt.Sprintf("%v", pb.OrderID))
 	builder.WriteString(", ")
-	builder.WriteString("obseleted=")
-	builder.WriteString(fmt.Sprintf("%v", pb.Obseleted))
+	builder.WriteString("obselete_state=")
+	builder.WriteString(pb.ObseleteState)
 	builder.WriteByte(')')
 	return builder.String()
 }

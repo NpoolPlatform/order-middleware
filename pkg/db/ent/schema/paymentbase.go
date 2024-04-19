@@ -5,6 +5,7 @@ import (
 	"entgo.io/ent/schema/field"
 	"entgo.io/ent/schema/index"
 	crudermixin "github.com/NpoolPlatform/libent-cruder/pkg/mixin"
+	types "github.com/NpoolPlatform/message/npool/basetypes/order/v1"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/mixin"
 	"github.com/google/uuid"
 )
@@ -32,9 +33,9 @@ func (PaymentBase) Fields() []ent.Field {
 			}),
 		// When user change order payment method, we'll create a new payment and obselete the old one
 		field.
-			Bool("obseleted").
+			String("obselete_state").
 			Optional().
-			Default(false),
+			Default(types.PaymentObseleteState_PaymentObseleteNone.String()),
 	}
 }
 
