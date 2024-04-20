@@ -250,12 +250,12 @@ func getFeeOrders(t *testing.T) {
 	}
 }
 
-/*
 func deleteFeeOrder(t *testing.T) {
 	handler, err := NewHandler(
 		context.Background(),
 		WithID(&ret.ID, true),
 		WithEntID(&ret.EntID, true),
+		WithOrderID(&ret.OrderID, true),
 	)
 	if assert.Nil(t, err) {
 		err = handler.DeleteFeeOrder(context.Background())
@@ -266,7 +266,6 @@ func deleteFeeOrder(t *testing.T) {
 		assert.Nil(t, info)
 	}
 }
-*/
 
 func TestFeeOrder(t *testing.T) {
 	if runByGithubAction, err := strconv.ParseBool(os.Getenv("RUN_BY_GITHUB_ACTION")); err == nil && runByGithubAction {
@@ -280,5 +279,5 @@ func TestFeeOrder(t *testing.T) {
 	t.Run("updateFeeOrder", updateFeeOrder)
 	t.Run("getFeeOrder", getFeeOrder)
 	t.Run("getFeeOrders", getFeeOrders)
-	// t.Run("deleteFeeOrder", deleteFeeOrder)
+	t.Run("deleteFeeOrder", deleteFeeOrder)
 }

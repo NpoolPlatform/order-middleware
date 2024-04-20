@@ -38,3 +38,23 @@ func (f *feeOrder) LedgerLockID() uuid.UUID {
 	}
 	return f.entLedgerLock.EntID
 }
+
+func (f *feeOrder) Exist() bool {
+	return f.entOrderBase != nil
+}
+
+func (f *feeOrder) OrderBaseID() uint32 {
+	return f.entOrderBase.ID
+}
+
+func (f *feeOrder) OrderStateBaseID() uint32 {
+	return f.entOrderStateBase.ID
+}
+
+func (f *feeOrder) FeeOrderID() uint32 {
+	return f.entFeeOrder.ID
+}
+
+func (f *feeOrder) FeeOrderStateID() uint32 {
+	return f.entFeeOrderState.ID
+}
