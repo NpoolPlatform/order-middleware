@@ -10,6 +10,7 @@ import (
 	constant "github.com/NpoolPlatform/order-middleware/pkg/const"
 	compensatecrud "github.com/NpoolPlatform/order-middleware/pkg/crud/compensate"
 	orderbasecrud "github.com/NpoolPlatform/order-middleware/pkg/crud/order/orderbase"
+	powerrentalstatecrud "github.com/NpoolPlatform/order-middleware/pkg/crud/powerrental/state"
 
 	"github.com/google/uuid"
 )
@@ -18,16 +19,18 @@ type Handler struct {
 	ID     *uint32
 	GoodID *uuid.UUID
 	compensatecrud.Req
-	CompensateConds *compensatecrud.Conds
-	OrderBaseConds  *orderbasecrud.Conds
-	Offset          int32
-	Limit           int32
+	PowerRentalStateReq *powerrentalstatecrud.Req
+	CompensateConds     *compensatecrud.Conds
+	OrderBaseConds      *orderbasecrud.Conds
+	Offset              int32
+	Limit               int32
 }
 
 func NewHandler(ctx context.Context, options ...func(context.Context, *Handler) error) (*Handler, error) {
 	handler := &Handler{
-		CompensateConds: &compensatecrud.Conds{},
-		OrderBaseConds:  &orderbasecrud.Conds{},
+		PowerRentalStateReq: &powerrentalstatecrud.Req{},
+		CompensateConds:     &compensatecrud.Conds{},
+		OrderBaseConds:      &orderbasecrud.Conds{},
 	}
 	for _, opt := range options {
 		if err := opt(ctx, handler); err != nil {
@@ -97,6 +100,7 @@ func WithOrderID(id *string, must bool) func(context.Context, *Handler) error {
 			return err
 		}
 		h.OrderID = &_id
+		h.PowerRentalStateReq.OrderID = &_id
 		return nil
 	}
 }
@@ -150,6 +154,7 @@ func WithCompensateSeconds(u *uint32, must bool) func(context.Context, *Handler)
 			return fmt.Errorf("invalid compensateseconds")
 		}
 		h.CompensateSeconds = u
+		h.PowerRentalStateReq.CompensateSeconds = u
 		return nil
 	}
 }
