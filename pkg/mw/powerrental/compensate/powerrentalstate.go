@@ -10,6 +10,10 @@ type powerRentalStates struct {
 	entPowerRentalStates []*ent.PowerRentalState
 }
 
+func (f *powerRentalStates) PowerRentalStateID() uint32 {
+	return f.entPowerRentalStates[0].ID
+}
+
 func (f *powerRentalStates) OrderID() uuid.UUID {
 	return f.entPowerRentalStates[0].OrderID
 }
