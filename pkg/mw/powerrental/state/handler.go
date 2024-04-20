@@ -124,22 +124,6 @@ func WithCancelState(state *types.OrderState, must bool) func(context.Context, *
 	}
 }
 
-func WithEndAt(u *uint32, must bool) func(context.Context, *Handler) error {
-	return func(ctx context.Context, h *Handler) error {
-		if u == nil {
-			if must {
-				return fmt.Errorf("invalid endat")
-			}
-			return nil
-		}
-		if *u < uint32(time.Now().Unix()) {
-			return fmt.Errorf("invalid endat")
-		}
-		h.EndAt = u
-		return nil
-	}
-}
-
 func WithPaidAt(u *uint32, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if u == nil {
@@ -235,28 +219,28 @@ func WithRollback(rollback *bool, must bool) func(context.Context, *Handler) err
 	}
 }
 
-func WithOutOfGasHours(outOfGasHours *uint32, must bool) func(context.Context, *Handler) error {
+func WithOutOfGasSeconds(outOfGasSeconds *uint32, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
-		if outOfGasHours == nil {
+		if outOfGasSeconds == nil {
 			if must {
-				return fmt.Errorf("invalid outofgashours")
+				return fmt.Errorf("invalid outofgasseconds")
 			}
 			return nil
 		}
-		h.OutOfGasHours = outOfGasHours
+		h.OutOfGasSeconds = outOfGasSeconds
 		return nil
 	}
 }
 
-func WithCompensateHours(compensateHours *uint32, must bool) func(context.Context, *Handler) error {
+func WithCompensateSeconds(compensateSeconds *uint32, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
-		if compensateHours == nil {
+		if compensateSeconds == nil {
 			if must {
-				return fmt.Errorf("invalid compensatehours")
+				return fmt.Errorf("invalid compensateseconds")
 			}
 			return nil
 		}
-		h.CompensateHours = compensateHours
+		h.CompensateSeconds = compensateSeconds
 		return nil
 	}
 }

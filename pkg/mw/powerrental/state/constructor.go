@@ -23,8 +23,8 @@ func (h *Handler) ConstructCreateSQL() string {
 	}
 	_sql += comma + "order_id"
 	comma = ", "
-	_sql += comma + "cancel_state"
-	_sql += comma + "end_at"
+	_sql += comma + "duration_seconds"
+	_sql += comma + "payment_id"
 	_sql += comma + "created_at"
 	_sql += comma + "updated_at"
 	_sql += comma + "deleted_at"
@@ -37,8 +37,8 @@ func (h *Handler) ConstructCreateSQL() string {
 	}
 	_sql += fmt.Sprintf("%v'%v' as order_id", comma, *h.OrderID)
 	comma = ", "
-	_sql += fmt.Sprintf("%v'%v' as cancel_state", comma, h.CancelState.String())
-	_sql += fmt.Sprintf("%v'%v' as end_at", comma, *h.EndAt)
+	_sql += fmt.Sprintf("%v'%v' as duration_seconds", comma, *h.DurationSeconds)
+	_sql += fmt.Sprintf("%v'%v' as payment_id", comma, *h.PaymentID)
 	_sql += fmt.Sprintf("%v%v as created_at", comma, now)
 	_sql += fmt.Sprintf("%v%v as updated_at", comma, now)
 	_sql += fmt.Sprintf("%v0 as deleted_at", comma)
@@ -67,8 +67,12 @@ func (h *Handler) ConstructUpdateSQL() (string, error) {
 		_sql += fmt.Sprintf("%vcancel_state = '%v', ", set, h.CancelState.String())
 		set = ""
 	}
-	if h.EndAt != nil {
-		_sql += fmt.Sprintf("%vend_at = %v, ", set, *h.EndAt)
+	if h.DurationSeconds != nil {
+		_sql += fmt.Sprintf("%vduration_state = '%v', ", set, *h.DurationSeconds)
+		set = ""
+	}
+	if h.PaymentID != nil {
+		_sql += fmt.Sprintf("%vpayment_id = %v, ", set, *h.PaymentID)
 		set = ""
 	}
 	if h.PaidAt != nil {
@@ -91,12 +95,12 @@ func (h *Handler) ConstructUpdateSQL() (string, error) {
 		_sql += fmt.Sprintf("%vpayment_state = '%v', ", set, h.PaymentState.String())
 		set = ""
 	}
-	if h.OutOfGasHours != nil {
-		_sql += fmt.Sprintf("%vout_of_gas_hours = %v, ", set, *h.OutOfGasHours)
+	if h.OutOfGasSeconds != nil {
+		_sql += fmt.Sprintf("%voutofgas_seconds = %v, ", set, *h.OutOfGasSeconds)
 		set = ""
 	}
-	if h.CompensateHours != nil {
-		_sql += fmt.Sprintf("%vcompensate_hours = %v, ", set, *h.CompensateHours)
+	if h.CompensateSeconds != nil {
+		_sql += fmt.Sprintf("%vcompensate_seconds = %v, ", set, *h.CompensateSeconds)
 		set = ""
 	}
 	if h.RenewState != nil {

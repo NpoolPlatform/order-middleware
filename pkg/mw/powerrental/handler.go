@@ -11,10 +11,13 @@ import (
 	paymentmwpb "github.com/NpoolPlatform/message/npool/order/mw/v1/payment"
 	npool "github.com/NpoolPlatform/message/npool/order/mw/v1/powerrental"
 	constant "github.com/NpoolPlatform/order-middleware/pkg/const"
+	ordercouponcrud "github.com/NpoolPlatform/order-middleware/pkg/crud/order/coupon"
 	orderlockcrud "github.com/NpoolPlatform/order-middleware/pkg/crud/order/lock"
 	orderbasecrud "github.com/NpoolPlatform/order-middleware/pkg/crud/order/orderbase"
 	orderstatebasecrud "github.com/NpoolPlatform/order-middleware/pkg/crud/order/statebase"
+	paymentbasecrud "github.com/NpoolPlatform/order-middleware/pkg/crud/payment"
 	paymentbalancecrud "github.com/NpoolPlatform/order-middleware/pkg/crud/payment/balance"
+	paymentbalancelockcrud "github.com/NpoolPlatform/order-middleware/pkg/crud/payment/balance/lock"
 	paymenttransfercrud "github.com/NpoolPlatform/order-middleware/pkg/crud/payment/transfer"
 	powerrentalcrud "github.com/NpoolPlatform/order-middleware/pkg/crud/powerrental"
 	powerrentalstatecrud "github.com/NpoolPlatform/order-middleware/pkg/crud/powerrental/state"
@@ -29,10 +32,13 @@ type Handler struct {
 	powerrentalcrud.Req
 	OrderBaseReq          *orderbasecrud.Req
 	OrderStateBaseReq     *orderstatebasecrud.Req
+	PaymentBalanceLockReq *paymentbalancelockcrud.Req
+	PaymentBaseReq        *paymentbasecrud.Req
 	OrderLockReqs         []*orderlockcrud.Req
 	PowerRentalStateReq   *powerrentalstatecrud.Req
 	PaymentBalanceReqs    []*paymentbalancecrud.Req
 	PaymentTransferReqs   []*paymenttransfercrud.Req
+	OrderCouponReqs       []*ordercouponcrud.Req
 	PowerRentalConds      *powerrentalcrud.Conds
 	OrderBaseConds        *orderbasecrud.Conds
 	OrderStateBaseConds   *orderstatebasecrud.Conds

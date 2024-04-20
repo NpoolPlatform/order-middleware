@@ -15,6 +15,7 @@ type Req struct {
 	EntID             *uuid.UUID
 	OrderID           *uuid.UUID
 	CancelState       *types.OrderState
+	PaymentID         *uuid.UUID
 	PaidAt            *uint32
 	UserSetPaid       *bool
 	UserSetCanceled   *bool
@@ -36,26 +37,11 @@ func CreateSet(c *ent.PowerRentalStateCreate, req *Req) *ent.PowerRentalStateCre
 	if req.OrderID != nil {
 		c.SetOrderID(*req.OrderID)
 	}
-	if req.CancelState != nil {
-		c.SetCancelState(req.CancelState.String())
+	if req.PaymentID != nil {
+		c.SetPaymentID(*req.PaymentID)
 	}
 	if req.UserSetPaid != nil {
 		c.SetUserSetPaid(*req.UserSetPaid)
-	}
-	if req.UserSetCanceled != nil {
-		c.SetUserSetCanceled(*req.UserSetCanceled)
-	}
-	if req.AdminSetCanceled != nil {
-		c.SetAdminSetCanceled(*req.AdminSetCanceled)
-	}
-	if req.PaymentState != nil {
-		c.SetPaymentState(req.PaymentState.String())
-	}
-	if req.RenewState != nil {
-		c.SetRenewState(req.RenewState.String())
-	}
-	if req.RenewNotifyAt != nil {
-		c.SetRenewNotifyAt(*req.RenewNotifyAt)
 	}
 	if req.DurationSeconds != nil {
 		c.SetDurationSeconds(*req.DurationSeconds)
@@ -67,6 +53,9 @@ func CreateSet(c *ent.PowerRentalStateCreate, req *Req) *ent.PowerRentalStateCre
 func UpdateSet(u *ent.PowerRentalStateUpdateOne, req *Req) *ent.PowerRentalStateUpdateOne {
 	if req.CancelState != nil {
 		u.SetCancelState(req.CancelState.String())
+	}
+	if req.PaymentID != nil {
+		u.SetPaymentID(*req.PaymentID)
 	}
 	if req.PaidAt != nil {
 		u.SetPaidAt(*req.PaidAt)
