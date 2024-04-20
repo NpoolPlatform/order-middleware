@@ -184,9 +184,9 @@ func (h *feeOrderQueryHandler) _getFeeOrder(ctx context.Context, must bool) erro
 }
 
 func (h *feeOrderQueryHandler) getFeeOrder(ctx context.Context) error {
-	return nil
+	return h._getFeeOrder(ctx, false)
 }
 
 func (h *feeOrderQueryHandler) requireFeeOrder(ctx context.Context) error {
-	return nil
+	return h._getFeeOrder(ctx, true)
 }

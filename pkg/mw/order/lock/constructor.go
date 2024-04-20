@@ -35,11 +35,7 @@ func (h *Handler) ConstructCreateSQL() string {
 	_sql += fmt.Sprintf("%v%v as updated_at", comma, now)
 	_sql += fmt.Sprintf("%v0 as deleted_at", comma)
 	_sql += ") as tmp "
-	_sql += "where not exists ("
-	_sql += "select 1 from order_locks "
-	_sql += fmt.Sprintf("where order_id = '%v' ", *h.OrderID)
-	_sql += fmt.Sprintf("and lock_type = '%v' ", h.LockType.String())
-	_sql += " limit 1) and exists ("
+	_sql += "where exists ("
 	_sql += "select 1 from order_bases "
 	_sql += fmt.Sprintf("where ent_id = '%v' ", *h.OrderID)
 	_sql += "limit 1)"

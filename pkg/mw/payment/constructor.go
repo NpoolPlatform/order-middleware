@@ -49,7 +49,7 @@ func (h *Handler) ConstructCreateSQL() string {
 }
 
 func (h *Handler) ConstructUpdateSQL() (string, error) {
-	if h.ID == nil && h.EntID == nil && h.OrderID == nil {
+	if h.ID == nil && h.EntID == nil {
 		return "", fmt.Errorf("invalid id")
 	}
 

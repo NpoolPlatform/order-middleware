@@ -13,6 +13,7 @@ import (
 	entorderbase "github.com/NpoolPlatform/order-middleware/pkg/db/ent/orderbase"
 	entorderlock "github.com/NpoolPlatform/order-middleware/pkg/db/ent/orderlock"
 	entorderstatebase "github.com/NpoolPlatform/order-middleware/pkg/db/ent/orderstatebase"
+	entpaymentbalancelock "github.com/NpoolPlatform/order-middleware/pkg/db/ent/paymentbalancelock"
 	entpaymentbase "github.com/NpoolPlatform/order-middleware/pkg/db/ent/paymentbase"
 
 	"github.com/google/uuid"
@@ -182,33 +183,32 @@ func (h *baseQueryHandler) queryJoinFeeOrderState(s *sql.Selector) error {
 	return nil
 }
 
-func (h *baseQueryHandler) queryJoinLedgerLock(s *sql.Selector) {
-	t := sql.Table(entorderlock.Table)
-	s.Join(t).
-		On(
-			s.C(entorderbase.FieldEntID),
-			t.C(entorderlock.FieldOrderID),
-		).
-		OnP(
-			sql.EQ(t.C(entorderlock.FieldLockType), types.OrderLockType_LockBalance.String()),
-		)
-	s.AppendSelect(
-		sql.As(t.C(entorderlock.FieldEntID), "ledger_lock_id"),
-	)
-}
-
 func (h *baseQueryHandler) queryJoinPaymentBase(s *sql.Selector) {
-	t := sql.Table(entpaymentbase.Table)
-	s.Join(t).
+	t1 := sql.Table(entpaymentbase.Table)
+	t2 := sql.Table(entpaymentbalancelock.Table)
+	t3 := sql.Table(entorderlock.Table)
+
+	s.LeftJoin(t1).
 		On(
 			s.C(entorderbase.FieldEntID),
-			t.C(entpaymentbase.FieldOrderID),
+			t1.C(entpaymentbase.FieldOrderID),
 		).
 		OnP(
-			sql.EQ(t.C(entpaymentbase.FieldObseleteState), types.PaymentObseleteState_PaymentObseleteNone.String()),
+			sql.EQ(t1.C(entpaymentbase.FieldObseleteState), types.PaymentObseleteState_PaymentObseleteNone.String()),
+		).
+		LeftJoin(t2).
+		On(
+			t1.C(entpaymentbase.FieldEntID),
+			t2.C(entpaymentbalancelock.FieldPaymentID),
+		).
+		LeftJoin(t3).
+		On(
+			t2.C(entpaymentbalancelock.FieldLedgerLockID),
+			t3.C(entorderlock.FieldEntID),
 		)
 	s.AppendSelect(
-		sql.As(t.C(entpaymentbase.FieldEntID), "payment_id"),
+		sql.As(t1.C(entpaymentbase.FieldEntID), "payment_id"),
+		sql.As(t3.C(entorderlock.FieldEntID), "ledger_lock_id"),
 	)
 }
 
@@ -218,7 +218,6 @@ func (h *baseQueryHandler) queryJoin() {
 		h.queryJoinFeeOrder(s)
 		h.queryJoinOrderStateBase(s)
 		h.queryJoinFeeOrderState(s)
-		h.queryJoinLedgerLock(s)
 		h.queryJoinPaymentBase(s)
 	})
 }

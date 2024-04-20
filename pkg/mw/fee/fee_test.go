@@ -7,10 +7,10 @@ import (
 	"strconv"
 	"testing"
 
-	// "github.com/NpoolPlatform/libent-cruder/pkg/cruder"
+	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
 	goodtypes "github.com/NpoolPlatform/message/npool/basetypes/good/v1"
 	types "github.com/NpoolPlatform/message/npool/basetypes/order/v1"
-	// basetypes "github.com/NpoolPlatform/message/npool/basetypes/v1"
+	basetypes "github.com/NpoolPlatform/message/npool/basetypes/v1"
 	npool "github.com/NpoolPlatform/message/npool/order/mw/v1/fee"
 	ordercouponmwpb "github.com/NpoolPlatform/message/npool/order/mw/v1/order/coupon"
 	paymentmwpb "github.com/NpoolPlatform/message/npool/order/mw/v1/payment"
@@ -168,6 +168,12 @@ func createFeeOrder(t *testing.T) {
 }
 
 func updateFeeOrder(t *testing.T) {
+	ret.PaymentID = uuid.NewString()
+	ret.LedgerLockID = uuid.NewString()
+	for _, paymentBalance := range ret.PaymentBalances {
+		paymentBalance.PaymentID = ret.PaymentID
+	}
+
 	handler, err := NewHandler(
 		context.Background(),
 		WithID(&ret.ID, true),
@@ -211,11 +217,10 @@ func updateFeeOrder(t *testing.T) {
 	}
 }
 
-/*
 func getFeeOrder(t *testing.T) {
 	handler, err := NewHandler(
 		context.Background(),
-		WithEntID(&ret.EntID, true),
+		WithOrderID(&ret.OrderID, true),
 	)
 	if assert.Nil(t, err) {
 		info, err := handler.GetFeeOrder(context.Background())
@@ -244,6 +249,7 @@ func getFeeOrders(t *testing.T) {
 	}
 }
 
+/*
 func deleteFeeOrder(t *testing.T) {
 	handler, err := NewHandler(
 		context.Background(),
@@ -270,8 +276,8 @@ func TestFeeOrder(t *testing.T) {
 	defer teardown(t)
 
 	t.Run("createFeeOrder", createFeeOrder)
-	// t.Run("updateFeeOrder", updateFeeOrder)
-	// t.Run("getFeeOrder", getFeeOrder)
-	// t.Run("getFeeOrders", getFeeOrders)
+	t.Run("updateFeeOrder", updateFeeOrder)
+	t.Run("getFeeOrder", getFeeOrder)
+	t.Run("getFeeOrders", getFeeOrders)
 	// t.Run("deleteFeeOrder", deleteFeeOrder)
 }

@@ -85,6 +85,7 @@ type Conds struct {
 	EntIDs        *cruder.Cond
 	OrderID       *cruder.Cond
 	OrderState    *cruder.Cond
+	OrderStates   *cruder.Cond
 	StartMode     *cruder.Cond
 	LastBenefitAt *cruder.Cond
 	BenefitState  *cruder.Cond
@@ -172,6 +173,23 @@ func SetQueryConds(q *ent.OrderStateBaseQuery, conds *Conds) (*ent.OrderStateBas
 		switch conds.OrderState.Op {
 		case cruder.EQ:
 			q.Where(entorderstatebase.OrderState(state.String()))
+		default:
+			return nil, fmt.Errorf("invalid order field")
+		}
+	}
+	if conds.OrderStates != nil {
+		states, ok := conds.OrderStates.Val.([]types.OrderState)
+		if !ok {
+			return nil, fmt.Errorf("invalid orderstate")
+		}
+		switch conds.OrderStates.Op {
+		case cruder.IN:
+			q.Where(entorderstatebase.OrderStateIn(func() (_states []string) {
+				for _, state := range states {
+					_states = append(_states, state.String())
+				}
+				return
+			}()...))
 		default:
 			return nil, fmt.Errorf("invalid order field")
 		}

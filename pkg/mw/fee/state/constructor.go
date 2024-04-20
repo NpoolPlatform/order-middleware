@@ -24,6 +24,7 @@ func (h *Handler) ConstructCreateSQL() string {
 	}
 	_sql += comma + "order_id"
 	comma = ", "
+	_sql += comma + "payment_id"
 	_sql += comma + "payment_state"
 	_sql += comma + "cancel_state"
 	_sql += comma + "created_at"
@@ -38,6 +39,7 @@ func (h *Handler) ConstructCreateSQL() string {
 	}
 	_sql += fmt.Sprintf("%v'%v' as order_id", comma, *h.OrderID)
 	comma = ", "
+	_sql += fmt.Sprintf("%v'%v' as payment_id", comma, *h.PaymentID)
 	_sql += fmt.Sprintf("%v'%v' as payment_state", comma, types.PaymentState_PaymentStateWait.String())
 	_sql += fmt.Sprintf("%v'%v' as cancel_mode", comma, types.OrderState_DefaultOrderState.String())
 	_sql += fmt.Sprintf("%v%v as created_at", comma, now)
@@ -64,6 +66,10 @@ func (h *Handler) ConstructUpdateSQL() (string, error) {
 	now := uint32(time.Now().Unix())
 
 	_sql := "update fee_order_states "
+	if h.PaymentID != nil {
+		_sql += fmt.Sprintf("%vpayment_id = '%v', ", set, *h.PaymentID)
+		set = ""
+	}
 	if h.PaidAt != nil {
 		_sql += fmt.Sprintf("%vspaid_at = %v, ", set, *h.PaidAt)
 		set = ""

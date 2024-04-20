@@ -35,6 +35,8 @@ type updateHandler struct {
 	sqlPaymentBalanceLock string
 	sqlPaymentBalances    []string
 	sqlPaymentTransfers   []string
+
+	updateNothing bool
 }
 
 func (h *updateHandler) constructOrderStateBaseSQL(ctx context.Context) (err error) {
@@ -66,7 +68,7 @@ func (h *updateHandler) constructLedgerLockSQL(ctx context.Context) {
 }
 
 func (h *updateHandler) constructPaymentBalanceLockSQL(ctx context.Context) {
-	if h.newPaymentBalance {
+	if !h.newPaymentBalance {
 		return
 	}
 	handler, _ := paymentbalancelock1.NewHandler(ctx)
@@ -132,8 +134,11 @@ func (h *updateHandler) execSQL(ctx context.Context, tx *ent.Tx, sql string) err
 		return err
 	}
 	n, err := rc.RowsAffected()
-	if err != nil || n != 1 {
-		return fmt.Errorf("fail update powerrental: %v", err)
+	if err != nil {
+		return err
+	}
+	if n == 1 {
+		h.updateNothing = false
 	}
 	return nil
 }
@@ -180,7 +185,7 @@ func (h *updateHandler) updateObseletePaymentBase(ctx context.Context, tx *ent.T
 	return h.execSQL(ctx, tx, h.sqlObseletePaymentBase)
 }
 
-func (h *updateHandler) createOrUpdatePaymentBalances(ctx context.Context, tx *ent.Tx) error {
+func (h *updateHandler) createPaymentBalances(ctx context.Context, tx *ent.Tx) error {
 	for _, sql := range h.sqlPaymentBalances {
 		if err := h.execSQL(ctx, tx, sql); err != nil {
 			return err
@@ -247,10 +252,17 @@ func (h *updateHandler) formalizePaymentID() error {
 	}
 
 	h.obseletePaymentBaseReq.EntID = func() *uuid.UUID { uid := h._ent.PaymentID(); return &uid }()
-	h.obseletePaymentBaseReq.ObseleteState = func() *types.PaymentObseleteState { e := types.PaymentObseleteState_PaymentObseleteWait; return &e }()
-
 	h.FeeOrderStateReq.PaymentID = h.PaymentBaseReq.EntID
 	return nil
+}
+
+func (h *updateHandler) formalizeEntIDs() {
+	if h.PaymentBaseReq.EntID == nil {
+		h.PaymentBaseReq.EntID = func() *uuid.UUID { uid := uuid.New(); return &uid }()
+	}
+	if h.PaymentBalanceLockReq.EntID == nil {
+		h.PaymentBalanceLockReq.EntID = func() *uuid.UUID { uid := uuid.New(); return &uid }()
+	}
 }
 
 func (h *Handler) UpdateFeeOrder(ctx context.Context) error {
@@ -258,7 +270,11 @@ func (h *Handler) UpdateFeeOrder(ctx context.Context) error {
 		feeOrderQueryHandler: &feeOrderQueryHandler{
 			Handler: h,
 		},
-		obseletePaymentBaseReq: &paymentbasecrud.Req{},
+		obseletePaymentBaseReq: &paymentbasecrud.Req{
+			OrderID:       h.OrderID,
+			ObseleteState: func() *types.PaymentObseleteState { e := types.PaymentObseleteState_PaymentObseleteWait; return &e }(),
+		},
+		updateNothing: true,
 	}
 
 	if err := handler.requireFeeOrder(ctx); err != nil {
@@ -266,18 +282,29 @@ func (h *Handler) UpdateFeeOrder(ctx context.Context) error {
 	}
 
 	handler.formalizeOrderID()
-	handler.formalizePaymentID()
+	handler.formalizeEntIDs()
+	if err := handler.formalizePaymentID(); err != nil {
+		return err
+	}
 	handler.formalizePaymentBalances()
 	handler.formalizePaymentTransfers()
 
-	handler.constructOrderStateBaseSQL(ctx)
-	handler.constructFeeOrderStateSQL(ctx)
+	if err := handler.constructOrderStateBaseSQL(ctx); err != nil {
+		return err
+	}
+	if err := handler.constructFeeOrderStateSQL(ctx); err != nil {
+		return err
+	}
 	handler.constructLedgerLockSQL(ctx)
 	handler.constructPaymentBalanceLockSQL(ctx)
 	handler.constructPaymentBaseSQL(ctx)
 	handler.constructPaymentBalanceSQLs(ctx)
-	handler.constructPaymentTransferSQLs(ctx)
-	handler.constructObseletePaymentBaseSQL(ctx)
+	if err := handler.constructPaymentTransferSQLs(ctx); err != nil {
+		return err
+	}
+	if err := handler.constructObseletePaymentBaseSQL(ctx); err != nil {
+		return err
+	}
 
 	return db.WithTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {
 		if err := handler.updateOrderStateBase(_ctx, tx); err != nil {
@@ -286,21 +313,27 @@ func (h *Handler) UpdateFeeOrder(ctx context.Context) error {
 		if err := handler.updateFeeOrderState(_ctx, tx); err != nil {
 			return err
 		}
-		if err := handler.createLedgerLock(_ctx, tx); err != nil {
+		if err := handler.updateObseletePaymentBase(_ctx, tx); err != nil {
 			return err
 		}
 		if err := handler.createPaymentBase(_ctx, tx); err != nil {
 			return err
 		}
+		if err := handler.createLedgerLock(_ctx, tx); err != nil {
+			return err
+		}
 		if err := handler.createPaymentBalanceLock(_ctx, tx); err != nil {
 			return err
 		}
-		if err := handler.createOrUpdatePaymentBalances(_ctx, tx); err != nil {
+		if err := handler.createPaymentBalances(_ctx, tx); err != nil {
 			return err
 		}
-		if err := handler.updateObseletePaymentBase(_ctx, tx); err != nil {
+		if err := handler.createOrUpdatePaymentTransfers(_ctx, tx); err != nil {
 			return err
 		}
-		return handler.createOrUpdatePaymentTransfers(_ctx, tx)
+		if handler.updateNothing {
+			return cruder.ErrUpdateNothing
+		}
+		return nil
 	})
 }

@@ -39,13 +39,14 @@ func UpdateSet(u *ent.OrderCouponUpdateOne, req *Req) *ent.OrderCouponUpdateOne 
 }
 
 type Conds struct {
-	ID       *cruder.Cond
-	IDs      *cruder.Cond
-	EntID    *cruder.Cond
-	EntIDs   *cruder.Cond
-	OrderID  *cruder.Cond
-	OrderIDs *cruder.Cond
-	CouponID *cruder.Cond
+	ID        *cruder.Cond
+	IDs       *cruder.Cond
+	EntID     *cruder.Cond
+	EntIDs    *cruder.Cond
+	OrderID   *cruder.Cond
+	OrderIDs  *cruder.Cond
+	CouponID  *cruder.Cond
+	CouponIDs *cruder.Cond
 }
 
 //nolint
@@ -144,6 +145,20 @@ func SetQueryConds(q *ent.OrderCouponQuery, conds *Conds) (*ent.OrderCouponQuery
 			q.Where(entordercoupon.CouponID(id))
 		default:
 			return nil, fmt.Errorf("invalid ordercoupon field")
+		}
+	}
+	if conds.CouponIDs != nil {
+		ids, ok := conds.CouponIDs.Val.([]uuid.UUID)
+		if !ok {
+			return nil, fmt.Errorf("invalid couponids")
+		}
+		if len(ids) > 0 {
+			switch conds.CouponIDs.Op {
+			case cruder.IN:
+				q.Where(entordercoupon.CouponIDIn(ids...))
+			default:
+				return nil, fmt.Errorf("invalid ordercoupon field")
+			}
 		}
 	}
 	return q, nil
