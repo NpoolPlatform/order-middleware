@@ -366,7 +366,6 @@ func (h *baseQueryHandler) queryJoinPaymentBase(s *sql.Selector) {
 	t1 := sql.Table(entpaymentbase.Table)
 	t2 := sql.Table(entpaymentbalancelock.Table)
 	t3 := sql.Table(entorderlock.Table)
-
 	s.LeftJoin(t1).
 		On(
 			s.C(entorderbase.FieldEntID),
@@ -388,6 +387,21 @@ func (h *baseQueryHandler) queryJoinPaymentBase(s *sql.Selector) {
 	s.AppendSelect(
 		sql.As(t1.C(entpaymentbase.FieldEntID), "payment_id"),
 		sql.As(t3.C(entorderlock.FieldEntID), "ledger_lock_id"),
+	)
+}
+
+func (h *baseQueryHandler) queryJoinStockLock(s *sql.Selector) {
+	t := sql.Table(entorderlock.Table)
+	s.Join(t).
+		On(
+			s.C(entorderbase.FieldEntID),
+			t.C(entorderlock.FieldOrderID),
+		).
+		OnP(
+			sql.EQ(t.C(entorderlock.FieldLockType), types.OrderLockType_LockStock.String()),
+		)
+	s.AppendSelect(
+		sql.As(t.C(entorderlock.FieldEntID), "app_good_stock_lock_id"),
 	)
 }
 
@@ -450,6 +464,7 @@ func (h *baseQueryHandler) queryJoin() {
 		h.queryJoinOrderStateBase(s)
 		h.queryJoinPowerRentalState(s)
 		h.queryJoinPaymentBase(s)
+		h.queryJoinStockLock(s)
 		h.queryJoinOrderCoupon(s)
 	})
 }
