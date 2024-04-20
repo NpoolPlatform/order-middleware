@@ -5,17 +5,35 @@ import (
 	"fmt"
 
 	"entgo.io/ent/dialect/sql"
+
+	cruder "github.com/NpoolPlatform/libent-cruder/pkg/cruder"
+	goodtypes "github.com/NpoolPlatform/message/npool/basetypes/good/v1"
+	types "github.com/NpoolPlatform/message/npool/basetypes/order/v1"
 	npool "github.com/NpoolPlatform/message/npool/order/mw/v1/fee"
+	ordercouponmwpb "github.com/NpoolPlatform/message/npool/order/mw/v1/order/coupon"
+	paymentmwpb "github.com/NpoolPlatform/message/npool/order/mw/v1/payment"
+	ordercouponcrud "github.com/NpoolPlatform/order-middleware/pkg/crud/order/coupon"
+	paymentbalancecrud "github.com/NpoolPlatform/order-middleware/pkg/crud/payment/balance"
+	paymenttransfercrud "github.com/NpoolPlatform/order-middleware/pkg/crud/payment/transfer"
 	"github.com/NpoolPlatform/order-middleware/pkg/db"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent"
 	entfeeorder "github.com/NpoolPlatform/order-middleware/pkg/db/ent/feeorder"
+	entordercoupon "github.com/NpoolPlatform/order-middleware/pkg/db/ent/ordercoupon"
+	entpaymentbalance "github.com/NpoolPlatform/order-middleware/pkg/db/ent/paymentbalance"
+	entpaymenttransfer "github.com/NpoolPlatform/order-middleware/pkg/db/ent/paymenttransfer"
+
+	"github.com/google/uuid"
+	"github.com/shopspring/decimal"
 )
 
 type queryHandler struct {
 	*baseQueryHandler
-	stmCount *ent.OrderBaseSelect
-	infos    []*npool.FeeOrder
-	total    uint32
+	stmCount         *ent.OrderBaseSelect
+	infos            []*npool.FeeOrder
+	orderCoupons     []*ordercouponmwpb.OrderCouponInfo
+	paymentBalances  []*paymentmwpb.PaymentBalanceInfo
+	paymentTransfers []*paymentmwpb.PaymentTransferInfo
+	total            uint32
 }
 
 func (h *queryHandler) queryJoin() {
@@ -32,8 +50,153 @@ func (h *queryHandler) scan(ctx context.Context) error {
 	return h.stmSelect.Scan(ctx, &h.infos)
 }
 
+func (h *queryHandler) queryOrderCoupons(ctx context.Context, cli *ent.Client) error {
+	orderIDs := func() (uids []uuid.UUID) {
+		for _, info := range h.infos {
+			uids = append(uids, uuid.MustParse(info.OrderID))
+		}
+		return
+	}()
+
+	stm, err := ordercouponcrud.SetQueryConds(
+		cli.OrderCoupon.Query(),
+		&ordercouponcrud.Conds{
+			OrderIDs: &cruder.Cond{Op: cruder.IN, Val: orderIDs},
+		},
+	)
+	if err != nil {
+		return err
+	}
+
+	return stm.Select(
+		entordercoupon.FieldOrderID,
+		entordercoupon.FieldCouponID,
+		entordercoupon.FieldCreatedAt,
+	).Scan(ctx, &h.orderCoupons)
+}
+
+func (h *queryHandler) queryPaymentBalances(ctx context.Context, cli *ent.Client) error {
+	paymentIDs := func() (uids []uuid.UUID) {
+		for _, info := range h.infos {
+			uids = append(uids, uuid.MustParse(info.PaymentID))
+		}
+		return
+	}()
+
+	stm, err := paymentbalancecrud.SetQueryConds(
+		cli.PaymentBalance.Query(),
+		&paymentbalancecrud.Conds{
+			PaymentIDs: &cruder.Cond{Op: cruder.IN, Val: paymentIDs},
+		},
+	)
+	if err != nil {
+		return err
+	}
+
+	return stm.Select(
+		entpaymentbalance.FieldPaymentID,
+		entpaymentbalance.FieldCoinTypeID,
+		entpaymentbalance.FieldAmount,
+		entpaymentbalance.FieldCoinUsdCurrency,
+		entpaymentbalance.FieldLocalCoinUsdCurrency,
+		entpaymentbalance.FieldLiveCoinUsdCurrency,
+		entpaymentbalance.FieldCreatedAt,
+	).Scan(ctx, &h.paymentBalances)
+}
+
+func (h *queryHandler) queryPaymentTransfers(ctx context.Context, cli *ent.Client) error {
+	paymentIDs := func() (uids []uuid.UUID) {
+		for _, info := range h.infos {
+			uids = append(uids, uuid.MustParse(info.PaymentID))
+		}
+		return
+	}()
+
+	stm, err := paymenttransfercrud.SetQueryConds(
+		cli.PaymentTransfer.Query(),
+		&paymenttransfercrud.Conds{
+			PaymentIDs: &cruder.Cond{Op: cruder.IN, Val: paymentIDs},
+		},
+	)
+	if err != nil {
+		return err
+	}
+
+	return stm.Select(
+		entpaymenttransfer.FieldPaymentID,
+		entpaymenttransfer.FieldCoinTypeID,
+		entpaymenttransfer.FieldAmount,
+		entpaymenttransfer.FieldAccountID,
+		entpaymenttransfer.FieldStartAmount,
+		entpaymenttransfer.FieldCoinUsdCurrency,
+		entpaymenttransfer.FieldLocalCoinUsdCurrency,
+		entpaymenttransfer.FieldLiveCoinUsdCurrency,
+		entpaymenttransfer.FieldFinishAmount,
+		entpaymenttransfer.FieldCreatedAt,
+	).Scan(ctx, &h.paymentTransfers)
+}
+
 func (h *queryHandler) formalize() {
-	// TODO: do nothing
+	orderCoupons := map[string][]*ordercouponmwpb.OrderCouponInfo{}
+	paymentBalances := map[string][]*paymentmwpb.PaymentBalanceInfo{}
+	paymentTransfers := map[string][]*paymentmwpb.PaymentTransferInfo{}
+
+	for _, orderCoupon := range h.orderCoupons {
+		orderCoupons[orderCoupon.OrderID] = append(orderCoupons[orderCoupon.OrderID], orderCoupon)
+	}
+	for _, paymentBalance := range h.paymentBalances {
+		paymentBalances[paymentBalance.PaymentID] = append(paymentBalances[paymentBalance.PaymentID], paymentBalance)
+		paymentBalance.Amount = func() string { amount, _ := decimal.NewFromString(paymentBalance.Amount); return amount.String() }()
+		paymentBalance.CoinUSDCurrency = func() string {
+			amount, _ := decimal.NewFromString(paymentBalance.CoinUSDCurrency)
+			return amount.String()
+		}()
+		paymentBalance.LocalCoinUSDCurrency = func() string {
+			amount, _ := decimal.NewFromString(paymentBalance.LocalCoinUSDCurrency)
+			return amount.String()
+		}()
+		paymentBalance.LiveCoinUSDCurrency = func() string {
+			amount, _ := decimal.NewFromString(paymentBalance.LiveCoinUSDCurrency)
+			return amount.String()
+		}()
+	}
+	for _, paymentTransfer := range h.paymentTransfers {
+		paymentTransfers[paymentTransfer.PaymentID] = append(paymentTransfers[paymentTransfer.PaymentID], paymentTransfer)
+		paymentTransfer.Amount = func() string { amount, _ := decimal.NewFromString(paymentTransfer.Amount); return amount.String() }()
+		paymentTransfer.StartAmount = func() string { amount, _ := decimal.NewFromString(paymentTransfer.StartAmount); return amount.String() }()
+		paymentTransfer.FinishAmount = func() string {
+			amount, _ := decimal.NewFromString(paymentTransfer.FinishAmount)
+			return amount.String()
+		}()
+		paymentTransfer.CoinUSDCurrency = func() string {
+			amount, _ := decimal.NewFromString(paymentTransfer.CoinUSDCurrency)
+			return amount.String()
+		}()
+		paymentTransfer.LocalCoinUSDCurrency = func() string {
+			amount, _ := decimal.NewFromString(paymentTransfer.LocalCoinUSDCurrency)
+			return amount.String()
+		}()
+		paymentTransfer.LiveCoinUSDCurrency = func() string {
+			amount, _ := decimal.NewFromString(paymentTransfer.LiveCoinUSDCurrency)
+			return amount.String()
+		}()
+	}
+
+	for _, info := range h.infos {
+		info.GoodValueUSD = func() string { amount, _ := decimal.NewFromString(info.GoodValueUSD); return amount.String() }()
+		info.PaymentAmountUSD = func() string { amount, _ := decimal.NewFromString(info.PaymentAmountUSD); return amount.String() }()
+		info.DiscountAmountUSD = func() string { amount, _ := decimal.NewFromString(info.DiscountAmountUSD); return amount.String() }()
+		info.GoodType = goodtypes.GoodType(goodtypes.GoodType_value[info.GoodTypeStr])
+		info.OrderType = types.OrderType(types.OrderType_value[info.OrderTypeStr])
+		info.PaymentType = types.PaymentType(types.PaymentType_value[info.PaymentTypeStr])
+		info.PaymentState = types.PaymentState(types.PaymentState_value[info.PaymentStateStr])
+		info.OrderState = types.OrderState(types.OrderState_value[info.OrderStateStr])
+		info.CancelState = types.OrderState(types.OrderState_value[info.CancelStateStr])
+		info.CreateMethod = types.OrderCreateMethod(types.OrderCreateMethod_value[info.CreateMethodStr])
+		info.Coupons = orderCoupons[info.OrderID]
+		info.PaymentBalances = paymentBalances[info.PaymentID]
+		info.PaymentTransfers = paymentTransfers[info.PaymentID]
+	}
 }
 
 func (h *Handler) GetFeeOrder(ctx context.Context) (*npool.FeeOrder, error) {
@@ -48,7 +211,16 @@ func (h *Handler) GetFeeOrder(ctx context.Context) (*npool.FeeOrder, error) {
 			return err
 		}
 		handler.queryJoin()
-		return handler.scan(_ctx)
+		if err := handler.scan(_ctx); err != nil {
+			return err
+		}
+		if err := handler.queryPaymentBalances(_ctx, cli); err != nil {
+			return err
+		}
+		if err := handler.queryPaymentTransfers(_ctx, cli); err != nil {
+			return err
+		}
+		return handler.queryOrderCoupons(_ctx, cli)
 	})
 	if err != nil {
 		return nil, err
@@ -95,7 +267,16 @@ func (h *Handler) GetFeeOrders(ctx context.Context) ([]*npool.FeeOrder, uint32, 
 			Limit(int(h.Limit)).
 			Order(ent.Desc(entfeeorder.FieldCreatedAt))
 
-		return handler.scan(_ctx)
+		if err := handler.scan(_ctx); err != nil {
+			return err
+		}
+		if err := handler.queryPaymentBalances(_ctx, cli); err != nil {
+			return err
+		}
+		if err := handler.queryPaymentTransfers(_ctx, cli); err != nil {
+			return err
+		}
+		return handler.queryOrderCoupons(_ctx, cli)
 	})
 	if err != nil {
 		return nil, 0, err

@@ -20,6 +20,7 @@ func (h *Handler) ConstructCreateSQL() string {
 	comma = ", "
 	_sql += comma + "user_id"
 	_sql += comma + "good_id"
+	_sql += comma + "good_type"
 	_sql += comma + "app_good_id"
 	if h.ParentOrderID != nil {
 		_sql += comma + "parent_order_id"
@@ -43,6 +44,7 @@ func (h *Handler) ConstructCreateSQL() string {
 	comma = ", "
 	_sql += fmt.Sprintf("%v'%v' as user_id", comma, *h.UserID)
 	_sql += fmt.Sprintf("%v'%v' as good_id", comma, *h.GoodID)
+	_sql += fmt.Sprintf("%v'%v' as good_type", comma, h.GoodType.String())
 	_sql += fmt.Sprintf("%v'%v' as app_good_id", comma, *h.AppGoodID)
 	if h.ParentOrderID != nil {
 		_sql += fmt.Sprintf("%v'%v' as parent_order_id", comma, *h.ParentOrderID)

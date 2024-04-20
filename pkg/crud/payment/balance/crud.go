@@ -59,6 +59,7 @@ type Conds struct {
 	EntID      *cruder.Cond
 	EntIDs     *cruder.Cond
 	PaymentID  *cruder.Cond
+	PaymentIDs *cruder.Cond
 	CoinTypeID *cruder.Cond
 }
 
@@ -132,6 +133,20 @@ func SetQueryConds(q *ent.PaymentBalanceQuery, conds *Conds) (*ent.PaymentBalanc
 			q.Where(entpaymentbalance.PaymentID(id))
 		default:
 			return nil, fmt.Errorf("invalid payment field")
+		}
+	}
+	if conds.PaymentIDs != nil {
+		ids, ok := conds.PaymentIDs.Val.([]uuid.UUID)
+		if !ok {
+			return nil, fmt.Errorf("invalid paymentids")
+		}
+		if len(ids) > 0 {
+			switch conds.PaymentIDs.Op {
+			case cruder.IN:
+				q.Where(entpaymentbalance.PaymentIDIn(ids...))
+			default:
+				return nil, fmt.Errorf("invalid payment field")
+			}
 		}
 	}
 	if conds.CoinTypeID != nil {

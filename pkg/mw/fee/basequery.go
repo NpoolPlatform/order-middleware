@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"entgo.io/ent/dialect/sql"
+
 	types "github.com/NpoolPlatform/message/npool/basetypes/order/v1"
 	orderbasecrud "github.com/NpoolPlatform/order-middleware/pkg/crud/order/orderbase"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent"
@@ -89,8 +90,8 @@ func (h *baseQueryHandler) queryJoinMyself(s *sql.Selector) {
 		t.C(entorderbase.FieldAppID),
 		t.C(entorderbase.FieldUserID),
 		t.C(entorderbase.FieldGoodID),
-		t.C(entorderbase.FieldAppGoodID),
 		t.C(entorderbase.FieldGoodType),
+		t.C(entorderbase.FieldAppGoodID),
 		t.C(entorderbase.FieldParentOrderID),
 		t.C(entorderbase.FieldOrderType),
 		t.C(entorderbase.FieldCreateMethod),
@@ -110,6 +111,8 @@ func (h *baseQueryHandler) queryJoinFeeOrder(s *sql.Selector) {
 			sql.EQ(t.C(entfeeorder.FieldDeletedAt), 0),
 		)
 	s.AppendSelect(
+		t.C(entfeeorder.FieldID),
+		t.C(entfeeorder.FieldEntID),
 		t.C(entfeeorder.FieldOrderID),
 		t.C(entfeeorder.FieldGoodValueUsd),
 		t.C(entfeeorder.FieldPaymentAmountUsd),

@@ -270,7 +270,7 @@ func (h *Handler) CreateFeeOrder(ctx context.Context) error {
 	handler.constructPaymentTransferSQLs(ctx)
 	handler.constructSQL()
 
-	return db.WithDebugTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {
+	return db.WithTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {
 		if err := handler.createOrderBase(_ctx, tx); err != nil {
 			return err
 		}

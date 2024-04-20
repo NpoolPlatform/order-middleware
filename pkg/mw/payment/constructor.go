@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
+	types "github.com/NpoolPlatform/message/npool/basetypes/order/v1"
 )
 
 func (h *Handler) ConstructCreateSQL() string {
@@ -38,6 +39,7 @@ func (h *Handler) ConstructCreateSQL() string {
 	_sql += "where not exists ("
 	_sql += "select 1 from payment_bases "
 	_sql += fmt.Sprintf("where order_id = '%v' ", *h.OrderID)
+	_sql += fmt.Sprintf("and obselete_state = '%v' ", types.PaymentObseleteState_PaymentObseleteNone.String())
 	_sql += " limit 1) and exists ("
 	_sql += "select 1 from order_bases "
 	_sql += fmt.Sprintf("where ent_id = '%v' ", *h.OrderID)

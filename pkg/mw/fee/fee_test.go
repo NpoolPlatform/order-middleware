@@ -60,14 +60,32 @@ var ret = npool.FeeOrder{
 		{
 			CoinTypeID:           uuid.NewString(),
 			Amount:               decimal.NewFromInt(110).String(),
+			CoinUSDCurrency:      decimal.NewFromInt(1).String(),
 			LocalCoinUSDCurrency: decimal.NewFromInt(1).String(),
 			LiveCoinUSDCurrency:  decimal.NewFromInt(1).String(),
 		},
 	},
+	OrderState:   types.OrderState_OrderStateCreated,
+	PaymentState: types.PaymentState_PaymentStateWait,
 }
 
 //nolint:funlen
 func setup(t *testing.T) func(*testing.T) {
+	for _, paymentBalance := range ret.PaymentBalances {
+		paymentBalance.PaymentID = ret.PaymentID
+	}
+	for _, orderCoupon := range ret.Coupons {
+		orderCoupon.OrderID = ret.OrderID
+	}
+
+	ret.GoodTypeStr = ret.GoodType.String()
+	ret.OrderTypeStr = ret.OrderType.String()
+	ret.PaymentTypeStr = ret.PaymentType.String()
+	ret.CreateMethodStr = ret.CreateMethod.String()
+	ret.OrderStateStr = ret.OrderState.String()
+	ret.PaymentStateStr = ret.PaymentState.String()
+	ret.CancelStateStr = ret.CancelState.String()
+
 	h1, err := orderbase1.NewHandler(
 		context.Background(),
 		orderbase1.WithEntID(&ret.ParentOrderID, false),
@@ -137,6 +155,12 @@ func createFeeOrder(t *testing.T) {
 				ret.CreatedAt = info.CreatedAt
 				ret.UpdatedAt = info.UpdatedAt
 				ret.ID = info.ID
+				for _, paymentBalance := range ret.PaymentBalances {
+					paymentBalance.CreatedAt = ret.CreatedAt
+				}
+				for _, orderCoupon := range ret.Coupons {
+					orderCoupon.CreatedAt = ret.CreatedAt
+				}
 				assert.Equal(t, &ret, info)
 			}
 		}
@@ -178,13 +202,11 @@ func updateFeeOrder(t *testing.T) {
 	if assert.Nil(t, err) {
 		err = handler.UpdateFeeOrder(context.Background())
 		if assert.Nil(t, err) {
-			/*
-				info, err := handler.GetFeeOrder(context.Background())
-				if assert.Nil(t, err) {
-					ret.UpdatedAt = info.UpdatedAt
-					assert.Equal(t, &ret, info)
-				}
-			*/
+			info, err := handler.GetFeeOrder(context.Background())
+			if assert.Nil(t, err) {
+				ret.UpdatedAt = info.UpdatedAt
+				assert.Equal(t, &ret, info)
+			}
 		}
 	}
 }
