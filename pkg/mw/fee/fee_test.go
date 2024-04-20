@@ -234,7 +234,8 @@ func getFeeOrders(t *testing.T) {
 	handler, err := NewHandler(
 		context.Background(),
 		WithConds(&npool.Conds{
-			OrderID: &basetypes.StringVal{Op: cruder.EQ, Value: ret.OrderID},
+			OrderID:  &basetypes.StringVal{Op: cruder.EQ, Value: ret.OrderID},
+			OrderIDs: &basetypes.StringSliceVal{Op: cruder.IN, Value: []string{ret.OrderID}},
 		}),
 		WithOffset(0),
 		WithLimit(0),
