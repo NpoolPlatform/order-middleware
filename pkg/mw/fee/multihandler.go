@@ -11,6 +11,10 @@ type MultiHandler struct {
 	Handlers []*Handler
 }
 
+func (h *MultiHandler) AppendHandler(handler *Handler) {
+	h.Handlers = append(h.Handlers, handler)
+}
+
 func (h *MultiHandler) CreateFeeOrders(ctx context.Context) error {
 	return db.WithTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {
 		for _, handler := range h.Handlers {

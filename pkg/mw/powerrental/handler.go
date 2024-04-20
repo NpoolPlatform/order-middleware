@@ -7,7 +7,7 @@ import (
 
 	goodtypes "github.com/NpoolPlatform/message/npool/basetypes/good/v1"
 	types "github.com/NpoolPlatform/message/npool/basetypes/order/v1"
-	ordermwpb "github.com/NpoolPlatform/message/npool/order/mw/v1/order"
+	feeordermwpb "github.com/NpoolPlatform/message/npool/order/mw/v1/fee"
 	paymentmwpb "github.com/NpoolPlatform/message/npool/order/mw/v1/payment"
 	npool "github.com/NpoolPlatform/message/npool/order/mw/v1/powerrental"
 	constant "github.com/NpoolPlatform/order-middleware/pkg/const"
@@ -18,7 +18,7 @@ import (
 	paymenttransfercrud "github.com/NpoolPlatform/order-middleware/pkg/crud/payment/transfer"
 	powerrentalcrud "github.com/NpoolPlatform/order-middleware/pkg/crud/powerrental"
 	powerrentalstatecrud "github.com/NpoolPlatform/order-middleware/pkg/crud/powerrental/state"
-	orderbase1 "github.com/NpoolPlatform/order-middleware/pkg/mw/order/orderbase"
+	feeorder1 "github.com/NpoolPlatform/order-middleware/pkg/mw/fee"
 
 	"github.com/google/uuid"
 	"github.com/shopspring/decimal"
@@ -39,10 +39,9 @@ type Handler struct {
 	PowerRentalStateConds *powerrentalstatecrud.Conds
 	Offset                int32
 	Limit                 int32
-
-	ChildOrderReqs []*orderbasecrud.Req
-	CouponIDs      []uuid.UUID
-	Rollback       *bool
+	FeeMultiHandler       *feeorder1.MultiHandler
+	CouponIDs             []uuid.UUID
+	Rollback              *bool
 }
 
 func NewHandler(ctx context.Context, options ...func(context.Context, *Handler) error) (*Handler, error) {
@@ -54,6 +53,7 @@ func NewHandler(ctx context.Context, options ...func(context.Context, *Handler) 
 		OrderBaseConds:        &orderbasecrud.Conds{},
 		OrderStateBaseConds:   &orderstatebasecrud.Conds{},
 		PowerRentalStateConds: &powerrentalstatecrud.Conds{},
+		FeeMultiHandler:       &feeorder1.MultiHandler{},
 	}
 	for _, opt := range options {
 		if err := opt(ctx, handler); err != nil {
@@ -331,15 +331,15 @@ func WithPromotionID(id *string, must bool) func(context.Context, *Handler) erro
 	}
 }
 
-func WithDuration(duration *uint32, must bool) func(context.Context, *Handler) error {
+func WithDurationSeconds(duration *uint32, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if duration == nil {
 			if must {
-				return fmt.Errorf("invalid duration")
+				return fmt.Errorf("invalid durationseconds")
 			}
 			return nil
 		}
-		h.Duration = duration
+		h.PowerRentalStateReq.DurationSeconds = duration
 		return nil
 	}
 }
@@ -401,7 +401,7 @@ func WithPaymentType(paymentType *types.PaymentType, must bool) func(context.Con
 		default:
 			return fmt.Errorf("invalid paymentType")
 		}
-		h.OrderBaseReq.PaymentType = paymentType
+		h.OrderStateBaseReq.PaymentType = paymentType
 		return nil
 	}
 }
@@ -514,19 +514,6 @@ func WithStartAt(startAt *uint32, must bool) func(context.Context, *Handler) err
 	}
 }
 
-func WithEndAt(endAt *uint32, must bool) func(context.Context, *Handler) error {
-	return func(ctx context.Context, h *Handler) error {
-		if endAt == nil {
-			if must {
-				return fmt.Errorf("invalid endat")
-			}
-			return nil
-		}
-		h.PowerRentalStateReq.EndAt = endAt
-		return nil
-	}
-}
-
 func WithLastBenefitAt(lastBenefitAt *uint32, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if lastBenefitAt == nil {
@@ -621,16 +608,16 @@ func WithPaymentState(state *types.PaymentState, must bool) func(context.Context
 	}
 }
 
-func WithOutOfGasHours(outOfGasHours *uint32, must bool) func(context.Context, *Handler) error {
+func WithOutOfGasSeconds(outOfGasSeconds *uint32, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
-		h.PowerRentalStateReq.OutOfGasHours = outOfGasHours
+		h.PowerRentalStateReq.OutOfGasSeconds = outOfGasSeconds
 		return nil
 	}
 }
 
-func WithCompensateHours(compensateHours *uint32, must bool) func(context.Context, *Handler) error {
+func WithCompensateSeconds(compensateSeconds *uint32, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
-		h.PowerRentalStateReq.CompensateHours = compensateHours
+		h.PowerRentalStateReq.CompensateSeconds = compensateSeconds
 		return nil
 	}
 }
@@ -829,22 +816,29 @@ func WithPaymentTransfers(bs []*paymentmwpb.PaymentTransferReq, must bool) func(
 	}
 }
 
-func WithChildOrders(childOrders []*ordermwpb.OrderReq, must bool) func(context.Context, *Handler) error {
+func WithFeeOrders(feeOrders []*feeordermwpb.FeeOrderReq, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
-		for _, childOrder := range childOrders {
-			// Fill app id, user id later
-			h1, err := orderbase1.NewHandler(
+		for _, feeOrder := range feeOrders {
+			handler, err := feeorder1.NewHandler(
 				ctx,
-				orderbase1.WithEntID(childOrder.EntID, false),
-				orderbase1.WithGoodID(childOrder.GoodID, true),
-				orderbase1.WithAppGoodID(childOrder.AppGoodID, true),
-				orderbase1.WithDuration(childOrder.Duration, true),
-				orderbase1.WithGoodType(childOrder.GoodType, true),
+				feeorder1.WithEntID(feeOrder.EntID, true),
+				// Fill app id with parent later
+				// Fill user id with parent later
+				feeorder1.WithGoodID(feeOrder.GoodID, true),
+				feeorder1.WithGoodType(feeOrder.GoodType, true),
+				feeorder1.WithAppGoodID(feeOrder.AppGoodID, true),
+				feeorder1.WithOrderID(feeOrder.OrderID, true),
+				// Fill parent order id later
+				// Fill order type with parent later
+				feeorder1.WithPaymentType(func() *types.PaymentType { e := types.PaymentType_PayWithParentOrder; return &e }(), true),
+				// Fill create method with parent later
+				feeorder1.WithGoodValueUSD(feeOrder.GoodValueUSD, true),
+				feeorder1.WithDurationSeconds(feeOrder.DurationSeconds, true),
 			)
 			if err != nil {
 				return err
 			}
-			h.ChildOrderReqs = append(h.ChildOrderReqs, &h1.Req)
+			h.FeeMultiHandler.AppendHandler(handler)
 		}
 		return nil
 	}
