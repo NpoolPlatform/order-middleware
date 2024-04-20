@@ -398,6 +398,49 @@ func (h *baseQueryHandler) queryJoinOrderCoupon(s *sql.Selector) {
 			s.C(entorderbase.FieldEntID),
 			t.C(entordercoupon.FieldOrderID),
 		)
+	if h.OrderCouponConds.OrderID != nil {
+		s.OnP(
+			sql.EQ(
+				t.C(entordercoupon.FieldOrderID),
+				h.OrderCouponConds.OrderID.Val.(uuid.UUID),
+			),
+		)
+	}
+	if h.OrderCouponConds.OrderIDs != nil {
+		s.OnP(
+			sql.In(
+				t.C(entordercoupon.FieldOrderID),
+				func() (_uids []interface{}) {
+					for _, uid := range h.OrderCouponConds.OrderIDs.Val.([]uuid.UUID) {
+						_uids = append(_uids, interface{}(uid))
+					}
+					return _uids
+				}()...,
+			),
+		)
+	}
+	if h.OrderCouponConds.CouponID != nil {
+		s.OnP(
+			sql.EQ(
+				t.C(entordercoupon.FieldCouponID),
+				h.OrderCouponConds.CouponID.Val.(uuid.UUID),
+			),
+		)
+	}
+	if h.OrderCouponConds.CouponIDs != nil {
+		s.OnP(
+			sql.In(
+				t.C(entordercoupon.FieldCouponID),
+				func() (_uids []interface{}) {
+					for _, uid := range h.OrderCouponConds.CouponIDs.Val.([]uuid.UUID) {
+						_uids = append(_uids, interface{}(uid))
+					}
+					return _uids
+				}()...,
+			),
+		)
+	}
+
 }
 
 func (h *baseQueryHandler) queryJoin() {

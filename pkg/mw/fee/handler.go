@@ -905,6 +905,30 @@ func (h *Handler) withFeeOrderStateConds(conds *npool.Conds) error {
 }
 
 func (h *Handler) withOrderCouponConds(conds *npool.Conds) error {
+	if conds.OrderID != nil {
+		id, err := uuid.Parse(conds.GetOrderID().GetValue())
+		if err != nil {
+			return err
+		}
+		h.OrderCouponConds.OrderID = &cruder.Cond{
+			Op:  conds.GetOrderID().GetOp(),
+			Val: id,
+		}
+	}
+	if conds.OrderIDs != nil {
+		ids := []uuid.UUID{}
+		for _, id := range conds.GetOrderIDs().GetValue() {
+			_id, err := uuid.Parse(id)
+			if err != nil {
+				return err
+			}
+			ids = append(ids, _id)
+		}
+		h.OrderCouponConds.OrderIDs = &cruder.Cond{
+			Op:  conds.GetOrderIDs().GetOp(),
+			Val: ids,
+		}
+	}
 	if conds.CouponID != nil {
 		id, err := uuid.Parse(conds.GetCouponID().GetValue())
 		if err != nil {
