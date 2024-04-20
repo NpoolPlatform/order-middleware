@@ -191,10 +191,13 @@ func (h *createHandler) formalizeOrderID() {
 	h.OrderBaseReq.EntID = h.OrderID
 	h.OrderStateBaseReq.OrderID = h.OrderID
 	h.PowerRentalStateReq.OrderID = h.OrderID
+	h.PaymentBaseReq.OrderID = h.OrderID
+}
+
+func (h *createHandler) formalizeOrderLocks() {
 	for _, req := range h.OrderLockReqs {
 		req.OrderID = h.OrderID
 	}
-	h.PaymentBaseReq.OrderID = h.OrderID
 }
 
 func (h *createHandler) formalizeEntIDs() {
@@ -262,6 +265,7 @@ func (h *Handler) CreatePowerRentalWithTx(ctx context.Context, tx *ent.Tx) error
 	}
 
 	handler.formalizeOrderID()
+	handler.formalizeOrderLocks()
 	handler.formalizeEntIDs()
 	handler.formalizeOrderCoupons()
 	handler.formalizePaymentID()

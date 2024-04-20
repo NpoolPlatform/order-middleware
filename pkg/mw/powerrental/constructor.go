@@ -26,7 +26,9 @@ func (h *Handler) ConstructCreateSQL() string {
 	if h.PromotionID != nil {
 		_sql += comma + "promotion_id"
 	}
-	_sql += comma + "investment_type"
+	if h.InvestmentType != nil {
+		_sql += comma + "investment_type"
+	}
 	_sql += comma + "created_at"
 	_sql += comma + "updated_at"
 	_sql += comma + "deleted_at"
@@ -47,7 +49,9 @@ func (h *Handler) ConstructCreateSQL() string {
 	if h.PromotionID != nil {
 		_sql += fmt.Sprintf("%v'%v' as promotion_id", comma, *h.PromotionID)
 	}
-	_sql += fmt.Sprintf("%v'%v' as investment_type", comma, h.InvestmentType.String())
+	if h.InvestmentType != nil {
+		_sql += fmt.Sprintf("%v'%v' as investment_type", comma, h.InvestmentType.String())
+	}
 	_sql += fmt.Sprintf("%v%v as created_at", comma, now)
 	_sql += fmt.Sprintf("%v%v as updated_at", comma, now)
 	_sql += fmt.Sprintf("%v0 as deleted_at", comma)

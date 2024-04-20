@@ -57,10 +57,13 @@ func NewHandler(ctx context.Context, options ...func(context.Context, *Handler) 
 		OrderBaseReq:          &orderbasecrud.Req{},
 		OrderStateBaseReq:     &orderstatebasecrud.Req{},
 		PowerRentalStateReq:   &powerrentalstatecrud.Req{},
+		PaymentBaseReq:        &paymentbasecrud.Req{},
+		PaymentBalanceLockReq: &paymentbalancelockcrud.Req{},
 		PowerRentalConds:      &powerrentalcrud.Conds{},
 		OrderBaseConds:        &orderbasecrud.Conds{},
 		OrderStateBaseConds:   &orderstatebasecrud.Conds{},
 		PowerRentalStateConds: &powerrentalstatecrud.Conds{},
+		OrderCouponConds:      &ordercouponcrud.Conds{},
 		FeeMultiHandler:       &feeorder1.MultiHandler{},
 	}
 	for _, opt := range options {
@@ -204,6 +207,7 @@ func WithOrderID(id *string, must bool) func(context.Context, *Handler) error {
 		h.OrderBaseReq.EntID = &_id
 		h.OrderStateBaseReq.OrderID = &_id
 		h.PowerRentalStateReq.OrderID = &_id
+		h.PaymentBaseReq.OrderID = &_id
 		return nil
 	}
 }
@@ -679,6 +683,26 @@ func WithLedgerLockID(id *string, must bool) func(context.Context, *Handler) err
 			EntID:    &_id,
 			LockType: func() *types.OrderLockType { e := types.OrderLockType_LockBalance; return &e }(),
 		})
+		h.PaymentBalanceLockReq.LedgerLockID = &_id
+		return nil
+	}
+}
+
+func WithPaymentID(id *string, must bool) func(context.Context, *Handler) error {
+	return func(ctx context.Context, h *Handler) error {
+		if id == nil {
+			if must {
+				return fmt.Errorf("invalid paymentid")
+			}
+			return nil
+		}
+		_id, err := uuid.Parse(*id)
+		if err != nil {
+			return err
+		}
+		h.PaymentBaseReq.EntID = &_id
+		h.PowerRentalStateReq.PaymentID = &_id
+		h.PaymentBalanceLockReq.PaymentID = &_id
 		return nil
 	}
 }

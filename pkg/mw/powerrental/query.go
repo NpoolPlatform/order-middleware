@@ -237,7 +237,7 @@ func (h *Handler) GetPowerRental(ctx context.Context) (*npool.PowerRentalOrder, 
 	return handler.infos[0], nil
 }
 
-func (h *Handler) GetPowerRentalOrders(ctx context.Context) ([]*npool.PowerRentalOrder, uint32, error) {
+func (h *Handler) GetPowerRentals(ctx context.Context) ([]*npool.PowerRentalOrder, uint32, error) {
 	handler := &queryHandler{
 		baseQueryHandler: &baseQueryHandler{
 			Handler: h,
