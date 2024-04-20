@@ -6,18 +6,26 @@ import (
 	"github.com/google/uuid"
 )
 
-type PowerRentalState interface {
-	OrderID() uuid.UUID
+type powerRentalStates struct {
+	entPowerRentalStates []*ent.PowerRentalState
 }
 
-type powerRentalState struct {
-	entPowerRentalState *ent.PowerRentalState
+func (f *powerRentalStates) OrderID() uuid.UUID {
+	return f.entPowerRentalStates[0].OrderID
 }
 
-func (f *powerRentalState) OrderID() uuid.UUID {
-	return f.entPowerRentalState.OrderID
+func (f *powerRentalStates) CompensateSeconds() uint32 {
+	return f.entPowerRentalStates[0].CompensateSeconds
 }
 
-func (f *powerRentalState) CompensateSeconds() uint32 {
-	return f.entPowerRentalState.CompensateSeconds
+func (f *powerRentalStates) OrderIDWithIndex(index int) uuid.UUID {
+	return f.entPowerRentalStates[index].OrderID
+}
+
+func (f *powerRentalStates) CompensateSecondsWithIndex(index int) uint32 {
+	return f.entPowerRentalStates[index].CompensateSeconds
+}
+
+func (f *powerRentalStates) Exhausted() bool {
+	return len(f.entPowerRentalStates) == 0
 }

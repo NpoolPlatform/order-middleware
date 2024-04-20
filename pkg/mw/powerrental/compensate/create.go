@@ -4,12 +4,15 @@ import (
 	"context"
 	"fmt"
 
+	constant "github.com/NpoolPlatform/order-middleware/pkg/const"
 	compensatecrud "github.com/NpoolPlatform/order-middleware/pkg/crud/compensate"
 	powerrentalstatecrud "github.com/NpoolPlatform/order-middleware/pkg/crud/powerrental/state"
 	"github.com/NpoolPlatform/order-middleware/pkg/db"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent"
 	compensate1 "github.com/NpoolPlatform/order-middleware/pkg/mw/compensate"
 	powerrentalstate1 "github.com/NpoolPlatform/order-middleware/pkg/mw/powerrental/state"
+
+	"github.com/google/uuid"
 )
 
 type createHandler struct {
@@ -66,11 +69,47 @@ func (h *createHandler) updatePowerRentalStates(ctx context.Context, tx *ent.Tx)
 }
 
 func (h *createHandler) createGoodCompensates(ctx context.Context, tx *ent.Tx) error {
-	return nil
+	h.limit = constant.DefaultRowLimit
+
+	for {
+		if err := h.requirePowerRentalStates(ctx); err != nil {
+			return err
+		}
+		if h._ent.Exhausted() {
+			return nil
+		}
+
+		h.sqlCompensates = []string{}
+		h.sqlPowerRentalStates = []string{}
+		for i, state := range h._ent.entPowerRentalStates {
+			h.constructCompensateSQL(ctx, &compensatecrud.Req{
+				EntID:             func() *uuid.UUID { uid := uuid.New(); return &uid }(),
+				OrderID:           &state.OrderID,
+				CompensateFromID:  h.CompensateFromID,
+				CompensateType:    h.CompensateType,
+				CompensateSeconds: h.CompensateSeconds,
+			})
+			if err := h.constructPowerRentalStateSQL(ctx, &powerrentalstatecrud.Req{
+				OrderID:           &state.OrderID,
+				CompensateSeconds: func() *uint32 { u := *h.CompensateSeconds + h._ent.CompensateSecondsWithIndex(i); return &u }(),
+			}); err != nil {
+				return err
+			}
+		}
+
+		if err := h.createCompensates(ctx, tx); err != nil {
+			return err
+		}
+		if err := h.updatePowerRentalStates(ctx, tx); err != nil {
+			return err
+		}
+
+		h.offset += h.limit
+	}
 }
 
 func (h *createHandler) createOrderCompensate(ctx context.Context, tx *ent.Tx) error {
-	if err := h.requirePowerRentalState(ctx); err != nil {
+	if err := h.requirePowerRentalStates(ctx); err != nil {
 		return err
 	}
 
