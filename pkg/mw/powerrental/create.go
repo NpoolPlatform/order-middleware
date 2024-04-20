@@ -248,6 +248,10 @@ func (h *createHandler) formalizePaymentID() {
 	h.PaymentBalanceLockReq.PaymentID = h.PaymentBaseReq.EntID
 }
 
+func (h *createHandler) createFeeOrders(ctx context.Context, tx *ent.Tx) error {
+	return h.FeeMultiHandler.CreateFeeOrdersWithTx(ctx, tx)
+}
+
 func (h *Handler) CreatePowerRentalWithTx(ctx context.Context, tx *ent.Tx) error {
 	handler := &createHandler{
 		Handler: h,
@@ -300,6 +304,9 @@ func (h *Handler) CreatePowerRentalWithTx(ctx context.Context, tx *ent.Tx) error
 		return err
 	}
 	if err := handler.createPaymentTransfers(ctx, tx); err != nil {
+		return err
+	}
+	if err := handler.createFeeOrders(ctx, tx); err != nil {
 		return err
 	}
 	return handler.createPowerRental(ctx, tx)
