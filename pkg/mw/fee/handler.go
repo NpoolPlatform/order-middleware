@@ -891,6 +891,16 @@ func (h *Handler) withFeeOrderStateConds(conds *npool.Conds) error {
 			Val: types.PaymentState(conds.GetPaymentState().GetValue()),
 		}
 	}
+	if conds.PaymentStates != nil {
+		_types := []types.PaymentState{}
+		for _, _type := range conds.GetPaymentStates().GetValue() {
+			_types = append(_types, types.PaymentState(_type))
+		}
+		h.FeeOrderStateConds.PaymentStates = &cruder.Cond{
+			Op:  conds.GetPaymentStates().GetOp(),
+			Val: _types,
+		}
+	}
 	return nil
 }
 

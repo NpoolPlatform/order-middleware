@@ -188,6 +188,69 @@ func (h *baseQueryHandler) queryJoinFeeOrder(s *sql.Selector) {
 		OnP(
 			sql.EQ(t.C(entfeeorder.FieldDeletedAt), 0),
 		)
+	if h.FeeOrderConds.ID != nil {
+		s.OnP(
+			sql.EQ(
+				t.C(entfeeorder.FieldID),
+				h.FeeOrderConds.ID.Val.(uint32),
+			),
+		)
+	}
+	if h.FeeOrderConds.IDs != nil {
+		s.OnP(
+			sql.In(
+				t.C(entfeeorder.FieldID),
+				func() (_ids []interface{}) {
+					for _, id := range h.FeeOrderConds.IDs.Val.([]uint32) {
+						_ids = append(_ids, interface{}(id))
+					}
+					return _ids
+				}()...,
+			),
+		)
+	}
+	if h.FeeOrderConds.EntID != nil {
+		s.OnP(
+			sql.EQ(
+				t.C(entfeeorder.FieldEntID),
+				h.FeeOrderConds.EntID.Val.(uuid.UUID),
+			),
+		)
+	}
+	if h.FeeOrderConds.EntIDs != nil {
+		s.OnP(
+			sql.In(
+				t.C(entfeeorder.FieldEntID),
+				func() (_uids []interface{}) {
+					for _, uid := range h.FeeOrderConds.EntIDs.Val.([]uuid.UUID) {
+						_uids = append(_uids, interface{}(uid))
+					}
+					return _uids
+				}()...,
+			),
+		)
+	}
+	if h.FeeOrderConds.OrderID != nil {
+		s.OnP(
+			sql.EQ(
+				t.C(entfeeorder.FieldOrderID),
+				h.FeeOrderConds.OrderID.Val.(uuid.UUID),
+			),
+		)
+	}
+	if h.FeeOrderConds.OrderIDs != nil {
+		s.OnP(
+			sql.In(
+				t.C(entfeeorder.FieldOrderID),
+				func() (_uids []interface{}) {
+					for _, uid := range h.FeeOrderConds.OrderIDs.Val.([]uuid.UUID) {
+						_uids = append(_uids, interface{}(uid))
+					}
+					return _uids
+				}()...,
+			),
+		)
+	}
 	s.AppendSelect(
 		t.C(entfeeorder.FieldID),
 		t.C(entfeeorder.FieldEntID),
@@ -216,6 +279,19 @@ func (h *baseQueryHandler) queryJoinOrderStateBase(s *sql.Selector) error {
 			sql.EQ(t.C(entorderstatebase.FieldPaymentType), _type.String()),
 		)
 	}
+	if h.OrderStateBaseConds.PaymentTypes != nil {
+		s.OnP(
+			sql.In(
+				t.C(entorderstatebase.FieldPaymentType),
+				func() (_types []interface{}) {
+					for _, _type := range h.OrderStateBaseConds.PaymentTypes.Val.([]types.PaymentType) {
+						_types = append(_types, interface{}(_type.String()))
+					}
+					return _types
+				}()...,
+			),
+		)
+	}
 	if h.OrderStateBaseConds.OrderState != nil {
 		_state, ok := h.OrderStateBaseConds.OrderState.Val.(types.OrderState)
 		if !ok {
@@ -223,6 +299,19 @@ func (h *baseQueryHandler) queryJoinOrderStateBase(s *sql.Selector) error {
 		}
 		s.OnP(
 			sql.EQ(t.C(entorderstatebase.FieldOrderState), _state.String()),
+		)
+	}
+	if h.OrderStateBaseConds.OrderStates != nil {
+		s.OnP(
+			sql.In(
+				t.C(entorderstatebase.FieldOrderState),
+				func() (_types []interface{}) {
+					for _, _type := range h.OrderStateBaseConds.OrderStates.Val.([]types.OrderState) {
+						_types = append(_types, interface{}(_type.String()))
+					}
+					return _types
+				}()...,
+			),
 		)
 	}
 	s.AppendSelect(
@@ -246,6 +335,19 @@ func (h *baseQueryHandler) queryJoinFeeOrderState(s *sql.Selector) error {
 		}
 		s.OnP(
 			sql.EQ(t.C(entfeeorderstate.FieldPaymentState), _state.String()),
+		)
+	}
+	if h.FeeOrderStateConds.PaymentStates != nil {
+		s.OnP(
+			sql.In(
+				t.C(entfeeorderstate.FieldPaymentState),
+				func() (_types []interface{}) {
+					for _, _type := range h.FeeOrderStateConds.PaymentStates.Val.([]types.PaymentState) {
+						_types = append(_types, interface{}(_type.String()))
+					}
+					return
+				}()...,
+			),
 		)
 	}
 	s.AppendSelect(

@@ -80,12 +80,13 @@ func UpdateSet(u *ent.FeeOrderStateUpdateOne, req *Req) *ent.FeeOrderStateUpdate
 }
 
 type Conds struct {
-	ID           *cruder.Cond
-	IDs          *cruder.Cond
-	EntID        *cruder.Cond
-	EntIDs       *cruder.Cond
-	OrderID      *cruder.Cond
-	PaymentState *cruder.Cond
+	ID            *cruder.Cond
+	IDs           *cruder.Cond
+	EntID         *cruder.Cond
+	EntIDs        *cruder.Cond
+	OrderID       *cruder.Cond
+	PaymentState  *cruder.Cond
+	PaymentStates *cruder.Cond
 }
 
 //nolint
@@ -168,6 +169,23 @@ func SetQueryConds(q *ent.FeeOrderStateQuery, conds *Conds) (*ent.FeeOrderStateQ
 		switch conds.PaymentState.Op {
 		case cruder.EQ:
 			q.Where(entfeeorderstate.PaymentState(state.String()))
+		default:
+			return nil, fmt.Errorf("invalid feeorder field")
+		}
+	}
+	if conds.PaymentStates != nil {
+		states, ok := conds.PaymentStates.Val.([]types.PaymentState)
+		if !ok {
+			return nil, fmt.Errorf("invalid paymentstate")
+		}
+		switch conds.PaymentState.Op {
+		case cruder.IN:
+			q.Where(entfeeorderstate.PaymentStateIn(func() (_states []string) {
+				for _, state := range states {
+					_states = append(_states, state.String())
+				}
+				return
+			}()...))
 		default:
 			return nil, fmt.Errorf("invalid feeorder field")
 		}
