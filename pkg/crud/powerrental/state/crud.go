@@ -100,6 +100,7 @@ type Conds struct {
 	EntIDs        *cruder.Cond
 	OrderID       *cruder.Cond
 	PaymentState  *cruder.Cond
+	PaymentStates *cruder.Cond
 	RenewState    *cruder.Cond
 	RenewNotifyAt *cruder.Cond
 }
@@ -184,6 +185,23 @@ func SetQueryConds(q *ent.PowerRentalStateQuery, conds *Conds) (*ent.PowerRental
 		switch conds.PaymentState.Op {
 		case cruder.EQ:
 			q.Where(entpowerrentalstate.PaymentState(state.String()))
+		default:
+			return nil, fmt.Errorf("invalid powerrental field")
+		}
+	}
+	if conds.PaymentStates != nil {
+		states, ok := conds.PaymentStates.Val.([]types.PaymentState)
+		if !ok {
+			return nil, fmt.Errorf("invalid paymentstate")
+		}
+		switch conds.PaymentState.Op {
+		case cruder.IN:
+			q.Where(entpowerrentalstate.PaymentStateIn(func() (_states []string) {
+				for _, state := range states {
+					_states = append(_states, state.String())
+				}
+				return
+			}()...))
 		default:
 			return nil, fmt.Errorf("invalid powerrental field")
 		}
