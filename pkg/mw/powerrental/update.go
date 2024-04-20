@@ -212,10 +212,13 @@ func (h *updateHandler) formalizeOrderID() {
 	h.OrderBaseReq.EntID = h.OrderID
 	h.OrderStateBaseReq.OrderID = h.OrderID
 	h.PowerRentalStateReq.OrderID = h.OrderID
+	h.PaymentBaseReq.OrderID = h.OrderID
+}
+
+func (h *updateHandler) formalizeOrderLocks() {
 	for _, req := range h.OrderLockReqs {
 		req.OrderID = h.OrderID
 	}
-	h.PaymentBaseReq.OrderID = h.OrderID
 }
 
 func (h *updateHandler) formalizePaymentBalances() {
@@ -292,6 +295,7 @@ func (h *Handler) UpdatePowerRentalWithTx(ctx context.Context, tx *ent.Tx) error
 	}
 
 	handler.formalizeOrderID()
+	handler.formalizeOrderLocks()
 	handler.formalizeEntIDs()
 	if err := handler.formalizePaymentID(); err != nil {
 		return err

@@ -393,7 +393,7 @@ func (h *baseQueryHandler) queryJoinPaymentBase(s *sql.Selector) {
 
 func (h *baseQueryHandler) queryJoinOrderCoupon(s *sql.Selector) {
 	t := sql.Table(entordercoupon.Table)
-	s.Join(t).
+	s.LeftJoin(t).
 		On(
 			s.C(entorderbase.FieldEntID),
 			t.C(entordercoupon.FieldOrderID),

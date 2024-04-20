@@ -68,11 +68,11 @@ func (h *Handler) ConstructUpdateSQL() (string, error) {
 		set = ""
 	}
 	if h.DurationSeconds != nil {
-		_sql += fmt.Sprintf("%vduration_state = '%v', ", set, *h.DurationSeconds)
+		_sql += fmt.Sprintf("%vduration_seconds = '%v', ", set, *h.DurationSeconds)
 		set = ""
 	}
 	if h.PaymentID != nil {
-		_sql += fmt.Sprintf("%vpayment_id = %v, ", set, *h.PaymentID)
+		_sql += fmt.Sprintf("%vpayment_id = '%v', ", set, *h.PaymentID)
 		set = ""
 	}
 	if h.PaidAt != nil {

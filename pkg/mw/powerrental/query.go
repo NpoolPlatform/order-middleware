@@ -183,6 +183,7 @@ func (h *queryHandler) formalize() {
 	}
 
 	for _, info := range h.infos {
+		info.Units = func() string { amount, _ := decimal.NewFromString(info.Units); return amount.String() }()
 		info.GoodValueUSD = func() string { amount, _ := decimal.NewFromString(info.GoodValueUSD); return amount.String() }()
 		info.PaymentAmountUSD = func() string { amount, _ := decimal.NewFromString(info.PaymentAmountUSD); return amount.String() }()
 		info.DiscountAmountUSD = func() string { amount, _ := decimal.NewFromString(info.DiscountAmountUSD); return amount.String() }()

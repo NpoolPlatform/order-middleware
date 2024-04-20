@@ -255,6 +255,8 @@ func (h *baseQueryHandler) queryJoinPowerRental(s *sql.Selector) {
 		t.C(entpowerrental.FieldID),
 		t.C(entpowerrental.FieldEntID),
 		t.C(entpowerrental.FieldOrderID),
+		t.C(entpowerrental.FieldAppGoodStockID),
+		t.C(entpowerrental.FieldUnits),
 		t.C(entpowerrental.FieldGoodValueUsd),
 		t.C(entpowerrental.FieldPaymentAmountUsd),
 		t.C(entpowerrental.FieldDiscountAmountUsd),
@@ -407,7 +409,7 @@ func (h *baseQueryHandler) queryJoinStockLock(s *sql.Selector) {
 
 func (h *baseQueryHandler) queryJoinOrderCoupon(s *sql.Selector) {
 	t := sql.Table(entordercoupon.Table)
-	s.Join(t).
+	s.LeftJoin(t).
 		On(
 			s.C(entorderbase.FieldEntID),
 			t.C(entordercoupon.FieldOrderID),

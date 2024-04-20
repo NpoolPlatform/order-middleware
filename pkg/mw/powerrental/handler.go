@@ -48,7 +48,6 @@ type Handler struct {
 	Offset                int32
 	Limit                 int32
 	FeeMultiHandler       *feeorder1.MultiHandler
-	CouponIDs             []uuid.UUID
 	Rollback              *bool
 }
 
@@ -750,7 +749,10 @@ func WithCouponIDs(ss []string, must bool) func(context.Context, *Handler) error
 			if err != nil {
 				return err
 			}
-			h.CouponIDs = append(h.CouponIDs, id)
+			// Fill order id later
+			h.OrderCouponReqs = append(h.OrderCouponReqs, &ordercouponcrud.Req{
+				CouponID: &id,
+			})
 		}
 		return nil
 	}
