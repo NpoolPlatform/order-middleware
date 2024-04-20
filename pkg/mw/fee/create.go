@@ -243,7 +243,7 @@ func (h *createHandler) formalizePaymentID() {
 	h.PaymentBalanceLockReq.PaymentID = h.PaymentBaseReq.EntID
 }
 
-func (h *Handler) CreateFeeOrder(ctx context.Context) error {
+func (h *Handler) CreateFeeOrderWithTx(ctx context.Context, tx *ent.Tx) error {
 	handler := &createHandler{
 		Handler: h,
 	}
@@ -270,34 +270,38 @@ func (h *Handler) CreateFeeOrder(ctx context.Context) error {
 	handler.constructPaymentTransferSQLs(ctx)
 	handler.constructSQL()
 
+	if err := handler.createOrderBase(ctx, tx); err != nil {
+		return err
+	}
+	if err := handler.createOrderStateBase(ctx, tx); err != nil {
+		return err
+	}
+	if err := handler.createFeeOrderState(ctx, tx); err != nil {
+		return err
+	}
+	if err := handler.createLedgerLock(ctx, tx); err != nil {
+		return err
+	}
+	if err := handler.createPaymentBase(ctx, tx); err != nil {
+		return err
+	}
+	if err := handler.createPaymentBalanceLock(ctx, tx); err != nil {
+		return err
+	}
+	if err := handler.createOrderCoupons(ctx, tx); err != nil {
+		return err
+	}
+	if err := handler.createPaymentBalances(ctx, tx); err != nil {
+		return err
+	}
+	if err := handler.createPaymentTransfers(ctx, tx); err != nil {
+		return err
+	}
+	return handler.createFeeOrder(ctx, tx)
+}
+
+func (h *Handler) CreateFeeOrder(ctx context.Context) error {
 	return db.WithTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {
-		if err := handler.createOrderBase(_ctx, tx); err != nil {
-			return err
-		}
-		if err := handler.createOrderStateBase(_ctx, tx); err != nil {
-			return err
-		}
-		if err := handler.createFeeOrderState(_ctx, tx); err != nil {
-			return err
-		}
-		if err := handler.createLedgerLock(_ctx, tx); err != nil {
-			return err
-		}
-		if err := handler.createPaymentBase(_ctx, tx); err != nil {
-			return err
-		}
-		if err := handler.createPaymentBalanceLock(_ctx, tx); err != nil {
-			return err
-		}
-		if err := handler.createOrderCoupons(_ctx, tx); err != nil {
-			return err
-		}
-		if err := handler.createPaymentBalances(_ctx, tx); err != nil {
-			return err
-		}
-		if err := handler.createPaymentTransfers(_ctx, tx); err != nil {
-			return err
-		}
-		return handler.createFeeOrder(_ctx, tx)
+		return h.CreateFeeOrderWithTx(_ctx, tx)
 	})
 }

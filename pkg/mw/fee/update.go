@@ -265,7 +265,7 @@ func (h *updateHandler) formalizeEntIDs() {
 	}
 }
 
-func (h *Handler) UpdateFeeOrder(ctx context.Context) error {
+func (h *Handler) UpdateFeeOrderWithTx(ctx context.Context, tx *ent.Tx) error {
 	handler := &updateHandler{
 		feeOrderQueryHandler: &feeOrderQueryHandler{
 			Handler: h,
@@ -306,34 +306,38 @@ func (h *Handler) UpdateFeeOrder(ctx context.Context) error {
 		return err
 	}
 
+	if err := handler.updateOrderStateBase(ctx, tx); err != nil {
+		return err
+	}
+	if err := handler.updateFeeOrderState(ctx, tx); err != nil {
+		return err
+	}
+	if err := handler.updateObseletePaymentBase(ctx, tx); err != nil {
+		return err
+	}
+	if err := handler.createPaymentBase(ctx, tx); err != nil {
+		return err
+	}
+	if err := handler.createLedgerLock(ctx, tx); err != nil {
+		return err
+	}
+	if err := handler.createPaymentBalanceLock(ctx, tx); err != nil {
+		return err
+	}
+	if err := handler.createPaymentBalances(ctx, tx); err != nil {
+		return err
+	}
+	if err := handler.createOrUpdatePaymentTransfers(ctx, tx); err != nil {
+		return err
+	}
+	if handler.updateNothing {
+		return cruder.ErrUpdateNothing
+	}
+	return nil
+}
+
+func (h *Handler) UpdateFeeOrder(ctx context.Context) error {
 	return db.WithTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {
-		if err := handler.updateOrderStateBase(_ctx, tx); err != nil {
-			return err
-		}
-		if err := handler.updateFeeOrderState(_ctx, tx); err != nil {
-			return err
-		}
-		if err := handler.updateObseletePaymentBase(_ctx, tx); err != nil {
-			return err
-		}
-		if err := handler.createPaymentBase(_ctx, tx); err != nil {
-			return err
-		}
-		if err := handler.createLedgerLock(_ctx, tx); err != nil {
-			return err
-		}
-		if err := handler.createPaymentBalanceLock(_ctx, tx); err != nil {
-			return err
-		}
-		if err := handler.createPaymentBalances(_ctx, tx); err != nil {
-			return err
-		}
-		if err := handler.createOrUpdatePaymentTransfers(_ctx, tx); err != nil {
-			return err
-		}
-		if handler.updateNothing {
-			return cruder.ErrUpdateNothing
-		}
-		return nil
+		return h.UpdateFeeOrderWithTx(_ctx, tx)
 	})
 }

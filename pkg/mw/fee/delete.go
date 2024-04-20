@@ -57,7 +57,7 @@ func (h *deleteHandler) deleteFeeOrderState(ctx context.Context, tx *ent.Tx) err
 	return err
 }
 
-func (h *Handler) DeleteFeeOrder(ctx context.Context) error {
+func (h *Handler) DeleteFeeOrderWithTx(ctx context.Context, tx *ent.Tx) error {
 	handler := &deleteHandler{
 		feeOrderQueryHandler: &feeOrderQueryHandler{
 			Handler: h,
@@ -72,19 +72,20 @@ func (h *Handler) DeleteFeeOrder(ctx context.Context) error {
 		return nil
 	}
 
+	if err := handler.deleteOrderBase(ctx, tx); err != nil {
+		return err
+	}
+	if err := handler.deleteOrderStateBase(ctx, tx); err != nil {
+		return err
+	}
+	if err := handler.deleteFeeOrder(ctx, tx); err != nil {
+		return err
+	}
+	return handler.deleteFeeOrderState(ctx, tx)
+}
+
+func (h *Handler) DeleteFeeOrder(ctx context.Context) error {
 	return db.WithTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {
-		if err := handler.deleteOrderBase(_ctx, tx); err != nil {
-			return err
-		}
-		if err := handler.deleteOrderStateBase(_ctx, tx); err != nil {
-			return err
-		}
-		if err := handler.deleteFeeOrder(_ctx, tx); err != nil {
-			return err
-		}
-		if err := handler.deleteFeeOrderState(_ctx, tx); err != nil {
-			return err
-		}
-		return nil
+		return h.DeleteFeeOrderWithTx(_ctx, tx)
 	})
 }
