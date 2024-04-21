@@ -42,3 +42,11 @@ var forwards = map[types.OrderState][]types.OrderState{
 	types.OrderState_OrderStateCanceled:                    {},
 	types.OrderState_OrderStatePaymentTimeout:              {types.OrderState_OrderStatePreCancel},
 }
+
+type forwardHandler struct {
+	*Handler
+}
+
+func (h *forwardHandler) forward() (*types.OrderState, error) {
+	return nil, nil
+}

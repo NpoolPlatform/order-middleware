@@ -29,3 +29,11 @@ var rollbacks = map[types.OrderState]types.OrderState{
 	types.OrderState_OrderStateChildCanceledByParent:       types.OrderState_OrderStateUpdateCanceledChilds,
 	types.OrderState_OrderStateCanceled:                    types.OrderState_OrderStateChildCanceledByParent,
 }
+
+type rollbackHandler struct {
+	*Handler
+}
+
+func (h *rollbackHandler) rollback() (*types.OrderState, error) {
+	return nil, nil
+}

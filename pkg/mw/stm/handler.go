@@ -10,13 +10,16 @@ import (
 )
 
 type Handler struct {
-	OrderID          *uuid.UUID
-	OrderState       *types.OrderState
-	PaymentState     *types.PaymentState
-	PaymentType      *types.PaymentType
-	UserSetCanceled  *bool
-	AdminSetCanceled *bool
-	Rollback         *bool
+	OrderID             *uuid.UUID
+	OrderState          *types.OrderState
+	CurrentPaymentState *types.PaymentState
+	NewPaymentState     *types.PaymentState
+	UserSetPaid         *bool
+	UserCanceled        *bool
+	UserSetCanceled     *bool
+	AdminCanceled       *bool
+	AdminSetCanceled    *bool
+	Rollback            *bool
 }
 
 func NewHandler(ctx context.Context, options ...func(context.Context, *Handler) error) (*Handler, error) {
@@ -95,7 +98,7 @@ func WithOrderState(state *types.OrderState, must bool) func(context.Context, *H
 	}
 }
 
-func WithPaymentState(state *types.PaymentState, must bool) func(context.Context, *Handler) error {
+func WithCurrentPaymentState(state *types.PaymentState, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if state == nil {
 			if must {
@@ -112,30 +115,36 @@ func WithPaymentState(state *types.PaymentState, must bool) func(context.Context
 		default:
 			return fmt.Errorf("invalid paymentstate")
 		}
-		h.PaymentState = state
+		h.CurrentPaymentState = state
 		return nil
 	}
 }
 
-func WithPaymentType(paymentType *types.PaymentType, must bool) func(context.Context, *Handler) error {
+func WithNewPaymentState(state *types.PaymentState, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
-		if paymentType == nil {
+		if state == nil {
 			if must {
-				return fmt.Errorf("invalid paymenttype")
+				return fmt.Errorf("invalid paymentstate")
 			}
 			return nil
 		}
-		switch *paymentType {
-		case types.PaymentType_PayWithBalanceOnly:
-		case types.PaymentType_PayWithTransferOnly:
-		case types.PaymentType_PayWithTransferAndBalance:
-		case types.PaymentType_PayWithParentOrder:
-		case types.PaymentType_PayWithOffline:
-		case types.PaymentType_PayWithNoPayment:
+		switch *state {
+		case types.PaymentState_PaymentStateWait:
+		case types.PaymentState_PaymentStateCanceled:
+		case types.PaymentState_PaymentStateTimeout:
+		case types.PaymentState_PaymentStateDone:
+		case types.PaymentState_PaymentStateNoPayment:
 		default:
-			return fmt.Errorf("invalid paymenttype")
+			return fmt.Errorf("invalid paymentstate")
 		}
-		h.PaymentType = paymentType
+		h.NewPaymentState = state
+		return nil
+	}
+}
+
+func WithUserCanceled(value *bool, must bool) func(context.Context, *Handler) error {
+	return func(ctx context.Context, h *Handler) error {
+		h.UserCanceled = value
 		return nil
 	}
 }
@@ -143,6 +152,20 @@ func WithPaymentType(paymentType *types.PaymentType, must bool) func(context.Con
 func WithUserSetCanceled(value *bool, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		h.UserSetCanceled = value
+		return nil
+	}
+}
+
+func WithUserSetPaid(value *bool, must bool) func(context.Context, *Handler) error {
+	return func(ctx context.Context, h *Handler) error {
+		h.UserSetPaid = value
+		return nil
+	}
+}
+
+func WithAdminCanceled(value *bool, must bool) func(context.Context, *Handler) error {
+	return func(ctx context.Context, h *Handler) error {
+		h.AdminCanceled = value
 		return nil
 	}
 }
