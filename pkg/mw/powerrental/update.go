@@ -342,6 +342,9 @@ func (h *Handler) UpdatePowerRentalWithTx(ctx context.Context, tx *ent.Tx) error
 	if err := handler.requirePowerRental(ctx); err != nil {
 		return err
 	}
+	if err := handler.validateUpdate(ctx); err != nil {
+		return err
+	}
 
 	handler.formalizeOrderID()
 	handler.formalizeOrderLocks()

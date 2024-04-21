@@ -116,6 +116,9 @@ func (h *validateHandler) validatePaymentState() error {
 }
 
 func (h *validateHandler) validateOrderState() (*types.OrderState, error) {
+	if h.OrderState == nil {
+		return nil, nil
+	}
 	if h.Rollback != nil && *h.Rollback && *h.OrderState == h._ent.OrderState() {
 		return h.rollback()
 	}
@@ -128,20 +131,16 @@ func (h *Handler) ValidateUpdateForNewState(ctx context.Context) (*types.OrderSt
 		orderQueryHandler: &orderQueryHandler{
 			Handler: h,
 		},
-		rollbackHandler: &rollbackHandler{
-			orderQueryHandler: &orderQueryHandler{
-				Handler: h,
-			},
-		},
-		forwardHandler: &forwardHandler{
-			orderQueryHandler: &orderQueryHandler{
-				Handler: h,
-			},
-		},
 	}
 
 	if err := handler.requireOrder(ctx); err != nil {
 		return nil, err
+	}
+	handler.rollbackHandler = &rollbackHandler{
+		orderQueryHandler: handler.orderQueryHandler,
+	}
+	handler.forwardHandler = &forwardHandler{
+		orderQueryHandler: handler.orderQueryHandler,
 	}
 
 	if err := handler.validateFinaled(); err != nil {
