@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"entgo.io/ent/dialect/sql"
+	goodtypes "github.com/NpoolPlatform/message/npool/basetypes/good/v1"
 	npool "github.com/NpoolPlatform/message/npool/order/mw/v1/outofgas"
 	"github.com/NpoolPlatform/order-middleware/pkg/db"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent"
@@ -33,7 +34,9 @@ func (h *queryHandler) scan(ctx context.Context) error {
 }
 
 func (h *queryHandler) formalize() {
-	// TODO: do nothing
+	for _, info := range h.infos {
+		info.GoodType = goodtypes.GoodType(goodtypes.GoodType_value[info.GoodTypeStr])
+	}
 }
 
 func (h *Handler) GetOutOfGas(ctx context.Context) (*npool.OutOfGas, error) {

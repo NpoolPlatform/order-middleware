@@ -42,7 +42,7 @@ func (h *Handler) ConstructCreateSQL() string {
 	_sql += fmt.Sprintf("where order_id = '%v' ", *h.OrderID)
 	_sql += "and ("
 	_sql += fmt.Sprintf("(start_at < %v and %v < end_at) or ", *h.StartAt, *h.StartAt)
-	_sql += fmt.Sprintf("(end_at < %v and %v < end_at)", *h.EndAt, *h.EndAt)
+	_sql += fmt.Sprintf("(start_at < %v and %v < end_at)", *h.EndAt, *h.EndAt)
 	_sql += ")"
 	_sql += " limit 1) and exists ("
 	_sql += "select 1 from order_bases "

@@ -19,5 +19,5 @@ func (f *powerRentalState) OrderID() uuid.UUID {
 }
 
 func (f *powerRentalState) OutOfGasSeconds() uint32 {
-	return f.entPowerRentalState.CompensateSeconds
+	return f.entPowerRentalState.OutofgasSeconds
 }

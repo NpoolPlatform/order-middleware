@@ -86,6 +86,7 @@ func (h *baseQueryHandler) queryJoinOrder(s *sql.Selector) error { //nolint
 		t.C(entorderbase.FieldAppID),
 		t.C(entorderbase.FieldUserID),
 		t.C(entorderbase.FieldGoodID),
+		t.C(entorderbase.FieldGoodType),
 		t.C(entorderbase.FieldAppGoodID),
 	)
 	return nil

@@ -5,7 +5,7 @@ import (
 	"fmt"
 
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
-	npool "github.com/NpoolPlatform/message/npool/order/mw/v1/powerrental/outofgas"
+	outofgasmwpb "github.com/NpoolPlatform/message/npool/order/mw/v1/outofgas"
 	constant "github.com/NpoolPlatform/order-middleware/pkg/const"
 	orderbasecrud "github.com/NpoolPlatform/order-middleware/pkg/crud/order/orderbase"
 	outofgascrud "github.com/NpoolPlatform/order-middleware/pkg/crud/outofgas"
@@ -100,7 +100,7 @@ func WithEndAt(u *uint32, must bool) func(context.Context, *Handler) error {
 	}
 }
 
-func (h *Handler) withOutOfGasConds(conds *npool.Conds) error {
+func (h *Handler) withOutOfGasConds(conds *outofgasmwpb.Conds) error {
 	if conds.ID != nil {
 		h.OutOfGasConds.ID = &cruder.Cond{
 			Op: conds.GetID().GetOp(), Val: conds.GetID().GetValue(),
@@ -128,7 +128,7 @@ func (h *Handler) withOutOfGasConds(conds *npool.Conds) error {
 	return nil
 }
 
-func (h *Handler) withOrderBaseConds(conds *npool.Conds) error {
+func (h *Handler) withOrderBaseConds(conds *outofgasmwpb.Conds) error {
 	if conds.OrderID != nil {
 		id, err := uuid.Parse(conds.GetOrderID().GetValue())
 		if err != nil {
@@ -182,7 +182,7 @@ func (h *Handler) withOrderBaseConds(conds *npool.Conds) error {
 	return nil
 }
 
-func WithConds(conds *npool.Conds) func(context.Context, *Handler) error {
+func WithConds(conds *outofgasmwpb.Conds) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if conds == nil {
 			return nil

@@ -34,6 +34,7 @@ var ret = npool.Compensate{
 	AppID:             uuid.NewString(),
 	UserID:            uuid.NewString(),
 	GoodID:            uuid.NewString(),
+	GoodType:          goodtypes.GoodType_PowerRental,
 	AppGoodID:         uuid.NewString(),
 	OrderID:           uuid.NewString(),
 	CompensateFromID:  uuid.NewString(),
@@ -44,6 +45,7 @@ var ret = npool.Compensate{
 //nolint:funlen
 func setup(t *testing.T) func(*testing.T) {
 	ret.CompensateTypeStr = ret.CompensateType.String()
+	ret.GoodTypeStr = ret.GoodType.String()
 
 	h1, err := orderbase1.NewHandler(
 		context.Background(),
@@ -51,7 +53,7 @@ func setup(t *testing.T) func(*testing.T) {
 		orderbase1.WithAppID(&ret.AppID, true),
 		orderbase1.WithUserID(&ret.UserID, true),
 		orderbase1.WithGoodID(&ret.GoodID, true),
-		orderbase1.WithGoodType(func() *goodtypes.GoodType { e := goodtypes.GoodType_PowerRental; return &e }(), true),
+		orderbase1.WithGoodType(&ret.GoodType, true),
 		orderbase1.WithAppGoodID(&ret.AppGoodID, true),
 		orderbase1.WithOrderType(func() *types.OrderType { e := types.OrderType_Offline; return &e }(), true),
 		orderbase1.WithCreateMethod(func() *types.OrderCreateMethod { e := types.OrderCreateMethod_OrderCreatedByAdmin; return &e }(), true),
