@@ -1,6 +1,7 @@
 package powerrental
 
 import (
+	types "github.com/NpoolPlatform/message/npool/basetypes/order/v1"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent"
 
 	"github.com/google/uuid"
@@ -55,4 +56,24 @@ func (f *powerRental) PowerRentalID() uint32 {
 
 func (f *powerRental) PowerRentalStateID() uint32 {
 	return f.entPowerRentalState.ID
+}
+
+func (f *powerRental) PaymentState() types.PaymentState {
+	return types.PaymentState(types.PaymentState_value[f.entPowerRentalState.PaymentState])
+}
+
+func (f *powerRental) OrderState() types.OrderState {
+	return types.OrderState(types.OrderState_value[f.entOrderStateBase.OrderState])
+}
+
+func (f *powerRental) CancelState() types.OrderState {
+	return types.OrderState(types.OrderState_value[f.entPowerRentalState.CancelState])
+}
+
+func (f powerRental) UserSetCanceled() bool {
+	return f.entPowerRentalState.UserSetCanceled
+}
+
+func (f powerRental) AdminSetCanceled() bool {
+	return f.entPowerRentalState.AdminSetCanceled
 }

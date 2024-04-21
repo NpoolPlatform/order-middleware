@@ -32,19 +32,9 @@ func NewHandler(ctx context.Context, options ...func(context.Context, *Handler) 
 	return handler, nil
 }
 
-func WithOrderID(id *string, must bool) func(context.Context, *Handler) error {
+func WithOrderID(id *uuid.UUID, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
-		if id == nil {
-			if must {
-				return fmt.Errorf("invalid orderid")
-			}
-			return nil
-		}
-		_id, err := uuid.Parse(*id)
-		if err != nil {
-			return err
-		}
-		h.OrderID = &_id
+		h.OrderID = id
 		return nil
 	}
 }

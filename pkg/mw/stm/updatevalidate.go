@@ -116,7 +116,7 @@ func (h *validateHandler) validatePaymentState() error {
 }
 
 func (h *validateHandler) validateOrderState() (*types.OrderState, error) {
-	if h.Rollback != nil && *h.Rollback {
+	if h.Rollback != nil && *h.Rollback && *h.OrderState == h._ent.OrderState() {
 		return h.rollback()
 	}
 	return h.forward()
