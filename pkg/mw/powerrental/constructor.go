@@ -21,8 +21,12 @@ func (h *Handler) ConstructCreateSQL() string {
 	_sql += comma + "app_good_stock_id"
 	_sql += comma + "units"
 	_sql += comma + "good_value_usd"
-	_sql += comma + "payment_amount_usd"
-	_sql += comma + "discount_amount_usd"
+	if h.PaymentAmountUSD != nil {
+		_sql += comma + "payment_amount_usd"
+	}
+	if h.DiscountAmountUSD != nil {
+		_sql += comma + "discount_amount_usd"
+	}
 	if h.PromotionID != nil {
 		_sql += comma + "promotion_id"
 	}
@@ -44,8 +48,12 @@ func (h *Handler) ConstructCreateSQL() string {
 	_sql += fmt.Sprintf("%v'%v' as app_good_stock_id", comma, *h.AppGoodStockID)
 	_sql += fmt.Sprintf("%v'%v' as units", comma, *h.Units)
 	_sql += fmt.Sprintf("%v'%v' as good_value_usd", comma, *h.GoodValueUSD)
-	_sql += fmt.Sprintf("%v'%v' as payment_amount_usd", comma, *h.PaymentAmountUSD)
-	_sql += fmt.Sprintf("%v'%v' as discount_amount_usd", comma, *h.DiscountAmountUSD)
+	if h.PaymentAmountUSD != nil {
+		_sql += fmt.Sprintf("%v'%v' as payment_amount_usd", comma, *h.PaymentAmountUSD)
+	}
+	if h.DiscountAmountUSD != nil {
+		_sql += fmt.Sprintf("%v'%v' as discount_amount_usd", comma, *h.DiscountAmountUSD)
+	}
 	if h.PromotionID != nil {
 		_sql += fmt.Sprintf("%v'%v' as promotion_id", comma, *h.PromotionID)
 	}

@@ -14,7 +14,6 @@ import (
 	ordercouponmwpb "github.com/NpoolPlatform/message/npool/order/mw/v1/order/coupon"
 	paymentmwpb "github.com/NpoolPlatform/message/npool/order/mw/v1/payment"
 	npool "github.com/NpoolPlatform/message/npool/order/mw/v1/powerrental"
-	orderbase1 "github.com/NpoolPlatform/order-middleware/pkg/mw/order/orderbase"
 
 	"github.com/google/uuid"
 	"github.com/shopspring/decimal"
@@ -40,7 +39,6 @@ var ret = npool.PowerRentalOrder{
 	GoodType:           goodtypes.GoodType_PowerRental,
 	AppGoodID:          uuid.NewString(),
 	OrderID:            uuid.NewString(),
-	ParentOrderID:      uuid.NewString(),
 	OrderType:          types.OrderType_Normal,
 	AppGoodStockID:     uuid.NewString(),
 	Units:              decimal.NewFromInt(10).String(),
@@ -88,26 +86,9 @@ func setup(t *testing.T) func(*testing.T) {
 	ret.OrderStateStr = ret.OrderState.String()
 	ret.PaymentStateStr = ret.PaymentState.String()
 	ret.CancelStateStr = ret.CancelState.String()
+	ret.RenewStateStr = types.OrderRenewState_OrderRenewWait.String()
 
-	h1, err := orderbase1.NewHandler(
-		context.Background(),
-		orderbase1.WithEntID(&ret.ParentOrderID, false),
-		orderbase1.WithAppID(&ret.AppID, true),
-		orderbase1.WithUserID(&ret.UserID, true),
-		orderbase1.WithGoodID(func() *string { s := uuid.NewString(); return &s }(), true),
-		orderbase1.WithGoodType(&ret.GoodType, true),
-		orderbase1.WithAppGoodID(func() *string { s := uuid.NewString(); return &s }(), true),
-		orderbase1.WithOrderType(func() *types.OrderType { e := types.OrderType_Offline; return &e }(), true),
-		orderbase1.WithCreateMethod(func() *types.OrderCreateMethod { e := types.OrderCreateMethod_OrderCreatedByAdmin; return &e }(), true),
-	)
-	assert.Nil(t, err)
-
-	err = h1.CreateOrderBase(context.Background())
-	assert.Nil(t, err)
-
-	return func(*testing.T) {
-		_ = h1.DeleteOrderBase(context.Background())
-	}
+	return func(*testing.T) {}
 }
 
 func createPowerRental(t *testing.T) {
@@ -120,7 +101,6 @@ func createPowerRental(t *testing.T) {
 		WithGoodType(&ret.GoodType, true),
 		WithAppGoodID(&ret.AppGoodID, true),
 		WithOrderID(&ret.OrderID, true),
-		WithParentOrderID(&ret.ParentOrderID, true),
 		WithOrderType(&ret.OrderType, true),
 		WithAppGoodStockID(&ret.AppGoodStockID, true),
 		WithUnits(&ret.Units, true),

@@ -251,14 +251,7 @@ func (h *updateHandler) formalizePaymentID() error {
 	}
 
 	h.newPayment = true
-	ledgerLockID := func() *uuid.UUID {
-		for _, req := range h.OrderLockReqs {
-			if *req.LockType == types.OrderLockType_LockBalance {
-				return req.EntID
-			}
-		}
-		return nil
-	}()
+	ledgerLockID := h.ledgerLockID()
 	h.newPaymentBalance = ledgerLockID != nil
 	if h.newPaymentBalance && *ledgerLockID == h._ent.LedgerLockID() {
 		return fmt.Errorf("invalid ledgerlock")

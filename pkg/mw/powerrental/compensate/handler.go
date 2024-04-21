@@ -6,7 +6,7 @@ import (
 
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
 	types "github.com/NpoolPlatform/message/npool/basetypes/order/v1"
-	npool "github.com/NpoolPlatform/message/npool/order/mw/v1/powerrental/compensate"
+	compensatemwpb "github.com/NpoolPlatform/message/npool/order/mw/v1/compensate"
 	constant "github.com/NpoolPlatform/order-middleware/pkg/const"
 	compensatecrud "github.com/NpoolPlatform/order-middleware/pkg/crud/compensate"
 	orderbasecrud "github.com/NpoolPlatform/order-middleware/pkg/crud/order/orderbase"
@@ -159,7 +159,7 @@ func WithCompensateSeconds(u *uint32, must bool) func(context.Context, *Handler)
 	}
 }
 
-func (h *Handler) withCompensateConds(conds *npool.Conds) error {
+func (h *Handler) withCompensateConds(conds *compensatemwpb.Conds) error {
 	if conds.ID != nil {
 		h.CompensateConds.ID = &cruder.Cond{
 			Op: conds.GetID().GetOp(), Val: conds.GetID().GetValue(),
@@ -197,7 +197,7 @@ func (h *Handler) withCompensateConds(conds *npool.Conds) error {
 	return nil
 }
 
-func (h *Handler) withOrderBaseConds(conds *npool.Conds) error {
+func (h *Handler) withOrderBaseConds(conds *compensatemwpb.Conds) error {
 	if conds.OrderID != nil {
 		id, err := uuid.Parse(conds.GetOrderID().GetValue())
 		if err != nil {
@@ -251,7 +251,7 @@ func (h *Handler) withOrderBaseConds(conds *npool.Conds) error {
 	return nil
 }
 
-func WithConds(conds *npool.Conds) func(context.Context, *Handler) error {
+func WithConds(conds *compensatemwpb.Conds) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if conds == nil {
 			return nil

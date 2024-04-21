@@ -11,11 +11,9 @@ import (
 	goodtypes "github.com/NpoolPlatform/message/npool/basetypes/good/v1"
 	types "github.com/NpoolPlatform/message/npool/basetypes/order/v1"
 	basetypes "github.com/NpoolPlatform/message/npool/basetypes/v1"
-	npool "github.com/NpoolPlatform/message/npool/order/mw/v1/compensate"
-	ordercouponmwpb "github.com/NpoolPlatform/message/npool/order/mw/v1/order/coupon"
-	paymentmwpb "github.com/NpoolPlatform/message/npool/order/mw/v1/payment"
-	npool "github.com/NpoolPlatform/message/npool/order/mw/v1/powerrental"
-	orderbase1 "github.com/NpoolPlatform/order-middleware/pkg/mw/order/orderbase"
+	compensatemwpb "github.com/NpoolPlatform/message/npool/order/mw/v1/compensate"
+	compensate1 "github.com/NpoolPlatform/order-middleware/pkg/mw/compensate"
+	powerrental1 "github.com/NpoolPlatform/order-middleware/pkg/mw/powerrental"
 
 	"github.com/google/uuid"
 	"github.com/shopspring/decimal"
@@ -33,231 +31,153 @@ func init() {
 	}
 }
 
-var ret = npool.PowerRentalOrder{
-	EntID:              uuid.NewString(),
-	AppID:              uuid.NewString(),
-	UserID:             uuid.NewString(),
-	GoodID:             uuid.NewString(),
-	GoodType:           goodtypes.GoodType_PowerRental,
-	AppGoodID:          uuid.NewString(),
-	OrderID:            uuid.NewString(),
-	ParentOrderID:      uuid.NewString(),
-	OrderType:          types.OrderType_Normal,
-	AppGoodStockID:     uuid.NewString(),
-	Units:              decimal.NewFromInt(10).String(),
-	PaymentType:        types.PaymentType_PayWithBalanceOnly,
-	CreateMethod:       types.OrderCreateMethod_OrderCreatedByAdmin,
-	GoodValueUSD:       decimal.NewFromInt(120).String(),
-	PaymentAmountUSD:   decimal.NewFromInt(110).String(),
-	DiscountAmountUSD:  decimal.NewFromInt(10).String(),
-	PromotionID:        uuid.NewString(),
-	DurationSeconds:    100000,
-	AppGoodStockLockID: uuid.NewString(),
-	LedgerLockID:       uuid.NewString(),
-	PaymentID:          uuid.NewString(),
-	Coupons: []*ordercouponmwpb.OrderCouponInfo{
-		{
-			CouponID: uuid.NewString(),
-		},
-	},
-	PaymentBalances: []*paymentmwpb.PaymentBalanceInfo{
-		{
-			CoinTypeID:           uuid.NewString(),
-			Amount:               decimal.NewFromInt(110).String(),
-			CoinUSDCurrency:      decimal.NewFromInt(1).String(),
-			LocalCoinUSDCurrency: decimal.NewFromInt(1).String(),
-			LiveCoinUSDCurrency:  decimal.NewFromInt(1).String(),
-		},
-	},
-	OrderState:   types.OrderState_OrderStateCreated,
-	PaymentState: types.PaymentState_PaymentStateWait,
+var ret = compensatemwpb.Compensate{
+	EntID:             uuid.NewString(),
+	AppID:             uuid.NewString(),
+	UserID:            uuid.NewString(),
+	GoodID:            uuid.NewString(),
+	GoodType:          goodtypes.GoodType_PowerRental,
+	AppGoodID:         uuid.NewString(),
+	OrderID:           uuid.NewString(),
+	CompensateFromID:  uuid.NewString(),
+	CompensateType:    types.CompensateType_CompensateMalfunction,
+	CompensateSeconds: 10000,
 }
 
 //nolint:funlen
 func setup(t *testing.T) func(*testing.T) {
-	for _, paymentBalance := range ret.PaymentBalances {
-		paymentBalance.PaymentID = ret.PaymentID
-	}
-	for _, orderCoupon := range ret.Coupons {
-		orderCoupon.OrderID = ret.OrderID
-	}
-
+	ret.CompensateTypeStr = ret.CompensateType.String()
 	ret.GoodTypeStr = ret.GoodType.String()
-	ret.OrderTypeStr = ret.OrderType.String()
-	ret.PaymentTypeStr = ret.PaymentType.String()
-	ret.CreateMethodStr = ret.CreateMethod.String()
-	ret.OrderStateStr = ret.OrderState.String()
-	ret.PaymentStateStr = ret.PaymentState.String()
-	ret.CancelStateStr = ret.CancelState.String()
 
-	h1, err := orderbase1.NewHandler(
+	h1, err := powerrental1.NewHandler(
 		context.Background(),
-		orderbase1.WithEntID(&ret.ParentOrderID, false),
-		orderbase1.WithAppID(&ret.AppID, true),
-		orderbase1.WithUserID(&ret.UserID, true),
-		orderbase1.WithGoodID(func() *string { s := uuid.NewString(); return &s }(), true),
-		orderbase1.WithGoodType(&ret.GoodType, true),
-		orderbase1.WithAppGoodID(func() *string { s := uuid.NewString(); return &s }(), true),
-		orderbase1.WithOrderType(func() *types.OrderType { e := types.OrderType_Offline; return &e }(), true),
-		orderbase1.WithCreateMethod(func() *types.OrderCreateMethod { e := types.OrderCreateMethod_OrderCreatedByAdmin; return &e }(), true),
+		powerrental1.WithEntID(func() *string { s := uuid.NewString(); return &s }(), true),
+		powerrental1.WithAppID(&ret.AppID, true),
+		powerrental1.WithUserID(&ret.UserID, true),
+		powerrental1.WithGoodID(&ret.GoodID, true),
+		powerrental1.WithGoodType(&ret.GoodType, true),
+		powerrental1.WithAppGoodID(&ret.AppGoodID, true),
+		powerrental1.WithOrderID(&ret.OrderID, true),
+		powerrental1.WithOrderType(func() *types.OrderType { e := types.OrderType_Normal; return &e }(), true),
+		powerrental1.WithAppGoodStockID(func() *string { s := uuid.NewString(); return &s }(), true),
+		powerrental1.WithUnits(func() *string { s := decimal.NewFromInt(10).String(); return &s }(), true),
+		powerrental1.WithPaymentType(func() *types.PaymentType { e := types.PaymentType_PayWithOffline; return &e }(), true),
+		powerrental1.WithCreateMethod(func() *types.OrderCreateMethod { e := types.OrderCreateMethod_OrderCreatedByAdmin; return &e }(), true),
+		powerrental1.WithGoodValueUSD(func() *string { s := decimal.NewFromInt(100).String(); return &s }(), true),
+		powerrental1.WithDurationSeconds(func() *uint32 { u := uint32(10000); return &u }(), true),
+		powerrental1.WithAppGoodStockLockID(func() *string { s := uuid.NewString(); return &s }(), true),
 	)
 	assert.Nil(t, err)
 
-	err = h1.CreateOrderBase(context.Background())
+	err = h1.CreatePowerRental(context.Background())
 	assert.Nil(t, err)
 
-	return func(*testing.T) {
-		_ = h1.DeleteOrderBase(context.Background())
+	return func(t *testing.T) {
+		_ = h1.DeletePowerRental(context.Background())
 	}
 }
 
-func createPowerRental(t *testing.T) {
+func getCompensate() (*compensatemwpb.Compensate, error) {
+	handler, err := compensate1.NewHandler(
+		context.Background(),
+		compensate1.WithEntID(&ret.EntID, true),
+	)
+	if err != nil {
+		return nil, err
+	}
+	return handler.GetCompensate(context.Background())
+}
+
+func getPowerRentalCompensateSeconds() (uint32, error) {
+	handler, err := powerrental1.NewHandler(
+		context.Background(),
+		powerrental1.WithOrderID(&ret.OrderID, true),
+	)
+	if err != nil {
+		return 0, err
+	}
+	info, err := handler.GetPowerRental(context.Background())
+	if err != nil {
+		return 0, err
+	}
+	if info == nil {
+		return 0, fmt.Errorf("invalid powerrental")
+	}
+	return info.CompensateSeconds, nil
+}
+
+func createCompensate(t *testing.T) {
 	handler, err := NewHandler(
 		context.Background(),
 		WithEntID(&ret.EntID, true),
-		WithAppID(&ret.AppID, true),
-		WithUserID(&ret.UserID, true),
-		WithGoodID(&ret.GoodID, true),
-		WithGoodType(&ret.GoodType, true),
-		WithAppGoodID(&ret.AppGoodID, true),
 		WithOrderID(&ret.OrderID, true),
-		WithParentOrderID(&ret.ParentOrderID, true),
-		WithOrderType(&ret.OrderType, true),
-		WithAppGoodStockID(&ret.AppGoodStockID, true),
-		WithUnits(&ret.Units, true),
-		WithPaymentType(&ret.PaymentType, true),
-		WithCreateMethod(&ret.CreateMethod, true),
-		WithGoodValueUSD(&ret.GoodValueUSD, true),
-		WithPaymentAmountUSD(&ret.PaymentAmountUSD, true),
-		WithDiscountAmountUSD(&ret.DiscountAmountUSD, true),
-		WithPromotionID(&ret.PromotionID, true),
-		WithDurationSeconds(&ret.DurationSeconds, true),
-		WithAppGoodStockLockID(&ret.AppGoodStockLockID, true),
-		WithLedgerLockID(&ret.LedgerLockID, true),
-		WithPaymentID(&ret.PaymentID, true),
-		WithCouponIDs(func() (_couponIDs []string) {
-			for _, coupon := range ret.Coupons {
-				_couponIDs = append(_couponIDs, coupon.CouponID)
-			}
-			return
-		}(), true),
-		WithPaymentBalances(func() (_reqs []*paymentmwpb.PaymentBalanceReq) {
-			for _, req := range ret.PaymentBalances {
-				_reqs = append(_reqs, &paymentmwpb.PaymentBalanceReq{
-					CoinTypeID:           &req.CoinTypeID,
-					Amount:               &req.Amount,
-					LocalCoinUSDCurrency: &req.LocalCoinUSDCurrency,
-					LiveCoinUSDCurrency:  &req.LiveCoinUSDCurrency,
-				})
-			}
-			return
-		}(), true),
-		WithPaymentTransfers([]*paymentmwpb.PaymentTransferReq{}, true),
+		WithCompensateFromID(&ret.CompensateFromID, true),
+		WithCompensateType(&ret.CompensateType, true),
+		WithCompensateSeconds(&ret.CompensateSeconds, true),
 	)
 	if assert.Nil(t, err) {
-		err = handler.CreatePowerRental(context.Background())
+		err = handler.CreateCompensate(context.Background())
 		if assert.Nil(t, err) {
-			info, err := handler.GetPowerRental(context.Background())
+			info, err := getCompensate()
 			if assert.Nil(t, err) {
 				ret.CreatedAt = info.CreatedAt
 				ret.UpdatedAt = info.UpdatedAt
 				ret.ID = info.ID
-				for _, paymentBalance := range ret.PaymentBalances {
-					paymentBalance.CreatedAt = ret.CreatedAt
-				}
-				for _, orderCoupon := range ret.Coupons {
-					orderCoupon.CreatedAt = ret.CreatedAt
-				}
 				assert.Equal(t, &ret, info)
 			}
-		}
-	}
-}
-
-func updatePowerRental(t *testing.T) {
-	ret.PaymentID = uuid.NewString()
-	ret.LedgerLockID = uuid.NewString()
-	for _, paymentBalance := range ret.PaymentBalances {
-		paymentBalance.PaymentID = ret.PaymentID
-	}
-
-	handler, err := NewHandler(
-		context.Background(),
-		WithID(&ret.ID, true),
-		WithEntID(&ret.EntID, false),
-		WithOrderID(&ret.OrderID, true),
-		WithGoodValueUSD(&ret.GoodValueUSD, true),
-		WithPaymentAmountUSD(&ret.PaymentAmountUSD, true),
-		WithDiscountAmountUSD(&ret.DiscountAmountUSD, true),
-		WithPromotionID(&ret.PromotionID, true),
-		WithDurationSeconds(&ret.DurationSeconds, true),
-		WithLedgerLockID(&ret.LedgerLockID, true),
-		WithPaymentID(&ret.PaymentID, true),
-		WithCouponIDs(func() (_couponIDs []string) {
-			for _, coupon := range ret.Coupons {
-				_couponIDs = append(_couponIDs, coupon.CouponID)
-			}
-			return
-		}(), true),
-		WithPaymentBalances(func() (_reqs []*paymentmwpb.PaymentBalanceReq) {
-			for _, req := range ret.PaymentBalances {
-				_reqs = append(_reqs, &paymentmwpb.PaymentBalanceReq{
-					CoinTypeID:           &req.CoinTypeID,
-					Amount:               &req.Amount,
-					LocalCoinUSDCurrency: &req.LocalCoinUSDCurrency,
-					LiveCoinUSDCurrency:  &req.LiveCoinUSDCurrency,
-				})
-			}
-			return
-		}(), true),
-		WithPaymentTransfers([]*paymentmwpb.PaymentTransferReq{}, true),
-	)
-	if assert.Nil(t, err) {
-		err = handler.UpdatePowerRental(context.Background())
-		if assert.Nil(t, err) {
-			info, err := handler.GetPowerRental(context.Background())
+			seconds, err := getPowerRentalCompensateSeconds()
 			if assert.Nil(t, err) {
-				ret.UpdatedAt = info.UpdatedAt
-				assert.Equal(t, &ret, info)
+				assert.Equal(t, ret.CompensateSeconds, seconds)
+			}
+		}
+	}
+
+	handler, err = NewHandler(
+		context.Background(),
+		WithGoodID(&ret.GoodID, true),
+		WithCompensateFromID(func() *string { s := uuid.NewString(); return &s }(), true),
+		WithCompensateType(&ret.CompensateType, true),
+		WithCompensateSeconds(&ret.CompensateSeconds, true),
+	)
+	if assert.Nil(t, err) {
+		err = handler.CreateCompensate(context.Background())
+		if assert.Nil(t, err) {
+			seconds, err := getPowerRentalCompensateSeconds()
+			if assert.Nil(t, err) {
+				assert.Equal(t, ret.CompensateSeconds*2, seconds)
 			}
 		}
 	}
 }
 
-func getPowerRental(t *testing.T) {
-	handler, err := NewHandler(
-		context.Background(),
-		WithOrderID(&ret.OrderID, true),
-	)
+func getCompensate1(t *testing.T) {
+	info, err := getCompensate()
 	if assert.Nil(t, err) {
-		info, err := handler.GetPowerRental(context.Background())
-		if assert.Nil(t, err) {
-			assert.Equal(t, &ret, info)
-		}
+		assert.Equal(t, &ret, info)
 	}
 }
 
-func getPowerRentals(t *testing.T) {
-	handler, err := NewHandler(
+func getCompensates(t *testing.T) {
+	handler, err := compensate1.NewHandler(
 		context.Background(),
-		WithConds(&npool.Conds{
+		compensate1.WithConds(&compensatemwpb.Conds{
 			OrderID:  &basetypes.StringVal{Op: cruder.EQ, Value: ret.OrderID},
 			OrderIDs: &basetypes.StringSliceVal{Op: cruder.IN, Value: []string{ret.OrderID}},
 		}),
-		WithOffset(0),
-		WithLimit(0),
+		compensate1.WithOffset(0),
+		compensate1.WithLimit(0),
 	)
 	if assert.Nil(t, err) {
-		infos, total, err := handler.GetPowerRentals(context.Background())
+		infos, total, err := handler.GetCompensates(context.Background())
 		if assert.Nil(t, err) {
-			if assert.Equal(t, uint32(1), total) {
+			if assert.Equal(t, uint32(2), total) {
 				assert.Equal(t, &ret, infos[0])
 			}
 		}
 	}
 }
 
-func deletePowerRental(t *testing.T) {
+func deleteCompensate(t *testing.T) {
 	handler, err := NewHandler(
 		context.Background(),
 		WithID(&ret.ID, true),
@@ -265,16 +185,21 @@ func deletePowerRental(t *testing.T) {
 		WithOrderID(&ret.OrderID, true),
 	)
 	if assert.Nil(t, err) {
-		err = handler.DeletePowerRental(context.Background())
+		err = handler.DeleteCompensate(context.Background())
 		assert.Nil(t, err)
 
-		info, err := handler.GetPowerRental(context.Background())
+		info, err := getCompensate()
 		assert.Nil(t, err)
 		assert.Nil(t, info)
+
+		seconds, err := getPowerRentalCompensateSeconds()
+		if assert.Nil(t, err) {
+			assert.Equal(t, ret.CompensateSeconds, seconds)
+		}
 	}
 }
 
-func TestPowerRental(t *testing.T) {
+func TestCompensate(t *testing.T) {
 	if runByGithubAction, err := strconv.ParseBool(os.Getenv("RUN_BY_GITHUB_ACTION")); err == nil && runByGithubAction {
 		return
 	}
@@ -282,9 +207,8 @@ func TestPowerRental(t *testing.T) {
 	teardown := setup(t)
 	defer teardown(t)
 
-	t.Run("createPowerRental", createPowerRental)
-	t.Run("updatePowerRental", updatePowerRental)
-	t.Run("getPowerRental", getPowerRental)
-	t.Run("getPowerRentals", getPowerRentals)
-	t.Run("deletePowerRental", deletePowerRental)
+	t.Run("createCompensate", createCompensate)
+	t.Run("getCompensate", getCompensate1)
+	t.Run("getCompensates", getCompensates)
+	t.Run("deleteCompensate", deleteCompensate)
 }

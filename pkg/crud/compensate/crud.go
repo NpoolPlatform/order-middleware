@@ -55,6 +55,7 @@ type Conds struct {
 	EntID            *cruder.Cond
 	EntIDs           *cruder.Cond
 	OrderID          *cruder.Cond
+	OrderIDs         *cruder.Cond
 	CompensateFromID *cruder.Cond
 }
 
@@ -142,6 +143,20 @@ func SetQueryConds(q *ent.CompensateQuery, conds *Conds) (*ent.CompensateQuery, 
 			q.Where(entcompensate.CompensateFromID(id))
 		default:
 			return nil, fmt.Errorf("invalid compensate field")
+		}
+	}
+	if conds.OrderIDs != nil {
+		ids, ok := conds.OrderIDs.Val.([]uuid.UUID)
+		if !ok {
+			return nil, fmt.Errorf("invalid orderids")
+		}
+		if len(ids) > 0 {
+			switch conds.OrderIDs.Op {
+			case cruder.IN:
+				q.Where(entcompensate.OrderIDIn(ids...))
+			default:
+				return nil, fmt.Errorf("invalid compensate field")
+			}
 		}
 	}
 	return q, nil

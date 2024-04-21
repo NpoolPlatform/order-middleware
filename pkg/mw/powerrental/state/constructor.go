@@ -24,7 +24,9 @@ func (h *Handler) ConstructCreateSQL() string {
 	_sql += comma + "order_id"
 	comma = ", "
 	_sql += comma + "duration_seconds"
-	_sql += comma + "payment_id"
+	if h.PaymentID != nil {
+		_sql += comma + "payment_id"
+	}
 	_sql += comma + "created_at"
 	_sql += comma + "updated_at"
 	_sql += comma + "deleted_at"
@@ -38,7 +40,9 @@ func (h *Handler) ConstructCreateSQL() string {
 	_sql += fmt.Sprintf("%v'%v' as order_id", comma, *h.OrderID)
 	comma = ", "
 	_sql += fmt.Sprintf("%v'%v' as duration_seconds", comma, *h.DurationSeconds)
-	_sql += fmt.Sprintf("%v'%v' as payment_id", comma, *h.PaymentID)
+	if h.PaymentID != nil {
+		_sql += fmt.Sprintf("%v'%v' as payment_id", comma, *h.PaymentID)
+	}
 	_sql += fmt.Sprintf("%v%v as created_at", comma, now)
 	_sql += fmt.Sprintf("%v%v as updated_at", comma, now)
 	_sql += fmt.Sprintf("%v0 as deleted_at", comma)

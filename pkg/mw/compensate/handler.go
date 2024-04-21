@@ -152,6 +152,20 @@ func (h *Handler) withCompensateConds(conds *npool.Conds) error {
 			Val: id,
 		}
 	}
+	if conds.OrderIDs != nil {
+		ids := []uuid.UUID{}
+		for _, id := range conds.GetOrderIDs().GetValue() {
+			_id, err := uuid.Parse(id)
+			if err != nil {
+				return err
+			}
+			ids = append(ids, _id)
+		}
+		h.CompensateConds.OrderIDs = &cruder.Cond{
+			Op:  conds.GetOrderIDs().GetOp(),
+			Val: ids,
+		}
+	}
 	if conds.CompensateFromID != nil {
 		id, err := uuid.Parse(conds.GetCompensateFromID().GetValue())
 		if err != nil {
@@ -174,6 +188,20 @@ func (h *Handler) withOrderBaseConds(conds *npool.Conds) error {
 		h.OrderBaseConds.EntID = &cruder.Cond{
 			Op:  conds.GetOrderID().GetOp(),
 			Val: id,
+		}
+	}
+	if conds.OrderIDs != nil {
+		ids := []uuid.UUID{}
+		for _, id := range conds.GetOrderIDs().GetValue() {
+			_id, err := uuid.Parse(id)
+			if err != nil {
+				return err
+			}
+			ids = append(ids, _id)
+		}
+		h.OrderBaseConds.EntIDs = &cruder.Cond{
+			Op:  conds.GetOrderIDs().GetOp(),
+			Val: ids,
 		}
 	}
 	if conds.AppID != nil {

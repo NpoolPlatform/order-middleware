@@ -255,6 +255,33 @@ func (h *createHandler) createFeeOrders(ctx context.Context, tx *ent.Tx) error {
 	return h.FeeMultiHandler.CreateFeeOrdersWithTx(ctx, tx)
 }
 
+func (h *createHandler) validatePaymentType() error {
+	switch *h.OrderStateBaseReq.PaymentType {
+	case types.PaymentType_PayWithBalanceOnly:
+		fallthrough //nolint
+	case types.PaymentType_PayWithTransferAndBalance:
+		if h.ledgerLockID() == nil {
+			return fmt.Errorf("invalid ledgerlockid")
+		}
+		fallthrough //nolint
+	case types.PaymentType_PayWithTransferOnly:
+		if h.PaymentBaseReq.EntID == nil {
+			return fmt.Errorf("invalid paymentid")
+		}
+	case types.PaymentType_PayWithParentOrder:
+		fallthrough //nolint
+	case types.PaymentType_PayWithContract:
+		fallthrough //nolint
+	case types.PaymentType_PayWithOffline:
+		fallthrough //nolint
+	case types.PaymentType_PayWithNoPayment:
+		if h.PaymentBaseReq.EntID != nil || h.ledgerLockID() != nil {
+			return fmt.Errorf("invalid paymenttype")
+		}
+	}
+	return nil
+}
+
 func (h *Handler) CreatePowerRentalWithTx(ctx context.Context, tx *ent.Tx) error {
 	handler := &createHandler{
 		Handler: h,
@@ -262,6 +289,10 @@ func (h *Handler) CreatePowerRentalWithTx(ctx context.Context, tx *ent.Tx) error
 
 	if h.EntID == nil {
 		h.EntID = func() *uuid.UUID { uid := uuid.New(); return &uid }()
+	}
+
+	if err := handler.validatePaymentType(); err != nil {
+		return err
 	}
 
 	handler.formalizeOrderID()

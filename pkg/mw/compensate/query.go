@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"entgo.io/ent/dialect/sql"
+	goodtypes "github.com/NpoolPlatform/message/npool/basetypes/good/v1"
 	types "github.com/NpoolPlatform/message/npool/basetypes/order/v1"
 	npool "github.com/NpoolPlatform/message/npool/order/mw/v1/compensate"
 	"github.com/NpoolPlatform/order-middleware/pkg/db"
@@ -36,6 +37,7 @@ func (h *queryHandler) scan(ctx context.Context) error {
 func (h *queryHandler) formalize() {
 	for _, info := range h.infos {
 		info.CompensateType = types.CompensateType(types.CompensateType_value[info.CompensateTypeStr])
+		info.GoodType = goodtypes.GoodType(goodtypes.GoodType_value[info.GoodTypeStr])
 	}
 }
 

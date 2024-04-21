@@ -70,6 +70,7 @@ func (h *powerRentalStateQueryHandler) _getPowerRentalStates(ctx context.Context
 	if h.OrderID == nil && h.GoodID == nil {
 		return fmt.Errorf("invalid id")
 	}
+	h._ent.entPowerRentalStates = []*ent.PowerRentalState{}
 	return db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
 		if h.OrderID != nil {
 			return h.getOrderPowerRentalStateEnt(ctx, cli, must)

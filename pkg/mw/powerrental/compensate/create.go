@@ -45,7 +45,7 @@ func (h *createHandler) execSQL(ctx context.Context, tx *ent.Tx, sql string) err
 	}
 	n, err := rc.RowsAffected()
 	if err != nil || n != 1 {
-		return fmt.Errorf("fail create compensate: %v", err)
+		return fmt.Errorf("fail run %v: %v", sql, err)
 	}
 	return nil
 }
@@ -139,9 +139,9 @@ func (h *Handler) CreateCompensate(ctx context.Context) error {
 	}
 
 	return db.WithTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {
-		if h.GoodID != nil {
-			return handler.createGoodCompensates(_ctx, tx)
+		if h.OrderID != nil {
+			return handler.createOrderCompensate(_ctx, tx)
 		}
-		return handler.createOrderCompensate(_ctx, tx)
+		return handler.createGoodCompensates(_ctx, tx)
 	})
 }
