@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
+	goodtypes "github.com/NpoolPlatform/message/npool/basetypes/good/v1"
 	types "github.com/NpoolPlatform/message/npool/basetypes/order/v1"
 	basetypes "github.com/NpoolPlatform/message/npool/basetypes/v1"
 	npool "github.com/NpoolPlatform/message/npool/order/mw/v1/outofgas"
@@ -48,9 +49,9 @@ func setup(t *testing.T) func(*testing.T) {
 		orderbase1.WithAppID(&ret.AppID, true),
 		orderbase1.WithUserID(&ret.UserID, true),
 		orderbase1.WithGoodID(&ret.GoodID, true),
+		orderbase1.WithGoodType(func() *goodtypes.GoodType { e := goodtypes.GoodType_PowerRental; return &e }(), true),
 		orderbase1.WithAppGoodID(&ret.AppGoodID, true),
 		orderbase1.WithOrderType(func() *types.OrderType { e := types.OrderType_Offline; return &e }(), true),
-		orderbase1.WithPaymentType(func() *types.PaymentType { e := types.PaymentType_PayWithBalanceOnly; return &e }(), true),
 		orderbase1.WithCreateMethod(func() *types.OrderCreateMethod { e := types.OrderCreateMethod_OrderCreatedByAdmin; return &e }(), true),
 	)
 	assert.Nil(t, err)
