@@ -333,6 +333,9 @@ func WithDurationSeconds(duration *uint32, must bool) func(context.Context, *Han
 			}
 			return nil
 		}
+		if *duration == 0 {
+			return fmt.Errorf("invalid durationseconds")
+		}
 		h.PowerRentalStateReq.DurationSeconds = duration
 		return nil
 	}
@@ -510,12 +513,6 @@ func WithStartAt(startAt *uint32, must bool) func(context.Context, *Handler) err
 
 func WithLastBenefitAt(lastBenefitAt *uint32, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
-		if lastBenefitAt == nil {
-			if must {
-				return fmt.Errorf("invalid lastbenefitat")
-			}
-			return nil
-		}
 		h.OrderStateBaseReq.LastBenefitAt = lastBenefitAt
 		return nil
 	}
@@ -543,12 +540,6 @@ func WithBenefitState(benefitState *types.BenefitState, must bool) func(context.
 
 func WithUserSetPaid(value *bool, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
-		if value == nil {
-			if must {
-				return fmt.Errorf("invalid usersetpaid")
-			}
-			return nil
-		}
 		h.PowerRentalStateReq.UserSetPaid = value
 		return nil
 	}
@@ -556,12 +547,6 @@ func WithUserSetPaid(value *bool, must bool) func(context.Context, *Handler) err
 
 func WithUserSetCanceled(value *bool, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
-		if value == nil {
-			if must {
-				return fmt.Errorf("invalid usersetcanceled")
-			}
-			return nil
-		}
 		h.PowerRentalStateReq.UserSetCanceled = value
 		return nil
 	}
@@ -569,12 +554,6 @@ func WithUserSetCanceled(value *bool, must bool) func(context.Context, *Handler)
 
 func WithAdminSetCanceled(value *bool, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
-		if value == nil {
-			if must {
-				return fmt.Errorf("invalid adminsetcanceled")
-			}
-			return nil
-		}
 		h.PowerRentalStateReq.AdminSetCanceled = value
 		return nil
 	}
@@ -618,12 +597,6 @@ func WithCompensateSeconds(compensateSeconds *uint32, must bool) func(context.Co
 
 func WithRollback(rollback *bool, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
-		if rollback == nil {
-			if must {
-				return fmt.Errorf("invalid rollback")
-			}
-			return nil
-		}
 		h.Rollback = rollback
 		return nil
 	}
