@@ -3,6 +3,7 @@ package feeorder
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
 	types "github.com/NpoolPlatform/message/npool/basetypes/order/v1"
@@ -16,6 +17,7 @@ import (
 	paymentbalance1 "github.com/NpoolPlatform/order-middleware/pkg/mw/payment/balance"
 	paymentbalancelock1 "github.com/NpoolPlatform/order-middleware/pkg/mw/payment/balance/lock"
 	paymenttransfer1 "github.com/NpoolPlatform/order-middleware/pkg/mw/payment/transfer"
+	orderstm1 "github.com/NpoolPlatform/order-middleware/pkg/mw/stm"
 
 	"github.com/google/uuid"
 )
@@ -265,6 +267,57 @@ func (h *updateHandler) formalizeEntIDs() {
 	}
 }
 
+func (h *updateHandler) validateCancelState() error {
+	if h.FeeOrderStateReq.CancelState == nil {
+		return nil
+	}
+	if h._ent.CancelState() != types.OrderState_DefaultOrderState {
+		return fmt.Errorf("invalid cancelstate")
+	}
+	return nil
+}
+
+func (h *updateHandler) formalizeCancelState() {
+	if (h.FeeOrderStateReq.UserSetCanceled != nil && *h.FeeOrderStateReq.UserSetCanceled) ||
+		(h.FeeOrderStateReq.AdminSetCanceled != nil && *h.FeeOrderStateReq.AdminSetCanceled) {
+		h.FeeOrderStateReq.CancelState = func() *types.OrderState { e := h._ent.OrderState(); return &e }()
+	}
+	if h.OrderStateBaseReq.OrderState != nil && *h.OrderStateBaseReq.OrderState == types.OrderState_OrderStatePreCancel {
+		h.FeeOrderStateReq.CancelState = func() *types.OrderState { e := h._ent.OrderState(); return &e }()
+	}
+}
+
+func (h *updateHandler) formalizePaidAt() {
+	if h.FeeOrderStateReq.PaymentState != nil && *h.FeeOrderStateReq.PaymentState == types.PaymentState_PaymentStateDone {
+		h.FeeOrderStateReq.PaidAt = func() *uint32 { u := uint32(time.Now().Unix()); return &u }()
+	}
+}
+
+func (h *updateHandler) validateUpdate(ctx context.Context) error {
+	handler, err := orderstm1.NewHandler(
+		ctx,
+		orderstm1.WithOrderID(h.OrderID, true),
+		orderstm1.WithOrderState(h.OrderStateBaseReq.OrderState, false),
+		orderstm1.WithCurrentPaymentState(func() *types.PaymentState { e := h._ent.PaymentState(); return &e }(), true),
+		orderstm1.WithNewPaymentState(h.FeeOrderStateReq.PaymentState, false),
+		orderstm1.WithUserSetPaid(h.FeeOrderStateReq.UserSetPaid, false),
+		orderstm1.WithUserSetCanceled(h.FeeOrderStateReq.UserSetCanceled, false),
+		orderstm1.WithUserCanceled(func() *bool { b := h._ent.UserSetCanceled(); return &b }(), false),
+		orderstm1.WithAdminSetCanceled(h.FeeOrderStateReq.AdminSetCanceled, false),
+		orderstm1.WithAdminCanceled(func() *bool { b := h._ent.AdminSetCanceled(); return &b }(), false),
+		orderstm1.WithRollback(h.Rollback, false),
+	)
+	if err != nil {
+		return err
+	}
+	state, err := handler.ValidateUpdateForNewState(ctx)
+	if err != nil {
+		return err
+	}
+	h.OrderStateBaseReq.OrderState = state
+	return nil
+}
+
 func (h *Handler) UpdateFeeOrderWithTx(ctx context.Context, tx *ent.Tx) error {
 	handler := &updateHandler{
 		feeOrderQueryHandler: &feeOrderQueryHandler{
@@ -280,6 +333,9 @@ func (h *Handler) UpdateFeeOrderWithTx(ctx context.Context, tx *ent.Tx) error {
 	if err := handler.requireFeeOrder(ctx); err != nil {
 		return err
 	}
+	if err := handler.validateUpdate(ctx); err != nil {
+		return err
+	}
 
 	handler.formalizeOrderID()
 	handler.formalizeEntIDs()
@@ -288,6 +344,11 @@ func (h *Handler) UpdateFeeOrderWithTx(ctx context.Context, tx *ent.Tx) error {
 	}
 	handler.formalizePaymentBalances()
 	handler.formalizePaymentTransfers()
+	handler.formalizeCancelState()
+	if err := handler.validateCancelState(); err != nil {
+		return err
+	}
+	handler.formalizePaidAt()
 
 	if err := handler.constructOrderStateBaseSQL(ctx); err != nil {
 		return err

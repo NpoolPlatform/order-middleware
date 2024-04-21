@@ -1,6 +1,7 @@
 package feeorder
 
 import (
+	types "github.com/NpoolPlatform/message/npool/basetypes/order/v1"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent"
 
 	"github.com/google/uuid"
@@ -57,4 +58,23 @@ func (f *feeOrder) FeeOrderID() uint32 {
 
 func (f *feeOrder) FeeOrderStateID() uint32 {
 	return f.entFeeOrderState.ID
+}
+func (f *feeOrder) PaymentState() types.PaymentState {
+	return types.PaymentState(types.PaymentState_value[f.entFeeOrderState.PaymentState])
+}
+
+func (f *feeOrder) OrderState() types.OrderState {
+	return types.OrderState(types.OrderState_value[f.entOrderStateBase.OrderState])
+}
+
+func (f *feeOrder) CancelState() types.OrderState {
+	return types.OrderState(types.OrderState_value[f.entFeeOrderState.CancelState])
+}
+
+func (f feeOrder) UserSetCanceled() bool {
+	return f.entFeeOrderState.UserSetCanceled
+}
+
+func (f feeOrder) AdminSetCanceled() bool {
+	return f.entFeeOrderState.AdminSetCanceled
 }
