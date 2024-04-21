@@ -1,6 +1,8 @@
 package orderstm
 
 import (
+	"fmt"
+
 	types "github.com/NpoolPlatform/message/npool/basetypes/order/v1"
 )
 
@@ -44,9 +46,18 @@ var forwards = map[types.OrderState][]types.OrderState{
 }
 
 type forwardHandler struct {
-	*Handler
+	*orderQueryHandler
 }
 
 func (h *forwardHandler) forward() (*types.OrderState, error) {
-	return nil, nil
+	states, ok := forwards[h._ent.OrderState()]
+	if !ok {
+		return nil, fmt.Errorf("invalid orderstate")
+	}
+	for _, state := range states {
+		if state == *h.OrderState {
+			return &state, nil
+		}
+	}
+	return nil, fmt.Errorf("invalid orderstate")
 }

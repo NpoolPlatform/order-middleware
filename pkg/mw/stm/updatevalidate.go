@@ -129,10 +129,14 @@ func (h *Handler) ValidateUpdateForNewState(ctx context.Context) (*types.OrderSt
 			Handler: h,
 		},
 		rollbackHandler: &rollbackHandler{
-			Handler: h,
+			orderQueryHandler: &orderQueryHandler{
+				Handler: h,
+			},
 		},
 		forwardHandler: &forwardHandler{
-			Handler: h,
+			orderQueryHandler: &orderQueryHandler{
+				Handler: h,
+			},
 		},
 	}
 

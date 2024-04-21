@@ -1,6 +1,8 @@
 package orderstm
 
 import (
+	"fmt"
+
 	types "github.com/NpoolPlatform/message/npool/basetypes/order/v1"
 )
 
@@ -31,9 +33,13 @@ var rollbacks = map[types.OrderState]types.OrderState{
 }
 
 type rollbackHandler struct {
-	*Handler
+	*orderQueryHandler
 }
 
 func (h *rollbackHandler) rollback() (*types.OrderState, error) {
-	return nil, nil
+	state, ok := rollbacks[h._ent.OrderState()]
+	if !ok {
+		return nil, fmt.Errorf("invalid orderstate")
+	}
+	return &state, nil
 }
