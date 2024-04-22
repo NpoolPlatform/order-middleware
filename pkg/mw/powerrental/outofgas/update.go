@@ -10,6 +10,8 @@ import (
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent"
 	outofgas1 "github.com/NpoolPlatform/order-middleware/pkg/mw/outofgas"
 	powerrentalstate1 "github.com/NpoolPlatform/order-middleware/pkg/mw/powerrental/state"
+
+	"github.com/google/uuid"
 )
 
 type updateHandler struct {
@@ -63,10 +65,11 @@ func (h *Handler) UpdateOutOfGas(ctx context.Context) error {
 		},
 	}
 
-	if err := handler.requirePowerRentalState(ctx); err != nil {
+	if err := handler.outOfGasHandler.requireOutOfGas(ctx); err != nil {
 		return err
 	}
-	if err := handler.outOfGasHandler.requireOutOfGas(ctx); err != nil {
+	h.OrderID = func() *uuid.UUID { uid := handler.outOfGasHandler._ent.OrderID(); return &uid }()
+	if err := handler.requirePowerRentalState(ctx); err != nil {
 		return err
 	}
 	if *h.EndAt <= handler.outOfGasHandler._ent.StartAt() {
