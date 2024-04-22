@@ -8,14 +8,14 @@ import (
 	"testing"
 	"time"
 
-	// "github.com/NpoolPlatform/libent-cruder/pkg/cruder"
+	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
 
 	"bou.ke/monkey"
 	"github.com/NpoolPlatform/go-service-framework/pkg/config"
 	grpc2 "github.com/NpoolPlatform/go-service-framework/pkg/grpc"
 	goodtypes "github.com/NpoolPlatform/message/npool/basetypes/good/v1"
 	types "github.com/NpoolPlatform/message/npool/basetypes/order/v1"
-	// basetypes "github.com/NpoolPlatform/message/npool/basetypes/v1"
+	basetypes "github.com/NpoolPlatform/message/npool/basetypes/v1"
 	ordercouponmwpb "github.com/NpoolPlatform/message/npool/order/mw/v1/order/coupon"
 	paymentmwpb "github.com/NpoolPlatform/message/npool/order/mw/v1/payment"
 	npool "github.com/NpoolPlatform/message/npool/order/mw/v1/powerrental"
@@ -151,17 +151,51 @@ func createPowerRentalOrder(t *testing.T) {
 	}
 }
 
-/*
 func updatePowerRentalOrder(t *testing.T) {
-	err := UpdatePowerRentalOrder(context.Background(), &npool.PowerRentalOrderReq{})
+	err := UpdatePowerRentalOrder(context.Background(), &npool.PowerRentalOrderReq{
+		ID:                &ret.ID,
+		EntID:             &ret.EntID,
+		OrderID:           &ret.OrderID,
+		PaymentType:       &ret.PaymentType,
+		CreateMethod:      &ret.CreateMethod,
+		GoodValueUSD:      &ret.GoodValueUSD,
+		PaymentAmountUSD:  &ret.PaymentAmountUSD,
+		DiscountAmountUSD: &ret.DiscountAmountUSD,
+		PromotionID:       &ret.PromotionID,
+		DurationSeconds:   &ret.DurationSeconds,
+		LedgerLockID:      &ret.LedgerLockID,
+		PaymentID:         &ret.PaymentID,
+		CouponIDs: func() (_couponIDs []string) {
+			for _, coupon := range ret.Coupons {
+				_couponIDs = append(_couponIDs, coupon.CouponID)
+			}
+			return
+		}(),
+		PaymentBalances: func() (_reqs []*paymentmwpb.PaymentBalanceReq) {
+			for _, req := range ret.PaymentBalances {
+				_reqs = append(_reqs, &paymentmwpb.PaymentBalanceReq{
+					CoinTypeID:           &req.CoinTypeID,
+					Amount:               &req.Amount,
+					LocalCoinUSDCurrency: &req.LocalCoinUSDCurrency,
+					LiveCoinUSDCurrency:  &req.LiveCoinUSDCurrency,
+				})
+			}
+			return
+		}(),
+		StartMode: &ret.StartMode,
+		StartAt:   &ret.StartAt,
+	})
 	if assert.Nil(t, err) {
-		ret.UpdatedAt = info.UpdatedAt
-		assert.Equal(t, info.String(), ret.String())
+		info, err := GetPowerRentalOrder(context.Background(), ret.OrderID)
+		if assert.Nil(t, err) {
+			ret.UpdatedAt = info.UpdatedAt
+			assert.Equal(t, info.String(), ret.String())
+		}
 	}
 }
+
 func getPowerRentalOrder(t *testing.T) {
-	var err error
-	info, err = GetPowerRentalOrder(context.Background(), ret.OrderID)
+	info, err := GetPowerRentalOrder(context.Background(), ret.OrderID)
 	if assert.Nil(t, err) {
 		assert.Equal(t, info.String(), ret.String())
 	}
@@ -169,12 +203,10 @@ func getPowerRentalOrder(t *testing.T) {
 
 func getPowerRentalOrders(t *testing.T) {
 	infos, _, err := GetPowerRentalOrders(context.Background(), &npool.Conds{
-		EntID: &basetypes.StringVal{
-			Op:    cruder.EQ,
-			Value: ret.EntID,
-		},
+		EntID:   &basetypes.StringVal{Op: cruder.EQ, Value: ret.EntID},
+		OrderID: &basetypes.StringVal{Op: cruder.EQ, Value: ret.OrderID},
 	}, 0, 1)
-	if assert.Nil(t, err) {
+	if assert.Nil(t, err) && assert.Equal(t, len(infos), 1) {
 		assert.Equal(t, infos[0].String(), ret.String())
 	}
 }
@@ -183,11 +215,10 @@ func deletePowerRentalOrder(t *testing.T) {
 	err := DeletePowerRentalOrder(context.Background(), &ret.ID, &ret.EntID, &ret.OrderID)
 	assert.Nil(t, err)
 
-	info, err = GetPowerRentalOrder(context.Background(), ret.OrderID)
+	info, err := GetPowerRentalOrder(context.Background(), ret.OrderID)
 	assert.Nil(t, err)
 	assert.Nil(t, info)
 }
-*/
 
 func TestPowerRentalOrder(t *testing.T) {
 	if runByGithubAction, err := strconv.ParseBool(os.Getenv("RUN_BY_GITHUB_ACTION")); err == nil && runByGithubAction {
@@ -203,8 +234,8 @@ func TestPowerRentalOrder(t *testing.T) {
 	})
 
 	t.Run("createPowerRentalOrder", createPowerRentalOrder)
-	//t.Run("updatePowerRentalOrder", updatePowerRentalOrder)
-	//t.Run("getPowerRentalOrder", getPowerRentalOrder)
-	//t.Run("getPowerRentalOrders", getPowerRentalOrders)
-	//t.Run("deletePowerRentalOrder", deletePowerRentalOrder)
+	t.Run("updatePowerRentalOrder", updatePowerRentalOrder)
+	t.Run("getPowerRentalOrder", getPowerRentalOrder)
+	t.Run("getPowerRentalOrders", getPowerRentalOrders)
+	t.Run("deletePowerRentalOrder", deletePowerRentalOrder)
 }
