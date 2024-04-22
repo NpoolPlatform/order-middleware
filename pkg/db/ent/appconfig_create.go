@@ -93,6 +93,20 @@ func (acc *AppConfigCreate) SetNillableAppID(u *uuid.UUID) *AppConfigCreate {
 	return acc
 }
 
+// SetEnableSimulateOrder sets the "enable_simulate_order" field.
+func (acc *AppConfigCreate) SetEnableSimulateOrder(b bool) *AppConfigCreate {
+	acc.mutation.SetEnableSimulateOrder(b)
+	return acc
+}
+
+// SetNillableEnableSimulateOrder sets the "enable_simulate_order" field if the given value is not nil.
+func (acc *AppConfigCreate) SetNillableEnableSimulateOrder(b *bool) *AppConfigCreate {
+	if b != nil {
+		acc.SetEnableSimulateOrder(*b)
+	}
+	return acc
+}
+
 // SetSimulateOrderCouponMode sets the "simulate_order_coupon_mode" field.
 func (acc *AppConfigCreate) SetSimulateOrderCouponMode(s string) *AppConfigCreate {
 	acc.mutation.SetSimulateOrderCouponMode(s)
@@ -131,20 +145,6 @@ func (acc *AppConfigCreate) SetSimulateOrderCashableProfitProbability(d decimal.
 func (acc *AppConfigCreate) SetNillableSimulateOrderCashableProfitProbability(d *decimal.Decimal) *AppConfigCreate {
 	if d != nil {
 		acc.SetSimulateOrderCashableProfitProbability(*d)
-	}
-	return acc
-}
-
-// SetEnableSimulateOrder sets the "enable_simulate_order" field.
-func (acc *AppConfigCreate) SetEnableSimulateOrder(b bool) *AppConfigCreate {
-	acc.mutation.SetEnableSimulateOrder(b)
-	return acc
-}
-
-// SetNillableEnableSimulateOrder sets the "enable_simulate_order" field if the given value is not nil.
-func (acc *AppConfigCreate) SetNillableEnableSimulateOrder(b *bool) *AppConfigCreate {
-	if b != nil {
-		acc.SetEnableSimulateOrder(*b)
 	}
 	return acc
 }
@@ -283,6 +283,10 @@ func (acc *AppConfigCreate) defaults() error {
 		v := appconfig.DefaultAppID()
 		acc.mutation.SetAppID(v)
 	}
+	if _, ok := acc.mutation.EnableSimulateOrder(); !ok {
+		v := appconfig.DefaultEnableSimulateOrder
+		acc.mutation.SetEnableSimulateOrder(v)
+	}
 	if _, ok := acc.mutation.SimulateOrderCouponMode(); !ok {
 		v := appconfig.DefaultSimulateOrderCouponMode
 		acc.mutation.SetSimulateOrderCouponMode(v)
@@ -294,10 +298,6 @@ func (acc *AppConfigCreate) defaults() error {
 	if _, ok := acc.mutation.SimulateOrderCashableProfitProbability(); !ok {
 		v := appconfig.DefaultSimulateOrderCashableProfitProbability
 		acc.mutation.SetSimulateOrderCashableProfitProbability(v)
-	}
-	if _, ok := acc.mutation.EnableSimulateOrder(); !ok {
-		v := appconfig.DefaultEnableSimulateOrder
-		acc.mutation.SetEnableSimulateOrder(v)
 	}
 	if _, ok := acc.mutation.MaxUnpaidOrders(); !ok {
 		v := appconfig.DefaultMaxUnpaidOrders
@@ -394,6 +394,14 @@ func (acc *AppConfigCreate) createSpec() (*AppConfig, *sqlgraph.CreateSpec) {
 		})
 		_node.AppID = value
 	}
+	if value, ok := acc.mutation.EnableSimulateOrder(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Value:  value,
+			Column: appconfig.FieldEnableSimulateOrder,
+		})
+		_node.EnableSimulateOrder = value
+	}
 	if value, ok := acc.mutation.SimulateOrderCouponMode(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
@@ -417,14 +425,6 @@ func (acc *AppConfigCreate) createSpec() (*AppConfig, *sqlgraph.CreateSpec) {
 			Column: appconfig.FieldSimulateOrderCashableProfitProbability,
 		})
 		_node.SimulateOrderCashableProfitProbability = value
-	}
-	if value, ok := acc.mutation.EnableSimulateOrder(); ok {
-		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
-			Type:   field.TypeBool,
-			Value:  value,
-			Column: appconfig.FieldEnableSimulateOrder,
-		})
-		_node.EnableSimulateOrder = value
 	}
 	if value, ok := acc.mutation.MaxUnpaidOrders(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -572,6 +572,24 @@ func (u *AppConfigUpsert) ClearAppID() *AppConfigUpsert {
 	return u
 }
 
+// SetEnableSimulateOrder sets the "enable_simulate_order" field.
+func (u *AppConfigUpsert) SetEnableSimulateOrder(v bool) *AppConfigUpsert {
+	u.Set(appconfig.FieldEnableSimulateOrder, v)
+	return u
+}
+
+// UpdateEnableSimulateOrder sets the "enable_simulate_order" field to the value that was provided on create.
+func (u *AppConfigUpsert) UpdateEnableSimulateOrder() *AppConfigUpsert {
+	u.SetExcluded(appconfig.FieldEnableSimulateOrder)
+	return u
+}
+
+// ClearEnableSimulateOrder clears the value of the "enable_simulate_order" field.
+func (u *AppConfigUpsert) ClearEnableSimulateOrder() *AppConfigUpsert {
+	u.SetNull(appconfig.FieldEnableSimulateOrder)
+	return u
+}
+
 // SetSimulateOrderCouponMode sets the "simulate_order_coupon_mode" field.
 func (u *AppConfigUpsert) SetSimulateOrderCouponMode(v string) *AppConfigUpsert {
 	u.Set(appconfig.FieldSimulateOrderCouponMode, v)
@@ -623,24 +641,6 @@ func (u *AppConfigUpsert) UpdateSimulateOrderCashableProfitProbability() *AppCon
 // ClearSimulateOrderCashableProfitProbability clears the value of the "simulate_order_cashable_profit_probability" field.
 func (u *AppConfigUpsert) ClearSimulateOrderCashableProfitProbability() *AppConfigUpsert {
 	u.SetNull(appconfig.FieldSimulateOrderCashableProfitProbability)
-	return u
-}
-
-// SetEnableSimulateOrder sets the "enable_simulate_order" field.
-func (u *AppConfigUpsert) SetEnableSimulateOrder(v bool) *AppConfigUpsert {
-	u.Set(appconfig.FieldEnableSimulateOrder, v)
-	return u
-}
-
-// UpdateEnableSimulateOrder sets the "enable_simulate_order" field to the value that was provided on create.
-func (u *AppConfigUpsert) UpdateEnableSimulateOrder() *AppConfigUpsert {
-	u.SetExcluded(appconfig.FieldEnableSimulateOrder)
-	return u
-}
-
-// ClearEnableSimulateOrder clears the value of the "enable_simulate_order" field.
-func (u *AppConfigUpsert) ClearEnableSimulateOrder() *AppConfigUpsert {
-	u.SetNull(appconfig.FieldEnableSimulateOrder)
 	return u
 }
 
@@ -816,6 +816,27 @@ func (u *AppConfigUpsertOne) ClearAppID() *AppConfigUpsertOne {
 	})
 }
 
+// SetEnableSimulateOrder sets the "enable_simulate_order" field.
+func (u *AppConfigUpsertOne) SetEnableSimulateOrder(v bool) *AppConfigUpsertOne {
+	return u.Update(func(s *AppConfigUpsert) {
+		s.SetEnableSimulateOrder(v)
+	})
+}
+
+// UpdateEnableSimulateOrder sets the "enable_simulate_order" field to the value that was provided on create.
+func (u *AppConfigUpsertOne) UpdateEnableSimulateOrder() *AppConfigUpsertOne {
+	return u.Update(func(s *AppConfigUpsert) {
+		s.UpdateEnableSimulateOrder()
+	})
+}
+
+// ClearEnableSimulateOrder clears the value of the "enable_simulate_order" field.
+func (u *AppConfigUpsertOne) ClearEnableSimulateOrder() *AppConfigUpsertOne {
+	return u.Update(func(s *AppConfigUpsert) {
+		s.ClearEnableSimulateOrder()
+	})
+}
+
 // SetSimulateOrderCouponMode sets the "simulate_order_coupon_mode" field.
 func (u *AppConfigUpsertOne) SetSimulateOrderCouponMode(v string) *AppConfigUpsertOne {
 	return u.Update(func(s *AppConfigUpsert) {
@@ -876,27 +897,6 @@ func (u *AppConfigUpsertOne) UpdateSimulateOrderCashableProfitProbability() *App
 func (u *AppConfigUpsertOne) ClearSimulateOrderCashableProfitProbability() *AppConfigUpsertOne {
 	return u.Update(func(s *AppConfigUpsert) {
 		s.ClearSimulateOrderCashableProfitProbability()
-	})
-}
-
-// SetEnableSimulateOrder sets the "enable_simulate_order" field.
-func (u *AppConfigUpsertOne) SetEnableSimulateOrder(v bool) *AppConfigUpsertOne {
-	return u.Update(func(s *AppConfigUpsert) {
-		s.SetEnableSimulateOrder(v)
-	})
-}
-
-// UpdateEnableSimulateOrder sets the "enable_simulate_order" field to the value that was provided on create.
-func (u *AppConfigUpsertOne) UpdateEnableSimulateOrder() *AppConfigUpsertOne {
-	return u.Update(func(s *AppConfigUpsert) {
-		s.UpdateEnableSimulateOrder()
-	})
-}
-
-// ClearEnableSimulateOrder clears the value of the "enable_simulate_order" field.
-func (u *AppConfigUpsertOne) ClearEnableSimulateOrder() *AppConfigUpsertOne {
-	return u.Update(func(s *AppConfigUpsert) {
-		s.ClearEnableSimulateOrder()
 	})
 }
 
@@ -1241,6 +1241,27 @@ func (u *AppConfigUpsertBulk) ClearAppID() *AppConfigUpsertBulk {
 	})
 }
 
+// SetEnableSimulateOrder sets the "enable_simulate_order" field.
+func (u *AppConfigUpsertBulk) SetEnableSimulateOrder(v bool) *AppConfigUpsertBulk {
+	return u.Update(func(s *AppConfigUpsert) {
+		s.SetEnableSimulateOrder(v)
+	})
+}
+
+// UpdateEnableSimulateOrder sets the "enable_simulate_order" field to the value that was provided on create.
+func (u *AppConfigUpsertBulk) UpdateEnableSimulateOrder() *AppConfigUpsertBulk {
+	return u.Update(func(s *AppConfigUpsert) {
+		s.UpdateEnableSimulateOrder()
+	})
+}
+
+// ClearEnableSimulateOrder clears the value of the "enable_simulate_order" field.
+func (u *AppConfigUpsertBulk) ClearEnableSimulateOrder() *AppConfigUpsertBulk {
+	return u.Update(func(s *AppConfigUpsert) {
+		s.ClearEnableSimulateOrder()
+	})
+}
+
 // SetSimulateOrderCouponMode sets the "simulate_order_coupon_mode" field.
 func (u *AppConfigUpsertBulk) SetSimulateOrderCouponMode(v string) *AppConfigUpsertBulk {
 	return u.Update(func(s *AppConfigUpsert) {
@@ -1301,27 +1322,6 @@ func (u *AppConfigUpsertBulk) UpdateSimulateOrderCashableProfitProbability() *Ap
 func (u *AppConfigUpsertBulk) ClearSimulateOrderCashableProfitProbability() *AppConfigUpsertBulk {
 	return u.Update(func(s *AppConfigUpsert) {
 		s.ClearSimulateOrderCashableProfitProbability()
-	})
-}
-
-// SetEnableSimulateOrder sets the "enable_simulate_order" field.
-func (u *AppConfigUpsertBulk) SetEnableSimulateOrder(v bool) *AppConfigUpsertBulk {
-	return u.Update(func(s *AppConfigUpsert) {
-		s.SetEnableSimulateOrder(v)
-	})
-}
-
-// UpdateEnableSimulateOrder sets the "enable_simulate_order" field to the value that was provided on create.
-func (u *AppConfigUpsertBulk) UpdateEnableSimulateOrder() *AppConfigUpsertBulk {
-	return u.Update(func(s *AppConfigUpsert) {
-		s.UpdateEnableSimulateOrder()
-	})
-}
-
-// ClearEnableSimulateOrder clears the value of the "enable_simulate_order" field.
-func (u *AppConfigUpsertBulk) ClearEnableSimulateOrder() *AppConfigUpsertBulk {
-	return u.Update(func(s *AppConfigUpsert) {
-		s.ClearEnableSimulateOrder()
 	})
 }
 

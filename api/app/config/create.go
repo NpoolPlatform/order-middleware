@@ -12,43 +12,43 @@ import (
 	config1 "github.com/NpoolPlatform/order-middleware/pkg/mw/app/config"
 )
 
-func (s *Server) CreateSimulateConfig(ctx context.Context, in *npool.CreateSimulateConfigRequest) (*npool.CreateSimulateConfigResponse, error) {
+func (s *Server) CreateAppConfig(ctx context.Context, in *npool.CreateAppConfigRequest) (*npool.CreateAppConfigResponse, error) {
 	req := in.GetInfo()
 	if req == nil {
 		logger.Sugar().Errorw(
-			"CreateSimulateConfig",
+			"CreateAppConfig",
 			"In", in,
 		)
-		return &npool.CreateSimulateConfigResponse{}, status.Error(codes.Aborted, "invalid argument")
+		return &npool.CreateAppConfigResponse{}, status.Error(codes.Aborted, "invalid argument")
 	}
 	handler, err := config1.NewHandler(
 		ctx,
 		config1.WithEntID(req.EntID, false),
 		config1.WithAppID(req.AppID, true),
-		config1.WithCashableProfitProbability(req.CashableProfitProbability, false),
-		config1.WithSendCouponMode(req.SendCouponMode, true),
-		config1.WithSendCouponProbability(req.SendCouponProbability, false),
-		config1.WithEnabled(req.Enabled, false),
+		config1.WithEnableSimulateOrder(req.EnableSimulateOrder, false),
+		config1.WithSimulateOrderCouponMode(req.SimulateOrderCouponMode, false),
+		config1.WithSimulateOrderCouponProbability(req.SimulateOrderCouponProbability, false),
+		config1.WithSimulateOrderCashableProfitProbability(req.SimulateOrderCashableProfitProbability, false),
 	)
 	if err != nil {
 		logger.Sugar().Errorw(
-			"CreateSimulateConfig",
+			"CreateAppConfig",
 			"Req", req,
 			"error", err,
 		)
-		return &npool.CreateSimulateConfigResponse{}, status.Error(codes.InvalidArgument, err.Error())
+		return &npool.CreateAppConfigResponse{}, status.Error(codes.InvalidArgument, err.Error())
 	}
-	info, err := handler.CreateSimulateConfig(ctx)
+	info, err := handler.CreateAppConfig(ctx)
 	if err != nil {
 		logger.Sugar().Errorw(
-			"CreateSimulateConfig",
+			"CreateAppConfig",
 			"Req", req,
 			"error", err,
 		)
-		return &npool.CreateSimulateConfigResponse{}, status.Error(codes.Aborted, err.Error())
+		return &npool.CreateAppConfigResponse{}, status.Error(codes.Aborted, err.Error())
 	}
 
-	return &npool.CreateSimulateConfigResponse{
+	return &npool.CreateAppConfigResponse{
 		Info: info,
 	}, nil
 }

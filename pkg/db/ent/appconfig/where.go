@@ -115,6 +115,13 @@ func AppID(v uuid.UUID) predicate.AppConfig {
 	})
 }
 
+// EnableSimulateOrder applies equality check predicate on the "enable_simulate_order" field. It's identical to EnableSimulateOrderEQ.
+func EnableSimulateOrder(v bool) predicate.AppConfig {
+	return predicate.AppConfig(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldEnableSimulateOrder), v))
+	})
+}
+
 // SimulateOrderCouponMode applies equality check predicate on the "simulate_order_coupon_mode" field. It's identical to SimulateOrderCouponModeEQ.
 func SimulateOrderCouponMode(v string) predicate.AppConfig {
 	return predicate.AppConfig(func(s *sql.Selector) {
@@ -133,13 +140,6 @@ func SimulateOrderCouponProbability(v decimal.Decimal) predicate.AppConfig {
 func SimulateOrderCashableProfitProbability(v decimal.Decimal) predicate.AppConfig {
 	return predicate.AppConfig(func(s *sql.Selector) {
 		s.Where(sql.EQ(s.C(FieldSimulateOrderCashableProfitProbability), v))
-	})
-}
-
-// EnableSimulateOrder applies equality check predicate on the "enable_simulate_order" field. It's identical to EnableSimulateOrderEQ.
-func EnableSimulateOrder(v bool) predicate.AppConfig {
-	return predicate.AppConfig(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldEnableSimulateOrder), v))
 	})
 }
 
@@ -484,6 +484,34 @@ func AppIDNotNil() predicate.AppConfig {
 	})
 }
 
+// EnableSimulateOrderEQ applies the EQ predicate on the "enable_simulate_order" field.
+func EnableSimulateOrderEQ(v bool) predicate.AppConfig {
+	return predicate.AppConfig(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldEnableSimulateOrder), v))
+	})
+}
+
+// EnableSimulateOrderNEQ applies the NEQ predicate on the "enable_simulate_order" field.
+func EnableSimulateOrderNEQ(v bool) predicate.AppConfig {
+	return predicate.AppConfig(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldEnableSimulateOrder), v))
+	})
+}
+
+// EnableSimulateOrderIsNil applies the IsNil predicate on the "enable_simulate_order" field.
+func EnableSimulateOrderIsNil() predicate.AppConfig {
+	return predicate.AppConfig(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldEnableSimulateOrder)))
+	})
+}
+
+// EnableSimulateOrderNotNil applies the NotNil predicate on the "enable_simulate_order" field.
+func EnableSimulateOrderNotNil() predicate.AppConfig {
+	return predicate.AppConfig(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldEnableSimulateOrder)))
+	})
+}
+
 // SimulateOrderCouponModeEQ applies the EQ predicate on the "simulate_order_coupon_mode" field.
 func SimulateOrderCouponModeEQ(v string) predicate.AppConfig {
 	return predicate.AppConfig(func(s *sql.Selector) {
@@ -750,34 +778,6 @@ func SimulateOrderCashableProfitProbabilityIsNil() predicate.AppConfig {
 func SimulateOrderCashableProfitProbabilityNotNil() predicate.AppConfig {
 	return predicate.AppConfig(func(s *sql.Selector) {
 		s.Where(sql.NotNull(s.C(FieldSimulateOrderCashableProfitProbability)))
-	})
-}
-
-// EnableSimulateOrderEQ applies the EQ predicate on the "enable_simulate_order" field.
-func EnableSimulateOrderEQ(v bool) predicate.AppConfig {
-	return predicate.AppConfig(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldEnableSimulateOrder), v))
-	})
-}
-
-// EnableSimulateOrderNEQ applies the NEQ predicate on the "enable_simulate_order" field.
-func EnableSimulateOrderNEQ(v bool) predicate.AppConfig {
-	return predicate.AppConfig(func(s *sql.Selector) {
-		s.Where(sql.NEQ(s.C(FieldEnableSimulateOrder), v))
-	})
-}
-
-// EnableSimulateOrderIsNil applies the IsNil predicate on the "enable_simulate_order" field.
-func EnableSimulateOrderIsNil() predicate.AppConfig {
-	return predicate.AppConfig(func(s *sql.Selector) {
-		s.Where(sql.IsNull(s.C(FieldEnableSimulateOrder)))
-	})
-}
-
-// EnableSimulateOrderNotNil applies the NotNil predicate on the "enable_simulate_order" field.
-func EnableSimulateOrderNotNil() predicate.AppConfig {
-	return predicate.AppConfig(func(s *sql.Selector) {
-		s.Where(sql.NotNull(s.C(FieldEnableSimulateOrder)))
 	})
 }
 

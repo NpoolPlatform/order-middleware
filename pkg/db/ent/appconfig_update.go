@@ -119,6 +119,26 @@ func (acu *AppConfigUpdate) ClearAppID() *AppConfigUpdate {
 	return acu
 }
 
+// SetEnableSimulateOrder sets the "enable_simulate_order" field.
+func (acu *AppConfigUpdate) SetEnableSimulateOrder(b bool) *AppConfigUpdate {
+	acu.mutation.SetEnableSimulateOrder(b)
+	return acu
+}
+
+// SetNillableEnableSimulateOrder sets the "enable_simulate_order" field if the given value is not nil.
+func (acu *AppConfigUpdate) SetNillableEnableSimulateOrder(b *bool) *AppConfigUpdate {
+	if b != nil {
+		acu.SetEnableSimulateOrder(*b)
+	}
+	return acu
+}
+
+// ClearEnableSimulateOrder clears the value of the "enable_simulate_order" field.
+func (acu *AppConfigUpdate) ClearEnableSimulateOrder() *AppConfigUpdate {
+	acu.mutation.ClearEnableSimulateOrder()
+	return acu
+}
+
 // SetSimulateOrderCouponMode sets the "simulate_order_coupon_mode" field.
 func (acu *AppConfigUpdate) SetSimulateOrderCouponMode(s string) *AppConfigUpdate {
 	acu.mutation.SetSimulateOrderCouponMode(s)
@@ -176,26 +196,6 @@ func (acu *AppConfigUpdate) SetNillableSimulateOrderCashableProfitProbability(d 
 // ClearSimulateOrderCashableProfitProbability clears the value of the "simulate_order_cashable_profit_probability" field.
 func (acu *AppConfigUpdate) ClearSimulateOrderCashableProfitProbability() *AppConfigUpdate {
 	acu.mutation.ClearSimulateOrderCashableProfitProbability()
-	return acu
-}
-
-// SetEnableSimulateOrder sets the "enable_simulate_order" field.
-func (acu *AppConfigUpdate) SetEnableSimulateOrder(b bool) *AppConfigUpdate {
-	acu.mutation.SetEnableSimulateOrder(b)
-	return acu
-}
-
-// SetNillableEnableSimulateOrder sets the "enable_simulate_order" field if the given value is not nil.
-func (acu *AppConfigUpdate) SetNillableEnableSimulateOrder(b *bool) *AppConfigUpdate {
-	if b != nil {
-		acu.SetEnableSimulateOrder(*b)
-	}
-	return acu
-}
-
-// ClearEnableSimulateOrder clears the value of the "enable_simulate_order" field.
-func (acu *AppConfigUpdate) ClearEnableSimulateOrder() *AppConfigUpdate {
-	acu.mutation.ClearEnableSimulateOrder()
 	return acu
 }
 
@@ -386,6 +386,19 @@ func (acu *AppConfigUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: appconfig.FieldAppID,
 		})
 	}
+	if value, ok := acu.mutation.EnableSimulateOrder(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Value:  value,
+			Column: appconfig.FieldEnableSimulateOrder,
+		})
+	}
+	if acu.mutation.EnableSimulateOrderCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Column: appconfig.FieldEnableSimulateOrder,
+		})
+	}
 	if value, ok := acu.mutation.SimulateOrderCouponMode(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
@@ -423,19 +436,6 @@ func (acu *AppConfigUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeOther,
 			Column: appconfig.FieldSimulateOrderCashableProfitProbability,
-		})
-	}
-	if value, ok := acu.mutation.EnableSimulateOrder(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeBool,
-			Value:  value,
-			Column: appconfig.FieldEnableSimulateOrder,
-		})
-	}
-	if acu.mutation.EnableSimulateOrderCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeBool,
-			Column: appconfig.FieldEnableSimulateOrder,
 		})
 	}
 	if value, ok := acu.mutation.MaxUnpaidOrders(); ok {
@@ -568,6 +568,26 @@ func (acuo *AppConfigUpdateOne) ClearAppID() *AppConfigUpdateOne {
 	return acuo
 }
 
+// SetEnableSimulateOrder sets the "enable_simulate_order" field.
+func (acuo *AppConfigUpdateOne) SetEnableSimulateOrder(b bool) *AppConfigUpdateOne {
+	acuo.mutation.SetEnableSimulateOrder(b)
+	return acuo
+}
+
+// SetNillableEnableSimulateOrder sets the "enable_simulate_order" field if the given value is not nil.
+func (acuo *AppConfigUpdateOne) SetNillableEnableSimulateOrder(b *bool) *AppConfigUpdateOne {
+	if b != nil {
+		acuo.SetEnableSimulateOrder(*b)
+	}
+	return acuo
+}
+
+// ClearEnableSimulateOrder clears the value of the "enable_simulate_order" field.
+func (acuo *AppConfigUpdateOne) ClearEnableSimulateOrder() *AppConfigUpdateOne {
+	acuo.mutation.ClearEnableSimulateOrder()
+	return acuo
+}
+
 // SetSimulateOrderCouponMode sets the "simulate_order_coupon_mode" field.
 func (acuo *AppConfigUpdateOne) SetSimulateOrderCouponMode(s string) *AppConfigUpdateOne {
 	acuo.mutation.SetSimulateOrderCouponMode(s)
@@ -625,26 +645,6 @@ func (acuo *AppConfigUpdateOne) SetNillableSimulateOrderCashableProfitProbabilit
 // ClearSimulateOrderCashableProfitProbability clears the value of the "simulate_order_cashable_profit_probability" field.
 func (acuo *AppConfigUpdateOne) ClearSimulateOrderCashableProfitProbability() *AppConfigUpdateOne {
 	acuo.mutation.ClearSimulateOrderCashableProfitProbability()
-	return acuo
-}
-
-// SetEnableSimulateOrder sets the "enable_simulate_order" field.
-func (acuo *AppConfigUpdateOne) SetEnableSimulateOrder(b bool) *AppConfigUpdateOne {
-	acuo.mutation.SetEnableSimulateOrder(b)
-	return acuo
-}
-
-// SetNillableEnableSimulateOrder sets the "enable_simulate_order" field if the given value is not nil.
-func (acuo *AppConfigUpdateOne) SetNillableEnableSimulateOrder(b *bool) *AppConfigUpdateOne {
-	if b != nil {
-		acuo.SetEnableSimulateOrder(*b)
-	}
-	return acuo
-}
-
-// ClearEnableSimulateOrder clears the value of the "enable_simulate_order" field.
-func (acuo *AppConfigUpdateOne) ClearEnableSimulateOrder() *AppConfigUpdateOne {
-	acuo.mutation.ClearEnableSimulateOrder()
 	return acuo
 }
 
@@ -865,6 +865,19 @@ func (acuo *AppConfigUpdateOne) sqlSave(ctx context.Context) (_node *AppConfig, 
 			Column: appconfig.FieldAppID,
 		})
 	}
+	if value, ok := acuo.mutation.EnableSimulateOrder(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Value:  value,
+			Column: appconfig.FieldEnableSimulateOrder,
+		})
+	}
+	if acuo.mutation.EnableSimulateOrderCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Column: appconfig.FieldEnableSimulateOrder,
+		})
+	}
 	if value, ok := acuo.mutation.SimulateOrderCouponMode(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
@@ -902,19 +915,6 @@ func (acuo *AppConfigUpdateOne) sqlSave(ctx context.Context) (_node *AppConfig, 
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeOther,
 			Column: appconfig.FieldSimulateOrderCashableProfitProbability,
-		})
-	}
-	if value, ok := acuo.mutation.EnableSimulateOrder(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeBool,
-			Value:  value,
-			Column: appconfig.FieldEnableSimulateOrder,
-		})
-	}
-	if acuo.mutation.EnableSimulateOrderCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeBool,
-			Column: appconfig.FieldEnableSimulateOrder,
 		})
 	}
 	if value, ok := acuo.mutation.MaxUnpaidOrders(); ok {

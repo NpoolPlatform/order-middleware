@@ -33,6 +33,10 @@ func (AppConfig) Fields() []ent.Field {
 				return uuid.Nil
 			}),
 		field.
+			Bool("enable_simulate_order").
+			Optional().
+			Default(false),
+		field.
 			String("simulate_order_coupon_mode").
 			Optional().
 			Default(types.SimulateOrderCouponMode_WithoutCoupon.String()),
@@ -50,10 +54,6 @@ func (AppConfig) Fields() []ent.Field {
 			}).
 			Optional().
 			Default(decimal.NewFromInt(0)),
-		field.
-			Bool("enable_simulate_order").
-			Optional().
-			Default(false),
 		field.
 			Uint32("max_unpaid_orders").
 			Optional().

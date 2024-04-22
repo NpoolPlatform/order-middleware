@@ -78,10 +78,10 @@ type AppConfigMutation struct {
 	adddeleted_at                              *int32
 	ent_id                                     *uuid.UUID
 	app_id                                     *uuid.UUID
+	enable_simulate_order                      *bool
 	simulate_order_coupon_mode                 *string
 	simulate_order_coupon_probability          *decimal.Decimal
 	simulate_order_cashable_profit_probability *decimal.Decimal
-	enable_simulate_order                      *bool
 	max_unpaid_orders                          *uint32
 	addmax_unpaid_orders                       *int32
 	clearedFields                              map[string]struct{}
@@ -447,6 +447,55 @@ func (m *AppConfigMutation) ResetAppID() {
 	delete(m.clearedFields, appconfig.FieldAppID)
 }
 
+// SetEnableSimulateOrder sets the "enable_simulate_order" field.
+func (m *AppConfigMutation) SetEnableSimulateOrder(b bool) {
+	m.enable_simulate_order = &b
+}
+
+// EnableSimulateOrder returns the value of the "enable_simulate_order" field in the mutation.
+func (m *AppConfigMutation) EnableSimulateOrder() (r bool, exists bool) {
+	v := m.enable_simulate_order
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldEnableSimulateOrder returns the old "enable_simulate_order" field's value of the AppConfig entity.
+// If the AppConfig object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *AppConfigMutation) OldEnableSimulateOrder(ctx context.Context) (v bool, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldEnableSimulateOrder is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldEnableSimulateOrder requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldEnableSimulateOrder: %w", err)
+	}
+	return oldValue.EnableSimulateOrder, nil
+}
+
+// ClearEnableSimulateOrder clears the value of the "enable_simulate_order" field.
+func (m *AppConfigMutation) ClearEnableSimulateOrder() {
+	m.enable_simulate_order = nil
+	m.clearedFields[appconfig.FieldEnableSimulateOrder] = struct{}{}
+}
+
+// EnableSimulateOrderCleared returns if the "enable_simulate_order" field was cleared in this mutation.
+func (m *AppConfigMutation) EnableSimulateOrderCleared() bool {
+	_, ok := m.clearedFields[appconfig.FieldEnableSimulateOrder]
+	return ok
+}
+
+// ResetEnableSimulateOrder resets all changes to the "enable_simulate_order" field.
+func (m *AppConfigMutation) ResetEnableSimulateOrder() {
+	m.enable_simulate_order = nil
+	delete(m.clearedFields, appconfig.FieldEnableSimulateOrder)
+}
+
 // SetSimulateOrderCouponMode sets the "simulate_order_coupon_mode" field.
 func (m *AppConfigMutation) SetSimulateOrderCouponMode(s string) {
 	m.simulate_order_coupon_mode = &s
@@ -594,55 +643,6 @@ func (m *AppConfigMutation) ResetSimulateOrderCashableProfitProbability() {
 	delete(m.clearedFields, appconfig.FieldSimulateOrderCashableProfitProbability)
 }
 
-// SetEnableSimulateOrder sets the "enable_simulate_order" field.
-func (m *AppConfigMutation) SetEnableSimulateOrder(b bool) {
-	m.enable_simulate_order = &b
-}
-
-// EnableSimulateOrder returns the value of the "enable_simulate_order" field in the mutation.
-func (m *AppConfigMutation) EnableSimulateOrder() (r bool, exists bool) {
-	v := m.enable_simulate_order
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldEnableSimulateOrder returns the old "enable_simulate_order" field's value of the AppConfig entity.
-// If the AppConfig object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *AppConfigMutation) OldEnableSimulateOrder(ctx context.Context) (v bool, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldEnableSimulateOrder is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldEnableSimulateOrder requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldEnableSimulateOrder: %w", err)
-	}
-	return oldValue.EnableSimulateOrder, nil
-}
-
-// ClearEnableSimulateOrder clears the value of the "enable_simulate_order" field.
-func (m *AppConfigMutation) ClearEnableSimulateOrder() {
-	m.enable_simulate_order = nil
-	m.clearedFields[appconfig.FieldEnableSimulateOrder] = struct{}{}
-}
-
-// EnableSimulateOrderCleared returns if the "enable_simulate_order" field was cleared in this mutation.
-func (m *AppConfigMutation) EnableSimulateOrderCleared() bool {
-	_, ok := m.clearedFields[appconfig.FieldEnableSimulateOrder]
-	return ok
-}
-
-// ResetEnableSimulateOrder resets all changes to the "enable_simulate_order" field.
-func (m *AppConfigMutation) ResetEnableSimulateOrder() {
-	m.enable_simulate_order = nil
-	delete(m.clearedFields, appconfig.FieldEnableSimulateOrder)
-}
-
 // SetMaxUnpaidOrders sets the "max_unpaid_orders" field.
 func (m *AppConfigMutation) SetMaxUnpaidOrders(u uint32) {
 	m.max_unpaid_orders = &u
@@ -748,6 +748,9 @@ func (m *AppConfigMutation) Fields() []string {
 	if m.app_id != nil {
 		fields = append(fields, appconfig.FieldAppID)
 	}
+	if m.enable_simulate_order != nil {
+		fields = append(fields, appconfig.FieldEnableSimulateOrder)
+	}
 	if m.simulate_order_coupon_mode != nil {
 		fields = append(fields, appconfig.FieldSimulateOrderCouponMode)
 	}
@@ -756,9 +759,6 @@ func (m *AppConfigMutation) Fields() []string {
 	}
 	if m.simulate_order_cashable_profit_probability != nil {
 		fields = append(fields, appconfig.FieldSimulateOrderCashableProfitProbability)
-	}
-	if m.enable_simulate_order != nil {
-		fields = append(fields, appconfig.FieldEnableSimulateOrder)
 	}
 	if m.max_unpaid_orders != nil {
 		fields = append(fields, appconfig.FieldMaxUnpaidOrders)
@@ -781,14 +781,14 @@ func (m *AppConfigMutation) Field(name string) (ent.Value, bool) {
 		return m.EntID()
 	case appconfig.FieldAppID:
 		return m.AppID()
+	case appconfig.FieldEnableSimulateOrder:
+		return m.EnableSimulateOrder()
 	case appconfig.FieldSimulateOrderCouponMode:
 		return m.SimulateOrderCouponMode()
 	case appconfig.FieldSimulateOrderCouponProbability:
 		return m.SimulateOrderCouponProbability()
 	case appconfig.FieldSimulateOrderCashableProfitProbability:
 		return m.SimulateOrderCashableProfitProbability()
-	case appconfig.FieldEnableSimulateOrder:
-		return m.EnableSimulateOrder()
 	case appconfig.FieldMaxUnpaidOrders:
 		return m.MaxUnpaidOrders()
 	}
@@ -810,14 +810,14 @@ func (m *AppConfigMutation) OldField(ctx context.Context, name string) (ent.Valu
 		return m.OldEntID(ctx)
 	case appconfig.FieldAppID:
 		return m.OldAppID(ctx)
+	case appconfig.FieldEnableSimulateOrder:
+		return m.OldEnableSimulateOrder(ctx)
 	case appconfig.FieldSimulateOrderCouponMode:
 		return m.OldSimulateOrderCouponMode(ctx)
 	case appconfig.FieldSimulateOrderCouponProbability:
 		return m.OldSimulateOrderCouponProbability(ctx)
 	case appconfig.FieldSimulateOrderCashableProfitProbability:
 		return m.OldSimulateOrderCashableProfitProbability(ctx)
-	case appconfig.FieldEnableSimulateOrder:
-		return m.OldEnableSimulateOrder(ctx)
 	case appconfig.FieldMaxUnpaidOrders:
 		return m.OldMaxUnpaidOrders(ctx)
 	}
@@ -864,6 +864,13 @@ func (m *AppConfigMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetAppID(v)
 		return nil
+	case appconfig.FieldEnableSimulateOrder:
+		v, ok := value.(bool)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetEnableSimulateOrder(v)
+		return nil
 	case appconfig.FieldSimulateOrderCouponMode:
 		v, ok := value.(string)
 		if !ok {
@@ -884,13 +891,6 @@ func (m *AppConfigMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetSimulateOrderCashableProfitProbability(v)
-		return nil
-	case appconfig.FieldEnableSimulateOrder:
-		v, ok := value.(bool)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetEnableSimulateOrder(v)
 		return nil
 	case appconfig.FieldMaxUnpaidOrders:
 		v, ok := value.(uint32)
@@ -983,6 +983,9 @@ func (m *AppConfigMutation) ClearedFields() []string {
 	if m.FieldCleared(appconfig.FieldAppID) {
 		fields = append(fields, appconfig.FieldAppID)
 	}
+	if m.FieldCleared(appconfig.FieldEnableSimulateOrder) {
+		fields = append(fields, appconfig.FieldEnableSimulateOrder)
+	}
 	if m.FieldCleared(appconfig.FieldSimulateOrderCouponMode) {
 		fields = append(fields, appconfig.FieldSimulateOrderCouponMode)
 	}
@@ -991,9 +994,6 @@ func (m *AppConfigMutation) ClearedFields() []string {
 	}
 	if m.FieldCleared(appconfig.FieldSimulateOrderCashableProfitProbability) {
 		fields = append(fields, appconfig.FieldSimulateOrderCashableProfitProbability)
-	}
-	if m.FieldCleared(appconfig.FieldEnableSimulateOrder) {
-		fields = append(fields, appconfig.FieldEnableSimulateOrder)
 	}
 	if m.FieldCleared(appconfig.FieldMaxUnpaidOrders) {
 		fields = append(fields, appconfig.FieldMaxUnpaidOrders)
@@ -1015,6 +1015,9 @@ func (m *AppConfigMutation) ClearField(name string) error {
 	case appconfig.FieldAppID:
 		m.ClearAppID()
 		return nil
+	case appconfig.FieldEnableSimulateOrder:
+		m.ClearEnableSimulateOrder()
+		return nil
 	case appconfig.FieldSimulateOrderCouponMode:
 		m.ClearSimulateOrderCouponMode()
 		return nil
@@ -1023,9 +1026,6 @@ func (m *AppConfigMutation) ClearField(name string) error {
 		return nil
 	case appconfig.FieldSimulateOrderCashableProfitProbability:
 		m.ClearSimulateOrderCashableProfitProbability()
-		return nil
-	case appconfig.FieldEnableSimulateOrder:
-		m.ClearEnableSimulateOrder()
 		return nil
 	case appconfig.FieldMaxUnpaidOrders:
 		m.ClearMaxUnpaidOrders()
@@ -1053,6 +1053,9 @@ func (m *AppConfigMutation) ResetField(name string) error {
 	case appconfig.FieldAppID:
 		m.ResetAppID()
 		return nil
+	case appconfig.FieldEnableSimulateOrder:
+		m.ResetEnableSimulateOrder()
+		return nil
 	case appconfig.FieldSimulateOrderCouponMode:
 		m.ResetSimulateOrderCouponMode()
 		return nil
@@ -1061,9 +1064,6 @@ func (m *AppConfigMutation) ResetField(name string) error {
 		return nil
 	case appconfig.FieldSimulateOrderCashableProfitProbability:
 		m.ResetSimulateOrderCashableProfitProbability()
-		return nil
-	case appconfig.FieldEnableSimulateOrder:
-		m.ResetEnableSimulateOrder()
 		return nil
 	case appconfig.FieldMaxUnpaidOrders:
 		m.ResetMaxUnpaidOrders()

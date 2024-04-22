@@ -27,14 +27,14 @@ type AppConfig struct {
 	EntID uuid.UUID `json:"ent_id,omitempty"`
 	// AppID holds the value of the "app_id" field.
 	AppID uuid.UUID `json:"app_id,omitempty"`
+	// EnableSimulateOrder holds the value of the "enable_simulate_order" field.
+	EnableSimulateOrder bool `json:"enable_simulate_order,omitempty"`
 	// SimulateOrderCouponMode holds the value of the "simulate_order_coupon_mode" field.
 	SimulateOrderCouponMode string `json:"simulate_order_coupon_mode,omitempty"`
 	// SimulateOrderCouponProbability holds the value of the "simulate_order_coupon_probability" field.
 	SimulateOrderCouponProbability decimal.Decimal `json:"simulate_order_coupon_probability,omitempty"`
 	// SimulateOrderCashableProfitProbability holds the value of the "simulate_order_cashable_profit_probability" field.
 	SimulateOrderCashableProfitProbability decimal.Decimal `json:"simulate_order_cashable_profit_probability,omitempty"`
-	// EnableSimulateOrder holds the value of the "enable_simulate_order" field.
-	EnableSimulateOrder bool `json:"enable_simulate_order,omitempty"`
 	// MaxUnpaidOrders holds the value of the "max_unpaid_orders" field.
 	MaxUnpaidOrders uint32 `json:"max_unpaid_orders,omitempty"`
 }
@@ -105,6 +105,12 @@ func (ac *AppConfig) assignValues(columns []string, values []interface{}) error 
 			} else if value != nil {
 				ac.AppID = *value
 			}
+		case appconfig.FieldEnableSimulateOrder:
+			if value, ok := values[i].(*sql.NullBool); !ok {
+				return fmt.Errorf("unexpected type %T for field enable_simulate_order", values[i])
+			} else if value.Valid {
+				ac.EnableSimulateOrder = value.Bool
+			}
 		case appconfig.FieldSimulateOrderCouponMode:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field simulate_order_coupon_mode", values[i])
@@ -122,12 +128,6 @@ func (ac *AppConfig) assignValues(columns []string, values []interface{}) error 
 				return fmt.Errorf("unexpected type %T for field simulate_order_cashable_profit_probability", values[i])
 			} else if value != nil {
 				ac.SimulateOrderCashableProfitProbability = *value
-			}
-		case appconfig.FieldEnableSimulateOrder:
-			if value, ok := values[i].(*sql.NullBool); !ok {
-				return fmt.Errorf("unexpected type %T for field enable_simulate_order", values[i])
-			} else if value.Valid {
-				ac.EnableSimulateOrder = value.Bool
 			}
 		case appconfig.FieldMaxUnpaidOrders:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
@@ -178,6 +178,9 @@ func (ac *AppConfig) String() string {
 	builder.WriteString("app_id=")
 	builder.WriteString(fmt.Sprintf("%v", ac.AppID))
 	builder.WriteString(", ")
+	builder.WriteString("enable_simulate_order=")
+	builder.WriteString(fmt.Sprintf("%v", ac.EnableSimulateOrder))
+	builder.WriteString(", ")
 	builder.WriteString("simulate_order_coupon_mode=")
 	builder.WriteString(ac.SimulateOrderCouponMode)
 	builder.WriteString(", ")
@@ -186,9 +189,6 @@ func (ac *AppConfig) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("simulate_order_cashable_profit_probability=")
 	builder.WriteString(fmt.Sprintf("%v", ac.SimulateOrderCashableProfitProbability))
-	builder.WriteString(", ")
-	builder.WriteString("enable_simulate_order=")
-	builder.WriteString(fmt.Sprintf("%v", ac.EnableSimulateOrder))
 	builder.WriteString(", ")
 	builder.WriteString("max_unpaid_orders=")
 	builder.WriteString(fmt.Sprintf("%v", ac.MaxUnpaidOrders))

@@ -16,10 +16,10 @@ var (
 		{Name: "deleted_at", Type: field.TypeUint32},
 		{Name: "ent_id", Type: field.TypeUUID, Unique: true},
 		{Name: "app_id", Type: field.TypeUUID, Nullable: true},
+		{Name: "enable_simulate_order", Type: field.TypeBool, Nullable: true, Default: false},
 		{Name: "simulate_order_coupon_mode", Type: field.TypeString, Nullable: true, Default: "WithoutCoupon"},
 		{Name: "simulate_order_coupon_probability", Type: field.TypeOther, Nullable: true, SchemaType: map[string]string{"mysql": "decimal(37,18)"}},
 		{Name: "simulate_order_cashable_profit_probability", Type: field.TypeOther, Nullable: true, SchemaType: map[string]string{"mysql": "decimal(37,18)"}},
-		{Name: "enable_simulate_order", Type: field.TypeBool, Nullable: true, Default: false},
 		{Name: "max_unpaid_orders", Type: field.TypeUint32, Nullable: true, Default: 5},
 	}
 	// AppConfigsTable holds the schema information for the "app_configs" table.

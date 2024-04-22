@@ -48,10 +48,10 @@ var schemaGraph = func() *sqlgraph.Schema {
 			appconfig.FieldDeletedAt:                              {Type: field.TypeUint32, Column: appconfig.FieldDeletedAt},
 			appconfig.FieldEntID:                                  {Type: field.TypeUUID, Column: appconfig.FieldEntID},
 			appconfig.FieldAppID:                                  {Type: field.TypeUUID, Column: appconfig.FieldAppID},
+			appconfig.FieldEnableSimulateOrder:                    {Type: field.TypeBool, Column: appconfig.FieldEnableSimulateOrder},
 			appconfig.FieldSimulateOrderCouponMode:                {Type: field.TypeString, Column: appconfig.FieldSimulateOrderCouponMode},
 			appconfig.FieldSimulateOrderCouponProbability:         {Type: field.TypeOther, Column: appconfig.FieldSimulateOrderCouponProbability},
 			appconfig.FieldSimulateOrderCashableProfitProbability: {Type: field.TypeOther, Column: appconfig.FieldSimulateOrderCashableProfitProbability},
-			appconfig.FieldEnableSimulateOrder:                    {Type: field.TypeBool, Column: appconfig.FieldEnableSimulateOrder},
 			appconfig.FieldMaxUnpaidOrders:                        {Type: field.TypeUint32, Column: appconfig.FieldMaxUnpaidOrders},
 		},
 	}
@@ -573,6 +573,11 @@ func (f *AppConfigFilter) WhereAppID(p entql.ValueP) {
 	f.Where(p.Field(appconfig.FieldAppID))
 }
 
+// WhereEnableSimulateOrder applies the entql bool predicate on the enable_simulate_order field.
+func (f *AppConfigFilter) WhereEnableSimulateOrder(p entql.BoolP) {
+	f.Where(p.Field(appconfig.FieldEnableSimulateOrder))
+}
+
 // WhereSimulateOrderCouponMode applies the entql string predicate on the simulate_order_coupon_mode field.
 func (f *AppConfigFilter) WhereSimulateOrderCouponMode(p entql.StringP) {
 	f.Where(p.Field(appconfig.FieldSimulateOrderCouponMode))
@@ -586,11 +591,6 @@ func (f *AppConfigFilter) WhereSimulateOrderCouponProbability(p entql.OtherP) {
 // WhereSimulateOrderCashableProfitProbability applies the entql other predicate on the simulate_order_cashable_profit_probability field.
 func (f *AppConfigFilter) WhereSimulateOrderCashableProfitProbability(p entql.OtherP) {
 	f.Where(p.Field(appconfig.FieldSimulateOrderCashableProfitProbability))
-}
-
-// WhereEnableSimulateOrder applies the entql bool predicate on the enable_simulate_order field.
-func (f *AppConfigFilter) WhereEnableSimulateOrder(p entql.BoolP) {
-	f.Where(p.Field(appconfig.FieldEnableSimulateOrder))
 }
 
 // WhereMaxUnpaidOrders applies the entql uint32 predicate on the max_unpaid_orders field.

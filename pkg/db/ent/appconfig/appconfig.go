@@ -23,14 +23,14 @@ const (
 	FieldEntID = "ent_id"
 	// FieldAppID holds the string denoting the app_id field in the database.
 	FieldAppID = "app_id"
+	// FieldEnableSimulateOrder holds the string denoting the enable_simulate_order field in the database.
+	FieldEnableSimulateOrder = "enable_simulate_order"
 	// FieldSimulateOrderCouponMode holds the string denoting the simulate_order_coupon_mode field in the database.
 	FieldSimulateOrderCouponMode = "simulate_order_coupon_mode"
 	// FieldSimulateOrderCouponProbability holds the string denoting the simulate_order_coupon_probability field in the database.
 	FieldSimulateOrderCouponProbability = "simulate_order_coupon_probability"
 	// FieldSimulateOrderCashableProfitProbability holds the string denoting the simulate_order_cashable_profit_probability field in the database.
 	FieldSimulateOrderCashableProfitProbability = "simulate_order_cashable_profit_probability"
-	// FieldEnableSimulateOrder holds the string denoting the enable_simulate_order field in the database.
-	FieldEnableSimulateOrder = "enable_simulate_order"
 	// FieldMaxUnpaidOrders holds the string denoting the max_unpaid_orders field in the database.
 	FieldMaxUnpaidOrders = "max_unpaid_orders"
 	// Table holds the table name of the appconfig in the database.
@@ -45,10 +45,10 @@ var Columns = []string{
 	FieldDeletedAt,
 	FieldEntID,
 	FieldAppID,
+	FieldEnableSimulateOrder,
 	FieldSimulateOrderCouponMode,
 	FieldSimulateOrderCouponProbability,
 	FieldSimulateOrderCashableProfitProbability,
-	FieldEnableSimulateOrder,
 	FieldMaxUnpaidOrders,
 }
 
@@ -83,14 +83,14 @@ var (
 	DefaultEntID func() uuid.UUID
 	// DefaultAppID holds the default value on creation for the "app_id" field.
 	DefaultAppID func() uuid.UUID
+	// DefaultEnableSimulateOrder holds the default value on creation for the "enable_simulate_order" field.
+	DefaultEnableSimulateOrder bool
 	// DefaultSimulateOrderCouponMode holds the default value on creation for the "simulate_order_coupon_mode" field.
 	DefaultSimulateOrderCouponMode string
 	// DefaultSimulateOrderCouponProbability holds the default value on creation for the "simulate_order_coupon_probability" field.
 	DefaultSimulateOrderCouponProbability decimal.Decimal
 	// DefaultSimulateOrderCashableProfitProbability holds the default value on creation for the "simulate_order_cashable_profit_probability" field.
 	DefaultSimulateOrderCashableProfitProbability decimal.Decimal
-	// DefaultEnableSimulateOrder holds the default value on creation for the "enable_simulate_order" field.
-	DefaultEnableSimulateOrder bool
 	// DefaultMaxUnpaidOrders holds the default value on creation for the "max_unpaid_orders" field.
 	DefaultMaxUnpaidOrders uint32
 )
