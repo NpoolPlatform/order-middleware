@@ -86,6 +86,7 @@ func (h *createHandler) constructOrderCouponSQLs(ctx context.Context) {
 }
 
 func (h *createHandler) constructPaymentBaseSQL(ctx context.Context) {
+	// TODO: some case do not need to create payment info
 	handler, _ := paymentbase1.NewHandler(ctx)
 	handler.Req = *h.PaymentBaseReq
 	h.sqlPaymentBase = handler.ConstructCreateSQL()

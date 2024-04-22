@@ -1,18 +1,18 @@
-package appconfig
+package feeorder
 
 import (
-	appconfig "github.com/NpoolPlatform/message/npool/order/mw/v1/app/config"
+	feeorder "github.com/NpoolPlatform/message/npool/order/mw/v1/fee"
 
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"google.golang.org/grpc"
 )
 
 type Server struct {
-	appconfig.UnimplementedMiddlewareServer
+	feeorder.UnimplementedMiddlewareServer
 }
 
 func Register(server grpc.ServiceRegistrar) {
-	appconfig.RegisterMiddlewareServer(server, &Server{})
+	feeorder.RegisterMiddlewareServer(server, &Server{})
 }
 
 func RegisterGateway(mux *runtime.ServeMux, endpoint string, opts []grpc.DialOption) error {

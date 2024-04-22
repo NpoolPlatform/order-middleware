@@ -15,7 +15,7 @@ import (
 func (s *Server) ExistAppConfig(ctx context.Context, in *npool.ExistAppConfigRequest) (*npool.ExistAppConfigResponse, error) {
 	handler, err := appconfig1.NewHandler(
 		ctx,
-		appconfig1.WithEntID(&in.EntID, true),
+		appconfig1.WithAppID(&in.AppID, true),
 	)
 	if err != nil {
 		logger.Sugar().Errorw(
