@@ -3,6 +3,8 @@ package outofgas
 import (
 	"fmt"
 	"time"
+
+	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
 )
 
 func (h *Handler) ConstructCreateSQL() string {
@@ -18,7 +20,6 @@ func (h *Handler) ConstructCreateSQL() string {
 	_sql += comma + "order_id"
 	comma = ", "
 	_sql += comma + "start_at"
-	_sql += comma + "end_at"
 	_sql += comma + "created_at"
 	_sql += comma + "updated_at"
 	_sql += comma + "deleted_at"
@@ -32,7 +33,6 @@ func (h *Handler) ConstructCreateSQL() string {
 	_sql += fmt.Sprintf("%v'%v' as order_id", comma, *h.OrderID)
 	comma = ", "
 	_sql += fmt.Sprintf("%v%v as start_at", comma, *h.StartAt)
-	_sql += fmt.Sprintf("%v%v as end_at", comma, *h.EndAt)
 	_sql += fmt.Sprintf("%v%v as created_at", comma, now)
 	_sql += fmt.Sprintf("%v%v as updated_at", comma, now)
 	_sql += fmt.Sprintf("%v0 as deleted_at", comma)
@@ -41,8 +41,7 @@ func (h *Handler) ConstructCreateSQL() string {
 	_sql += "select 1 from out_of_gas "
 	_sql += fmt.Sprintf("where order_id = '%v' ", *h.OrderID)
 	_sql += "and ("
-	_sql += fmt.Sprintf("(start_at < %v and %v < end_at) or ", *h.StartAt, *h.StartAt)
-	_sql += fmt.Sprintf("(start_at < %v and %v < end_at)", *h.EndAt, *h.EndAt)
+	_sql += fmt.Sprintf("start_at < %v and %v < end_at", *h.StartAt, *h.StartAt)
 	_sql += ")"
 	_sql += " limit 1) and exists ("
 	_sql += "select 1 from order_bases "
@@ -50,4 +49,32 @@ func (h *Handler) ConstructCreateSQL() string {
 	_sql += "limit 1)"
 
 	return _sql
+}
+
+func (h *Handler) ConstructUpdateSQL() (string, error) {
+	if h.ID == nil && h.EntID == nil {
+		return "", fmt.Errorf("invalid id")
+	}
+
+	set := "set "
+	now := uint32(time.Now().Unix())
+
+	_sql := "update out_of_gas "
+	if h.EndAt != nil {
+		_sql += fmt.Sprintf("%vend_at = %v, ", set, *h.EndAt)
+		set = ""
+	}
+	if set != "" {
+		return "", cruder.ErrUpdateNothing
+	}
+	_sql += fmt.Sprintf("updated_at = %v ", now)
+	_sql += fmt.Sprintf("where end_at = 0 and start_at < %v ", *h.EndAt)
+	if h.ID != nil {
+		_sql += fmt.Sprintf("and id = %v ", *h.ID)
+	}
+	if h.EntID != nil {
+		_sql += fmt.Sprintf("and ent_id = '%v' ", *h.EntID)
+	}
+
+	return _sql, nil
 }
