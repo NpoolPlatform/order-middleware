@@ -1,4 +1,4 @@
-package config
+package appconfig
 
 import (
 	"github.com/NpoolPlatform/message/npool/order/mw/v1/app/config"

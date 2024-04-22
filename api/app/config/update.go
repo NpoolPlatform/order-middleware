@@ -1,4 +1,4 @@
-package config
+package appconfig
 
 import (
 	"context"
@@ -9,44 +9,44 @@ import (
 	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
 	npool "github.com/NpoolPlatform/message/npool/order/mw/v1/app/config"
 
-	config1 "github.com/NpoolPlatform/order-middleware/pkg/mw/app/config"
+	appconfig1 "github.com/NpoolPlatform/order-middleware/pkg/mw/app/config"
 )
 
-func (s *Server) UpdateSimulateConfig(ctx context.Context, in *npool.UpdateSimulateConfigRequest) (*npool.UpdateSimulateConfigResponse, error) {
+func (s *Server) UpdateAppConfig(ctx context.Context, in *npool.UpdateAppConfigRequest) (*npool.UpdateAppConfigResponse, error) {
 	req := in.GetInfo()
 	if req == nil {
 		logger.Sugar().Errorw(
-			"UpdateSimulateConfig",
+			"UpdateAppConfig",
 			"In", in,
 		)
-		return &npool.UpdateSimulateConfigResponse{}, status.Error(codes.Aborted, "invalid argument")
+		return &npool.UpdateAppConfigResponse{}, status.Error(codes.Aborted, "invalid argument")
 	}
-	handler, err := config1.NewHandler(
+	handler, err := appconfig1.NewHandler(
 		ctx,
-		config1.WithID(req.ID, true),
-		config1.WithCashableProfitProbability(req.CashableProfitProbability, false),
-		config1.WithSendCouponMode(req.SendCouponMode, false),
-		config1.WithSendCouponProbability(req.SendCouponProbability, false),
-		config1.WithEnabled(req.Enabled, false),
+		appconfig1.WithID(req.ID, false),
+		appconfig1.WithEntID(req.EntID, false),
+		appconfig1.WithAppID(req.AppID, false),
+		appconfig1.WithEnableSimulateOrder(req.EnableSimulateOrder, false),
+		appconfig1.WithSimulateOrderCouponMode(req.SimulateOrderCouponMode, false),
+		appconfig1.WithSimulateOrderCouponProbability(req.SimulateOrderCouponProbability, false),
+		appconfig1.WithSimulateOrderCashableProfitProbability(req.SimulateOrderCashableProfitProbability, false),
+		appconfig1.WithMaxUnpaidOrders(req.MaxUnpaidOrders, false),
 	)
 	if err != nil {
 		logger.Sugar().Errorw(
-			"UpdateSimulateConfig",
+			"UpdateAppConfig",
 			"In", in,
 			"Error", err,
 		)
-		return &npool.UpdateSimulateConfigResponse{}, status.Error(codes.Aborted, err.Error())
+		return &npool.UpdateAppConfigResponse{}, status.Error(codes.Aborted, err.Error())
 	}
-	info, err := handler.UpdateSimulateConfig(ctx)
-	if err != nil {
+	if err := handler.UpdateAppConfig(ctx); err != nil {
 		logger.Sugar().Errorw(
-			"UpdateSimulateConfig",
+			"UpdateAppConfig",
 			"In", in,
 			"Error", err,
 		)
-		return &npool.UpdateSimulateConfigResponse{}, status.Error(codes.Aborted, err.Error())
+		return &npool.UpdateAppConfigResponse{}, status.Error(codes.Aborted, err.Error())
 	}
-	return &npool.UpdateSimulateConfigResponse{
-		Info: info,
-	}, nil
+	return &npool.UpdateAppConfigResponse{}, nil
 }

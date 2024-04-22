@@ -1,4 +1,4 @@
-package config
+package appconfig
 
 import (
 	"context"
@@ -9,40 +9,39 @@ import (
 	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
 	npool "github.com/NpoolPlatform/message/npool/order/mw/v1/app/config"
 
-	config1 "github.com/NpoolPlatform/order-middleware/pkg/mw/app/config"
+	appconfig1 "github.com/NpoolPlatform/order-middleware/pkg/mw/app/config"
 )
 
-func (s *Server) DeleteSimulateConfig(ctx context.Context, in *npool.DeleteSimulateConfigRequest) (*npool.DeleteSimulateConfigResponse, error) {
+func (s *Server) DeleteAppConfig(ctx context.Context, in *npool.DeleteAppConfigRequest) (*npool.DeleteAppConfigResponse, error) {
 	req := in.GetInfo()
 	if req == nil {
 		logger.Sugar().Errorw(
-			"DeleteSimulateConfig",
+			"DeleteAppConfig",
 			"In", in,
 		)
-		return &npool.DeleteSimulateConfigResponse{}, status.Error(codes.Aborted, "invalid argument")
+		return &npool.DeleteAppConfigResponse{}, status.Error(codes.Aborted, "invalid argument")
 	}
-	handler, err := config1.NewHandler(
+	handler, err := appconfig1.NewHandler(
 		ctx,
-		config1.WithID(req.ID, true),
+		appconfig1.WithID(req.ID, false),
+		appconfig1.WithEntID(req.EntID, false),
+		appconfig1.WithAppID(req.AppID, false),
 	)
 	if err != nil {
 		logger.Sugar().Errorw(
-			"DeleteSimulateConfig",
+			"DeleteAppConfig",
 			"In", in,
 			"Error", err,
 		)
-		return &npool.DeleteSimulateConfigResponse{}, status.Error(codes.Aborted, err.Error())
+		return &npool.DeleteAppConfigResponse{}, status.Error(codes.Aborted, err.Error())
 	}
-	info, err := handler.DeleteSimulateConfig(ctx)
-	if err != nil {
+	if err := handler.DeleteAppConfig(ctx); err != nil {
 		logger.Sugar().Errorw(
-			"DeleteSimulateConfig",
+			"DeleteAppConfig",
 			"In", in,
 			"Error", err,
 		)
-		return &npool.DeleteSimulateConfigResponse{}, status.Error(codes.Aborted, err.Error())
+		return &npool.DeleteAppConfigResponse{}, status.Error(codes.Aborted, err.Error())
 	}
-	return &npool.DeleteSimulateConfigResponse{
-		Info: info,
-	}, nil
+	return &npool.DeleteAppConfigResponse{}, nil
 }

@@ -1,4 +1,4 @@
-package config
+package appconfig
 
 import (
 	"context"
@@ -9,7 +9,7 @@ import (
 	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
 	npool "github.com/NpoolPlatform/message/npool/order/mw/v1/app/config"
 
-	config1 "github.com/NpoolPlatform/order-middleware/pkg/mw/app/config"
+	appconfig1 "github.com/NpoolPlatform/order-middleware/pkg/mw/app/config"
 )
 
 func (s *Server) CreateAppConfig(ctx context.Context, in *npool.CreateAppConfigRequest) (*npool.CreateAppConfigResponse, error) {
@@ -21,14 +21,15 @@ func (s *Server) CreateAppConfig(ctx context.Context, in *npool.CreateAppConfigR
 		)
 		return &npool.CreateAppConfigResponse{}, status.Error(codes.Aborted, "invalid argument")
 	}
-	handler, err := config1.NewHandler(
+	handler, err := appconfig1.NewHandler(
 		ctx,
-		config1.WithEntID(req.EntID, false),
-		config1.WithAppID(req.AppID, true),
-		config1.WithEnableSimulateOrder(req.EnableSimulateOrder, false),
-		config1.WithSimulateOrderCouponMode(req.SimulateOrderCouponMode, false),
-		config1.WithSimulateOrderCouponProbability(req.SimulateOrderCouponProbability, false),
-		config1.WithSimulateOrderCashableProfitProbability(req.SimulateOrderCashableProfitProbability, false),
+		appconfig1.WithEntID(req.EntID, false),
+		appconfig1.WithAppID(req.AppID, true),
+		appconfig1.WithEnableSimulateOrder(req.EnableSimulateOrder, false),
+		appconfig1.WithSimulateOrderCouponMode(req.SimulateOrderCouponMode, false),
+		appconfig1.WithSimulateOrderCouponProbability(req.SimulateOrderCouponProbability, false),
+		appconfig1.WithSimulateOrderCashableProfitProbability(req.SimulateOrderCashableProfitProbability, false),
+		appconfig1.WithMaxUnpaidOrders(req.MaxUnpaidOrders, false),
 	)
 	if err != nil {
 		logger.Sugar().Errorw(
@@ -38,8 +39,7 @@ func (s *Server) CreateAppConfig(ctx context.Context, in *npool.CreateAppConfigR
 		)
 		return &npool.CreateAppConfigResponse{}, status.Error(codes.InvalidArgument, err.Error())
 	}
-	info, err := handler.CreateAppConfig(ctx)
-	if err != nil {
+	if err := handler.CreateAppConfig(ctx); err != nil {
 		logger.Sugar().Errorw(
 			"CreateAppConfig",
 			"Req", req,
@@ -48,7 +48,5 @@ func (s *Server) CreateAppConfig(ctx context.Context, in *npool.CreateAppConfigR
 		return &npool.CreateAppConfigResponse{}, status.Error(codes.Aborted, err.Error())
 	}
 
-	return &npool.CreateAppConfigResponse{
-		Info: info,
-	}, nil
+	return &npool.CreateAppConfigResponse{}, nil
 }

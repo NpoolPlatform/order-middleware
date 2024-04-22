@@ -4,7 +4,7 @@ import (
 	"context"
 
 	order "github.com/NpoolPlatform/message/npool/order/mw/v1"
-	config "github.com/NpoolPlatform/order-middleware/api/app/config"
+	appconfig "github.com/NpoolPlatform/order-middleware/api/app/config"
 	"github.com/NpoolPlatform/order-middleware/api/compensate"
 	order1 "github.com/NpoolPlatform/order-middleware/api/order"
 	"github.com/NpoolPlatform/order-middleware/api/outofgas"
@@ -22,7 +22,7 @@ func Register(server grpc.ServiceRegistrar) {
 	order1.Register(server)
 	compensate.Register(server)
 	outofgas.Register(server)
-	config.Register(server)
+	appconfig.Register(server)
 }
 
 func RegisterGateway(mux *runtime.ServeMux, endpoint string, opts []grpc.DialOption) error {
@@ -38,7 +38,7 @@ func RegisterGateway(mux *runtime.ServeMux, endpoint string, opts []grpc.DialOpt
 	if err := order1.RegisterGateway(mux, endpoint, opts); err != nil {
 		return err
 	}
-	if err := config.RegisterGateway(mux, endpoint, opts); err != nil {
+	if err := appconfig.RegisterGateway(mux, endpoint, opts); err != nil {
 		return err
 	}
 	return nil
