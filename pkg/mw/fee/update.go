@@ -43,6 +43,9 @@ type updateHandler struct {
 	updateNothing bool
 }
 
+// TODO: if fee order's payment contain other order, it should update other orders' state too
+// TODO: if fee order is pay with parent or pay with other order, it cannot update state
+
 func (h *updateHandler) constructOrderStateBaseSQL(ctx context.Context) (err error) {
 	handler, _ := orderstatebase1.NewHandler(ctx)
 	handler.Req = *h.OrderStateBaseReq
