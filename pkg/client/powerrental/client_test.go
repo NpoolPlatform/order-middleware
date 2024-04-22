@@ -160,19 +160,19 @@ func createPowerRentalOrder(t *testing.T) {
 }
 
 func updatePowerRentalOrder(t *testing.T) {
+	ret.PaymentID = uuid.NewString()
+	ret.LedgerLockID = uuid.NewString()
+	for _, paymentBalance := range ret.PaymentBalances {
+		paymentBalance.PaymentID = ret.PaymentID
+	}
+
 	err := UpdatePowerRentalOrder(context.Background(), &npool.PowerRentalOrderReq{
-		ID:                &ret.ID,
-		EntID:             &ret.EntID,
-		OrderID:           &ret.OrderID,
-		PaymentType:       &ret.PaymentType,
-		CreateMethod:      &ret.CreateMethod,
-		GoodValueUSD:      &ret.GoodValueUSD,
-		PaymentAmountUSD:  &ret.PaymentAmountUSD,
-		DiscountAmountUSD: &ret.DiscountAmountUSD,
-		PromotionID:       &ret.PromotionID,
-		DurationSeconds:   &ret.DurationSeconds,
-		LedgerLockID:      &ret.LedgerLockID,
-		PaymentID:         &ret.PaymentID,
+		ID:           &ret.ID,
+		EntID:        &ret.EntID,
+		OrderID:      &ret.OrderID,
+		PaymentType:  &ret.PaymentType,
+		LedgerLockID: &ret.LedgerLockID,
+		PaymentID:    &ret.PaymentID,
 		CouponIDs: func() (_couponIDs []string) {
 			for _, coupon := range ret.Coupons {
 				_couponIDs = append(_couponIDs, coupon.CouponID)
@@ -245,8 +245,8 @@ func TestPowerRentalOrder(t *testing.T) {
 	})
 
 	t.Run("createPowerRentalOrder", createPowerRentalOrder)
-	return
 	t.Run("updatePowerRentalOrder", updatePowerRentalOrder)
+	return
 	t.Run("getPowerRentalOrder", getPowerRentalOrder)
 	t.Run("getPowerRentalOrders", getPowerRentalOrders)
 	t.Run("deletePowerRentalOrder", deletePowerRentalOrder)

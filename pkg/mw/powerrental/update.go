@@ -159,6 +159,9 @@ func (h *updateHandler) updatePowerRentalState(ctx context.Context, tx *ent.Tx) 
 }
 
 func (h *updateHandler) createOrderLocks(ctx context.Context, tx *ent.Tx) error {
+	if !h.newPayment {
+		return nil
+	}
 	for _, sql := range h.sqlOrderLocks {
 		if err := h.execSQL(ctx, tx, sql); err != nil {
 			return err
