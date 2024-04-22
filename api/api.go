@@ -9,6 +9,7 @@ import (
 	feeorder1 "github.com/NpoolPlatform/order-middleware/api/fee"
 	order1 "github.com/NpoolPlatform/order-middleware/api/order"
 	"github.com/NpoolPlatform/order-middleware/api/outofgas"
+	powerrental1 "github.com/NpoolPlatform/order-middleware/api/powerrental"
 
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"google.golang.org/grpc"
@@ -22,6 +23,7 @@ func Register(server grpc.ServiceRegistrar) {
 	order.RegisterMiddlewareServer(server, &Server{})
 	order1.Register(server)
 	feeorder1.Register(server)
+	powerrental1.Register(server)
 	compensate.Register(server)
 	outofgas.Register(server)
 	appconfig.Register(server)
@@ -41,6 +43,9 @@ func RegisterGateway(mux *runtime.ServeMux, endpoint string, opts []grpc.DialOpt
 		return err
 	}
 	if err := feeorder1.RegisterGateway(mux, endpoint, opts); err != nil {
+		return err
+	}
+	if err := powerrental1.RegisterGateway(mux, endpoint, opts); err != nil {
 		return err
 	}
 	if err := appconfig.RegisterGateway(mux, endpoint, opts); err != nil {
