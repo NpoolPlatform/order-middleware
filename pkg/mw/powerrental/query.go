@@ -194,6 +194,7 @@ func (h *queryHandler) formalize() {
 		info.OrderState = types.OrderState(types.OrderState_value[info.OrderStateStr])
 		info.CancelState = types.OrderState(types.OrderState_value[info.CancelStateStr])
 		info.CreateMethod = types.OrderCreateMethod(types.OrderCreateMethod_value[info.CreateMethodStr])
+		info.StartMode = types.OrderStartMode(types.OrderStartMode_value[info.StartModeStr])
 		info.Coupons = orderCoupons[info.OrderID]
 		info.PaymentBalances = paymentBalances[info.PaymentID]
 		info.PaymentTransfers = paymentTransfers[info.PaymentID]

@@ -318,6 +318,8 @@ func (h *baseQueryHandler) queryJoinOrderStateBase(s *sql.Selector) error {
 	s.AppendSelect(
 		t.C(entorderstatebase.FieldPaymentType),
 		t.C(entorderstatebase.FieldOrderState),
+		t.C(entorderstatebase.FieldStartMode),
+		t.C(entorderstatebase.FieldStartAt),
 	)
 	return nil
 }

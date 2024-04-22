@@ -21,6 +21,9 @@ func (h *MultiHandler) AppendHandler(handler *Handler) {
 
 func (h *MultiHandler) validatePaymentOrder() error {
 	paymentOrders := 0
+	payWithParents := 0
+	payWithOthers := 0
+
 	for _, handler := range h.Handlers {
 		switch *handler.OrderStateBaseReq.PaymentType {
 		case types.PaymentType_PayWithBalanceOnly:
@@ -29,9 +32,22 @@ func (h *MultiHandler) validatePaymentOrder() error {
 			fallthrough //nolint
 		case types.PaymentType_PayWithTransferAndBalance:
 			paymentOrders += 1
+		case types.PaymentType_PayWithParentOrder:
+			payWithParents += 1
+		case types.PaymentType_PayWithOtherOrder:
+			payWithOthers += 1
 		}
 	}
-	if paymentOrders != 1 {
+	switch paymentOrders {
+	case 0:
+		if payWithParents != len(h.Handlers) {
+			return fmt.Errorf("invalid paywithparents")
+		}
+	case 1:
+		if payWithOthers != len(h.Handlers)-1 {
+			return fmt.Errorf("invalid paywithothers")
+		}
+	default:
 		return fmt.Errorf("invalid paymentorder")
 	}
 	return nil
