@@ -1,4 +1,4 @@
-package config
+package appconfig
 
 import (
 	"context"
@@ -6,7 +6,6 @@ import (
 	"os"
 	"strconv"
 	"testing"
-	"time"
 
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
 
@@ -36,95 +35,91 @@ func init() {
 	}
 }
 
-var (
-	ret = npool.SimulateConfig{
-		EntID:                     uuid.NewString(),
-		AppID:                     uuid.NewString(),
-		CashableProfitProbability: "1",
-		SendCouponModeStr:         ordertypes.SendCouponMode_WithoutCoupon.String(),
-		SendCouponMode:            ordertypes.SendCouponMode_WithoutCoupon,
-		SendCouponProbability:     "1",
-		Enabled:                   false,
-	}
-)
+var ret = npool.AppConfig{
+	EntID:                                  uuid.NewString(),
+	AppID:                                  uuid.NewString(),
+	EnableSimulateOrder:                    false,
+	SimulateOrderCouponMode:                ordertypes.SimulateOrderCouponMode_WithoutCoupon,
+	SimulateOrderCouponProbability:         "1",
+	SimulateOrderCashableProfitProbability: "0.1",
+	MaxUnpaidOrders:                        10,
+}
 
 func setup(t *testing.T) func(*testing.T) {
+	ret.SimulateOrderCouponModeStr = ret.SimulateOrderCouponMode.String()
 	return func(*testing.T) {}
 }
 
-func createSimulateConfig(t *testing.T) {
-	var (
-		req = npool.SimulateConfigReq{
-			EntID:                     &ret.EntID,
-			AppID:                     &ret.AppID,
-			CashableProfitProbability: &ret.CashableProfitProbability,
-			SendCouponMode:            &ret.SendCouponMode,
-			SendCouponProbability:     &ret.SendCouponProbability,
-			Enabled:                   &ret.Enabled,
+func createAppConfig(t *testing.T) {
+	err := CreateAppConfig(context.Background(), &npool.AppConfigReq{
+		EntID:                                  &ret.EntID,
+		AppID:                                  &ret.AppID,
+		EnableSimulateOrder:                    &ret.EnableSimulateOrder,
+		SimulateOrderCouponMode:                &ret.SimulateOrderCouponMode,
+		SimulateOrderCouponProbability:         &ret.SimulateOrderCouponProbability,
+		SimulateOrderCashableProfitProbability: &ret.SimulateOrderCashableProfitProbability,
+		MaxUnpaidOrders:                        &ret.MaxUnpaidOrders,
+	})
+	if assert.Nil(t, err) {
+		info, err := GetAppConfig(context.Background(), ret.AppID)
+		if assert.Nil(t, err) {
+			ret.CreatedAt = info.CreatedAt
+			ret.UpdatedAt = info.UpdatedAt
+			ret.ID = info.ID
+			assert.Equal(t, info, &ret)
 		}
-	)
-
-	info, err := CreateSimulateConfig(context.Background(), &req)
-	if assert.Nil(t, err) {
-		ret.CreatedAt = info.CreatedAt
-		ret.UpdatedAt = info.UpdatedAt
-		ret.ID = info.ID
-		assert.Equal(t, info, &ret)
 	}
 }
 
-func updateSimulateConfig(t *testing.T) {
-	ret.CashableProfitProbability = "0.5"
-	ret.SendCouponMode = ordertypes.SendCouponMode_RandomBenifit
-	ret.SendCouponModeStr = ordertypes.SendCouponMode_RandomBenifit.String()
-	ret.SendCouponProbability = "0.5"
-	var (
-		req = npool.SimulateConfigReq{
-			ID:                        &ret.ID,
-			CashableProfitProbability: &ret.CashableProfitProbability,
-			SendCouponMode:            &ret.SendCouponMode,
-			SendCouponProbability:     &ret.SendCouponProbability,
+func updateAppConfig(t *testing.T) {
+	ret.MaxUnpaidOrders = 20
+	err := UpdateAppConfig(context.Background(), &npool.AppConfigReq{
+		ID:                                     &ret.ID,
+		EntID:                                  &ret.EntID,
+		AppID:                                  &ret.AppID,
+		EnableSimulateOrder:                    &ret.EnableSimulateOrder,
+		SimulateOrderCouponMode:                &ret.SimulateOrderCouponMode,
+		SimulateOrderCouponProbability:         &ret.SimulateOrderCouponProbability,
+		SimulateOrderCashableProfitProbability: &ret.SimulateOrderCashableProfitProbability,
+		MaxUnpaidOrders:                        &ret.MaxUnpaidOrders,
+	})
+	if assert.Nil(t, err) {
+		info, err := GetAppConfig(context.Background(), ret.AppID)
+		if assert.Nil(t, err) {
+			ret.UpdatedAt = info.UpdatedAt
+			assert.Equal(t, info, &ret)
 		}
-	)
-	info, err := UpdateSimulateConfig(context.Background(), &req)
-	if assert.Nil(t, err) {
-		ret.UpdatedAt = info.UpdatedAt
-		assert.Equal(t, info, &ret)
 	}
 }
 
-func getSimulateConfig(t *testing.T) {
-	info, err := GetSimulateConfig(context.Background(), ret.EntID)
+func getAppConfig(t *testing.T) {
+	info, err := GetAppConfig(context.Background(), ret.AppID)
 	if assert.Nil(t, err) {
 		assert.Equal(t, info, &ret)
 	}
 }
 
-func getSimulateConfigs(t *testing.T) {
-	infos, _, err := GetSimulateConfigs(context.Background(), &npool.Conds{
-		ID:             &basetypes.Uint32Val{Op: cruder.EQ, Value: ret.ID},
-		EntID:          &basetypes.StringVal{Op: cruder.EQ, Value: ret.EntID},
-		AppID:          &basetypes.StringVal{Op: cruder.EQ, Value: ret.AppID},
-		SendCouponMode: &basetypes.Uint32Val{Op: cruder.EQ, Value: uint32(ret.SendCouponMode)},
-		Enabled:        &basetypes.BoolVal{Op: cruder.EQ, Value: ret.Enabled},
+func getAppConfigs(t *testing.T) {
+	infos, _, err := GetAppConfigs(context.Background(), &npool.Conds{
+		ID:    &basetypes.Uint32Val{Op: cruder.EQ, Value: ret.ID},
+		EntID: &basetypes.StringVal{Op: cruder.EQ, Value: ret.EntID},
+		AppID: &basetypes.StringVal{Op: cruder.EQ, Value: ret.AppID},
 	}, 0, 1)
 	if assert.Nil(t, err) {
 		assert.NotEqual(t, len(infos), 0)
 	}
 }
 
-func deleteSimulateConfig(t *testing.T) {
-	info, err := DeleteSimulateConfig(context.Background(), ret.ID)
-	if assert.Nil(t, err) {
-		assert.Equal(t, info, &ret)
-	}
+func deleteAppConfig(t *testing.T) {
+	err := DeleteAppConfig(context.Background(), &ret.ID, &ret.EntID, &ret.AppID)
+	assert.Nil(t, err)
 
-	info, err = GetSimulateConfig(context.Background(), ret.EntID)
+	info, err := GetAppConfig(context.Background(), ret.AppID)
 	assert.Nil(t, err)
 	assert.Nil(t, info)
 }
 
-func TestSimulateConfig(t *testing.T) {
+func TestAppConfig(t *testing.T) {
 	if runByGithubAction, err := strconv.ParseBool(os.Getenv("RUN_BY_GITHUB_ACTION")); err == nil && runByGithubAction {
 		return
 	}
@@ -141,10 +136,9 @@ func TestSimulateConfig(t *testing.T) {
 	teardown := setup(t)
 	defer teardown(t)
 
-	time.Sleep(10 * time.Second)
-	t.Run("createSimulateConfig", createSimulateConfig)
-	t.Run("updateSimulateConfig", updateSimulateConfig)
-	t.Run("getSimulateConfig", getSimulateConfig)
-	t.Run("getSimulateConfigs", getSimulateConfigs)
-	t.Run("deleteSimulateConfig", deleteSimulateConfig)
+	t.Run("createAppConfig", createAppConfig)
+	t.Run("updateAppConfig", updateAppConfig)
+	t.Run("getAppConfig", getAppConfig)
+	t.Run("getAppConfigs", getAppConfigs)
+	t.Run("deleteAppConfig", deleteAppConfig)
 }
