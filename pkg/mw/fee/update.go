@@ -16,6 +16,7 @@ import (
 	paymentbase1 "github.com/NpoolPlatform/order-middleware/pkg/mw/payment"
 	paymentbalance1 "github.com/NpoolPlatform/order-middleware/pkg/mw/payment/balance"
 	paymentbalancelock1 "github.com/NpoolPlatform/order-middleware/pkg/mw/payment/balance/lock"
+	paymentcommon "github.com/NpoolPlatform/order-middleware/pkg/mw/payment/common"
 	paymenttransfer1 "github.com/NpoolPlatform/order-middleware/pkg/mw/payment/transfer"
 	orderstm1 "github.com/NpoolPlatform/order-middleware/pkg/mw/stm"
 
@@ -24,6 +25,7 @@ import (
 
 type updateHandler struct {
 	*feeOrderQueryHandler
+	paymentChecker *paymentcommon.PaymentCheckHandler
 
 	newPayment             bool
 	newPaymentBalance      bool
@@ -328,6 +330,13 @@ func (h *Handler) UpdateFeeOrderWithTx(ctx context.Context, tx *ent.Tx) error {
 			ObseleteState: func() *types.PaymentObseleteState { e := types.PaymentObseleteState_PaymentObseleteWait; return &e }(),
 		},
 		updateNothing: true,
+		paymentChecker: &paymentcommon.PaymentCheckHandler{
+			PaymentType:         h.OrderStateBaseReq.PaymentType,
+			PaymentBalanceReqs:  h.PaymentBalanceReqs,
+			PaymentTransferReqs: h.PaymentTransferReqs,
+			PaymentAmountUSD:    h.PaymentAmountUSD,
+			DiscountAmountUSD:   h.DiscountAmountUSD,
+		},
 	}
 
 	if err := handler.requireFeeOrder(ctx); err != nil {
@@ -344,6 +353,11 @@ func (h *Handler) UpdateFeeOrderWithTx(ctx context.Context, tx *ent.Tx) error {
 	}
 	handler.formalizePaymentBalances()
 	handler.formalizePaymentTransfers()
+	if handler.newPayment {
+		if err := handler.paymentChecker.ValidatePayment(); err != nil {
+			return err
+		}
+	}
 	handler.formalizeCancelState()
 	if err := handler.validateCancelState(); err != nil {
 		return err

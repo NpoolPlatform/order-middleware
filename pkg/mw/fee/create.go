@@ -19,11 +19,11 @@ import (
 	paymenttransfer1 "github.com/NpoolPlatform/order-middleware/pkg/mw/payment/transfer"
 
 	"github.com/google/uuid"
-	"github.com/shopspring/decimal"
 )
 
 type createHandler struct {
 	*Handler
+	paymentChecker        *paymentcommon.PaymentCheckHandler
 	payWithBalance        bool
 	sql                   string
 	sqlOrderBase          string
@@ -246,72 +246,22 @@ func (h *createHandler) formalizePaymentID() {
 	h.PaymentBalanceLockReq.PaymentID = h.PaymentBaseReq.EntID
 }
 
-func (h *createHandler) validatePayment() error {
-	totalAmount := decimal.NewFromInt(0)
-	for _, balance := range h.PaymentBalanceReqs {
-		handler := &paymentcommon.PaymentCommonHandler{
-			LocalCoinUSDCurrency: balance.LocalCoinUSDCurrency,
-			LiveCoinUSDCurrency:  balance.LiveCoinUSDCurrency,
-		}
-		totalAmount = totalAmount.Add(balance.Amount.Mul(*handler.FormalizeCoinUSDCurrency()))
-	}
-	for _, transfer := range h.PaymentTransferReqs {
-		handler := &paymentcommon.PaymentCommonHandler{
-			LocalCoinUSDCurrency: transfer.LocalCoinUSDCurrency,
-			LiveCoinUSDCurrency:  transfer.LiveCoinUSDCurrency,
-		}
-		totalAmount = totalAmount.Add(transfer.Amount.Mul(*handler.FormalizeCoinUSDCurrency()))
-	}
-	if !h.PaymentAmountUSD.Equal(totalAmount) {
-		return fmt.Errorf("invalid paymentamount")
-	}
-
-	switch *h.OrderStateBaseReq.PaymentType {
-	case types.PaymentType_PayWithBalanceOnly:
-		if len(h.PaymentBalanceReqs) == 0 {
-			return fmt.Errorf("invalid paymentbalances")
-		}
-	case types.PaymentType_PayWithTransferOnly:
-		if len(h.PaymentTransferReqs) == 0 {
-			return fmt.Errorf("invalid paymenttransfers")
-		}
-	case types.PaymentType_PayWithTransferAndBalance:
-		if len(h.PaymentBalanceReqs) == 0 {
-			return fmt.Errorf("invalid paymentbalances")
-		}
-		if len(h.PaymentTransferReqs) == 0 {
-			return fmt.Errorf("invalid paymenttransfers")
-		}
-		if h.PaymentAmountUSD.Equal(decimal.NewFromInt(0)) {
-			return fmt.Errorf("invalid paymentamount")
-		}
-	default:
-		if len(h.PaymentBalanceReqs) > 0 {
-			return fmt.Errorf("invalid paymentbalances")
-		}
-		if len(h.PaymentTransferReqs) > 0 {
-			return fmt.Errorf("invalid paymenttransfers")
-		}
-		if !h.PaymentAmountUSD.Equal(decimal.NewFromInt(0)) {
-			return fmt.Errorf("invalid paymentamount")
-		}
-		if !h.DiscountAmountUSD.Equal(decimal.NewFromInt(0)) {
-			return fmt.Errorf("invalid paymentamount")
-		}
-	}
-	return nil
-}
-
 func (h *Handler) CreateFeeOrderWithTx(ctx context.Context, tx *ent.Tx) error {
 	handler := &createHandler{
 		Handler: h,
+		paymentChecker: &paymentcommon.PaymentCheckHandler{
+			PaymentType:         h.OrderStateBaseReq.PaymentType,
+			PaymentBalanceReqs:  h.PaymentBalanceReqs,
+			PaymentTransferReqs: h.PaymentTransferReqs,
+			PaymentAmountUSD:    h.PaymentAmountUSD,
+			DiscountAmountUSD:   h.DiscountAmountUSD,
+		},
 	}
 
 	if h.EntID == nil {
 		h.EntID = func() *uuid.UUID { uid := uuid.New(); return &uid }()
 	}
-
-	if err := handler.validatePayment(); err != nil {
+	if err := handler.paymentChecker.ValidatePayment(); err != nil {
 		return err
 	}
 
