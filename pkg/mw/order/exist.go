@@ -11,7 +11,7 @@ type existHandler struct {
 	*baseQueryHandler
 }
 
-func (h *Handler) ExistFeeOrderConds(ctx context.Context) (exist bool, err error) {
+func (h *Handler) ExistOrderConds(ctx context.Context) (exist bool, err error) {
 	handler := &existHandler{
 		baseQueryHandler: &baseQueryHandler{
 			Handler: h,

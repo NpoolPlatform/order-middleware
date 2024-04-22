@@ -5,7 +5,7 @@ import (
 
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
 	types "github.com/NpoolPlatform/message/npool/basetypes/order/v1"
-	npool "github.com/NpoolPlatform/message/npool/order/mw/v1/powerrental"
+	npool "github.com/NpoolPlatform/message/npool/order/mw/v1/order"
 	constant "github.com/NpoolPlatform/order-middleware/pkg/const"
 	orderbasecrud "github.com/NpoolPlatform/order-middleware/pkg/crud/order/orderbase"
 	orderstatebasecrud "github.com/NpoolPlatform/order-middleware/pkg/crud/order/statebase"
@@ -34,19 +34,19 @@ func NewHandler(ctx context.Context, options ...func(context.Context, *Handler) 
 }
 
 func (h *Handler) withOrderBaseConds(conds *npool.Conds) error {
-	if conds.OrderID != nil {
-		id, err := uuid.Parse(conds.GetOrderID().GetValue())
+	if conds.EntID != nil {
+		id, err := uuid.Parse(conds.GetEntID().GetValue())
 		if err != nil {
 			return err
 		}
 		h.OrderBaseConds.EntID = &cruder.Cond{
-			Op:  conds.GetOrderID().GetOp(),
+			Op:  conds.GetEntID().GetOp(),
 			Val: id,
 		}
 	}
-	if conds.OrderIDs != nil {
+	if conds.EntIDs != nil {
 		ids := []uuid.UUID{}
-		for _, id := range conds.GetOrderIDs().GetValue() {
+		for _, id := range conds.GetEntIDs().GetValue() {
 			_id, err := uuid.Parse(id)
 			if err != nil {
 				return err
@@ -54,7 +54,7 @@ func (h *Handler) withOrderBaseConds(conds *npool.Conds) error {
 			ids = append(ids, _id)
 		}
 		h.OrderBaseConds.EntIDs = &cruder.Cond{
-			Op:  conds.GetOrderIDs().GetOp(),
+			Op:  conds.GetEntIDs().GetOp(),
 			Val: ids,
 		}
 	}
