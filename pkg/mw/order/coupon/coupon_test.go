@@ -8,6 +8,7 @@ import (
 	"testing"
 
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
+	goodtypes "github.com/NpoolPlatform/message/npool/basetypes/good/v1"
 	types "github.com/NpoolPlatform/message/npool/basetypes/order/v1"
 	basetypes "github.com/NpoolPlatform/message/npool/basetypes/v1"
 	npool "github.com/NpoolPlatform/message/npool/order/mw/v1/order/coupon"
@@ -33,18 +34,22 @@ var ret = npool.OrderCoupon{
 	AppID:     uuid.NewString(),
 	UserID:    uuid.NewString(),
 	GoodID:    uuid.NewString(),
+	GoodType:  goodtypes.GoodType_PowerRental,
 	AppGoodID: uuid.NewString(),
 	OrderID:   uuid.NewString(),
 	CouponID:  uuid.NewString(),
 }
 
 func setup(t *testing.T) func(*testing.T) {
+	ret.GoodTypeStr = ret.GoodType.String()
+
 	h1, err := orderbase1.NewHandler(
 		context.Background(),
 		orderbase1.WithEntID(&ret.OrderID, false),
 		orderbase1.WithAppID(&ret.AppID, true),
 		orderbase1.WithUserID(&ret.UserID, true),
 		orderbase1.WithGoodID(&ret.GoodID, true),
+		orderbase1.WithGoodType(&ret.GoodType, true),
 		orderbase1.WithAppGoodID(&ret.AppGoodID, true),
 		orderbase1.WithOrderType(func() *types.OrderType { e := types.OrderType_Offline; return &e }(), true),
 		orderbase1.WithCreateMethod(func() *types.OrderCreateMethod { e := types.OrderCreateMethod_OrderCreatedByAdmin; return &e }(), true),
