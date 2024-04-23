@@ -43,7 +43,6 @@ var ret = outofgasmwpb.OutOfGas{
 	AppGoodID: uuid.NewString(),
 	OrderID:   uuid.NewString(),
 	StartAt:   uint32(time.Now().Unix()),
-	EndAt:     uint32(time.Now().Unix() + int64(outOfGasSeconds)),
 }
 
 func setup(t *testing.T) func(*testing.T) {
@@ -112,7 +111,6 @@ func createOutOfGas(t *testing.T) {
 		WithEntID(&ret.EntID, true),
 		WithOrderID(&ret.OrderID, true),
 		WithStartAt(&ret.StartAt, true),
-		WithEndAt(&ret.EndAt, true),
 	)
 	if assert.Nil(t, err) {
 		err = handler.CreateOutOfGas(context.Background())
@@ -126,7 +124,7 @@ func createOutOfGas(t *testing.T) {
 			}
 			seconds, err := getPowerRentalOutOfGasSeconds()
 			if assert.Nil(t, err) {
-				assert.Equal(t, outOfGasSeconds, seconds)
+				assert.Equal(t, uint32(0), seconds)
 			}
 		}
 	}
@@ -134,30 +132,37 @@ func createOutOfGas(t *testing.T) {
 	err = handler.CreateOutOfGas(context.Background())
 	assert.NotNil(t, err)
 
-	ret.EntID = uuid.NewString()
-	ret.StartAt = ret.EndAt
-	ret.EndAt = ret.StartAt + outOfGasSeconds
-
 	handler, err = NewHandler(
 		context.Background(),
-		WithEntID(&ret.EntID, true),
 		WithOrderID(&ret.OrderID, true),
 		WithStartAt(&ret.StartAt, true),
-		WithEndAt(&ret.EndAt, true),
 	)
 	if assert.Nil(t, err) {
 		err = handler.CreateOutOfGas(context.Background())
+		assert.NotNil(t, err)
+	}
+}
+
+func updateOutOfGas(t *testing.T) {
+	ret.EndAt = ret.StartAt + outOfGasSeconds
+
+	handler, err := NewHandler(
+		context.Background(),
+		WithEntID(&ret.EntID, true),
+		WithOrderID(&ret.OrderID, true),
+		WithEndAt(&ret.EndAt, true),
+	)
+	if assert.Nil(t, err) {
+		err = handler.UpdateOutOfGas(context.Background())
 		if assert.Nil(t, err) {
 			info, err := getOutOfGas()
 			if assert.Nil(t, err) {
-				ret.CreatedAt = info.CreatedAt
 				ret.UpdatedAt = info.UpdatedAt
-				ret.ID = info.ID
 				assert.Equal(t, &ret, info)
 			}
 			seconds, err := getPowerRentalOutOfGasSeconds()
 			if assert.Nil(t, err) {
-				assert.Equal(t, outOfGasSeconds*2, seconds)
+				assert.Equal(t, outOfGasSeconds, seconds)
 			}
 		}
 	}
@@ -183,7 +188,7 @@ func getOutOfGases(t *testing.T) {
 	if assert.Nil(t, err) {
 		_, total, err := handler.GetOutOfGases(context.Background())
 		if assert.Nil(t, err) {
-			assert.Equal(t, uint32(2), total)
+			assert.Equal(t, uint32(1), total)
 		}
 	}
 }
@@ -205,7 +210,7 @@ func deleteOutOfGas(t *testing.T) {
 
 		seconds, err := getPowerRentalOutOfGasSeconds()
 		if assert.Nil(t, err) {
-			assert.Equal(t, outOfGasSeconds, seconds)
+			assert.Equal(t, uint32(0), seconds)
 		}
 	}
 }
@@ -219,6 +224,7 @@ func TestOutOfGas(t *testing.T) {
 	defer teardown(t)
 
 	t.Run("createOutOfGas", createOutOfGas)
+	t.Run("updateOutOfGas", updateOutOfGas)
 	t.Run("getOutOfGas", getOutOfGas1)
 	t.Run("getOutOfGases", getOutOfGases)
 	t.Run("deleteOutOfGas", deleteOutOfGas)

@@ -32,7 +32,7 @@ func (h *outOfGasQueryHandler) getOutOfGasEnt(ctx context.Context, cli *ent.Clie
 }
 
 func (h *outOfGasQueryHandler) _getOutOfGas(ctx context.Context, must bool) error {
-	if h.ID == nil || h.EntID == nil {
+	if h.ID == nil && h.EntID == nil {
 		return fmt.Errorf("invalid id")
 	}
 	return db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
