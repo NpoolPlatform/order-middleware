@@ -349,6 +349,9 @@ func (h *Handler) UpdateFeeOrderWithTx(ctx context.Context, tx *ent.Tx) error {
 	}
 	handler.paymentChecker.PaymentAmountUSD = func() *decimal.Decimal { d := handler._ent.PaymentAmountUSD(); return &d }()
 	handler.paymentChecker.DiscountAmountUSD = func() *decimal.Decimal { d := handler._ent.DiscountAmountUSD(); return &d }()
+	if handler.paymentChecker.PaymentType == nil {
+		handler.paymentChecker.PaymentType = func() *types.PaymentType { e := handler._ent.PaymentType(); return &e }()
+	}
 
 	if err := handler.validateUpdate(ctx); err != nil {
 		return err

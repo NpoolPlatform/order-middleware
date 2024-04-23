@@ -60,8 +60,13 @@ func (f *feeOrder) FeeOrderID() uint32 {
 func (f *feeOrder) FeeOrderStateID() uint32 {
 	return f.entFeeOrderState.ID
 }
+
 func (f *feeOrder) PaymentState() types.PaymentState {
 	return types.PaymentState(types.PaymentState_value[f.entFeeOrderState.PaymentState])
+}
+
+func (f *feeOrder) PaymentType() types.PaymentType {
+	return types.PaymentType(types.PaymentType_value[f.entOrderStateBase.PaymentType])
 }
 
 func (f *feeOrder) OrderState() types.OrderState {

@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 
+	types "github.com/NpoolPlatform/message/npool/basetypes/order/v1"
 	"github.com/NpoolPlatform/order-middleware/pkg/db"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent"
 	entfeeorder "github.com/NpoolPlatform/order-middleware/pkg/db/ent/feeorder"
@@ -13,6 +14,7 @@ import (
 	entorderlock "github.com/NpoolPlatform/order-middleware/pkg/db/ent/orderlock"
 	entorderstatebase "github.com/NpoolPlatform/order-middleware/pkg/db/ent/orderstatebase"
 	entpaymentbalance "github.com/NpoolPlatform/order-middleware/pkg/db/ent/paymentbalance"
+	entpaymentbalancelock "github.com/NpoolPlatform/order-middleware/pkg/db/ent/paymentbalancelock"
 	entpaymentbase "github.com/NpoolPlatform/order-middleware/pkg/db/ent/paymentbase"
 	entpaymenttransfer "github.com/NpoolPlatform/order-middleware/pkg/db/ent/paymenttransfer"
 )
@@ -96,11 +98,27 @@ func (h *feeOrderQueryHandler) getPaymentBase(ctx context.Context, cli *ent.Clie
 }
 
 func (h *feeOrderQueryHandler) getLedgerLock(ctx context.Context, cli *ent.Client) (err error) {
+	paymentBalanceLock, err := cli.
+		PaymentBalanceLock.
+		Query().
+		Where(
+			entpaymentbalancelock.PaymentID(h._ent.entFeeOrderState.PaymentID),
+			entpaymentbalancelock.DeletedAt(0),
+		).
+		Only(ctx)
+	if err != nil {
+		if ent.IsNotFound(err) {
+			return nil
+		}
+		return err
+	}
 	if h._ent.entLedgerLock, err = cli.
 		OrderLock.
 		Query().
 		Where(
+			entorderlock.EntID(paymentBalanceLock.LedgerLockID),
 			entorderlock.OrderID(h._ent.entFeeOrder.OrderID),
+			entorderlock.LockType(types.OrderLockType_LockBalance.String()),
 			entorderlock.DeletedAt(0),
 		).
 		Only(ctx); err != nil {
