@@ -16,6 +16,7 @@ import (
 	goodtypes "github.com/NpoolPlatform/message/npool/basetypes/good/v1"
 	types "github.com/NpoolPlatform/message/npool/basetypes/order/v1"
 	basetypes "github.com/NpoolPlatform/message/npool/basetypes/v1"
+	feeordermwpb "github.com/NpoolPlatform/message/npool/order/mw/v1/fee"
 	ordercouponmwpb "github.com/NpoolPlatform/message/npool/order/mw/v1/order/coupon"
 	paymentmwpb "github.com/NpoolPlatform/message/npool/order/mw/v1/payment"
 	npool "github.com/NpoolPlatform/message/npool/order/mw/v1/powerrental"
@@ -100,8 +101,8 @@ func setup(t *testing.T) func(*testing.T) {
 	return func(*testing.T) {}
 }
 
-func createPowerRentalOrder(t *testing.T) {
-	err := CreatePowerRentalOrder(context.Background(), &npool.PowerRentalOrderReq{
+func createPowerRentalOrderWithFees(t *testing.T) {
+	err := CreatePowerRentalOrderWithFees(context.Background(), &npool.PowerRentalOrderReq{
 		EntID:              &ret.EntID,
 		AppID:              &ret.AppID,
 		UserID:             &ret.UserID,
@@ -141,7 +142,18 @@ func createPowerRentalOrder(t *testing.T) {
 		}(),
 		StartMode: &ret.StartMode,
 		StartAt:   &ret.StartAt,
-	})
+	},
+		[]*feeordermwpb.FeeOrderReq{
+			{
+				EntID:           func() *string { s := uuid.NewString(); return &s }(),
+				GoodID:          func() *string { s := uuid.NewString(); return &s }(),
+				GoodType:        func() *goodtypes.GoodType { e := goodtypes.GoodType_TechniqueServiceFee; return &e }(),
+				AppGoodID:       func() *string { s := uuid.NewString(); return &s }(),
+				OrderID:         func() *string { s := uuid.NewString(); return &s }(),
+				GoodValueUSD:    func() *string { s := decimal.NewFromInt(100).String(); return &s }(),
+				DurationSeconds: func() *uint32 { u := uint32(150); return &u }(),
+			},
+		})
 	if assert.Nil(t, err) {
 		info, err := GetPowerRentalOrder(context.Background(), ret.OrderID)
 		if assert.Nil(t, err) {
@@ -244,9 +256,8 @@ func TestPowerRentalOrder(t *testing.T) {
 		return grpc.Dial(fmt.Sprintf("localhost:%v", gport), grpc.WithTransportCredentials(insecure.NewCredentials()))
 	})
 
-	t.Run("createPowerRentalOrder", createPowerRentalOrder)
+	t.Run("createPowerRentalOrderWithFees", createPowerRentalOrderWithFees)
 	t.Run("updatePowerRentalOrder", updatePowerRentalOrder)
-	return
 	t.Run("getPowerRentalOrder", getPowerRentalOrder)
 	t.Run("getPowerRentalOrders", getPowerRentalOrders)
 	t.Run("deletePowerRentalOrder", deletePowerRentalOrder)

@@ -86,6 +86,7 @@ func (h *Handler) DeletePowerRentalWithTx(ctx context.Context, tx *ent.Tx) error
 
 func (h *Handler) DeletePowerRental(ctx context.Context) error {
 	return db.WithTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {
+		// TODO: also delete child orders
 		return h.DeletePowerRentalWithTx(_ctx, tx)
 	})
 }
