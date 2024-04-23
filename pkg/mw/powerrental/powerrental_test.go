@@ -61,7 +61,14 @@ var ret = npool.PowerRentalOrder{
 	PaymentBalances: []*paymentmwpb.PaymentBalanceInfo{
 		{
 			CoinTypeID:           uuid.NewString(),
-			Amount:               decimal.NewFromInt(110).String(),
+			Amount:               decimal.NewFromInt(10).String(),
+			CoinUSDCurrency:      decimal.NewFromInt(1).String(),
+			LocalCoinUSDCurrency: decimal.NewFromInt(1).String(),
+			LiveCoinUSDCurrency:  decimal.NewFromInt(1).String(),
+		},
+		{
+			CoinTypeID:           uuid.NewString(),
+			Amount:               decimal.NewFromInt(100).String(),
 			CoinUSDCurrency:      decimal.NewFromInt(1).String(),
 			LocalCoinUSDCurrency: decimal.NewFromInt(1).String(),
 			LiveCoinUSDCurrency:  decimal.NewFromInt(1).String(),

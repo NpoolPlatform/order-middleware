@@ -12,6 +12,7 @@ import (
 	entorderlock "github.com/NpoolPlatform/order-middleware/pkg/db/ent/orderlock"
 	entorderstatebase "github.com/NpoolPlatform/order-middleware/pkg/db/ent/orderstatebase"
 	entpaymentbalance "github.com/NpoolPlatform/order-middleware/pkg/db/ent/paymentbalance"
+	entpaymentbalancelock "github.com/NpoolPlatform/order-middleware/pkg/db/ent/paymentbalancelock"
 	entpaymentbase "github.com/NpoolPlatform/order-middleware/pkg/db/ent/paymentbase"
 	entpaymenttransfer "github.com/NpoolPlatform/order-middleware/pkg/db/ent/paymenttransfer"
 	entpowerrental "github.com/NpoolPlatform/order-middleware/pkg/db/ent/powerrental"
@@ -98,10 +99,25 @@ func (h *powerRentalQueryHandler) getPaymentBase(ctx context.Context, cli *ent.C
 
 func (h *powerRentalQueryHandler) getLedgerLock(ctx context.Context, cli *ent.Client) (err error) {
 	// TODO: should get ID from payment balance lock firstly
+	paymentBalanceLock, err := cli.
+		PaymentBalanceLock.
+		Query().
+		Where(
+			entpaymentbalancelock.PaymentID(h._ent.entPowerRentalState.PaymentID),
+			entpaymentbalancelock.DeletedAt(0),
+		).
+		Only(ctx)
+	if err != nil {
+		if ent.IsNotFound(err) {
+			return nil
+		}
+		return err
+	}
 	if h._ent.entLedgerLock, err = cli.
 		OrderLock.
 		Query().
 		Where(
+			entorderlock.EntID(paymentBalanceLock.LedgerLockID),
 			entorderlock.OrderID(h._ent.entPowerRental.OrderID),
 			entorderlock.LockType(types.OrderLockType_LockBalance.String()),
 			entorderlock.DeletedAt(0),
