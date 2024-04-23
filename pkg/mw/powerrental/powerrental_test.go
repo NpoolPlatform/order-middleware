@@ -11,6 +11,7 @@ import (
 	goodtypes "github.com/NpoolPlatform/message/npool/basetypes/good/v1"
 	types "github.com/NpoolPlatform/message/npool/basetypes/order/v1"
 	basetypes "github.com/NpoolPlatform/message/npool/basetypes/v1"
+	feeordermwpb "github.com/NpoolPlatform/message/npool/order/mw/v1/fee"
 	ordercouponmwpb "github.com/NpoolPlatform/message/npool/order/mw/v1/order/coupon"
 	paymentmwpb "github.com/NpoolPlatform/message/npool/order/mw/v1/payment"
 	npool "github.com/NpoolPlatform/message/npool/order/mw/v1/powerrental"
@@ -68,6 +69,7 @@ var ret = npool.PowerRentalOrder{
 	},
 	OrderState:   types.OrderState_OrderStateCreated,
 	PaymentState: types.PaymentState_PaymentStateWait,
+	StartMode:    types.OrderStartMode_OrderStartInstantly,
 }
 
 //nolint:funlen
@@ -87,6 +89,7 @@ func setup(t *testing.T) func(*testing.T) {
 	ret.PaymentStateStr = ret.PaymentState.String()
 	ret.CancelStateStr = ret.CancelState.String()
 	ret.RenewStateStr = types.OrderRenewState_OrderRenewWait.String()
+	ret.StartModeStr = ret.StartMode.String()
 
 	return func(*testing.T) {}
 }
@@ -132,6 +135,17 @@ func createPowerRental(t *testing.T) {
 			return
 		}(), true),
 		WithPaymentTransfers([]*paymentmwpb.PaymentTransferReq{}, true),
+		WithFeeOrders([]*feeordermwpb.FeeOrderReq{
+			{
+				EntID:           func() *string { s := uuid.NewString(); return &s }(),
+				GoodID:          func() *string { s := uuid.NewString(); return &s }(),
+				GoodType:        func() *goodtypes.GoodType { e := goodtypes.GoodType_TechniqueServiceFee; return &e }(),
+				AppGoodID:       func() *string { s := uuid.NewString(); return &s }(),
+				OrderID:         func() *string { s := uuid.NewString(); return &s }(),
+				GoodValueUSD:    func() *string { s := decimal.NewFromInt(100).String(); return &s }(),
+				DurationSeconds: func() *uint32 { u := uint32(150); return &u }(),
+			},
+		}, true),
 	)
 	if assert.Nil(t, err) {
 		err = handler.CreatePowerRental(context.Background())

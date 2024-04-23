@@ -73,10 +73,10 @@ func (h *PaymentCheckHandler) ValidatePayment() error {
 			return fmt.Errorf("invalid paymentamount")
 		}
 	default:
-		if !h.PaymentAmountUSD.Equal(decimal.NewFromInt(0)) {
+		if h.PaymentAmountUSD != nil && !h.PaymentAmountUSD.Equal(decimal.NewFromInt(0)) {
 			return fmt.Errorf("invalid paymentamount")
 		}
-		if !h.DiscountAmountUSD.Equal(decimal.NewFromInt(0)) {
+		if h.DiscountAmountUSD != nil && !h.DiscountAmountUSD.Equal(decimal.NewFromInt(0)) {
 			return fmt.Errorf("invalid paymentamount")
 		}
 	}

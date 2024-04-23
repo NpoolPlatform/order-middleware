@@ -88,7 +88,13 @@ func (h *createHandler) constructOrderCouponSQLs(ctx context.Context) {
 }
 
 func (h *createHandler) constructPaymentBaseSQL(ctx context.Context) {
-	// TODO: some case do not need to create payment info
+	switch *h.OrderStateBaseReq.PaymentType {
+	case types.PaymentType_PayWithBalanceOnly:
+	case types.PaymentType_PayWithTransferOnly:
+	case types.PaymentType_PayWithTransferAndBalance:
+	default:
+		return
+	}
 	handler, _ := paymentbase1.NewHandler(ctx)
 	handler.Req = *h.PaymentBaseReq
 	h.sqlPaymentBase = handler.ConstructCreateSQL()
@@ -158,6 +164,9 @@ func (h *createHandler) createOrderCoupons(ctx context.Context, tx *ent.Tx) erro
 }
 
 func (h *createHandler) createPaymentBase(ctx context.Context, tx *ent.Tx) error {
+	if h.sqlPaymentBase == "" {
+		return nil
+	}
 	return h.execSQL(ctx, tx, h.sqlPaymentBase)
 }
 

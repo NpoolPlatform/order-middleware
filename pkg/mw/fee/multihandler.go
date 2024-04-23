@@ -19,6 +19,10 @@ func (h *MultiHandler) AppendHandler(handler *Handler) {
 	h.Handlers = append(h.Handlers, handler)
 }
 
+func (h *MultiHandler) GetHandlers() []*Handler {
+	return h.Handlers
+}
+
 func (h *MultiHandler) validatePaymentOrder() error {
 	paymentOrders := 0
 	payWithParents := 0

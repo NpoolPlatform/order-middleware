@@ -242,6 +242,18 @@ func (h *createHandler) formalizePaymentTransfers() {
 	}
 }
 
+func (h *createHandler) formalizeFeeOrders() {
+	for _, handler := range h.FeeMultiHandler.GetHandlers() {
+		handler.OrderBaseReq.AppID = h.OrderBaseReq.AppID
+		handler.OrderBaseReq.UserID = h.OrderBaseReq.UserID
+		handler.OrderBaseReq.ParentOrderID = h.OrderBaseReq.EntID
+		handler.OrderBaseReq.OrderType = h.OrderBaseReq.OrderType
+		handler.OrderBaseReq.CreateMethod = h.OrderBaseReq.CreateMethod
+		handler.PaymentBaseReq.EntID = h.PowerRentalStateReq.PaymentID
+		handler.FeeOrderStateReq.PaymentID = h.PowerRentalStateReq.PaymentID
+	}
+}
+
 func (h *createHandler) formalizePaymentID() {
 	if h.PaymentBaseReq.EntID != nil {
 		return
@@ -302,6 +314,7 @@ func (h *Handler) CreatePowerRentalWithTx(ctx context.Context, tx *ent.Tx) error
 	handler.formalizePaymentID()
 	handler.formalizePaymentBalances()
 	handler.formalizePaymentTransfers()
+	handler.formalizeFeeOrders()
 
 	handler.constructOrderBaseSQL(ctx)
 	handler.constructOrderStateBaseSQL(ctx)
