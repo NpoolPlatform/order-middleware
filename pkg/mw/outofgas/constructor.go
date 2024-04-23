@@ -7,6 +7,7 @@ import (
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
 )
 
+//nolint:goconst
 func (h *Handler) ConstructCreateSQL() string {
 	comma := ""
 	now := uint32(time.Now().Unix())

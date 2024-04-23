@@ -26,7 +26,6 @@ type Req struct {
 	DeletedAt     *uint32
 }
 
-//nolint:funlen,gocyclo
 func CreateSet(c *ent.OrderBaseCreate, req *Req) *ent.OrderBaseCreate {
 	if req.EntID != nil {
 		c.SetEntID(*req.EntID)
@@ -88,7 +87,7 @@ type Conds struct {
 	UpdatedAt      *cruder.Cond
 }
 
-//nolint
+//nolint:gocyclo,funlen
 func SetQueryConds(q *ent.OrderBaseQuery, conds *Conds) (*ent.OrderBaseQuery, error) {
 	q.Where(entorderbase.DeletedAt(0))
 	if conds == nil {

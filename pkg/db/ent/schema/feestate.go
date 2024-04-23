@@ -23,7 +23,6 @@ func (FeeOrderState) Mixin() []ent.Mixin {
 }
 
 // Fields of the FeeOrderState.
-//nolint:funlen
 func (FeeOrderState) Fields() []ent.Field {
 	return []ent.Field{
 		field.

@@ -24,7 +24,6 @@ func (FeeOrder) Mixin() []ent.Mixin {
 }
 
 // Fields of the FeeOrder.
-//nolint:funlen
 func (FeeOrder) Fields() []ent.Field {
 	return []ent.Field{
 		field.

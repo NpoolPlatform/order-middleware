@@ -52,7 +52,6 @@ func (h *validateHandler) validateUserCancelable() error {
 		return fmt.Errorf("invalid cancelstate")
 	}
 	return nil
-
 }
 
 func (h *validateHandler) validateAdminCancelable() error {

@@ -5,6 +5,7 @@ import (
 
 	"entgo.io/ent/dialect/sql"
 
+	logger "github.com/NpoolPlatform/go-service-framework/pkg/logger"
 	types "github.com/NpoolPlatform/message/npool/basetypes/order/v1"
 	orderbasecrud "github.com/NpoolPlatform/order-middleware/pkg/crud/order/orderbase"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent"
@@ -31,6 +32,7 @@ func (h *baseQueryHandler) queryOrderBases(cli *ent.Client) (*ent.OrderBaseSelec
 	return h.selectOrderBase(stm), nil
 }
 
+//nolint:gocyclo,funlen
 func (h *baseQueryHandler) queryJoinMyself(s *sql.Selector) {
 	t := sql.Table(entorderbase.Table)
 	s.Join(t).
@@ -226,6 +228,8 @@ func (h *baseQueryHandler) queryJoinOrderStateBase(s *sql.Selector) error {
 func (h *baseQueryHandler) queryJoin() {
 	h.stmSelect.Modify(func(s *sql.Selector) {
 		h.queryJoinMyself(s)
-		h.queryJoinOrderStateBase(s)
+		if err := h.queryJoinOrderStateBase(s); err != nil {
+			logger.Sugar().Errorw("queryJoinOrderStateBase", "Error", err)
+		}
 	})
 }

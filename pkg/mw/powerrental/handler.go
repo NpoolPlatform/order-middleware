@@ -1,3 +1,4 @@
+//nolint:dupl
 package powerrental
 
 import (
@@ -403,6 +404,7 @@ func WithPaymentType(paymentType *types.PaymentType, must bool) func(context.Con
 	}
 }
 
+//nolint:gocyclo
 func WithOrderState(state *types.OrderState, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if state == nil {
@@ -834,6 +836,7 @@ func WithFeeOrders(feeOrders []*feeordermwpb.FeeOrderReq, must bool) func(contex
 	}
 }
 
+//nolint:funlen,gocyclo
 func (h *Handler) withOrderBaseConds(conds *npool.Conds) error {
 	if conds.OrderID != nil {
 		id, err := uuid.Parse(conds.GetOrderID().GetValue())

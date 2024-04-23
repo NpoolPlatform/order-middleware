@@ -73,6 +73,7 @@ func WithOrderID(id *string, must bool) func(context.Context, *Handler) error {
 	}
 }
 
+//nolint:gocyclo
 func WithCancelState(state *types.OrderState, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if state == nil {

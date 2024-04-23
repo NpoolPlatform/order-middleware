@@ -44,7 +44,6 @@ var ret = compensatemwpb.Compensate{
 	CompensateSeconds: 10000,
 }
 
-//nolint:funlen
 func setup(t *testing.T) func(*testing.T) {
 	ret.CompensateTypeStr = ret.CompensateType.String()
 	ret.GoodTypeStr = ret.GoodType.String()

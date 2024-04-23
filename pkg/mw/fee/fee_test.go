@@ -69,7 +69,6 @@ var ret = npool.FeeOrder{
 	PaymentState: types.PaymentState_PaymentStateWait,
 }
 
-//nolint:funlen
 func setup(t *testing.T) func(*testing.T) {
 	for _, paymentBalance := range ret.PaymentBalances {
 		paymentBalance.PaymentID = ret.PaymentID

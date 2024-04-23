@@ -4,6 +4,8 @@ import (
 	"fmt"
 
 	"entgo.io/ent/dialect/sql"
+
+	logger "github.com/NpoolPlatform/go-service-framework/pkg/logger"
 	ordercouponcrud "github.com/NpoolPlatform/order-middleware/pkg/crud/order/coupon"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent"
 	entorderbase "github.com/NpoolPlatform/order-middleware/pkg/db/ent/orderbase"
@@ -58,7 +60,7 @@ func (h *baseQueryHandler) queryJoinMyself(s *sql.Selector) {
 	)
 }
 
-func (h *baseQueryHandler) queryJoinOrder(s *sql.Selector) error { //nolint
+func (h *baseQueryHandler) queryJoinOrder(s *sql.Selector) error {
 	t := sql.Table(entorderbase.Table)
 	s.Join(t).
 		On(
@@ -69,19 +71,21 @@ func (h *baseQueryHandler) queryJoinOrder(s *sql.Selector) error { //nolint
 			sql.EQ(t.C(entorderbase.FieldDeletedAt), 0),
 		)
 	if h.OrderBaseConds.AppID != nil {
+		id, ok := h.OrderBaseConds.AppID.Val.(uuid.UUID)
+		if !ok {
+			return fmt.Errorf("invalid appid")
+		}
 		s.OnP(
-			sql.EQ(
-				t.C(entorderbase.FieldAppID),
-				h.OrderBaseConds.AppID.Val.(uuid.UUID),
-			),
+			sql.EQ(t.C(entorderbase.FieldAppID), id),
 		)
 	}
 	if h.OrderBaseConds.UserID != nil {
+		id, ok := h.OrderBaseConds.UserID.Val.(uuid.UUID)
+		if !ok {
+			return fmt.Errorf("invalid userid")
+		}
 		s.OnP(
-			sql.EQ(
-				t.C(entorderbase.FieldUserID),
-				h.OrderBaseConds.UserID.Val.(uuid.UUID),
-			),
+			sql.EQ(t.C(entorderbase.FieldUserID), id),
 		)
 	}
 	s.AppendSelect(
@@ -96,6 +100,8 @@ func (h *baseQueryHandler) queryJoinOrder(s *sql.Selector) error { //nolint
 func (h *baseQueryHandler) queryJoin() {
 	h.stmSelect.Modify(func(s *sql.Selector) {
 		h.queryJoinMyself(s)
-		h.queryJoinOrder(s)
+		if err := h.queryJoinOrder(s); err != nil {
+			logger.Sugar().Errorw("queryJoinOrder", "Error", err)
+		}
 	})
 }

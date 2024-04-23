@@ -5,6 +5,7 @@ import (
 
 	"entgo.io/ent/dialect/sql"
 
+	logger "github.com/NpoolPlatform/go-service-framework/pkg/logger"
 	types "github.com/NpoolPlatform/message/npool/basetypes/order/v1"
 	orderbasecrud "github.com/NpoolPlatform/order-middleware/pkg/crud/order/orderbase"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent"
@@ -56,114 +57,6 @@ func (h *baseQueryHandler) queryJoinMyself(s *sql.Selector) {
 			s.C(entorderbase.FieldID),
 			t.C(entorderbase.FieldID),
 		)
-	if h.OrderBaseConds.EntID != nil {
-		s.OnP(
-			sql.EQ(
-				t.C(entorderbase.FieldEntID),
-				h.OrderBaseConds.EntID.Val.(uuid.UUID),
-			),
-		)
-	}
-	if h.OrderBaseConds.EntIDs != nil {
-		s.OnP(
-			sql.In(
-				t.C(entorderbase.FieldEntID),
-				func() (_uids []interface{}) {
-					for _, uid := range h.OrderBaseConds.EntIDs.Val.([]uuid.UUID) {
-						_uids = append(_uids, interface{}(uid))
-					}
-					return _uids
-				}()...,
-			),
-		)
-	}
-	if h.OrderBaseConds.AppID != nil {
-		s.OnP(
-			sql.EQ(
-				t.C(entorderbase.FieldAppID),
-				h.OrderBaseConds.AppID.Val.(uuid.UUID),
-			),
-		)
-	}
-	if h.OrderBaseConds.UserID != nil {
-		s.OnP(
-			sql.EQ(
-				t.C(entorderbase.FieldUserID),
-				h.OrderBaseConds.UserID.Val.(uuid.UUID),
-			),
-		)
-	}
-	if h.OrderBaseConds.GoodID != nil {
-		s.OnP(
-			sql.EQ(
-				t.C(entorderbase.FieldGoodID),
-				h.OrderBaseConds.GoodID.Val.(uuid.UUID),
-			),
-		)
-	}
-	if h.OrderBaseConds.GoodIDs != nil {
-		s.OnP(
-			sql.In(
-				t.C(entorderbase.FieldGoodID),
-				func() (_uids []interface{}) {
-					for _, uid := range h.OrderBaseConds.GoodIDs.Val.([]uuid.UUID) {
-						_uids = append(_uids, interface{}(uid))
-					}
-					return _uids
-				}()...,
-			),
-		)
-	}
-	if h.OrderBaseConds.AppGoodID != nil {
-		s.OnP(
-			sql.EQ(
-				t.C(entorderbase.FieldAppGoodID),
-				h.OrderBaseConds.AppGoodID.Val.(uuid.UUID),
-			),
-		)
-	}
-	if h.OrderBaseConds.AppGoodIDs != nil {
-		s.OnP(
-			sql.In(
-				t.C(entorderbase.FieldAppGoodID),
-				func() (_uids []interface{}) {
-					for _, uid := range h.OrderBaseConds.AppGoodIDs.Val.([]uuid.UUID) {
-						_uids = append(_uids, interface{}(uid))
-					}
-					return _uids
-				}()...,
-			),
-		)
-	}
-	if h.OrderBaseConds.ParentOrderID != nil {
-		s.OnP(
-			sql.EQ(
-				t.C(entorderbase.FieldParentOrderID),
-				h.OrderBaseConds.ParentOrderID.Val.(uuid.UUID),
-			),
-		)
-	}
-	if h.OrderBaseConds.ParentOrderIDs != nil {
-		s.OnP(
-			sql.In(
-				t.C(entorderbase.FieldParentOrderID),
-				func() (_uids []interface{}) {
-					for _, uid := range h.OrderBaseConds.ParentOrderIDs.Val.([]uuid.UUID) {
-						_uids = append(_uids, interface{}(uid))
-					}
-					return _uids
-				}()...,
-			),
-		)
-	}
-	if h.OrderBaseConds.OrderType != nil {
-		s.OnP(
-			sql.EQ(
-				t.C(entorderbase.FieldOrderType),
-				h.OrderBaseConds.OrderType.Val.(types.OrderType).String(),
-			),
-		)
-	}
 	s.AppendSelect(
 		t.C(entorderbase.FieldAppID),
 		t.C(entorderbase.FieldUserID),
@@ -440,15 +333,18 @@ func (h *baseQueryHandler) queryJoinOrderCoupon(s *sql.Selector) {
 			),
 		)
 	}
-
 }
 
 func (h *baseQueryHandler) queryJoin() {
 	h.stmSelect.Modify(func(s *sql.Selector) {
 		h.queryJoinMyself(s)
 		h.queryJoinFeeOrder(s)
-		h.queryJoinOrderStateBase(s)
-		h.queryJoinFeeOrderState(s)
+		if err := h.queryJoinOrderStateBase(s); err != nil {
+			logger.Sugar().Errorw("queryJoinOrderStateBase", "Error", err)
+		}
+		if err := h.queryJoinFeeOrderState(s); err != nil {
+			logger.Sugar().Errorw("queryJoinFeeOrderState", "Error", err)
+		}
 		h.queryJoinPaymentBase(s)
 		h.queryJoinOrderCoupon(s)
 	})

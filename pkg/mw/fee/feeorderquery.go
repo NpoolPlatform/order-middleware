@@ -104,7 +104,7 @@ func (h *feeOrderQueryHandler) getLedgerLock(ctx context.Context, cli *ent.Clien
 			entorderlock.DeletedAt(0),
 		).
 		Only(ctx); err != nil {
-		if ent.IsNotFound(err); err != nil {
+		if ent.IsNotFound(err) {
 			return nil
 		}
 	}

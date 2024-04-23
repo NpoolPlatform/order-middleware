@@ -45,6 +45,7 @@ var ret = npool.AppConfig{
 	MaxUnpaidOrders:                        10,
 }
 
+//nolint:unparam
 func setup(t *testing.T) func(*testing.T) {
 	ret.SimulateOrderCouponModeStr = ret.SimulateOrderCouponMode.String()
 	return func(*testing.T) {}

@@ -33,6 +33,7 @@ func NewHandler(ctx context.Context, options ...func(context.Context, *Handler) 
 	return handler, nil
 }
 
+//nolint:gocyclo,funlen
 func (h *Handler) withOrderBaseConds(conds *npool.Conds) error {
 	if conds.EntID != nil {
 		id, err := uuid.Parse(conds.GetEntID().GetValue())

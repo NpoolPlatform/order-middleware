@@ -12,8 +12,7 @@ import (
 
 type createHandler struct {
 	*Handler
-	sqlOutOfGas         string
-	sqlPowerRentalState string
+	sqlOutOfGas string
 }
 
 func (h *createHandler) constructOutOfGasSQL(ctx context.Context, req *outofgascrud.Req) {
@@ -36,10 +35,6 @@ func (h *createHandler) execSQL(ctx context.Context, tx *ent.Tx, sql string) err
 
 func (h *createHandler) createOutOfGas(ctx context.Context, tx *ent.Tx) error {
 	return h.execSQL(ctx, tx, h.sqlOutOfGas)
-}
-
-func (h *createHandler) updatePowerRentalState(ctx context.Context, tx *ent.Tx) error {
-	return h.execSQL(ctx, tx, h.sqlPowerRentalState)
 }
 
 func (h *Handler) CreateOutOfGas(ctx context.Context) error {

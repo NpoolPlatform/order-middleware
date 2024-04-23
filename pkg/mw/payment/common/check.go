@@ -18,6 +18,7 @@ type PaymentCheckHandler struct {
 	DiscountAmountUSD   *decimal.Decimal
 }
 
+//nolint:gocyclo
 func (h *PaymentCheckHandler) ValidatePayment() error {
 	totalAmount := decimal.NewFromInt(0)
 	for _, balance := range h.PaymentBalanceReqs {

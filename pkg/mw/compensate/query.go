@@ -5,6 +5,8 @@ import (
 	"fmt"
 
 	"entgo.io/ent/dialect/sql"
+
+	logger "github.com/NpoolPlatform/go-service-framework/pkg/logger"
 	goodtypes "github.com/NpoolPlatform/message/npool/basetypes/good/v1"
 	types "github.com/NpoolPlatform/message/npool/basetypes/order/v1"
 	npool "github.com/NpoolPlatform/message/npool/order/mw/v1/compensate"
@@ -26,7 +28,9 @@ func (h *queryHandler) queryJoin() {
 		return
 	}
 	h.stmCount.Modify(func(s *sql.Selector) {
-		h.queryJoinOrder(s)
+		if err := h.queryJoinOrder(s); err != nil {
+			logger.Sugar().Errorw("queryJoinOrder", "Error", err)
+		}
 	})
 }
 

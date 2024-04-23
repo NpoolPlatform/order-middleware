@@ -56,10 +56,6 @@ func (h *orderQueryHandler) _getOrder(ctx context.Context, must bool) error {
 	})
 }
 
-func (h *orderQueryHandler) getOrder(ctx context.Context) error {
-	return h._getOrder(ctx, false)
-}
-
 func (h *orderQueryHandler) requireOrder(ctx context.Context) error {
 	return h._getOrder(ctx, true)
 }

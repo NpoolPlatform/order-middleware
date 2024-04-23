@@ -186,6 +186,9 @@ func WithConds(conds *npool.Conds) func(context.Context, *Handler) error {
 		if conds == nil {
 			return nil
 		}
+		if err := h.withOrderBaseConds(conds); err != nil {
+			return err
+		}
 		return h.withOutOfGasConds(conds)
 	}
 }

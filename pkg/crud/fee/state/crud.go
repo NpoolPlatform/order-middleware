@@ -24,7 +24,6 @@ type Req struct {
 	DeletedAt        *uint32
 }
 
-//nolint:gocyclo
 func CreateSet(c *ent.FeeOrderStateCreate, req *Req) *ent.FeeOrderStateCreate {
 	if req.EntID != nil {
 		c.SetEntID(*req.EntID)
@@ -50,7 +49,6 @@ func CreateSet(c *ent.FeeOrderStateCreate, req *Req) *ent.FeeOrderStateCreate {
 	return c
 }
 
-//nolint:gocyclo
 func UpdateSet(u *ent.FeeOrderStateUpdateOne, req *Req) *ent.FeeOrderStateUpdateOne {
 	if req.OrderID != nil {
 		u.SetOrderID(*req.OrderID)
@@ -89,7 +87,7 @@ type Conds struct {
 	PaymentStates *cruder.Cond
 }
 
-//nolint
+//nolint:gocyclo,funlen
 func SetQueryConds(q *ent.FeeOrderStateQuery, conds *Conds) (*ent.FeeOrderStateQuery, error) {
 	q.Where(entfeeorderstate.DeletedAt(0))
 	if conds == nil {

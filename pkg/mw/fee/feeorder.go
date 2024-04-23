@@ -72,11 +72,11 @@ func (f *feeOrder) CancelState() types.OrderState {
 	return types.OrderState(types.OrderState_value[f.entFeeOrderState.CancelState])
 }
 
-func (f feeOrder) UserSetCanceled() bool {
+func (f *feeOrder) UserSetCanceled() bool {
 	return f.entFeeOrderState.UserSetCanceled
 }
 
-func (f feeOrder) AdminSetCanceled() bool {
+func (f *feeOrder) AdminSetCanceled() bool {
 	return f.entFeeOrderState.AdminSetCanceled
 }
 

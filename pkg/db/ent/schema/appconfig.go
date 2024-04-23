@@ -57,7 +57,7 @@ func (AppConfig) Fields() []ent.Field {
 		field.
 			Uint32("max_unpaid_orders").
 			Optional().
-			Default(5),
+			Default(5), //nolint
 	}
 }
 

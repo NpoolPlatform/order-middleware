@@ -72,7 +72,7 @@ var ret = npool.PowerRentalOrder{
 	StartMode:    types.OrderStartMode_OrderStartInstantly,
 }
 
-//nolint:funlen
+//nolint:unparam
 func setup(t *testing.T) func(*testing.T) {
 	for _, paymentBalance := range ret.PaymentBalances {
 		paymentBalance.PaymentID = ret.PaymentID

@@ -76,7 +76,9 @@ func (h *Handler) UpdateOutOfGas(ctx context.Context) error {
 		return fmt.Errorf("invalid duration")
 	}
 
-	handler.constructOutOfGasSQL(ctx, &h.Req)
+	if err := handler.constructOutOfGasSQL(ctx, &h.Req); err != nil {
+		return err
+	}
 	if err := handler.constructPowerRentalStateSQL(ctx, &powerrentalstatecrud.Req{
 		OrderID: h.OrderID,
 		OutOfGasSeconds: func() *uint32 {

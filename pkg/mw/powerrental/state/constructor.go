@@ -7,10 +7,7 @@ import (
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
 )
 
-type constructorHandler struct {
-	*Handler
-}
-
+//nolint:goconst
 func (h *Handler) ConstructCreateSQL() string {
 	comma := ""
 	now := uint32(time.Now().Unix())
@@ -58,6 +55,7 @@ func (h *Handler) ConstructCreateSQL() string {
 	return _sql
 }
 
+//nolint:funlen,gocyclo
 func (h *Handler) ConstructUpdateSQL() (string, error) {
 	if h.ID == nil && h.EntID == nil && h.OrderID == nil {
 		return "", fmt.Errorf("invalid id")

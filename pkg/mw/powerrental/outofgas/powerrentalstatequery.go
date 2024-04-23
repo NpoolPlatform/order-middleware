@@ -39,10 +39,6 @@ func (h *powerRentalStateQueryHandler) _getPowerRentalState(ctx context.Context,
 	})
 }
 
-func (h *powerRentalStateQueryHandler) getPowerRentalState(ctx context.Context) error {
-	return h._getPowerRentalState(ctx, false)
-}
-
 func (h *powerRentalStateQueryHandler) requirePowerRentalState(ctx context.Context) error {
 	return h._getPowerRentalState(ctx, true)
 }

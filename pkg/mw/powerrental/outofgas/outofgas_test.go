@@ -46,7 +46,6 @@ var ret = outofgasmwpb.OutOfGas{
 	EndAt:     uint32(time.Now().Unix() + int64(outOfGasSeconds)),
 }
 
-//nolint:funlen
 func setup(t *testing.T) func(*testing.T) {
 	ret.GoodTypeStr = ret.GoodType.String()
 

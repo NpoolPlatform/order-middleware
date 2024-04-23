@@ -39,6 +39,7 @@ func WithOrderID(id *uuid.UUID, must bool) func(context.Context, *Handler) error
 	}
 }
 
+//nolint:gocyclo
 func WithOrderState(state *types.OrderState, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if state == nil {

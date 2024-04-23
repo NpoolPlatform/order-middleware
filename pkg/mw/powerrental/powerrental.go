@@ -70,10 +70,10 @@ func (f *powerRental) CancelState() types.OrderState {
 	return types.OrderState(types.OrderState_value[f.entPowerRentalState.CancelState])
 }
 
-func (f powerRental) UserSetCanceled() bool {
+func (f *powerRental) UserSetCanceled() bool {
 	return f.entPowerRentalState.UserSetCanceled
 }
 
-func (f powerRental) AdminSetCanceled() bool {
+func (f *powerRental) AdminSetCanceled() bool {
 	return f.entPowerRentalState.AdminSetCanceled
 }

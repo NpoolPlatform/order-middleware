@@ -8,6 +8,7 @@ import (
 	types "github.com/NpoolPlatform/message/npool/basetypes/order/v1"
 )
 
+//nolint:goconst
 func (h *Handler) ConstructCreateSQL() string {
 	comma := ""
 	now := uint32(time.Now().Unix())

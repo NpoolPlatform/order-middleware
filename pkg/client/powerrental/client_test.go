@@ -80,6 +80,7 @@ var ret = npool.PowerRentalOrder{
 	StartAt:      uint32(time.Now().Unix() + 100),
 }
 
+//nolint:unparam
 func setup(t *testing.T) func(*testing.T) {
 	for _, paymentBalance := range ret.PaymentBalances {
 		paymentBalance.PaymentID = ret.PaymentID

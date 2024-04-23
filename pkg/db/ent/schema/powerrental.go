@@ -25,7 +25,6 @@ func (PowerRental) Mixin() []ent.Mixin {
 }
 
 // Fields of the PowerRental.
-//nolint:funlen
 func (PowerRental) Fields() []ent.Field {
 	return []ent.Field{
 		field.

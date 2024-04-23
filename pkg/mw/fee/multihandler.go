@@ -57,7 +57,8 @@ func (h *MultiHandler) validatePaymentOrder() error {
 	return nil
 }
 
-func (h *MultiHandler) validatePayment() error {
+//nolint:gocyclo
+func (h *MultiHandler) validatePaymentID() error {
 	paymentIDs := map[uuid.UUID]struct{}{}
 
 	for _, handler := range h.Handlers {
@@ -107,6 +108,9 @@ func (h *MultiHandler) validatePayment() error {
 
 func (h *MultiHandler) CreateFeeOrdersWithTx(ctx context.Context, tx *ent.Tx) error {
 	if err := h.validatePaymentOrder(); err != nil {
+		return err
+	}
+	if err := h.validatePaymentID(); err != nil {
 		return err
 	}
 	for _, handler := range h.Handlers {

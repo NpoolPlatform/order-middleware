@@ -4,6 +4,8 @@ import (
 	"fmt"
 
 	"entgo.io/ent/dialect/sql"
+
+	logger "github.com/NpoolPlatform/go-service-framework/pkg/logger"
 	compensatecrud "github.com/NpoolPlatform/order-middleware/pkg/crud/compensate"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent"
 	entcompensate "github.com/NpoolPlatform/order-middleware/pkg/db/ent/compensate"
@@ -97,6 +99,8 @@ func (h *baseQueryHandler) queryJoinOrder(s *sql.Selector) error { //nolint
 func (h *baseQueryHandler) queryJoin() {
 	h.stmSelect.Modify(func(s *sql.Selector) {
 		h.queryJoinMyself(s)
-		h.queryJoinOrder(s)
+		if err := h.queryJoinOrder(s); err != nil {
+			logger.Sugar().Errorw("queryJoinOrder", "Error", err)
+		}
 	})
 }

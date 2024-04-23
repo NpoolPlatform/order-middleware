@@ -107,7 +107,7 @@ func (h *powerRentalQueryHandler) getLedgerLock(ctx context.Context, cli *ent.Cl
 			entorderlock.DeletedAt(0),
 		).
 		Only(ctx); err != nil {
-		if ent.IsNotFound(err); err != nil {
+		if ent.IsNotFound(err) {
 			return nil
 		}
 	}
@@ -115,7 +115,7 @@ func (h *powerRentalQueryHandler) getLedgerLock(ctx context.Context, cli *ent.Cl
 }
 
 func (h *powerRentalQueryHandler) getStockLock(ctx context.Context, cli *ent.Client) (err error) {
-	if h._ent.entLedgerLock, err = cli.
+	if h._ent.entStockLock, err = cli.
 		OrderLock.
 		Query().
 		Where(
@@ -124,7 +124,7 @@ func (h *powerRentalQueryHandler) getStockLock(ctx context.Context, cli *ent.Cli
 			entorderlock.DeletedAt(0),
 		).
 		Only(ctx); err != nil {
-		if ent.IsNotFound(err); err != nil {
+		if ent.IsNotFound(err) {
 			return nil
 		}
 	}

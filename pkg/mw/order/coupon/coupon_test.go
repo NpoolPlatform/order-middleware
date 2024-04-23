@@ -38,7 +38,6 @@ var ret = npool.OrderCoupon{
 	CouponID:  uuid.NewString(),
 }
 
-//nolint:funlen
 func setup(t *testing.T) func(*testing.T) {
 	h1, err := orderbase1.NewHandler(
 		context.Background(),
@@ -48,7 +47,6 @@ func setup(t *testing.T) func(*testing.T) {
 		orderbase1.WithGoodID(&ret.GoodID, true),
 		orderbase1.WithAppGoodID(&ret.AppGoodID, true),
 		orderbase1.WithOrderType(func() *types.OrderType { e := types.OrderType_Offline; return &e }(), true),
-		orderbase1.WithPaymentType(func() *types.PaymentType { e := types.PaymentType_PayWithBalanceOnly; return &e }(), true),
 		orderbase1.WithCreateMethod(func() *types.OrderCreateMethod { e := types.OrderCreateMethod_OrderCreatedByAdmin; return &e }(), true),
 	)
 	assert.Nil(t, err)

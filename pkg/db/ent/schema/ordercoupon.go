@@ -22,7 +22,6 @@ func (OrderCoupon) Mixin() []ent.Mixin {
 }
 
 // Fields of the OrderCoupon.
-//nolint:funlen
 func (OrderCoupon) Fields() []ent.Field {
 	return []ent.Field{
 		field.

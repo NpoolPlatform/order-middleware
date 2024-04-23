@@ -29,7 +29,6 @@ type Req struct {
 	DeletedAt         *uint32
 }
 
-//nolint:gocyclo
 func CreateSet(c *ent.PowerRentalStateCreate, req *Req) *ent.PowerRentalStateCreate {
 	if req.EntID != nil {
 		c.SetEntID(*req.EntID)
@@ -49,7 +48,6 @@ func CreateSet(c *ent.PowerRentalStateCreate, req *Req) *ent.PowerRentalStateCre
 	return c
 }
 
-//nolint:gocyclo
 func UpdateSet(u *ent.PowerRentalStateUpdateOne, req *Req) *ent.PowerRentalStateUpdateOne {
 	if req.CancelState != nil {
 		u.SetCancelState(req.CancelState.String())
@@ -105,7 +103,7 @@ type Conds struct {
 	RenewNotifyAt *cruder.Cond
 }
 
-//nolint
+//nolint:gocyclo,funlen
 func SetQueryConds(q *ent.PowerRentalStateQuery, conds *Conds) (*ent.PowerRentalStateQuery, error) {
 	q.Where(entpowerrentalstate.DeletedAt(0))
 	if conds == nil {

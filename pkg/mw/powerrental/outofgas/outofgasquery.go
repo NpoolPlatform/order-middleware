@@ -40,10 +40,6 @@ func (h *outOfGasQueryHandler) _getOutOfGas(ctx context.Context, must bool) erro
 	})
 }
 
-func (h *outOfGasQueryHandler) getOutOfGas(ctx context.Context) error {
-	return h._getOutOfGas(ctx, false)
-}
-
 func (h *outOfGasQueryHandler) requireOutOfGas(ctx context.Context) error {
 	return h._getOutOfGas(ctx, true)
 }

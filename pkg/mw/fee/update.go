@@ -324,6 +324,7 @@ func (h *updateHandler) validateUpdate(ctx context.Context) error {
 	return nil
 }
 
+//nolint:funlen,gocyclo
 func (h *Handler) UpdateFeeOrderWithTx(ctx context.Context, tx *ent.Tx) error {
 	handler := &updateHandler{
 		feeOrderQueryHandler: &feeOrderQueryHandler{

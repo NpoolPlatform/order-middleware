@@ -275,7 +275,7 @@ func (h *createHandler) validatePaymentType() error {
 		if h.ledgerLockID() == nil {
 			return fmt.Errorf("invalid ledgerlockid")
 		}
-		fallthrough //nolint
+		fallthrough
 	case types.PaymentType_PayWithTransferOnly:
 		if h.PaymentBaseReq.EntID == nil {
 			return fmt.Errorf("invalid paymentid")

@@ -88,6 +88,9 @@ func (h *Handler) DeleteOutOfGas(ctx context.Context) error {
 		if err := handler.deleteOutOfGas(_ctx, tx); err != nil {
 			return err
 		}
+		if info.EndAt == 0 {
+			return nil
+		}
 		return handler.updatePowerRentalState(_ctx, tx)
 	})
 }

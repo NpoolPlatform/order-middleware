@@ -1,3 +1,4 @@
+//nolint:dupl
 package feeorder
 
 import (
@@ -364,6 +365,7 @@ func WithDurationSeconds(duration *uint32, must bool) func(context.Context, *Han
 	}
 }
 
+//nolint:gocyclo
 func WithOrderState(state *types.OrderState, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if state == nil {
@@ -652,6 +654,7 @@ func WithPaymentTransfers(bs []*paymentmwpb.PaymentTransferReq, must bool) func(
 	}
 }
 
+//nolint:funlen,gocyclo
 func (h *Handler) withOrderBaseConds(conds *npool.Conds) error {
 	if conds.OrderID != nil {
 		id, err := uuid.Parse(conds.GetOrderID().GetValue())

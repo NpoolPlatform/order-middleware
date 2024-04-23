@@ -19,7 +19,7 @@ type powerRentalStateQueryHandler struct {
 	_ent   powerRentalStates
 }
 
-func (h *powerRentalStateQueryHandler) getGoodPowerRentalStateEnts(ctx context.Context, cli *ent.Client, must bool) error {
+func (h *powerRentalStateQueryHandler) getGoodPowerRentalStateEnts(ctx context.Context, cli *ent.Client) error {
 	orders, err := cli.
 		OrderBase.
 		Query().
@@ -60,6 +60,9 @@ func (h *powerRentalStateQueryHandler) getOrderPowerRentalStateEnt(ctx context.C
 		).
 		Only(ctx)
 	if err != nil {
+		if ent.IsNotFound(err) && !must {
+			return nil
+		}
 		return err
 	}
 	h._ent.entPowerRentalStates = append(h._ent.entPowerRentalStates, _ent)
@@ -75,12 +78,8 @@ func (h *powerRentalStateQueryHandler) _getPowerRentalStates(ctx context.Context
 		if h.OrderID != nil {
 			return h.getOrderPowerRentalStateEnt(ctx, cli, must)
 		}
-		return h.getGoodPowerRentalStateEnts(_ctx, cli, must)
+		return h.getGoodPowerRentalStateEnts(_ctx, cli)
 	})
-}
-
-func (h *powerRentalStateQueryHandler) getPowerRentalStates(ctx context.Context) error {
-	return h._getPowerRentalStates(ctx, false)
 }
 
 func (h *powerRentalStateQueryHandler) requirePowerRentalStates(ctx context.Context) error {

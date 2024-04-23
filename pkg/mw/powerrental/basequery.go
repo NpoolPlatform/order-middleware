@@ -50,6 +50,7 @@ func (h *baseQueryHandler) queryOrderBases(cli *ent.Client) (*ent.OrderBaseSelec
 	return h.selectOrderBase(stm), nil
 }
 
+//nolint:funlen,gocyclo
 func (h *baseQueryHandler) queryJoinMyself(s *sql.Selector) {
 	t := sql.Table(entorderbase.Table)
 	s.Join(t).
@@ -463,7 +464,6 @@ func (h *baseQueryHandler) queryJoinOrderCoupon(s *sql.Selector) {
 			),
 		)
 	}
-
 }
 
 func (h *baseQueryHandler) queryJoin() {
@@ -473,7 +473,9 @@ func (h *baseQueryHandler) queryJoin() {
 		if err := h.queryJoinOrderStateBase(s); err != nil {
 			logger.Sugar().Errorw("queryJoinOrderStateBase", "Error", err)
 		}
-		h.queryJoinPowerRentalState(s)
+		if err := h.queryJoinPowerRentalState(s); err != nil {
+			logger.Sugar().Errorw("queryJoinPowerRentalState", "Error", err)
+		}
 		h.queryJoinPaymentBase(s)
 		h.queryJoinStockLock(s)
 		h.queryJoinOrderCoupon(s)

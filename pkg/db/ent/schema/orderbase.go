@@ -23,7 +23,6 @@ func (OrderBase) Mixin() []ent.Mixin {
 }
 
 // Fields of the OrderBase.
-//nolint:funlen
 func (OrderBase) Fields() []ent.Field {
 	return []ent.Field{
 		field.
