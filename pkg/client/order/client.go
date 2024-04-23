@@ -2,121 +2,28 @@ package order
 
 import (
 	"context"
-	"fmt"
 	"time"
 
 	grpc2 "github.com/NpoolPlatform/go-service-framework/pkg/grpc"
-
-	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
 	npool "github.com/NpoolPlatform/message/npool/order/mw/v1/order"
-
 	servicename "github.com/NpoolPlatform/order-middleware/pkg/servicename"
+	"google.golang.org/grpc"
 )
 
-var timeout = 10 * time.Second
-
-type handler func(context.Context, npool.MiddlewareClient) (cruder.Any, error)
-
-func do(ctx context.Context, handler handler) (cruder.Any, error) {
-	_ctx, cancel := context.WithTimeout(ctx, timeout)
-	defer cancel()
-
-	conn, err := grpc2.GetGRPCConn(servicename.ServiceDomain, grpc2.GRPCTAG)
-	if err != nil {
-		return nil, err
-	}
-
-	defer conn.Close()
-
-	cli := npool.NewMiddlewareClient(conn)
-
-	return handler(_ctx, cli)
+func withClient(ctx context.Context, handler func(context.Context, npool.MiddlewareClient) (interface{}, error)) (interface{}, error) {
+	return grpc2.WithGRPCConn(
+		ctx,
+		servicename.ServiceDomain,
+		10*time.Second, //nolint
+		func(_ctx context.Context, conn *grpc.ClientConn) (interface{}, error) {
+			return handler(_ctx, npool.NewMiddlewareClient(conn))
+		},
+		grpc2.GRPCTAG,
+	)
 }
 
-func CreateOrder(ctx context.Context, in *npool.OrderReq) (*npool.Order, error) {
-	info, err := do(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
-		resp, err := cli.CreateOrder(ctx, &npool.CreateOrderRequest{
-			Info: in,
-		})
-		if err != nil {
-			return nil, err
-		}
-		return resp.Info, nil
-	})
-	if err != nil {
-		return nil, err
-	}
-	return info.(*npool.Order), nil
-}
-
-func CreateOrders(ctx context.Context, in []*npool.OrderReq) ([]*npool.Order, error) {
-	infos, err := do(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
-		resp, err := cli.CreateOrders(ctx, &npool.CreateOrdersRequest{
-			Infos: in,
-		})
-		if err != nil {
-			return nil, err
-		}
-		return resp.Infos, nil
-	})
-	if err != nil {
-		return nil, err
-	}
-	return infos.([]*npool.Order), nil
-}
-
-func UpdateOrder(ctx context.Context, in *npool.OrderReq) (*npool.Order, error) {
-	info, err := do(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
-		resp, err := cli.UpdateOrder(ctx, &npool.UpdateOrderRequest{
-			Info: in,
-		})
-		if err != nil {
-			return nil, err
-		}
-		return resp.Info, nil
-	})
-	if err != nil {
-		return nil, err
-	}
-	return info.(*npool.Order), nil
-}
-
-func UpdateOrders(ctx context.Context, in []*npool.OrderReq) ([]*npool.Order, error) {
-	infos, err := do(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
-		resp, err := cli.UpdateOrders(ctx, &npool.UpdateOrdersRequest{
-			Infos: in,
-		})
-		if err != nil {
-			return nil, err
-		}
-		return resp.Infos, nil
-	})
-	if err != nil {
-		return nil, err
-	}
-	return infos.([]*npool.Order), nil
-}
-
-func GetOrder(ctx context.Context, id string) (*npool.Order, error) {
-	info, err := do(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
-		resp, err := cli.GetOrder(ctx, &npool.GetOrderRequest{
-			EntID: id,
-		})
-		if err != nil {
-			return nil, err
-		}
-		return resp.Info, nil
-	})
-	if err != nil {
-		return nil, err
-	}
-	return info.(*npool.Order), nil
-}
-
-func GetOrders(ctx context.Context, conds *npool.Conds, offset, limit int32) ([]*npool.Order, uint32, error) {
-	total := uint32(0)
-
-	infos, err := do(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
+func GetOrders(ctx context.Context, conds *npool.Conds, offset, limit int32) (infos []*npool.Order, total uint32, err error) {
+	_infos, err := withClient(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (interface{}, error) {
 		resp, err := cli.GetOrders(ctx, &npool.GetOrdersRequest{
 			Conds:  conds,
 			Offset: offset,
@@ -125,103 +32,23 @@ func GetOrders(ctx context.Context, conds *npool.Conds, offset, limit int32) ([]
 		if err != nil {
 			return nil, err
 		}
-
 		total = resp.Total
-
 		return resp.Infos, nil
 	})
 	if err != nil {
 		return nil, 0, err
 	}
-	return infos.([]*npool.Order), total, nil
-}
-
-func GetOrderOnly(ctx context.Context, conds *npool.Conds) (*npool.Order, error) {
-	const limit = 2
-	infos, err := do(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
-		resp, err := cli.GetOrders(ctx, &npool.GetOrdersRequest{
-			Conds:  conds,
-			Offset: 0,
-			Limit:  limit,
-		})
-		if err != nil {
-			return nil, err
-		}
-		return resp.Infos, nil
-	})
-	if err != nil {
-		return nil, err
-	}
-	if err != nil {
-		return nil, err
-	}
-	if len(infos.([]*npool.Order)) == 0 {
-		return nil, nil
-	}
-	if len(infos.([]*npool.Order)) > 1 {
-		return nil, fmt.Errorf("too many records")
-	}
-	return infos.([]*npool.Order)[0], nil
-}
-
-func SumOrderUnits(ctx context.Context, conds *npool.Conds) (string, error) {
-	info, err := do(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
-		resp, err := cli.SumOrderUnits(ctx, &npool.SumOrderUnitsRequest{
-			Conds: conds,
-		})
-		if err != nil {
-			return nil, err
-		}
-		return resp.Info, nil
-	})
-	if err != nil {
-		return "", err
-	}
-	return info.(string), nil
-}
-
-func SumOrderPaymentAmounts(ctx context.Context, conds *npool.Conds) (string, error) {
-	info, err := do(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
-		resp, err := cli.SumOrderPaymentAmounts(ctx, &npool.SumOrderPaymentAmountsRequest{
-			Conds: conds,
-		})
-		if err != nil {
-			return nil, err
-		}
-		return resp.Info, nil
-	})
-	if err != nil {
-		return "0", err
-	}
-	return info.(string), nil
-}
-
-func ExistOrder(ctx context.Context, id string) (bool, error) {
-	exist, err := do(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
-		resp, err := cli.ExistOrder(ctx, &npool.ExistOrderRequest{
-			EntID: id,
-		})
-		if err != nil {
-			return false, err
-		}
-
-		return resp.Info, nil
-	})
-	if err != nil {
-		return false, err
-	}
-	return exist.(bool), err
+	return _infos.([]*npool.Order), total, nil
 }
 
 func ExistOrderConds(ctx context.Context, conds *npool.Conds) (bool, error) {
-	exist, err := do(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
+	exist, err := withClient(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (interface{}, error) {
 		resp, err := cli.ExistOrderConds(ctx, &npool.ExistOrderCondsRequest{
 			Conds: conds,
 		})
 		if err != nil {
 			return false, err
 		}
-
 		return resp.Info, nil
 	})
 	if err != nil {
@@ -230,47 +57,14 @@ func ExistOrderConds(ctx context.Context, conds *npool.Conds) (bool, error) {
 	return exist.(bool), err
 }
 
-func DeleteOrder(ctx context.Context, in *npool.OrderReq) (*npool.Order, error) {
-	info, err := do(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
-		resp, err := cli.DeleteOrder(ctx, &npool.DeleteOrderRequest{
-			Info: in,
-		})
-		if err != nil {
-			return nil, err
-		}
-		return resp.Info, nil
-	})
-	if err != nil {
-		return nil, err
-	}
-	return info.(*npool.Order), nil
-}
-
-func DeleteOrders(ctx context.Context, in []*npool.OrderReq) ([]*npool.Order, error) {
-	infos, err := do(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
-		resp, err := cli.DeleteOrders(ctx, &npool.DeleteOrdersRequest{
-			Infos: in,
-		})
-		if err != nil {
-			return nil, err
-		}
-		return resp.Infos, nil
-	})
-	if err != nil {
-		return nil, err
-	}
-	return infos.([]*npool.Order), nil
-}
-
 func CountOrders(ctx context.Context, conds *npool.Conds) (uint32, error) {
-	count, err := do(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
+	count, err := withClient(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (interface{}, error) {
 		resp, err := cli.CountOrders(ctx, &npool.CountOrdersRequest{
 			Conds: conds,
 		})
 		if err != nil {
 			return false, err
 		}
-
 		return resp.Info, nil
 	})
 	if err != nil {
