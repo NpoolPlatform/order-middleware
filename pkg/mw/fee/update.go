@@ -21,6 +21,7 @@ import (
 	orderstm1 "github.com/NpoolPlatform/order-middleware/pkg/mw/stm"
 
 	"github.com/google/uuid"
+	"github.com/shopspring/decimal"
 )
 
 type updateHandler struct {
@@ -345,6 +346,9 @@ func (h *Handler) UpdateFeeOrderWithTx(ctx context.Context, tx *ent.Tx) error {
 	if err := handler.requireFeeOrder(ctx); err != nil {
 		return err
 	}
+	handler.paymentChecker.PaymentAmountUSD = func() *decimal.Decimal { d := handler._ent.PaymentAmountUSD(); return &d }()
+	handler.paymentChecker.DiscountAmountUSD = func() *decimal.Decimal { d := handler._ent.DiscountAmountUSD(); return &d }()
+
 	if err := handler.validateUpdate(ctx); err != nil {
 		return err
 	}

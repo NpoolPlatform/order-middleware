@@ -5,6 +5,7 @@ import (
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent"
 
 	"github.com/google/uuid"
+	"github.com/shopspring/decimal"
 )
 
 type FeeOrder interface {
@@ -77,4 +78,12 @@ func (f feeOrder) UserSetCanceled() bool {
 
 func (f feeOrder) AdminSetCanceled() bool {
 	return f.entFeeOrderState.AdminSetCanceled
+}
+
+func (f *feeOrder) PaymentAmountUSD() decimal.Decimal {
+	return f.entFeeOrder.PaymentAmountUsd
+}
+
+func (f *feeOrder) DiscountAmountUSD() decimal.Decimal {
+	return f.entFeeOrder.DiscountAmountUsd
 }

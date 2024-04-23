@@ -69,7 +69,7 @@ func (h *PaymentCheckHandler) ValidatePayment() error {
 	case types.PaymentType_PayWithTransferOnly:
 		fallthrough // nolint
 	case types.PaymentType_PayWithTransferAndBalance:
-		if h.PaymentAmountUSD.Equal(decimal.NewFromInt(0)) {
+		if h.PaymentAmountUSD == nil || h.PaymentAmountUSD.Equal(decimal.NewFromInt(0)) {
 			return fmt.Errorf("invalid paymentamount")
 		}
 	default:
