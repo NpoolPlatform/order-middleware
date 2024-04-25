@@ -29,6 +29,8 @@ type AppConfig struct {
 	AppID uuid.UUID `json:"app_id,omitempty"`
 	// EnableSimulateOrder holds the value of the "enable_simulate_order" field.
 	EnableSimulateOrder bool `json:"enable_simulate_order,omitempty"`
+	// SimulateOrderUnits holds the value of the "simulate_order_units" field.
+	SimulateOrderUnits decimal.Decimal `json:"simulate_order_units,omitempty"`
 	// SimulateOrderCouponMode holds the value of the "simulate_order_coupon_mode" field.
 	SimulateOrderCouponMode string `json:"simulate_order_coupon_mode,omitempty"`
 	// SimulateOrderCouponProbability holds the value of the "simulate_order_coupon_probability" field.
@@ -44,7 +46,7 @@ func (*AppConfig) scanValues(columns []string) ([]interface{}, error) {
 	values := make([]interface{}, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case appconfig.FieldSimulateOrderCouponProbability, appconfig.FieldSimulateOrderCashableProfitProbability:
+		case appconfig.FieldSimulateOrderUnits, appconfig.FieldSimulateOrderCouponProbability, appconfig.FieldSimulateOrderCashableProfitProbability:
 			values[i] = new(decimal.Decimal)
 		case appconfig.FieldEnableSimulateOrder:
 			values[i] = new(sql.NullBool)
@@ -110,6 +112,12 @@ func (ac *AppConfig) assignValues(columns []string, values []interface{}) error 
 				return fmt.Errorf("unexpected type %T for field enable_simulate_order", values[i])
 			} else if value.Valid {
 				ac.EnableSimulateOrder = value.Bool
+			}
+		case appconfig.FieldSimulateOrderUnits:
+			if value, ok := values[i].(*decimal.Decimal); !ok {
+				return fmt.Errorf("unexpected type %T for field simulate_order_units", values[i])
+			} else if value != nil {
+				ac.SimulateOrderUnits = *value
 			}
 		case appconfig.FieldSimulateOrderCouponMode:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -180,6 +188,9 @@ func (ac *AppConfig) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("enable_simulate_order=")
 	builder.WriteString(fmt.Sprintf("%v", ac.EnableSimulateOrder))
+	builder.WriteString(", ")
+	builder.WriteString("simulate_order_units=")
+	builder.WriteString(fmt.Sprintf("%v", ac.SimulateOrderUnits))
 	builder.WriteString(", ")
 	builder.WriteString("simulate_order_coupon_mode=")
 	builder.WriteString(ac.SimulateOrderCouponMode)

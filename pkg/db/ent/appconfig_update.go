@@ -139,6 +139,26 @@ func (acu *AppConfigUpdate) ClearEnableSimulateOrder() *AppConfigUpdate {
 	return acu
 }
 
+// SetSimulateOrderUnits sets the "simulate_order_units" field.
+func (acu *AppConfigUpdate) SetSimulateOrderUnits(d decimal.Decimal) *AppConfigUpdate {
+	acu.mutation.SetSimulateOrderUnits(d)
+	return acu
+}
+
+// SetNillableSimulateOrderUnits sets the "simulate_order_units" field if the given value is not nil.
+func (acu *AppConfigUpdate) SetNillableSimulateOrderUnits(d *decimal.Decimal) *AppConfigUpdate {
+	if d != nil {
+		acu.SetSimulateOrderUnits(*d)
+	}
+	return acu
+}
+
+// ClearSimulateOrderUnits clears the value of the "simulate_order_units" field.
+func (acu *AppConfigUpdate) ClearSimulateOrderUnits() *AppConfigUpdate {
+	acu.mutation.ClearSimulateOrderUnits()
+	return acu
+}
+
 // SetSimulateOrderCouponMode sets the "simulate_order_coupon_mode" field.
 func (acu *AppConfigUpdate) SetSimulateOrderCouponMode(s string) *AppConfigUpdate {
 	acu.mutation.SetSimulateOrderCouponMode(s)
@@ -399,6 +419,19 @@ func (acu *AppConfigUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: appconfig.FieldEnableSimulateOrder,
 		})
 	}
+	if value, ok := acu.mutation.SimulateOrderUnits(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeOther,
+			Value:  value,
+			Column: appconfig.FieldSimulateOrderUnits,
+		})
+	}
+	if acu.mutation.SimulateOrderUnitsCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeOther,
+			Column: appconfig.FieldSimulateOrderUnits,
+		})
+	}
 	if value, ok := acu.mutation.SimulateOrderCouponMode(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
@@ -585,6 +618,26 @@ func (acuo *AppConfigUpdateOne) SetNillableEnableSimulateOrder(b *bool) *AppConf
 // ClearEnableSimulateOrder clears the value of the "enable_simulate_order" field.
 func (acuo *AppConfigUpdateOne) ClearEnableSimulateOrder() *AppConfigUpdateOne {
 	acuo.mutation.ClearEnableSimulateOrder()
+	return acuo
+}
+
+// SetSimulateOrderUnits sets the "simulate_order_units" field.
+func (acuo *AppConfigUpdateOne) SetSimulateOrderUnits(d decimal.Decimal) *AppConfigUpdateOne {
+	acuo.mutation.SetSimulateOrderUnits(d)
+	return acuo
+}
+
+// SetNillableSimulateOrderUnits sets the "simulate_order_units" field if the given value is not nil.
+func (acuo *AppConfigUpdateOne) SetNillableSimulateOrderUnits(d *decimal.Decimal) *AppConfigUpdateOne {
+	if d != nil {
+		acuo.SetSimulateOrderUnits(*d)
+	}
+	return acuo
+}
+
+// ClearSimulateOrderUnits clears the value of the "simulate_order_units" field.
+func (acuo *AppConfigUpdateOne) ClearSimulateOrderUnits() *AppConfigUpdateOne {
+	acuo.mutation.ClearSimulateOrderUnits()
 	return acuo
 }
 
@@ -876,6 +929,19 @@ func (acuo *AppConfigUpdateOne) sqlSave(ctx context.Context) (_node *AppConfig, 
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeBool,
 			Column: appconfig.FieldEnableSimulateOrder,
+		})
+	}
+	if value, ok := acuo.mutation.SimulateOrderUnits(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeOther,
+			Value:  value,
+			Column: appconfig.FieldSimulateOrderUnits,
+		})
+	}
+	if acuo.mutation.SimulateOrderUnitsCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeOther,
+			Column: appconfig.FieldSimulateOrderUnits,
 		})
 	}
 	if value, ok := acuo.mutation.SimulateOrderCouponMode(); ok {

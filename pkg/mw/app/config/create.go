@@ -30,10 +30,15 @@ func (h *createHandler) constructSQL() {
 	_sql += comma + "app_id"
 	comma = ", "
 	_sql += comma + "enable_simulate_order"
-	_sql += comma + "simulate_order_coupon_mode"
+	_sql += comma + "simulate_order_units"
+	if h.SimulateOrderCouponMode != nil {
+		_sql += comma + "simulate_order_coupon_mode"
+	}
 	_sql += comma + "simulate_order_coupon_probability"
 	_sql += comma + "simulate_order_cashable_profit_probability"
-	_sql += comma + "max_unpaid_orders"
+	if h.MaxUnpaidOrders != nil {
+		_sql += comma + "max_unpaid_orders"
+	}
 	_sql += comma + "created_at"
 	_sql += comma + "updated_at"
 	_sql += comma + "deleted_at"
@@ -47,10 +52,27 @@ func (h *createHandler) constructSQL() {
 	_sql += fmt.Sprintf("%v'%v' as app_id", comma, *h.AppID)
 	comma = ", "
 	_sql += fmt.Sprintf("%v%v as enable_simulate_order", comma, *h.EnableSimulateOrder)
-	_sql += fmt.Sprintf("%v'%v' as simulate_order_coupon_mode", comma, h.SimulateOrderCouponMode.String())
-	_sql += fmt.Sprintf("%v'%v' as simulate_order_coupon_probability", comma, *h.SimulateOrderCouponProbability)
-	_sql += fmt.Sprintf("%v'%v' as simulate_order_cashable_profit_probability", comma, *h.SimulateOrderCashableProfitProbability)
-	_sql += fmt.Sprintf("%v%v as max_unpaid_orders", comma, *h.MaxUnpaidOrders)
+	if h.SimulateOrderUnits != nil {
+		_sql += fmt.Sprintf("%v'%v' as simulate_order_units", comma, *h.SimulateOrderUnits)
+	} else {
+		_sql += fmt.Sprintf("%v'0' as simulate_order_units", comma)
+	}
+	if h.SimulateOrderCouponMode != nil {
+		_sql += fmt.Sprintf("%v'%v' as simulate_order_coupon_mode", comma, h.SimulateOrderCouponMode.String())
+	}
+	if h.SimulateOrderCouponProbability != nil {
+		_sql += fmt.Sprintf("%v'%v' as simulate_order_coupon_probability", comma, *h.SimulateOrderCouponProbability)
+	} else {
+		_sql += fmt.Sprintf("%v'0' as simulate_order_coupon_probability", comma)
+	}
+	if h.SimulateOrderCashableProfitProbability != nil {
+		_sql += fmt.Sprintf("%v'%v' as simulate_order_cashable_profit_probability", comma, *h.SimulateOrderCashableProfitProbability)
+	} else {
+		_sql += fmt.Sprintf("%v'0' as simulate_order_cashable_profit_probability", comma)
+	}
+	if h.MaxUnpaidOrders != nil {
+		_sql += fmt.Sprintf("%v%v as max_unpaid_orders", comma, *h.MaxUnpaidOrders)
+	}
 	_sql += fmt.Sprintf("%v%v as created_at", comma, now)
 	_sql += fmt.Sprintf("%v%v as updated_at", comma, now)
 	_sql += fmt.Sprintf("%v0 as deleted_at", comma)

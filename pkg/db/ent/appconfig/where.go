@@ -122,6 +122,13 @@ func EnableSimulateOrder(v bool) predicate.AppConfig {
 	})
 }
 
+// SimulateOrderUnits applies equality check predicate on the "simulate_order_units" field. It's identical to SimulateOrderUnitsEQ.
+func SimulateOrderUnits(v decimal.Decimal) predicate.AppConfig {
+	return predicate.AppConfig(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldSimulateOrderUnits), v))
+	})
+}
+
 // SimulateOrderCouponMode applies equality check predicate on the "simulate_order_coupon_mode" field. It's identical to SimulateOrderCouponModeEQ.
 func SimulateOrderCouponMode(v string) predicate.AppConfig {
 	return predicate.AppConfig(func(s *sql.Selector) {
@@ -509,6 +516,84 @@ func EnableSimulateOrderIsNil() predicate.AppConfig {
 func EnableSimulateOrderNotNil() predicate.AppConfig {
 	return predicate.AppConfig(func(s *sql.Selector) {
 		s.Where(sql.NotNull(s.C(FieldEnableSimulateOrder)))
+	})
+}
+
+// SimulateOrderUnitsEQ applies the EQ predicate on the "simulate_order_units" field.
+func SimulateOrderUnitsEQ(v decimal.Decimal) predicate.AppConfig {
+	return predicate.AppConfig(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldSimulateOrderUnits), v))
+	})
+}
+
+// SimulateOrderUnitsNEQ applies the NEQ predicate on the "simulate_order_units" field.
+func SimulateOrderUnitsNEQ(v decimal.Decimal) predicate.AppConfig {
+	return predicate.AppConfig(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldSimulateOrderUnits), v))
+	})
+}
+
+// SimulateOrderUnitsIn applies the In predicate on the "simulate_order_units" field.
+func SimulateOrderUnitsIn(vs ...decimal.Decimal) predicate.AppConfig {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.AppConfig(func(s *sql.Selector) {
+		s.Where(sql.In(s.C(FieldSimulateOrderUnits), v...))
+	})
+}
+
+// SimulateOrderUnitsNotIn applies the NotIn predicate on the "simulate_order_units" field.
+func SimulateOrderUnitsNotIn(vs ...decimal.Decimal) predicate.AppConfig {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.AppConfig(func(s *sql.Selector) {
+		s.Where(sql.NotIn(s.C(FieldSimulateOrderUnits), v...))
+	})
+}
+
+// SimulateOrderUnitsGT applies the GT predicate on the "simulate_order_units" field.
+func SimulateOrderUnitsGT(v decimal.Decimal) predicate.AppConfig {
+	return predicate.AppConfig(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldSimulateOrderUnits), v))
+	})
+}
+
+// SimulateOrderUnitsGTE applies the GTE predicate on the "simulate_order_units" field.
+func SimulateOrderUnitsGTE(v decimal.Decimal) predicate.AppConfig {
+	return predicate.AppConfig(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldSimulateOrderUnits), v))
+	})
+}
+
+// SimulateOrderUnitsLT applies the LT predicate on the "simulate_order_units" field.
+func SimulateOrderUnitsLT(v decimal.Decimal) predicate.AppConfig {
+	return predicate.AppConfig(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldSimulateOrderUnits), v))
+	})
+}
+
+// SimulateOrderUnitsLTE applies the LTE predicate on the "simulate_order_units" field.
+func SimulateOrderUnitsLTE(v decimal.Decimal) predicate.AppConfig {
+	return predicate.AppConfig(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldSimulateOrderUnits), v))
+	})
+}
+
+// SimulateOrderUnitsIsNil applies the IsNil predicate on the "simulate_order_units" field.
+func SimulateOrderUnitsIsNil() predicate.AppConfig {
+	return predicate.AppConfig(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldSimulateOrderUnits)))
+	})
+}
+
+// SimulateOrderUnitsNotNil applies the NotNil predicate on the "simulate_order_units" field.
+func SimulateOrderUnitsNotNil() predicate.AppConfig {
+	return predicate.AppConfig(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldSimulateOrderUnits)))
 	})
 }
 

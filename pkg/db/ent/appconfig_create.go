@@ -107,6 +107,20 @@ func (acc *AppConfigCreate) SetNillableEnableSimulateOrder(b *bool) *AppConfigCr
 	return acc
 }
 
+// SetSimulateOrderUnits sets the "simulate_order_units" field.
+func (acc *AppConfigCreate) SetSimulateOrderUnits(d decimal.Decimal) *AppConfigCreate {
+	acc.mutation.SetSimulateOrderUnits(d)
+	return acc
+}
+
+// SetNillableSimulateOrderUnits sets the "simulate_order_units" field if the given value is not nil.
+func (acc *AppConfigCreate) SetNillableSimulateOrderUnits(d *decimal.Decimal) *AppConfigCreate {
+	if d != nil {
+		acc.SetSimulateOrderUnits(*d)
+	}
+	return acc
+}
+
 // SetSimulateOrderCouponMode sets the "simulate_order_coupon_mode" field.
 func (acc *AppConfigCreate) SetSimulateOrderCouponMode(s string) *AppConfigCreate {
 	acc.mutation.SetSimulateOrderCouponMode(s)
@@ -287,6 +301,10 @@ func (acc *AppConfigCreate) defaults() error {
 		v := appconfig.DefaultEnableSimulateOrder
 		acc.mutation.SetEnableSimulateOrder(v)
 	}
+	if _, ok := acc.mutation.SimulateOrderUnits(); !ok {
+		v := appconfig.DefaultSimulateOrderUnits
+		acc.mutation.SetSimulateOrderUnits(v)
+	}
 	if _, ok := acc.mutation.SimulateOrderCouponMode(); !ok {
 		v := appconfig.DefaultSimulateOrderCouponMode
 		acc.mutation.SetSimulateOrderCouponMode(v)
@@ -401,6 +419,14 @@ func (acc *AppConfigCreate) createSpec() (*AppConfig, *sqlgraph.CreateSpec) {
 			Column: appconfig.FieldEnableSimulateOrder,
 		})
 		_node.EnableSimulateOrder = value
+	}
+	if value, ok := acc.mutation.SimulateOrderUnits(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeOther,
+			Value:  value,
+			Column: appconfig.FieldSimulateOrderUnits,
+		})
+		_node.SimulateOrderUnits = value
 	}
 	if value, ok := acc.mutation.SimulateOrderCouponMode(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -587,6 +613,24 @@ func (u *AppConfigUpsert) UpdateEnableSimulateOrder() *AppConfigUpsert {
 // ClearEnableSimulateOrder clears the value of the "enable_simulate_order" field.
 func (u *AppConfigUpsert) ClearEnableSimulateOrder() *AppConfigUpsert {
 	u.SetNull(appconfig.FieldEnableSimulateOrder)
+	return u
+}
+
+// SetSimulateOrderUnits sets the "simulate_order_units" field.
+func (u *AppConfigUpsert) SetSimulateOrderUnits(v decimal.Decimal) *AppConfigUpsert {
+	u.Set(appconfig.FieldSimulateOrderUnits, v)
+	return u
+}
+
+// UpdateSimulateOrderUnits sets the "simulate_order_units" field to the value that was provided on create.
+func (u *AppConfigUpsert) UpdateSimulateOrderUnits() *AppConfigUpsert {
+	u.SetExcluded(appconfig.FieldSimulateOrderUnits)
+	return u
+}
+
+// ClearSimulateOrderUnits clears the value of the "simulate_order_units" field.
+func (u *AppConfigUpsert) ClearSimulateOrderUnits() *AppConfigUpsert {
+	u.SetNull(appconfig.FieldSimulateOrderUnits)
 	return u
 }
 
@@ -834,6 +878,27 @@ func (u *AppConfigUpsertOne) UpdateEnableSimulateOrder() *AppConfigUpsertOne {
 func (u *AppConfigUpsertOne) ClearEnableSimulateOrder() *AppConfigUpsertOne {
 	return u.Update(func(s *AppConfigUpsert) {
 		s.ClearEnableSimulateOrder()
+	})
+}
+
+// SetSimulateOrderUnits sets the "simulate_order_units" field.
+func (u *AppConfigUpsertOne) SetSimulateOrderUnits(v decimal.Decimal) *AppConfigUpsertOne {
+	return u.Update(func(s *AppConfigUpsert) {
+		s.SetSimulateOrderUnits(v)
+	})
+}
+
+// UpdateSimulateOrderUnits sets the "simulate_order_units" field to the value that was provided on create.
+func (u *AppConfigUpsertOne) UpdateSimulateOrderUnits() *AppConfigUpsertOne {
+	return u.Update(func(s *AppConfigUpsert) {
+		s.UpdateSimulateOrderUnits()
+	})
+}
+
+// ClearSimulateOrderUnits clears the value of the "simulate_order_units" field.
+func (u *AppConfigUpsertOne) ClearSimulateOrderUnits() *AppConfigUpsertOne {
+	return u.Update(func(s *AppConfigUpsert) {
+		s.ClearSimulateOrderUnits()
 	})
 }
 
@@ -1259,6 +1324,27 @@ func (u *AppConfigUpsertBulk) UpdateEnableSimulateOrder() *AppConfigUpsertBulk {
 func (u *AppConfigUpsertBulk) ClearEnableSimulateOrder() *AppConfigUpsertBulk {
 	return u.Update(func(s *AppConfigUpsert) {
 		s.ClearEnableSimulateOrder()
+	})
+}
+
+// SetSimulateOrderUnits sets the "simulate_order_units" field.
+func (u *AppConfigUpsertBulk) SetSimulateOrderUnits(v decimal.Decimal) *AppConfigUpsertBulk {
+	return u.Update(func(s *AppConfigUpsert) {
+		s.SetSimulateOrderUnits(v)
+	})
+}
+
+// UpdateSimulateOrderUnits sets the "simulate_order_units" field to the value that was provided on create.
+func (u *AppConfigUpsertBulk) UpdateSimulateOrderUnits() *AppConfigUpsertBulk {
+	return u.Update(func(s *AppConfigUpsert) {
+		s.UpdateSimulateOrderUnits()
+	})
+}
+
+// ClearSimulateOrderUnits clears the value of the "simulate_order_units" field.
+func (u *AppConfigUpsertBulk) ClearSimulateOrderUnits() *AppConfigUpsertBulk {
+	return u.Update(func(s *AppConfigUpsert) {
+		s.ClearSimulateOrderUnits()
 	})
 }
 

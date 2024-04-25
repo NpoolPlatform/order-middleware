@@ -25,6 +25,8 @@ const (
 	FieldAppID = "app_id"
 	// FieldEnableSimulateOrder holds the string denoting the enable_simulate_order field in the database.
 	FieldEnableSimulateOrder = "enable_simulate_order"
+	// FieldSimulateOrderUnits holds the string denoting the simulate_order_units field in the database.
+	FieldSimulateOrderUnits = "simulate_order_units"
 	// FieldSimulateOrderCouponMode holds the string denoting the simulate_order_coupon_mode field in the database.
 	FieldSimulateOrderCouponMode = "simulate_order_coupon_mode"
 	// FieldSimulateOrderCouponProbability holds the string denoting the simulate_order_coupon_probability field in the database.
@@ -46,6 +48,7 @@ var Columns = []string{
 	FieldEntID,
 	FieldAppID,
 	FieldEnableSimulateOrder,
+	FieldSimulateOrderUnits,
 	FieldSimulateOrderCouponMode,
 	FieldSimulateOrderCouponProbability,
 	FieldSimulateOrderCashableProfitProbability,
@@ -85,6 +88,8 @@ var (
 	DefaultAppID func() uuid.UUID
 	// DefaultEnableSimulateOrder holds the default value on creation for the "enable_simulate_order" field.
 	DefaultEnableSimulateOrder bool
+	// DefaultSimulateOrderUnits holds the default value on creation for the "simulate_order_units" field.
+	DefaultSimulateOrderUnits decimal.Decimal
 	// DefaultSimulateOrderCouponMode holds the default value on creation for the "simulate_order_coupon_mode" field.
 	DefaultSimulateOrderCouponMode string
 	// DefaultSimulateOrderCouponProbability holds the default value on creation for the "simulate_order_coupon_probability" field.
