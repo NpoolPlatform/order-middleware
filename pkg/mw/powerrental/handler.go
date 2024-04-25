@@ -930,30 +930,6 @@ func (h *Handler) withOrderBaseConds(conds *npool.Conds) error {
 			Val: ids,
 		}
 	}
-	if conds.ParentOrderID != nil {
-		id, err := uuid.Parse(conds.GetParentOrderID().GetValue())
-		if err != nil {
-			return err
-		}
-		h.OrderBaseConds.ParentOrderID = &cruder.Cond{
-			Op:  conds.GetParentOrderID().GetOp(),
-			Val: id,
-		}
-	}
-	if conds.ParentOrderIDs != nil {
-		ids := []uuid.UUID{}
-		for _, id := range conds.GetParentOrderIDs().GetValue() {
-			_id, err := uuid.Parse(id)
-			if err != nil {
-				return err
-			}
-			ids = append(ids, _id)
-		}
-		h.OrderBaseConds.ParentOrderIDs = &cruder.Cond{
-			Op:  conds.GetParentOrderIDs().GetOp(),
-			Val: ids,
-		}
-	}
 	if conds.OrderType != nil {
 		h.OrderBaseConds.OrderType = &cruder.Cond{
 			Op:  conds.GetOrderType().GetOp(),
