@@ -109,6 +109,22 @@ func WithSimulateOrderUnits(s *string, must bool) func(context.Context, *Handler
 	}
 }
 
+func WithSimulateOrderDurationSeconds(u *uint32, must bool) func(context.Context, *Handler) error {
+	return func(ctx context.Context, h *Handler) error {
+		if u == nil {
+			if must {
+				return fmt.Errorf("invalid simulateorderdurationseconds")
+			}
+			return nil
+		}
+		if *u <= 0 {
+			return fmt.Errorf("invalid simulateorderdurationseconds")
+		}
+		h.SimulateOrderDurationSeconds = u
+		return nil
+	}
+}
+
 func WithSimulateOrderCouponMode(e *types.SimulateOrderCouponMode, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if e == nil {

@@ -17,6 +17,7 @@ type Req struct {
 	AppID                                  *uuid.UUID
 	EnableSimulateOrder                    *bool
 	SimulateOrderUnits                     *decimal.Decimal
+	SimulateOrderDurationSeconds           *uint32
 	SimulateOrderCouponMode                *types.SimulateOrderCouponMode
 	SimulateOrderCouponProbability         *decimal.Decimal
 	SimulateOrderCashableProfitProbability *decimal.Decimal
@@ -36,6 +37,9 @@ func CreateSet(c *ent.AppConfigCreate, req *Req) *ent.AppConfigCreate {
 	}
 	if req.SimulateOrderUnits != nil {
 		c.SetSimulateOrderUnits(*req.SimulateOrderUnits)
+	}
+	if req.SimulateOrderDurationSeconds != nil {
+		c.SetSimulateOrderDurationSeconds(*req.SimulateOrderDurationSeconds)
 	}
 	if req.SimulateOrderCouponMode != nil {
 		c.SetSimulateOrderCouponMode(req.SimulateOrderCouponMode.String())
@@ -58,6 +62,9 @@ func UpdateSet(u *ent.AppConfigUpdateOne, req *Req) *ent.AppConfigUpdateOne {
 	}
 	if req.SimulateOrderUnits != nil {
 		u.SetSimulateOrderUnits(*req.SimulateOrderUnits)
+	}
+	if req.SimulateOrderDurationSeconds != nil {
+		u.SetSimulateOrderDurationSeconds(*req.SimulateOrderDurationSeconds)
 	}
 	if req.SimulateOrderCouponMode != nil {
 		u.SetSimulateOrderCouponMode(req.SimulateOrderCouponMode.String())

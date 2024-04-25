@@ -27,6 +27,7 @@ func (s *Server) CreateAppConfig(ctx context.Context, in *npool.CreateAppConfigR
 		appconfig1.WithAppID(req.AppID, true),
 		appconfig1.WithEnableSimulateOrder(req.EnableSimulateOrder, false),
 		appconfig1.WithSimulateOrderUnits(req.SimulateOrderUnits, false),
+		appconfig1.WithSimulateOrderDurationSeconds(req.SimulateOrderDurationSeconds, false),
 		appconfig1.WithSimulateOrderCouponMode(req.SimulateOrderCouponMode, false),
 		appconfig1.WithSimulateOrderCouponProbability(req.SimulateOrderCouponProbability, false),
 		appconfig1.WithSimulateOrderCashableProfitProbability(req.SimulateOrderCashableProfitProbability, false),

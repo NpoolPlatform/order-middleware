@@ -82,20 +82,24 @@ func init() {
 	appconfigDescSimulateOrderUnits := appconfigFields[2].Descriptor()
 	// appconfig.DefaultSimulateOrderUnits holds the default value on creation for the simulate_order_units field.
 	appconfig.DefaultSimulateOrderUnits = appconfigDescSimulateOrderUnits.Default.(decimal.Decimal)
+	// appconfigDescSimulateOrderDurationSeconds is the schema descriptor for simulate_order_duration_seconds field.
+	appconfigDescSimulateOrderDurationSeconds := appconfigFields[3].Descriptor()
+	// appconfig.DefaultSimulateOrderDurationSeconds holds the default value on creation for the simulate_order_duration_seconds field.
+	appconfig.DefaultSimulateOrderDurationSeconds = appconfigDescSimulateOrderDurationSeconds.Default.(uint32)
 	// appconfigDescSimulateOrderCouponMode is the schema descriptor for simulate_order_coupon_mode field.
-	appconfigDescSimulateOrderCouponMode := appconfigFields[3].Descriptor()
+	appconfigDescSimulateOrderCouponMode := appconfigFields[4].Descriptor()
 	// appconfig.DefaultSimulateOrderCouponMode holds the default value on creation for the simulate_order_coupon_mode field.
 	appconfig.DefaultSimulateOrderCouponMode = appconfigDescSimulateOrderCouponMode.Default.(string)
 	// appconfigDescSimulateOrderCouponProbability is the schema descriptor for simulate_order_coupon_probability field.
-	appconfigDescSimulateOrderCouponProbability := appconfigFields[4].Descriptor()
+	appconfigDescSimulateOrderCouponProbability := appconfigFields[5].Descriptor()
 	// appconfig.DefaultSimulateOrderCouponProbability holds the default value on creation for the simulate_order_coupon_probability field.
 	appconfig.DefaultSimulateOrderCouponProbability = appconfigDescSimulateOrderCouponProbability.Default.(decimal.Decimal)
 	// appconfigDescSimulateOrderCashableProfitProbability is the schema descriptor for simulate_order_cashable_profit_probability field.
-	appconfigDescSimulateOrderCashableProfitProbability := appconfigFields[5].Descriptor()
+	appconfigDescSimulateOrderCashableProfitProbability := appconfigFields[6].Descriptor()
 	// appconfig.DefaultSimulateOrderCashableProfitProbability holds the default value on creation for the simulate_order_cashable_profit_probability field.
 	appconfig.DefaultSimulateOrderCashableProfitProbability = appconfigDescSimulateOrderCashableProfitProbability.Default.(decimal.Decimal)
 	// appconfigDescMaxUnpaidOrders is the schema descriptor for max_unpaid_orders field.
-	appconfigDescMaxUnpaidOrders := appconfigFields[6].Descriptor()
+	appconfigDescMaxUnpaidOrders := appconfigFields[7].Descriptor()
 	// appconfig.DefaultMaxUnpaidOrders holds the default value on creation for the max_unpaid_orders field.
 	appconfig.DefaultMaxUnpaidOrders = appconfigDescMaxUnpaidOrders.Default.(uint32)
 	compensateMixin := schema.Compensate{}.Mixin()

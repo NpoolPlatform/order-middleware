@@ -16,7 +16,7 @@ type createHandler struct {
 	sql string
 }
 
-//nolint:goconst
+//nolint:goconst,funlen
 func (h *createHandler) constructSQL() {
 	comma := ""
 	now := uint32(time.Now().Unix())
@@ -31,6 +31,9 @@ func (h *createHandler) constructSQL() {
 	comma = ", "
 	_sql += comma + "enable_simulate_order"
 	_sql += comma + "simulate_order_units"
+	if h.SimulateOrderDurationSeconds != nil {
+		_sql += comma + "simulate_order_duration_seconds"
+	}
 	if h.SimulateOrderCouponMode != nil {
 		_sql += comma + "simulate_order_coupon_mode"
 	}
@@ -56,6 +59,9 @@ func (h *createHandler) constructSQL() {
 		_sql += fmt.Sprintf("%v'%v' as simulate_order_units", comma, *h.SimulateOrderUnits)
 	} else {
 		_sql += fmt.Sprintf("%v'0' as simulate_order_units", comma)
+	}
+	if h.SimulateOrderDurationSeconds != nil {
+		_sql += fmt.Sprintf("%v%v as simulate_order_duration_seconds", comma, *h.SimulateOrderDurationSeconds)
 	}
 	if h.SimulateOrderCouponMode != nil {
 		_sql += fmt.Sprintf("%v'%v' as simulate_order_coupon_mode", comma, h.SimulateOrderCouponMode.String())

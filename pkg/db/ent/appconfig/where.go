@@ -129,6 +129,13 @@ func SimulateOrderUnits(v decimal.Decimal) predicate.AppConfig {
 	})
 }
 
+// SimulateOrderDurationSeconds applies equality check predicate on the "simulate_order_duration_seconds" field. It's identical to SimulateOrderDurationSecondsEQ.
+func SimulateOrderDurationSeconds(v uint32) predicate.AppConfig {
+	return predicate.AppConfig(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldSimulateOrderDurationSeconds), v))
+	})
+}
+
 // SimulateOrderCouponMode applies equality check predicate on the "simulate_order_coupon_mode" field. It's identical to SimulateOrderCouponModeEQ.
 func SimulateOrderCouponMode(v string) predicate.AppConfig {
 	return predicate.AppConfig(func(s *sql.Selector) {
@@ -594,6 +601,84 @@ func SimulateOrderUnitsIsNil() predicate.AppConfig {
 func SimulateOrderUnitsNotNil() predicate.AppConfig {
 	return predicate.AppConfig(func(s *sql.Selector) {
 		s.Where(sql.NotNull(s.C(FieldSimulateOrderUnits)))
+	})
+}
+
+// SimulateOrderDurationSecondsEQ applies the EQ predicate on the "simulate_order_duration_seconds" field.
+func SimulateOrderDurationSecondsEQ(v uint32) predicate.AppConfig {
+	return predicate.AppConfig(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldSimulateOrderDurationSeconds), v))
+	})
+}
+
+// SimulateOrderDurationSecondsNEQ applies the NEQ predicate on the "simulate_order_duration_seconds" field.
+func SimulateOrderDurationSecondsNEQ(v uint32) predicate.AppConfig {
+	return predicate.AppConfig(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldSimulateOrderDurationSeconds), v))
+	})
+}
+
+// SimulateOrderDurationSecondsIn applies the In predicate on the "simulate_order_duration_seconds" field.
+func SimulateOrderDurationSecondsIn(vs ...uint32) predicate.AppConfig {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.AppConfig(func(s *sql.Selector) {
+		s.Where(sql.In(s.C(FieldSimulateOrderDurationSeconds), v...))
+	})
+}
+
+// SimulateOrderDurationSecondsNotIn applies the NotIn predicate on the "simulate_order_duration_seconds" field.
+func SimulateOrderDurationSecondsNotIn(vs ...uint32) predicate.AppConfig {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.AppConfig(func(s *sql.Selector) {
+		s.Where(sql.NotIn(s.C(FieldSimulateOrderDurationSeconds), v...))
+	})
+}
+
+// SimulateOrderDurationSecondsGT applies the GT predicate on the "simulate_order_duration_seconds" field.
+func SimulateOrderDurationSecondsGT(v uint32) predicate.AppConfig {
+	return predicate.AppConfig(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldSimulateOrderDurationSeconds), v))
+	})
+}
+
+// SimulateOrderDurationSecondsGTE applies the GTE predicate on the "simulate_order_duration_seconds" field.
+func SimulateOrderDurationSecondsGTE(v uint32) predicate.AppConfig {
+	return predicate.AppConfig(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldSimulateOrderDurationSeconds), v))
+	})
+}
+
+// SimulateOrderDurationSecondsLT applies the LT predicate on the "simulate_order_duration_seconds" field.
+func SimulateOrderDurationSecondsLT(v uint32) predicate.AppConfig {
+	return predicate.AppConfig(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldSimulateOrderDurationSeconds), v))
+	})
+}
+
+// SimulateOrderDurationSecondsLTE applies the LTE predicate on the "simulate_order_duration_seconds" field.
+func SimulateOrderDurationSecondsLTE(v uint32) predicate.AppConfig {
+	return predicate.AppConfig(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldSimulateOrderDurationSeconds), v))
+	})
+}
+
+// SimulateOrderDurationSecondsIsNil applies the IsNil predicate on the "simulate_order_duration_seconds" field.
+func SimulateOrderDurationSecondsIsNil() predicate.AppConfig {
+	return predicate.AppConfig(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldSimulateOrderDurationSeconds)))
+	})
+}
+
+// SimulateOrderDurationSecondsNotNil applies the NotNil predicate on the "simulate_order_duration_seconds" field.
+func SimulateOrderDurationSecondsNotNil() predicate.AppConfig {
+	return predicate.AppConfig(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldSimulateOrderDurationSeconds)))
 	})
 }
 

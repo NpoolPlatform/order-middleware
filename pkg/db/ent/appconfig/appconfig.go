@@ -27,6 +27,8 @@ const (
 	FieldEnableSimulateOrder = "enable_simulate_order"
 	// FieldSimulateOrderUnits holds the string denoting the simulate_order_units field in the database.
 	FieldSimulateOrderUnits = "simulate_order_units"
+	// FieldSimulateOrderDurationSeconds holds the string denoting the simulate_order_duration_seconds field in the database.
+	FieldSimulateOrderDurationSeconds = "simulate_order_duration_seconds"
 	// FieldSimulateOrderCouponMode holds the string denoting the simulate_order_coupon_mode field in the database.
 	FieldSimulateOrderCouponMode = "simulate_order_coupon_mode"
 	// FieldSimulateOrderCouponProbability holds the string denoting the simulate_order_coupon_probability field in the database.
@@ -49,6 +51,7 @@ var Columns = []string{
 	FieldAppID,
 	FieldEnableSimulateOrder,
 	FieldSimulateOrderUnits,
+	FieldSimulateOrderDurationSeconds,
 	FieldSimulateOrderCouponMode,
 	FieldSimulateOrderCouponProbability,
 	FieldSimulateOrderCashableProfitProbability,
@@ -90,6 +93,8 @@ var (
 	DefaultEnableSimulateOrder bool
 	// DefaultSimulateOrderUnits holds the default value on creation for the "simulate_order_units" field.
 	DefaultSimulateOrderUnits decimal.Decimal
+	// DefaultSimulateOrderDurationSeconds holds the default value on creation for the "simulate_order_duration_seconds" field.
+	DefaultSimulateOrderDurationSeconds uint32
 	// DefaultSimulateOrderCouponMode holds the default value on creation for the "simulate_order_coupon_mode" field.
 	DefaultSimulateOrderCouponMode string
 	// DefaultSimulateOrderCouponProbability holds the default value on creation for the "simulate_order_coupon_probability" field.

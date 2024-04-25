@@ -31,6 +31,8 @@ type AppConfig struct {
 	EnableSimulateOrder bool `json:"enable_simulate_order,omitempty"`
 	// SimulateOrderUnits holds the value of the "simulate_order_units" field.
 	SimulateOrderUnits decimal.Decimal `json:"simulate_order_units,omitempty"`
+	// SimulateOrderDurationSeconds holds the value of the "simulate_order_duration_seconds" field.
+	SimulateOrderDurationSeconds uint32 `json:"simulate_order_duration_seconds,omitempty"`
 	// SimulateOrderCouponMode holds the value of the "simulate_order_coupon_mode" field.
 	SimulateOrderCouponMode string `json:"simulate_order_coupon_mode,omitempty"`
 	// SimulateOrderCouponProbability holds the value of the "simulate_order_coupon_probability" field.
@@ -50,7 +52,7 @@ func (*AppConfig) scanValues(columns []string) ([]interface{}, error) {
 			values[i] = new(decimal.Decimal)
 		case appconfig.FieldEnableSimulateOrder:
 			values[i] = new(sql.NullBool)
-		case appconfig.FieldID, appconfig.FieldCreatedAt, appconfig.FieldUpdatedAt, appconfig.FieldDeletedAt, appconfig.FieldMaxUnpaidOrders:
+		case appconfig.FieldID, appconfig.FieldCreatedAt, appconfig.FieldUpdatedAt, appconfig.FieldDeletedAt, appconfig.FieldSimulateOrderDurationSeconds, appconfig.FieldMaxUnpaidOrders:
 			values[i] = new(sql.NullInt64)
 		case appconfig.FieldSimulateOrderCouponMode:
 			values[i] = new(sql.NullString)
@@ -118,6 +120,12 @@ func (ac *AppConfig) assignValues(columns []string, values []interface{}) error 
 				return fmt.Errorf("unexpected type %T for field simulate_order_units", values[i])
 			} else if value != nil {
 				ac.SimulateOrderUnits = *value
+			}
+		case appconfig.FieldSimulateOrderDurationSeconds:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field simulate_order_duration_seconds", values[i])
+			} else if value.Valid {
+				ac.SimulateOrderDurationSeconds = uint32(value.Int64)
 			}
 		case appconfig.FieldSimulateOrderCouponMode:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -191,6 +199,9 @@ func (ac *AppConfig) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("simulate_order_units=")
 	builder.WriteString(fmt.Sprintf("%v", ac.SimulateOrderUnits))
+	builder.WriteString(", ")
+	builder.WriteString("simulate_order_duration_seconds=")
+	builder.WriteString(fmt.Sprintf("%v", ac.SimulateOrderDurationSeconds))
 	builder.WriteString(", ")
 	builder.WriteString("simulate_order_coupon_mode=")
 	builder.WriteString(ac.SimulateOrderCouponMode)

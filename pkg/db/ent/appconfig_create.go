@@ -121,6 +121,20 @@ func (acc *AppConfigCreate) SetNillableSimulateOrderUnits(d *decimal.Decimal) *A
 	return acc
 }
 
+// SetSimulateOrderDurationSeconds sets the "simulate_order_duration_seconds" field.
+func (acc *AppConfigCreate) SetSimulateOrderDurationSeconds(u uint32) *AppConfigCreate {
+	acc.mutation.SetSimulateOrderDurationSeconds(u)
+	return acc
+}
+
+// SetNillableSimulateOrderDurationSeconds sets the "simulate_order_duration_seconds" field if the given value is not nil.
+func (acc *AppConfigCreate) SetNillableSimulateOrderDurationSeconds(u *uint32) *AppConfigCreate {
+	if u != nil {
+		acc.SetSimulateOrderDurationSeconds(*u)
+	}
+	return acc
+}
+
 // SetSimulateOrderCouponMode sets the "simulate_order_coupon_mode" field.
 func (acc *AppConfigCreate) SetSimulateOrderCouponMode(s string) *AppConfigCreate {
 	acc.mutation.SetSimulateOrderCouponMode(s)
@@ -305,6 +319,10 @@ func (acc *AppConfigCreate) defaults() error {
 		v := appconfig.DefaultSimulateOrderUnits
 		acc.mutation.SetSimulateOrderUnits(v)
 	}
+	if _, ok := acc.mutation.SimulateOrderDurationSeconds(); !ok {
+		v := appconfig.DefaultSimulateOrderDurationSeconds
+		acc.mutation.SetSimulateOrderDurationSeconds(v)
+	}
 	if _, ok := acc.mutation.SimulateOrderCouponMode(); !ok {
 		v := appconfig.DefaultSimulateOrderCouponMode
 		acc.mutation.SetSimulateOrderCouponMode(v)
@@ -427,6 +445,14 @@ func (acc *AppConfigCreate) createSpec() (*AppConfig, *sqlgraph.CreateSpec) {
 			Column: appconfig.FieldSimulateOrderUnits,
 		})
 		_node.SimulateOrderUnits = value
+	}
+	if value, ok := acc.mutation.SimulateOrderDurationSeconds(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeUint32,
+			Value:  value,
+			Column: appconfig.FieldSimulateOrderDurationSeconds,
+		})
+		_node.SimulateOrderDurationSeconds = value
 	}
 	if value, ok := acc.mutation.SimulateOrderCouponMode(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -631,6 +657,30 @@ func (u *AppConfigUpsert) UpdateSimulateOrderUnits() *AppConfigUpsert {
 // ClearSimulateOrderUnits clears the value of the "simulate_order_units" field.
 func (u *AppConfigUpsert) ClearSimulateOrderUnits() *AppConfigUpsert {
 	u.SetNull(appconfig.FieldSimulateOrderUnits)
+	return u
+}
+
+// SetSimulateOrderDurationSeconds sets the "simulate_order_duration_seconds" field.
+func (u *AppConfigUpsert) SetSimulateOrderDurationSeconds(v uint32) *AppConfigUpsert {
+	u.Set(appconfig.FieldSimulateOrderDurationSeconds, v)
+	return u
+}
+
+// UpdateSimulateOrderDurationSeconds sets the "simulate_order_duration_seconds" field to the value that was provided on create.
+func (u *AppConfigUpsert) UpdateSimulateOrderDurationSeconds() *AppConfigUpsert {
+	u.SetExcluded(appconfig.FieldSimulateOrderDurationSeconds)
+	return u
+}
+
+// AddSimulateOrderDurationSeconds adds v to the "simulate_order_duration_seconds" field.
+func (u *AppConfigUpsert) AddSimulateOrderDurationSeconds(v uint32) *AppConfigUpsert {
+	u.Add(appconfig.FieldSimulateOrderDurationSeconds, v)
+	return u
+}
+
+// ClearSimulateOrderDurationSeconds clears the value of the "simulate_order_duration_seconds" field.
+func (u *AppConfigUpsert) ClearSimulateOrderDurationSeconds() *AppConfigUpsert {
+	u.SetNull(appconfig.FieldSimulateOrderDurationSeconds)
 	return u
 }
 
@@ -899,6 +949,34 @@ func (u *AppConfigUpsertOne) UpdateSimulateOrderUnits() *AppConfigUpsertOne {
 func (u *AppConfigUpsertOne) ClearSimulateOrderUnits() *AppConfigUpsertOne {
 	return u.Update(func(s *AppConfigUpsert) {
 		s.ClearSimulateOrderUnits()
+	})
+}
+
+// SetSimulateOrderDurationSeconds sets the "simulate_order_duration_seconds" field.
+func (u *AppConfigUpsertOne) SetSimulateOrderDurationSeconds(v uint32) *AppConfigUpsertOne {
+	return u.Update(func(s *AppConfigUpsert) {
+		s.SetSimulateOrderDurationSeconds(v)
+	})
+}
+
+// AddSimulateOrderDurationSeconds adds v to the "simulate_order_duration_seconds" field.
+func (u *AppConfigUpsertOne) AddSimulateOrderDurationSeconds(v uint32) *AppConfigUpsertOne {
+	return u.Update(func(s *AppConfigUpsert) {
+		s.AddSimulateOrderDurationSeconds(v)
+	})
+}
+
+// UpdateSimulateOrderDurationSeconds sets the "simulate_order_duration_seconds" field to the value that was provided on create.
+func (u *AppConfigUpsertOne) UpdateSimulateOrderDurationSeconds() *AppConfigUpsertOne {
+	return u.Update(func(s *AppConfigUpsert) {
+		s.UpdateSimulateOrderDurationSeconds()
+	})
+}
+
+// ClearSimulateOrderDurationSeconds clears the value of the "simulate_order_duration_seconds" field.
+func (u *AppConfigUpsertOne) ClearSimulateOrderDurationSeconds() *AppConfigUpsertOne {
+	return u.Update(func(s *AppConfigUpsert) {
+		s.ClearSimulateOrderDurationSeconds()
 	})
 }
 
@@ -1345,6 +1423,34 @@ func (u *AppConfigUpsertBulk) UpdateSimulateOrderUnits() *AppConfigUpsertBulk {
 func (u *AppConfigUpsertBulk) ClearSimulateOrderUnits() *AppConfigUpsertBulk {
 	return u.Update(func(s *AppConfigUpsert) {
 		s.ClearSimulateOrderUnits()
+	})
+}
+
+// SetSimulateOrderDurationSeconds sets the "simulate_order_duration_seconds" field.
+func (u *AppConfigUpsertBulk) SetSimulateOrderDurationSeconds(v uint32) *AppConfigUpsertBulk {
+	return u.Update(func(s *AppConfigUpsert) {
+		s.SetSimulateOrderDurationSeconds(v)
+	})
+}
+
+// AddSimulateOrderDurationSeconds adds v to the "simulate_order_duration_seconds" field.
+func (u *AppConfigUpsertBulk) AddSimulateOrderDurationSeconds(v uint32) *AppConfigUpsertBulk {
+	return u.Update(func(s *AppConfigUpsert) {
+		s.AddSimulateOrderDurationSeconds(v)
+	})
+}
+
+// UpdateSimulateOrderDurationSeconds sets the "simulate_order_duration_seconds" field to the value that was provided on create.
+func (u *AppConfigUpsertBulk) UpdateSimulateOrderDurationSeconds() *AppConfigUpsertBulk {
+	return u.Update(func(s *AppConfigUpsert) {
+		s.UpdateSimulateOrderDurationSeconds()
+	})
+}
+
+// ClearSimulateOrderDurationSeconds clears the value of the "simulate_order_duration_seconds" field.
+func (u *AppConfigUpsertBulk) ClearSimulateOrderDurationSeconds() *AppConfigUpsertBulk {
+	return u.Update(func(s *AppConfigUpsert) {
+		s.ClearSimulateOrderDurationSeconds()
 	})
 }
 

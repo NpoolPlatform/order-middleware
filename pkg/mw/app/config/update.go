@@ -32,6 +32,10 @@ func (h *updateHandler) constructSQL() error {
 		_sql += fmt.Sprintf("%vsimulate_order_units = %v, ", set, *h.SimulateOrderUnits)
 		set = ""
 	}
+	if h.SimulateOrderDurationSeconds != nil {
+		_sql += fmt.Sprintf("%vsimulate_order_duration_seconds = %v, ", set, *h.SimulateOrderDurationSeconds)
+		set = ""
+	}
 	if h.SimulateOrderCouponMode != nil {
 		_sql += fmt.Sprintf("%vsimulate_order_coupon_mode = '%v', ", set, h.SimulateOrderCouponMode.String())
 		set = ""
