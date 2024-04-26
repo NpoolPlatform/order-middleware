@@ -12,6 +12,29 @@ import (
 	order1 "github.com/NpoolPlatform/order-middleware/pkg/mw/order"
 )
 
+func (s *Server) GetOrder(ctx context.Context, in *npool.GetOrderRequest) (*npool.GetOrderResponse, error) {
+	handler, err := order1.NewHandler(
+		ctx,
+		order1.WithEntID(&in.EntID, true),
+	)
+	if err != nil {
+		logger.Sugar().Errorw(
+			"GetOrder",
+			"In", in,
+			"error", err,
+		)
+		return &npool.GetOrderResponse{}, status.Error(codes.InvalidArgument, err.Error())
+	}
+	info, err := handler.GetOrder(ctx)
+	if err != nil {
+		return &npool.GetOrderResponse{}, status.Error(codes.Internal, err.Error())
+	}
+
+	return &npool.GetOrderResponse{
+		Info: info,
+	}, nil
+}
+
 func (s *Server) GetOrders(ctx context.Context, in *npool.GetOrdersRequest) (*npool.GetOrdersResponse, error) {
 	handler, err := order1.NewHandler(
 		ctx,

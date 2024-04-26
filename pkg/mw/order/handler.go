@@ -2,6 +2,7 @@ package order
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
 	types "github.com/NpoolPlatform/message/npool/basetypes/order/v1"
@@ -14,6 +15,7 @@ import (
 )
 
 type Handler struct {
+	EntID               *uuid.UUID
 	OrderBaseConds      *orderbasecrud.Conds
 	OrderStateBaseConds *orderstatebasecrud.Conds
 	Offset              int32
@@ -31,6 +33,23 @@ func NewHandler(ctx context.Context, options ...func(context.Context, *Handler) 
 		}
 	}
 	return handler, nil
+}
+
+func WithEntID(id *string, must bool) func(context.Context, *Handler) error {
+	return func(ctx context.Context, h *Handler) error {
+		if id == nil {
+			if must {
+				return fmt.Errorf("invalid entid")
+			}
+			return nil
+		}
+		_id, err := uuid.Parse(*id)
+		if err != nil {
+			return err
+		}
+		h.EntID = &_id
+		return nil
+	}
 }
 
 //nolint:gocyclo,funlen

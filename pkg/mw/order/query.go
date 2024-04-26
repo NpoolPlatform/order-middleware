@@ -2,6 +2,7 @@ package order
 
 import (
 	"context"
+	"fmt"
 
 	"entgo.io/ent/dialect/sql"
 
@@ -45,6 +46,34 @@ func (h *queryHandler) formalize() {
 		info.OrderState = types.OrderState(types.OrderState_value[info.OrderStateStr])
 		info.CreateMethod = types.OrderCreateMethod(types.OrderCreateMethod_value[info.CreateMethodStr])
 	}
+}
+
+func (h *Handler) GetOrder(ctx context.Context) (*npool.Order, error) {
+	handler := &queryHandler{
+		baseQueryHandler: &baseQueryHandler{
+			Handler: h,
+		},
+	}
+
+	err := db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
+		handler.queryOrderBase(cli)
+		handler.queryJoin()
+		handler.stmSelect.Offset(int(0)).Limit(int(2))
+		return handler.scan(_ctx)
+	})
+	if err != nil {
+		return nil, err
+	}
+	if len(handler.infos) == 0 {
+		return nil, nil
+	}
+	if len(handler.infos) > 1 {
+		return nil, fmt.Errorf("too many records")
+	}
+
+	handler.formalize()
+
+	return handler.infos[0], nil
 }
 
 func (h *Handler) GetOrders(ctx context.Context) ([]*npool.Order, uint32, error) {

@@ -2,6 +2,7 @@ package order
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	grpc2 "github.com/NpoolPlatform/go-service-framework/pkg/grpc"
@@ -71,4 +72,44 @@ func CountOrders(ctx context.Context, conds *npool.Conds) (uint32, error) {
 		return 0, err
 	}
 	return count.(uint32), err
+}
+
+func GetOrder(ctx context.Context, entID string) (info *npool.Order, err error) {
+	_info, err := withClient(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (interface{}, error) {
+		resp, err := cli.GetOrder(ctx, &npool.GetOrderRequest{
+			EntID: entID,
+		})
+		if err != nil {
+			return nil, err
+		}
+		return resp.Info, nil
+	})
+	if err != nil {
+		return nil, err
+	}
+	return _info.(*npool.Order), nil
+}
+
+func GetOrdersOnly(ctx context.Context, conds *npool.Conds) (info *npool.Order, err error) {
+	_infos, err := withClient(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (interface{}, error) {
+		resp, err := cli.GetOrders(ctx, &npool.GetOrdersRequest{
+			Conds:  conds,
+			Offset: 0,
+			Limit:  2,
+		})
+		if err != nil {
+			return nil, err
+		}
+		return resp.Infos, nil
+	})
+	if err != nil {
+		return nil, err
+	}
+	if len(_infos.([]*npool.Order)) == 0 {
+		return nil, fmt.Errorf("invalid order")
+	}
+	if len(_infos.([]*npool.Order)) > 1 {
+		return nil, fmt.Errorf("too many records")
+	}
+	return _infos.([]*npool.Order)[0], nil
 }

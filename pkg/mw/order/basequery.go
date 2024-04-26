@@ -24,6 +24,17 @@ func (h *baseQueryHandler) selectOrderBase(stm *ent.OrderBaseQuery) *ent.OrderBa
 	return stm.Select(entorderbase.FieldID)
 }
 
+func (h *baseQueryHandler) queryOrderBase(cli *ent.Client) {
+	h.stmSelect = h.selectOrderBase(
+		cli.OrderBase.
+			Query().
+			Where(
+				entorderbase.EntID(*h.EntID),
+				entorderbase.DeletedAt(0),
+			),
+	)
+}
+
 func (h *baseQueryHandler) queryOrderBases(cli *ent.Client) (*ent.OrderBaseSelect, error) {
 	stm, err := orderbasecrud.SetQueryConds(cli.OrderBase.Query(), h.OrderBaseConds)
 	if err != nil {
