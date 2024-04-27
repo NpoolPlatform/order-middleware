@@ -87,6 +87,8 @@ type AppConfigMutation struct {
 	simulate_order_cashable_profit_probability *decimal.Decimal
 	max_unpaid_orders                          *uint32
 	addmax_unpaid_orders                       *int32
+	max_typed_coupons_per_order                *uint32
+	addmax_typed_coupons_per_order             *int32
 	clearedFields                              map[string]struct{}
 	done                                       bool
 	oldValue                                   func(context.Context) (*AppConfig, error)
@@ -835,6 +837,76 @@ func (m *AppConfigMutation) ResetMaxUnpaidOrders() {
 	delete(m.clearedFields, appconfig.FieldMaxUnpaidOrders)
 }
 
+// SetMaxTypedCouponsPerOrder sets the "max_typed_coupons_per_order" field.
+func (m *AppConfigMutation) SetMaxTypedCouponsPerOrder(u uint32) {
+	m.max_typed_coupons_per_order = &u
+	m.addmax_typed_coupons_per_order = nil
+}
+
+// MaxTypedCouponsPerOrder returns the value of the "max_typed_coupons_per_order" field in the mutation.
+func (m *AppConfigMutation) MaxTypedCouponsPerOrder() (r uint32, exists bool) {
+	v := m.max_typed_coupons_per_order
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldMaxTypedCouponsPerOrder returns the old "max_typed_coupons_per_order" field's value of the AppConfig entity.
+// If the AppConfig object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *AppConfigMutation) OldMaxTypedCouponsPerOrder(ctx context.Context) (v uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldMaxTypedCouponsPerOrder is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldMaxTypedCouponsPerOrder requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldMaxTypedCouponsPerOrder: %w", err)
+	}
+	return oldValue.MaxTypedCouponsPerOrder, nil
+}
+
+// AddMaxTypedCouponsPerOrder adds u to the "max_typed_coupons_per_order" field.
+func (m *AppConfigMutation) AddMaxTypedCouponsPerOrder(u int32) {
+	if m.addmax_typed_coupons_per_order != nil {
+		*m.addmax_typed_coupons_per_order += u
+	} else {
+		m.addmax_typed_coupons_per_order = &u
+	}
+}
+
+// AddedMaxTypedCouponsPerOrder returns the value that was added to the "max_typed_coupons_per_order" field in this mutation.
+func (m *AppConfigMutation) AddedMaxTypedCouponsPerOrder() (r int32, exists bool) {
+	v := m.addmax_typed_coupons_per_order
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearMaxTypedCouponsPerOrder clears the value of the "max_typed_coupons_per_order" field.
+func (m *AppConfigMutation) ClearMaxTypedCouponsPerOrder() {
+	m.max_typed_coupons_per_order = nil
+	m.addmax_typed_coupons_per_order = nil
+	m.clearedFields[appconfig.FieldMaxTypedCouponsPerOrder] = struct{}{}
+}
+
+// MaxTypedCouponsPerOrderCleared returns if the "max_typed_coupons_per_order" field was cleared in this mutation.
+func (m *AppConfigMutation) MaxTypedCouponsPerOrderCleared() bool {
+	_, ok := m.clearedFields[appconfig.FieldMaxTypedCouponsPerOrder]
+	return ok
+}
+
+// ResetMaxTypedCouponsPerOrder resets all changes to the "max_typed_coupons_per_order" field.
+func (m *AppConfigMutation) ResetMaxTypedCouponsPerOrder() {
+	m.max_typed_coupons_per_order = nil
+	m.addmax_typed_coupons_per_order = nil
+	delete(m.clearedFields, appconfig.FieldMaxTypedCouponsPerOrder)
+}
+
 // Where appends a list predicates to the AppConfigMutation builder.
 func (m *AppConfigMutation) Where(ps ...predicate.AppConfig) {
 	m.predicates = append(m.predicates, ps...)
@@ -854,7 +926,7 @@ func (m *AppConfigMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *AppConfigMutation) Fields() []string {
-	fields := make([]string, 0, 12)
+	fields := make([]string, 0, 13)
 	if m.created_at != nil {
 		fields = append(fields, appconfig.FieldCreatedAt)
 	}
@@ -891,6 +963,9 @@ func (m *AppConfigMutation) Fields() []string {
 	if m.max_unpaid_orders != nil {
 		fields = append(fields, appconfig.FieldMaxUnpaidOrders)
 	}
+	if m.max_typed_coupons_per_order != nil {
+		fields = append(fields, appconfig.FieldMaxTypedCouponsPerOrder)
+	}
 	return fields
 }
 
@@ -923,6 +998,8 @@ func (m *AppConfigMutation) Field(name string) (ent.Value, bool) {
 		return m.SimulateOrderCashableProfitProbability()
 	case appconfig.FieldMaxUnpaidOrders:
 		return m.MaxUnpaidOrders()
+	case appconfig.FieldMaxTypedCouponsPerOrder:
+		return m.MaxTypedCouponsPerOrder()
 	}
 	return nil, false
 }
@@ -956,6 +1033,8 @@ func (m *AppConfigMutation) OldField(ctx context.Context, name string) (ent.Valu
 		return m.OldSimulateOrderCashableProfitProbability(ctx)
 	case appconfig.FieldMaxUnpaidOrders:
 		return m.OldMaxUnpaidOrders(ctx)
+	case appconfig.FieldMaxTypedCouponsPerOrder:
+		return m.OldMaxTypedCouponsPerOrder(ctx)
 	}
 	return nil, fmt.Errorf("unknown AppConfig field %s", name)
 }
@@ -1049,6 +1128,13 @@ func (m *AppConfigMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetMaxUnpaidOrders(v)
 		return nil
+	case appconfig.FieldMaxTypedCouponsPerOrder:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetMaxTypedCouponsPerOrder(v)
+		return nil
 	}
 	return fmt.Errorf("unknown AppConfig field %s", name)
 }
@@ -1072,6 +1158,9 @@ func (m *AppConfigMutation) AddedFields() []string {
 	if m.addmax_unpaid_orders != nil {
 		fields = append(fields, appconfig.FieldMaxUnpaidOrders)
 	}
+	if m.addmax_typed_coupons_per_order != nil {
+		fields = append(fields, appconfig.FieldMaxTypedCouponsPerOrder)
+	}
 	return fields
 }
 
@@ -1090,6 +1179,8 @@ func (m *AppConfigMutation) AddedField(name string) (ent.Value, bool) {
 		return m.AddedSimulateOrderDurationSeconds()
 	case appconfig.FieldMaxUnpaidOrders:
 		return m.AddedMaxUnpaidOrders()
+	case appconfig.FieldMaxTypedCouponsPerOrder:
+		return m.AddedMaxTypedCouponsPerOrder()
 	}
 	return nil, false
 }
@@ -1134,6 +1225,13 @@ func (m *AppConfigMutation) AddField(name string, value ent.Value) error {
 		}
 		m.AddMaxUnpaidOrders(v)
 		return nil
+	case appconfig.FieldMaxTypedCouponsPerOrder:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddMaxTypedCouponsPerOrder(v)
+		return nil
 	}
 	return fmt.Errorf("unknown AppConfig numeric field %s", name)
 }
@@ -1165,6 +1263,9 @@ func (m *AppConfigMutation) ClearedFields() []string {
 	}
 	if m.FieldCleared(appconfig.FieldMaxUnpaidOrders) {
 		fields = append(fields, appconfig.FieldMaxUnpaidOrders)
+	}
+	if m.FieldCleared(appconfig.FieldMaxTypedCouponsPerOrder) {
+		fields = append(fields, appconfig.FieldMaxTypedCouponsPerOrder)
 	}
 	return fields
 }
@@ -1203,6 +1304,9 @@ func (m *AppConfigMutation) ClearField(name string) error {
 		return nil
 	case appconfig.FieldMaxUnpaidOrders:
 		m.ClearMaxUnpaidOrders()
+		return nil
+	case appconfig.FieldMaxTypedCouponsPerOrder:
+		m.ClearMaxTypedCouponsPerOrder()
 		return nil
 	}
 	return fmt.Errorf("unknown AppConfig nullable field %s", name)
@@ -1247,6 +1351,9 @@ func (m *AppConfigMutation) ResetField(name string) error {
 		return nil
 	case appconfig.FieldMaxUnpaidOrders:
 		m.ResetMaxUnpaidOrders()
+		return nil
+	case appconfig.FieldMaxTypedCouponsPerOrder:
+		m.ResetMaxTypedCouponsPerOrder()
 		return nil
 	}
 	return fmt.Errorf("unknown AppConfig field %s", name)

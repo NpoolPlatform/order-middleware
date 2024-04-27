@@ -42,6 +42,9 @@ func (h *createHandler) constructSQL() {
 	if h.MaxUnpaidOrders != nil {
 		_sql += comma + "max_unpaid_orders"
 	}
+	if h.MaxTypedCouponsPerOrder != nil {
+		_sql += comma + "max_typed_coupons_per_order"
+	}
 	_sql += comma + "created_at"
 	_sql += comma + "updated_at"
 	_sql += comma + "deleted_at"
@@ -78,6 +81,9 @@ func (h *createHandler) constructSQL() {
 	}
 	if h.MaxUnpaidOrders != nil {
 		_sql += fmt.Sprintf("%v%v as max_unpaid_orders", comma, *h.MaxUnpaidOrders)
+	}
+	if h.MaxTypedCouponsPerOrder != nil {
+		_sql += fmt.Sprintf("%v%v as max_typed_coupons_per_order", comma, *h.MaxTypedCouponsPerOrder)
 	}
 	_sql += fmt.Sprintf("%v%v as created_at", comma, now)
 	_sql += fmt.Sprintf("%v%v as updated_at", comma, now)

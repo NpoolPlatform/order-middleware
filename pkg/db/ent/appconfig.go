@@ -41,6 +41,8 @@ type AppConfig struct {
 	SimulateOrderCashableProfitProbability decimal.Decimal `json:"simulate_order_cashable_profit_probability,omitempty"`
 	// MaxUnpaidOrders holds the value of the "max_unpaid_orders" field.
 	MaxUnpaidOrders uint32 `json:"max_unpaid_orders,omitempty"`
+	// MaxTypedCouponsPerOrder holds the value of the "max_typed_coupons_per_order" field.
+	MaxTypedCouponsPerOrder uint32 `json:"max_typed_coupons_per_order,omitempty"`
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -52,7 +54,7 @@ func (*AppConfig) scanValues(columns []string) ([]interface{}, error) {
 			values[i] = new(decimal.Decimal)
 		case appconfig.FieldEnableSimulateOrder:
 			values[i] = new(sql.NullBool)
-		case appconfig.FieldID, appconfig.FieldCreatedAt, appconfig.FieldUpdatedAt, appconfig.FieldDeletedAt, appconfig.FieldSimulateOrderDurationSeconds, appconfig.FieldMaxUnpaidOrders:
+		case appconfig.FieldID, appconfig.FieldCreatedAt, appconfig.FieldUpdatedAt, appconfig.FieldDeletedAt, appconfig.FieldSimulateOrderDurationSeconds, appconfig.FieldMaxUnpaidOrders, appconfig.FieldMaxTypedCouponsPerOrder:
 			values[i] = new(sql.NullInt64)
 		case appconfig.FieldSimulateOrderCouponMode:
 			values[i] = new(sql.NullString)
@@ -151,6 +153,12 @@ func (ac *AppConfig) assignValues(columns []string, values []interface{}) error 
 			} else if value.Valid {
 				ac.MaxUnpaidOrders = uint32(value.Int64)
 			}
+		case appconfig.FieldMaxTypedCouponsPerOrder:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field max_typed_coupons_per_order", values[i])
+			} else if value.Valid {
+				ac.MaxTypedCouponsPerOrder = uint32(value.Int64)
+			}
 		}
 	}
 	return nil
@@ -214,6 +222,9 @@ func (ac *AppConfig) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("max_unpaid_orders=")
 	builder.WriteString(fmt.Sprintf("%v", ac.MaxUnpaidOrders))
+	builder.WriteString(", ")
+	builder.WriteString("max_typed_coupons_per_order=")
+	builder.WriteString(fmt.Sprintf("%v", ac.MaxTypedCouponsPerOrder))
 	builder.WriteByte(')')
 	return builder.String()
 }

@@ -66,6 +66,7 @@ func (h *queryHandler) queryJoinMyself(s *sql.Selector) {
 		t.C(entappconfig.FieldSimulateOrderCouponProbability),
 		t.C(entappconfig.FieldSimulateOrderCashableProfitProbability),
 		t.C(entappconfig.FieldMaxUnpaidOrders),
+		t.C(entappconfig.FieldMaxTypedCouponsPerOrder),
 		t.C(entappconfig.FieldCreatedAt),
 		t.C(entappconfig.FieldUpdatedAt),
 	)

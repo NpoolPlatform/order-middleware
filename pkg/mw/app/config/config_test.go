@@ -36,6 +36,7 @@ var ret = npool.AppConfig{
 	SimulateOrderCouponProbability:         "1",
 	SimulateOrderCashableProfitProbability: "0.1",
 	MaxUnpaidOrders:                        10,
+	MaxTypedCouponsPerOrder:                10,
 }
 
 //nolint:unparam
@@ -54,6 +55,7 @@ func createAppConfig(t *testing.T) {
 		WithSimulateOrderCouponProbability(&ret.SimulateOrderCouponProbability, true),
 		WithSimulateOrderCashableProfitProbability(&ret.SimulateOrderCashableProfitProbability, true),
 		WithMaxUnpaidOrders(&ret.MaxUnpaidOrders, true),
+		WithMaxTypedCouponsPerOrder(&ret.MaxTypedCouponsPerOrder, true),
 	)
 	if assert.Nil(t, err) {
 		err = handler.CreateAppConfig(context.Background())

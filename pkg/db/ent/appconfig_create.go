@@ -191,6 +191,20 @@ func (acc *AppConfigCreate) SetNillableMaxUnpaidOrders(u *uint32) *AppConfigCrea
 	return acc
 }
 
+// SetMaxTypedCouponsPerOrder sets the "max_typed_coupons_per_order" field.
+func (acc *AppConfigCreate) SetMaxTypedCouponsPerOrder(u uint32) *AppConfigCreate {
+	acc.mutation.SetMaxTypedCouponsPerOrder(u)
+	return acc
+}
+
+// SetNillableMaxTypedCouponsPerOrder sets the "max_typed_coupons_per_order" field if the given value is not nil.
+func (acc *AppConfigCreate) SetNillableMaxTypedCouponsPerOrder(u *uint32) *AppConfigCreate {
+	if u != nil {
+		acc.SetMaxTypedCouponsPerOrder(*u)
+	}
+	return acc
+}
+
 // SetID sets the "id" field.
 func (acc *AppConfigCreate) SetID(u uint32) *AppConfigCreate {
 	acc.mutation.SetID(u)
@@ -339,6 +353,10 @@ func (acc *AppConfigCreate) defaults() error {
 		v := appconfig.DefaultMaxUnpaidOrders
 		acc.mutation.SetMaxUnpaidOrders(v)
 	}
+	if _, ok := acc.mutation.MaxTypedCouponsPerOrder(); !ok {
+		v := appconfig.DefaultMaxTypedCouponsPerOrder
+		acc.mutation.SetMaxTypedCouponsPerOrder(v)
+	}
 	return nil
 }
 
@@ -485,6 +503,14 @@ func (acc *AppConfigCreate) createSpec() (*AppConfig, *sqlgraph.CreateSpec) {
 			Column: appconfig.FieldMaxUnpaidOrders,
 		})
 		_node.MaxUnpaidOrders = value
+	}
+	if value, ok := acc.mutation.MaxTypedCouponsPerOrder(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeUint32,
+			Value:  value,
+			Column: appconfig.FieldMaxTypedCouponsPerOrder,
+		})
+		_node.MaxTypedCouponsPerOrder = value
 	}
 	return _node, _spec
 }
@@ -759,6 +785,30 @@ func (u *AppConfigUpsert) AddMaxUnpaidOrders(v uint32) *AppConfigUpsert {
 // ClearMaxUnpaidOrders clears the value of the "max_unpaid_orders" field.
 func (u *AppConfigUpsert) ClearMaxUnpaidOrders() *AppConfigUpsert {
 	u.SetNull(appconfig.FieldMaxUnpaidOrders)
+	return u
+}
+
+// SetMaxTypedCouponsPerOrder sets the "max_typed_coupons_per_order" field.
+func (u *AppConfigUpsert) SetMaxTypedCouponsPerOrder(v uint32) *AppConfigUpsert {
+	u.Set(appconfig.FieldMaxTypedCouponsPerOrder, v)
+	return u
+}
+
+// UpdateMaxTypedCouponsPerOrder sets the "max_typed_coupons_per_order" field to the value that was provided on create.
+func (u *AppConfigUpsert) UpdateMaxTypedCouponsPerOrder() *AppConfigUpsert {
+	u.SetExcluded(appconfig.FieldMaxTypedCouponsPerOrder)
+	return u
+}
+
+// AddMaxTypedCouponsPerOrder adds v to the "max_typed_coupons_per_order" field.
+func (u *AppConfigUpsert) AddMaxTypedCouponsPerOrder(v uint32) *AppConfigUpsert {
+	u.Add(appconfig.FieldMaxTypedCouponsPerOrder, v)
+	return u
+}
+
+// ClearMaxTypedCouponsPerOrder clears the value of the "max_typed_coupons_per_order" field.
+func (u *AppConfigUpsert) ClearMaxTypedCouponsPerOrder() *AppConfigUpsert {
+	u.SetNull(appconfig.FieldMaxTypedCouponsPerOrder)
 	return u
 }
 
@@ -1068,6 +1118,34 @@ func (u *AppConfigUpsertOne) UpdateMaxUnpaidOrders() *AppConfigUpsertOne {
 func (u *AppConfigUpsertOne) ClearMaxUnpaidOrders() *AppConfigUpsertOne {
 	return u.Update(func(s *AppConfigUpsert) {
 		s.ClearMaxUnpaidOrders()
+	})
+}
+
+// SetMaxTypedCouponsPerOrder sets the "max_typed_coupons_per_order" field.
+func (u *AppConfigUpsertOne) SetMaxTypedCouponsPerOrder(v uint32) *AppConfigUpsertOne {
+	return u.Update(func(s *AppConfigUpsert) {
+		s.SetMaxTypedCouponsPerOrder(v)
+	})
+}
+
+// AddMaxTypedCouponsPerOrder adds v to the "max_typed_coupons_per_order" field.
+func (u *AppConfigUpsertOne) AddMaxTypedCouponsPerOrder(v uint32) *AppConfigUpsertOne {
+	return u.Update(func(s *AppConfigUpsert) {
+		s.AddMaxTypedCouponsPerOrder(v)
+	})
+}
+
+// UpdateMaxTypedCouponsPerOrder sets the "max_typed_coupons_per_order" field to the value that was provided on create.
+func (u *AppConfigUpsertOne) UpdateMaxTypedCouponsPerOrder() *AppConfigUpsertOne {
+	return u.Update(func(s *AppConfigUpsert) {
+		s.UpdateMaxTypedCouponsPerOrder()
+	})
+}
+
+// ClearMaxTypedCouponsPerOrder clears the value of the "max_typed_coupons_per_order" field.
+func (u *AppConfigUpsertOne) ClearMaxTypedCouponsPerOrder() *AppConfigUpsertOne {
+	return u.Update(func(s *AppConfigUpsert) {
+		s.ClearMaxTypedCouponsPerOrder()
 	})
 }
 
@@ -1542,6 +1620,34 @@ func (u *AppConfigUpsertBulk) UpdateMaxUnpaidOrders() *AppConfigUpsertBulk {
 func (u *AppConfigUpsertBulk) ClearMaxUnpaidOrders() *AppConfigUpsertBulk {
 	return u.Update(func(s *AppConfigUpsert) {
 		s.ClearMaxUnpaidOrders()
+	})
+}
+
+// SetMaxTypedCouponsPerOrder sets the "max_typed_coupons_per_order" field.
+func (u *AppConfigUpsertBulk) SetMaxTypedCouponsPerOrder(v uint32) *AppConfigUpsertBulk {
+	return u.Update(func(s *AppConfigUpsert) {
+		s.SetMaxTypedCouponsPerOrder(v)
+	})
+}
+
+// AddMaxTypedCouponsPerOrder adds v to the "max_typed_coupons_per_order" field.
+func (u *AppConfigUpsertBulk) AddMaxTypedCouponsPerOrder(v uint32) *AppConfigUpsertBulk {
+	return u.Update(func(s *AppConfigUpsert) {
+		s.AddMaxTypedCouponsPerOrder(v)
+	})
+}
+
+// UpdateMaxTypedCouponsPerOrder sets the "max_typed_coupons_per_order" field to the value that was provided on create.
+func (u *AppConfigUpsertBulk) UpdateMaxTypedCouponsPerOrder() *AppConfigUpsertBulk {
+	return u.Update(func(s *AppConfigUpsert) {
+		s.UpdateMaxTypedCouponsPerOrder()
+	})
+}
+
+// ClearMaxTypedCouponsPerOrder clears the value of the "max_typed_coupons_per_order" field.
+func (u *AppConfigUpsertBulk) ClearMaxTypedCouponsPerOrder() *AppConfigUpsertBulk {
+	return u.Update(func(s *AppConfigUpsert) {
+		s.ClearMaxTypedCouponsPerOrder()
 	})
 }
 

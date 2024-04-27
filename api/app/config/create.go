@@ -32,6 +32,7 @@ func (s *Server) CreateAppConfig(ctx context.Context, in *npool.CreateAppConfigR
 		appconfig1.WithSimulateOrderCouponProbability(req.SimulateOrderCouponProbability, false),
 		appconfig1.WithSimulateOrderCashableProfitProbability(req.SimulateOrderCashableProfitProbability, false),
 		appconfig1.WithMaxUnpaidOrders(req.MaxUnpaidOrders, false),
+		appconfig1.WithMaxTypedCouponsPerOrder(req.MaxTypedCouponsPerOrder, false),
 	)
 	if err != nil {
 		logger.Sugar().Errorw(

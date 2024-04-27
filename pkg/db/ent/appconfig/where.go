@@ -164,6 +164,13 @@ func MaxUnpaidOrders(v uint32) predicate.AppConfig {
 	})
 }
 
+// MaxTypedCouponsPerOrder applies equality check predicate on the "max_typed_coupons_per_order" field. It's identical to MaxTypedCouponsPerOrderEQ.
+func MaxTypedCouponsPerOrder(v uint32) predicate.AppConfig {
+	return predicate.AppConfig(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldMaxTypedCouponsPerOrder), v))
+	})
+}
+
 // CreatedAtEQ applies the EQ predicate on the "created_at" field.
 func CreatedAtEQ(v uint32) predicate.AppConfig {
 	return predicate.AppConfig(func(s *sql.Selector) {
@@ -1026,6 +1033,84 @@ func MaxUnpaidOrdersIsNil() predicate.AppConfig {
 func MaxUnpaidOrdersNotNil() predicate.AppConfig {
 	return predicate.AppConfig(func(s *sql.Selector) {
 		s.Where(sql.NotNull(s.C(FieldMaxUnpaidOrders)))
+	})
+}
+
+// MaxTypedCouponsPerOrderEQ applies the EQ predicate on the "max_typed_coupons_per_order" field.
+func MaxTypedCouponsPerOrderEQ(v uint32) predicate.AppConfig {
+	return predicate.AppConfig(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldMaxTypedCouponsPerOrder), v))
+	})
+}
+
+// MaxTypedCouponsPerOrderNEQ applies the NEQ predicate on the "max_typed_coupons_per_order" field.
+func MaxTypedCouponsPerOrderNEQ(v uint32) predicate.AppConfig {
+	return predicate.AppConfig(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldMaxTypedCouponsPerOrder), v))
+	})
+}
+
+// MaxTypedCouponsPerOrderIn applies the In predicate on the "max_typed_coupons_per_order" field.
+func MaxTypedCouponsPerOrderIn(vs ...uint32) predicate.AppConfig {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.AppConfig(func(s *sql.Selector) {
+		s.Where(sql.In(s.C(FieldMaxTypedCouponsPerOrder), v...))
+	})
+}
+
+// MaxTypedCouponsPerOrderNotIn applies the NotIn predicate on the "max_typed_coupons_per_order" field.
+func MaxTypedCouponsPerOrderNotIn(vs ...uint32) predicate.AppConfig {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.AppConfig(func(s *sql.Selector) {
+		s.Where(sql.NotIn(s.C(FieldMaxTypedCouponsPerOrder), v...))
+	})
+}
+
+// MaxTypedCouponsPerOrderGT applies the GT predicate on the "max_typed_coupons_per_order" field.
+func MaxTypedCouponsPerOrderGT(v uint32) predicate.AppConfig {
+	return predicate.AppConfig(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldMaxTypedCouponsPerOrder), v))
+	})
+}
+
+// MaxTypedCouponsPerOrderGTE applies the GTE predicate on the "max_typed_coupons_per_order" field.
+func MaxTypedCouponsPerOrderGTE(v uint32) predicate.AppConfig {
+	return predicate.AppConfig(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldMaxTypedCouponsPerOrder), v))
+	})
+}
+
+// MaxTypedCouponsPerOrderLT applies the LT predicate on the "max_typed_coupons_per_order" field.
+func MaxTypedCouponsPerOrderLT(v uint32) predicate.AppConfig {
+	return predicate.AppConfig(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldMaxTypedCouponsPerOrder), v))
+	})
+}
+
+// MaxTypedCouponsPerOrderLTE applies the LTE predicate on the "max_typed_coupons_per_order" field.
+func MaxTypedCouponsPerOrderLTE(v uint32) predicate.AppConfig {
+	return predicate.AppConfig(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldMaxTypedCouponsPerOrder), v))
+	})
+}
+
+// MaxTypedCouponsPerOrderIsNil applies the IsNil predicate on the "max_typed_coupons_per_order" field.
+func MaxTypedCouponsPerOrderIsNil() predicate.AppConfig {
+	return predicate.AppConfig(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldMaxTypedCouponsPerOrder)))
+	})
+}
+
+// MaxTypedCouponsPerOrderNotNil applies the NotNil predicate on the "max_typed_coupons_per_order" field.
+func MaxTypedCouponsPerOrderNotNil() predicate.AppConfig {
+	return predicate.AppConfig(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldMaxTypedCouponsPerOrder)))
 	})
 }
 

@@ -55,6 +55,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			appconfig.FieldSimulateOrderCouponProbability:         {Type: field.TypeOther, Column: appconfig.FieldSimulateOrderCouponProbability},
 			appconfig.FieldSimulateOrderCashableProfitProbability: {Type: field.TypeOther, Column: appconfig.FieldSimulateOrderCashableProfitProbability},
 			appconfig.FieldMaxUnpaidOrders:                        {Type: field.TypeUint32, Column: appconfig.FieldMaxUnpaidOrders},
+			appconfig.FieldMaxTypedCouponsPerOrder:                {Type: field.TypeUint32, Column: appconfig.FieldMaxTypedCouponsPerOrder},
 		},
 	}
 	graph.Nodes[1] = &sqlgraph.Node{
@@ -608,6 +609,11 @@ func (f *AppConfigFilter) WhereSimulateOrderCashableProfitProbability(p entql.Ot
 // WhereMaxUnpaidOrders applies the entql uint32 predicate on the max_unpaid_orders field.
 func (f *AppConfigFilter) WhereMaxUnpaidOrders(p entql.Uint32P) {
 	f.Where(p.Field(appconfig.FieldMaxUnpaidOrders))
+}
+
+// WhereMaxTypedCouponsPerOrder applies the entql uint32 predicate on the max_typed_coupons_per_order field.
+func (f *AppConfigFilter) WhereMaxTypedCouponsPerOrder(p entql.Uint32P) {
+	f.Where(p.Field(appconfig.FieldMaxTypedCouponsPerOrder))
 }
 
 // addPredicate implements the predicateAdder interface.

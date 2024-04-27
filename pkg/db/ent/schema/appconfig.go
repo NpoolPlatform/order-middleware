@@ -69,6 +69,10 @@ func (AppConfig) Fields() []ent.Field {
 			Uint32("max_unpaid_orders").
 			Optional().
 			Default(5), //nolint
+		field.
+			Uint32("max_typed_coupons_per_order").
+			Optional().
+			Default(1),
 	}
 }
 

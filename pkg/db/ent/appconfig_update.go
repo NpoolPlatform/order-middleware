@@ -273,6 +273,33 @@ func (acu *AppConfigUpdate) ClearMaxUnpaidOrders() *AppConfigUpdate {
 	return acu
 }
 
+// SetMaxTypedCouponsPerOrder sets the "max_typed_coupons_per_order" field.
+func (acu *AppConfigUpdate) SetMaxTypedCouponsPerOrder(u uint32) *AppConfigUpdate {
+	acu.mutation.ResetMaxTypedCouponsPerOrder()
+	acu.mutation.SetMaxTypedCouponsPerOrder(u)
+	return acu
+}
+
+// SetNillableMaxTypedCouponsPerOrder sets the "max_typed_coupons_per_order" field if the given value is not nil.
+func (acu *AppConfigUpdate) SetNillableMaxTypedCouponsPerOrder(u *uint32) *AppConfigUpdate {
+	if u != nil {
+		acu.SetMaxTypedCouponsPerOrder(*u)
+	}
+	return acu
+}
+
+// AddMaxTypedCouponsPerOrder adds u to the "max_typed_coupons_per_order" field.
+func (acu *AppConfigUpdate) AddMaxTypedCouponsPerOrder(u int32) *AppConfigUpdate {
+	acu.mutation.AddMaxTypedCouponsPerOrder(u)
+	return acu
+}
+
+// ClearMaxTypedCouponsPerOrder clears the value of the "max_typed_coupons_per_order" field.
+func (acu *AppConfigUpdate) ClearMaxTypedCouponsPerOrder() *AppConfigUpdate {
+	acu.mutation.ClearMaxTypedCouponsPerOrder()
+	return acu
+}
+
 // Mutation returns the AppConfigMutation object of the builder.
 func (acu *AppConfigUpdate) Mutation() *AppConfigMutation {
 	return acu.mutation
@@ -538,6 +565,26 @@ func (acu *AppConfigUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: appconfig.FieldMaxUnpaidOrders,
 		})
 	}
+	if value, ok := acu.mutation.MaxTypedCouponsPerOrder(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeUint32,
+			Value:  value,
+			Column: appconfig.FieldMaxTypedCouponsPerOrder,
+		})
+	}
+	if value, ok := acu.mutation.AddedMaxTypedCouponsPerOrder(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeUint32,
+			Value:  value,
+			Column: appconfig.FieldMaxTypedCouponsPerOrder,
+		})
+	}
+	if acu.mutation.MaxTypedCouponsPerOrderCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeUint32,
+			Column: appconfig.FieldMaxTypedCouponsPerOrder,
+		})
+	}
 	_spec.Modifiers = acu.modifiers
 	if n, err = sqlgraph.UpdateNodes(ctx, acu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
@@ -799,6 +846,33 @@ func (acuo *AppConfigUpdateOne) AddMaxUnpaidOrders(u int32) *AppConfigUpdateOne 
 // ClearMaxUnpaidOrders clears the value of the "max_unpaid_orders" field.
 func (acuo *AppConfigUpdateOne) ClearMaxUnpaidOrders() *AppConfigUpdateOne {
 	acuo.mutation.ClearMaxUnpaidOrders()
+	return acuo
+}
+
+// SetMaxTypedCouponsPerOrder sets the "max_typed_coupons_per_order" field.
+func (acuo *AppConfigUpdateOne) SetMaxTypedCouponsPerOrder(u uint32) *AppConfigUpdateOne {
+	acuo.mutation.ResetMaxTypedCouponsPerOrder()
+	acuo.mutation.SetMaxTypedCouponsPerOrder(u)
+	return acuo
+}
+
+// SetNillableMaxTypedCouponsPerOrder sets the "max_typed_coupons_per_order" field if the given value is not nil.
+func (acuo *AppConfigUpdateOne) SetNillableMaxTypedCouponsPerOrder(u *uint32) *AppConfigUpdateOne {
+	if u != nil {
+		acuo.SetMaxTypedCouponsPerOrder(*u)
+	}
+	return acuo
+}
+
+// AddMaxTypedCouponsPerOrder adds u to the "max_typed_coupons_per_order" field.
+func (acuo *AppConfigUpdateOne) AddMaxTypedCouponsPerOrder(u int32) *AppConfigUpdateOne {
+	acuo.mutation.AddMaxTypedCouponsPerOrder(u)
+	return acuo
+}
+
+// ClearMaxTypedCouponsPerOrder clears the value of the "max_typed_coupons_per_order" field.
+func (acuo *AppConfigUpdateOne) ClearMaxTypedCouponsPerOrder() *AppConfigUpdateOne {
+	acuo.mutation.ClearMaxTypedCouponsPerOrder()
 	return acuo
 }
 
@@ -1095,6 +1169,26 @@ func (acuo *AppConfigUpdateOne) sqlSave(ctx context.Context) (_node *AppConfig, 
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeUint32,
 			Column: appconfig.FieldMaxUnpaidOrders,
+		})
+	}
+	if value, ok := acuo.mutation.MaxTypedCouponsPerOrder(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeUint32,
+			Value:  value,
+			Column: appconfig.FieldMaxTypedCouponsPerOrder,
+		})
+	}
+	if value, ok := acuo.mutation.AddedMaxTypedCouponsPerOrder(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeUint32,
+			Value:  value,
+			Column: appconfig.FieldMaxTypedCouponsPerOrder,
+		})
+	}
+	if acuo.mutation.MaxTypedCouponsPerOrderCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeUint32,
+			Column: appconfig.FieldMaxTypedCouponsPerOrder,
 		})
 	}
 	_spec.Modifiers = acuo.modifiers

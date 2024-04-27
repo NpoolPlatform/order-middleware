@@ -44,6 +44,7 @@ var ret = npool.AppConfig{
 	SimulateOrderCouponProbability:         "1",
 	SimulateOrderCashableProfitProbability: "0.1",
 	MaxUnpaidOrders:                        10,
+	MaxTypedCouponsPerOrder:                10,
 }
 
 //nolint:unparam
@@ -61,6 +62,7 @@ func createAppConfig(t *testing.T) {
 		SimulateOrderCouponProbability:         &ret.SimulateOrderCouponProbability,
 		SimulateOrderCashableProfitProbability: &ret.SimulateOrderCashableProfitProbability,
 		MaxUnpaidOrders:                        &ret.MaxUnpaidOrders,
+		MaxTypedCouponsPerOrder:                &ret.MaxTypedCouponsPerOrder,
 	})
 	if assert.Nil(t, err) {
 		info, err := GetAppConfig(context.Background(), ret.AppID)
@@ -84,6 +86,7 @@ func updateAppConfig(t *testing.T) {
 		SimulateOrderCouponProbability:         &ret.SimulateOrderCouponProbability,
 		SimulateOrderCashableProfitProbability: &ret.SimulateOrderCashableProfitProbability,
 		MaxUnpaidOrders:                        &ret.MaxUnpaidOrders,
+		MaxTypedCouponsPerOrder:                &ret.MaxTypedCouponsPerOrder,
 	})
 	if assert.Nil(t, err) {
 		info, err := GetAppConfig(context.Background(), ret.AppID)

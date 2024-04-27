@@ -22,6 +22,7 @@ type Req struct {
 	SimulateOrderCouponProbability         *decimal.Decimal
 	SimulateOrderCashableProfitProbability *decimal.Decimal
 	MaxUnpaidOrders                        *uint32
+	MaxTypedCouponsPerOrder                *uint32
 	DeletedAt                              *uint32
 }
 
@@ -53,6 +54,9 @@ func CreateSet(c *ent.AppConfigCreate, req *Req) *ent.AppConfigCreate {
 	if req.MaxUnpaidOrders != nil {
 		c.SetMaxUnpaidOrders(*req.MaxUnpaidOrders)
 	}
+	if req.MaxTypedCouponsPerOrder != nil {
+		c.SetMaxTypedCouponsPerOrder(*req.MaxTypedCouponsPerOrder)
+	}
 	return c
 }
 
@@ -77,6 +81,9 @@ func UpdateSet(u *ent.AppConfigUpdateOne, req *Req) *ent.AppConfigUpdateOne {
 	}
 	if req.MaxUnpaidOrders != nil {
 		u.SetMaxUnpaidOrders(*req.MaxUnpaidOrders)
+	}
+	if req.MaxTypedCouponsPerOrder != nil {
+		u.SetMaxTypedCouponsPerOrder(*req.MaxTypedCouponsPerOrder)
 	}
 	if req.DeletedAt != nil {
 		u.SetDeletedAt(*req.DeletedAt)

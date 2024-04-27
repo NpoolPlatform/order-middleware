@@ -102,6 +102,10 @@ func init() {
 	appconfigDescMaxUnpaidOrders := appconfigFields[7].Descriptor()
 	// appconfig.DefaultMaxUnpaidOrders holds the default value on creation for the max_unpaid_orders field.
 	appconfig.DefaultMaxUnpaidOrders = appconfigDescMaxUnpaidOrders.Default.(uint32)
+	// appconfigDescMaxTypedCouponsPerOrder is the schema descriptor for max_typed_coupons_per_order field.
+	appconfigDescMaxTypedCouponsPerOrder := appconfigFields[8].Descriptor()
+	// appconfig.DefaultMaxTypedCouponsPerOrder holds the default value on creation for the max_typed_coupons_per_order field.
+	appconfig.DefaultMaxTypedCouponsPerOrder = appconfigDescMaxTypedCouponsPerOrder.Default.(uint32)
 	compensateMixin := schema.Compensate{}.Mixin()
 	compensate.Policy = privacy.NewPolicies(compensateMixin[0], schema.Compensate{})
 	compensate.Hooks[0] = func(next ent.Mutator) ent.Mutator {

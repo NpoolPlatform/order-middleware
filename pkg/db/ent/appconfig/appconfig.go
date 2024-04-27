@@ -37,6 +37,8 @@ const (
 	FieldSimulateOrderCashableProfitProbability = "simulate_order_cashable_profit_probability"
 	// FieldMaxUnpaidOrders holds the string denoting the max_unpaid_orders field in the database.
 	FieldMaxUnpaidOrders = "max_unpaid_orders"
+	// FieldMaxTypedCouponsPerOrder holds the string denoting the max_typed_coupons_per_order field in the database.
+	FieldMaxTypedCouponsPerOrder = "max_typed_coupons_per_order"
 	// Table holds the table name of the appconfig in the database.
 	Table = "app_configs"
 )
@@ -56,6 +58,7 @@ var Columns = []string{
 	FieldSimulateOrderCouponProbability,
 	FieldSimulateOrderCashableProfitProbability,
 	FieldMaxUnpaidOrders,
+	FieldMaxTypedCouponsPerOrder,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -103,4 +106,6 @@ var (
 	DefaultSimulateOrderCashableProfitProbability decimal.Decimal
 	// DefaultMaxUnpaidOrders holds the default value on creation for the "max_unpaid_orders" field.
 	DefaultMaxUnpaidOrders uint32
+	// DefaultMaxTypedCouponsPerOrder holds the default value on creation for the "max_typed_coupons_per_order" field.
+	DefaultMaxTypedCouponsPerOrder uint32
 )

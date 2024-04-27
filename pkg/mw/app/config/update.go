@@ -15,6 +15,7 @@ type updateHandler struct {
 	sql string
 }
 
+//nolint:gocyclo
 func (h *updateHandler) constructSQL() error {
 	if h.ID == nil && h.EntID == nil && h.AppID == nil {
 		return fmt.Errorf("invalid appconfigid")
@@ -58,6 +59,10 @@ func (h *updateHandler) constructSQL() error {
 	}
 	if h.MaxUnpaidOrders != nil {
 		_sql += fmt.Sprintf("%vmax_unpaid_orders = %v, ", set, *h.MaxUnpaidOrders)
+		set = ""
+	}
+	if h.MaxTypedCouponsPerOrder != nil {
+		_sql += fmt.Sprintf("%vmax_typed_coupons_per_order = %v, ", set, *h.MaxTypedCouponsPerOrder)
 		set = ""
 	}
 	if set != "" {
