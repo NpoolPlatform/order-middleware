@@ -2,8 +2,8 @@ package powerrental
 
 import (
 	"context"
-	"fmt"
 
+	wlog "github.com/NpoolPlatform/go-service-framework/pkg/wlog"
 	types "github.com/NpoolPlatform/message/npool/basetypes/order/v1"
 	"github.com/NpoolPlatform/order-middleware/pkg/db"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent"
@@ -115,7 +115,7 @@ func (h *createHandler) execSQL(ctx context.Context, tx *ent.Tx, sql string) err
 	}
 	n, err := rc.RowsAffected()
 	if err != nil || n != 1 {
-		return fmt.Errorf("fail create powerrental: %v", err)
+		return wlog.Errorf("fail create powerrental: %v", err)
 	}
 	return nil
 }
@@ -273,12 +273,12 @@ func (h *createHandler) validatePaymentType() error {
 		fallthrough //nolint
 	case types.PaymentType_PayWithTransferAndBalance:
 		if h.ledgerLockID() == nil {
-			return fmt.Errorf("invalid ledgerlockid")
+			return wlog.Errorf("invalid ledgerlockid")
 		}
 		fallthrough
 	case types.PaymentType_PayWithTransferOnly:
 		if h.PaymentBaseReq.EntID == nil {
-			return fmt.Errorf("invalid paymentid")
+			return wlog.Errorf("invalid paymentid")
 		}
 	case types.PaymentType_PayWithParentOrder:
 		fallthrough //nolint
@@ -288,7 +288,7 @@ func (h *createHandler) validatePaymentType() error {
 		fallthrough //nolint
 	case types.PaymentType_PayWithNoPayment:
 		if h.PaymentBaseReq.EntID != nil || h.ledgerLockID() != nil {
-			return fmt.Errorf("invalid paymenttype")
+			return wlog.Errorf("invalid paymenttype")
 		}
 	}
 	return nil

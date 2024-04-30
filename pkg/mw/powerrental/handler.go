@@ -3,9 +3,9 @@ package powerrental
 
 import (
 	"context"
-	"fmt"
 	"time"
 
+	wlog "github.com/NpoolPlatform/go-service-framework/pkg/wlog"
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
 	goodtypes "github.com/NpoolPlatform/message/npool/basetypes/good/v1"
 	types "github.com/NpoolPlatform/message/npool/basetypes/order/v1"
@@ -78,7 +78,7 @@ func WithID(u *uint32, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if u == nil {
 			if must {
-				return fmt.Errorf("invalid id")
+				return wlog.Errorf("invalid id")
 			}
 			return nil
 		}
@@ -91,13 +91,13 @@ func WithEntID(id *string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if id == nil {
 			if must {
-				return fmt.Errorf("invalid entid")
+				return wlog.Errorf("invalid entid")
 			}
 			return nil
 		}
 		_id, err := uuid.Parse(*id)
 		if err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		h.EntID = &_id
 		return nil
@@ -108,13 +108,13 @@ func WithAppID(id *string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if id == nil {
 			if must {
-				return fmt.Errorf("invalid appid")
+				return wlog.Errorf("invalid appid")
 			}
 			return nil
 		}
 		_id, err := uuid.Parse(*id)
 		if err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		h.OrderBaseReq.AppID = &_id
 		return nil
@@ -125,13 +125,13 @@ func WithUserID(id *string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if id == nil {
 			if must {
-				return fmt.Errorf("invalid userid")
+				return wlog.Errorf("invalid userid")
 			}
 			return nil
 		}
 		_id, err := uuid.Parse(*id)
 		if err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		h.OrderBaseReq.UserID = &_id
 		return nil
@@ -142,13 +142,13 @@ func WithGoodID(id *string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if id == nil {
 			if must {
-				return fmt.Errorf("invalid goodid")
+				return wlog.Errorf("invalid goodid")
 			}
 			return nil
 		}
 		_id, err := uuid.Parse(*id)
 		if err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		h.OrderBaseReq.GoodID = &_id
 		return nil
@@ -159,7 +159,7 @@ func WithGoodType(e *goodtypes.GoodType, must bool) func(context.Context, *Handl
 	return func(ctx context.Context, h *Handler) error {
 		if e == nil {
 			if must {
-				return fmt.Errorf("invalid goodtype")
+				return wlog.Errorf("invalid goodtype")
 			}
 			return nil
 		}
@@ -167,7 +167,7 @@ func WithGoodType(e *goodtypes.GoodType, must bool) func(context.Context, *Handl
 		case goodtypes.GoodType_PowerRental:
 		case goodtypes.GoodType_LegacyPowerRental:
 		default:
-			return fmt.Errorf("invalid goodtype")
+			return wlog.Errorf("invalid goodtype")
 		}
 		h.OrderBaseReq.GoodType = e
 		return nil
@@ -178,13 +178,13 @@ func WithAppGoodID(id *string, must bool) func(context.Context, *Handler) error 
 	return func(ctx context.Context, h *Handler) error {
 		if id == nil {
 			if must {
-				return fmt.Errorf("invalid appgoodid")
+				return wlog.Errorf("invalid appgoodid")
 			}
 			return nil
 		}
 		_id, err := uuid.Parse(*id)
 		if err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		h.OrderBaseReq.AppGoodID = &_id
 		return nil
@@ -195,13 +195,13 @@ func WithOrderID(id *string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if id == nil {
 			if must {
-				return fmt.Errorf("invalid orderid")
+				return wlog.Errorf("invalid orderid")
 			}
 			return nil
 		}
 		_id, err := uuid.Parse(*id)
 		if err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		h.OrderID = &_id
 		h.OrderBaseReq.EntID = &_id
@@ -216,13 +216,13 @@ func WithAppGoodStockID(id *string, must bool) func(context.Context, *Handler) e
 	return func(ctx context.Context, h *Handler) error {
 		if id == nil {
 			if must {
-				return fmt.Errorf("invalid appgoodstockid")
+				return wlog.Errorf("invalid appgoodstockid")
 			}
 			return nil
 		}
 		_id, err := uuid.Parse(*id)
 		if err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		h.AppGoodStockID = &_id
 		return nil
@@ -233,16 +233,16 @@ func WithUnits(value *string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if value == nil {
 			if must {
-				return fmt.Errorf("invalid units")
+				return wlog.Errorf("invalid units")
 			}
 			return nil
 		}
 		amount, err := decimal.NewFromString(*value)
 		if err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		if amount.Cmp(decimal.NewFromInt(0)) <= 0 {
-			return fmt.Errorf("units is less than or equal to 0")
+			return wlog.Errorf("units is less than or equal to 0")
 		}
 		h.Units = &amount
 		return nil
@@ -253,16 +253,16 @@ func WithGoodValueUSD(value *string, must bool) func(context.Context, *Handler) 
 	return func(ctx context.Context, h *Handler) error {
 		if value == nil {
 			if must {
-				return fmt.Errorf("invalid goodvalueusd")
+				return wlog.Errorf("invalid goodvalueusd")
 			}
 			return nil
 		}
 		amount, err := decimal.NewFromString(*value)
 		if err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		if amount.Cmp(decimal.NewFromInt(0)) < 0 {
-			return fmt.Errorf("invalid goodvalueusd")
+			return wlog.Errorf("invalid goodvalueusd")
 		}
 		h.GoodValueUSD = &amount
 		return nil
@@ -273,16 +273,16 @@ func WithPaymentAmountUSD(value *string, must bool) func(context.Context, *Handl
 	return func(ctx context.Context, h *Handler) error {
 		if value == nil {
 			if must {
-				return fmt.Errorf("invalid paymentamountusd")
+				return wlog.Errorf("invalid paymentamountusd")
 			}
 			return nil
 		}
 		amount, err := decimal.NewFromString(*value)
 		if err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		if amount.Cmp(decimal.NewFromInt(0)) < 0 {
-			return fmt.Errorf("invalid paymentamountusd")
+			return wlog.Errorf("invalid paymentamountusd")
 		}
 		h.PaymentAmountUSD = &amount
 		return nil
@@ -293,16 +293,16 @@ func WithDiscountAmountUSD(value *string, must bool) func(context.Context, *Hand
 	return func(ctx context.Context, h *Handler) error {
 		if value == nil {
 			if must {
-				return fmt.Errorf("invalid discountamountusd")
+				return wlog.Errorf("invalid discountamountusd")
 			}
 			return nil
 		}
 		amount, err := decimal.NewFromString(*value)
 		if err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		if amount.Cmp(decimal.NewFromInt(0)) < 0 {
-			return fmt.Errorf("invalid discountamountusd")
+			return wlog.Errorf("invalid discountamountusd")
 		}
 		h.DiscountAmountUSD = &amount
 		return nil
@@ -313,13 +313,13 @@ func WithPromotionID(id *string, must bool) func(context.Context, *Handler) erro
 	return func(ctx context.Context, h *Handler) error {
 		if id == nil {
 			if must {
-				return fmt.Errorf("invalid promotionid")
+				return wlog.Errorf("invalid promotionid")
 			}
 			return nil
 		}
 		_id, err := uuid.Parse(*id)
 		if err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		h.PromotionID = &_id
 		return nil
@@ -330,12 +330,12 @@ func WithDurationSeconds(duration *uint32, must bool) func(context.Context, *Han
 	return func(ctx context.Context, h *Handler) error {
 		if duration == nil {
 			if must {
-				return fmt.Errorf("invalid durationseconds")
+				return wlog.Errorf("invalid durationseconds")
 			}
 			return nil
 		}
 		if *duration == 0 {
-			return fmt.Errorf("invalid durationseconds")
+			return wlog.Errorf("invalid durationseconds")
 		}
 		h.PowerRentalStateReq.DurationSeconds = duration
 		return nil
@@ -346,7 +346,7 @@ func WithOrderType(orderType *types.OrderType, must bool) func(context.Context, 
 	return func(ctx context.Context, h *Handler) error {
 		if orderType == nil {
 			if must {
-				return fmt.Errorf("invalid ordertype")
+				return wlog.Errorf("invalid ordertype")
 			}
 			return nil
 		}
@@ -355,7 +355,7 @@ func WithOrderType(orderType *types.OrderType, must bool) func(context.Context, 
 		case types.OrderType_Offline:
 		case types.OrderType_Normal:
 		default:
-			return fmt.Errorf("invalid ordertype")
+			return wlog.Errorf("invalid ordertype")
 		}
 		h.OrderBaseReq.OrderType = orderType
 		return nil
@@ -366,7 +366,7 @@ func WithInvestmentType(_type *types.InvestmentType, must bool) func(context.Con
 	return func(ctx context.Context, h *Handler) error {
 		if _type == nil {
 			if must {
-				return fmt.Errorf("invalid investmenttype")
+				return wlog.Errorf("invalid investmenttype")
 			}
 			return nil
 		}
@@ -374,7 +374,7 @@ func WithInvestmentType(_type *types.InvestmentType, must bool) func(context.Con
 		case types.InvestmentType_FullPayment:
 		case types.InvestmentType_UnionMining:
 		default:
-			return fmt.Errorf("invalid investmenttype")
+			return wlog.Errorf("invalid investmenttype")
 		}
 		h.InvestmentType = _type
 		return nil
@@ -385,7 +385,7 @@ func WithPaymentType(paymentType *types.PaymentType, must bool) func(context.Con
 	return func(ctx context.Context, h *Handler) error {
 		if paymentType == nil {
 			if must {
-				return fmt.Errorf("invalid paymenttype")
+				return wlog.Errorf("invalid paymenttype")
 			}
 			return nil
 		}
@@ -397,7 +397,7 @@ func WithPaymentType(paymentType *types.PaymentType, must bool) func(context.Con
 		case types.PaymentType_PayWithOffline:
 		case types.PaymentType_PayWithNoPayment:
 		default:
-			return fmt.Errorf("invalid paymentType")
+			return wlog.Errorf("invalid paymentType")
 		}
 		h.OrderStateBaseReq.PaymentType = paymentType
 		return nil
@@ -409,7 +409,7 @@ func WithOrderState(state *types.OrderState, must bool) func(context.Context, *H
 	return func(ctx context.Context, h *Handler) error {
 		if state == nil {
 			if must {
-				return fmt.Errorf("invalid orderstate")
+				return wlog.Errorf("invalid orderstate")
 			}
 			return nil
 		}
@@ -447,7 +447,7 @@ func WithOrderState(state *types.OrderState, must bool) func(context.Context, *H
 		case types.OrderState_OrderStateCanceled:
 		case types.OrderState_OrderStateExpired:
 		default:
-			return fmt.Errorf("invalid orderstate")
+			return wlog.Errorf("invalid orderstate")
 		}
 		h.OrderStateBaseReq.OrderState = state
 		return nil
@@ -458,7 +458,7 @@ func WithCreateMethod(e *types.OrderCreateMethod, must bool) func(context.Contex
 	return func(ctx context.Context, h *Handler) error {
 		if e == nil {
 			if must {
-				return fmt.Errorf("invalid createmethod")
+				return wlog.Errorf("invalid createmethod")
 			}
 			return nil
 		}
@@ -467,7 +467,7 @@ func WithCreateMethod(e *types.OrderCreateMethod, must bool) func(context.Contex
 		case types.OrderCreateMethod_OrderCreatedByAdmin:
 		case types.OrderCreateMethod_OrderCreatedByRenew:
 		default:
-			return fmt.Errorf("invalid createmethod")
+			return wlog.Errorf("invalid createmethod")
 		}
 		h.OrderBaseReq.CreateMethod = e
 		return nil
@@ -478,7 +478,7 @@ func WithStartMode(startMode *types.OrderStartMode, must bool) func(context.Cont
 	return func(ctx context.Context, h *Handler) error {
 		if startMode == nil {
 			if must {
-				return fmt.Errorf("invalid startmode")
+				return wlog.Errorf("invalid startmode")
 			}
 			return nil
 		}
@@ -489,7 +489,7 @@ func WithStartMode(startMode *types.OrderStartMode, must bool) func(context.Cont
 		case types.OrderStartMode_OrderStartNextDay:
 		case types.OrderStartMode_OrderStartPreset:
 		default:
-			return fmt.Errorf("invalid startmode")
+			return wlog.Errorf("invalid startmode")
 		}
 		h.OrderStateBaseReq.StartMode = startMode
 		return nil
@@ -500,13 +500,13 @@ func WithStartAt(startAt *uint32, must bool) func(context.Context, *Handler) err
 	return func(ctx context.Context, h *Handler) error {
 		if startAt == nil {
 			if must {
-				return fmt.Errorf("invalid startat")
+				return wlog.Errorf("invalid startat")
 			}
 			return nil
 		}
 		now := uint32(time.Now().Unix())
 		if *startAt < now {
-			return fmt.Errorf("invalid startat")
+			return wlog.Errorf("invalid startat")
 		}
 		h.OrderStateBaseReq.StartAt = startAt
 		return nil
@@ -524,7 +524,7 @@ func WithBenefitState(benefitState *types.BenefitState, must bool) func(context.
 	return func(ctx context.Context, h *Handler) error {
 		if benefitState == nil {
 			if must {
-				return fmt.Errorf("invalid benefitstate")
+				return wlog.Errorf("invalid benefitstate")
 			}
 			return nil
 		}
@@ -533,7 +533,7 @@ func WithBenefitState(benefitState *types.BenefitState, must bool) func(context.
 		case types.BenefitState_BenefitCalculated:
 		case types.BenefitState_BenefitBookKept:
 		default:
-			return fmt.Errorf("invalid benefitstate")
+			return wlog.Errorf("invalid benefitstate")
 		}
 		h.OrderStateBaseReq.BenefitState = benefitState
 		return nil
@@ -565,7 +565,7 @@ func WithPaymentState(state *types.PaymentState, must bool) func(context.Context
 	return func(ctx context.Context, h *Handler) error {
 		if state == nil {
 			if must {
-				return fmt.Errorf("invalid paymentstate")
+				return wlog.Errorf("invalid paymentstate")
 			}
 			return nil
 		}
@@ -576,7 +576,7 @@ func WithPaymentState(state *types.PaymentState, must bool) func(context.Context
 		case types.PaymentState_PaymentStateDone:
 		case types.PaymentState_PaymentStateNoPayment:
 		default:
-			return fmt.Errorf("invalid paymentstate")
+			return wlog.Errorf("invalid paymentstate")
 		}
 		h.PowerRentalStateReq.PaymentState = state
 		return nil
@@ -608,13 +608,13 @@ func WithAppGoodStockLockID(id *string, must bool) func(context.Context, *Handle
 	return func(ctx context.Context, h *Handler) error {
 		if id == nil {
 			if must {
-				return fmt.Errorf("invalid appgoodstocklockid")
+				return wlog.Errorf("invalid appgoodstocklockid")
 			}
 			return nil
 		}
 		_id, err := uuid.Parse(*id)
 		if err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		h.OrderLockReqs = append(h.OrderLockReqs, &orderlockcrud.Req{
 			EntID:    &_id,
@@ -628,13 +628,13 @@ func WithLedgerLockID(id *string, must bool) func(context.Context, *Handler) err
 	return func(ctx context.Context, h *Handler) error {
 		if id == nil {
 			if must {
-				return fmt.Errorf("invalid ledgerlockid")
+				return wlog.Errorf("invalid ledgerlockid")
 			}
 			return nil
 		}
 		_id, err := uuid.Parse(*id)
 		if err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		h.OrderLockReqs = append(h.OrderLockReqs, &orderlockcrud.Req{
 			EntID:    &_id,
@@ -649,13 +649,13 @@ func WithPaymentID(id *string, must bool) func(context.Context, *Handler) error 
 	return func(ctx context.Context, h *Handler) error {
 		if id == nil {
 			if must {
-				return fmt.Errorf("invalid paymentid")
+				return wlog.Errorf("invalid paymentid")
 			}
 			return nil
 		}
 		_id, err := uuid.Parse(*id)
 		if err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		h.PaymentBaseReq.EntID = &_id
 		h.PowerRentalStateReq.PaymentID = &_id
@@ -668,7 +668,7 @@ func WithRenewState(e *types.OrderRenewState, must bool) func(context.Context, *
 	return func(ctx context.Context, h *Handler) error {
 		if e == nil {
 			if must {
-				return fmt.Errorf("invalid renewstate")
+				return wlog.Errorf("invalid renewstate")
 			}
 			return nil
 		}
@@ -679,7 +679,7 @@ func WithRenewState(e *types.OrderRenewState, must bool) func(context.Context, *
 		case types.OrderRenewState_OrderRenewExecute:
 		case types.OrderRenewState_OrderRenewFail:
 		default:
-			return fmt.Errorf("invalid renewstate")
+			return wlog.Errorf("invalid renewstate")
 		}
 		h.PowerRentalStateReq.RenewState = e
 		return nil
@@ -705,7 +705,7 @@ func WithCouponIDs(ss []string, must bool) func(context.Context, *Handler) error
 		for _, s := range ss {
 			id, err := uuid.Parse(s)
 			if err != nil {
-				return err
+				return wlog.WrapError(err)
 			}
 			// Fill order id later
 			h.OrderCouponReqs = append(h.OrderCouponReqs, &ordercouponcrud.Req{
@@ -723,27 +723,27 @@ func WithPaymentBalances(bs []*paymentmwpb.PaymentBalanceReq, must bool) func(co
 
 			id, err := uuid.Parse(b.GetCoinTypeID())
 			if err != nil {
-				return err
+				return wlog.WrapError(err)
 			}
 			req.CoinTypeID = &id
 
 			if b.LocalCoinUSDCurrency != nil {
 				amount, err := decimal.NewFromString(b.GetLocalCoinUSDCurrency())
 				if err != nil {
-					return err
+					return wlog.WrapError(err)
 				}
 				req.LocalCoinUSDCurrency = &amount
 			}
 
 			amount1, err := decimal.NewFromString(b.GetAmount())
 			if err != nil {
-				return err
+				return wlog.WrapError(err)
 			}
 			req.Amount = &amount1
 
 			amount2, err := decimal.NewFromString(b.GetLiveCoinUSDCurrency())
 			if err != nil {
-				return err
+				return wlog.WrapError(err)
 			}
 			req.LiveCoinUSDCurrency = &amount2
 
@@ -760,45 +760,45 @@ func WithPaymentTransfers(bs []*paymentmwpb.PaymentTransferReq, must bool) func(
 
 			id1, err := uuid.Parse(b.GetCoinTypeID())
 			if err != nil {
-				return err
+				return wlog.WrapError(err)
 			}
 			req.CoinTypeID = &id1
 
 			if b.LocalCoinUSDCurrency != nil {
 				amount, err := decimal.NewFromString(*b.LocalCoinUSDCurrency)
 				if err != nil {
-					return err
+					return wlog.WrapError(err)
 				}
 				req.LocalCoinUSDCurrency = &amount
 			}
 
 			id2, err := uuid.Parse(b.GetAccountID())
 			if err != nil {
-				return err
+				return wlog.WrapError(err)
 			}
 			req.AccountID = &id2
 
 			amount1, err := decimal.NewFromString(b.GetAmount())
 			if err != nil {
-				return err
+				return wlog.WrapError(err)
 			}
 			req.Amount = &amount1
 
 			amount2, err := decimal.NewFromString(b.GetStartAmount())
 			if err != nil {
-				return err
+				return wlog.WrapError(err)
 			}
 			req.StartAmount = &amount2
 
 			amount3, err := decimal.NewFromString(*b.LiveCoinUSDCurrency)
 			if err != nil {
-				return err
+				return wlog.WrapError(err)
 			}
 			req.LiveCoinUSDCurrency = &amount3
 
 			amount4, err := decimal.NewFromString(b.GetFinishAmount())
 			if err != nil {
-				return err
+				return wlog.WrapError(err)
 			}
 			req.FinishAmount = &amount4
 
@@ -811,6 +811,9 @@ func WithPaymentTransfers(bs []*paymentmwpb.PaymentTransferReq, must bool) func(
 func WithFeeOrders(feeOrders []*feeordermwpb.FeeOrderReq, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		for _, feeOrder := range feeOrders {
+			if feeOrder.EntID == nil {
+				feeOrder.EntID = func() *string { s := uuid.NewString(); return &s }()
+			}
 			handler, err := feeorder1.NewHandler(
 				ctx,
 				feeorder1.WithEntID(feeOrder.EntID, true),
@@ -828,7 +831,7 @@ func WithFeeOrders(feeOrders []*feeordermwpb.FeeOrderReq, must bool) func(contex
 				feeorder1.WithDurationSeconds(feeOrder.DurationSeconds, true),
 			)
 			if err != nil {
-				return err
+				return wlog.WrapError(err)
 			}
 			h.FeeMultiHandler.AppendHandler(handler)
 		}
@@ -841,7 +844,7 @@ func (h *Handler) withOrderBaseConds(conds *npool.Conds) error {
 	if conds.OrderID != nil {
 		id, err := uuid.Parse(conds.GetOrderID().GetValue())
 		if err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		h.OrderBaseConds.EntID = &cruder.Cond{
 			Op:  conds.GetOrderID().GetOp(),
@@ -853,7 +856,7 @@ func (h *Handler) withOrderBaseConds(conds *npool.Conds) error {
 		for _, id := range conds.GetOrderIDs().GetValue() {
 			_id, err := uuid.Parse(id)
 			if err != nil {
-				return err
+				return wlog.WrapError(err)
 			}
 			ids = append(ids, _id)
 		}
@@ -865,7 +868,7 @@ func (h *Handler) withOrderBaseConds(conds *npool.Conds) error {
 	if conds.AppID != nil {
 		id, err := uuid.Parse(conds.GetAppID().GetValue())
 		if err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		h.OrderBaseConds.AppID = &cruder.Cond{
 			Op:  conds.GetAppID().GetOp(),
@@ -875,7 +878,7 @@ func (h *Handler) withOrderBaseConds(conds *npool.Conds) error {
 	if conds.UserID != nil {
 		id, err := uuid.Parse(conds.GetUserID().GetValue())
 		if err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		h.OrderBaseConds.UserID = &cruder.Cond{
 			Op:  conds.GetUserID().GetOp(),
@@ -885,7 +888,7 @@ func (h *Handler) withOrderBaseConds(conds *npool.Conds) error {
 	if conds.GoodID != nil {
 		id, err := uuid.Parse(conds.GetGoodID().GetValue())
 		if err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		h.OrderBaseConds.GoodID = &cruder.Cond{
 			Op:  conds.GetGoodID().GetOp(),
@@ -897,7 +900,7 @@ func (h *Handler) withOrderBaseConds(conds *npool.Conds) error {
 		for _, id := range conds.GetGoodIDs().GetValue() {
 			_id, err := uuid.Parse(id)
 			if err != nil {
-				return err
+				return wlog.WrapError(err)
 			}
 			ids = append(ids, _id)
 		}
@@ -909,7 +912,7 @@ func (h *Handler) withOrderBaseConds(conds *npool.Conds) error {
 	if conds.AppGoodID != nil {
 		id, err := uuid.Parse(conds.GetAppGoodID().GetValue())
 		if err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		h.OrderBaseConds.AppGoodID = &cruder.Cond{
 			Op:  conds.GetAppGoodID().GetOp(),
@@ -921,7 +924,7 @@ func (h *Handler) withOrderBaseConds(conds *npool.Conds) error {
 		for _, id := range conds.GetAppGoodIDs().GetValue() {
 			_id, err := uuid.Parse(id)
 			if err != nil {
-				return err
+				return wlog.WrapError(err)
 			}
 			ids = append(ids, _id)
 		}
@@ -961,7 +964,7 @@ func (h *Handler) withPowerRentalConds(conds *npool.Conds) error {
 	if conds.EntID != nil {
 		id, err := uuid.Parse(conds.GetEntID().GetValue())
 		if err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		h.PowerRentalConds.EntID = &cruder.Cond{
 			Op:  conds.GetEntID().GetOp(),
@@ -973,7 +976,7 @@ func (h *Handler) withPowerRentalConds(conds *npool.Conds) error {
 		for _, id := range conds.GetEntIDs().GetValue() {
 			_id, err := uuid.Parse(id)
 			if err != nil {
-				return err
+				return wlog.WrapError(err)
 			}
 			ids = append(ids, _id)
 		}
@@ -985,7 +988,7 @@ func (h *Handler) withPowerRentalConds(conds *npool.Conds) error {
 	if conds.OrderID != nil {
 		id, err := uuid.Parse(conds.GetOrderID().GetValue())
 		if err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		h.PowerRentalConds.OrderID = &cruder.Cond{
 			Op:  conds.GetOrderID().GetOp(),
@@ -997,7 +1000,7 @@ func (h *Handler) withPowerRentalConds(conds *npool.Conds) error {
 		for _, id := range conds.GetOrderIDs().GetValue() {
 			_id, err := uuid.Parse(id)
 			if err != nil {
-				return err
+				return wlog.WrapError(err)
 			}
 			ids = append(ids, _id)
 		}
@@ -1069,7 +1072,7 @@ func (h *Handler) withOrderCouponConds(conds *npool.Conds) error {
 	if conds.OrderID != nil {
 		id, err := uuid.Parse(conds.GetOrderID().GetValue())
 		if err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		h.OrderCouponConds.OrderID = &cruder.Cond{
 			Op:  conds.GetOrderID().GetOp(),
@@ -1081,7 +1084,7 @@ func (h *Handler) withOrderCouponConds(conds *npool.Conds) error {
 		for _, id := range conds.GetOrderIDs().GetValue() {
 			_id, err := uuid.Parse(id)
 			if err != nil {
-				return err
+				return wlog.WrapError(err)
 			}
 			ids = append(ids, _id)
 		}
@@ -1093,7 +1096,7 @@ func (h *Handler) withOrderCouponConds(conds *npool.Conds) error {
 	if conds.CouponID != nil {
 		id, err := uuid.Parse(conds.GetCouponID().GetValue())
 		if err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		h.OrderCouponConds.CouponID = &cruder.Cond{
 			Op:  conds.GetCouponID().GetOp(),
@@ -1105,7 +1108,7 @@ func (h *Handler) withOrderCouponConds(conds *npool.Conds) error {
 		for _, id := range conds.GetCouponIDs().GetValue() {
 			_id, err := uuid.Parse(id)
 			if err != nil {
-				return err
+				return wlog.WrapError(err)
 			}
 			ids = append(ids, _id)
 		}
@@ -1123,16 +1126,16 @@ func WithConds(conds *npool.Conds) func(context.Context, *Handler) error {
 			return nil
 		}
 		if err := h.withOrderBaseConds(conds); err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		if err := h.withPowerRentalConds(conds); err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		if err := h.withOrderStateBaseConds(conds); err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		if err := h.withOrderCouponConds(conds); err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		return h.withPowerRentalStateConds(conds)
 	}

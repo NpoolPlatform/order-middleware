@@ -3,8 +3,8 @@ package feeorder
 
 import (
 	"context"
-	"fmt"
 
+	wlog "github.com/NpoolPlatform/go-service-framework/pkg/wlog"
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
 	goodtypes "github.com/NpoolPlatform/message/npool/basetypes/good/v1"
 	types "github.com/NpoolPlatform/message/npool/basetypes/order/v1"
@@ -76,7 +76,7 @@ func WithID(u *uint32, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if u == nil {
 			if must {
-				return fmt.Errorf("invalid id")
+				return wlog.Errorf("invalid id")
 			}
 			return nil
 		}
@@ -89,7 +89,7 @@ func WithEntID(id *string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if id == nil {
 			if must {
-				return fmt.Errorf("invalid entid")
+				return wlog.Errorf("invalid entid")
 			}
 			return nil
 		}
@@ -106,7 +106,7 @@ func WithAppID(id *string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if id == nil {
 			if must {
-				return fmt.Errorf("invalid appid")
+				return wlog.Errorf("invalid appid")
 			}
 			return nil
 		}
@@ -123,7 +123,7 @@ func WithUserID(id *string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if id == nil {
 			if must {
-				return fmt.Errorf("invalid userid")
+				return wlog.Errorf("invalid userid")
 			}
 			return nil
 		}
@@ -140,7 +140,7 @@ func WithGoodID(id *string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if id == nil {
 			if must {
-				return fmt.Errorf("invalid goodid")
+				return wlog.Errorf("invalid goodid")
 			}
 			return nil
 		}
@@ -157,7 +157,7 @@ func WithGoodType(e *goodtypes.GoodType, must bool) func(context.Context, *Handl
 	return func(ctx context.Context, h *Handler) error {
 		if e == nil {
 			if must {
-				return fmt.Errorf("invalid goodtype")
+				return wlog.Errorf("invalid goodtype")
 			}
 			return nil
 		}
@@ -165,7 +165,7 @@ func WithGoodType(e *goodtypes.GoodType, must bool) func(context.Context, *Handl
 		case goodtypes.GoodType_TechniqueServiceFee:
 		case goodtypes.GoodType_ElectricityFee:
 		default:
-			return fmt.Errorf("invalid goodtype")
+			return wlog.Errorf("invalid goodtype")
 		}
 		h.OrderBaseReq.GoodType = e
 		return nil
@@ -176,7 +176,7 @@ func WithAppGoodID(id *string, must bool) func(context.Context, *Handler) error 
 	return func(ctx context.Context, h *Handler) error {
 		if id == nil {
 			if must {
-				return fmt.Errorf("invalid appgoodid")
+				return wlog.Errorf("invalid appgoodid")
 			}
 			return nil
 		}
@@ -193,7 +193,7 @@ func WithOrderID(id *string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if id == nil {
 			if must {
-				return fmt.Errorf("invalid orderid")
+				return wlog.Errorf("invalid orderid")
 			}
 			return nil
 		}
@@ -215,7 +215,7 @@ func WithParentOrderID(id *string, must bool) func(context.Context, *Handler) er
 	return func(ctx context.Context, h *Handler) error {
 		if id == nil {
 			if must {
-				return fmt.Errorf("invalid parentorderid")
+				return wlog.Errorf("invalid parentorderid")
 			}
 			return nil
 		}
@@ -232,7 +232,7 @@ func WithOrderType(orderType *types.OrderType, must bool) func(context.Context, 
 	return func(ctx context.Context, h *Handler) error {
 		if orderType == nil {
 			if must {
-				return fmt.Errorf("invalid ordertype")
+				return wlog.Errorf("invalid ordertype")
 			}
 			return nil
 		}
@@ -241,7 +241,7 @@ func WithOrderType(orderType *types.OrderType, must bool) func(context.Context, 
 		case types.OrderType_Offline:
 		case types.OrderType_Normal:
 		default:
-			return fmt.Errorf("invalid ordertype")
+			return wlog.Errorf("invalid ordertype")
 		}
 		h.OrderBaseReq.OrderType = orderType
 		return nil
@@ -252,7 +252,7 @@ func WithPaymentType(paymentType *types.PaymentType, must bool) func(context.Con
 	return func(ctx context.Context, h *Handler) error {
 		if paymentType == nil {
 			if must {
-				return fmt.Errorf("invalid paymenttype")
+				return wlog.Errorf("invalid paymenttype")
 			}
 			return nil
 		}
@@ -265,7 +265,7 @@ func WithPaymentType(paymentType *types.PaymentType, must bool) func(context.Con
 		case types.PaymentType_PayWithOffline:
 		case types.PaymentType_PayWithNoPayment:
 		default:
-			return fmt.Errorf("invalid paymentType")
+			return wlog.Errorf("invalid paymentType")
 		}
 		h.OrderStateBaseReq.PaymentType = paymentType
 		return nil
@@ -276,7 +276,7 @@ func WithGoodValueUSD(value *string, must bool) func(context.Context, *Handler) 
 	return func(ctx context.Context, h *Handler) error {
 		if value == nil {
 			if must {
-				return fmt.Errorf("invalid goodvalueusd")
+				return wlog.Errorf("invalid goodvalueusd")
 			}
 			return nil
 		}
@@ -285,7 +285,7 @@ func WithGoodValueUSD(value *string, must bool) func(context.Context, *Handler) 
 			return err
 		}
 		if amount.Cmp(decimal.NewFromInt(0)) < 0 {
-			return fmt.Errorf("invalid goodvalueusd")
+			return wlog.Errorf("invalid goodvalueusd")
 		}
 		h.GoodValueUSD = &amount
 		return nil
@@ -296,7 +296,7 @@ func WithPaymentAmountUSD(value *string, must bool) func(context.Context, *Handl
 	return func(ctx context.Context, h *Handler) error {
 		if value == nil {
 			if must {
-				return fmt.Errorf("invalid paymentamountusd")
+				return wlog.Errorf("invalid paymentamountusd")
 			}
 			return nil
 		}
@@ -305,7 +305,7 @@ func WithPaymentAmountUSD(value *string, must bool) func(context.Context, *Handl
 			return err
 		}
 		if amount.Cmp(decimal.NewFromInt(0)) < 0 {
-			return fmt.Errorf("invalid paymentamountusd")
+			return wlog.Errorf("invalid paymentamountusd")
 		}
 		h.PaymentAmountUSD = &amount
 		return nil
@@ -316,7 +316,7 @@ func WithDiscountAmountUSD(value *string, must bool) func(context.Context, *Hand
 	return func(ctx context.Context, h *Handler) error {
 		if value == nil {
 			if must {
-				return fmt.Errorf("invalid discountamountusd")
+				return wlog.Errorf("invalid discountamountusd")
 			}
 			return nil
 		}
@@ -325,7 +325,7 @@ func WithDiscountAmountUSD(value *string, must bool) func(context.Context, *Hand
 			return err
 		}
 		if amount.Cmp(decimal.NewFromInt(0)) < 0 {
-			return fmt.Errorf("invalid discountamountusd")
+			return wlog.Errorf("invalid discountamountusd")
 		}
 		h.DiscountAmountUSD = &amount
 		return nil
@@ -336,7 +336,7 @@ func WithPromotionID(id *string, must bool) func(context.Context, *Handler) erro
 	return func(ctx context.Context, h *Handler) error {
 		if id == nil {
 			if must {
-				return fmt.Errorf("invalid promotionid")
+				return wlog.Errorf("invalid promotionid")
 			}
 			return nil
 		}
@@ -353,12 +353,12 @@ func WithDurationSeconds(duration *uint32, must bool) func(context.Context, *Han
 	return func(ctx context.Context, h *Handler) error {
 		if duration == nil {
 			if must {
-				return fmt.Errorf("invalid durationseconds")
+				return wlog.Errorf("invalid durationseconds")
 			}
 			return nil
 		}
 		if *duration <= 0 {
-			return fmt.Errorf("invalid durationseconds")
+			return wlog.Errorf("invalid durationseconds")
 		}
 		h.DurationSeconds = duration
 		return nil
@@ -370,7 +370,7 @@ func WithOrderState(state *types.OrderState, must bool) func(context.Context, *H
 	return func(ctx context.Context, h *Handler) error {
 		if state == nil {
 			if must {
-				return fmt.Errorf("invalid orderstate")
+				return wlog.Errorf("invalid orderstate")
 			}
 			return nil
 		}
@@ -408,7 +408,7 @@ func WithOrderState(state *types.OrderState, must bool) func(context.Context, *H
 		case types.OrderState_OrderStateCanceled:
 		case types.OrderState_OrderStateExpired:
 		default:
-			return fmt.Errorf("invalid orderstate")
+			return wlog.Errorf("invalid orderstate")
 		}
 		h.OrderStateBaseReq.OrderState = state
 		return nil
@@ -419,7 +419,7 @@ func WithCreateMethod(e *types.OrderCreateMethod, must bool) func(context.Contex
 	return func(ctx context.Context, h *Handler) error {
 		if e == nil {
 			if must {
-				return fmt.Errorf("invalid createmethod")
+				return wlog.Errorf("invalid createmethod")
 			}
 			return nil
 		}
@@ -428,7 +428,7 @@ func WithCreateMethod(e *types.OrderCreateMethod, must bool) func(context.Contex
 		case types.OrderCreateMethod_OrderCreatedByAdmin:
 		case types.OrderCreateMethod_OrderCreatedByRenew:
 		default:
-			return fmt.Errorf("invalid createmethod")
+			return wlog.Errorf("invalid createmethod")
 		}
 		h.OrderBaseReq.CreateMethod = e
 		return nil
@@ -439,7 +439,7 @@ func WithUserSetPaid(value *bool, must bool) func(context.Context, *Handler) err
 	return func(ctx context.Context, h *Handler) error {
 		if value == nil {
 			if must {
-				return fmt.Errorf("invalid usersetpaid")
+				return wlog.Errorf("invalid usersetpaid")
 			}
 			return nil
 		}
@@ -452,7 +452,7 @@ func WithUserSetCanceled(value *bool, must bool) func(context.Context, *Handler)
 	return func(ctx context.Context, h *Handler) error {
 		if value == nil {
 			if must {
-				return fmt.Errorf("invalid usersetcanceled")
+				return wlog.Errorf("invalid usersetcanceled")
 			}
 			return nil
 		}
@@ -465,7 +465,7 @@ func WithAdminSetCanceled(value *bool, must bool) func(context.Context, *Handler
 	return func(ctx context.Context, h *Handler) error {
 		if value == nil {
 			if must {
-				return fmt.Errorf("invalid adminsetcanceled")
+				return wlog.Errorf("invalid adminsetcanceled")
 			}
 			return nil
 		}
@@ -478,7 +478,7 @@ func WithPaymentState(state *types.PaymentState, must bool) func(context.Context
 	return func(ctx context.Context, h *Handler) error {
 		if state == nil {
 			if must {
-				return fmt.Errorf("invalid paymentstate")
+				return wlog.Errorf("invalid paymentstate")
 			}
 			return nil
 		}
@@ -489,7 +489,7 @@ func WithPaymentState(state *types.PaymentState, must bool) func(context.Context
 		case types.PaymentState_PaymentStateDone:
 		case types.PaymentState_PaymentStateNoPayment:
 		default:
-			return fmt.Errorf("invalid paymentstate")
+			return wlog.Errorf("invalid paymentstate")
 		}
 		h.FeeOrderStateReq.PaymentState = state
 		return nil
@@ -500,7 +500,7 @@ func WithRollback(rollback *bool, must bool) func(context.Context, *Handler) err
 	return func(ctx context.Context, h *Handler) error {
 		if rollback == nil {
 			if must {
-				return fmt.Errorf("invalid rollback")
+				return wlog.Errorf("invalid rollback")
 			}
 			return nil
 		}
@@ -513,7 +513,7 @@ func WithLedgerLockID(id *string, must bool) func(context.Context, *Handler) err
 	return func(ctx context.Context, h *Handler) error {
 		if id == nil {
 			if must {
-				return fmt.Errorf("invalid ledgerlockid")
+				return wlog.Errorf("invalid ledgerlockid")
 			}
 			return nil
 		}
@@ -531,7 +531,7 @@ func WithPaymentID(id *string, must bool) func(context.Context, *Handler) error 
 	return func(ctx context.Context, h *Handler) error {
 		if id == nil {
 			if must {
-				return fmt.Errorf("invalid paymentid")
+				return wlog.Errorf("invalid paymentid")
 			}
 			return nil
 		}

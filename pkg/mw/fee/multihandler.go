@@ -2,8 +2,8 @@ package feeorder
 
 import (
 	"context"
-	"fmt"
 
+	wlog "github.com/NpoolPlatform/go-service-framework/pkg/wlog"
 	types "github.com/NpoolPlatform/message/npool/basetypes/order/v1"
 	"github.com/NpoolPlatform/order-middleware/pkg/db"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent"
@@ -45,14 +45,14 @@ func (h *MultiHandler) validatePaymentOrder() error {
 	switch paymentOrders {
 	case 0:
 		if payWithParents != len(h.Handlers) {
-			return fmt.Errorf("invalid paywithparents")
+			return wlog.Errorf("invalid paywithparents")
 		}
 	case 1:
 		if payWithOthers != len(h.Handlers)-1 {
-			return fmt.Errorf("invalid paywithothers")
+			return wlog.Errorf("invalid paywithothers")
 		}
 	default:
-		return fmt.Errorf("invalid paymentorder")
+		return wlog.Errorf("invalid paymentorder")
 	}
 	return nil
 }
@@ -63,14 +63,14 @@ func (h *MultiHandler) validatePaymentID() error {
 
 	for _, handler := range h.Handlers {
 		if len(paymentIDs) > 0 && handler.PaymentBaseReq.EntID == nil {
-			return fmt.Errorf("invalid paymentid")
+			return wlog.Errorf("invalid paymentid")
 		}
 		if handler.PaymentBaseReq.EntID != nil {
 			paymentIDs[*handler.PaymentBaseReq.EntID] = struct{}{}
 		}
 		for _, balance := range handler.PaymentBalanceReqs {
 			if len(paymentIDs) > 0 && balance.PaymentID == nil {
-				return fmt.Errorf("invalid paymentid")
+				return wlog.Errorf("invalid paymentid")
 			}
 			if balance.PaymentID != nil {
 				paymentIDs[*balance.PaymentID] = struct{}{}
@@ -78,7 +78,7 @@ func (h *MultiHandler) validatePaymentID() error {
 		}
 		for _, transfer := range handler.PaymentTransferReqs {
 			if len(paymentIDs) > 0 && transfer.PaymentID == nil {
-				return fmt.Errorf("invalid paymentid")
+				return wlog.Errorf("invalid paymentid")
 			}
 			if transfer.PaymentID != nil {
 				paymentIDs[*transfer.PaymentID] = struct{}{}
@@ -86,7 +86,7 @@ func (h *MultiHandler) validatePaymentID() error {
 		}
 	}
 	if len(paymentIDs) > 1 {
-		return fmt.Errorf("invalid paymentid")
+		return wlog.Errorf("invalid paymentid")
 	}
 	if len(paymentIDs) == 1 {
 		return nil
