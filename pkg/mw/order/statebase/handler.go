@@ -2,9 +2,9 @@ package statebase
 
 import (
 	"context"
-	"fmt"
 	"time"
 
+	wlog "github.com/NpoolPlatform/go-service-framework/pkg/wlog"
 	types "github.com/NpoolPlatform/message/npool/basetypes/order/v1"
 	statebasecrud "github.com/NpoolPlatform/order-middleware/pkg/crud/order/statebase"
 
@@ -30,7 +30,7 @@ func WithID(u *uint32, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if u == nil {
 			if must {
-				return fmt.Errorf("invalid id")
+				return wlog.Errorf("invalid id")
 			}
 			return nil
 		}
@@ -43,7 +43,7 @@ func WithEntID(id *string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if id == nil {
 			if must {
-				return fmt.Errorf("invalid entid")
+				return wlog.Errorf("invalid entid")
 			}
 			return nil
 		}
@@ -60,7 +60,7 @@ func WithOrderID(id *string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if id == nil {
 			if must {
-				return fmt.Errorf("invalid orderid")
+				return wlog.Errorf("invalid orderid")
 			}
 			return nil
 		}
@@ -78,7 +78,7 @@ func WithOrderState(state *types.OrderState, must bool) func(context.Context, *H
 	return func(ctx context.Context, h *Handler) error {
 		if state == nil {
 			if must {
-				return fmt.Errorf("invalid orderstate")
+				return wlog.Errorf("invalid orderstate")
 			}
 			return nil
 		}
@@ -116,7 +116,7 @@ func WithOrderState(state *types.OrderState, must bool) func(context.Context, *H
 		case types.OrderState_OrderStateCanceled:
 		case types.OrderState_OrderStateExpired:
 		default:
-			return fmt.Errorf("invalid orderstate")
+			return wlog.Errorf("invalid orderstate")
 		}
 		h.OrderState = state
 		return nil
@@ -127,7 +127,7 @@ func WithPaymentType(paymentType *types.PaymentType, must bool) func(context.Con
 	return func(ctx context.Context, h *Handler) error {
 		if paymentType == nil {
 			if must {
-				return fmt.Errorf("invalid paymenttype")
+				return wlog.Errorf("invalid paymenttype")
 			}
 			return nil
 		}
@@ -140,7 +140,7 @@ func WithPaymentType(paymentType *types.PaymentType, must bool) func(context.Con
 		case types.PaymentType_PayWithOffline:
 		case types.PaymentType_PayWithNoPayment:
 		default:
-			return fmt.Errorf("invalid paymentType")
+			return wlog.Errorf("invalid paymentType")
 		}
 		h.PaymentType = paymentType
 		return nil
@@ -151,7 +151,7 @@ func WithStartMode(startMode *types.OrderStartMode, must bool) func(context.Cont
 	return func(ctx context.Context, h *Handler) error {
 		if startMode == nil {
 			if must {
-				return fmt.Errorf("invalid startmode")
+				return wlog.Errorf("invalid startmode")
 			}
 			return nil
 		}
@@ -162,7 +162,7 @@ func WithStartMode(startMode *types.OrderStartMode, must bool) func(context.Cont
 		case types.OrderStartMode_OrderStartNextDay:
 		case types.OrderStartMode_OrderStartPreset:
 		default:
-			return fmt.Errorf("invalid startmode")
+			return wlog.Errorf("invalid startmode")
 		}
 		h.StartMode = startMode
 		return nil
@@ -173,12 +173,12 @@ func WithStartAt(startAt *uint32, must bool) func(context.Context, *Handler) err
 	return func(ctx context.Context, h *Handler) error {
 		if startAt == nil {
 			if must {
-				return fmt.Errorf("invalid startat")
+				return wlog.Errorf("invalid startat")
 			}
 			return nil
 		}
 		if *startAt < uint32(time.Now().Unix()) {
-			return fmt.Errorf("invalid startat")
+			return wlog.Errorf("invalid startat")
 		}
 		h.StartAt = startAt
 		return nil
@@ -189,7 +189,7 @@ func WithLastBenefitAt(lastBenefitAt *uint32, must bool) func(context.Context, *
 	return func(ctx context.Context, h *Handler) error {
 		if lastBenefitAt == nil {
 			if must {
-				return fmt.Errorf("invalid lastbenefitat")
+				return wlog.Errorf("invalid lastbenefitat")
 			}
 			return nil
 		}
@@ -202,7 +202,7 @@ func WithBenefitState(benefitState *types.BenefitState, must bool) func(context.
 	return func(ctx context.Context, h *Handler) error {
 		if benefitState == nil {
 			if must {
-				return fmt.Errorf("invalid benefitstate")
+				return wlog.Errorf("invalid benefitstate")
 			}
 			return nil
 		}
@@ -211,7 +211,7 @@ func WithBenefitState(benefitState *types.BenefitState, must bool) func(context.
 		case types.BenefitState_BenefitCalculated:
 		case types.BenefitState_BenefitBookKept:
 		default:
-			return fmt.Errorf("invalid benefitstate")
+			return wlog.Errorf("invalid benefitstate")
 		}
 		h.BenefitState = benefitState
 		return nil

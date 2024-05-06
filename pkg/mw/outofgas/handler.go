@@ -2,8 +2,8 @@ package outofgas
 
 import (
 	"context"
-	"fmt"
 
+	wlog "github.com/NpoolPlatform/go-service-framework/pkg/wlog"
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
 	npool "github.com/NpoolPlatform/message/npool/order/mw/v1/outofgas"
 	constant "github.com/NpoolPlatform/order-middleware/pkg/const"
@@ -39,7 +39,7 @@ func WithID(u *uint32, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if u == nil {
 			if must {
-				return fmt.Errorf("invalid id")
+				return wlog.Errorf("invalid id")
 			}
 			return nil
 		}
@@ -52,7 +52,7 @@ func WithEntID(id *string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if id == nil {
 			if must {
-				return fmt.Errorf("invalid entid")
+				return wlog.Errorf("invalid entid")
 			}
 			return nil
 		}
@@ -69,7 +69,7 @@ func WithOrderID(id *string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if id == nil {
 			if must {
-				return fmt.Errorf("invalid orderid")
+				return wlog.Errorf("invalid orderid")
 			}
 			return nil
 		}
@@ -86,7 +86,7 @@ func WithStartAt(startAt *uint32, must bool) func(context.Context, *Handler) err
 	return func(ctx context.Context, h *Handler) error {
 		if startAt == nil {
 			if must {
-				return fmt.Errorf("invalid start")
+				return wlog.Errorf("invalid start")
 			}
 			return nil
 		}
@@ -99,7 +99,7 @@ func WithEndAt(endAt *uint32, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if endAt == nil {
 			if must {
-				return fmt.Errorf("invalid end")
+				return wlog.Errorf("invalid end")
 			}
 			return nil
 		}

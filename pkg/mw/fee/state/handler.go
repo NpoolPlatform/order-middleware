@@ -2,9 +2,9 @@ package feestate
 
 import (
 	"context"
-	"fmt"
 	"time"
 
+	wlog "github.com/NpoolPlatform/go-service-framework/pkg/wlog"
 	types "github.com/NpoolPlatform/message/npool/basetypes/order/v1"
 	feestatecrud "github.com/NpoolPlatform/order-middleware/pkg/crud/fee/state"
 
@@ -30,7 +30,7 @@ func WithID(u *uint32, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if u == nil {
 			if must {
-				return fmt.Errorf("invalid id")
+				return wlog.Errorf("invalid id")
 			}
 			return nil
 		}
@@ -43,7 +43,7 @@ func WithEntID(id *string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if id == nil {
 			if must {
-				return fmt.Errorf("invalid entid")
+				return wlog.Errorf("invalid entid")
 			}
 			return nil
 		}
@@ -60,7 +60,7 @@ func WithOrderID(id *string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if id == nil {
 			if must {
-				return fmt.Errorf("invalid orderid")
+				return wlog.Errorf("invalid orderid")
 			}
 			return nil
 		}
@@ -78,7 +78,7 @@ func WithCancelState(state *types.OrderState, must bool) func(context.Context, *
 	return func(ctx context.Context, h *Handler) error {
 		if state == nil {
 			if must {
-				return fmt.Errorf("invalid cancelstate")
+				return wlog.Errorf("invalid cancelstate")
 			}
 			return nil
 		}
@@ -116,7 +116,7 @@ func WithCancelState(state *types.OrderState, must bool) func(context.Context, *
 		case types.OrderState_OrderStateCanceled:
 		case types.OrderState_OrderStateExpired:
 		default:
-			return fmt.Errorf("invalid cancelstate")
+			return wlog.Errorf("invalid cancelstate")
 		}
 		h.CancelState = state
 		return nil
@@ -127,12 +127,12 @@ func WithPaidAt(u *uint32, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if u == nil {
 			if must {
-				return fmt.Errorf("invalid paidat")
+				return wlog.Errorf("invalid paidat")
 			}
 			return nil
 		}
 		if *u < uint32(time.Now().Unix()) {
-			return fmt.Errorf("invalid paidat")
+			return wlog.Errorf("invalid paidat")
 		}
 		h.PaidAt = u
 		return nil
@@ -164,7 +164,7 @@ func WithPaymentState(state *types.PaymentState, must bool) func(context.Context
 	return func(ctx context.Context, h *Handler) error {
 		if state == nil {
 			if must {
-				return fmt.Errorf("invalid paymentstate")
+				return wlog.Errorf("invalid paymentstate")
 			}
 			return nil
 		}
@@ -175,7 +175,7 @@ func WithPaymentState(state *types.PaymentState, must bool) func(context.Context
 		case types.PaymentState_PaymentStateDone:
 		case types.PaymentState_PaymentStateNoPayment:
 		default:
-			return fmt.Errorf("invalid paymentstate")
+			return wlog.Errorf("invalid paymentstate")
 		}
 		h.PaymentState = state
 		return nil

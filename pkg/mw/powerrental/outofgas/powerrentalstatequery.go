@@ -2,8 +2,8 @@ package outofgas
 
 import (
 	"context"
-	"fmt"
 
+	wlog "github.com/NpoolPlatform/go-service-framework/pkg/wlog"
 	"github.com/NpoolPlatform/order-middleware/pkg/db"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent"
 	entpowerrentalstate "github.com/NpoolPlatform/order-middleware/pkg/db/ent/powerrentalstate"
@@ -32,7 +32,7 @@ func (h *powerRentalStateQueryHandler) getPowerRentalStateEnt(ctx context.Contex
 
 func (h *powerRentalStateQueryHandler) _getPowerRentalState(ctx context.Context, must bool) error {
 	if h.OrderID == nil {
-		return fmt.Errorf("invalid orderid")
+		return wlog.Errorf("invalid orderid")
 	}
 	return db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
 		return h.getPowerRentalStateEnt(ctx, cli, must)

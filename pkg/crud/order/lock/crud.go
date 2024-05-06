@@ -1,8 +1,7 @@
 package orderlock
 
 import (
-	"fmt"
-
+	wlog "github.com/NpoolPlatform/go-service-framework/pkg/wlog"
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
 	basetypes "github.com/NpoolPlatform/message/npool/basetypes/order/v1"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent"
@@ -58,33 +57,33 @@ func SetQueryConds(q *ent.OrderLockQuery, conds *Conds) (*ent.OrderLockQuery, er
 	if conds.ID != nil {
 		id, ok := conds.ID.Val.(uint32)
 		if !ok {
-			return nil, fmt.Errorf("invalid id")
+			return nil, wlog.Errorf("invalid id")
 		}
 		switch conds.ID.Op {
 		case cruder.EQ:
 			q.Where(entorderlock.ID(id))
 		default:
-			return nil, fmt.Errorf("invalid orderlock field")
+			return nil, wlog.Errorf("invalid orderlock field")
 		}
 	}
 	if conds.IDs != nil {
 		ids, ok := conds.IDs.Val.([]uint32)
 		if !ok {
-			return nil, fmt.Errorf("invalid ids")
+			return nil, wlog.Errorf("invalid ids")
 		}
 		if len(ids) > 0 {
 			switch conds.IDs.Op {
 			case cruder.IN:
 				q.Where(entorderlock.IDIn(ids...))
 			default:
-				return nil, fmt.Errorf("invalid orderlock field")
+				return nil, wlog.Errorf("invalid orderlock field")
 			}
 		}
 	}
 	if conds.EntID != nil {
 		id, ok := conds.EntID.Val.(uuid.UUID)
 		if !ok {
-			return nil, fmt.Errorf("invalid entid")
+			return nil, wlog.Errorf("invalid entid")
 		}
 		switch conds.EntID.Op {
 		case cruder.EQ:
@@ -92,59 +91,59 @@ func SetQueryConds(q *ent.OrderLockQuery, conds *Conds) (*ent.OrderLockQuery, er
 		case cruder.NEQ:
 			q.Where(entorderlock.EntIDNEQ(id))
 		default:
-			return nil, fmt.Errorf("invalid orderlock field")
+			return nil, wlog.Errorf("invalid orderlock field")
 		}
 	}
 	if conds.EntIDs != nil {
 		ids, ok := conds.EntIDs.Val.([]uuid.UUID)
 		if !ok {
-			return nil, fmt.Errorf("invalid entids")
+			return nil, wlog.Errorf("invalid entids")
 		}
 		if len(ids) > 0 {
 			switch conds.EntIDs.Op {
 			case cruder.IN:
 				q.Where(entorderlock.EntIDIn(ids...))
 			default:
-				return nil, fmt.Errorf("invalid orderlock field")
+				return nil, wlog.Errorf("invalid orderlock field")
 			}
 		}
 	}
 	if conds.OrderID != nil {
 		id, ok := conds.OrderID.Val.(uuid.UUID)
 		if !ok {
-			return nil, fmt.Errorf("invalid orderid")
+			return nil, wlog.Errorf("invalid orderid")
 		}
 		switch conds.OrderID.Op {
 		case cruder.EQ:
 			q.Where(entorderlock.OrderID(id))
 		default:
-			return nil, fmt.Errorf("invalid orderlock field")
+			return nil, wlog.Errorf("invalid orderlock field")
 		}
 	}
 	if conds.OrderIDs != nil {
 		ids, ok := conds.OrderIDs.Val.([]uuid.UUID)
 		if !ok {
-			return nil, fmt.Errorf("invalid orderids")
+			return nil, wlog.Errorf("invalid orderids")
 		}
 		if len(ids) > 0 {
 			switch conds.OrderIDs.Op {
 			case cruder.IN:
 				q.Where(entorderlock.OrderIDIn(ids...))
 			default:
-				return nil, fmt.Errorf("invalid orderlock field")
+				return nil, wlog.Errorf("invalid orderlock field")
 			}
 		}
 	}
 	if conds.LockType != nil {
 		_type, ok := conds.LockType.Val.(basetypes.OrderLockType)
 		if !ok {
-			return nil, fmt.Errorf("invalid locktype")
+			return nil, wlog.Errorf("invalid locktype")
 		}
 		switch conds.LockType.Op {
 		case cruder.EQ:
 			q.Where(entorderlock.LockType(_type.String()))
 		default:
-			return nil, fmt.Errorf("invalid orderlock field")
+			return nil, wlog.Errorf("invalid orderlock field")
 		}
 	}
 	return q, nil

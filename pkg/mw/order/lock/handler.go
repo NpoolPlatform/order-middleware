@@ -2,8 +2,8 @@ package orderlock
 
 import (
 	"context"
-	"fmt"
 
+	wlog "github.com/NpoolPlatform/go-service-framework/pkg/wlog"
 	types "github.com/NpoolPlatform/message/npool/basetypes/order/v1"
 	orderlockcrud "github.com/NpoolPlatform/order-middleware/pkg/crud/order/lock"
 
@@ -29,7 +29,7 @@ func WithID(u *uint32, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if u == nil {
 			if must {
-				return fmt.Errorf("invalid id")
+				return wlog.Errorf("invalid id")
 			}
 			return nil
 		}
@@ -42,7 +42,7 @@ func WithEntID(id *string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if id == nil {
 			if must {
-				return fmt.Errorf("invalid entid")
+				return wlog.Errorf("invalid entid")
 			}
 			return nil
 		}
@@ -59,7 +59,7 @@ func WithOrderID(id *string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if id == nil {
 			if must {
-				return fmt.Errorf("invalid orderid")
+				return wlog.Errorf("invalid orderid")
 			}
 			return nil
 		}
@@ -76,7 +76,7 @@ func WithLockType(lockType *types.OrderLockType, must bool) func(context.Context
 	return func(ctx context.Context, h *Handler) error {
 		if lockType == nil {
 			if must {
-				return fmt.Errorf("invalid locktype")
+				return wlog.Errorf("invalid locktype")
 			}
 			return nil
 		}
@@ -85,7 +85,7 @@ func WithLockType(lockType *types.OrderLockType, must bool) func(context.Context
 		case types.OrderLockType_LockBalance:
 		case types.OrderLockType_LockCommission:
 		default:
-			return fmt.Errorf("invalid locktype")
+			return wlog.Errorf("invalid locktype")
 		}
 		h.LockType = lockType
 		return nil

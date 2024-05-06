@@ -2,8 +2,8 @@ package paymentcontract
 
 import (
 	"context"
-	"fmt"
 
+	wlog "github.com/NpoolPlatform/go-service-framework/pkg/wlog"
 	paymentcontractcrud "github.com/NpoolPlatform/order-middleware/pkg/crud/payment/contract"
 
 	"github.com/google/uuid"
@@ -29,7 +29,7 @@ func WithID(u *uint32, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if u == nil {
 			if must {
-				return fmt.Errorf("invalid id")
+				return wlog.Errorf("invalid id")
 			}
 			return nil
 		}
@@ -42,7 +42,7 @@ func WithEntID(id *string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if id == nil {
 			if must {
-				return fmt.Errorf("invalid entid")
+				return wlog.Errorf("invalid entid")
 			}
 			return nil
 		}
@@ -59,7 +59,7 @@ func WithOrderID(id *string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if id == nil {
 			if must {
-				return fmt.Errorf("invalid orderid")
+				return wlog.Errorf("invalid orderid")
 			}
 			return nil
 		}
@@ -76,7 +76,7 @@ func WithCoinTypeID(id *string, must bool) func(context.Context, *Handler) error
 	return func(ctx context.Context, h *Handler) error {
 		if id == nil {
 			if must {
-				return fmt.Errorf("invalid cointypeid")
+				return wlog.Errorf("invalid cointypeid")
 			}
 			return nil
 		}
@@ -93,7 +93,7 @@ func WithAmount(value *string, must bool) func(context.Context, *Handler) error 
 	return func(ctx context.Context, h *Handler) error {
 		if value == nil {
 			if must {
-				return fmt.Errorf("invalid amount")
+				return wlog.Errorf("invalid amount")
 			}
 			return nil
 		}
@@ -102,7 +102,7 @@ func WithAmount(value *string, must bool) func(context.Context, *Handler) error 
 			return err
 		}
 		if amount.Cmp(decimal.NewFromInt(0)) <= 0 {
-			return fmt.Errorf("invalid amount")
+			return wlog.Errorf("invalid amount")
 		}
 		h.Amount = &amount
 		return nil

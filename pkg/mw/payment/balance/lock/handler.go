@@ -2,8 +2,8 @@ package paymentbalancelock
 
 import (
 	"context"
-	"fmt"
 
+	wlog "github.com/NpoolPlatform/go-service-framework/pkg/wlog"
 	paymentbalancelockcrud "github.com/NpoolPlatform/order-middleware/pkg/crud/payment/balance/lock"
 
 	"github.com/google/uuid"
@@ -28,7 +28,7 @@ func WithID(u *uint32, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if u == nil {
 			if must {
-				return fmt.Errorf("invalid id")
+				return wlog.Errorf("invalid id")
 			}
 			return nil
 		}
@@ -41,7 +41,7 @@ func WithEntID(id *string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if id == nil {
 			if must {
-				return fmt.Errorf("invalid entid")
+				return wlog.Errorf("invalid entid")
 			}
 			return nil
 		}
@@ -58,7 +58,7 @@ func WithPaymentID(id *string, must bool) func(context.Context, *Handler) error 
 	return func(ctx context.Context, h *Handler) error {
 		if id == nil {
 			if must {
-				return fmt.Errorf("invalid orderid")
+				return wlog.Errorf("invalid orderid")
 			}
 			return nil
 		}
@@ -75,7 +75,7 @@ func WithLedgerLockID(id *string, must bool) func(context.Context, *Handler) err
 	return func(ctx context.Context, h *Handler) error {
 		if id == nil {
 			if must {
-				return fmt.Errorf("invalid couponid")
+				return wlog.Errorf("invalid couponid")
 			}
 			return nil
 		}

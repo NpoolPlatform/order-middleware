@@ -2,8 +2,8 @@ package compensate
 
 import (
 	"context"
-	"fmt"
 
+	wlog "github.com/NpoolPlatform/go-service-framework/pkg/wlog"
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
 	types "github.com/NpoolPlatform/message/npool/basetypes/order/v1"
 	compensatemwpb "github.com/NpoolPlatform/message/npool/order/mw/v1/compensate"
@@ -44,7 +44,7 @@ func WithID(u *uint32, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if u == nil {
 			if must {
-				return fmt.Errorf("invalid id")
+				return wlog.Errorf("invalid id")
 			}
 			return nil
 		}
@@ -57,7 +57,7 @@ func WithEntID(id *string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if id == nil {
 			if must {
-				return fmt.Errorf("invalid entid")
+				return wlog.Errorf("invalid entid")
 			}
 			return nil
 		}
@@ -74,7 +74,7 @@ func WithGoodID(id *string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if id == nil {
 			if must {
-				return fmt.Errorf("invalid goodid")
+				return wlog.Errorf("invalid goodid")
 			}
 			return nil
 		}
@@ -91,7 +91,7 @@ func WithOrderID(id *string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if id == nil {
 			if must {
-				return fmt.Errorf("invalid orderid")
+				return wlog.Errorf("invalid orderid")
 			}
 			return nil
 		}
@@ -109,7 +109,7 @@ func WithCompensateFromID(id *string, must bool) func(context.Context, *Handler)
 	return func(ctx context.Context, h *Handler) error {
 		if id == nil {
 			if must {
-				return fmt.Errorf("invalid compensatefromid")
+				return wlog.Errorf("invalid compensatefromid")
 			}
 			return nil
 		}
@@ -126,7 +126,7 @@ func WithCompensateType(e *types.CompensateType, must bool) func(context.Context
 	return func(ctx context.Context, h *Handler) error {
 		if e == nil {
 			if must {
-				return fmt.Errorf("invalid compensatetype")
+				return wlog.Errorf("invalid compensatetype")
 			}
 			return nil
 		}
@@ -135,7 +135,7 @@ func WithCompensateType(e *types.CompensateType, must bool) func(context.Context
 		case types.CompensateType_CompensateWalfare:
 		case types.CompensateType_CompensateStarterDelay:
 		default:
-			return fmt.Errorf("invalid compensatetype")
+			return wlog.Errorf("invalid compensatetype")
 		}
 		h.CompensateType = e
 		return nil
@@ -146,12 +146,12 @@ func WithCompensateSeconds(u *uint32, must bool) func(context.Context, *Handler)
 	return func(ctx context.Context, h *Handler) error {
 		if u == nil {
 			if must {
-				return fmt.Errorf("invalid compensateseconds")
+				return wlog.Errorf("invalid compensateseconds")
 			}
 			return nil
 		}
 		if *u == 0 {
-			return fmt.Errorf("invalid compensateseconds")
+			return wlog.Errorf("invalid compensateseconds")
 		}
 		h.CompensateSeconds = u
 		h.PowerRentalStateReq.CompensateSeconds = u

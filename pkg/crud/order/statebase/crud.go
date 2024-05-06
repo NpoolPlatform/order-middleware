@@ -1,8 +1,7 @@
 package orderstatebase
 
 import (
-	"fmt"
-
+	wlog "github.com/NpoolPlatform/go-service-framework/pkg/wlog"
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
 	types "github.com/NpoolPlatform/message/npool/basetypes/order/v1"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent"
@@ -100,33 +99,33 @@ func SetQueryConds(q *ent.OrderStateBaseQuery, conds *Conds) (*ent.OrderStateBas
 	if conds.ID != nil {
 		id, ok := conds.ID.Val.(uint32)
 		if !ok {
-			return nil, fmt.Errorf("invalid id")
+			return nil, wlog.Errorf("invalid id")
 		}
 		switch conds.ID.Op {
 		case cruder.EQ:
 			q.Where(entorderstatebase.ID(id))
 		default:
-			return nil, fmt.Errorf("invalid order field")
+			return nil, wlog.Errorf("invalid order field")
 		}
 	}
 	if conds.IDs != nil {
 		ids, ok := conds.IDs.Val.([]uint32)
 		if !ok {
-			return nil, fmt.Errorf("invalid ids")
+			return nil, wlog.Errorf("invalid ids")
 		}
 		if len(ids) > 0 {
 			switch conds.IDs.Op {
 			case cruder.IN:
 				q.Where(entorderstatebase.IDIn(ids...))
 			default:
-				return nil, fmt.Errorf("invalid order field")
+				return nil, wlog.Errorf("invalid order field")
 			}
 		}
 	}
 	if conds.EntID != nil {
 		id, ok := conds.EntID.Val.(uuid.UUID)
 		if !ok {
-			return nil, fmt.Errorf("invalid entid")
+			return nil, wlog.Errorf("invalid entid")
 		}
 		switch conds.EntID.Op {
 		case cruder.EQ:
@@ -134,51 +133,51 @@ func SetQueryConds(q *ent.OrderStateBaseQuery, conds *Conds) (*ent.OrderStateBas
 		case cruder.NEQ:
 			q.Where(entorderstatebase.EntIDNEQ(id))
 		default:
-			return nil, fmt.Errorf("invalid order field")
+			return nil, wlog.Errorf("invalid order field")
 		}
 	}
 	if conds.EntIDs != nil {
 		ids, ok := conds.EntIDs.Val.([]uuid.UUID)
 		if !ok {
-			return nil, fmt.Errorf("invalid entids")
+			return nil, wlog.Errorf("invalid entids")
 		}
 		if len(ids) > 0 {
 			switch conds.EntIDs.Op {
 			case cruder.IN:
 				q.Where(entorderstatebase.EntIDIn(ids...))
 			default:
-				return nil, fmt.Errorf("invalid order field")
+				return nil, wlog.Errorf("invalid order field")
 			}
 		}
 	}
 	if conds.OrderID != nil {
 		id, ok := conds.OrderID.Val.(uuid.UUID)
 		if !ok {
-			return nil, fmt.Errorf("invalid orderid")
+			return nil, wlog.Errorf("invalid orderid")
 		}
 		switch conds.OrderID.Op {
 		case cruder.EQ:
 			q.Where(entorderstatebase.OrderID(id))
 		default:
-			return nil, fmt.Errorf("invalid order field")
+			return nil, wlog.Errorf("invalid order field")
 		}
 	}
 	if conds.OrderState != nil {
 		state, ok := conds.OrderState.Val.(types.OrderState)
 		if !ok {
-			return nil, fmt.Errorf("invalid orderstate")
+			return nil, wlog.Errorf("invalid orderstate")
 		}
 		switch conds.OrderState.Op {
 		case cruder.EQ:
 			q.Where(entorderstatebase.OrderState(state.String()))
 		default:
-			return nil, fmt.Errorf("invalid order field")
+			return nil, wlog.Errorf("invalid order field")
 		}
 	}
 	if conds.OrderStates != nil {
 		states, ok := conds.OrderStates.Val.([]types.OrderState)
 		if !ok {
-			return nil, fmt.Errorf("invalid orderstate")
+			return nil, wlog.Errorf("invalid orderstate")
 		}
 		switch conds.OrderStates.Op {
 		case cruder.IN:
@@ -189,37 +188,37 @@ func SetQueryConds(q *ent.OrderStateBaseQuery, conds *Conds) (*ent.OrderStateBas
 				return
 			}()...))
 		default:
-			return nil, fmt.Errorf("invalid order field")
+			return nil, wlog.Errorf("invalid order field")
 		}
 	}
 	if conds.StartMode != nil {
 		startmode, ok := conds.StartMode.Val.(types.OrderStartMode)
 		if !ok {
-			return nil, fmt.Errorf("invalid startmode")
+			return nil, wlog.Errorf("invalid startmode")
 		}
 		switch conds.StartMode.Op {
 		case cruder.EQ:
 			q.Where(entorderstatebase.StartMode(startmode.String()))
 		default:
-			return nil, fmt.Errorf("invalid order field")
+			return nil, wlog.Errorf("invalid order field")
 		}
 	}
 	if conds.BenefitState != nil {
 		state, ok := conds.BenefitState.Val.(types.BenefitState)
 		if !ok {
-			return nil, fmt.Errorf("invalid benefitstate")
+			return nil, wlog.Errorf("invalid benefitstate")
 		}
 		switch conds.BenefitState.Op {
 		case cruder.EQ:
 			q.Where(entorderstatebase.BenefitState(state.String()))
 		default:
-			return nil, fmt.Errorf("invalid order field")
+			return nil, wlog.Errorf("invalid order field")
 		}
 	}
 	if conds.PaymentType != nil {
 		paymenttype, ok := conds.PaymentType.Val.(types.PaymentType)
 		if !ok {
-			return nil, fmt.Errorf("invalid paymenttype")
+			return nil, wlog.Errorf("invalid paymenttype")
 		}
 		switch conds.PaymentType.Op {
 		case cruder.EQ:
@@ -227,13 +226,13 @@ func SetQueryConds(q *ent.OrderStateBaseQuery, conds *Conds) (*ent.OrderStateBas
 		case cruder.NEQ:
 			q.Where(entorderstatebase.PaymentTypeNEQ(paymenttype.String()))
 		default:
-			return nil, fmt.Errorf("invalid order field")
+			return nil, wlog.Errorf("invalid order field")
 		}
 	}
 	if conds.PaymentTypes != nil {
 		paymenttypes, ok := conds.PaymentTypes.Val.([]types.PaymentType)
 		if !ok {
-			return nil, fmt.Errorf("invalid paymenttypes")
+			return nil, wlog.Errorf("invalid paymenttypes")
 		}
 		_types := []string{}
 		for _, _type := range paymenttypes {
@@ -243,7 +242,7 @@ func SetQueryConds(q *ent.OrderStateBaseQuery, conds *Conds) (*ent.OrderStateBas
 		case cruder.IN:
 			q.Where(entorderstatebase.PaymentTypeIn(_types...))
 		default:
-			return nil, fmt.Errorf("invalid order field")
+			return nil, wlog.Errorf("invalid order field")
 		}
 	}
 	return q, nil

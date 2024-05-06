@@ -1,8 +1,7 @@
 package fee
 
 import (
-	"fmt"
-
+	wlog "github.com/NpoolPlatform/go-service-framework/pkg/wlog"
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent"
 	entfeeorder "github.com/NpoolPlatform/order-middleware/pkg/db/ent/feeorder"
@@ -73,33 +72,33 @@ func SetQueryConds(q *ent.FeeOrderQuery, conds *Conds) (*ent.FeeOrderQuery, erro
 	if conds.ID != nil {
 		id, ok := conds.ID.Val.(uint32)
 		if !ok {
-			return nil, fmt.Errorf("invalid id")
+			return nil, wlog.Errorf("invalid id")
 		}
 		switch conds.ID.Op {
 		case cruder.EQ:
 			q.Where(entfeeorder.ID(id))
 		default:
-			return nil, fmt.Errorf("invalid fee field")
+			return nil, wlog.Errorf("invalid fee field")
 		}
 	}
 	if conds.IDs != nil {
 		ids, ok := conds.IDs.Val.([]uint32)
 		if !ok {
-			return nil, fmt.Errorf("invalid ids")
+			return nil, wlog.Errorf("invalid ids")
 		}
 		if len(ids) > 0 {
 			switch conds.IDs.Op {
 			case cruder.IN:
 				q.Where(entfeeorder.IDIn(ids...))
 			default:
-				return nil, fmt.Errorf("invalid fee field")
+				return nil, wlog.Errorf("invalid fee field")
 			}
 		}
 	}
 	if conds.EntID != nil {
 		id, ok := conds.EntID.Val.(uuid.UUID)
 		if !ok {
-			return nil, fmt.Errorf("invalid entid")
+			return nil, wlog.Errorf("invalid entid")
 		}
 		switch conds.EntID.Op {
 		case cruder.EQ:
@@ -107,46 +106,46 @@ func SetQueryConds(q *ent.FeeOrderQuery, conds *Conds) (*ent.FeeOrderQuery, erro
 		case cruder.NEQ:
 			q.Where(entfeeorder.EntIDNEQ(id))
 		default:
-			return nil, fmt.Errorf("invalid fee field")
+			return nil, wlog.Errorf("invalid fee field")
 		}
 	}
 	if conds.EntIDs != nil {
 		ids, ok := conds.EntIDs.Val.([]uuid.UUID)
 		if !ok {
-			return nil, fmt.Errorf("invalid entids")
+			return nil, wlog.Errorf("invalid entids")
 		}
 		if len(ids) > 0 {
 			switch conds.EntIDs.Op {
 			case cruder.IN:
 				q.Where(entfeeorder.EntIDIn(ids...))
 			default:
-				return nil, fmt.Errorf("invalid fee field")
+				return nil, wlog.Errorf("invalid fee field")
 			}
 		}
 	}
 	if conds.OrderID != nil {
 		id, ok := conds.OrderID.Val.(uuid.UUID)
 		if !ok {
-			return nil, fmt.Errorf("invalid orderid")
+			return nil, wlog.Errorf("invalid orderid")
 		}
 		switch conds.OrderID.Op {
 		case cruder.EQ:
 			q.Where(entfeeorder.OrderID(id))
 		default:
-			return nil, fmt.Errorf("invalid fee field")
+			return nil, wlog.Errorf("invalid fee field")
 		}
 	}
 	if conds.OrderIDs != nil {
 		ids, ok := conds.OrderIDs.Val.([]uuid.UUID)
 		if !ok {
-			return nil, fmt.Errorf("invalid orderids")
+			return nil, wlog.Errorf("invalid orderids")
 		}
 		if len(ids) > 0 {
 			switch conds.OrderIDs.Op {
 			case cruder.IN:
 				q.Where(entfeeorder.OrderIDIn(ids...))
 			default:
-				return nil, fmt.Errorf("invalid fee field")
+				return nil, wlog.Errorf("invalid fee field")
 			}
 		}
 	}

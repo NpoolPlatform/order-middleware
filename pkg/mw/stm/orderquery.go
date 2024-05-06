@@ -2,8 +2,8 @@ package orderstm
 
 import (
 	"context"
-	"fmt"
 
+	wlog "github.com/NpoolPlatform/go-service-framework/pkg/wlog"
 	"github.com/NpoolPlatform/order-middleware/pkg/db"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent"
 	entorderbase "github.com/NpoolPlatform/order-middleware/pkg/db/ent/orderbase"
@@ -43,7 +43,7 @@ func (h *orderQueryHandler) getOrderStateBase(ctx context.Context, cli *ent.Clie
 
 func (h *orderQueryHandler) _getOrder(ctx context.Context, must bool) error {
 	if h.OrderID == nil {
-		return fmt.Errorf("invalid orderid")
+		return wlog.Errorf("invalid orderid")
 	}
 	return db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
 		if err := h.getOrderBaseEnt(_ctx, cli, must); err != nil {

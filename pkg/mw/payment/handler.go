@@ -2,8 +2,8 @@ package paymentbase
 
 import (
 	"context"
-	"fmt"
 
+	wlog "github.com/NpoolPlatform/go-service-framework/pkg/wlog"
 	types "github.com/NpoolPlatform/message/npool/basetypes/order/v1"
 	paymentbasecrud "github.com/NpoolPlatform/order-middleware/pkg/crud/payment"
 
@@ -29,7 +29,7 @@ func WithID(u *uint32, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if u == nil {
 			if must {
-				return fmt.Errorf("invalid id")
+				return wlog.Errorf("invalid id")
 			}
 			return nil
 		}
@@ -42,7 +42,7 @@ func WithEntID(id *string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if id == nil {
 			if must {
-				return fmt.Errorf("invalid entid")
+				return wlog.Errorf("invalid entid")
 			}
 			return nil
 		}
@@ -59,7 +59,7 @@ func WithOrderID(id *string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if id == nil {
 			if must {
-				return fmt.Errorf("invalid orderid")
+				return wlog.Errorf("invalid orderid")
 			}
 			return nil
 		}
@@ -76,7 +76,7 @@ func WithObseleteState(e *types.PaymentObseleteState, must bool) func(context.Co
 	return func(ctx context.Context, h *Handler) error {
 		if e == nil {
 			if must {
-				return fmt.Errorf("invalid obseletestate")
+				return wlog.Errorf("invalid obseletestate")
 			}
 			return nil
 		}
@@ -87,7 +87,7 @@ func WithObseleteState(e *types.PaymentObseleteState, must bool) func(context.Co
 		case types.PaymentObseleteState_PaymentObseleted:
 		case types.PaymentObseleteState_PaymentObseleteFail:
 		default:
-			return fmt.Errorf("invalid obseletestate")
+			return wlog.Errorf("invalid obseletestate")
 		}
 		h.ObseleteState = e
 		return nil

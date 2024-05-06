@@ -1,8 +1,7 @@
 package paymentbalance
 
 import (
-	"fmt"
-
+	wlog "github.com/NpoolPlatform/go-service-framework/pkg/wlog"
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent"
 	entpaymentbalance "github.com/NpoolPlatform/order-middleware/pkg/db/ent/paymentbalance"
@@ -72,33 +71,33 @@ func SetQueryConds(q *ent.PaymentBalanceQuery, conds *Conds) (*ent.PaymentBalanc
 	if conds.ID != nil {
 		id, ok := conds.ID.Val.(uint32)
 		if !ok {
-			return nil, fmt.Errorf("invalid id")
+			return nil, wlog.Errorf("invalid id")
 		}
 		switch conds.ID.Op {
 		case cruder.EQ:
 			q.Where(entpaymentbalance.ID(id))
 		default:
-			return nil, fmt.Errorf("invalid payment field")
+			return nil, wlog.Errorf("invalid payment field")
 		}
 	}
 	if conds.IDs != nil {
 		ids, ok := conds.IDs.Val.([]uint32)
 		if !ok {
-			return nil, fmt.Errorf("invalid ids")
+			return nil, wlog.Errorf("invalid ids")
 		}
 		if len(ids) > 0 {
 			switch conds.IDs.Op {
 			case cruder.IN:
 				q.Where(entpaymentbalance.IDIn(ids...))
 			default:
-				return nil, fmt.Errorf("invalid payment field")
+				return nil, wlog.Errorf("invalid payment field")
 			}
 		}
 	}
 	if conds.EntID != nil {
 		id, ok := conds.EntID.Val.(uuid.UUID)
 		if !ok {
-			return nil, fmt.Errorf("invalid entid")
+			return nil, wlog.Errorf("invalid entid")
 		}
 		switch conds.EntID.Op {
 		case cruder.EQ:
@@ -106,59 +105,59 @@ func SetQueryConds(q *ent.PaymentBalanceQuery, conds *Conds) (*ent.PaymentBalanc
 		case cruder.NEQ:
 			q.Where(entpaymentbalance.EntIDNEQ(id))
 		default:
-			return nil, fmt.Errorf("invalid payment field")
+			return nil, wlog.Errorf("invalid payment field")
 		}
 	}
 	if conds.EntIDs != nil {
 		ids, ok := conds.EntIDs.Val.([]uuid.UUID)
 		if !ok {
-			return nil, fmt.Errorf("invalid entids")
+			return nil, wlog.Errorf("invalid entids")
 		}
 		if len(ids) > 0 {
 			switch conds.EntIDs.Op {
 			case cruder.IN:
 				q.Where(entpaymentbalance.EntIDIn(ids...))
 			default:
-				return nil, fmt.Errorf("invalid payment field")
+				return nil, wlog.Errorf("invalid payment field")
 			}
 		}
 	}
 	if conds.PaymentID != nil {
 		id, ok := conds.PaymentID.Val.(uuid.UUID)
 		if !ok {
-			return nil, fmt.Errorf("invalid orderid")
+			return nil, wlog.Errorf("invalid orderid")
 		}
 		switch conds.PaymentID.Op {
 		case cruder.EQ:
 			q.Where(entpaymentbalance.PaymentID(id))
 		default:
-			return nil, fmt.Errorf("invalid payment field")
+			return nil, wlog.Errorf("invalid payment field")
 		}
 	}
 	if conds.PaymentIDs != nil {
 		ids, ok := conds.PaymentIDs.Val.([]uuid.UUID)
 		if !ok {
-			return nil, fmt.Errorf("invalid paymentids")
+			return nil, wlog.Errorf("invalid paymentids")
 		}
 		if len(ids) > 0 {
 			switch conds.PaymentIDs.Op {
 			case cruder.IN:
 				q.Where(entpaymentbalance.PaymentIDIn(ids...))
 			default:
-				return nil, fmt.Errorf("invalid payment field")
+				return nil, wlog.Errorf("invalid payment field")
 			}
 		}
 	}
 	if conds.CoinTypeID != nil {
 		id, ok := conds.CoinTypeID.Val.(uuid.UUID)
 		if !ok {
-			return nil, fmt.Errorf("invalid cointypeid")
+			return nil, wlog.Errorf("invalid cointypeid")
 		}
 		switch conds.CoinTypeID.Op {
 		case cruder.EQ:
 			q.Where(entpaymentbalance.CoinTypeID(id))
 		default:
-			return nil, fmt.Errorf("invalid payment field")
+			return nil, wlog.Errorf("invalid payment field")
 		}
 	}
 	return q, nil
