@@ -1012,7 +1012,7 @@ func (h *Handler) withPowerRentalConds(conds *npool.Conds) error {
 	return nil
 }
 
-func (h *Handler) withOrderStateBaseConds(conds *npool.Conds) error {
+func (h *Handler) withOrderStateBaseConds(conds *npool.Conds) {
 	if conds.OrderState != nil {
 		h.OrderStateBaseConds.OrderState = &cruder.Cond{
 			Op:  conds.GetOrderState().GetOp(),
@@ -1045,7 +1045,6 @@ func (h *Handler) withOrderStateBaseConds(conds *npool.Conds) error {
 			Val: _types,
 		}
 	}
-	return nil
 }
 
 func (h *Handler) withPowerRentalStateConds(conds *npool.Conds) error {
@@ -1131,9 +1130,7 @@ func WithConds(conds *npool.Conds) func(context.Context, *Handler) error {
 		if err := h.withPowerRentalConds(conds); err != nil {
 			return wlog.WrapError(err)
 		}
-		if err := h.withOrderStateBaseConds(conds); err != nil {
-			return wlog.WrapError(err)
-		}
+		h.withOrderStateBaseConds(conds)
 		if err := h.withOrderCouponConds(conds); err != nil {
 			return wlog.WrapError(err)
 		}

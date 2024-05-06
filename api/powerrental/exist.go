@@ -41,6 +41,7 @@ func (s *Server) ExistPowerRentalOrder(ctx context.Context, in *npool.ExistPower
 	}, nil
 }
 
+//nolint:dupl
 func (s *Server) ExistPowerRentalOrderConds(ctx context.Context, in *npool.ExistPowerRentalOrderCondsRequest) (*npool.ExistPowerRentalOrderCondsResponse, error) {
 	handler, err := powerrental1.NewHandler(
 		ctx,

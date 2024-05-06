@@ -41,6 +41,7 @@ func (s *Server) ExistFeeOrder(ctx context.Context, in *npool.ExistFeeOrderReque
 	}, nil
 }
 
+//nolint:dupl
 func (s *Server) ExistFeeOrderConds(ctx context.Context, in *npool.ExistFeeOrderCondsRequest) (*npool.ExistFeeOrderCondsResponse, error) {
 	handler, err := feeorder1.NewHandler(
 		ctx,
