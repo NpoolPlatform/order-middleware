@@ -265,6 +265,33 @@ func (fosu *FeeOrderStateUpdate) ClearCancelState() *FeeOrderStateUpdate {
 	return fosu
 }
 
+// SetCanceledAt sets the "canceled_at" field.
+func (fosu *FeeOrderStateUpdate) SetCanceledAt(u uint32) *FeeOrderStateUpdate {
+	fosu.mutation.ResetCanceledAt()
+	fosu.mutation.SetCanceledAt(u)
+	return fosu
+}
+
+// SetNillableCanceledAt sets the "canceled_at" field if the given value is not nil.
+func (fosu *FeeOrderStateUpdate) SetNillableCanceledAt(u *uint32) *FeeOrderStateUpdate {
+	if u != nil {
+		fosu.SetCanceledAt(*u)
+	}
+	return fosu
+}
+
+// AddCanceledAt adds u to the "canceled_at" field.
+func (fosu *FeeOrderStateUpdate) AddCanceledAt(u int32) *FeeOrderStateUpdate {
+	fosu.mutation.AddCanceledAt(u)
+	return fosu
+}
+
+// ClearCanceledAt clears the value of the "canceled_at" field.
+func (fosu *FeeOrderStateUpdate) ClearCanceledAt() *FeeOrderStateUpdate {
+	fosu.mutation.ClearCanceledAt()
+	return fosu
+}
+
 // Mutation returns the FeeOrderStateMutation object of the builder.
 func (fosu *FeeOrderStateUpdate) Mutation() *FeeOrderStateMutation {
 	return fosu.mutation
@@ -523,6 +550,26 @@ func (fosu *FeeOrderStateUpdate) sqlSave(ctx context.Context) (n int, err error)
 			Column: feeorderstate.FieldCancelState,
 		})
 	}
+	if value, ok := fosu.mutation.CanceledAt(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeUint32,
+			Value:  value,
+			Column: feeorderstate.FieldCanceledAt,
+		})
+	}
+	if value, ok := fosu.mutation.AddedCanceledAt(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeUint32,
+			Value:  value,
+			Column: feeorderstate.FieldCanceledAt,
+		})
+	}
+	if fosu.mutation.CanceledAtCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeUint32,
+			Column: feeorderstate.FieldCanceledAt,
+		})
+	}
 	_spec.Modifiers = fosu.modifiers
 	if n, err = sqlgraph.UpdateNodes(ctx, fosu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
@@ -777,6 +824,33 @@ func (fosuo *FeeOrderStateUpdateOne) SetNillableCancelState(s *string) *FeeOrder
 // ClearCancelState clears the value of the "cancel_state" field.
 func (fosuo *FeeOrderStateUpdateOne) ClearCancelState() *FeeOrderStateUpdateOne {
 	fosuo.mutation.ClearCancelState()
+	return fosuo
+}
+
+// SetCanceledAt sets the "canceled_at" field.
+func (fosuo *FeeOrderStateUpdateOne) SetCanceledAt(u uint32) *FeeOrderStateUpdateOne {
+	fosuo.mutation.ResetCanceledAt()
+	fosuo.mutation.SetCanceledAt(u)
+	return fosuo
+}
+
+// SetNillableCanceledAt sets the "canceled_at" field if the given value is not nil.
+func (fosuo *FeeOrderStateUpdateOne) SetNillableCanceledAt(u *uint32) *FeeOrderStateUpdateOne {
+	if u != nil {
+		fosuo.SetCanceledAt(*u)
+	}
+	return fosuo
+}
+
+// AddCanceledAt adds u to the "canceled_at" field.
+func (fosuo *FeeOrderStateUpdateOne) AddCanceledAt(u int32) *FeeOrderStateUpdateOne {
+	fosuo.mutation.AddCanceledAt(u)
+	return fosuo
+}
+
+// ClearCanceledAt clears the value of the "canceled_at" field.
+func (fosuo *FeeOrderStateUpdateOne) ClearCanceledAt() *FeeOrderStateUpdateOne {
+	fosuo.mutation.ClearCanceledAt()
 	return fosuo
 }
 
@@ -1066,6 +1140,26 @@ func (fosuo *FeeOrderStateUpdateOne) sqlSave(ctx context.Context) (_node *FeeOrd
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
 			Column: feeorderstate.FieldCancelState,
+		})
+	}
+	if value, ok := fosuo.mutation.CanceledAt(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeUint32,
+			Value:  value,
+			Column: feeorderstate.FieldCanceledAt,
+		})
+	}
+	if value, ok := fosuo.mutation.AddedCanceledAt(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeUint32,
+			Value:  value,
+			Column: feeorderstate.FieldCanceledAt,
+		})
+	}
+	if fosuo.mutation.CanceledAtCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeUint32,
+			Column: feeorderstate.FieldCanceledAt,
 		})
 	}
 	_spec.Modifiers = fosuo.modifiers

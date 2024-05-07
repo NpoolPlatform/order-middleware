@@ -283,6 +283,7 @@ func (h *updateHandler) validateCancelState() error {
 	if h._ent.CancelState() != types.OrderState_DefaultOrderState {
 		return fmt.Errorf("invalid cancelstate")
 	}
+	h.PowerRentalStateReq.CanceledAt = func() *uint32 { u := uint32(time.Now().Unix()); return &u }()
 	return nil
 }
 

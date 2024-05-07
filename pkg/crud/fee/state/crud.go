@@ -21,6 +21,7 @@ type Req struct {
 	AdminSetCanceled *bool
 	PaymentState     *types.PaymentState
 	CancelState      *types.OrderState
+	CanceledAt       *uint32
 	DeletedAt        *uint32
 }
 
@@ -70,6 +71,9 @@ func UpdateSet(u *ent.FeeOrderStateUpdateOne, req *Req) *ent.FeeOrderStateUpdate
 	}
 	if req.CancelState != nil {
 		u.SetCancelState(req.CancelState.String())
+	}
+	if req.CanceledAt != nil {
+		u.SetCanceledAt(*req.CanceledAt)
 	}
 	if req.DeletedAt != nil {
 		u.SetDeletedAt(*req.DeletedAt)

@@ -121,6 +121,13 @@ func CancelState(v string) predicate.PowerRentalState {
 	})
 }
 
+// CanceledAt applies equality check predicate on the "canceled_at" field. It's identical to CanceledAtEQ.
+func CanceledAt(v uint32) predicate.PowerRentalState {
+	return predicate.PowerRentalState(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldCanceledAt), v))
+	})
+}
+
 // DurationSeconds applies equality check predicate on the "duration_seconds" field. It's identical to DurationSecondsEQ.
 func DurationSeconds(v uint32) predicate.PowerRentalState {
 	return predicate.PowerRentalState(func(s *sql.Selector) {
@@ -642,6 +649,84 @@ func CancelStateEqualFold(v string) predicate.PowerRentalState {
 func CancelStateContainsFold(v string) predicate.PowerRentalState {
 	return predicate.PowerRentalState(func(s *sql.Selector) {
 		s.Where(sql.ContainsFold(s.C(FieldCancelState), v))
+	})
+}
+
+// CanceledAtEQ applies the EQ predicate on the "canceled_at" field.
+func CanceledAtEQ(v uint32) predicate.PowerRentalState {
+	return predicate.PowerRentalState(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldCanceledAt), v))
+	})
+}
+
+// CanceledAtNEQ applies the NEQ predicate on the "canceled_at" field.
+func CanceledAtNEQ(v uint32) predicate.PowerRentalState {
+	return predicate.PowerRentalState(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldCanceledAt), v))
+	})
+}
+
+// CanceledAtIn applies the In predicate on the "canceled_at" field.
+func CanceledAtIn(vs ...uint32) predicate.PowerRentalState {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.PowerRentalState(func(s *sql.Selector) {
+		s.Where(sql.In(s.C(FieldCanceledAt), v...))
+	})
+}
+
+// CanceledAtNotIn applies the NotIn predicate on the "canceled_at" field.
+func CanceledAtNotIn(vs ...uint32) predicate.PowerRentalState {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.PowerRentalState(func(s *sql.Selector) {
+		s.Where(sql.NotIn(s.C(FieldCanceledAt), v...))
+	})
+}
+
+// CanceledAtGT applies the GT predicate on the "canceled_at" field.
+func CanceledAtGT(v uint32) predicate.PowerRentalState {
+	return predicate.PowerRentalState(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldCanceledAt), v))
+	})
+}
+
+// CanceledAtGTE applies the GTE predicate on the "canceled_at" field.
+func CanceledAtGTE(v uint32) predicate.PowerRentalState {
+	return predicate.PowerRentalState(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldCanceledAt), v))
+	})
+}
+
+// CanceledAtLT applies the LT predicate on the "canceled_at" field.
+func CanceledAtLT(v uint32) predicate.PowerRentalState {
+	return predicate.PowerRentalState(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldCanceledAt), v))
+	})
+}
+
+// CanceledAtLTE applies the LTE predicate on the "canceled_at" field.
+func CanceledAtLTE(v uint32) predicate.PowerRentalState {
+	return predicate.PowerRentalState(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldCanceledAt), v))
+	})
+}
+
+// CanceledAtIsNil applies the IsNil predicate on the "canceled_at" field.
+func CanceledAtIsNil() predicate.PowerRentalState {
+	return predicate.PowerRentalState(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldCanceledAt)))
+	})
+}
+
+// CanceledAtNotNil applies the NotNil predicate on the "canceled_at" field.
+func CanceledAtNotNil() predicate.PowerRentalState {
+	return predicate.PowerRentalState(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldCanceledAt)))
 	})
 }
 

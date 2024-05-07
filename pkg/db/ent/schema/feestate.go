@@ -61,6 +61,10 @@ func (FeeOrderState) Fields() []ent.Field {
 			String("cancel_state").
 			Optional().
 			Default(types.OrderState_DefaultOrderState.String()),
+		field.
+			Uint32("canceled_at").
+			Optional().
+			Default(0),
 	}
 }
 

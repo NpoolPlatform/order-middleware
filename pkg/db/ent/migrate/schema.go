@@ -115,6 +115,7 @@ var (
 		{Name: "admin_set_canceled", Type: field.TypeBool, Nullable: true, Default: false},
 		{Name: "payment_state", Type: field.TypeString, Nullable: true, Default: "PaymentStateWait"},
 		{Name: "cancel_state", Type: field.TypeString, Nullable: true, Default: "DefaultOrderState"},
+		{Name: "canceled_at", Type: field.TypeUint32, Nullable: true, Default: 0},
 	}
 	// FeeOrderStatesTable holds the schema information for the "fee_order_states" table.
 	FeeOrderStatesTable = &schema.Table{
@@ -614,6 +615,7 @@ var (
 		{Name: "ent_id", Type: field.TypeUUID, Unique: true},
 		{Name: "order_id", Type: field.TypeUUID, Nullable: true},
 		{Name: "cancel_state", Type: field.TypeString, Nullable: true, Default: "DefaultOrderState"},
+		{Name: "canceled_at", Type: field.TypeUint32, Nullable: true, Default: 0},
 		{Name: "duration_seconds", Type: field.TypeUint32, Nullable: true, Default: 0},
 		{Name: "payment_id", Type: field.TypeUUID, Nullable: true},
 		{Name: "paid_at", Type: field.TypeUint32, Nullable: true, Default: 0},

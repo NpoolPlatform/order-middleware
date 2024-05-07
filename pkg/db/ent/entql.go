@@ -125,6 +125,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			feeorderstate.FieldAdminSetCanceled: {Type: field.TypeBool, Column: feeorderstate.FieldAdminSetCanceled},
 			feeorderstate.FieldPaymentState:     {Type: field.TypeString, Column: feeorderstate.FieldPaymentState},
 			feeorderstate.FieldCancelState:      {Type: field.TypeString, Column: feeorderstate.FieldCancelState},
+			feeorderstate.FieldCanceledAt:       {Type: field.TypeUint32, Column: feeorderstate.FieldCanceledAt},
 		},
 	}
 	graph.Nodes[4] = &sqlgraph.Node{
@@ -489,6 +490,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			powerrentalstate.FieldEntID:             {Type: field.TypeUUID, Column: powerrentalstate.FieldEntID},
 			powerrentalstate.FieldOrderID:           {Type: field.TypeUUID, Column: powerrentalstate.FieldOrderID},
 			powerrentalstate.FieldCancelState:       {Type: field.TypeString, Column: powerrentalstate.FieldCancelState},
+			powerrentalstate.FieldCanceledAt:        {Type: field.TypeUint32, Column: powerrentalstate.FieldCanceledAt},
 			powerrentalstate.FieldDurationSeconds:   {Type: field.TypeUint32, Column: powerrentalstate.FieldDurationSeconds},
 			powerrentalstate.FieldPaymentID:         {Type: field.TypeUUID, Column: powerrentalstate.FieldPaymentID},
 			powerrentalstate.FieldPaidAt:            {Type: field.TypeUint32, Column: powerrentalstate.FieldPaidAt},
@@ -884,6 +886,11 @@ func (f *FeeOrderStateFilter) WherePaymentState(p entql.StringP) {
 // WhereCancelState applies the entql string predicate on the cancel_state field.
 func (f *FeeOrderStateFilter) WhereCancelState(p entql.StringP) {
 	f.Where(p.Field(feeorderstate.FieldCancelState))
+}
+
+// WhereCanceledAt applies the entql uint32 predicate on the canceled_at field.
+func (f *FeeOrderStateFilter) WhereCanceledAt(p entql.Uint32P) {
+	f.Where(p.Field(feeorderstate.FieldCanceledAt))
 }
 
 // addPredicate implements the predicateAdder interface.
@@ -2329,6 +2336,11 @@ func (f *PowerRentalStateFilter) WhereOrderID(p entql.ValueP) {
 // WhereCancelState applies the entql string predicate on the cancel_state field.
 func (f *PowerRentalStateFilter) WhereCancelState(p entql.StringP) {
 	f.Where(p.Field(powerrentalstate.FieldCancelState))
+}
+
+// WhereCanceledAt applies the entql uint32 predicate on the canceled_at field.
+func (f *PowerRentalStateFilter) WhereCanceledAt(p entql.Uint32P) {
+	f.Where(p.Field(powerrentalstate.FieldCanceledAt))
 }
 
 // WhereDurationSeconds applies the entql uint32 predicate on the duration_seconds field.
