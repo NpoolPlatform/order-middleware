@@ -1,11 +1,10 @@
 package feeorder
 
 import (
-	"fmt"
-
 	"entgo.io/ent/dialect/sql"
 
 	logger "github.com/NpoolPlatform/go-service-framework/pkg/logger"
+	wlog "github.com/NpoolPlatform/go-service-framework/pkg/wlog"
 	types "github.com/NpoolPlatform/message/npool/basetypes/order/v1"
 	orderbasecrud "github.com/NpoolPlatform/order-middleware/pkg/crud/order/orderbase"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent"
@@ -32,7 +31,7 @@ func (h *baseQueryHandler) selectOrderBase(stm *ent.OrderBaseQuery) *ent.OrderBa
 
 func (h *baseQueryHandler) queryOrderBase(cli *ent.Client) error {
 	if h.OrderID == nil {
-		return fmt.Errorf("invalid id")
+		return wlog.Errorf("invalid id")
 	}
 	stm := cli.OrderBase.Query().Where(entorderbase.DeletedAt(0))
 	if h.OrderID != nil {
@@ -166,7 +165,7 @@ func (h *baseQueryHandler) queryJoinOrderStateBase(s *sql.Selector) error {
 	if h.OrderStateBaseConds.PaymentType != nil {
 		_type, ok := h.OrderStateBaseConds.PaymentType.Val.(types.PaymentType)
 		if !ok {
-			return fmt.Errorf("invalid paymenttype")
+			return wlog.Errorf("invalid paymenttype")
 		}
 		s.OnP(
 			sql.EQ(t.C(entorderstatebase.FieldPaymentType), _type.String()),
@@ -188,7 +187,7 @@ func (h *baseQueryHandler) queryJoinOrderStateBase(s *sql.Selector) error {
 	if h.OrderStateBaseConds.OrderState != nil {
 		_state, ok := h.OrderStateBaseConds.OrderState.Val.(types.OrderState)
 		if !ok {
-			return fmt.Errorf("invalid orderstate")
+			return wlog.Errorf("invalid orderstate")
 		}
 		s.OnP(
 			sql.EQ(t.C(entorderstatebase.FieldOrderState), _state.String()),
@@ -224,7 +223,7 @@ func (h *baseQueryHandler) queryJoinFeeOrderState(s *sql.Selector) error {
 	if h.FeeOrderStateConds.PaymentState != nil {
 		_state, ok := h.FeeOrderStateConds.PaymentState.Val.(types.PaymentState)
 		if !ok {
-			return fmt.Errorf("invalid paymentstate")
+			return wlog.Errorf("invalid paymentstate")
 		}
 		s.OnP(
 			sql.EQ(t.C(entfeeorderstate.FieldPaymentState), _state.String()),
@@ -284,7 +283,7 @@ func (h *baseQueryHandler) queryJoinPaymentBase(s *sql.Selector) {
 	)
 }
 
-func (h *baseQueryHandler) queryJoinOrderCoupon(s *sql.Selector) {
+func (h *baseQueryHandler) queryJoinOrderCoupon(s *sql.Selector) error {
 	t := sql.Table(entordercoupon.Table)
 	s.LeftJoin(t).
 		On(
@@ -292,19 +291,24 @@ func (h *baseQueryHandler) queryJoinOrderCoupon(s *sql.Selector) {
 			t.C(entordercoupon.FieldOrderID),
 		)
 	if h.OrderCouponConds.OrderID != nil {
+		uid, ok := h.OrderCouponConds.OrderID.Val.(uuid.UUID)
+		if !ok {
+			return wlog.Errorf("invalid orderid")
+		}
 		s.OnP(
-			sql.EQ(
-				t.C(entordercoupon.FieldOrderID),
-				h.OrderCouponConds.OrderID.Val.(uuid.UUID),
-			),
+			sql.EQ(t.C(entordercoupon.FieldOrderID), uid),
 		)
 	}
 	if h.OrderCouponConds.OrderIDs != nil {
+		uids, ok := h.OrderCouponConds.OrderIDs.Val.([]uuid.UUID)
+		if !ok {
+			return wlog.Errorf("invalid orderids")
+		}
 		s.OnP(
 			sql.In(
 				t.C(entordercoupon.FieldOrderID),
 				func() (_uids []interface{}) {
-					for _, uid := range h.OrderCouponConds.OrderIDs.Val.([]uuid.UUID) {
+					for _, uid := range uids {
 						_uids = append(_uids, interface{}(uid))
 					}
 					return _uids
@@ -313,19 +317,24 @@ func (h *baseQueryHandler) queryJoinOrderCoupon(s *sql.Selector) {
 		)
 	}
 	if h.OrderCouponConds.CouponID != nil {
+		uid, ok := h.OrderCouponConds.CouponID.Val.(uuid.UUID)
+		if !ok {
+			return wlog.Errorf("invalid couponid")
+		}
 		s.OnP(
-			sql.EQ(
-				t.C(entordercoupon.FieldCouponID),
-				h.OrderCouponConds.CouponID.Val.(uuid.UUID),
-			),
+			sql.EQ(t.C(entordercoupon.FieldCouponID), uid),
 		)
 	}
 	if h.OrderCouponConds.CouponIDs != nil {
+		uids, ok := h.OrderCouponConds.CouponIDs.Val.([]uuid.UUID)
+		if !ok {
+			return wlog.Errorf("invalid couponids")
+		}
 		s.OnP(
 			sql.In(
 				t.C(entordercoupon.FieldCouponID),
 				func() (_uids []interface{}) {
-					for _, uid := range h.OrderCouponConds.CouponIDs.Val.([]uuid.UUID) {
+					for _, uid := range uids {
 						_uids = append(_uids, interface{}(uid))
 					}
 					return _uids
@@ -333,6 +342,20 @@ func (h *baseQueryHandler) queryJoinOrderCoupon(s *sql.Selector) {
 			),
 		)
 	}
+	return nil
+}
+
+func (h *baseQueryHandler) queryJoinParentOrder(s *sql.Selector) {
+	t1 := sql.Table(entorderbase.Table)
+	s.Join(t1).
+		On(
+			s.C(entorderbase.FieldParentOrderID),
+			t1.C(entorderbase.FieldEntID),
+		).
+		AppendSelect(
+			sql.As(t1.C(entorderbase.FieldAppGoodID), "parent_app_good_id"),
+			sql.As(t1.C(entorderbase.FieldGoodType), "parent_good_type"),
+		)
 }
 
 func (h *baseQueryHandler) queryJoin() {
@@ -346,6 +369,9 @@ func (h *baseQueryHandler) queryJoin() {
 			logger.Sugar().Errorw("queryJoinFeeOrderState", "Error", err)
 		}
 		h.queryJoinPaymentBase(s)
-		h.queryJoinOrderCoupon(s)
+		if err := h.queryJoinOrderCoupon(s); err != nil {
+			logger.Sugar().Errorw("queryJoinOrderCoupon", "Error", err)
+		}
+		h.queryJoinParentOrder(s)
 	})
 }

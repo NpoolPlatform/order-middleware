@@ -2,10 +2,11 @@ package feeorder
 
 import (
 	"context"
-	"fmt"
 
 	"entgo.io/ent/dialect/sql"
 
+	logger "github.com/NpoolPlatform/go-service-framework/pkg/logger"
+	wlog "github.com/NpoolPlatform/go-service-framework/pkg/wlog"
 	cruder "github.com/NpoolPlatform/libent-cruder/pkg/cruder"
 	goodtypes "github.com/NpoolPlatform/message/npool/basetypes/good/v1"
 	types "github.com/NpoolPlatform/message/npool/basetypes/order/v1"
@@ -43,6 +44,17 @@ func (h *queryHandler) queryJoin() {
 	}
 	h.stmCount.Modify(func(s *sql.Selector) {
 		h.queryJoinFeeOrder(s)
+		if err := h.queryJoinOrderStateBase(s); err != nil {
+			logger.Sugar().Errorw("queryJoinOrderStateBase", "Error", err)
+		}
+		if err := h.queryJoinFeeOrderState(s); err != nil {
+			logger.Sugar().Errorw("queryJoinFeeOrderState", "Error", err)
+		}
+		h.queryJoinPaymentBase(s)
+		if err := h.queryJoinOrderCoupon(s); err != nil {
+			logger.Sugar().Errorw("queryJoinOrderCoupon", "Error", err)
+		}
+		h.queryJoinParentOrder(s)
 	})
 }
 
@@ -65,7 +77,7 @@ func (h *queryHandler) queryOrderCoupons(ctx context.Context, cli *ent.Client) e
 		},
 	)
 	if err != nil {
-		return err
+		return wlog.WrapError(err)
 	}
 
 	return stm.Select(
@@ -90,7 +102,7 @@ func (h *queryHandler) queryPaymentBalances(ctx context.Context, cli *ent.Client
 		},
 	)
 	if err != nil {
-		return err
+		return wlog.WrapError(err)
 	}
 
 	return stm.Select(
@@ -119,7 +131,7 @@ func (h *queryHandler) queryPaymentTransfers(ctx context.Context, cli *ent.Clien
 		},
 	)
 	if err != nil {
-		return err
+		return wlog.WrapError(err)
 	}
 
 	return stm.Select(
@@ -208,17 +220,17 @@ func (h *Handler) GetFeeOrder(ctx context.Context) (*npool.FeeOrder, error) {
 
 	err := db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
 		if err := handler.queryOrderBase(cli); err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		handler.queryJoin()
 		if err := handler.scan(_ctx); err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		if err := handler.queryPaymentBalances(_ctx, cli); err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		if err := handler.queryPaymentTransfers(_ctx, cli); err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		return handler.queryOrderCoupons(_ctx, cli)
 	})
@@ -229,7 +241,7 @@ func (h *Handler) GetFeeOrder(ctx context.Context) (*npool.FeeOrder, error) {
 		return nil, nil
 	}
 	if len(handler.infos) > 1 {
-		return nil, fmt.Errorf("too many records")
+		return nil, wlog.Errorf("too many records")
 	}
 
 	handler.formalize()
@@ -248,17 +260,17 @@ func (h *Handler) GetFeeOrders(ctx context.Context) ([]*npool.FeeOrder, uint32, 
 	err = db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
 		handler.stmSelect, err = handler.queryOrderBases(cli)
 		if err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		handler.stmCount, err = handler.queryOrderBases(cli)
 		if err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 
 		handler.queryJoin()
 		_total, err := handler.stmCount.Count(_ctx)
 		if err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		handler.total = uint32(_total)
 
@@ -268,13 +280,13 @@ func (h *Handler) GetFeeOrders(ctx context.Context) ([]*npool.FeeOrder, uint32, 
 			Order(ent.Desc(entfeeorder.FieldCreatedAt))
 
 		if err := handler.scan(_ctx); err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		if err := handler.queryPaymentBalances(_ctx, cli); err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		if err := handler.queryPaymentTransfers(_ctx, cli); err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		return handler.queryOrderCoupons(_ctx, cli)
 	})
