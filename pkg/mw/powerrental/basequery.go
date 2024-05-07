@@ -50,7 +50,6 @@ func (h *baseQueryHandler) queryOrderBases(cli *ent.Client) (*ent.OrderBaseSelec
 	return h.selectOrderBase(stm), nil
 }
 
-//nolint:funlen,gocyclo
 func (h *baseQueryHandler) queryJoinMyself(s *sql.Selector) {
 	t := sql.Table(entorderbase.Table)
 	s.Join(t).
