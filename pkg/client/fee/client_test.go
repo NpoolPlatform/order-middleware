@@ -48,6 +48,8 @@ var ret = npool.FeeOrder{
 	AppGoodID:         uuid.NewString(),
 	OrderID:           uuid.NewString(),
 	ParentOrderID:     uuid.NewString(),
+	ParentAppGoodID:   uuid.NewString(),
+	ParentGoodType:    goodtypes.GoodType_PowerRental,
 	OrderType:         types.OrderType_Normal,
 	PaymentType:       types.PaymentType_PayWithBalanceOnly,
 	CreateMethod:      types.OrderCreateMethod_OrderCreatedByAdmin,
@@ -91,14 +93,15 @@ func setup(t *testing.T) func(*testing.T) {
 	ret.OrderStateStr = ret.OrderState.String()
 	ret.PaymentStateStr = ret.PaymentState.String()
 	ret.CancelStateStr = ret.CancelState.String()
+	ret.ParentGoodTypeStr = ret.ParentGoodType.String()
 
 	err := powerrentalmwcli.CreatePowerRentalOrder(context.Background(), &powerrentalmwpb.PowerRentalOrderReq{
 		EntID:              func() *string { s := uuid.NewString(); return &s }(),
 		AppID:              &ret.AppID,
 		UserID:             &ret.UserID,
 		GoodID:             func() *string { s := uuid.NewString(); return &s }(),
-		GoodType:           func() *goodtypes.GoodType { e := goodtypes.GoodType_PowerRental; return &e }(),
-		AppGoodID:          func() *string { s := uuid.NewString(); return &s }(),
+		GoodType:           &ret.ParentGoodType,
+		AppGoodID:          &ret.ParentAppGoodID,
 		OrderID:            &ret.ParentOrderID,
 		OrderType:          func() *types.OrderType { e := types.OrderType_Offline; return &e }(),
 		AppGoodStockID:     func() *string { s := uuid.NewString(); return &s }(),

@@ -89,6 +89,7 @@ func setup(t *testing.T) func(*testing.T) {
 		orderCoupon.OrderID = ret.OrderID
 	}
 
+	ret.EndAt = ret.StartAt + ret.DurationSeconds
 	ret.GoodTypeStr = ret.GoodType.String()
 	ret.OrderTypeStr = ret.OrderType.String()
 	ret.PaymentTypeStr = ret.PaymentType.String()
