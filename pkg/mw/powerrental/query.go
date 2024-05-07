@@ -198,6 +198,7 @@ func (h *queryHandler) formalize() {
 		info.Coupons = orderCoupons[info.OrderID]
 		info.PaymentBalances = paymentBalances[info.PaymentID]
 		info.PaymentTransfers = paymentTransfers[info.PaymentID]
+		info.EndAt = info.StartAt + info.DurationSeconds + info.CompensateSeconds
 	}
 }
 

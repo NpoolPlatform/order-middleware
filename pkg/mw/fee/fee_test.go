@@ -41,6 +41,8 @@ var ret = npool.FeeOrder{
 	AppGoodID:         uuid.NewString(),
 	OrderID:           uuid.NewString(),
 	ParentOrderID:     uuid.NewString(),
+	ParentAppGoodID:   uuid.NewString(),
+	ParentGoodType:    goodtypes.GoodType_PowerRental,
 	OrderType:         types.OrderType_Normal,
 	PaymentType:       types.PaymentType_PayWithBalanceOnly,
 	CreateMethod:      types.OrderCreateMethod_OrderCreatedByAdmin,
@@ -76,6 +78,7 @@ func setup(t *testing.T) func(*testing.T) {
 	for _, orderCoupon := range ret.Coupons {
 		orderCoupon.OrderID = ret.OrderID
 	}
+	ret.ParentGoodTypeStr = ret.ParentGoodType.String()
 
 	ret.GoodTypeStr = ret.GoodType.String()
 	ret.OrderTypeStr = ret.OrderType.String()
@@ -91,9 +94,9 @@ func setup(t *testing.T) func(*testing.T) {
 		orderbase1.WithAppID(&ret.AppID, true),
 		orderbase1.WithUserID(&ret.UserID, true),
 		orderbase1.WithGoodID(func() *string { s := uuid.NewString(); return &s }(), true),
-		orderbase1.WithGoodType(&ret.GoodType, true),
-		orderbase1.WithAppGoodID(func() *string { s := uuid.NewString(); return &s }(), true),
-		orderbase1.WithOrderType(func() *types.OrderType { e := types.OrderType_Offline; return &e }(), true),
+		orderbase1.WithGoodType(&ret.ParentGoodType, true),
+		orderbase1.WithAppGoodID(&ret.ParentAppGoodID, true),
+		orderbase1.WithOrderType(func() *types.OrderType { e := types.OrderType_Airdrop; return &e }(), true),
 		orderbase1.WithCreateMethod(func() *types.OrderCreateMethod { e := types.OrderCreateMethod_OrderCreatedByAdmin; return &e }(), true),
 	)
 	assert.Nil(t, err)

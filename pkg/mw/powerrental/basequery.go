@@ -137,27 +137,6 @@ func (h *baseQueryHandler) queryJoinMyself(s *sql.Selector) {
 			),
 		)
 	}
-	if h.OrderBaseConds.ParentOrderID != nil {
-		s.OnP(
-			sql.EQ(
-				t.C(entorderbase.FieldParentOrderID),
-				h.OrderBaseConds.ParentOrderID.Val.(uuid.UUID),
-			),
-		)
-	}
-	if h.OrderBaseConds.ParentOrderIDs != nil {
-		s.OnP(
-			sql.In(
-				t.C(entorderbase.FieldParentOrderID),
-				func() (_uids []interface{}) {
-					for _, uid := range h.OrderBaseConds.ParentOrderIDs.Val.([]uuid.UUID) {
-						_uids = append(_uids, interface{}(uid))
-					}
-					return _uids
-				}()...,
-			),
-		)
-	}
 	if h.OrderBaseConds.OrderType != nil {
 		s.OnP(
 			sql.EQ(
@@ -172,7 +151,6 @@ func (h *baseQueryHandler) queryJoinMyself(s *sql.Selector) {
 		t.C(entorderbase.FieldGoodID),
 		t.C(entorderbase.FieldGoodType),
 		t.C(entorderbase.FieldAppGoodID),
-		t.C(entorderbase.FieldParentOrderID),
 		t.C(entorderbase.FieldOrderType),
 		t.C(entorderbase.FieldCreateMethod),
 		t.C(entorderbase.FieldCreatedAt),

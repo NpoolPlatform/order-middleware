@@ -199,6 +199,7 @@ func (h *queryHandler) formalize() {
 		info.PaymentAmountUSD = func() string { amount, _ := decimal.NewFromString(info.PaymentAmountUSD); return amount.String() }()
 		info.DiscountAmountUSD = func() string { amount, _ := decimal.NewFromString(info.DiscountAmountUSD); return amount.String() }()
 		info.GoodType = goodtypes.GoodType(goodtypes.GoodType_value[info.GoodTypeStr])
+		info.ParentGoodType = goodtypes.GoodType(goodtypes.GoodType_value[info.ParentGoodTypeStr])
 		info.OrderType = types.OrderType(types.OrderType_value[info.OrderTypeStr])
 		info.PaymentType = types.PaymentType(types.PaymentType_value[info.PaymentTypeStr])
 		info.PaymentState = types.PaymentState(types.PaymentState_value[info.PaymentStateStr])
