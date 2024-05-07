@@ -250,6 +250,7 @@ func (h *baseQueryHandler) queryJoinFeeOrderState(s *sql.Selector) error {
 		t.C(entfeeorderstate.FieldAdminSetCanceled),
 		t.C(entfeeorderstate.FieldPaymentState),
 		t.C(entfeeorderstate.FieldCancelState),
+		t.C(entfeeorderstate.FieldCanceledAt),
 	)
 	return nil
 }

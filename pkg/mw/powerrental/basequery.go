@@ -365,6 +365,7 @@ func (h *baseQueryHandler) queryJoinPowerRentalState(s *sql.Selector) error {
 		t.C(entpowerrentalstate.FieldOutofgasSeconds),
 		t.C(entpowerrentalstate.FieldCompensateSeconds),
 		t.C(entpowerrentalstate.FieldCancelState),
+		t.C(entpowerrentalstate.FieldCanceledAt),
 		t.C(entpowerrentalstate.FieldDurationSeconds),
 		t.C(entpowerrentalstate.FieldRenewState),
 		t.C(entpowerrentalstate.FieldRenewNotifyAt),

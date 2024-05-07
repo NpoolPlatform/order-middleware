@@ -138,6 +138,33 @@ func (prsu *PowerRentalStateUpdate) ClearCancelState() *PowerRentalStateUpdate {
 	return prsu
 }
 
+// SetCanceledAt sets the "canceled_at" field.
+func (prsu *PowerRentalStateUpdate) SetCanceledAt(u uint32) *PowerRentalStateUpdate {
+	prsu.mutation.ResetCanceledAt()
+	prsu.mutation.SetCanceledAt(u)
+	return prsu
+}
+
+// SetNillableCanceledAt sets the "canceled_at" field if the given value is not nil.
+func (prsu *PowerRentalStateUpdate) SetNillableCanceledAt(u *uint32) *PowerRentalStateUpdate {
+	if u != nil {
+		prsu.SetCanceledAt(*u)
+	}
+	return prsu
+}
+
+// AddCanceledAt adds u to the "canceled_at" field.
+func (prsu *PowerRentalStateUpdate) AddCanceledAt(u int32) *PowerRentalStateUpdate {
+	prsu.mutation.AddCanceledAt(u)
+	return prsu
+}
+
+// ClearCanceledAt clears the value of the "canceled_at" field.
+func (prsu *PowerRentalStateUpdate) ClearCanceledAt() *PowerRentalStateUpdate {
+	prsu.mutation.ClearCanceledAt()
+	return prsu
+}
+
 // SetDurationSeconds sets the "duration_seconds" field.
 func (prsu *PowerRentalStateUpdate) SetDurationSeconds(u uint32) *PowerRentalStateUpdate {
 	prsu.mutation.ResetDurationSeconds()
@@ -566,6 +593,26 @@ func (prsu *PowerRentalStateUpdate) sqlSave(ctx context.Context) (n int, err err
 			Column: powerrentalstate.FieldCancelState,
 		})
 	}
+	if value, ok := prsu.mutation.CanceledAt(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeUint32,
+			Value:  value,
+			Column: powerrentalstate.FieldCanceledAt,
+		})
+	}
+	if value, ok := prsu.mutation.AddedCanceledAt(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeUint32,
+			Value:  value,
+			Column: powerrentalstate.FieldCanceledAt,
+		})
+	}
+	if prsu.mutation.CanceledAtCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeUint32,
+			Column: powerrentalstate.FieldCanceledAt,
+		})
+	}
 	if value, ok := prsu.mutation.DurationSeconds(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeUint32,
@@ -871,6 +918,33 @@ func (prsuo *PowerRentalStateUpdateOne) SetNillableCancelState(s *string) *Power
 // ClearCancelState clears the value of the "cancel_state" field.
 func (prsuo *PowerRentalStateUpdateOne) ClearCancelState() *PowerRentalStateUpdateOne {
 	prsuo.mutation.ClearCancelState()
+	return prsuo
+}
+
+// SetCanceledAt sets the "canceled_at" field.
+func (prsuo *PowerRentalStateUpdateOne) SetCanceledAt(u uint32) *PowerRentalStateUpdateOne {
+	prsuo.mutation.ResetCanceledAt()
+	prsuo.mutation.SetCanceledAt(u)
+	return prsuo
+}
+
+// SetNillableCanceledAt sets the "canceled_at" field if the given value is not nil.
+func (prsuo *PowerRentalStateUpdateOne) SetNillableCanceledAt(u *uint32) *PowerRentalStateUpdateOne {
+	if u != nil {
+		prsuo.SetCanceledAt(*u)
+	}
+	return prsuo
+}
+
+// AddCanceledAt adds u to the "canceled_at" field.
+func (prsuo *PowerRentalStateUpdateOne) AddCanceledAt(u int32) *PowerRentalStateUpdateOne {
+	prsuo.mutation.AddCanceledAt(u)
+	return prsuo
+}
+
+// ClearCanceledAt clears the value of the "canceled_at" field.
+func (prsuo *PowerRentalStateUpdateOne) ClearCanceledAt() *PowerRentalStateUpdateOne {
+	prsuo.mutation.ClearCanceledAt()
 	return prsuo
 }
 
@@ -1330,6 +1404,26 @@ func (prsuo *PowerRentalStateUpdateOne) sqlSave(ctx context.Context) (_node *Pow
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
 			Column: powerrentalstate.FieldCancelState,
+		})
+	}
+	if value, ok := prsuo.mutation.CanceledAt(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeUint32,
+			Value:  value,
+			Column: powerrentalstate.FieldCanceledAt,
+		})
+	}
+	if value, ok := prsuo.mutation.AddedCanceledAt(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeUint32,
+			Value:  value,
+			Column: powerrentalstate.FieldCanceledAt,
+		})
+	}
+	if prsuo.mutation.CanceledAtCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeUint32,
+			Column: powerrentalstate.FieldCanceledAt,
 		})
 	}
 	if value, ok := prsuo.mutation.DurationSeconds(); ok {

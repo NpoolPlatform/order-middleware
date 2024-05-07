@@ -40,6 +40,8 @@ type FeeOrderState struct {
 	PaymentState string `json:"payment_state,omitempty"`
 	// CancelState holds the value of the "cancel_state" field.
 	CancelState string `json:"cancel_state,omitempty"`
+	// CanceledAt holds the value of the "canceled_at" field.
+	CanceledAt uint32 `json:"canceled_at,omitempty"`
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -49,7 +51,7 @@ func (*FeeOrderState) scanValues(columns []string) ([]interface{}, error) {
 		switch columns[i] {
 		case feeorderstate.FieldUserSetPaid, feeorderstate.FieldUserSetCanceled, feeorderstate.FieldAdminSetCanceled:
 			values[i] = new(sql.NullBool)
-		case feeorderstate.FieldID, feeorderstate.FieldCreatedAt, feeorderstate.FieldUpdatedAt, feeorderstate.FieldDeletedAt, feeorderstate.FieldPaidAt:
+		case feeorderstate.FieldID, feeorderstate.FieldCreatedAt, feeorderstate.FieldUpdatedAt, feeorderstate.FieldDeletedAt, feeorderstate.FieldPaidAt, feeorderstate.FieldCanceledAt:
 			values[i] = new(sql.NullInt64)
 		case feeorderstate.FieldPaymentState, feeorderstate.FieldCancelState:
 			values[i] = new(sql.NullString)
@@ -148,6 +150,12 @@ func (fos *FeeOrderState) assignValues(columns []string, values []interface{}) e
 			} else if value.Valid {
 				fos.CancelState = value.String
 			}
+		case feeorderstate.FieldCanceledAt:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field canceled_at", values[i])
+			} else if value.Valid {
+				fos.CanceledAt = uint32(value.Int64)
+			}
 		}
 	}
 	return nil
@@ -211,6 +219,9 @@ func (fos *FeeOrderState) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("cancel_state=")
 	builder.WriteString(fos.CancelState)
+	builder.WriteString(", ")
+	builder.WriteString("canceled_at=")
+	builder.WriteString(fmt.Sprintf("%v", fos.CanceledAt))
 	builder.WriteByte(')')
 	return builder.String()
 }

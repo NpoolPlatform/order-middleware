@@ -190,6 +190,20 @@ func (fosc *FeeOrderStateCreate) SetNillableCancelState(s *string) *FeeOrderStat
 	return fosc
 }
 
+// SetCanceledAt sets the "canceled_at" field.
+func (fosc *FeeOrderStateCreate) SetCanceledAt(u uint32) *FeeOrderStateCreate {
+	fosc.mutation.SetCanceledAt(u)
+	return fosc
+}
+
+// SetNillableCanceledAt sets the "canceled_at" field if the given value is not nil.
+func (fosc *FeeOrderStateCreate) SetNillableCanceledAt(u *uint32) *FeeOrderStateCreate {
+	if u != nil {
+		fosc.SetCanceledAt(*u)
+	}
+	return fosc
+}
+
 // SetID sets the "id" field.
 func (fosc *FeeOrderStateCreate) SetID(u uint32) *FeeOrderStateCreate {
 	fosc.mutation.SetID(u)
@@ -341,6 +355,10 @@ func (fosc *FeeOrderStateCreate) defaults() error {
 		v := feeorderstate.DefaultCancelState
 		fosc.mutation.SetCancelState(v)
 	}
+	if _, ok := fosc.mutation.CanceledAt(); !ok {
+		v := feeorderstate.DefaultCanceledAt
+		fosc.mutation.SetCanceledAt(v)
+	}
 	return nil
 }
 
@@ -487,6 +505,14 @@ func (fosc *FeeOrderStateCreate) createSpec() (*FeeOrderState, *sqlgraph.CreateS
 			Column: feeorderstate.FieldCancelState,
 		})
 		_node.CancelState = value
+	}
+	if value, ok := fosc.mutation.CanceledAt(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeUint32,
+			Value:  value,
+			Column: feeorderstate.FieldCanceledAt,
+		})
+		_node.CanceledAt = value
 	}
 	return _node, _spec
 }
@@ -755,6 +781,30 @@ func (u *FeeOrderStateUpsert) UpdateCancelState() *FeeOrderStateUpsert {
 // ClearCancelState clears the value of the "cancel_state" field.
 func (u *FeeOrderStateUpsert) ClearCancelState() *FeeOrderStateUpsert {
 	u.SetNull(feeorderstate.FieldCancelState)
+	return u
+}
+
+// SetCanceledAt sets the "canceled_at" field.
+func (u *FeeOrderStateUpsert) SetCanceledAt(v uint32) *FeeOrderStateUpsert {
+	u.Set(feeorderstate.FieldCanceledAt, v)
+	return u
+}
+
+// UpdateCanceledAt sets the "canceled_at" field to the value that was provided on create.
+func (u *FeeOrderStateUpsert) UpdateCanceledAt() *FeeOrderStateUpsert {
+	u.SetExcluded(feeorderstate.FieldCanceledAt)
+	return u
+}
+
+// AddCanceledAt adds v to the "canceled_at" field.
+func (u *FeeOrderStateUpsert) AddCanceledAt(v uint32) *FeeOrderStateUpsert {
+	u.Add(feeorderstate.FieldCanceledAt, v)
+	return u
+}
+
+// ClearCanceledAt clears the value of the "canceled_at" field.
+func (u *FeeOrderStateUpsert) ClearCanceledAt() *FeeOrderStateUpsert {
+	u.SetNull(feeorderstate.FieldCanceledAt)
 	return u
 }
 
@@ -1057,6 +1107,34 @@ func (u *FeeOrderStateUpsertOne) UpdateCancelState() *FeeOrderStateUpsertOne {
 func (u *FeeOrderStateUpsertOne) ClearCancelState() *FeeOrderStateUpsertOne {
 	return u.Update(func(s *FeeOrderStateUpsert) {
 		s.ClearCancelState()
+	})
+}
+
+// SetCanceledAt sets the "canceled_at" field.
+func (u *FeeOrderStateUpsertOne) SetCanceledAt(v uint32) *FeeOrderStateUpsertOne {
+	return u.Update(func(s *FeeOrderStateUpsert) {
+		s.SetCanceledAt(v)
+	})
+}
+
+// AddCanceledAt adds v to the "canceled_at" field.
+func (u *FeeOrderStateUpsertOne) AddCanceledAt(v uint32) *FeeOrderStateUpsertOne {
+	return u.Update(func(s *FeeOrderStateUpsert) {
+		s.AddCanceledAt(v)
+	})
+}
+
+// UpdateCanceledAt sets the "canceled_at" field to the value that was provided on create.
+func (u *FeeOrderStateUpsertOne) UpdateCanceledAt() *FeeOrderStateUpsertOne {
+	return u.Update(func(s *FeeOrderStateUpsert) {
+		s.UpdateCanceledAt()
+	})
+}
+
+// ClearCanceledAt clears the value of the "canceled_at" field.
+func (u *FeeOrderStateUpsertOne) ClearCanceledAt() *FeeOrderStateUpsertOne {
+	return u.Update(func(s *FeeOrderStateUpsert) {
+		s.ClearCanceledAt()
 	})
 }
 
@@ -1524,6 +1602,34 @@ func (u *FeeOrderStateUpsertBulk) UpdateCancelState() *FeeOrderStateUpsertBulk {
 func (u *FeeOrderStateUpsertBulk) ClearCancelState() *FeeOrderStateUpsertBulk {
 	return u.Update(func(s *FeeOrderStateUpsert) {
 		s.ClearCancelState()
+	})
+}
+
+// SetCanceledAt sets the "canceled_at" field.
+func (u *FeeOrderStateUpsertBulk) SetCanceledAt(v uint32) *FeeOrderStateUpsertBulk {
+	return u.Update(func(s *FeeOrderStateUpsert) {
+		s.SetCanceledAt(v)
+	})
+}
+
+// AddCanceledAt adds v to the "canceled_at" field.
+func (u *FeeOrderStateUpsertBulk) AddCanceledAt(v uint32) *FeeOrderStateUpsertBulk {
+	return u.Update(func(s *FeeOrderStateUpsert) {
+		s.AddCanceledAt(v)
+	})
+}
+
+// UpdateCanceledAt sets the "canceled_at" field to the value that was provided on create.
+func (u *FeeOrderStateUpsertBulk) UpdateCanceledAt() *FeeOrderStateUpsertBulk {
+	return u.Update(func(s *FeeOrderStateUpsert) {
+		s.UpdateCanceledAt()
+	})
+}
+
+// ClearCanceledAt clears the value of the "canceled_at" field.
+func (u *FeeOrderStateUpsertBulk) ClearCanceledAt() *FeeOrderStateUpsertBulk {
+	return u.Update(func(s *FeeOrderStateUpsert) {
+		s.ClearCanceledAt()
 	})
 }
 

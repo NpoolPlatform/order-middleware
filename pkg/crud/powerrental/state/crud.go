@@ -15,6 +15,7 @@ type Req struct {
 	EntID             *uuid.UUID
 	OrderID           *uuid.UUID
 	CancelState       *types.OrderState
+	CanceledAt        *uint32
 	PaymentID         *uuid.UUID
 	PaidAt            *uint32
 	UserSetPaid       *bool
@@ -51,6 +52,9 @@ func CreateSet(c *ent.PowerRentalStateCreate, req *Req) *ent.PowerRentalStateCre
 func UpdateSet(u *ent.PowerRentalStateUpdateOne, req *Req) *ent.PowerRentalStateUpdateOne {
 	if req.CancelState != nil {
 		u.SetCancelState(req.CancelState.String())
+	}
+	if req.CanceledAt != nil {
+		u.SetCanceledAt(*req.CanceledAt)
 	}
 	if req.PaymentID != nil {
 		u.SetPaymentID(*req.PaymentID)

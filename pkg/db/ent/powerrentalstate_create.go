@@ -106,6 +106,20 @@ func (prsc *PowerRentalStateCreate) SetNillableCancelState(s *string) *PowerRent
 	return prsc
 }
 
+// SetCanceledAt sets the "canceled_at" field.
+func (prsc *PowerRentalStateCreate) SetCanceledAt(u uint32) *PowerRentalStateCreate {
+	prsc.mutation.SetCanceledAt(u)
+	return prsc
+}
+
+// SetNillableCanceledAt sets the "canceled_at" field if the given value is not nil.
+func (prsc *PowerRentalStateCreate) SetNillableCanceledAt(u *uint32) *PowerRentalStateCreate {
+	if u != nil {
+		prsc.SetCanceledAt(*u)
+	}
+	return prsc
+}
+
 // SetDurationSeconds sets the "duration_seconds" field.
 func (prsc *PowerRentalStateCreate) SetDurationSeconds(u uint32) *PowerRentalStateCreate {
 	prsc.mutation.SetDurationSeconds(u)
@@ -384,6 +398,10 @@ func (prsc *PowerRentalStateCreate) defaults() error {
 		v := powerrentalstate.DefaultCancelState
 		prsc.mutation.SetCancelState(v)
 	}
+	if _, ok := prsc.mutation.CanceledAt(); !ok {
+		v := powerrentalstate.DefaultCanceledAt
+		prsc.mutation.SetCanceledAt(v)
+	}
 	if _, ok := prsc.mutation.DurationSeconds(); !ok {
 		v := powerrentalstate.DefaultDurationSeconds
 		prsc.mutation.SetDurationSeconds(v)
@@ -529,6 +547,14 @@ func (prsc *PowerRentalStateCreate) createSpec() (*PowerRentalState, *sqlgraph.C
 			Column: powerrentalstate.FieldCancelState,
 		})
 		_node.CancelState = value
+	}
+	if value, ok := prsc.mutation.CanceledAt(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeUint32,
+			Value:  value,
+			Column: powerrentalstate.FieldCanceledAt,
+		})
+		_node.CanceledAt = value
 	}
 	if value, ok := prsc.mutation.DurationSeconds(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -771,6 +797,30 @@ func (u *PowerRentalStateUpsert) UpdateCancelState() *PowerRentalStateUpsert {
 // ClearCancelState clears the value of the "cancel_state" field.
 func (u *PowerRentalStateUpsert) ClearCancelState() *PowerRentalStateUpsert {
 	u.SetNull(powerrentalstate.FieldCancelState)
+	return u
+}
+
+// SetCanceledAt sets the "canceled_at" field.
+func (u *PowerRentalStateUpsert) SetCanceledAt(v uint32) *PowerRentalStateUpsert {
+	u.Set(powerrentalstate.FieldCanceledAt, v)
+	return u
+}
+
+// UpdateCanceledAt sets the "canceled_at" field to the value that was provided on create.
+func (u *PowerRentalStateUpsert) UpdateCanceledAt() *PowerRentalStateUpsert {
+	u.SetExcluded(powerrentalstate.FieldCanceledAt)
+	return u
+}
+
+// AddCanceledAt adds v to the "canceled_at" field.
+func (u *PowerRentalStateUpsert) AddCanceledAt(v uint32) *PowerRentalStateUpsert {
+	u.Add(powerrentalstate.FieldCanceledAt, v)
+	return u
+}
+
+// ClearCanceledAt clears the value of the "canceled_at" field.
+func (u *PowerRentalStateUpsert) ClearCanceledAt() *PowerRentalStateUpsert {
+	u.SetNull(powerrentalstate.FieldCanceledAt)
 	return u
 }
 
@@ -1168,6 +1218,34 @@ func (u *PowerRentalStateUpsertOne) UpdateCancelState() *PowerRentalStateUpsertO
 func (u *PowerRentalStateUpsertOne) ClearCancelState() *PowerRentalStateUpsertOne {
 	return u.Update(func(s *PowerRentalStateUpsert) {
 		s.ClearCancelState()
+	})
+}
+
+// SetCanceledAt sets the "canceled_at" field.
+func (u *PowerRentalStateUpsertOne) SetCanceledAt(v uint32) *PowerRentalStateUpsertOne {
+	return u.Update(func(s *PowerRentalStateUpsert) {
+		s.SetCanceledAt(v)
+	})
+}
+
+// AddCanceledAt adds v to the "canceled_at" field.
+func (u *PowerRentalStateUpsertOne) AddCanceledAt(v uint32) *PowerRentalStateUpsertOne {
+	return u.Update(func(s *PowerRentalStateUpsert) {
+		s.AddCanceledAt(v)
+	})
+}
+
+// UpdateCanceledAt sets the "canceled_at" field to the value that was provided on create.
+func (u *PowerRentalStateUpsertOne) UpdateCanceledAt() *PowerRentalStateUpsertOne {
+	return u.Update(func(s *PowerRentalStateUpsert) {
+		s.UpdateCanceledAt()
+	})
+}
+
+// ClearCanceledAt clears the value of the "canceled_at" field.
+func (u *PowerRentalStateUpsertOne) ClearCanceledAt() *PowerRentalStateUpsertOne {
+	return u.Update(func(s *PowerRentalStateUpsert) {
+		s.ClearCanceledAt()
 	})
 }
 
@@ -1768,6 +1846,34 @@ func (u *PowerRentalStateUpsertBulk) UpdateCancelState() *PowerRentalStateUpsert
 func (u *PowerRentalStateUpsertBulk) ClearCancelState() *PowerRentalStateUpsertBulk {
 	return u.Update(func(s *PowerRentalStateUpsert) {
 		s.ClearCancelState()
+	})
+}
+
+// SetCanceledAt sets the "canceled_at" field.
+func (u *PowerRentalStateUpsertBulk) SetCanceledAt(v uint32) *PowerRentalStateUpsertBulk {
+	return u.Update(func(s *PowerRentalStateUpsert) {
+		s.SetCanceledAt(v)
+	})
+}
+
+// AddCanceledAt adds v to the "canceled_at" field.
+func (u *PowerRentalStateUpsertBulk) AddCanceledAt(v uint32) *PowerRentalStateUpsertBulk {
+	return u.Update(func(s *PowerRentalStateUpsert) {
+		s.AddCanceledAt(v)
+	})
+}
+
+// UpdateCanceledAt sets the "canceled_at" field to the value that was provided on create.
+func (u *PowerRentalStateUpsertBulk) UpdateCanceledAt() *PowerRentalStateUpsertBulk {
+	return u.Update(func(s *PowerRentalStateUpsert) {
+		s.UpdateCanceledAt()
+	})
+}
+
+// ClearCanceledAt clears the value of the "canceled_at" field.
+func (u *PowerRentalStateUpsertBulk) ClearCanceledAt() *PowerRentalStateUpsertBulk {
+	return u.Update(func(s *PowerRentalStateUpsert) {
+		s.ClearCanceledAt()
 	})
 }
 

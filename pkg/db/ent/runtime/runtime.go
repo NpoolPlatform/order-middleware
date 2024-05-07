@@ -280,6 +280,10 @@ func init() {
 	feeorderstateDescCancelState := feeorderstateFields[7].Descriptor()
 	// feeorderstate.DefaultCancelState holds the default value on creation for the cancel_state field.
 	feeorderstate.DefaultCancelState = feeorderstateDescCancelState.Default.(string)
+	// feeorderstateDescCanceledAt is the schema descriptor for canceled_at field.
+	feeorderstateDescCanceledAt := feeorderstateFields[8].Descriptor()
+	// feeorderstate.DefaultCanceledAt holds the default value on creation for the canceled_at field.
+	feeorderstate.DefaultCanceledAt = feeorderstateDescCanceledAt.Default.(uint32)
 	orderMixin := schema.Order{}.Mixin()
 	order.Policy = privacy.NewPolicies(orderMixin[0], schema.Order{})
 	order.Hooks[0] = func(next ent.Mutator) ent.Mutator {
@@ -1174,48 +1178,52 @@ func init() {
 	powerrentalstateDescCancelState := powerrentalstateFields[1].Descriptor()
 	// powerrentalstate.DefaultCancelState holds the default value on creation for the cancel_state field.
 	powerrentalstate.DefaultCancelState = powerrentalstateDescCancelState.Default.(string)
+	// powerrentalstateDescCanceledAt is the schema descriptor for canceled_at field.
+	powerrentalstateDescCanceledAt := powerrentalstateFields[2].Descriptor()
+	// powerrentalstate.DefaultCanceledAt holds the default value on creation for the canceled_at field.
+	powerrentalstate.DefaultCanceledAt = powerrentalstateDescCanceledAt.Default.(uint32)
 	// powerrentalstateDescDurationSeconds is the schema descriptor for duration_seconds field.
-	powerrentalstateDescDurationSeconds := powerrentalstateFields[2].Descriptor()
+	powerrentalstateDescDurationSeconds := powerrentalstateFields[3].Descriptor()
 	// powerrentalstate.DefaultDurationSeconds holds the default value on creation for the duration_seconds field.
 	powerrentalstate.DefaultDurationSeconds = powerrentalstateDescDurationSeconds.Default.(uint32)
 	// powerrentalstateDescPaymentID is the schema descriptor for payment_id field.
-	powerrentalstateDescPaymentID := powerrentalstateFields[3].Descriptor()
+	powerrentalstateDescPaymentID := powerrentalstateFields[4].Descriptor()
 	// powerrentalstate.DefaultPaymentID holds the default value on creation for the payment_id field.
 	powerrentalstate.DefaultPaymentID = powerrentalstateDescPaymentID.Default.(func() uuid.UUID)
 	// powerrentalstateDescPaidAt is the schema descriptor for paid_at field.
-	powerrentalstateDescPaidAt := powerrentalstateFields[4].Descriptor()
+	powerrentalstateDescPaidAt := powerrentalstateFields[5].Descriptor()
 	// powerrentalstate.DefaultPaidAt holds the default value on creation for the paid_at field.
 	powerrentalstate.DefaultPaidAt = powerrentalstateDescPaidAt.Default.(uint32)
 	// powerrentalstateDescUserSetPaid is the schema descriptor for user_set_paid field.
-	powerrentalstateDescUserSetPaid := powerrentalstateFields[5].Descriptor()
+	powerrentalstateDescUserSetPaid := powerrentalstateFields[6].Descriptor()
 	// powerrentalstate.DefaultUserSetPaid holds the default value on creation for the user_set_paid field.
 	powerrentalstate.DefaultUserSetPaid = powerrentalstateDescUserSetPaid.Default.(bool)
 	// powerrentalstateDescUserSetCanceled is the schema descriptor for user_set_canceled field.
-	powerrentalstateDescUserSetCanceled := powerrentalstateFields[6].Descriptor()
+	powerrentalstateDescUserSetCanceled := powerrentalstateFields[7].Descriptor()
 	// powerrentalstate.DefaultUserSetCanceled holds the default value on creation for the user_set_canceled field.
 	powerrentalstate.DefaultUserSetCanceled = powerrentalstateDescUserSetCanceled.Default.(bool)
 	// powerrentalstateDescAdminSetCanceled is the schema descriptor for admin_set_canceled field.
-	powerrentalstateDescAdminSetCanceled := powerrentalstateFields[7].Descriptor()
+	powerrentalstateDescAdminSetCanceled := powerrentalstateFields[8].Descriptor()
 	// powerrentalstate.DefaultAdminSetCanceled holds the default value on creation for the admin_set_canceled field.
 	powerrentalstate.DefaultAdminSetCanceled = powerrentalstateDescAdminSetCanceled.Default.(bool)
 	// powerrentalstateDescPaymentState is the schema descriptor for payment_state field.
-	powerrentalstateDescPaymentState := powerrentalstateFields[8].Descriptor()
+	powerrentalstateDescPaymentState := powerrentalstateFields[9].Descriptor()
 	// powerrentalstate.DefaultPaymentState holds the default value on creation for the payment_state field.
 	powerrentalstate.DefaultPaymentState = powerrentalstateDescPaymentState.Default.(string)
 	// powerrentalstateDescOutofgasSeconds is the schema descriptor for outofgas_seconds field.
-	powerrentalstateDescOutofgasSeconds := powerrentalstateFields[9].Descriptor()
+	powerrentalstateDescOutofgasSeconds := powerrentalstateFields[10].Descriptor()
 	// powerrentalstate.DefaultOutofgasSeconds holds the default value on creation for the outofgas_seconds field.
 	powerrentalstate.DefaultOutofgasSeconds = powerrentalstateDescOutofgasSeconds.Default.(uint32)
 	// powerrentalstateDescCompensateSeconds is the schema descriptor for compensate_seconds field.
-	powerrentalstateDescCompensateSeconds := powerrentalstateFields[10].Descriptor()
+	powerrentalstateDescCompensateSeconds := powerrentalstateFields[11].Descriptor()
 	// powerrentalstate.DefaultCompensateSeconds holds the default value on creation for the compensate_seconds field.
 	powerrentalstate.DefaultCompensateSeconds = powerrentalstateDescCompensateSeconds.Default.(uint32)
 	// powerrentalstateDescRenewState is the schema descriptor for renew_state field.
-	powerrentalstateDescRenewState := powerrentalstateFields[11].Descriptor()
+	powerrentalstateDescRenewState := powerrentalstateFields[12].Descriptor()
 	// powerrentalstate.DefaultRenewState holds the default value on creation for the renew_state field.
 	powerrentalstate.DefaultRenewState = powerrentalstateDescRenewState.Default.(string)
 	// powerrentalstateDescRenewNotifyAt is the schema descriptor for renew_notify_at field.
-	powerrentalstateDescRenewNotifyAt := powerrentalstateFields[12].Descriptor()
+	powerrentalstateDescRenewNotifyAt := powerrentalstateFields[13].Descriptor()
 	// powerrentalstate.DefaultRenewNotifyAt holds the default value on creation for the renew_notify_at field.
 	powerrentalstate.DefaultRenewNotifyAt = powerrentalstateDescRenewNotifyAt.Default.(uint32)
 }

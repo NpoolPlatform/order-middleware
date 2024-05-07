@@ -36,6 +36,8 @@ const (
 	FieldPaymentState = "payment_state"
 	// FieldCancelState holds the string denoting the cancel_state field in the database.
 	FieldCancelState = "cancel_state"
+	// FieldCanceledAt holds the string denoting the canceled_at field in the database.
+	FieldCanceledAt = "canceled_at"
 	// Table holds the table name of the feeorderstate in the database.
 	Table = "fee_order_states"
 )
@@ -55,6 +57,7 @@ var Columns = []string{
 	FieldAdminSetCanceled,
 	FieldPaymentState,
 	FieldCancelState,
+	FieldCanceledAt,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -102,4 +105,6 @@ var (
 	DefaultPaymentState string
 	// DefaultCancelState holds the default value on creation for the "cancel_state" field.
 	DefaultCancelState string
+	// DefaultCanceledAt holds the default value on creation for the "canceled_at" field.
+	DefaultCanceledAt uint32
 )

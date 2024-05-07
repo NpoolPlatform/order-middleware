@@ -36,6 +36,10 @@ func (PowerRentalState) Fields() []ent.Field {
 			Optional().
 			Default(types.OrderState_DefaultOrderState.String()),
 		field.
+			Uint32("canceled_at").
+			Optional().
+			Default(0),
+		field.
 			Uint32("duration_seconds").
 			Optional().
 			Default(0),

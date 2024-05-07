@@ -3395,6 +3395,8 @@ type FeeOrderStateMutation struct {
 	admin_set_canceled *bool
 	payment_state      *string
 	cancel_state       *string
+	canceled_at        *uint32
+	addcanceled_at     *int32
 	clearedFields      map[string]struct{}
 	done               bool
 	oldValue           func(context.Context) (*FeeOrderState, error)
@@ -4122,6 +4124,76 @@ func (m *FeeOrderStateMutation) ResetCancelState() {
 	delete(m.clearedFields, feeorderstate.FieldCancelState)
 }
 
+// SetCanceledAt sets the "canceled_at" field.
+func (m *FeeOrderStateMutation) SetCanceledAt(u uint32) {
+	m.canceled_at = &u
+	m.addcanceled_at = nil
+}
+
+// CanceledAt returns the value of the "canceled_at" field in the mutation.
+func (m *FeeOrderStateMutation) CanceledAt() (r uint32, exists bool) {
+	v := m.canceled_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCanceledAt returns the old "canceled_at" field's value of the FeeOrderState entity.
+// If the FeeOrderState object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *FeeOrderStateMutation) OldCanceledAt(ctx context.Context) (v uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCanceledAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCanceledAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCanceledAt: %w", err)
+	}
+	return oldValue.CanceledAt, nil
+}
+
+// AddCanceledAt adds u to the "canceled_at" field.
+func (m *FeeOrderStateMutation) AddCanceledAt(u int32) {
+	if m.addcanceled_at != nil {
+		*m.addcanceled_at += u
+	} else {
+		m.addcanceled_at = &u
+	}
+}
+
+// AddedCanceledAt returns the value that was added to the "canceled_at" field in this mutation.
+func (m *FeeOrderStateMutation) AddedCanceledAt() (r int32, exists bool) {
+	v := m.addcanceled_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearCanceledAt clears the value of the "canceled_at" field.
+func (m *FeeOrderStateMutation) ClearCanceledAt() {
+	m.canceled_at = nil
+	m.addcanceled_at = nil
+	m.clearedFields[feeorderstate.FieldCanceledAt] = struct{}{}
+}
+
+// CanceledAtCleared returns if the "canceled_at" field was cleared in this mutation.
+func (m *FeeOrderStateMutation) CanceledAtCleared() bool {
+	_, ok := m.clearedFields[feeorderstate.FieldCanceledAt]
+	return ok
+}
+
+// ResetCanceledAt resets all changes to the "canceled_at" field.
+func (m *FeeOrderStateMutation) ResetCanceledAt() {
+	m.canceled_at = nil
+	m.addcanceled_at = nil
+	delete(m.clearedFields, feeorderstate.FieldCanceledAt)
+}
+
 // Where appends a list predicates to the FeeOrderStateMutation builder.
 func (m *FeeOrderStateMutation) Where(ps ...predicate.FeeOrderState) {
 	m.predicates = append(m.predicates, ps...)
@@ -4141,7 +4213,7 @@ func (m *FeeOrderStateMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *FeeOrderStateMutation) Fields() []string {
-	fields := make([]string, 0, 12)
+	fields := make([]string, 0, 13)
 	if m.created_at != nil {
 		fields = append(fields, feeorderstate.FieldCreatedAt)
 	}
@@ -4178,6 +4250,9 @@ func (m *FeeOrderStateMutation) Fields() []string {
 	if m.cancel_state != nil {
 		fields = append(fields, feeorderstate.FieldCancelState)
 	}
+	if m.canceled_at != nil {
+		fields = append(fields, feeorderstate.FieldCanceledAt)
+	}
 	return fields
 }
 
@@ -4210,6 +4285,8 @@ func (m *FeeOrderStateMutation) Field(name string) (ent.Value, bool) {
 		return m.PaymentState()
 	case feeorderstate.FieldCancelState:
 		return m.CancelState()
+	case feeorderstate.FieldCanceledAt:
+		return m.CanceledAt()
 	}
 	return nil, false
 }
@@ -4243,6 +4320,8 @@ func (m *FeeOrderStateMutation) OldField(ctx context.Context, name string) (ent.
 		return m.OldPaymentState(ctx)
 	case feeorderstate.FieldCancelState:
 		return m.OldCancelState(ctx)
+	case feeorderstate.FieldCanceledAt:
+		return m.OldCanceledAt(ctx)
 	}
 	return nil, fmt.Errorf("unknown FeeOrderState field %s", name)
 }
@@ -4336,6 +4415,13 @@ func (m *FeeOrderStateMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetCancelState(v)
 		return nil
+	case feeorderstate.FieldCanceledAt:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCanceledAt(v)
+		return nil
 	}
 	return fmt.Errorf("unknown FeeOrderState field %s", name)
 }
@@ -4356,6 +4442,9 @@ func (m *FeeOrderStateMutation) AddedFields() []string {
 	if m.addpaid_at != nil {
 		fields = append(fields, feeorderstate.FieldPaidAt)
 	}
+	if m.addcanceled_at != nil {
+		fields = append(fields, feeorderstate.FieldCanceledAt)
+	}
 	return fields
 }
 
@@ -4372,6 +4461,8 @@ func (m *FeeOrderStateMutation) AddedField(name string) (ent.Value, bool) {
 		return m.AddedDeletedAt()
 	case feeorderstate.FieldPaidAt:
 		return m.AddedPaidAt()
+	case feeorderstate.FieldCanceledAt:
+		return m.AddedCanceledAt()
 	}
 	return nil, false
 }
@@ -4409,6 +4500,13 @@ func (m *FeeOrderStateMutation) AddField(name string, value ent.Value) error {
 		}
 		m.AddPaidAt(v)
 		return nil
+	case feeorderstate.FieldCanceledAt:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddCanceledAt(v)
+		return nil
 	}
 	return fmt.Errorf("unknown FeeOrderState numeric field %s", name)
 }
@@ -4440,6 +4538,9 @@ func (m *FeeOrderStateMutation) ClearedFields() []string {
 	}
 	if m.FieldCleared(feeorderstate.FieldCancelState) {
 		fields = append(fields, feeorderstate.FieldCancelState)
+	}
+	if m.FieldCleared(feeorderstate.FieldCanceledAt) {
+		fields = append(fields, feeorderstate.FieldCanceledAt)
 	}
 	return fields
 }
@@ -4478,6 +4579,9 @@ func (m *FeeOrderStateMutation) ClearField(name string) error {
 		return nil
 	case feeorderstate.FieldCancelState:
 		m.ClearCancelState()
+		return nil
+	case feeorderstate.FieldCanceledAt:
+		m.ClearCanceledAt()
 		return nil
 	}
 	return fmt.Errorf("unknown FeeOrderState nullable field %s", name)
@@ -4522,6 +4626,9 @@ func (m *FeeOrderStateMutation) ResetField(name string) error {
 		return nil
 	case feeorderstate.FieldCancelState:
 		m.ResetCancelState()
+		return nil
+	case feeorderstate.FieldCanceledAt:
+		m.ResetCanceledAt()
 		return nil
 	}
 	return fmt.Errorf("unknown FeeOrderState field %s", name)
@@ -20776,6 +20883,8 @@ type PowerRentalStateMutation struct {
 	ent_id                *uuid.UUID
 	order_id              *uuid.UUID
 	cancel_state          *string
+	canceled_at           *uint32
+	addcanceled_at        *int32
 	duration_seconds      *uint32
 	addduration_seconds   *int32
 	payment_id            *uuid.UUID
@@ -21202,6 +21311,76 @@ func (m *PowerRentalStateMutation) CancelStateCleared() bool {
 func (m *PowerRentalStateMutation) ResetCancelState() {
 	m.cancel_state = nil
 	delete(m.clearedFields, powerrentalstate.FieldCancelState)
+}
+
+// SetCanceledAt sets the "canceled_at" field.
+func (m *PowerRentalStateMutation) SetCanceledAt(u uint32) {
+	m.canceled_at = &u
+	m.addcanceled_at = nil
+}
+
+// CanceledAt returns the value of the "canceled_at" field in the mutation.
+func (m *PowerRentalStateMutation) CanceledAt() (r uint32, exists bool) {
+	v := m.canceled_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCanceledAt returns the old "canceled_at" field's value of the PowerRentalState entity.
+// If the PowerRentalState object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PowerRentalStateMutation) OldCanceledAt(ctx context.Context) (v uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCanceledAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCanceledAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCanceledAt: %w", err)
+	}
+	return oldValue.CanceledAt, nil
+}
+
+// AddCanceledAt adds u to the "canceled_at" field.
+func (m *PowerRentalStateMutation) AddCanceledAt(u int32) {
+	if m.addcanceled_at != nil {
+		*m.addcanceled_at += u
+	} else {
+		m.addcanceled_at = &u
+	}
+}
+
+// AddedCanceledAt returns the value that was added to the "canceled_at" field in this mutation.
+func (m *PowerRentalStateMutation) AddedCanceledAt() (r int32, exists bool) {
+	v := m.addcanceled_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearCanceledAt clears the value of the "canceled_at" field.
+func (m *PowerRentalStateMutation) ClearCanceledAt() {
+	m.canceled_at = nil
+	m.addcanceled_at = nil
+	m.clearedFields[powerrentalstate.FieldCanceledAt] = struct{}{}
+}
+
+// CanceledAtCleared returns if the "canceled_at" field was cleared in this mutation.
+func (m *PowerRentalStateMutation) CanceledAtCleared() bool {
+	_, ok := m.clearedFields[powerrentalstate.FieldCanceledAt]
+	return ok
+}
+
+// ResetCanceledAt resets all changes to the "canceled_at" field.
+func (m *PowerRentalStateMutation) ResetCanceledAt() {
+	m.canceled_at = nil
+	m.addcanceled_at = nil
+	delete(m.clearedFields, powerrentalstate.FieldCanceledAt)
 }
 
 // SetDurationSeconds sets the "duration_seconds" field.
@@ -21867,7 +22046,7 @@ func (m *PowerRentalStateMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *PowerRentalStateMutation) Fields() []string {
-	fields := make([]string, 0, 17)
+	fields := make([]string, 0, 18)
 	if m.created_at != nil {
 		fields = append(fields, powerrentalstate.FieldCreatedAt)
 	}
@@ -21885,6 +22064,9 @@ func (m *PowerRentalStateMutation) Fields() []string {
 	}
 	if m.cancel_state != nil {
 		fields = append(fields, powerrentalstate.FieldCancelState)
+	}
+	if m.canceled_at != nil {
+		fields = append(fields, powerrentalstate.FieldCanceledAt)
 	}
 	if m.duration_seconds != nil {
 		fields = append(fields, powerrentalstate.FieldDurationSeconds)
@@ -21939,6 +22121,8 @@ func (m *PowerRentalStateMutation) Field(name string) (ent.Value, bool) {
 		return m.OrderID()
 	case powerrentalstate.FieldCancelState:
 		return m.CancelState()
+	case powerrentalstate.FieldCanceledAt:
+		return m.CanceledAt()
 	case powerrentalstate.FieldDurationSeconds:
 		return m.DurationSeconds()
 	case powerrentalstate.FieldPaymentID:
@@ -21982,6 +22166,8 @@ func (m *PowerRentalStateMutation) OldField(ctx context.Context, name string) (e
 		return m.OldOrderID(ctx)
 	case powerrentalstate.FieldCancelState:
 		return m.OldCancelState(ctx)
+	case powerrentalstate.FieldCanceledAt:
+		return m.OldCanceledAt(ctx)
 	case powerrentalstate.FieldDurationSeconds:
 		return m.OldDurationSeconds(ctx)
 	case powerrentalstate.FieldPaymentID:
@@ -22054,6 +22240,13 @@ func (m *PowerRentalStateMutation) SetField(name string, value ent.Value) error 
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetCancelState(v)
+		return nil
+	case powerrentalstate.FieldCanceledAt:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCanceledAt(v)
 		return nil
 	case powerrentalstate.FieldDurationSeconds:
 		v, ok := value.(uint32)
@@ -22149,6 +22342,9 @@ func (m *PowerRentalStateMutation) AddedFields() []string {
 	if m.adddeleted_at != nil {
 		fields = append(fields, powerrentalstate.FieldDeletedAt)
 	}
+	if m.addcanceled_at != nil {
+		fields = append(fields, powerrentalstate.FieldCanceledAt)
+	}
 	if m.addduration_seconds != nil {
 		fields = append(fields, powerrentalstate.FieldDurationSeconds)
 	}
@@ -22178,6 +22374,8 @@ func (m *PowerRentalStateMutation) AddedField(name string) (ent.Value, bool) {
 		return m.AddedUpdatedAt()
 	case powerrentalstate.FieldDeletedAt:
 		return m.AddedDeletedAt()
+	case powerrentalstate.FieldCanceledAt:
+		return m.AddedCanceledAt()
 	case powerrentalstate.FieldDurationSeconds:
 		return m.AddedDurationSeconds()
 	case powerrentalstate.FieldPaidAt:
@@ -22217,6 +22415,13 @@ func (m *PowerRentalStateMutation) AddField(name string, value ent.Value) error 
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.AddDeletedAt(v)
+		return nil
+	case powerrentalstate.FieldCanceledAt:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddCanceledAt(v)
 		return nil
 	case powerrentalstate.FieldDurationSeconds:
 		v, ok := value.(int32)
@@ -22266,6 +22471,9 @@ func (m *PowerRentalStateMutation) ClearedFields() []string {
 	}
 	if m.FieldCleared(powerrentalstate.FieldCancelState) {
 		fields = append(fields, powerrentalstate.FieldCancelState)
+	}
+	if m.FieldCleared(powerrentalstate.FieldCanceledAt) {
+		fields = append(fields, powerrentalstate.FieldCanceledAt)
 	}
 	if m.FieldCleared(powerrentalstate.FieldDurationSeconds) {
 		fields = append(fields, powerrentalstate.FieldDurationSeconds)
@@ -22319,6 +22527,9 @@ func (m *PowerRentalStateMutation) ClearField(name string) error {
 		return nil
 	case powerrentalstate.FieldCancelState:
 		m.ClearCancelState()
+		return nil
+	case powerrentalstate.FieldCanceledAt:
+		m.ClearCanceledAt()
 		return nil
 	case powerrentalstate.FieldDurationSeconds:
 		m.ClearDurationSeconds()
@@ -22378,6 +22589,9 @@ func (m *PowerRentalStateMutation) ResetField(name string) error {
 		return nil
 	case powerrentalstate.FieldCancelState:
 		m.ResetCancelState()
+		return nil
+	case powerrentalstate.FieldCanceledAt:
+		m.ResetCanceledAt()
 		return nil
 	case powerrentalstate.FieldDurationSeconds:
 		m.ResetDurationSeconds()

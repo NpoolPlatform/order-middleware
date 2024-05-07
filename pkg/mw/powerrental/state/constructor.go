@@ -69,6 +69,10 @@ func (h *Handler) ConstructUpdateSQL() (string, error) {
 		_sql += fmt.Sprintf("%vcancel_state = '%v', ", set, h.CancelState.String())
 		set = ""
 	}
+	if h.CanceledAt != nil {
+		_sql += fmt.Sprintf("%vcanceled_at = %v, ", set, *h.CanceledAt)
+		set = ""
+	}
 	if h.DurationSeconds != nil {
 		_sql += fmt.Sprintf("%vduration_seconds = '%v', ", set, *h.DurationSeconds)
 		set = ""
