@@ -247,10 +247,6 @@ func (h *createHandler) formalizePaymentTransfers() {
 }
 
 func (h *createHandler) formalizePaymentID() {
-	if h.PaymentBaseReq.EntID != nil {
-		return
-	}
-	h.PaymentBaseReq.EntID = func() *uuid.UUID { uid := uuid.New(); return &uid }()
 	h.FeeOrderStateReq.PaymentID = h.PaymentBaseReq.EntID
 	h.PaymentBalanceLockReq.PaymentID = h.PaymentBaseReq.EntID
 }
