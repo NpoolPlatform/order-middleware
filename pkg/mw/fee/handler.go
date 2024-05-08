@@ -261,7 +261,7 @@ func WithPaymentType(paymentType *types.PaymentType, must bool) func(context.Con
 		case types.PaymentType_PayWithTransferOnly:
 		case types.PaymentType_PayWithTransferAndBalance:
 		case types.PaymentType_PayWithParentOrder:
-		case types.PaymentType_PayWithContract:
+		case types.PaymentType_PayWithOtherOrder:
 		case types.PaymentType_PayWithOffline:
 		case types.PaymentType_PayWithNoPayment:
 		default:
