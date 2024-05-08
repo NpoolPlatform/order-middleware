@@ -24,6 +24,7 @@ type feeOrder struct {
 	entPaymentTransfers []*ent.PaymentTransfer
 	entLedgerLock       *ent.OrderLock
 	entOrderCoupons     []*ent.OrderCoupon
+	payWithMeOrderIDs   []uuid.UUID
 }
 
 func (f *feeOrder) OrderID() uuid.UUID {
@@ -91,4 +92,8 @@ func (f *feeOrder) PaymentAmountUSD() decimal.Decimal {
 
 func (f *feeOrder) DiscountAmountUSD() decimal.Decimal {
 	return f.entFeeOrder.DiscountAmountUsd
+}
+
+func (f *feeOrder) PayWithMeOrderIDs() []uuid.UUID {
+	return f.payWithMeOrderIDs
 }

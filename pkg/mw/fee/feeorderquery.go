@@ -165,6 +165,24 @@ func (h *feeOrderQueryHandler) getOrderCoupons(ctx context.Context, cli *ent.Cli
 	return wlog.WrapError(err)
 }
 
+func (h *feeOrderQueryHandler) getPayWithMeOrders(ctx context.Context, cli *ent.Client) error {
+	infos, err := cli.
+		FeeOrderState.
+		Query().
+		Where(
+			entfeeorderstate.PaymentID(h._ent.entFeeOrderState.PaymentID),
+			entfeeorderstate.DeletedAt(0),
+		).
+		All(ctx)
+	if err != nil {
+		return wlog.WrapError(err)
+	}
+	for _, info := range infos {
+		h._ent.payWithMeOrderIDs = append(h._ent.payWithMeOrderIDs, info.OrderID)
+	}
+	return nil
+}
+
 func (h *feeOrderQueryHandler) _getFeeOrder(ctx context.Context, must bool) error {
 	if h.ID == nil && h.EntID == nil && h.OrderID == nil {
 		return wlog.Errorf("invalid id")
@@ -195,6 +213,9 @@ func (h *feeOrderQueryHandler) _getFeeOrder(ctx context.Context, must bool) erro
 			return wlog.WrapError(err)
 		}
 		if err := h.getPaymentTransfers(_ctx, cli); err != nil {
+			return wlog.WrapError(err)
+		}
+		if err := h.getPayWithMeOrders(_ctx, cli); err != nil {
 			return wlog.WrapError(err)
 		}
 		return h.getOrderCoupons(_ctx, cli)

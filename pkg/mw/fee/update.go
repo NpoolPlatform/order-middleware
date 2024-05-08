@@ -41,11 +41,13 @@ type updateHandler struct {
 	sqlPaymentBalances    []string
 	sqlPaymentTransfers   []string
 
+	sqlPayWithMeOrderStateBases []string
+	sqlPayWithMeFeeOrderStates  []string
+
 	updateNothing bool
 }
 
 // TODO: if fee order's payment contain other order, it should update other orders' state too
-// TODO: if fee order is pay with parent or pay with other order, it cannot update state
 
 func (h *updateHandler) constructOrderStateBaseSQL(ctx context.Context) (err error) {
 	handler, _ := orderstatebase1.NewHandler(ctx)
@@ -57,6 +59,23 @@ func (h *updateHandler) constructOrderStateBaseSQL(ctx context.Context) (err err
 	return wlog.WrapError(err)
 }
 
+func (h *updateHandler) constructPayWithMeOrderStateBaseSQLs(ctx context.Context) error {
+	for _, orderID := range h._ent.PayWithMeOrderIDs() {
+		handler, _ := orderstatebase1.NewHandler(ctx)
+		handler.Req = *h.OrderStateBaseReq
+		handler.OrderID = &orderID
+		sql, err := handler.ConstructUpdateSQL()
+		if err != nil {
+			if wlog.Equal(err, cruder.ErrUpdateNothing) {
+				continue
+			}
+			return wlog.WrapError(err)
+		}
+		h.sqlPayWithMeOrderStateBases = append(h.sqlPayWithMeOrderStateBases, sql)
+	}
+	return nil
+}
+
 func (h *updateHandler) constructFeeOrderStateSQL(ctx context.Context) (err error) {
 	handler, _ := feeorderstate1.NewHandler(ctx)
 	handler.Req = *h.FeeOrderStateReq
@@ -64,6 +83,23 @@ func (h *updateHandler) constructFeeOrderStateSQL(ctx context.Context) (err erro
 		return nil
 	}
 	return wlog.WrapError(err)
+}
+
+func (h *updateHandler) constructPayWithMeFeeOrderStateSQLs(ctx context.Context) error {
+	for _, orderID := range h._ent.PayWithMeOrderIDs() {
+		handler, _ := feeorderstate1.NewHandler(ctx)
+		handler.Req = *h.FeeOrderStateReq
+		handler.OrderID = &orderID
+		sql, err := handler.ConstructUpdateSQL()
+		if err != nil {
+			if wlog.Equal(err, cruder.ErrUpdateNothing) {
+				continue
+			}
+			return wlog.WrapError(err)
+		}
+		h.sqlPayWithMeFeeOrderStates = append(h.sqlPayWithMeFeeOrderStates, sql)
+	}
+	return nil
 }
 
 func (h *updateHandler) constructLedgerLockSQL(ctx context.Context) {
@@ -158,11 +194,29 @@ func (h *updateHandler) updateOrderStateBase(ctx context.Context, tx *ent.Tx) er
 	return h.execSQL(ctx, tx, h.sqlOrderStateBase)
 }
 
+func (h *updateHandler) updatePayWithMeOrderStateBases(ctx context.Context, tx *ent.Tx) error {
+	for _, sql := range h.sqlPayWithMeOrderStateBases {
+		if err := h.execSQL(ctx, tx, sql); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
 func (h *updateHandler) updateFeeOrderState(ctx context.Context, tx *ent.Tx) error {
 	if h.sqlFeeOrderState == "" {
 		return nil
 	}
 	return h.execSQL(ctx, tx, h.sqlFeeOrderState)
+}
+
+func (h *updateHandler) updatePayWithMeFeeOrderStates(ctx context.Context, tx *ent.Tx) error {
+	for _, sql := range h.sqlPayWithMeFeeOrderStates {
+		if err := h.execSQL(ctx, tx, sql); err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
 func (h *updateHandler) createLedgerLock(ctx context.Context, tx *ent.Tx) error {
@@ -325,6 +379,33 @@ func (h *updateHandler) validateUpdate(ctx context.Context) error {
 	return nil
 }
 
+func (h *updateHandler) validatePaymentType() error {
+	switch h._ent.PaymentType() {
+	case types.PaymentType_PayWithOffline:
+		fallthrough //nolint
+	case types.PaymentType_PayWithNoPayment:
+		fallthrough //nolint
+	case types.PaymentType_PayWithParentOrder:
+		fallthrough //nolint
+	case types.PaymentType_PayWithOtherOrder:
+		if h.OrderStateBaseReq.PaymentType != nil && *h.OrderStateBaseReq.PaymentType != h._ent.PaymentType() {
+			return wlog.Errorf("permission denied")
+		}
+	}
+	switch h._ent.PaymentType() {
+	case types.PaymentType_PayWithParentOrder:
+		fallthrough //nolint
+	case types.PaymentType_PayWithOtherOrder:
+		if h.OrderStateBaseReq.OrderState != nil {
+			return wlog.Errorf("permission denied")
+		}
+		if h.FeeOrderStateReq.CancelState != nil {
+			return wlog.Errorf("permission denied")
+		}
+	}
+	return nil
+}
+
 //nolint:funlen,gocyclo
 func (h *Handler) UpdateFeeOrderWithTx(ctx context.Context, tx *ent.Tx) error {
 	handler := &updateHandler{
@@ -370,6 +451,9 @@ func (h *Handler) UpdateFeeOrderWithTx(ctx context.Context, tx *ent.Tx) error {
 			return wlog.WrapError(err)
 		}
 	}
+	if err := handler.validatePaymentType(); err != nil {
+		return wlog.WrapError(err)
+	}
 	handler.formalizeCancelState()
 	if err := handler.validateCancelState(); err != nil {
 		return wlog.WrapError(err)
@@ -379,7 +463,13 @@ func (h *Handler) UpdateFeeOrderWithTx(ctx context.Context, tx *ent.Tx) error {
 	if err := handler.constructOrderStateBaseSQL(ctx); err != nil {
 		return wlog.WrapError(err)
 	}
+	if err := handler.constructPayWithMeOrderStateBaseSQLs(ctx); err != nil {
+		return wlog.WrapError(err)
+	}
 	if err := handler.constructFeeOrderStateSQL(ctx); err != nil {
+		return wlog.WrapError(err)
+	}
+	if err := handler.constructPayWithMeFeeOrderStateSQLs(ctx); err != nil {
 		return wlog.WrapError(err)
 	}
 	handler.constructLedgerLockSQL(ctx)
@@ -396,7 +486,13 @@ func (h *Handler) UpdateFeeOrderWithTx(ctx context.Context, tx *ent.Tx) error {
 	if err := handler.updateOrderStateBase(ctx, tx); err != nil {
 		return wlog.WrapError(err)
 	}
+	if err := handler.updatePayWithMeOrderStateBases(ctx, tx); err != nil {
+		return wlog.WrapError(err)
+	}
 	if err := handler.updateFeeOrderState(ctx, tx); err != nil {
+		return wlog.WrapError(err)
+	}
+	if err := handler.updatePayWithMeFeeOrderStates(ctx, tx); err != nil {
 		return wlog.WrapError(err)
 	}
 	if err := handler.updateObseletePaymentBase(ctx, tx); err != nil {
