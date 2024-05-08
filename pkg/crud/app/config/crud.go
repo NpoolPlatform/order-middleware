@@ -1,8 +1,7 @@
 package appconfig
 
 import (
-	"fmt"
-
+	wlog "github.com/NpoolPlatform/go-service-framework/pkg/wlog"
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
 	types "github.com/NpoolPlatform/message/npool/basetypes/order/v1"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent"
@@ -108,7 +107,7 @@ func SetQueryConds(q *ent.AppConfigQuery, conds *Conds) (*ent.AppConfigQuery, er
 	if conds.ID != nil {
 		id, ok := conds.ID.Val.(uint32)
 		if !ok {
-			return nil, fmt.Errorf("invalid id")
+			return nil, wlog.Errorf("invalid id")
 		}
 		switch conds.ID.Op {
 		case cruder.EQ:
@@ -116,27 +115,27 @@ func SetQueryConds(q *ent.AppConfigQuery, conds *Conds) (*ent.AppConfigQuery, er
 		case cruder.NEQ:
 			q.Where(entappconfig.IDNEQ(id))
 		default:
-			return nil, fmt.Errorf("invalid appconfig field")
+			return nil, wlog.Errorf("invalid appconfig field")
 		}
 	}
 	if conds.IDs != nil {
 		ids, ok := conds.IDs.Val.([]uint32)
 		if !ok {
-			return nil, fmt.Errorf("invalid ids")
+			return nil, wlog.Errorf("invalid ids")
 		}
 		if len(ids) > 0 {
 			switch conds.IDs.Op {
 			case cruder.IN:
 				q.Where(entappconfig.IDIn(ids...))
 			default:
-				return nil, fmt.Errorf("invalid appconfig field")
+				return nil, wlog.Errorf("invalid appconfig field")
 			}
 		}
 	}
 	if conds.EntID != nil {
 		id, ok := conds.EntID.Val.(uuid.UUID)
 		if !ok {
-			return nil, fmt.Errorf("invalid entid")
+			return nil, wlog.Errorf("invalid entid")
 		}
 		switch conds.EntID.Op {
 		case cruder.EQ:
@@ -144,33 +143,33 @@ func SetQueryConds(q *ent.AppConfigQuery, conds *Conds) (*ent.AppConfigQuery, er
 		case cruder.NEQ:
 			q.Where(entappconfig.EntIDNEQ(id))
 		default:
-			return nil, fmt.Errorf("invalid appconfig field")
+			return nil, wlog.Errorf("invalid appconfig field")
 		}
 	}
 	if conds.EntIDs != nil {
 		ids, ok := conds.EntIDs.Val.([]uuid.UUID)
 		if !ok {
-			return nil, fmt.Errorf("invalid entids")
+			return nil, wlog.Errorf("invalid entids")
 		}
 		if len(ids) > 0 {
 			switch conds.EntIDs.Op {
 			case cruder.IN:
 				q.Where(entappconfig.EntIDIn(ids...))
 			default:
-				return nil, fmt.Errorf("invalid appconfig field")
+				return nil, wlog.Errorf("invalid appconfig field")
 			}
 		}
 	}
 	if conds.AppID != nil {
 		id, ok := conds.AppID.Val.(uuid.UUID)
 		if !ok {
-			return nil, fmt.Errorf("invalid appid")
+			return nil, wlog.Errorf("invalid appid")
 		}
 		switch conds.AppID.Op {
 		case cruder.EQ:
 			q.Where(entappconfig.AppID(id))
 		default:
-			return nil, fmt.Errorf("invalid appconfig field")
+			return nil, wlog.Errorf("invalid appconfig field")
 		}
 	}
 	return q, nil

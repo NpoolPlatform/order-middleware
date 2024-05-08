@@ -2,10 +2,10 @@ package feeorder
 
 import (
 	"context"
-	"fmt"
 	"time"
 
 	grpc2 "github.com/NpoolPlatform/go-service-framework/pkg/grpc"
+	wlog "github.com/NpoolPlatform/go-service-framework/pkg/wlog"
 	npool "github.com/NpoolPlatform/message/npool/order/mw/v1/fee"
 	servicename "github.com/NpoolPlatform/order-middleware/pkg/servicename"
 	"google.golang.org/grpc"
@@ -29,7 +29,7 @@ func CreateFeeOrder(ctx context.Context, in *npool.FeeOrderReq) error {
 			Info: in,
 		})
 	})
-	return err
+	return wlog.WrapError(err)
 }
 
 func CreateFeeOrders(ctx context.Context, in []*npool.FeeOrderReq) error {
@@ -38,7 +38,7 @@ func CreateFeeOrders(ctx context.Context, in []*npool.FeeOrderReq) error {
 			Infos: in,
 		})
 	})
-	return err
+	return wlog.WrapError(err)
 }
 
 func UpdateFeeOrder(ctx context.Context, in *npool.FeeOrderReq) error {
@@ -47,7 +47,7 @@ func UpdateFeeOrder(ctx context.Context, in *npool.FeeOrderReq) error {
 			Info: in,
 		})
 	})
-	return err
+	return wlog.WrapError(err)
 }
 
 func GetFeeOrder(ctx context.Context, orderID string) (*npool.FeeOrder, error) {
@@ -56,12 +56,12 @@ func GetFeeOrder(ctx context.Context, orderID string) (*npool.FeeOrder, error) {
 			OrderID: orderID,
 		})
 		if err != nil {
-			return nil, err
+			return nil, wlog.WrapError(err)
 		}
 		return resp.Info, nil
 	})
 	if err != nil {
-		return nil, err
+		return nil, wlog.WrapError(err)
 	}
 	return info.(*npool.FeeOrder), nil
 }
@@ -74,7 +74,7 @@ func GetFeeOrders(ctx context.Context, conds *npool.Conds, offset, limit int32) 
 			Limit:  limit,
 		})
 		if err != nil {
-			return nil, err
+			return nil, wlog.WrapError(err)
 		}
 		total = resp.Total
 		return resp.Infos, nil
@@ -91,7 +91,7 @@ func CountFeeOrders(ctx context.Context, conds *npool.Conds) (count uint32, err 
 			Conds: conds,
 		})
 		if err != nil {
-			return nil, err
+			return nil, wlog.WrapError(err)
 		}
 		return resp.Info, nil
 	})
@@ -109,18 +109,18 @@ func GetFeeOrderOnly(ctx context.Context, conds *npool.Conds) (*npool.FeeOrder, 
 			Limit:  2,
 		})
 		if err != nil {
-			return nil, err
+			return nil, wlog.WrapError(err)
 		}
 		return resp.Infos, nil
 	})
 	if err != nil {
-		return nil, err
+		return nil, wlog.WrapError(err)
 	}
 	if len(infos.([]*npool.FeeOrder)) == 0 {
 		return nil, nil
 	}
 	if len(infos.([]*npool.FeeOrder)) > 1 {
-		return nil, fmt.Errorf("too many records")
+		return nil, wlog.Errorf("too many records")
 	}
 	return infos.([]*npool.FeeOrder)[0], nil
 }
@@ -167,7 +167,7 @@ func DeleteFeeOrder(ctx context.Context, id *uint32, entID, orderID *string) err
 			},
 		})
 	})
-	return err
+	return wlog.WrapError(err)
 }
 
 func DeleteFeeOrders(ctx context.Context, in []*npool.FeeOrderReq) error {
@@ -176,5 +176,5 @@ func DeleteFeeOrders(ctx context.Context, in []*npool.FeeOrderReq) error {
 			Infos: in,
 		})
 	})
-	return err
+	return wlog.WrapError(err)
 }

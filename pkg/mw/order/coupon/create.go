@@ -2,8 +2,8 @@ package ordercoupon
 
 import (
 	"context"
-	"fmt"
 
+	wlog "github.com/NpoolPlatform/go-service-framework/pkg/wlog"
 	"github.com/NpoolPlatform/order-middleware/pkg/db"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent"
 
@@ -22,10 +22,10 @@ func (h *createHandler) constructSQL() {
 func (h *createHandler) createOrderCoupon(ctx context.Context, tx *ent.Tx) error {
 	rc, err := tx.ExecContext(ctx, h.sql)
 	if err != nil {
-		return err
+		return wlog.WrapError(err)
 	}
 	if n, err := rc.RowsAffected(); err != nil || n != 1 {
-		return fmt.Errorf("fail create ordercoupon: %v", err)
+		return wlog.Errorf("fail create ordercoupon: %v", err)
 	}
 	return nil
 }

@@ -2,8 +2,8 @@ package compensate
 
 import (
 	"context"
-	"fmt"
 
+	wlog "github.com/NpoolPlatform/go-service-framework/pkg/wlog"
 	"github.com/NpoolPlatform/order-middleware/pkg/db"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent"
 	entorderbase "github.com/NpoolPlatform/order-middleware/pkg/db/ent/orderbase"
@@ -30,7 +30,7 @@ func (h *powerRentalStateQueryHandler) getGoodPowerRentalStateEnts(ctx context.C
 		Limit(int(h.limit)).
 		All(ctx)
 	if err != nil {
-		return err
+		return wlog.WrapError(err)
 	}
 	if len(orders) == 0 {
 		return nil
@@ -48,7 +48,7 @@ func (h *powerRentalStateQueryHandler) getGoodPowerRentalStateEnts(ctx context.C
 			}()...),
 		).
 		All(ctx)
-	return err
+	return wlog.WrapError(err)
 }
 
 func (h *powerRentalStateQueryHandler) getOrderPowerRentalStateEnt(ctx context.Context, cli *ent.Client, must bool) error {
@@ -63,7 +63,7 @@ func (h *powerRentalStateQueryHandler) getOrderPowerRentalStateEnt(ctx context.C
 		if ent.IsNotFound(err) && !must {
 			return nil
 		}
-		return err
+		return wlog.WrapError(err)
 	}
 	h._ent.entPowerRentalStates = append(h._ent.entPowerRentalStates, _ent)
 	return nil
@@ -71,7 +71,7 @@ func (h *powerRentalStateQueryHandler) getOrderPowerRentalStateEnt(ctx context.C
 
 func (h *powerRentalStateQueryHandler) _getPowerRentalStates(ctx context.Context, must bool) error {
 	if h.OrderID == nil && h.GoodID == nil {
-		return fmt.Errorf("invalid id")
+		return wlog.Errorf("invalid id")
 	}
 	h._ent.entPowerRentalStates = []*ent.PowerRentalState{}
 	return db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {

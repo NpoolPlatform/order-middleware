@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"time"
 
+	wlog "github.com/NpoolPlatform/go-service-framework/pkg/wlog"
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
 	types "github.com/NpoolPlatform/message/npool/basetypes/order/v1"
 )
@@ -57,7 +58,7 @@ func (h *Handler) ConstructCreateSQL() string {
 //nolint:gocyclo
 func (h *Handler) ConstructUpdateSQL() (string, error) {
 	if h.ID == nil && h.EntID == nil && h.OrderID == nil {
-		return "", fmt.Errorf("invalid id")
+		return "", wlog.Errorf("invalid id")
 	}
 
 	set := "set "
@@ -97,7 +98,7 @@ func (h *Handler) ConstructUpdateSQL() (string, error) {
 		set = ""
 	}
 	if set != "" {
-		return "", cruder.ErrUpdateNothing
+		return "", wlog.WrapError(cruder.ErrUpdateNothing)
 	}
 	_sql += fmt.Sprintf("updated_at = %v ", now)
 	whereAnd := "where "

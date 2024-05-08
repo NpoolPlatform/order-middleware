@@ -2,8 +2,8 @@ package compensate
 
 import (
 	"context"
-	"fmt"
 
+	wlog "github.com/NpoolPlatform/go-service-framework/pkg/wlog"
 	constant "github.com/NpoolPlatform/order-middleware/pkg/const"
 	compensatecrud "github.com/NpoolPlatform/order-middleware/pkg/crud/compensate"
 	powerrentalstatecrud "github.com/NpoolPlatform/order-middleware/pkg/crud/powerrental/state"
@@ -32,7 +32,7 @@ func (h *createHandler) constructPowerRentalStateSQL(ctx context.Context, req *p
 	handler.Req = *req
 	sql, err := handler.ConstructUpdateSQL()
 	if err != nil {
-		return err
+		return wlog.WrapError(err)
 	}
 	h.sqlPowerRentalStates = append(h.sqlPowerRentalStates, sql)
 	return nil
@@ -41,11 +41,11 @@ func (h *createHandler) constructPowerRentalStateSQL(ctx context.Context, req *p
 func (h *createHandler) execSQL(ctx context.Context, tx *ent.Tx, sql string) error {
 	rc, err := tx.ExecContext(ctx, sql)
 	if err != nil {
-		return err
+		return wlog.WrapError(err)
 	}
 	n, err := rc.RowsAffected()
 	if err != nil || n != 1 {
-		return fmt.Errorf("fail run %v: %v", sql, err)
+		return wlog.Errorf("fail run %v: %v", sql, err)
 	}
 	return nil
 }
@@ -53,7 +53,7 @@ func (h *createHandler) execSQL(ctx context.Context, tx *ent.Tx, sql string) err
 func (h *createHandler) createCompensates(ctx context.Context, tx *ent.Tx) error {
 	for _, sql := range h.sqlCompensates {
 		if err := h.execSQL(ctx, tx, sql); err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 	}
 	return nil
@@ -62,7 +62,7 @@ func (h *createHandler) createCompensates(ctx context.Context, tx *ent.Tx) error
 func (h *createHandler) updatePowerRentalStates(ctx context.Context, tx *ent.Tx) error {
 	for _, sql := range h.sqlPowerRentalStates {
 		if err := h.execSQL(ctx, tx, sql); err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 	}
 	return nil
@@ -73,7 +73,7 @@ func (h *createHandler) createGoodCompensates(ctx context.Context, tx *ent.Tx) e
 
 	for {
 		if err := h.requirePowerRentalStates(ctx); err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		if h._ent.Exhausted() {
 			return nil
@@ -93,15 +93,15 @@ func (h *createHandler) createGoodCompensates(ctx context.Context, tx *ent.Tx) e
 				OrderID:           &state.OrderID,
 				CompensateSeconds: func() *uint32 { u := *h.CompensateSeconds + h._ent.CompensateSecondsWithIndex(i); return &u }(),
 			}); err != nil {
-				return err
+				return wlog.WrapError(err)
 			}
 		}
 
 		if err := h.createCompensates(ctx, tx); err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		if err := h.updatePowerRentalStates(ctx, tx); err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 
 		h.offset += h.limit
@@ -110,7 +110,7 @@ func (h *createHandler) createGoodCompensates(ctx context.Context, tx *ent.Tx) e
 
 func (h *createHandler) createOrderCompensate(ctx context.Context, tx *ent.Tx) error {
 	if err := h.requirePowerRentalStates(ctx); err != nil {
-		return err
+		return wlog.WrapError(err)
 	}
 
 	h.constructCompensateSQL(ctx, &h.Req)
@@ -118,18 +118,18 @@ func (h *createHandler) createOrderCompensate(ctx context.Context, tx *ent.Tx) e
 		OrderID:           h.OrderID,
 		CompensateSeconds: func() *uint32 { u := *h.CompensateSeconds + h._ent.CompensateSeconds(); return &u }(),
 	}); err != nil {
-		return err
+		return wlog.WrapError(err)
 	}
 
 	if err := h.createCompensates(ctx, tx); err != nil {
-		return err
+		return wlog.WrapError(err)
 	}
 	return h.updatePowerRentalStates(ctx, tx)
 }
 
 func (h *Handler) CreateCompensate(ctx context.Context) error {
 	if h.OrderID == nil && h.GoodID == nil {
-		return fmt.Errorf("invalid compensate id")
+		return wlog.Errorf("invalid compensate id")
 	}
 
 	handler := &createHandler{

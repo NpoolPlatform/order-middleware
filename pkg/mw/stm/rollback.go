@@ -1,8 +1,7 @@
 package orderstm
 
 import (
-	"fmt"
-
+	wlog "github.com/NpoolPlatform/go-service-framework/pkg/wlog"
 	types "github.com/NpoolPlatform/message/npool/basetypes/order/v1"
 )
 
@@ -39,7 +38,7 @@ type rollbackHandler struct {
 func (h *rollbackHandler) rollback() (*types.OrderState, error) {
 	state, ok := rollbacks[h._ent.OrderState()]
 	if !ok {
-		return nil, fmt.Errorf("invalid orderstate")
+		return nil, wlog.Errorf("invalid orderstate")
 	}
 	return &state, nil
 }

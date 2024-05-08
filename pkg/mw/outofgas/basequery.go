@@ -1,11 +1,10 @@
 package outofgas
 
 import (
-	"fmt"
-
 	"entgo.io/ent/dialect/sql"
 
 	logger "github.com/NpoolPlatform/go-service-framework/pkg/logger"
+	wlog "github.com/NpoolPlatform/go-service-framework/pkg/wlog"
 	outofgascrud "github.com/NpoolPlatform/order-middleware/pkg/crud/outofgas"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent"
 	entorderbase "github.com/NpoolPlatform/order-middleware/pkg/db/ent/orderbase"
@@ -25,7 +24,7 @@ func (h *baseQueryHandler) selectOutOfGas(stm *ent.OutOfGasQuery) *ent.OutOfGasS
 
 func (h *baseQueryHandler) queryOutOfGas(cli *ent.Client) error {
 	if h.ID == nil && h.EntID == nil {
-		return fmt.Errorf("invalid id")
+		return wlog.Errorf("invalid id")
 	}
 	stm := cli.OutOfGas.Query().Where(entoutofgas.DeletedAt(0))
 	if h.ID != nil {
@@ -41,7 +40,7 @@ func (h *baseQueryHandler) queryOutOfGas(cli *ent.Client) error {
 func (h *baseQueryHandler) queryOutOfGases(cli *ent.Client) (*ent.OutOfGasSelect, error) {
 	stm, err := outofgascrud.SetQueryConds(cli.OutOfGas.Query(), h.OutOfGasConds)
 	if err != nil {
-		return nil, err
+		return nil, wlog.WrapError(err)
 	}
 	return h.selectOutOfGas(stm), nil
 }
@@ -71,7 +70,7 @@ func (h *baseQueryHandler) queryJoinOrder(s *sql.Selector) error {
 	if h.OrderBaseConds.AppID != nil {
 		id, ok := h.OrderBaseConds.AppID.Val.(uuid.UUID)
 		if !ok {
-			return fmt.Errorf("invalid appid")
+			return wlog.Errorf("invalid appid")
 		}
 		s.OnP(
 			sql.EQ(t.C(entorderbase.FieldAppID), id),
@@ -80,7 +79,7 @@ func (h *baseQueryHandler) queryJoinOrder(s *sql.Selector) error {
 	if h.OrderBaseConds.UserID != nil {
 		id, ok := h.OrderBaseConds.UserID.Val.(uuid.UUID)
 		if !ok {
-			return fmt.Errorf("invalid userid")
+			return wlog.Errorf("invalid userid")
 		}
 		s.OnP(
 			sql.EQ(t.C(entorderbase.FieldUserID), id),

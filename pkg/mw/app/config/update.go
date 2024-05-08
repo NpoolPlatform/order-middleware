@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"time"
 
+	wlog "github.com/NpoolPlatform/go-service-framework/pkg/wlog"
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
 	"github.com/NpoolPlatform/order-middleware/pkg/db"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent"
@@ -18,7 +19,7 @@ type updateHandler struct {
 //nolint:gocyclo
 func (h *updateHandler) constructSQL() error {
 	if h.ID == nil && h.EntID == nil && h.AppID == nil {
-		return fmt.Errorf("invalid appconfigid")
+		return wlog.Errorf("invalid appconfigid")
 	}
 
 	set := "set "
@@ -66,7 +67,7 @@ func (h *updateHandler) constructSQL() error {
 		set = ""
 	}
 	if set != "" {
-		return cruder.ErrUpdateNothing
+		return wlog.WrapError(cruder.ErrUpdateNothing)
 	}
 
 	_sql += fmt.Sprintf("updated_at = %v ", now)
@@ -91,10 +92,10 @@ func (h *updateHandler) constructSQL() error {
 func (h *updateHandler) updateAppConfig(ctx context.Context, tx *ent.Tx) error {
 	rc, err := tx.ExecContext(ctx, h.sql)
 	if err != nil {
-		return err
+		return wlog.WrapError(err)
 	}
 	if n, err := rc.RowsAffected(); err != nil || n != 1 {
-		return fmt.Errorf("fail update appconfig: %v", err)
+		return wlog.Errorf("fail update appconfig: %v", err)
 	}
 	return nil
 }
@@ -104,7 +105,7 @@ func (h *Handler) UpdateAppConfig(ctx context.Context) error {
 		Handler: h,
 	}
 	if err := handler.constructSQL(); err != nil {
-		return err
+		return wlog.WrapError(err)
 	}
 	return db.WithTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {
 		return handler.updateAppConfig(ctx, tx)

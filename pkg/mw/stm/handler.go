@@ -2,8 +2,8 @@ package orderstm
 
 import (
 	"context"
-	"fmt"
 
+	wlog "github.com/NpoolPlatform/go-service-framework/pkg/wlog"
 	types "github.com/NpoolPlatform/message/npool/basetypes/order/v1"
 
 	"github.com/google/uuid"
@@ -26,7 +26,7 @@ func NewHandler(ctx context.Context, options ...func(context.Context, *Handler) 
 	handler := &Handler{}
 	for _, opt := range options {
 		if err := opt(ctx, handler); err != nil {
-			return nil, err
+			return nil, wlog.WrapError(err)
 		}
 	}
 	return handler, nil
@@ -44,7 +44,7 @@ func WithOrderState(state *types.OrderState, must bool) func(context.Context, *H
 	return func(ctx context.Context, h *Handler) error {
 		if state == nil {
 			if must {
-				return fmt.Errorf("invalid orderstate")
+				return wlog.Errorf("invalid orderstate")
 			}
 			return nil
 		}
@@ -82,7 +82,7 @@ func WithOrderState(state *types.OrderState, must bool) func(context.Context, *H
 		case types.OrderState_OrderStateCanceled:
 		case types.OrderState_OrderStateExpired:
 		default:
-			return fmt.Errorf("invalid orderstate")
+			return wlog.Errorf("invalid orderstate")
 		}
 		h.OrderState = state
 		return nil
@@ -93,7 +93,7 @@ func WithCurrentPaymentState(state *types.PaymentState, must bool) func(context.
 	return func(ctx context.Context, h *Handler) error {
 		if state == nil {
 			if must {
-				return fmt.Errorf("invalid paymentstate")
+				return wlog.Errorf("invalid paymentstate")
 			}
 			return nil
 		}
@@ -104,7 +104,7 @@ func WithCurrentPaymentState(state *types.PaymentState, must bool) func(context.
 		case types.PaymentState_PaymentStateDone:
 		case types.PaymentState_PaymentStateNoPayment:
 		default:
-			return fmt.Errorf("invalid paymentstate")
+			return wlog.Errorf("invalid paymentstate")
 		}
 		h.CurrentPaymentState = state
 		return nil
@@ -115,7 +115,7 @@ func WithNewPaymentState(state *types.PaymentState, must bool) func(context.Cont
 	return func(ctx context.Context, h *Handler) error {
 		if state == nil {
 			if must {
-				return fmt.Errorf("invalid paymentstate")
+				return wlog.Errorf("invalid paymentstate")
 			}
 			return nil
 		}
@@ -126,7 +126,7 @@ func WithNewPaymentState(state *types.PaymentState, must bool) func(context.Cont
 		case types.PaymentState_PaymentStateDone:
 		case types.PaymentState_PaymentStateNoPayment:
 		default:
-			return fmt.Errorf("invalid paymentstate")
+			return wlog.Errorf("invalid paymentstate")
 		}
 		h.NewPaymentState = state
 		return nil

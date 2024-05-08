@@ -2,9 +2,9 @@ package feeorder
 
 import (
 	"context"
-	"fmt"
 	"time"
 
+	wlog "github.com/NpoolPlatform/go-service-framework/pkg/wlog"
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
 	types "github.com/NpoolPlatform/message/npool/basetypes/order/v1"
 	paymentbasecrud "github.com/NpoolPlatform/order-middleware/pkg/crud/payment"
@@ -54,7 +54,7 @@ func (h *updateHandler) constructOrderStateBaseSQL(ctx context.Context) (err err
 	if h.sqlOrderStateBase, err = handler.ConstructUpdateSQL(); err == cruder.ErrUpdateNothing {
 		return nil
 	}
-	return err
+	return wlog.WrapError(err)
 }
 
 func (h *updateHandler) constructFeeOrderStateSQL(ctx context.Context) (err error) {
@@ -63,7 +63,7 @@ func (h *updateHandler) constructFeeOrderStateSQL(ctx context.Context) (err erro
 	if h.sqlFeeOrderState, err = handler.ConstructUpdateSQL(); err == cruder.ErrUpdateNothing {
 		return nil
 	}
-	return err
+	return wlog.WrapError(err)
 }
 
 func (h *updateHandler) constructLedgerLockSQL(ctx context.Context) {
@@ -102,7 +102,7 @@ func (h *updateHandler) constructObseletePaymentBaseSQL(ctx context.Context) (er
 	if h.sqlObseletePaymentBase, err = handler.ConstructUpdateSQL(); err == cruder.ErrUpdateNothing {
 		return nil
 	}
-	return err
+	return wlog.WrapError(err)
 }
 
 func (h *updateHandler) constructPaymentBalanceSQLs(ctx context.Context) {
@@ -128,7 +128,7 @@ func (h *updateHandler) constructPaymentTransferSQLs(ctx context.Context) error 
 				continue
 			}
 			if err != nil {
-				return err
+				return wlog.WrapError(err)
 			}
 			h.sqlPaymentTransfers = append(h.sqlPaymentTransfers, sql)
 		}
@@ -139,11 +139,11 @@ func (h *updateHandler) constructPaymentTransferSQLs(ctx context.Context) error 
 func (h *updateHandler) execSQL(ctx context.Context, tx *ent.Tx, sql string) error {
 	rc, err := tx.ExecContext(ctx, sql)
 	if err != nil {
-		return err
+		return wlog.WrapError(err)
 	}
 	n, err := rc.RowsAffected()
 	if err != nil {
-		return err
+		return wlog.WrapError(err)
 	}
 	if n == 1 {
 		h.updateNothing = false
@@ -196,7 +196,7 @@ func (h *updateHandler) updateObseletePaymentBase(ctx context.Context, tx *ent.T
 func (h *updateHandler) createPaymentBalances(ctx context.Context, tx *ent.Tx) error {
 	for _, sql := range h.sqlPaymentBalances {
 		if err := h.execSQL(ctx, tx, sql); err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 	}
 	return nil
@@ -205,7 +205,7 @@ func (h *updateHandler) createPaymentBalances(ctx context.Context, tx *ent.Tx) e
 func (h *updateHandler) createOrUpdatePaymentTransfers(ctx context.Context, tx *ent.Tx) error {
 	for _, sql := range h.sqlPaymentTransfers {
 		if err := h.execSQL(ctx, tx, sql); err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 	}
 	return nil
@@ -256,7 +256,7 @@ func (h *updateHandler) formalizePaymentID() error {
 	h.newPaymentBalance = h.LedgerLockReq.EntID != nil
 
 	if h.newPaymentBalance && *h.LedgerLockReq.EntID == h._ent.LedgerLockID() {
-		return fmt.Errorf("invalid ledgerlock")
+		return wlog.Errorf("invalid ledgerlock")
 	}
 
 	h.obseletePaymentBaseReq.EntID = func() *uuid.UUID { uid := h._ent.PaymentID(); return &uid }()
@@ -278,7 +278,7 @@ func (h *updateHandler) validateCancelState() error {
 		return nil
 	}
 	if h._ent.CancelState() != types.OrderState_DefaultOrderState {
-		return fmt.Errorf("invalid cancelstate")
+		return wlog.Errorf("invalid cancelstate")
 	}
 	h.FeeOrderStateReq.CanceledAt = func() *uint32 { u := uint32(time.Now().Unix()); return &u }()
 	return nil
@@ -315,11 +315,11 @@ func (h *updateHandler) validateUpdate(ctx context.Context) error {
 		orderstm1.WithRollback(h.Rollback, false),
 	)
 	if err != nil {
-		return err
+		return wlog.WrapError(err)
 	}
 	state, err := handler.ValidateUpdateForNewState(ctx)
 	if err != nil {
-		return err
+		return wlog.WrapError(err)
 	}
 	h.OrderStateBaseReq.OrderState = state
 	return nil
@@ -346,7 +346,7 @@ func (h *Handler) UpdateFeeOrderWithTx(ctx context.Context, tx *ent.Tx) error {
 	}
 
 	if err := handler.requireFeeOrder(ctx); err != nil {
-		return err
+		return wlog.WrapError(err)
 	}
 	handler.paymentChecker.PaymentAmountUSD = func() *decimal.Decimal { d := handler._ent.PaymentAmountUSD(); return &d }()
 	handler.paymentChecker.DiscountAmountUSD = func() *decimal.Decimal { d := handler._ent.DiscountAmountUSD(); return &d }()
@@ -355,67 +355,67 @@ func (h *Handler) UpdateFeeOrderWithTx(ctx context.Context, tx *ent.Tx) error {
 	}
 
 	if err := handler.validateUpdate(ctx); err != nil {
-		return err
+		return wlog.WrapError(err)
 	}
 
 	handler.formalizeOrderID()
 	handler.formalizeEntIDs()
 	if err := handler.formalizePaymentID(); err != nil {
-		return err
+		return wlog.WrapError(err)
 	}
 	handler.formalizePaymentBalances()
 	handler.formalizePaymentTransfers()
 	if handler.newPayment {
 		if err := handler.paymentChecker.ValidatePayment(); err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 	}
 	handler.formalizeCancelState()
 	if err := handler.validateCancelState(); err != nil {
-		return err
+		return wlog.WrapError(err)
 	}
 	handler.formalizePaidAt()
 
 	if err := handler.constructOrderStateBaseSQL(ctx); err != nil {
-		return err
+		return wlog.WrapError(err)
 	}
 	if err := handler.constructFeeOrderStateSQL(ctx); err != nil {
-		return err
+		return wlog.WrapError(err)
 	}
 	handler.constructLedgerLockSQL(ctx)
 	handler.constructPaymentBalanceLockSQL(ctx)
 	handler.constructPaymentBaseSQL(ctx)
 	handler.constructPaymentBalanceSQLs(ctx)
 	if err := handler.constructPaymentTransferSQLs(ctx); err != nil {
-		return err
+		return wlog.WrapError(err)
 	}
 	if err := handler.constructObseletePaymentBaseSQL(ctx); err != nil {
-		return err
+		return wlog.WrapError(err)
 	}
 
 	if err := handler.updateOrderStateBase(ctx, tx); err != nil {
-		return err
+		return wlog.WrapError(err)
 	}
 	if err := handler.updateFeeOrderState(ctx, tx); err != nil {
-		return err
+		return wlog.WrapError(err)
 	}
 	if err := handler.updateObseletePaymentBase(ctx, tx); err != nil {
-		return err
+		return wlog.WrapError(err)
 	}
 	if err := handler.createPaymentBase(ctx, tx); err != nil {
-		return err
+		return wlog.WrapError(err)
 	}
 	if err := handler.createLedgerLock(ctx, tx); err != nil {
-		return err
+		return wlog.WrapError(err)
 	}
 	if err := handler.createPaymentBalanceLock(ctx, tx); err != nil {
-		return err
+		return wlog.WrapError(err)
 	}
 	if err := handler.createPaymentBalances(ctx, tx); err != nil {
-		return err
+		return wlog.WrapError(err)
 	}
 	if err := handler.createOrUpdatePaymentTransfers(ctx, tx); err != nil {
-		return err
+		return wlog.WrapError(err)
 	}
 	if handler.updateNothing {
 		return cruder.ErrUpdateNothing

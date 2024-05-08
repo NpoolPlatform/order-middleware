@@ -2,10 +2,10 @@ package appconfig
 
 import (
 	"context"
-	"fmt"
 	"time"
 
 	grpc2 "github.com/NpoolPlatform/go-service-framework/pkg/grpc"
+	wlog "github.com/NpoolPlatform/go-service-framework/pkg/wlog"
 	npool "github.com/NpoolPlatform/message/npool/order/mw/v1/app/config"
 	servicename "github.com/NpoolPlatform/order-middleware/pkg/servicename"
 	"google.golang.org/grpc"
@@ -29,7 +29,7 @@ func CreateAppConfig(ctx context.Context, in *npool.AppConfigReq) error {
 			Info: in,
 		})
 	})
-	return err
+	return wlog.WrapError(err)
 }
 
 func UpdateAppConfig(ctx context.Context, in *npool.AppConfigReq) error {
@@ -38,7 +38,7 @@ func UpdateAppConfig(ctx context.Context, in *npool.AppConfigReq) error {
 			Info: in,
 		})
 	})
-	return err
+	return wlog.WrapError(err)
 }
 
 func GetAppConfig(ctx context.Context, appID string) (*npool.AppConfig, error) {
@@ -47,12 +47,12 @@ func GetAppConfig(ctx context.Context, appID string) (*npool.AppConfig, error) {
 			AppID: appID,
 		})
 		if err != nil {
-			return nil, err
+			return nil, wlog.WrapError(err)
 		}
 		return resp.Info, nil
 	})
 	if err != nil {
-		return nil, err
+		return nil, wlog.WrapError(err)
 	}
 	return info.(*npool.AppConfig), nil
 }
@@ -65,7 +65,7 @@ func GetAppConfigs(ctx context.Context, conds *npool.Conds, offset, limit int32)
 			Limit:  limit,
 		})
 		if err != nil {
-			return nil, err
+			return nil, wlog.WrapError(err)
 		}
 		total = resp.Total
 		return resp.Infos, nil
@@ -84,18 +84,18 @@ func GetAppConfigOnly(ctx context.Context, conds *npool.Conds) (*npool.AppConfig
 			Limit:  2,
 		})
 		if err != nil {
-			return nil, err
+			return nil, wlog.WrapError(err)
 		}
 		return resp.Infos, nil
 	})
 	if err != nil {
-		return nil, err
+		return nil, wlog.WrapError(err)
 	}
 	if len(infos.([]*npool.AppConfig)) == 0 {
 		return nil, nil
 	}
 	if len(infos.([]*npool.AppConfig)) > 1 {
-		return nil, fmt.Errorf("too many records")
+		return nil, wlog.Errorf("too many records")
 	}
 	return infos.([]*npool.AppConfig)[0], nil
 }
@@ -110,7 +110,7 @@ func DeleteAppConfig(ctx context.Context, id *uint32, entID, appID *string) erro
 			},
 		})
 	})
-	return err
+	return wlog.WrapError(err)
 }
 
 func ExistAppConfig(ctx context.Context, appID string) (bool, error) {

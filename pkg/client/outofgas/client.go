@@ -2,10 +2,10 @@ package outofgas
 
 import (
 	"context"
-	"fmt"
 	"time"
 
 	grpc2 "github.com/NpoolPlatform/go-service-framework/pkg/grpc"
+	wlog "github.com/NpoolPlatform/go-service-framework/pkg/wlog"
 	npool "github.com/NpoolPlatform/message/npool/order/mw/v1/outofgas"
 	servicename "github.com/NpoolPlatform/order-middleware/pkg/servicename"
 	"google.golang.org/grpc"
@@ -29,12 +29,12 @@ func GetOutOfGas(ctx context.Context, id string) (*npool.OutOfGas, error) {
 			EntID: id,
 		})
 		if err != nil {
-			return nil, err
+			return nil, wlog.WrapError(err)
 		}
 		return resp.Info, nil
 	})
 	if err != nil {
-		return nil, err
+		return nil, wlog.WrapError(err)
 	}
 	return info.(*npool.OutOfGas), nil
 }
@@ -47,7 +47,7 @@ func GetOutOfGases(ctx context.Context, conds *npool.Conds, offset, limit int32)
 			Limit:  limit,
 		})
 		if err != nil {
-			return nil, err
+			return nil, wlog.WrapError(err)
 		}
 		total = resp.Total
 		return resp.Infos, nil
@@ -66,18 +66,18 @@ func GetOutOfGasOnly(ctx context.Context, conds *npool.Conds) (*npool.OutOfGas, 
 			Limit:  2,
 		})
 		if err != nil {
-			return nil, err
+			return nil, wlog.WrapError(err)
 		}
 		return resp.Infos, nil
 	})
 	if err != nil {
-		return nil, err
+		return nil, wlog.WrapError(err)
 	}
 	if len(infos.([]*npool.OutOfGas)) == 0 {
 		return nil, nil
 	}
 	if len(infos.([]*npool.OutOfGas)) > 1 {
-		return nil, fmt.Errorf("too many records")
+		return nil, wlog.Errorf("too many records")
 	}
 	return infos.([]*npool.OutOfGas)[0], nil
 }

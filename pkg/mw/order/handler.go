@@ -2,8 +2,8 @@ package order
 
 import (
 	"context"
-	"fmt"
 
+	wlog "github.com/NpoolPlatform/go-service-framework/pkg/wlog"
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
 	types "github.com/NpoolPlatform/message/npool/basetypes/order/v1"
 	npool "github.com/NpoolPlatform/message/npool/order/mw/v1/order"
@@ -29,7 +29,7 @@ func NewHandler(ctx context.Context, options ...func(context.Context, *Handler) 
 	}
 	for _, opt := range options {
 		if err := opt(ctx, handler); err != nil {
-			return nil, err
+			return nil, wlog.WrapError(err)
 		}
 	}
 	return handler, nil
@@ -39,13 +39,13 @@ func WithEntID(id *string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if id == nil {
 			if must {
-				return fmt.Errorf("invalid entid")
+				return wlog.Errorf("invalid entid")
 			}
 			return nil
 		}
 		_id, err := uuid.Parse(*id)
 		if err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		h.EntID = &_id
 		return nil
@@ -57,7 +57,7 @@ func (h *Handler) withOrderBaseConds(conds *npool.Conds) error {
 	if conds.EntID != nil {
 		id, err := uuid.Parse(conds.GetEntID().GetValue())
 		if err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		h.OrderBaseConds.EntID = &cruder.Cond{
 			Op:  conds.GetEntID().GetOp(),
@@ -69,7 +69,7 @@ func (h *Handler) withOrderBaseConds(conds *npool.Conds) error {
 		for _, id := range conds.GetEntIDs().GetValue() {
 			_id, err := uuid.Parse(id)
 			if err != nil {
-				return err
+				return wlog.WrapError(err)
 			}
 			ids = append(ids, _id)
 		}
@@ -81,7 +81,7 @@ func (h *Handler) withOrderBaseConds(conds *npool.Conds) error {
 	if conds.AppID != nil {
 		id, err := uuid.Parse(conds.GetAppID().GetValue())
 		if err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		h.OrderBaseConds.AppID = &cruder.Cond{
 			Op:  conds.GetAppID().GetOp(),
@@ -91,7 +91,7 @@ func (h *Handler) withOrderBaseConds(conds *npool.Conds) error {
 	if conds.UserID != nil {
 		id, err := uuid.Parse(conds.GetUserID().GetValue())
 		if err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		h.OrderBaseConds.UserID = &cruder.Cond{
 			Op:  conds.GetUserID().GetOp(),
@@ -101,7 +101,7 @@ func (h *Handler) withOrderBaseConds(conds *npool.Conds) error {
 	if conds.GoodID != nil {
 		id, err := uuid.Parse(conds.GetGoodID().GetValue())
 		if err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		h.OrderBaseConds.GoodID = &cruder.Cond{
 			Op:  conds.GetGoodID().GetOp(),
@@ -113,7 +113,7 @@ func (h *Handler) withOrderBaseConds(conds *npool.Conds) error {
 		for _, id := range conds.GetGoodIDs().GetValue() {
 			_id, err := uuid.Parse(id)
 			if err != nil {
-				return err
+				return wlog.WrapError(err)
 			}
 			ids = append(ids, _id)
 		}
@@ -125,7 +125,7 @@ func (h *Handler) withOrderBaseConds(conds *npool.Conds) error {
 	if conds.AppGoodID != nil {
 		id, err := uuid.Parse(conds.GetAppGoodID().GetValue())
 		if err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		h.OrderBaseConds.AppGoodID = &cruder.Cond{
 			Op:  conds.GetAppGoodID().GetOp(),
@@ -137,7 +137,7 @@ func (h *Handler) withOrderBaseConds(conds *npool.Conds) error {
 		for _, id := range conds.GetAppGoodIDs().GetValue() {
 			_id, err := uuid.Parse(id)
 			if err != nil {
-				return err
+				return wlog.WrapError(err)
 			}
 			ids = append(ids, _id)
 		}
@@ -149,7 +149,7 @@ func (h *Handler) withOrderBaseConds(conds *npool.Conds) error {
 	if conds.ParentOrderID != nil {
 		id, err := uuid.Parse(conds.GetParentOrderID().GetValue())
 		if err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		h.OrderBaseConds.ParentOrderID = &cruder.Cond{
 			Op:  conds.GetParentOrderID().GetOp(),
@@ -161,7 +161,7 @@ func (h *Handler) withOrderBaseConds(conds *npool.Conds) error {
 		for _, id := range conds.GetParentOrderIDs().GetValue() {
 			_id, err := uuid.Parse(id)
 			if err != nil {
-				return err
+				return wlog.WrapError(err)
 			}
 			ids = append(ids, _id)
 		}
@@ -227,7 +227,7 @@ func WithConds(conds *npool.Conds) func(context.Context, *Handler) error {
 			return nil
 		}
 		if err := h.withOrderBaseConds(conds); err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		return h.withOrderStateBaseConds(conds)
 	}

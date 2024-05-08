@@ -1,8 +1,7 @@
 package paymentcommon
 
 import (
-	"fmt"
-
+	wlog "github.com/NpoolPlatform/go-service-framework/pkg/wlog"
 	types "github.com/NpoolPlatform/message/npool/basetypes/order/v1"
 	paymentbalancecrud "github.com/NpoolPlatform/order-middleware/pkg/crud/payment/balance"
 	paymenttransfercrud "github.com/NpoolPlatform/order-middleware/pkg/crud/payment/transfer"
@@ -36,31 +35,31 @@ func (h *PaymentCheckHandler) ValidatePayment() error {
 		totalAmount = totalAmount.Add(transfer.Amount.Mul(*handler.FormalizeCoinUSDCurrency()))
 	}
 	if h.PaymentAmountUSD != nil && !h.PaymentAmountUSD.Equal(totalAmount) {
-		return fmt.Errorf("invalid paymentamount")
+		return wlog.Errorf("invalid paymentamount")
 	}
 
 	switch *h.PaymentType {
 	case types.PaymentType_PayWithBalanceOnly:
 		if len(h.PaymentBalanceReqs) == 0 {
-			return fmt.Errorf("invalid paymentbalances")
+			return wlog.Errorf("invalid paymentbalances")
 		}
 	case types.PaymentType_PayWithTransferOnly:
 		if len(h.PaymentTransferReqs) == 0 {
-			return fmt.Errorf("invalid paymenttransfers")
+			return wlog.Errorf("invalid paymenttransfers")
 		}
 	case types.PaymentType_PayWithTransferAndBalance:
 		if len(h.PaymentBalanceReqs) == 0 {
-			return fmt.Errorf("invalid paymentbalances")
+			return wlog.Errorf("invalid paymentbalances")
 		}
 		if len(h.PaymentTransferReqs) == 0 {
-			return fmt.Errorf("invalid paymenttransfers")
+			return wlog.Errorf("invalid paymenttransfers")
 		}
 	default:
 		if len(h.PaymentBalanceReqs) > 0 {
-			return fmt.Errorf("invalid paymentbalances")
+			return wlog.Errorf("invalid paymentbalances")
 		}
 		if len(h.PaymentTransferReqs) > 0 {
-			return fmt.Errorf("invalid paymenttransfers")
+			return wlog.Errorf("invalid paymenttransfers")
 		}
 	}
 
@@ -71,14 +70,14 @@ func (h *PaymentCheckHandler) ValidatePayment() error {
 		fallthrough // nolint
 	case types.PaymentType_PayWithTransferAndBalance:
 		if h.PaymentAmountUSD == nil || h.PaymentAmountUSD.Equal(decimal.NewFromInt(0)) {
-			return fmt.Errorf("invalid paymentamount")
+			return wlog.Errorf("invalid paymentamount")
 		}
 	default:
 		if h.PaymentAmountUSD != nil && !h.PaymentAmountUSD.Equal(decimal.NewFromInt(0)) {
-			return fmt.Errorf("invalid paymentamount")
+			return wlog.Errorf("invalid paymentamount")
 		}
 		if h.DiscountAmountUSD != nil && !h.DiscountAmountUSD.Equal(decimal.NewFromInt(0)) {
-			return fmt.Errorf("invalid paymentamount")
+			return wlog.Errorf("invalid paymentamount")
 		}
 	}
 	return nil

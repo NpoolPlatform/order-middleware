@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"time"
 
+	wlog "github.com/NpoolPlatform/go-service-framework/pkg/wlog"
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
 )
 
@@ -54,7 +55,7 @@ func (h *Handler) ConstructCreateSQL() string {
 
 func (h *Handler) ConstructUpdateSQL() (string, error) {
 	if h.ID == nil && h.EntID == nil {
-		return "", fmt.Errorf("invalid id")
+		return "", wlog.Errorf("invalid id")
 	}
 
 	set := "set "
@@ -66,7 +67,7 @@ func (h *Handler) ConstructUpdateSQL() (string, error) {
 		set = ""
 	}
 	if set != "" {
-		return "", cruder.ErrUpdateNothing
+		return "", wlog.WrapError(cruder.ErrUpdateNothing)
 	}
 	_sql += fmt.Sprintf("updated_at = %v ", now)
 	_sql += fmt.Sprintf("where end_at = 0 and start_at < %v ", *h.EndAt)

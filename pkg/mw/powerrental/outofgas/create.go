@@ -2,8 +2,8 @@ package outofgas
 
 import (
 	"context"
-	"fmt"
 
+	wlog "github.com/NpoolPlatform/go-service-framework/pkg/wlog"
 	outofgascrud "github.com/NpoolPlatform/order-middleware/pkg/crud/outofgas"
 	"github.com/NpoolPlatform/order-middleware/pkg/db"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent"
@@ -24,11 +24,11 @@ func (h *createHandler) constructOutOfGasSQL(ctx context.Context, req *outofgasc
 func (h *createHandler) execSQL(ctx context.Context, tx *ent.Tx, sql string) error {
 	rc, err := tx.ExecContext(ctx, sql)
 	if err != nil {
-		return err
+		return wlog.WrapError(err)
 	}
 	n, err := rc.RowsAffected()
 	if err != nil || n != 1 {
-		return fmt.Errorf("fail create outofgas: %v", err)
+		return wlog.Errorf("fail create outofgas: %v", err)
 	}
 	return nil
 }

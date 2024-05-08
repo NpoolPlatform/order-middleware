@@ -2,8 +2,8 @@ package outofgas
 
 import (
 	"context"
-	"fmt"
 
+	wlog "github.com/NpoolPlatform/go-service-framework/pkg/wlog"
 	outofgascrud "github.com/NpoolPlatform/order-middleware/pkg/crud/outofgas"
 	powerrentalstatecrud "github.com/NpoolPlatform/order-middleware/pkg/crud/powerrental/state"
 	"github.com/NpoolPlatform/order-middleware/pkg/db"
@@ -25,24 +25,24 @@ func (h *updateHandler) constructOutOfGasSQL(ctx context.Context, req *outofgasc
 	handler, _ := outofgas1.NewHandler(ctx)
 	handler.Req = *req
 	h.sqlOutOfGas, err = handler.ConstructUpdateSQL()
-	return err
+	return wlog.WrapError(err)
 }
 
 func (h *updateHandler) constructPowerRentalStateSQL(ctx context.Context, req *powerrentalstatecrud.Req) (err error) {
 	handler, _ := powerrentalstate1.NewHandler(ctx)
 	handler.Req = *req
 	h.sqlPowerRentalState, err = handler.ConstructUpdateSQL()
-	return err
+	return wlog.WrapError(err)
 }
 
 func (h *updateHandler) execSQL(ctx context.Context, tx *ent.Tx, sql string) error {
 	rc, err := tx.ExecContext(ctx, sql)
 	if err != nil {
-		return err
+		return wlog.WrapError(err)
 	}
 	n, err := rc.RowsAffected()
 	if err != nil || n != 1 {
-		return fmt.Errorf("fail update outofgas: %v", err)
+		return wlog.Errorf("fail update outofgas: %v", err)
 	}
 	return nil
 }
@@ -66,18 +66,18 @@ func (h *Handler) UpdateOutOfGas(ctx context.Context) error {
 	}
 
 	if err := handler.outOfGasHandler.requireOutOfGas(ctx); err != nil {
-		return err
+		return wlog.WrapError(err)
 	}
 	h.OrderID = func() *uuid.UUID { uid := handler.outOfGasHandler._ent.OrderID(); return &uid }()
 	if err := handler.requirePowerRentalState(ctx); err != nil {
-		return err
+		return wlog.WrapError(err)
 	}
 	if *h.EndAt <= handler.outOfGasHandler._ent.StartAt() {
-		return fmt.Errorf("invalid duration")
+		return wlog.Errorf("invalid duration")
 	}
 
 	if err := handler.constructOutOfGasSQL(ctx, &h.Req); err != nil {
-		return err
+		return wlog.WrapError(err)
 	}
 	if err := handler.constructPowerRentalStateSQL(ctx, &powerrentalstatecrud.Req{
 		OrderID: h.OrderID,
@@ -86,12 +86,12 @@ func (h *Handler) UpdateOutOfGas(ctx context.Context) error {
 			return &u
 		}(),
 	}); err != nil {
-		return err
+		return wlog.WrapError(err)
 	}
 
 	return db.WithTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {
 		if err := handler.updateOutOfGas(_ctx, tx); err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		return handler.updatePowerRentalState(_ctx, tx)
 	})

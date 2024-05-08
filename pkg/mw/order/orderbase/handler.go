@@ -2,8 +2,8 @@ package orderbase
 
 import (
 	"context"
-	"fmt"
 
+	wlog "github.com/NpoolPlatform/go-service-framework/pkg/wlog"
 	goodtypes "github.com/NpoolPlatform/message/npool/basetypes/good/v1"
 	types "github.com/NpoolPlatform/message/npool/basetypes/order/v1"
 	orderbasecrud "github.com/NpoolPlatform/order-middleware/pkg/crud/order/orderbase"
@@ -20,7 +20,7 @@ func NewHandler(ctx context.Context, options ...func(context.Context, *Handler) 
 	handler := &Handler{}
 	for _, opt := range options {
 		if err := opt(ctx, handler); err != nil {
-			return nil, err
+			return nil, wlog.WrapError(err)
 		}
 	}
 	return handler, nil
@@ -30,7 +30,7 @@ func WithID(u *uint32, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if u == nil {
 			if must {
-				return fmt.Errorf("invalid id")
+				return wlog.Errorf("invalid id")
 			}
 			return nil
 		}
@@ -43,13 +43,13 @@ func WithEntID(id *string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if id == nil {
 			if must {
-				return fmt.Errorf("invalid entid")
+				return wlog.Errorf("invalid entid")
 			}
 			return nil
 		}
 		_id, err := uuid.Parse(*id)
 		if err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		h.EntID = &_id
 		return nil
@@ -60,13 +60,13 @@ func WithAppID(id *string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if id == nil {
 			if must {
-				return fmt.Errorf("invalid appid")
+				return wlog.Errorf("invalid appid")
 			}
 			return nil
 		}
 		_id, err := uuid.Parse(*id)
 		if err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		h.AppID = &_id
 		return nil
@@ -77,13 +77,13 @@ func WithUserID(id *string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if id == nil {
 			if must {
-				return fmt.Errorf("invalid userid")
+				return wlog.Errorf("invalid userid")
 			}
 			return nil
 		}
 		_id, err := uuid.Parse(*id)
 		if err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		h.UserID = &_id
 		return nil
@@ -94,13 +94,13 @@ func WithGoodID(id *string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if id == nil {
 			if must {
-				return fmt.Errorf("invalid goodid")
+				return wlog.Errorf("invalid goodid")
 			}
 			return nil
 		}
 		_id, err := uuid.Parse(*id)
 		if err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		h.GoodID = &_id
 		return nil
@@ -111,7 +111,7 @@ func WithGoodType(e *goodtypes.GoodType, must bool) func(context.Context, *Handl
 	return func(ctx context.Context, h *Handler) error {
 		if e == nil {
 			if must {
-				return fmt.Errorf("invalid goodtype")
+				return wlog.Errorf("invalid goodtype")
 			}
 			return nil
 		}
@@ -123,7 +123,7 @@ func WithGoodType(e *goodtypes.GoodType, must bool) func(context.Context, *Handl
 		case goodtypes.GoodType_TechniqueServiceFee:
 		case goodtypes.GoodType_ElectricityFee:
 		default:
-			return fmt.Errorf("invalid goodtype")
+			return wlog.Errorf("invalid goodtype")
 		}
 		h.GoodType = e
 		return nil
@@ -134,13 +134,13 @@ func WithAppGoodID(id *string, must bool) func(context.Context, *Handler) error 
 	return func(ctx context.Context, h *Handler) error {
 		if id == nil {
 			if must {
-				return fmt.Errorf("invalid appgoodid")
+				return wlog.Errorf("invalid appgoodid")
 			}
 			return nil
 		}
 		_id, err := uuid.Parse(*id)
 		if err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		h.AppGoodID = &_id
 		return nil
@@ -151,13 +151,13 @@ func WithParentOrderID(id *string, must bool) func(context.Context, *Handler) er
 	return func(ctx context.Context, h *Handler) error {
 		if id == nil {
 			if must {
-				return fmt.Errorf("invalid parentorderid")
+				return wlog.Errorf("invalid parentorderid")
 			}
 			return nil
 		}
 		id, err := uuid.Parse(*id)
 		if err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		h.ParentOrderID = &id
 		return nil
@@ -168,7 +168,7 @@ func WithOrderType(orderType *types.OrderType, must bool) func(context.Context, 
 	return func(ctx context.Context, h *Handler) error {
 		if orderType == nil {
 			if must {
-				return fmt.Errorf("invalid ordertype")
+				return wlog.Errorf("invalid ordertype")
 			}
 			return nil
 		}
@@ -177,7 +177,7 @@ func WithOrderType(orderType *types.OrderType, must bool) func(context.Context, 
 		case types.OrderType_Offline:
 		case types.OrderType_Normal:
 		default:
-			return fmt.Errorf("invalid ordertype")
+			return wlog.Errorf("invalid ordertype")
 		}
 		h.OrderType = orderType
 		return nil
@@ -188,7 +188,7 @@ func WithCreateMethod(e *types.OrderCreateMethod, must bool) func(context.Contex
 	return func(ctx context.Context, h *Handler) error {
 		if e == nil {
 			if must {
-				return fmt.Errorf("invalid createmethod")
+				return wlog.Errorf("invalid createmethod")
 			}
 			return nil
 		}
@@ -197,7 +197,7 @@ func WithCreateMethod(e *types.OrderCreateMethod, must bool) func(context.Contex
 		case types.OrderCreateMethod_OrderCreatedByAdmin:
 		case types.OrderCreateMethod_OrderCreatedByRenew:
 		default:
-			return fmt.Errorf("invalid createmethod")
+			return wlog.Errorf("invalid createmethod")
 		}
 		h.CreateMethod = e
 		return nil

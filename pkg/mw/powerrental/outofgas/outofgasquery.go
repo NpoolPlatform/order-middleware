@@ -2,8 +2,8 @@ package outofgas
 
 import (
 	"context"
-	"fmt"
 
+	wlog "github.com/NpoolPlatform/go-service-framework/pkg/wlog"
 	"github.com/NpoolPlatform/order-middleware/pkg/db"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent"
 	entoutofgas "github.com/NpoolPlatform/order-middleware/pkg/db/ent/outofgas"
@@ -26,14 +26,14 @@ func (h *outOfGasQueryHandler) getOutOfGasEnt(ctx context.Context, cli *ent.Clie
 		if ent.IsNotFound(err) && !must {
 			return nil
 		}
-		return err
+		return wlog.WrapError(err)
 	}
 	return nil
 }
 
 func (h *outOfGasQueryHandler) _getOutOfGas(ctx context.Context, must bool) error {
 	if h.ID == nil && h.EntID == nil {
-		return fmt.Errorf("invalid id")
+		return wlog.Errorf("invalid id")
 	}
 	return db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
 		return h.getOutOfGasEnt(ctx, cli, must)

@@ -2,8 +2,8 @@ package feeorder
 
 import (
 	"context"
-	"fmt"
 
+	wlog "github.com/NpoolPlatform/go-service-framework/pkg/wlog"
 	types "github.com/NpoolPlatform/message/npool/basetypes/order/v1"
 	"github.com/NpoolPlatform/order-middleware/pkg/db"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent"
@@ -39,7 +39,7 @@ func (h *feeOrderQueryHandler) getFeeOrderEnt(ctx context.Context, cli *ent.Clie
 		if ent.IsNotFound(err) && !must {
 			return nil
 		}
-		return err
+		return wlog.WrapError(err)
 	}
 	return nil
 }
@@ -53,7 +53,7 @@ func (h *feeOrderQueryHandler) getFeeOrderState(ctx context.Context, cli *ent.Cl
 			entfeeorderstate.DeletedAt(0),
 		).
 		Only(ctx)
-	return err
+	return wlog.WrapError(err)
 }
 
 func (h *feeOrderQueryHandler) getOrderBase(ctx context.Context, cli *ent.Client) (err error) {
@@ -65,7 +65,7 @@ func (h *feeOrderQueryHandler) getOrderBase(ctx context.Context, cli *ent.Client
 			entorderbase.DeletedAt(0),
 		).
 		Only(ctx)
-	return err
+	return wlog.WrapError(err)
 }
 
 func (h *feeOrderQueryHandler) getOrderStateBase(ctx context.Context, cli *ent.Client) (err error) {
@@ -77,7 +77,7 @@ func (h *feeOrderQueryHandler) getOrderStateBase(ctx context.Context, cli *ent.C
 			entorderstatebase.DeletedAt(0),
 		).
 		Only(ctx)
-	return err
+	return wlog.WrapError(err)
 }
 
 func (h *feeOrderQueryHandler) getPaymentBase(ctx context.Context, cli *ent.Client) (err error) {
@@ -94,7 +94,7 @@ func (h *feeOrderQueryHandler) getPaymentBase(ctx context.Context, cli *ent.Clie
 			return nil
 		}
 	}
-	return err
+	return wlog.WrapError(err)
 }
 
 func (h *feeOrderQueryHandler) getLedgerLock(ctx context.Context, cli *ent.Client) (err error) {
@@ -110,7 +110,7 @@ func (h *feeOrderQueryHandler) getLedgerLock(ctx context.Context, cli *ent.Clien
 		if ent.IsNotFound(err) {
 			return nil
 		}
-		return err
+		return wlog.WrapError(err)
 	}
 	if h._ent.entLedgerLock, err = cli.
 		OrderLock.
@@ -126,7 +126,7 @@ func (h *feeOrderQueryHandler) getLedgerLock(ctx context.Context, cli *ent.Clien
 			return nil
 		}
 	}
-	return err
+	return wlog.WrapError(err)
 }
 
 func (h *feeOrderQueryHandler) getPaymentBalances(ctx context.Context, cli *ent.Client) (err error) {
@@ -138,7 +138,7 @@ func (h *feeOrderQueryHandler) getPaymentBalances(ctx context.Context, cli *ent.
 			entpaymentbalance.DeletedAt(0),
 		).
 		All(ctx)
-	return err
+	return wlog.WrapError(err)
 }
 
 func (h *feeOrderQueryHandler) getPaymentTransfers(ctx context.Context, cli *ent.Client) (err error) {
@@ -150,7 +150,7 @@ func (h *feeOrderQueryHandler) getPaymentTransfers(ctx context.Context, cli *ent
 			entpaymenttransfer.DeletedAt(0),
 		).
 		All(ctx)
-	return err
+	return wlog.WrapError(err)
 }
 
 func (h *feeOrderQueryHandler) getOrderCoupons(ctx context.Context, cli *ent.Client) (err error) {
@@ -162,40 +162,40 @@ func (h *feeOrderQueryHandler) getOrderCoupons(ctx context.Context, cli *ent.Cli
 			entordercoupon.DeletedAt(0),
 		).
 		All(ctx)
-	return err
+	return wlog.WrapError(err)
 }
 
 func (h *feeOrderQueryHandler) _getFeeOrder(ctx context.Context, must bool) error {
 	if h.ID == nil && h.EntID == nil && h.OrderID == nil {
-		return fmt.Errorf("invalid id")
+		return wlog.Errorf("invalid id")
 	}
 	return db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
 		if err := h.getFeeOrderEnt(_ctx, cli, must); err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		if h._ent.entFeeOrder == nil {
 			return nil
 		}
 		if err := h.getFeeOrderState(_ctx, cli); err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		if err := h.getOrderBase(_ctx, cli); err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		if err := h.getOrderStateBase(_ctx, cli); err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		if err := h.getPaymentBase(_ctx, cli); err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		if err := h.getLedgerLock(_ctx, cli); err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		if err := h.getPaymentBalances(_ctx, cli); err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		if err := h.getPaymentTransfers(_ctx, cli); err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		return h.getOrderCoupons(_ctx, cli)
 	})

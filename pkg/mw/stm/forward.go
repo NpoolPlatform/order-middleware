@@ -1,8 +1,7 @@
 package orderstm
 
 import (
-	"fmt"
-
+	wlog "github.com/NpoolPlatform/go-service-framework/pkg/wlog"
 	types "github.com/NpoolPlatform/message/npool/basetypes/order/v1"
 )
 
@@ -52,12 +51,12 @@ type forwardHandler struct {
 func (h *forwardHandler) forward() (*types.OrderState, error) {
 	states, ok := forwards[h._ent.OrderState()]
 	if !ok {
-		return nil, fmt.Errorf("invalid orderstate")
+		return nil, wlog.Errorf("invalid orderstate")
 	}
 	for _, state := range states {
 		if state == *h.OrderState {
 			return &state, nil
 		}
 	}
-	return nil, fmt.Errorf("invalid orderstate")
+	return nil, wlog.Errorf("invalid orderstate")
 }

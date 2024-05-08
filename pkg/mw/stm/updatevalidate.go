@@ -2,8 +2,8 @@ package orderstm
 
 import (
 	"context"
-	"fmt"
 
+	wlog "github.com/NpoolPlatform/go-service-framework/pkg/wlog"
 	types "github.com/NpoolPlatform/message/npool/basetypes/order/v1"
 )
 
@@ -20,7 +20,7 @@ func (h *validateHandler) validateFinaled() error {
 		fallthrough //nolint
 	case types.OrderState_OrderStateCanceled:
 		if h.Rollback == nil || !*h.Rollback {
-			return fmt.Errorf("permission denied")
+			return wlog.Errorf("permission denied")
 		}
 	}
 	return nil
@@ -31,25 +31,25 @@ func (h *validateHandler) validateUserCancelable() error {
 		return nil
 	}
 	if !*h.UserSetCanceled {
-		return fmt.Errorf("permission denied")
+		return wlog.Errorf("permission denied")
 	}
 	if *h.UserCanceled {
-		return fmt.Errorf("permission denied")
+		return wlog.Errorf("permission denied")
 	}
 	if h._ent.PaymentType() == types.PaymentType_PayWithParentOrder {
-		return fmt.Errorf("permission denied")
+		return wlog.Errorf("permission denied")
 	}
 	switch h._ent.OrderType() {
 	case types.OrderType_Normal:
 	default:
-		return fmt.Errorf("permission denied")
+		return wlog.Errorf("permission denied")
 	}
 	switch h._ent.OrderState() {
 	case types.OrderState_OrderStateWaitPayment:
 	case types.OrderState_OrderStatePaid:
 	case types.OrderState_OrderStateInService:
 	default:
-		return fmt.Errorf("invalid cancelstate")
+		return wlog.Errorf("invalid cancelstate")
 	}
 	return nil
 }
@@ -59,17 +59,17 @@ func (h *validateHandler) validateAdminCancelable() error {
 		return nil
 	}
 	if !*h.AdminSetCanceled {
-		return fmt.Errorf("invalid cancelstate")
+		return wlog.Errorf("invalid cancelstate")
 	}
 	if !*h.AdminCanceled {
-		return fmt.Errorf("invalid cancelstate")
+		return wlog.Errorf("invalid cancelstate")
 	}
 	switch h._ent.OrderType() {
 	case types.OrderType_Offline:
 	case types.OrderType_Airdrop:
 	case types.OrderType_Normal:
 	default:
-		return fmt.Errorf("permission denied")
+		return wlog.Errorf("permission denied")
 	}
 	return nil
 }
@@ -79,12 +79,12 @@ func (h *validateHandler) validateUserPayable() error {
 		return nil
 	}
 	if !*h.UserSetPaid {
-		return fmt.Errorf("permission denied")
+		return wlog.Errorf("permission denied")
 	}
 	switch h._ent.OrderType() {
 	case types.OrderType_Normal:
 	default:
-		return fmt.Errorf("permissioned denied")
+		return wlog.Errorf("permissioned denied")
 	}
 	return nil
 }
@@ -100,7 +100,7 @@ func (h *validateHandler) validatePaymentState() error {
 		case types.PaymentState_PaymentStateCanceled:
 		case types.PaymentState_PaymentStateTimeout:
 		default:
-			return fmt.Errorf("permission denied")
+			return wlog.Errorf("permission denied")
 		}
 	case types.PaymentState_PaymentStateDone:
 		fallthrough //nolint
@@ -109,7 +109,7 @@ func (h *validateHandler) validatePaymentState() error {
 	case types.PaymentState_PaymentStateTimeout:
 		fallthrough //nolint
 	case types.PaymentState_PaymentStateNoPayment:
-		return fmt.Errorf("permission denied")
+		return wlog.Errorf("permission denied")
 	}
 	return nil
 }
@@ -133,7 +133,7 @@ func (h *Handler) ValidateUpdateForNewState(ctx context.Context) (*types.OrderSt
 	}
 
 	if err := handler.requireOrder(ctx); err != nil {
-		return nil, err
+		return nil, wlog.WrapError(err)
 	}
 	handler.rollbackHandler = &rollbackHandler{
 		orderQueryHandler: handler.orderQueryHandler,
@@ -143,19 +143,19 @@ func (h *Handler) ValidateUpdateForNewState(ctx context.Context) (*types.OrderSt
 	}
 
 	if err := handler.validateFinaled(); err != nil {
-		return nil, err
+		return nil, wlog.WrapError(err)
 	}
 	if err := handler.validateUserCancelable(); err != nil {
-		return nil, err
+		return nil, wlog.WrapError(err)
 	}
 	if err := handler.validateAdminCancelable(); err != nil {
-		return nil, err
+		return nil, wlog.WrapError(err)
 	}
 	if err := handler.validateUserPayable(); err != nil {
-		return nil, err
+		return nil, wlog.WrapError(err)
 	}
 	if err := handler.validatePaymentState(); err != nil {
-		return nil, err
+		return nil, wlog.WrapError(err)
 	}
 	return handler.validateOrderState()
 }

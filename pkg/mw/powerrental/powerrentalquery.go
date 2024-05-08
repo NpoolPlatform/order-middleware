@@ -2,8 +2,8 @@ package powerrental
 
 import (
 	"context"
-	"fmt"
 
+	wlog "github.com/NpoolPlatform/go-service-framework/pkg/wlog"
 	types "github.com/NpoolPlatform/message/npool/basetypes/order/v1"
 	"github.com/NpoolPlatform/order-middleware/pkg/db"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent"
@@ -39,7 +39,7 @@ func (h *powerRentalQueryHandler) getPowerRentalEnt(ctx context.Context, cli *en
 		if ent.IsNotFound(err) && !must {
 			return nil
 		}
-		return err
+		return wlog.WrapError(err)
 	}
 	return nil
 }
@@ -53,7 +53,7 @@ func (h *powerRentalQueryHandler) getPowerRentalState(ctx context.Context, cli *
 			entpowerrentalstate.DeletedAt(0),
 		).
 		Only(ctx)
-	return err
+	return wlog.WrapError(err)
 }
 
 func (h *powerRentalQueryHandler) getOrderBase(ctx context.Context, cli *ent.Client) (err error) {
@@ -65,7 +65,7 @@ func (h *powerRentalQueryHandler) getOrderBase(ctx context.Context, cli *ent.Cli
 			entorderbase.DeletedAt(0),
 		).
 		Only(ctx)
-	return err
+	return wlog.WrapError(err)
 }
 
 func (h *powerRentalQueryHandler) getOrderStateBase(ctx context.Context, cli *ent.Client) (err error) {
@@ -77,7 +77,7 @@ func (h *powerRentalQueryHandler) getOrderStateBase(ctx context.Context, cli *en
 			entorderstatebase.DeletedAt(0),
 		).
 		Only(ctx)
-	return err
+	return wlog.WrapError(err)
 }
 
 func (h *powerRentalQueryHandler) getPaymentBase(ctx context.Context, cli *ent.Client) (err error) {
@@ -94,7 +94,7 @@ func (h *powerRentalQueryHandler) getPaymentBase(ctx context.Context, cli *ent.C
 			return nil
 		}
 	}
-	return err
+	return wlog.WrapError(err)
 }
 
 func (h *powerRentalQueryHandler) getLedgerLock(ctx context.Context, cli *ent.Client) (err error) {
@@ -111,7 +111,7 @@ func (h *powerRentalQueryHandler) getLedgerLock(ctx context.Context, cli *ent.Cl
 		if ent.IsNotFound(err) {
 			return nil
 		}
-		return err
+		return wlog.WrapError(err)
 	}
 	if h._ent.entLedgerLock, err = cli.
 		OrderLock.
@@ -127,7 +127,7 @@ func (h *powerRentalQueryHandler) getLedgerLock(ctx context.Context, cli *ent.Cl
 			return nil
 		}
 	}
-	return err
+	return wlog.WrapError(err)
 }
 
 func (h *powerRentalQueryHandler) getStockLock(ctx context.Context, cli *ent.Client) (err error) {
@@ -144,7 +144,7 @@ func (h *powerRentalQueryHandler) getStockLock(ctx context.Context, cli *ent.Cli
 			return nil
 		}
 	}
-	return err
+	return wlog.WrapError(err)
 }
 
 func (h *powerRentalQueryHandler) getPaymentBalances(ctx context.Context, cli *ent.Client) (err error) {
@@ -156,7 +156,7 @@ func (h *powerRentalQueryHandler) getPaymentBalances(ctx context.Context, cli *e
 			entpaymentbalance.DeletedAt(0),
 		).
 		All(ctx)
-	return err
+	return wlog.WrapError(err)
 }
 
 func (h *powerRentalQueryHandler) getPaymentTransfers(ctx context.Context, cli *ent.Client) (err error) {
@@ -168,7 +168,7 @@ func (h *powerRentalQueryHandler) getPaymentTransfers(ctx context.Context, cli *
 			entpaymenttransfer.DeletedAt(0),
 		).
 		All(ctx)
-	return err
+	return wlog.WrapError(err)
 }
 
 func (h *powerRentalQueryHandler) getOrderCoupons(ctx context.Context, cli *ent.Client) (err error) {
@@ -180,43 +180,43 @@ func (h *powerRentalQueryHandler) getOrderCoupons(ctx context.Context, cli *ent.
 			entordercoupon.DeletedAt(0),
 		).
 		All(ctx)
-	return err
+	return wlog.WrapError(err)
 }
 
 func (h *powerRentalQueryHandler) _getPowerRental(ctx context.Context, must bool) error {
 	if h.ID == nil && h.EntID == nil && h.OrderID == nil {
-		return fmt.Errorf("invalid id")
+		return wlog.Errorf("invalid id")
 	}
 	return db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
 		if err := h.getPowerRentalEnt(_ctx, cli, must); err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		if h._ent.entPowerRental == nil {
 			return nil
 		}
 		if err := h.getPowerRentalState(_ctx, cli); err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		if err := h.getOrderBase(_ctx, cli); err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		if err := h.getOrderStateBase(_ctx, cli); err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		if err := h.getPaymentBase(_ctx, cli); err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		if err := h.getLedgerLock(_ctx, cli); err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		if err := h.getStockLock(_ctx, cli); err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		if err := h.getPaymentBalances(_ctx, cli); err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		if err := h.getPaymentTransfers(_ctx, cli); err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		return h.getOrderCoupons(_ctx, cli)
 	})

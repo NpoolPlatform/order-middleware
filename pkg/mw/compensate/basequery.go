@@ -1,11 +1,10 @@
 package compensate
 
 import (
-	"fmt"
-
 	"entgo.io/ent/dialect/sql"
 
 	logger "github.com/NpoolPlatform/go-service-framework/pkg/logger"
+	wlog "github.com/NpoolPlatform/go-service-framework/pkg/wlog"
 	compensatecrud "github.com/NpoolPlatform/order-middleware/pkg/crud/compensate"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent"
 	entcompensate "github.com/NpoolPlatform/order-middleware/pkg/db/ent/compensate"
@@ -25,7 +24,7 @@ func (h *baseQueryHandler) selectCompensate(stm *ent.CompensateQuery) *ent.Compe
 
 func (h *baseQueryHandler) queryCompensate(cli *ent.Client) error {
 	if h.ID == nil && h.EntID == nil {
-		return fmt.Errorf("invalid id")
+		return wlog.Errorf("invalid id")
 	}
 	stm := cli.Compensate.Query().Where(entcompensate.DeletedAt(0))
 	if h.ID != nil {
@@ -41,7 +40,7 @@ func (h *baseQueryHandler) queryCompensate(cli *ent.Client) error {
 func (h *baseQueryHandler) queryCompensates(cli *ent.Client) (*ent.CompensateSelect, error) {
 	stm, err := compensatecrud.SetQueryConds(cli.Compensate.Query(), h.CompensateConds)
 	if err != nil {
-		return nil, err
+		return nil, wlog.WrapError(err)
 	}
 	return h.selectCompensate(stm), nil
 }

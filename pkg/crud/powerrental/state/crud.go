@@ -1,8 +1,7 @@
 package powerrentalstate
 
 import (
-	"fmt"
-
+	wlog "github.com/NpoolPlatform/go-service-framework/pkg/wlog"
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
 	types "github.com/NpoolPlatform/message/npool/basetypes/order/v1"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent"
@@ -116,33 +115,33 @@ func SetQueryConds(q *ent.PowerRentalStateQuery, conds *Conds) (*ent.PowerRental
 	if conds.ID != nil {
 		id, ok := conds.ID.Val.(uint32)
 		if !ok {
-			return nil, fmt.Errorf("invalid id")
+			return nil, wlog.Errorf("invalid id")
 		}
 		switch conds.ID.Op {
 		case cruder.EQ:
 			q.Where(entpowerrentalstate.ID(id))
 		default:
-			return nil, fmt.Errorf("invalid powerrental field")
+			return nil, wlog.Errorf("invalid powerrental field")
 		}
 	}
 	if conds.IDs != nil {
 		ids, ok := conds.IDs.Val.([]uint32)
 		if !ok {
-			return nil, fmt.Errorf("invalid ids")
+			return nil, wlog.Errorf("invalid ids")
 		}
 		if len(ids) > 0 {
 			switch conds.IDs.Op {
 			case cruder.IN:
 				q.Where(entpowerrentalstate.IDIn(ids...))
 			default:
-				return nil, fmt.Errorf("invalid powerrental field")
+				return nil, wlog.Errorf("invalid powerrental field")
 			}
 		}
 	}
 	if conds.EntID != nil {
 		id, ok := conds.EntID.Val.(uuid.UUID)
 		if !ok {
-			return nil, fmt.Errorf("invalid entid")
+			return nil, wlog.Errorf("invalid entid")
 		}
 		switch conds.EntID.Op {
 		case cruder.EQ:
@@ -150,51 +149,51 @@ func SetQueryConds(q *ent.PowerRentalStateQuery, conds *Conds) (*ent.PowerRental
 		case cruder.NEQ:
 			q.Where(entpowerrentalstate.EntIDNEQ(id))
 		default:
-			return nil, fmt.Errorf("invalid powerrental field")
+			return nil, wlog.Errorf("invalid powerrental field")
 		}
 	}
 	if conds.EntIDs != nil {
 		ids, ok := conds.EntIDs.Val.([]uuid.UUID)
 		if !ok {
-			return nil, fmt.Errorf("invalid entids")
+			return nil, wlog.Errorf("invalid entids")
 		}
 		if len(ids) > 0 {
 			switch conds.EntIDs.Op {
 			case cruder.IN:
 				q.Where(entpowerrentalstate.EntIDIn(ids...))
 			default:
-				return nil, fmt.Errorf("invalid powerrental field")
+				return nil, wlog.Errorf("invalid powerrental field")
 			}
 		}
 	}
 	if conds.OrderID != nil {
 		id, ok := conds.OrderID.Val.(uuid.UUID)
 		if !ok {
-			return nil, fmt.Errorf("invalid powerrentalid")
+			return nil, wlog.Errorf("invalid powerrentalid")
 		}
 		switch conds.OrderID.Op {
 		case cruder.EQ:
 			q.Where(entpowerrentalstate.OrderID(id))
 		default:
-			return nil, fmt.Errorf("invalid powerrental field")
+			return nil, wlog.Errorf("invalid powerrental field")
 		}
 	}
 	if conds.PaymentState != nil {
 		state, ok := conds.PaymentState.Val.(types.PaymentState)
 		if !ok {
-			return nil, fmt.Errorf("invalid paymentstate")
+			return nil, wlog.Errorf("invalid paymentstate")
 		}
 		switch conds.PaymentState.Op {
 		case cruder.EQ:
 			q.Where(entpowerrentalstate.PaymentState(state.String()))
 		default:
-			return nil, fmt.Errorf("invalid powerrental field")
+			return nil, wlog.Errorf("invalid powerrental field")
 		}
 	}
 	if conds.PaymentStates != nil {
 		states, ok := conds.PaymentStates.Val.([]types.PaymentState)
 		if !ok {
-			return nil, fmt.Errorf("invalid paymentstate")
+			return nil, wlog.Errorf("invalid paymentstate")
 		}
 		switch conds.PaymentState.Op {
 		case cruder.IN:
@@ -205,25 +204,25 @@ func SetQueryConds(q *ent.PowerRentalStateQuery, conds *Conds) (*ent.PowerRental
 				return
 			}()...))
 		default:
-			return nil, fmt.Errorf("invalid powerrental field")
+			return nil, wlog.Errorf("invalid powerrental field")
 		}
 	}
 	if conds.RenewState != nil {
 		state, ok := conds.RenewState.Val.(types.OrderRenewState)
 		if !ok {
-			return nil, fmt.Errorf("invalid renewstate")
+			return nil, wlog.Errorf("invalid renewstate")
 		}
 		switch conds.RenewState.Op {
 		case cruder.EQ:
 			q.Where(entpowerrentalstate.RenewState(state.String()))
 		default:
-			return nil, fmt.Errorf("invalid powerrental field")
+			return nil, wlog.Errorf("invalid powerrental field")
 		}
 	}
 	if conds.RenewNotifyAt != nil {
 		at, ok := conds.RenewNotifyAt.Val.(uint32)
 		if !ok {
-			return nil, fmt.Errorf("invalid renewnotifyat")
+			return nil, wlog.Errorf("invalid renewnotifyat")
 		}
 		switch conds.RenewNotifyAt.Op {
 		case cruder.EQ:
@@ -237,7 +236,7 @@ func SetQueryConds(q *ent.PowerRentalStateQuery, conds *Conds) (*ent.PowerRental
 		case cruder.GTE:
 			q.Where(entpowerrentalstate.RenewNotifyAtGTE(at))
 		default:
-			return nil, fmt.Errorf("invalid powerrental field")
+			return nil, wlog.Errorf("invalid powerrental field")
 		}
 	}
 	return q, nil
