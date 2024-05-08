@@ -108,14 +108,14 @@ func (h *MultiHandler) validatePaymentID() error {
 
 func (h *MultiHandler) CreateFeeOrdersWithTx(ctx context.Context, tx *ent.Tx) error {
 	if err := h.validatePaymentOrder(); err != nil {
-		return err
+		return wlog.WrapError(err)
 	}
 	if err := h.validatePaymentID(); err != nil {
-		return err
+		return wlog.WrapError(err)
 	}
 	for _, handler := range h.Handlers {
 		if err := handler.CreateFeeOrderWithTx(ctx, tx); err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 	}
 	return nil
@@ -130,7 +130,7 @@ func (h *MultiHandler) CreateFeeOrders(ctx context.Context) error {
 func (h *MultiHandler) UpdateFeeOrdersWithTx(ctx context.Context, tx *ent.Tx) error {
 	for _, handler := range h.Handlers {
 		if err := handler.UpdateFeeOrderWithTx(ctx, tx); err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 	}
 	return nil
@@ -145,7 +145,7 @@ func (h *MultiHandler) UpdateFeeOrders(ctx context.Context) error {
 func (h *MultiHandler) DeleteFeeOrdersWithTx(ctx context.Context, tx *ent.Tx) error {
 	for _, handler := range h.Handlers {
 		if err := handler.DeleteFeeOrderWithTx(ctx, tx); err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 	}
 	return nil

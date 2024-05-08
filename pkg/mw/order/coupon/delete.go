@@ -4,6 +4,7 @@ import (
 	"context"
 	"time"
 
+	wlog "github.com/NpoolPlatform/go-service-framework/pkg/wlog"
 	ordercouponcrud "github.com/NpoolPlatform/order-middleware/pkg/crud/order/coupon"
 	"github.com/NpoolPlatform/order-middleware/pkg/db"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent"
@@ -21,7 +22,7 @@ func (h *deleteHandler) deleteOrderCoupon(ctx context.Context, tx *ent.Tx) error
 			DeletedAt: &h.now,
 		},
 	).Save(ctx); err != nil {
-		return err
+		return wlog.WrapError(err)
 	}
 	return nil
 }
@@ -29,7 +30,7 @@ func (h *deleteHandler) deleteOrderCoupon(ctx context.Context, tx *ent.Tx) error
 func (h *Handler) DeleteOrderCoupon(ctx context.Context) error {
 	info, err := h.GetOrderCoupon(ctx)
 	if err != nil {
-		return err
+		return wlog.WrapError(err)
 	}
 	if info == nil {
 		return nil

@@ -111,7 +111,7 @@ func (h *createHandler) constructPaymentTransferSQLs(ctx context.Context) {
 func (h *createHandler) execSQL(ctx context.Context, tx *ent.Tx, sql string) error {
 	rc, err := tx.ExecContext(ctx, sql)
 	if err != nil {
-		return err
+		return wlog.WrapError(err)
 	}
 	n, err := rc.RowsAffected()
 	if err != nil || n != 1 {
@@ -135,7 +135,7 @@ func (h *createHandler) createPowerRentalState(ctx context.Context, tx *ent.Tx) 
 func (h *createHandler) createOrderLocks(ctx context.Context, tx *ent.Tx) error {
 	for _, sql := range h.sqlOrderLocks {
 		if err := h.execSQL(ctx, tx, sql); err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 	}
 	return nil
@@ -151,7 +151,7 @@ func (h *createHandler) createPaymentBalanceLock(ctx context.Context, tx *ent.Tx
 func (h *createHandler) createOrderCoupons(ctx context.Context, tx *ent.Tx) error {
 	for _, sql := range h.sqlOrderCoupons {
 		if err := h.execSQL(ctx, tx, sql); err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 	}
 	return nil
@@ -164,7 +164,7 @@ func (h *createHandler) createPaymentBase(ctx context.Context, tx *ent.Tx) error
 func (h *createHandler) createPaymentBalances(ctx context.Context, tx *ent.Tx) error {
 	for _, sql := range h.sqlPaymentBalances {
 		if err := h.execSQL(ctx, tx, sql); err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 	}
 	return nil
@@ -173,7 +173,7 @@ func (h *createHandler) createPaymentBalances(ctx context.Context, tx *ent.Tx) e
 func (h *createHandler) createPaymentTransfers(ctx context.Context, tx *ent.Tx) error {
 	for _, sql := range h.sqlPaymentTransfers {
 		if err := h.execSQL(ctx, tx, sql); err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 	}
 	return nil
@@ -304,7 +304,7 @@ func (h *Handler) CreatePowerRentalWithTx(ctx context.Context, tx *ent.Tx) error
 	}
 
 	if err := handler.validatePaymentType(); err != nil {
-		return err
+		return wlog.WrapError(err)
 	}
 
 	handler.formalizeOrderID()
@@ -328,34 +328,34 @@ func (h *Handler) CreatePowerRentalWithTx(ctx context.Context, tx *ent.Tx) error
 	handler.constructSQL()
 
 	if err := handler.createOrderBase(ctx, tx); err != nil {
-		return err
+		return wlog.WrapError(err)
 	}
 	if err := handler.createOrderStateBase(ctx, tx); err != nil {
-		return err
+		return wlog.WrapError(err)
 	}
 	if err := handler.createPowerRentalState(ctx, tx); err != nil {
-		return err
+		return wlog.WrapError(err)
 	}
 	if err := handler.createOrderLocks(ctx, tx); err != nil {
-		return err
+		return wlog.WrapError(err)
 	}
 	if err := handler.createPaymentBase(ctx, tx); err != nil {
-		return err
+		return wlog.WrapError(err)
 	}
 	if err := handler.createPaymentBalanceLock(ctx, tx); err != nil {
-		return err
+		return wlog.WrapError(err)
 	}
 	if err := handler.createOrderCoupons(ctx, tx); err != nil {
-		return err
+		return wlog.WrapError(err)
 	}
 	if err := handler.createPaymentBalances(ctx, tx); err != nil {
-		return err
+		return wlog.WrapError(err)
 	}
 	if err := handler.createPaymentTransfers(ctx, tx); err != nil {
-		return err
+		return wlog.WrapError(err)
 	}
 	if err := handler.createFeeOrders(ctx, tx); err != nil {
-		return err
+		return wlog.WrapError(err)
 	}
 	return handler.createPowerRental(ctx, tx)
 }

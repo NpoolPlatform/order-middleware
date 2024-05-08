@@ -34,7 +34,7 @@ func NewHandler(ctx context.Context, options ...func(context.Context, *Handler) 
 	}
 	for _, opt := range options {
 		if err := opt(ctx, handler); err != nil {
-			return nil, err
+			return nil, wlog.WrapError(err)
 		}
 	}
 	return handler, nil
@@ -63,7 +63,7 @@ func WithEntID(id *string, must bool) func(context.Context, *Handler) error {
 		}
 		_id, err := uuid.Parse(*id)
 		if err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		h.EntID = &_id
 		return nil
@@ -80,7 +80,7 @@ func WithGoodID(id *string, must bool) func(context.Context, *Handler) error {
 		}
 		_id, err := uuid.Parse(*id)
 		if err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		h.GoodID = &_id
 		return nil
@@ -97,7 +97,7 @@ func WithOrderID(id *string, must bool) func(context.Context, *Handler) error {
 		}
 		_id, err := uuid.Parse(*id)
 		if err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		h.OrderID = &_id
 		h.PowerRentalStateReq.OrderID = &_id
@@ -115,7 +115,7 @@ func WithCompensateFromID(id *string, must bool) func(context.Context, *Handler)
 		}
 		_id, err := uuid.Parse(*id)
 		if err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		h.CompensateFromID = &_id
 		return nil
@@ -168,7 +168,7 @@ func (h *Handler) withCompensateConds(conds *compensatemwpb.Conds) error {
 	if conds.EntID != nil {
 		id, err := uuid.Parse(conds.GetEntID().GetValue())
 		if err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		h.CompensateConds.EntID = &cruder.Cond{
 			Op: conds.GetEntID().GetOp(), Val: id,
@@ -177,7 +177,7 @@ func (h *Handler) withCompensateConds(conds *compensatemwpb.Conds) error {
 	if conds.OrderID != nil {
 		id, err := uuid.Parse(conds.GetOrderID().GetValue())
 		if err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		h.CompensateConds.OrderID = &cruder.Cond{
 			Op:  conds.GetOrderID().GetOp(),
@@ -187,7 +187,7 @@ func (h *Handler) withCompensateConds(conds *compensatemwpb.Conds) error {
 	if conds.CompensateFromID != nil {
 		id, err := uuid.Parse(conds.GetCompensateFromID().GetValue())
 		if err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		h.CompensateConds.CompensateFromID = &cruder.Cond{
 			Op:  conds.GetCompensateFromID().GetOp(),
@@ -201,7 +201,7 @@ func (h *Handler) withOrderBaseConds(conds *compensatemwpb.Conds) error {
 	if conds.OrderID != nil {
 		id, err := uuid.Parse(conds.GetOrderID().GetValue())
 		if err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		h.OrderBaseConds.EntID = &cruder.Cond{
 			Op:  conds.GetOrderID().GetOp(),
@@ -211,7 +211,7 @@ func (h *Handler) withOrderBaseConds(conds *compensatemwpb.Conds) error {
 	if conds.AppID != nil {
 		id, err := uuid.Parse(conds.GetAppID().GetValue())
 		if err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		h.OrderBaseConds.AppID = &cruder.Cond{
 			Op:  conds.GetAppID().GetOp(),
@@ -221,7 +221,7 @@ func (h *Handler) withOrderBaseConds(conds *compensatemwpb.Conds) error {
 	if conds.UserID != nil {
 		id, err := uuid.Parse(conds.GetUserID().GetValue())
 		if err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		h.OrderBaseConds.UserID = &cruder.Cond{
 			Op:  conds.GetUserID().GetOp(),
@@ -231,7 +231,7 @@ func (h *Handler) withOrderBaseConds(conds *compensatemwpb.Conds) error {
 	if conds.GoodID != nil {
 		id, err := uuid.Parse(conds.GetGoodID().GetValue())
 		if err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		h.OrderBaseConds.GoodID = &cruder.Cond{
 			Op:  conds.GetGoodID().GetOp(),
@@ -241,7 +241,7 @@ func (h *Handler) withOrderBaseConds(conds *compensatemwpb.Conds) error {
 	if conds.AppGoodID != nil {
 		id, err := uuid.Parse(conds.GetAppGoodID().GetValue())
 		if err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		h.OrderBaseConds.AppGoodID = &cruder.Cond{
 			Op:  conds.GetAppGoodID().GetOp(),
@@ -257,7 +257,7 @@ func WithConds(conds *compensatemwpb.Conds) func(context.Context, *Handler) erro
 			return nil
 		}
 		if err := h.withCompensateConds(conds); err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		return h.withOrderBaseConds(conds)
 	}

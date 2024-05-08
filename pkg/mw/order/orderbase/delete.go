@@ -4,6 +4,7 @@ import (
 	"context"
 	"time"
 
+	wlog "github.com/NpoolPlatform/go-service-framework/pkg/wlog"
 	orderbasecrud "github.com/NpoolPlatform/order-middleware/pkg/crud/order/orderbase"
 	"github.com/NpoolPlatform/order-middleware/pkg/db"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent"
@@ -21,7 +22,7 @@ func (h *deleteHandler) deleteOrderBase(ctx context.Context, cli *ent.Client) er
 			DeletedAt: &h.now,
 		},
 	).Save(ctx); err != nil {
-		return err
+		return wlog.WrapError(err)
 	}
 	return nil
 }
@@ -33,7 +34,7 @@ func (h *Handler) DeleteOrderBase(ctx context.Context) error {
 	}
 	info, err := h.GetOrderBase(ctx)
 	if err != nil {
-		return err
+		return wlog.WrapError(err)
 	}
 	if info == nil {
 		return nil

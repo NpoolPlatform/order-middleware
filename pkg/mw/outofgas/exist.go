@@ -3,6 +3,7 @@ package outofgas
 import (
 	"context"
 
+	wlog "github.com/NpoolPlatform/go-service-framework/pkg/wlog"
 	"github.com/NpoolPlatform/order-middleware/pkg/db"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent"
 )
@@ -19,11 +20,11 @@ func (h *Handler) ExistOutOfGas(ctx context.Context) (exist bool, err error) {
 	}
 	err = db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
 		if err := handler.queryOutOfGas(cli); err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		handler.queryJoin()
 		exist, err = handler.stmSelect.Exist(_ctx)
-		return err
+		return wlog.WrapError(err)
 	})
 	if err != nil {
 		return false, err
@@ -40,11 +41,11 @@ func (h *Handler) ExistOutOfGasConds(ctx context.Context) (exist bool, err error
 	err = db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
 		handler.stmSelect, err = handler.queryOutOfGases(cli)
 		if err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		handler.queryJoin()
 		exist, err = handler.stmSelect.Exist(_ctx)
-		return err
+		return wlog.WrapError(err)
 	})
 	if err != nil {
 		return false, err

@@ -3,6 +3,7 @@ package orderbase
 import (
 	"context"
 
+	wlog "github.com/NpoolPlatform/go-service-framework/pkg/wlog"
 	"github.com/NpoolPlatform/order-middleware/pkg/db"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent"
 	entorderbase "github.com/NpoolPlatform/order-middleware/pkg/db/ent/orderbase"
@@ -22,12 +23,12 @@ func (h *Handler) GetOrderBase(ctx context.Context) (OrderBase, error) {
 		}
 		_orderBase, err = stm.Only(_ctx)
 		if err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		return nil
 	})
 	if err != nil {
-		return nil, err
+		return nil, wlog.WrapError(err)
 	}
 	return &orderBase{
 		_ent: _orderBase,

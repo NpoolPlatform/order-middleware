@@ -4,6 +4,7 @@ import (
 	"context"
 	"time"
 
+	wlog "github.com/NpoolPlatform/go-service-framework/pkg/wlog"
 	outofgascrud "github.com/NpoolPlatform/order-middleware/pkg/crud/outofgas"
 	"github.com/NpoolPlatform/order-middleware/pkg/db"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent"
@@ -25,7 +26,7 @@ func (h *deleteHandler) deleteOutOfGas(ctx context.Context, tx *ent.Tx) error {
 			DeletedAt: &h.now,
 		},
 	).Save(ctx)
-	return err
+	return wlog.WrapError(err)
 }
 
 func (h *deleteHandler) updatePowerRentalState(ctx context.Context, tx *ent.Tx) error {
@@ -34,7 +35,7 @@ func (h *deleteHandler) updatePowerRentalState(ctx context.Context, tx *ent.Tx) 
 		UpdateOneID(h._ent.PowerRentalStateID()).
 		AddOutofgasSeconds(0 - int32(h.outOfGasSeconds)).
 		Save(ctx)
-	return err
+	return wlog.WrapError(err)
 }
 
 func (h *Handler) DeleteOutOfGas(ctx context.Context) error {
@@ -57,12 +58,12 @@ func (h *Handler) DeleteOutOfGas(ctx context.Context) error {
 		}(), false),
 	)
 	if err != nil {
-		return err
+		return wlog.WrapError(err)
 	}
 
 	info, err := h1.GetOutOfGas(ctx)
 	if err != nil {
-		return err
+		return wlog.WrapError(err)
 	}
 	if info == nil {
 		return nil
@@ -81,12 +82,12 @@ func (h *Handler) DeleteOutOfGas(ctx context.Context) error {
 	h.OrderID = func() *uuid.UUID { uid := uuid.MustParse(info.OrderID); return &uid }()
 
 	if err := handler.requirePowerRentalState(ctx); err != nil {
-		return err
+		return wlog.WrapError(err)
 	}
 
 	return db.WithTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {
 		if err := handler.deleteOutOfGas(_ctx, tx); err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		if info.EndAt == 0 {
 			return nil

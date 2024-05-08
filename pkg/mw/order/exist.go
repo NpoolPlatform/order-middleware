@@ -3,6 +3,7 @@ package order
 import (
 	"context"
 
+	wlog "github.com/NpoolPlatform/go-service-framework/pkg/wlog"
 	"github.com/NpoolPlatform/order-middleware/pkg/db"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent"
 )
@@ -20,11 +21,11 @@ func (h *Handler) ExistOrderConds(ctx context.Context) (exist bool, err error) {
 	err = db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
 		handler.stmSelect, err = handler.queryOrderBases(cli)
 		if err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		handler.queryJoin()
 		exist, err = handler.stmSelect.Exist(_ctx)
-		return err
+		return wlog.WrapError(err)
 	})
 	if err != nil {
 		return false, err

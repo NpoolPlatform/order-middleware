@@ -3,6 +3,7 @@ package appconfig
 import (
 	"context"
 
+	wlog "github.com/NpoolPlatform/go-service-framework/pkg/wlog"
 	"github.com/NpoolPlatform/order-middleware/pkg/db"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent"
 
@@ -20,10 +21,10 @@ func (h *Handler) ExistAppConfig(ctx context.Context) (exist bool, err error) {
 				entappconfig.DeletedAt(0),
 			).
 			Exist(_ctx)
-		return err
+		return wlog.WrapError(err)
 	})
 	if err != nil {
-		return false, err
+		return false, wlog.WrapError(err)
 	}
 	return exist, nil
 }
@@ -32,13 +33,13 @@ func (h *Handler) ExistAppConfigConds(ctx context.Context) (exist bool, err erro
 	err = db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
 		stm, err := appconfigcrud.SetQueryConds(cli.AppConfig.Query(), h.AppConfigConds)
 		if err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		exist, err = stm.Exist(_ctx)
-		return err
+		return wlog.WrapError(err)
 	})
 	if err != nil {
-		return false, err
+		return false, wlog.WrapError(err)
 	}
 	return exist, nil
 }

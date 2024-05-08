@@ -4,6 +4,7 @@ import (
 	"context"
 	"time"
 
+	wlog "github.com/NpoolPlatform/go-service-framework/pkg/wlog"
 	feeordercrud "github.com/NpoolPlatform/order-middleware/pkg/crud/fee"
 	feeorderstatecrud "github.com/NpoolPlatform/order-middleware/pkg/crud/fee/state"
 	orderbasecrud "github.com/NpoolPlatform/order-middleware/pkg/crud/order/orderbase"
@@ -24,7 +25,7 @@ func (h *deleteHandler) deleteOrderBase(ctx context.Context, tx *ent.Tx) error {
 			DeletedAt: &h.now,
 		},
 	).Save(ctx)
-	return err
+	return wlog.WrapError(err)
 }
 
 func (h *deleteHandler) deleteOrderStateBase(ctx context.Context, tx *ent.Tx) error {
@@ -34,7 +35,7 @@ func (h *deleteHandler) deleteOrderStateBase(ctx context.Context, tx *ent.Tx) er
 			DeletedAt: &h.now,
 		},
 	).Save(ctx)
-	return err
+	return wlog.WrapError(err)
 }
 
 func (h *deleteHandler) deleteFeeOrder(ctx context.Context, tx *ent.Tx) error {
@@ -44,7 +45,7 @@ func (h *deleteHandler) deleteFeeOrder(ctx context.Context, tx *ent.Tx) error {
 			DeletedAt: &h.now,
 		},
 	).Save(ctx)
-	return err
+	return wlog.WrapError(err)
 }
 
 func (h *deleteHandler) deleteFeeOrderState(ctx context.Context, tx *ent.Tx) error {
@@ -54,7 +55,7 @@ func (h *deleteHandler) deleteFeeOrderState(ctx context.Context, tx *ent.Tx) err
 			DeletedAt: &h.now,
 		},
 	).Save(ctx)
-	return err
+	return wlog.WrapError(err)
 }
 
 func (h *Handler) DeleteFeeOrderWithTx(ctx context.Context, tx *ent.Tx) error {
@@ -66,20 +67,20 @@ func (h *Handler) DeleteFeeOrderWithTx(ctx context.Context, tx *ent.Tx) error {
 	}
 
 	if err := handler.getFeeOrder(ctx); err != nil {
-		return err
+		return wlog.WrapError(err)
 	}
 	if !handler._ent.Exist() {
 		return nil
 	}
 
 	if err := handler.deleteOrderBase(ctx, tx); err != nil {
-		return err
+		return wlog.WrapError(err)
 	}
 	if err := handler.deleteOrderStateBase(ctx, tx); err != nil {
-		return err
+		return wlog.WrapError(err)
 	}
 	if err := handler.deleteFeeOrder(ctx, tx); err != nil {
-		return err
+		return wlog.WrapError(err)
 	}
 	return handler.deleteFeeOrderState(ctx, tx)
 }

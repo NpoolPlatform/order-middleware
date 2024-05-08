@@ -236,7 +236,7 @@ func (h *Handler) GetFeeOrder(ctx context.Context) (*npool.FeeOrder, error) {
 		return handler.queryOrderCoupons(_ctx, cli)
 	})
 	if err != nil {
-		return nil, err
+		return nil, wlog.WrapError(err)
 	}
 	if len(handler.infos) == 0 {
 		return nil, nil

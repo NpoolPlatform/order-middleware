@@ -25,7 +25,7 @@ func (h *powerRentalStateQueryHandler) getPowerRentalStateEnt(ctx context.Contex
 		if ent.IsNotFound(err) && !must {
 			return nil
 		}
-		return err
+		return wlog.WrapError(err)
 	}
 	return nil
 }

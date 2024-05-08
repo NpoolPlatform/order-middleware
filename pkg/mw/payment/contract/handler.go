@@ -19,7 +19,7 @@ func NewHandler(ctx context.Context, options ...func(context.Context, *Handler) 
 	handler := &Handler{}
 	for _, opt := range options {
 		if err := opt(ctx, handler); err != nil {
-			return nil, err
+			return nil, wlog.WrapError(err)
 		}
 	}
 	return handler, nil
@@ -48,7 +48,7 @@ func WithEntID(id *string, must bool) func(context.Context, *Handler) error {
 		}
 		_id, err := uuid.Parse(*id)
 		if err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		h.EntID = &_id
 		return nil
@@ -65,7 +65,7 @@ func WithOrderID(id *string, must bool) func(context.Context, *Handler) error {
 		}
 		_id, err := uuid.Parse(*id)
 		if err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		h.OrderID = &_id
 		return nil
@@ -82,7 +82,7 @@ func WithCoinTypeID(id *string, must bool) func(context.Context, *Handler) error
 		}
 		_id, err := uuid.Parse(*id)
 		if err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		h.CoinTypeID = &_id
 		return nil
@@ -99,7 +99,7 @@ func WithAmount(value *string, must bool) func(context.Context, *Handler) error 
 		}
 		amount, err := decimal.NewFromString(*value)
 		if err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		if amount.Cmp(decimal.NewFromInt(0)) <= 0 {
 			return wlog.Errorf("invalid amount")

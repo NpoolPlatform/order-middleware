@@ -44,7 +44,7 @@ func (h *baseQueryHandler) queryOrderBase(cli *ent.Client) error {
 func (h *baseQueryHandler) queryOrderBases(cli *ent.Client) (*ent.OrderBaseSelect, error) {
 	stm, err := orderbasecrud.SetQueryConds(cli.OrderBase.Query(), h.OrderBaseConds)
 	if err != nil {
-		return nil, err
+		return nil, wlog.WrapError(err)
 	}
 	return h.selectOrderBase(stm), nil
 }

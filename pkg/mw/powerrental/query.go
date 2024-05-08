@@ -65,7 +65,7 @@ func (h *queryHandler) queryOrderCoupons(ctx context.Context, cli *ent.Client) e
 		},
 	)
 	if err != nil {
-		return err
+		return wlog.WrapError(err)
 	}
 
 	return stm.Select(
@@ -90,7 +90,7 @@ func (h *queryHandler) queryPaymentBalances(ctx context.Context, cli *ent.Client
 		},
 	)
 	if err != nil {
-		return err
+		return wlog.WrapError(err)
 	}
 
 	return stm.Select(
@@ -119,7 +119,7 @@ func (h *queryHandler) queryPaymentTransfers(ctx context.Context, cli *ent.Clien
 		},
 	)
 	if err != nil {
-		return err
+		return wlog.WrapError(err)
 	}
 
 	return stm.Select(
@@ -211,17 +211,17 @@ func (h *Handler) GetPowerRental(ctx context.Context) (*npool.PowerRentalOrder, 
 
 	err := db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
 		if err := handler.queryOrderBase(cli); err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		handler.queryJoin()
 		if err := handler.scan(_ctx); err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		if err := handler.queryPaymentBalances(_ctx, cli); err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		if err := handler.queryPaymentTransfers(_ctx, cli); err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		return handler.queryOrderCoupons(_ctx, cli)
 	})
@@ -251,17 +251,17 @@ func (h *Handler) GetPowerRentals(ctx context.Context) ([]*npool.PowerRentalOrde
 	err = db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
 		handler.stmSelect, err = handler.queryOrderBases(cli)
 		if err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		handler.stmCount, err = handler.queryOrderBases(cli)
 		if err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 
 		handler.queryJoin()
 		_total, err := handler.stmCount.Count(_ctx)
 		if err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		handler.total = uint32(_total)
 
@@ -271,13 +271,13 @@ func (h *Handler) GetPowerRentals(ctx context.Context) ([]*npool.PowerRentalOrde
 			Order(ent.Desc(entpowerrental.FieldCreatedAt))
 
 		if err := handler.scan(_ctx); err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		if err := handler.queryPaymentBalances(_ctx, cli); err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		if err := handler.queryPaymentTransfers(_ctx, cli); err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		return handler.queryOrderCoupons(_ctx, cli)
 	})

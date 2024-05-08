@@ -4,6 +4,7 @@ import (
 	"context"
 	"time"
 
+	wlog "github.com/NpoolPlatform/go-service-framework/pkg/wlog"
 	compensatecrud "github.com/NpoolPlatform/order-middleware/pkg/crud/compensate"
 	"github.com/NpoolPlatform/order-middleware/pkg/db"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent"
@@ -24,7 +25,7 @@ func (h *deleteHandler) deleteCompensate(ctx context.Context, tx *ent.Tx) error 
 			DeletedAt: &h.now,
 		},
 	).Save(ctx)
-	return err
+	return wlog.WrapError(err)
 }
 
 func (h *deleteHandler) updatePowerRentalState(ctx context.Context, tx *ent.Tx) error {
@@ -33,7 +34,7 @@ func (h *deleteHandler) updatePowerRentalState(ctx context.Context, tx *ent.Tx) 
 		UpdateOneID(h._ent.PowerRentalStateID()).
 		AddCompensateSeconds(0 - int32(*h.CompensateSeconds)).
 		Save(ctx)
-	return err
+	return wlog.WrapError(err)
 }
 
 func (h *Handler) DeleteCompensate(ctx context.Context) error {
@@ -56,12 +57,12 @@ func (h *Handler) DeleteCompensate(ctx context.Context) error {
 		}(), false),
 	)
 	if err != nil {
-		return err
+		return wlog.WrapError(err)
 	}
 
 	info, err := h1.GetCompensate(ctx)
 	if err != nil {
-		return err
+		return wlog.WrapError(err)
 	}
 	if info == nil {
 		return nil
@@ -80,12 +81,12 @@ func (h *Handler) DeleteCompensate(ctx context.Context) error {
 	h.CompensateSeconds = &info.CompensateSeconds
 
 	if err := handler.requirePowerRentalStates(ctx); err != nil {
-		return err
+		return wlog.WrapError(err)
 	}
 
 	return db.WithTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {
 		if err := handler.deleteCompensate(_ctx, tx); err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		return handler.updatePowerRentalState(_ctx, tx)
 	})

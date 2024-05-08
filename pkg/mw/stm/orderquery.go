@@ -24,7 +24,7 @@ func (h *orderQueryHandler) getOrderBaseEnt(ctx context.Context, cli *ent.Client
 		if ent.IsNotFound(err) && !must {
 			return nil
 		}
-		return err
+		return wlog.WrapError(err)
 	}
 	return nil
 }
@@ -38,7 +38,7 @@ func (h *orderQueryHandler) getOrderStateBase(ctx context.Context, cli *ent.Clie
 			entorderstatebase.DeletedAt(0),
 		).
 		Only(ctx)
-	return err
+	return wlog.WrapError(err)
 }
 
 func (h *orderQueryHandler) _getOrder(ctx context.Context, must bool) error {
@@ -47,7 +47,7 @@ func (h *orderQueryHandler) _getOrder(ctx context.Context, must bool) error {
 	}
 	return db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
 		if err := h.getOrderBaseEnt(_ctx, cli, must); err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		if h._ent.entOrderBase == nil {
 			return nil

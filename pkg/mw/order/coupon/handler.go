@@ -29,7 +29,7 @@ func NewHandler(ctx context.Context, options ...func(context.Context, *Handler) 
 	}
 	for _, opt := range options {
 		if err := opt(ctx, handler); err != nil {
-			return nil, err
+			return nil, wlog.WrapError(err)
 		}
 	}
 	return handler, nil
@@ -58,7 +58,7 @@ func WithEntID(id *string, must bool) func(context.Context, *Handler) error {
 		}
 		_id, err := uuid.Parse(*id)
 		if err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		h.EntID = &_id
 		return nil
@@ -75,7 +75,7 @@ func WithOrderID(id *string, must bool) func(context.Context, *Handler) error {
 		}
 		_id, err := uuid.Parse(*id)
 		if err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		h.OrderID = &_id
 		return nil
@@ -92,7 +92,7 @@ func WithCouponID(id *string, must bool) func(context.Context, *Handler) error {
 		}
 		_id, err := uuid.Parse(*id)
 		if err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		h.CouponID = &_id
 		return nil
@@ -108,7 +108,7 @@ func (h *Handler) withOrderCouponConds(conds *npool.Conds) error {
 	if conds.EntID != nil {
 		id, err := uuid.Parse(conds.GetEntID().GetValue())
 		if err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		h.OrderCouponConds.EntID = &cruder.Cond{
 			Op: conds.GetEntID().GetOp(), Val: id,
@@ -117,7 +117,7 @@ func (h *Handler) withOrderCouponConds(conds *npool.Conds) error {
 	if conds.OrderID != nil {
 		id, err := uuid.Parse(conds.GetOrderID().GetValue())
 		if err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		h.OrderCouponConds.OrderID = &cruder.Cond{
 			Op:  conds.GetOrderID().GetOp(),
@@ -127,7 +127,7 @@ func (h *Handler) withOrderCouponConds(conds *npool.Conds) error {
 	if conds.CouponID != nil {
 		id, err := uuid.Parse(conds.GetCouponID().GetValue())
 		if err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		h.OrderCouponConds.CouponID = &cruder.Cond{
 			Op:  conds.GetCouponID().GetOp(),
@@ -141,7 +141,7 @@ func (h *Handler) withOrderBaseConds(conds *npool.Conds) error {
 	if conds.OrderID != nil {
 		id, err := uuid.Parse(conds.GetOrderID().GetValue())
 		if err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		h.OrderBaseConds.EntID = &cruder.Cond{
 			Op:  conds.GetOrderID().GetOp(),
@@ -151,7 +151,7 @@ func (h *Handler) withOrderBaseConds(conds *npool.Conds) error {
 	if conds.AppID != nil {
 		id, err := uuid.Parse(conds.GetAppID().GetValue())
 		if err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		h.OrderBaseConds.AppID = &cruder.Cond{
 			Op:  conds.GetAppID().GetOp(),
@@ -161,7 +161,7 @@ func (h *Handler) withOrderBaseConds(conds *npool.Conds) error {
 	if conds.UserID != nil {
 		id, err := uuid.Parse(conds.GetUserID().GetValue())
 		if err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		h.OrderBaseConds.UserID = &cruder.Cond{
 			Op:  conds.GetUserID().GetOp(),
@@ -177,7 +177,7 @@ func WithConds(conds *npool.Conds) func(context.Context, *Handler) error {
 			return nil
 		}
 		if err := h.withOrderCouponConds(conds); err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		return h.withOrderBaseConds(conds)
 	}
