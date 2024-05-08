@@ -135,6 +135,7 @@ func (h *queryHandler) queryPaymentTransfers(ctx context.Context, cli *ent.Clien
 	}
 
 	return stm.Select(
+		entpaymenttransfer.FieldEntID,
 		entpaymenttransfer.FieldPaymentID,
 		entpaymenttransfer.FieldCoinTypeID,
 		entpaymenttransfer.FieldAmount,
