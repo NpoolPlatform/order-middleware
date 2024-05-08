@@ -169,3 +169,12 @@ func DeleteFeeOrder(ctx context.Context, id *uint32, entID, orderID *string) err
 	})
 	return err
 }
+
+func DeleteFeeOrders(ctx context.Context, in []*npool.FeeOrderReq) error {
+	_, err := withClient(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (interface{}, error) {
+		return cli.DeleteFeeOrders(ctx, &npool.DeleteFeeOrdersRequest{
+			Infos: in,
+		})
+	})
+	return err
+}
