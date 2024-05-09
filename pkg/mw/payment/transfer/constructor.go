@@ -9,7 +9,7 @@ import (
 	paymentcommon "github.com/NpoolPlatform/order-middleware/pkg/mw/payment/common"
 )
 
-//nolint:goconst
+//nolint:goconst,funlen
 func (h *Handler) ConstructCreateSQL() string {
 	handler := &paymentcommon.PaymentCommonHandler{
 		LocalCoinUSDCurrency: h.LocalCoinUSDCurrency,
