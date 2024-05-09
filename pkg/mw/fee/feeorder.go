@@ -32,6 +32,9 @@ func (f *feeOrder) OrderID() uuid.UUID {
 }
 
 func (f *feeOrder) PaymentID() uuid.UUID {
+	if f.entPaymentBase == nil {
+		return uuid.Nil
+	}
 	return f.entPaymentBase.EntID
 }
 
