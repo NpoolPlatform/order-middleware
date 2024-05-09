@@ -33,9 +33,7 @@ func (h *Handler) ConstructCreateSQL() string {
 	_sql += comma + "amount"
 	_sql += comma + "start_amount"
 	_sql += comma + "coin_usd_currency"
-	if h.LocalCoinUSDCurrency != nil {
-		_sql += comma + "local_coin_usd_currency"
-	}
+	_sql += comma + "local_coin_usd_currency"
 	_sql += comma + "live_coin_usd_currency"
 	_sql += comma + "created_at"
 	_sql += comma + "updated_at"
@@ -56,6 +54,8 @@ func (h *Handler) ConstructCreateSQL() string {
 	_sql += fmt.Sprintf("%v'%v' as coin_usd_currency", comma, *h.CoinUSDCurrency)
 	if h.LocalCoinUSDCurrency != nil {
 		_sql += fmt.Sprintf("%v'%v' as local_coin_usd_currency", comma, *h.LocalCoinUSDCurrency)
+	} else {
+		_sql += fmt.Sprintf("%v'0' as local_coin_usd_currency", comma)
 	}
 	_sql += fmt.Sprintf("%v'%v' as live_coin_usd_currency", comma, *h.LiveCoinUSDCurrency)
 	_sql += fmt.Sprintf("%v%v as created_at", comma, now)
