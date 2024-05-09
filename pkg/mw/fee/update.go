@@ -61,9 +61,10 @@ func (h *updateHandler) constructOrderStateBaseSQL(ctx context.Context) (err err
 
 func (h *updateHandler) constructPayWithMeOrderStateBaseSQLs(ctx context.Context) error {
 	for _, orderID := range h._ent.PayWithMeOrderIDs() {
+		_orderID := orderID
 		handler, _ := orderstatebase1.NewHandler(ctx)
 		handler.Req = *h.OrderStateBaseReq
-		handler.OrderID = &orderID
+		handler.OrderID = &_orderID
 		sql, err := handler.ConstructUpdateSQL()
 		if err != nil {
 			if wlog.Equal(err, cruder.ErrUpdateNothing) {
@@ -87,9 +88,10 @@ func (h *updateHandler) constructFeeOrderStateSQL(ctx context.Context) (err erro
 
 func (h *updateHandler) constructPayWithMeFeeOrderStateSQLs(ctx context.Context) error {
 	for _, orderID := range h._ent.PayWithMeOrderIDs() {
+		_orderID := orderID
 		handler, _ := feeorderstate1.NewHandler(ctx)
 		handler.Req = *h.FeeOrderStateReq
-		handler.OrderID = &orderID
+		handler.OrderID = &_orderID
 		sql, err := handler.ConstructUpdateSQL()
 		if err != nil {
 			if wlog.Equal(err, cruder.ErrUpdateNothing) {
