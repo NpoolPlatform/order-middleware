@@ -303,15 +303,14 @@ func (h *Handler) CreatePowerRentalWithTx(ctx context.Context, tx *ent.Tx) error
 		h.EntID = func() *uuid.UUID { uid := uuid.New(); return &uid }()
 	}
 
-	if err := handler.validatePaymentType(); err != nil {
-		return wlog.WrapError(err)
-	}
-
 	handler.formalizeOrderID()
 	handler.formalizeOrderLocks()
 	handler.formalizeEntIDs()
 	handler.formalizeOrderCoupons()
 	handler.formalizePaymentID()
+	if err := handler.validatePaymentType(); err != nil {
+		return wlog.WrapError(err)
+	}
 	handler.formalizePaymentBalances()
 	handler.formalizePaymentTransfers()
 	handler.formalizeFeeOrders()
