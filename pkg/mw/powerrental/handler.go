@@ -796,11 +796,13 @@ func WithPaymentTransfers(bs []*paymentmwpb.PaymentTransferReq, must bool) func(
 			}
 			req.LiveCoinUSDCurrency = &amount3
 
-			amount4, err := decimal.NewFromString(b.GetFinishAmount())
-			if err != nil {
-				return wlog.WrapError(err)
+			if b.FinishAmount != nil {
+				amount4, err := decimal.NewFromString(b.GetFinishAmount())
+				if err != nil {
+					return wlog.WrapError(err)
+				}
+				req.FinishAmount = &amount4
 			}
-			req.FinishAmount = &amount4
 
 			h.PaymentTransferReqs = append(h.PaymentTransferReqs, req)
 		}
