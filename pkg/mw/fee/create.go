@@ -211,9 +211,6 @@ func (h *createHandler) formalizeEntIDs() {
 	if h.FeeOrderStateReq.EntID == nil {
 		h.FeeOrderStateReq.EntID = func() *uuid.UUID { uid := uuid.New(); return &uid }()
 	}
-	if h.PaymentBaseReq.EntID == nil {
-		h.PaymentBaseReq.EntID = func() *uuid.UUID { uid := uuid.New(); return &uid }()
-	}
 	if h.PaymentBalanceLockReq.EntID == nil {
 		h.PaymentBalanceLockReq.EntID = func() *uuid.UUID { uid := uuid.New(); return &uid }()
 	}
@@ -246,7 +243,23 @@ func (h *createHandler) formalizePaymentTransfers() {
 	}
 }
 
+// TODO: validate payment type
+
 func (h *createHandler) formalizePaymentID() {
+	switch *h.OrderStateBaseReq.PaymentType {
+	case types.PaymentType_PayWithParentOrder:
+		fallthrough //nolint
+	case types.PaymentType_PayWithContract:
+		fallthrough //nolint
+	case types.PaymentType_PayWithOffline:
+		fallthrough //nolint
+	case types.PaymentType_PayWithNoPayment:
+		return
+	}
+	if h.PaymentBaseReq.EntID != nil {
+		return
+	}
+	h.PaymentBaseReq.EntID = func() *uuid.UUID { uid := uuid.New(); return &uid }()
 	h.FeeOrderStateReq.PaymentID = h.PaymentBaseReq.EntID
 	h.PaymentBalanceLockReq.PaymentID = h.PaymentBaseReq.EntID
 }

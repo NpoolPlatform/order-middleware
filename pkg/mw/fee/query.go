@@ -90,6 +90,9 @@ func (h *queryHandler) queryOrderCoupons(ctx context.Context, cli *ent.Client) e
 func (h *queryHandler) queryPaymentBalances(ctx context.Context, cli *ent.Client) error {
 	paymentIDs := func() (uids []uuid.UUID) {
 		for _, info := range h.infos {
+			if _, err := uuid.Parse(info.PaymentID); err != nil {
+				continue
+			}
 			uids = append(uids, uuid.MustParse(info.PaymentID))
 		}
 		return
@@ -119,6 +122,9 @@ func (h *queryHandler) queryPaymentBalances(ctx context.Context, cli *ent.Client
 func (h *queryHandler) queryPaymentTransfers(ctx context.Context, cli *ent.Client) error {
 	paymentIDs := func() (uids []uuid.UUID) {
 		for _, info := range h.infos {
+			if _, err := uuid.Parse(info.PaymentID); err != nil {
+				continue
+			}
 			uids = append(uids, uuid.MustParse(info.PaymentID))
 		}
 		return

@@ -14,6 +14,7 @@ import (
 	paymentbase1 "github.com/NpoolPlatform/order-middleware/pkg/mw/payment"
 	paymentbalance1 "github.com/NpoolPlatform/order-middleware/pkg/mw/payment/balance"
 	paymentbalancelock1 "github.com/NpoolPlatform/order-middleware/pkg/mw/payment/balance/lock"
+	paymentcommon "github.com/NpoolPlatform/order-middleware/pkg/mw/payment/common"
 	paymenttransfer1 "github.com/NpoolPlatform/order-middleware/pkg/mw/payment/transfer"
 	powerrentalstate1 "github.com/NpoolPlatform/order-middleware/pkg/mw/powerrental/state"
 
@@ -22,6 +23,7 @@ import (
 
 type createHandler struct {
 	*Handler
+	paymentChecker        *paymentcommon.PaymentCheckHandler
 	payWithBalance        bool
 	sql                   string
 	sqlOrderBase          string
@@ -87,6 +89,9 @@ func (h *createHandler) constructOrderCouponSQLs(ctx context.Context) {
 }
 
 func (h *createHandler) constructPaymentBaseSQL(ctx context.Context) {
+	if !h.paymentChecker.Payable() {
+		return
+	}
 	handler, _ := paymentbase1.NewHandler(ctx)
 	handler.Req = *h.PaymentBaseReq
 	h.sqlPaymentBase = handler.ConstructCreateSQL()
@@ -207,9 +212,6 @@ func (h *createHandler) formalizeEntIDs() {
 	if h.PowerRentalStateReq.EntID == nil {
 		h.PowerRentalStateReq.EntID = func() *uuid.UUID { uid := uuid.New(); return &uid }()
 	}
-	if h.PaymentBaseReq.EntID == nil {
-		h.PaymentBaseReq.EntID = func() *uuid.UUID { uid := uuid.New(); return &uid }()
-	}
 	if h.PaymentBalanceLockReq.EntID == nil {
 		h.PaymentBalanceLockReq.EntID = func() *uuid.UUID { uid := uuid.New(); return &uid }()
 	}
@@ -255,6 +257,9 @@ func (h *createHandler) formalizeFeeOrders() {
 }
 
 func (h *createHandler) formalizePaymentID() {
+	if !h.paymentChecker.Payable() {
+		return
+	}
 	if h.PaymentBaseReq.EntID != nil {
 		return
 	}
@@ -297,6 +302,13 @@ func (h *createHandler) validatePaymentType() error {
 func (h *Handler) CreatePowerRentalWithTx(ctx context.Context, tx *ent.Tx) error {
 	handler := &createHandler{
 		Handler: h,
+		paymentChecker: &paymentcommon.PaymentCheckHandler{
+			PaymentType:         h.OrderStateBaseReq.PaymentType,
+			PaymentBalanceReqs:  h.PaymentBalanceReqs,
+			PaymentTransferReqs: h.PaymentTransferReqs,
+			PaymentAmountUSD:    h.PaymentAmountUSD,
+			DiscountAmountUSD:   h.DiscountAmountUSD,
+		},
 	}
 
 	if h.EntID == nil {
@@ -338,8 +350,10 @@ func (h *Handler) CreatePowerRentalWithTx(ctx context.Context, tx *ent.Tx) error
 	if err := handler.createOrderLocks(ctx, tx); err != nil {
 		return wlog.WrapError(err)
 	}
-	if err := handler.createPaymentBase(ctx, tx); err != nil {
-		return wlog.WrapError(err)
+	if handler.paymentChecker.Payable() {
+		if err := handler.createPaymentBase(ctx, tx); err != nil {
+			return wlog.WrapError(err)
+		}
 	}
 	if err := handler.createPaymentBalanceLock(ctx, tx); err != nil {
 		return wlog.WrapError(err)
