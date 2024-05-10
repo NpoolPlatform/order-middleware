@@ -61,6 +61,9 @@ func (h *createHandler) constructPowerRentalStateSQL(ctx context.Context) {
 }
 
 func (h *createHandler) constructOrderLockSQLs(ctx context.Context) {
+	if h.OrderBaseReq.Simulate != nil && *h.OrderBaseReq.Simulate {
+		return
+	}
 	for _, req := range h.OrderLockReqs {
 		handler, _ := orderlock1.NewHandler(ctx)
 		handler.Req = *req
@@ -299,6 +302,21 @@ func (h *createHandler) validatePaymentType() error {
 	return nil
 }
 
+func (h *Handler) validateAppGoodStock() error {
+	if h.OrderBaseReq.Simulate == nil || !*h.OrderBaseReq.Simulate {
+		return nil
+	}
+	if h.AppGoodStockID == nil {
+		return wlog.Errorf("invalid appgoodstockid")
+	}
+	for _, req := range h.OrderLockReqs {
+		if *req.LockType == types.OrderLockType_LockStock {
+			return nil
+		}
+	}
+	return wlog.Errorf("invalid appgoodstocklock")
+}
+
 func (h *Handler) CreatePowerRentalWithTx(ctx context.Context, tx *ent.Tx) error {
 	handler := &createHandler{
 		Handler: h,
@@ -311,6 +329,9 @@ func (h *Handler) CreatePowerRentalWithTx(ctx context.Context, tx *ent.Tx) error
 		},
 	}
 
+	if err := h.validateAppGoodStock(); err != nil {
+		return err
+	}
 	if h.EntID == nil {
 		h.EntID = func() *uuid.UUID { uid := uuid.New(); return &uid }()
 	}

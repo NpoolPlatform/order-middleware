@@ -18,7 +18,9 @@ func (h *Handler) ConstructCreateSQL() string {
 	}
 	_sql += comma + "order_id"
 	comma = ", "
-	_sql += comma + "app_good_stock_id"
+	if h.AppGoodStockID != nil {
+		_sql += comma + "app_good_stock_id"
+	}
 	_sql += comma + "units"
 	_sql += comma + "good_value_usd"
 	_sql += comma + "payment_amount_usd"
@@ -41,7 +43,9 @@ func (h *Handler) ConstructCreateSQL() string {
 	}
 	_sql += fmt.Sprintf("%v'%v' as order_id", comma, *h.OrderID)
 	comma = ", "
-	_sql += fmt.Sprintf("%v'%v' as app_good_stock_id", comma, *h.AppGoodStockID)
+	if h.AppGoodStockID != nil {
+		_sql += fmt.Sprintf("%v'%v' as app_good_stock_id", comma, *h.AppGoodStockID)
+	}
 	_sql += fmt.Sprintf("%v'%v' as units", comma, *h.Units)
 	_sql += fmt.Sprintf("%v'%v' as good_value_usd", comma, *h.GoodValueUSD)
 	if h.PaymentAmountUSD != nil {
