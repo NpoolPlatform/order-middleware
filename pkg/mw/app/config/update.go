@@ -16,7 +16,6 @@ type updateHandler struct {
 	sql string
 }
 
-//nolint:gocyclo
 func (h *updateHandler) constructSQL() error {
 	if h.ID == nil && h.EntID == nil && h.AppID == nil {
 		return wlog.Errorf("invalid appconfigid")
