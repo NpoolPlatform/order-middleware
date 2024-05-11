@@ -302,7 +302,7 @@ func (h *createHandler) validatePaymentType() error {
 	return nil
 }
 
-func (h *Handler) validateAppGoodStock() error {
+func (h *createHandler) validateAppGoodStock() error {
 	if h.OrderBaseReq.Simulate == nil || !*h.OrderBaseReq.Simulate {
 		return nil
 	}
@@ -329,7 +329,7 @@ func (h *Handler) CreatePowerRentalWithTx(ctx context.Context, tx *ent.Tx) error
 		},
 	}
 
-	if err := h.validateAppGoodStock(); err != nil {
+	if err := handler.validateAppGoodStock(); err != nil {
 		return err
 	}
 	if h.EntID == nil {

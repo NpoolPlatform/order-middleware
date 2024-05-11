@@ -10,6 +10,7 @@ import (
 	paymentbasecrud "github.com/NpoolPlatform/order-middleware/pkg/crud/payment"
 	"github.com/NpoolPlatform/order-middleware/pkg/db"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent"
+	feeorderstate1 "github.com/NpoolPlatform/order-middleware/pkg/mw/fee/state"
 	orderlock1 "github.com/NpoolPlatform/order-middleware/pkg/mw/order/lock"
 	orderstatebase1 "github.com/NpoolPlatform/order-middleware/pkg/mw/order/statebase"
 	paymentbase1 "github.com/NpoolPlatform/order-middleware/pkg/mw/payment"
@@ -38,6 +39,9 @@ type updateHandler struct {
 	sqlPaymentBalances    []string
 	sqlPaymentTransfers   []string
 
+	sqlPayWithMeOrderStateBases []string
+	sqlPayWithMeFeeOrderStates  []string
+
 	updateNothing bool
 }
 
@@ -51,6 +55,24 @@ func (h *updateHandler) constructOrderStateBaseSQL(ctx context.Context) (err err
 	return wlog.WrapError(err)
 }
 
+func (h *updateHandler) constructPayWithMeOrderStateBaseSQLs(ctx context.Context) error {
+	for _, orderID := range h._ent.PayWithMeOrderIDs() {
+		_orderID := orderID
+		handler, _ := orderstatebase1.NewHandler(ctx)
+		handler.Req = *h.OrderStateBaseReq
+		handler.OrderID = &_orderID
+		sql, err := handler.ConstructUpdateSQL()
+		if err != nil {
+			if wlog.Equal(err, cruder.ErrUpdateNothing) {
+				continue
+			}
+			return wlog.WrapError(err)
+		}
+		h.sqlPayWithMeOrderStateBases = append(h.sqlPayWithMeOrderStateBases, sql)
+	}
+	return nil
+}
+
 func (h *updateHandler) constructPowerRentalStateSQL(ctx context.Context) (err error) {
 	handler, _ := powerrentalstate1.NewHandler(ctx)
 	handler.Req = *h.PowerRentalStateReq
@@ -58,6 +80,32 @@ func (h *updateHandler) constructPowerRentalStateSQL(ctx context.Context) (err e
 		return nil
 	}
 	return wlog.WrapError(err)
+}
+
+func (h *updateHandler) constructPayWithMeFeeOrderStateSQLs(ctx context.Context) error {
+	for _, orderID := range h._ent.PayWithMeOrderIDs() {
+		_orderID := orderID
+		handler, err := feeorderstate1.NewHandler(
+			ctx,
+			feeorderstate1.WithOrderID(func() *string { s := orderID.String(); return &s }(), true),
+			feeorderstate1.WithCancelState(h.PowerRentalStateReq.CancelState, false),
+			feeorderstate1.WithPaidAt(h.PowerRentalStateReq.PaidAt, false),
+			feeorderstate1.WithUserSetPaid(h.PowerRentalStateReq.UserSetPaid, false),
+			feeorderstate1.WithUserSetCanceled(h.PowerRentalStateReq.UserSetCanceled, false),
+			feeorderstate1.WithAdminSetCanceled(h.PowerRentalStateReq.AdminSetCanceled, false),
+			feeorderstate1.WithPaymentState(h.PowerRentalStateReq.PaymentState, false),
+		)
+		handler.OrderID = &_orderID
+		sql, err := handler.ConstructUpdateSQL()
+		if err != nil {
+			if wlog.Equal(err, cruder.ErrUpdateNothing) {
+				continue
+			}
+			return wlog.WrapError(err)
+		}
+		h.sqlPayWithMeFeeOrderStates = append(h.sqlPayWithMeFeeOrderStates, sql)
+	}
+	return nil
 }
 
 func (h *updateHandler) constructOrderLockSQLs(ctx context.Context) {
@@ -151,11 +199,29 @@ func (h *updateHandler) updateOrderStateBase(ctx context.Context, tx *ent.Tx) er
 	return h.execSQL(ctx, tx, h.sqlOrderStateBase)
 }
 
+func (h *updateHandler) updatePayWithMeOrderStateBases(ctx context.Context, tx *ent.Tx) error {
+	for _, sql := range h.sqlPayWithMeOrderStateBases {
+		if err := h.execSQL(ctx, tx, sql); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
 func (h *updateHandler) updatePowerRentalState(ctx context.Context, tx *ent.Tx) error {
 	if h.sqlPowerRentalState == "" {
 		return nil
 	}
 	return h.execSQL(ctx, tx, h.sqlPowerRentalState)
+}
+
+func (h *updateHandler) updatePayWithMeFeeOrderStates(ctx context.Context, tx *ent.Tx) error {
+	for _, sql := range h.sqlPayWithMeFeeOrderStates {
+		if err := h.execSQL(ctx, tx, sql); err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
 func (h *updateHandler) createOrderLocks(ctx context.Context, tx *ent.Tx) error {
@@ -368,7 +434,13 @@ func (h *Handler) UpdatePowerRentalWithTx(ctx context.Context, tx *ent.Tx) error
 	if err := handler.constructOrderStateBaseSQL(ctx); err != nil {
 		return wlog.WrapError(err)
 	}
+	if err := handler.constructPayWithMeOrderStateBaseSQLs(ctx); err != nil {
+		return wlog.WrapError(err)
+	}
 	if err := handler.constructPowerRentalStateSQL(ctx); err != nil {
+		return wlog.WrapError(err)
+	}
+	if err := handler.constructPayWithMeFeeOrderStateSQLs(ctx); err != nil {
 		return wlog.WrapError(err)
 	}
 	handler.constructOrderLockSQLs(ctx)
@@ -385,7 +457,13 @@ func (h *Handler) UpdatePowerRentalWithTx(ctx context.Context, tx *ent.Tx) error
 	if err := handler.updateOrderStateBase(ctx, tx); err != nil {
 		return wlog.WrapError(err)
 	}
+	if err := handler.updatePayWithMeOrderStateBases(ctx, tx); err != nil {
+		return wlog.WrapError(err)
+	}
 	if err := handler.updatePowerRentalState(ctx, tx); err != nil {
+		return wlog.WrapError(err)
+	}
+	if err := handler.updatePayWithMeFeeOrderStates(ctx, tx); err != nil {
 		return wlog.WrapError(err)
 	}
 	if err := handler.updateObseletePaymentBase(ctx, tx); err != nil {

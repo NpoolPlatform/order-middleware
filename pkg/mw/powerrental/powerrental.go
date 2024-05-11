@@ -24,6 +24,7 @@ type powerRental struct {
 	entLedgerLock       *ent.OrderLock
 	entStockLock        *ent.OrderLock
 	entOrderCoupons     []*ent.OrderCoupon
+	payWithMeOrderIDs   []uuid.UUID
 }
 
 func (f *powerRental) OrderID() uuid.UUID {
@@ -76,4 +77,8 @@ func (f *powerRental) UserSetCanceled() bool {
 
 func (f *powerRental) AdminSetCanceled() bool {
 	return f.entPowerRentalState.AdminSetCanceled
+}
+
+func (f *powerRental) PayWithMeOrderIDs() []uuid.UUID {
+	return f.payWithMeOrderIDs
 }

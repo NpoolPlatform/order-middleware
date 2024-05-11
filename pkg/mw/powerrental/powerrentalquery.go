@@ -7,6 +7,7 @@ import (
 	types "github.com/NpoolPlatform/message/npool/basetypes/order/v1"
 	"github.com/NpoolPlatform/order-middleware/pkg/db"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent"
+	entfeeorderstate "github.com/NpoolPlatform/order-middleware/pkg/db/ent/feeorderstate"
 	entorderbase "github.com/NpoolPlatform/order-middleware/pkg/db/ent/orderbase"
 	entordercoupon "github.com/NpoolPlatform/order-middleware/pkg/db/ent/ordercoupon"
 	entorderlock "github.com/NpoolPlatform/order-middleware/pkg/db/ent/orderlock"
@@ -183,6 +184,24 @@ func (h *powerRentalQueryHandler) getOrderCoupons(ctx context.Context, cli *ent.
 	return wlog.WrapError(err)
 }
 
+func (h *powerRentalQueryHandler) getPayWithMeOrders(ctx context.Context, cli *ent.Client) error {
+	infos, err := cli.
+		FeeOrderState.
+		Query().
+		Where(
+			entfeeorderstate.PaymentID(h._ent.entPowerRentalState.PaymentID),
+			entfeeorderstate.DeletedAt(0),
+		).
+		All(ctx)
+	if err != nil {
+		return wlog.WrapError(err)
+	}
+	for _, info := range infos {
+		h._ent.payWithMeOrderIDs = append(h._ent.payWithMeOrderIDs, info.OrderID)
+	}
+	return nil
+}
+
 func (h *powerRentalQueryHandler) _getPowerRental(ctx context.Context, must bool) error {
 	if h.ID == nil && h.EntID == nil && h.OrderID == nil {
 		return wlog.Errorf("invalid id")
@@ -216,6 +235,9 @@ func (h *powerRentalQueryHandler) _getPowerRental(ctx context.Context, must bool
 			return wlog.WrapError(err)
 		}
 		if err := h.getPaymentTransfers(_ctx, cli); err != nil {
+			return wlog.WrapError(err)
+		}
+		if err := h.getPayWithMeOrders(_ctx, cli); err != nil {
 			return wlog.WrapError(err)
 		}
 		return h.getOrderCoupons(_ctx, cli)
