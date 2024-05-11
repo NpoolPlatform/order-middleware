@@ -333,6 +333,7 @@ func (h *updateHandler) formalizePaymentID() error {
 
 	h.obseletePaymentBaseReq.EntID = func() *uuid.UUID { uid := h._ent.PaymentID(); return &uid }()
 	h.PowerRentalStateReq.PaymentID = h.PaymentBaseReq.EntID
+	h.PaymentBalanceLockReq.PaymentID = h.PaymentBaseReq.EntID
 	return nil
 }
 
