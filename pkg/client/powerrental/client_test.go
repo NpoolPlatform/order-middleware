@@ -274,7 +274,6 @@ func TestPowerRentalOrder(t *testing.T) {
 	})
 
 	t.Run("createPowerRentalOrderWithFees", createPowerRentalOrderWithFees)
-	return
 	t.Run("updatePowerRentalOrder", updatePowerRentalOrder)
 	t.Run("getPowerRentalOrder", getPowerRentalOrder)
 	t.Run("getPowerRentalOrders", getPowerRentalOrders)
