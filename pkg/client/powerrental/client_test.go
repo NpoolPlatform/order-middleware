@@ -169,7 +169,6 @@ func createPowerRentalOrderWithFees(t *testing.T) {
 				})
 			}
 			return
-
 		}())
 	if assert.Nil(t, err) {
 		info, err := GetPowerRentalOrder(context.Background(), ret.OrderID)
