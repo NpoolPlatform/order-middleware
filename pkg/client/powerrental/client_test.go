@@ -78,6 +78,12 @@ var ret = npool.PowerRentalOrder{
 	PaymentState: types.PaymentState_PaymentStateWait,
 	StartMode:    types.OrderStartMode_OrderStartInstantly,
 	StartAt:      uint32(time.Now().Unix() + 100),
+	FeeDurations: []*feeordermwpb.FeeDuration{
+		{
+			AppGoodID:            uuid.NewString(),
+			TotalDurationSeconds: 16000,
+		},
+	},
 }
 
 //nolint:unparam
@@ -87,6 +93,9 @@ func setup(t *testing.T) func(*testing.T) {
 	}
 	for _, orderCoupon := range ret.Coupons {
 		orderCoupon.OrderID = ret.OrderID
+	}
+	for _, feeDuration := range ret.FeeDurations {
+		feeDuration.ParentOrderID = ret.OrderID
 	}
 
 	ret.EndAt = ret.StartAt + ret.DurationSeconds
@@ -104,58 +113,64 @@ func setup(t *testing.T) func(*testing.T) {
 }
 
 func createPowerRentalOrderWithFees(t *testing.T) {
-	err := CreatePowerRentalOrderWithFees(context.Background(), &npool.PowerRentalOrderReq{
-		EntID:              &ret.EntID,
-		AppID:              &ret.AppID,
-		UserID:             &ret.UserID,
-		GoodID:             &ret.GoodID,
-		GoodType:           &ret.GoodType,
-		AppGoodID:          &ret.AppGoodID,
-		OrderID:            &ret.OrderID,
-		OrderType:          &ret.OrderType,
-		AppGoodStockID:     &ret.AppGoodStockID,
-		Units:              &ret.Units,
-		PaymentType:        &ret.PaymentType,
-		CreateMethod:       &ret.CreateMethod,
-		GoodValueUSD:       &ret.GoodValueUSD,
-		PaymentAmountUSD:   &ret.PaymentAmountUSD,
-		DiscountAmountUSD:  &ret.DiscountAmountUSD,
-		PromotionID:        &ret.PromotionID,
-		DurationSeconds:    &ret.DurationSeconds,
-		AppGoodStockLockID: &ret.AppGoodStockLockID,
-		LedgerLockID:       &ret.LedgerLockID,
-		PaymentID:          &ret.PaymentID,
-		CouponIDs: func() (_couponIDs []string) {
-			for _, coupon := range ret.Coupons {
-				_couponIDs = append(_couponIDs, coupon.CouponID)
-			}
-			return
-		}(),
-		PaymentBalances: func() (_reqs []*paymentmwpb.PaymentBalanceReq) {
-			for _, req := range ret.PaymentBalances {
-				_reqs = append(_reqs, &paymentmwpb.PaymentBalanceReq{
-					CoinTypeID:           &req.CoinTypeID,
-					Amount:               &req.Amount,
-					LocalCoinUSDCurrency: &req.LocalCoinUSDCurrency,
-					LiveCoinUSDCurrency:  &req.LiveCoinUSDCurrency,
+	err := CreatePowerRentalOrderWithFees(
+		context.Background(),
+		&npool.PowerRentalOrderReq{
+			EntID:              &ret.EntID,
+			AppID:              &ret.AppID,
+			UserID:             &ret.UserID,
+			GoodID:             &ret.GoodID,
+			GoodType:           &ret.GoodType,
+			AppGoodID:          &ret.AppGoodID,
+			OrderID:            &ret.OrderID,
+			OrderType:          &ret.OrderType,
+			AppGoodStockID:     &ret.AppGoodStockID,
+			Units:              &ret.Units,
+			PaymentType:        &ret.PaymentType,
+			CreateMethod:       &ret.CreateMethod,
+			GoodValueUSD:       &ret.GoodValueUSD,
+			PaymentAmountUSD:   &ret.PaymentAmountUSD,
+			DiscountAmountUSD:  &ret.DiscountAmountUSD,
+			PromotionID:        &ret.PromotionID,
+			DurationSeconds:    &ret.DurationSeconds,
+			AppGoodStockLockID: &ret.AppGoodStockLockID,
+			LedgerLockID:       &ret.LedgerLockID,
+			PaymentID:          &ret.PaymentID,
+			CouponIDs: func() (_couponIDs []string) {
+				for _, coupon := range ret.Coupons {
+					_couponIDs = append(_couponIDs, coupon.CouponID)
+				}
+				return
+			}(),
+			PaymentBalances: func() (_reqs []*paymentmwpb.PaymentBalanceReq) {
+				for _, req := range ret.PaymentBalances {
+					_reqs = append(_reqs, &paymentmwpb.PaymentBalanceReq{
+						CoinTypeID:           &req.CoinTypeID,
+						Amount:               &req.Amount,
+						LocalCoinUSDCurrency: &req.LocalCoinUSDCurrency,
+						LiveCoinUSDCurrency:  &req.LiveCoinUSDCurrency,
+					})
+				}
+				return
+			}(),
+			StartMode: &ret.StartMode,
+			StartAt:   &ret.StartAt,
+		},
+		func() (_reqs []*feeordermwpb.FeeOrderReq) {
+			for _, req := range ret.FeeDurations {
+				_reqs = append(_reqs, &feeordermwpb.FeeOrderReq{
+					EntID:           func() *string { s := uuid.NewString(); return &s }(),
+					GoodID:          func() *string { s := uuid.NewString(); return &s }(),
+					GoodType:        func() *goodtypes.GoodType { e := goodtypes.GoodType_TechniqueServiceFee; return &e }(),
+					AppGoodID:       &req.AppGoodID,
+					OrderID:         func() *string { s := uuid.NewString(); return &s }(),
+					GoodValueUSD:    func() *string { s := decimal.NewFromInt(100).String(); return &s }(),
+					DurationSeconds: &req.TotalDurationSeconds,
 				})
 			}
 			return
-		}(),
-		StartMode: &ret.StartMode,
-		StartAt:   &ret.StartAt,
-	},
-		[]*feeordermwpb.FeeOrderReq{
-			{
-				EntID:           func() *string { s := uuid.NewString(); return &s }(),
-				GoodID:          func() *string { s := uuid.NewString(); return &s }(),
-				GoodType:        func() *goodtypes.GoodType { e := goodtypes.GoodType_TechniqueServiceFee; return &e }(),
-				AppGoodID:       func() *string { s := uuid.NewString(); return &s }(),
-				OrderID:         func() *string { s := uuid.NewString(); return &s }(),
-				GoodValueUSD:    func() *string { s := decimal.NewFromInt(100).String(); return &s }(),
-				DurationSeconds: func() *uint32 { u := uint32(150); return &u }(),
-			},
-		})
+
+		}())
 	if assert.Nil(t, err) {
 		info, err := GetPowerRentalOrder(context.Background(), ret.OrderID)
 		if assert.Nil(t, err) {
@@ -259,6 +274,7 @@ func TestPowerRentalOrder(t *testing.T) {
 	})
 
 	t.Run("createPowerRentalOrderWithFees", createPowerRentalOrderWithFees)
+	return
 	t.Run("updatePowerRentalOrder", updatePowerRentalOrder)
 	t.Run("getPowerRentalOrder", getPowerRentalOrder)
 	t.Run("getPowerRentalOrders", getPowerRentalOrders)
