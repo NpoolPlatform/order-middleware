@@ -89,42 +89,6 @@ func WithEnableSimulateOrder(b *bool, must bool) func(context.Context, *Handler)
 	}
 }
 
-func WithSimulateOrderUnits(s *string, must bool) func(context.Context, *Handler) error {
-	return func(ctx context.Context, h *Handler) error {
-		if s == nil {
-			if must {
-				return wlog.Errorf("invalid simulateorderunits")
-			}
-			return nil
-		}
-		amount, err := decimal.NewFromString(*s)
-		if err != nil {
-			return wlog.WrapError(err)
-		}
-		if amount.Cmp(decimal.NewFromInt(0)) <= 0 {
-			return wlog.Errorf("invalid simulateorderunits")
-		}
-		h.SimulateOrderUnits = &amount
-		return nil
-	}
-}
-
-func WithSimulateOrderDurationSeconds(u *uint32, must bool) func(context.Context, *Handler) error {
-	return func(ctx context.Context, h *Handler) error {
-		if u == nil {
-			if must {
-				return wlog.Errorf("invalid simulateorderdurationseconds")
-			}
-			return nil
-		}
-		if *u <= 0 {
-			return wlog.Errorf("invalid simulateorderdurationseconds")
-		}
-		h.SimulateOrderDurationSeconds = u
-		return nil
-	}
-}
-
 func WithSimulateOrderCouponMode(e *types.SimulateOrderCouponMode, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if e == nil {

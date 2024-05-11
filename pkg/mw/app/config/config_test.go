@@ -31,7 +31,6 @@ var ret = npool.AppConfig{
 	EntID:                                  uuid.NewString(),
 	AppID:                                  uuid.NewString(),
 	EnableSimulateOrder:                    false,
-	SimulateOrderUnits:                     "0",
 	SimulateOrderCouponMode:                ordertypes.SimulateOrderCouponMode_WithoutCoupon,
 	SimulateOrderCouponProbability:         "1",
 	SimulateOrderCashableProfitProbability: "0.1",

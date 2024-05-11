@@ -60,8 +60,6 @@ func (h *queryHandler) queryJoinMyself(s *sql.Selector) {
 		t.C(entappconfig.FieldEntID),
 		t.C(entappconfig.FieldAppID),
 		t.C(entappconfig.FieldEnableSimulateOrder),
-		t.C(entappconfig.FieldSimulateOrderUnits),
-		t.C(entappconfig.FieldSimulateOrderDurationSeconds),
 		t.C(entappconfig.FieldSimulateOrderCouponMode),
 		t.C(entappconfig.FieldSimulateOrderCouponProbability),
 		t.C(entappconfig.FieldSimulateOrderCashableProfitProbability),
@@ -88,10 +86,6 @@ func (h *queryHandler) scan(ctx context.Context) error {
 
 func (h *queryHandler) formalize() {
 	for _, info := range h.infos {
-		info.SimulateOrderUnits = func() string {
-			amount, _ := decimal.NewFromString(info.SimulateOrderUnits)
-			return amount.String()
-		}()
 		info.SimulateOrderCouponProbability = func() string {
 			amount, _ := decimal.NewFromString(info.SimulateOrderCouponProbability)
 			return amount.String()

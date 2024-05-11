@@ -37,17 +37,6 @@ func (AppConfig) Fields() []ent.Field {
 			Optional().
 			Default(false),
 		field.
-			Other("simulate_order_units", decimal.Decimal{}).
-			SchemaType(map[string]string{
-				dialect.MySQL: "decimal(37,18)",
-			}).
-			Optional().
-			Default(decimal.NewFromInt(0)),
-		field.
-			Uint32("simulate_order_duration_seconds").
-			Optional().
-			Default(0),
-		field.
 			String("simulate_order_coupon_mode").
 			Optional().
 			Default(types.SimulateOrderCouponMode_WithoutCoupon.String()),

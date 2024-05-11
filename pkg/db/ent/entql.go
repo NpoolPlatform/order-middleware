@@ -49,8 +49,6 @@ var schemaGraph = func() *sqlgraph.Schema {
 			appconfig.FieldEntID:                                  {Type: field.TypeUUID, Column: appconfig.FieldEntID},
 			appconfig.FieldAppID:                                  {Type: field.TypeUUID, Column: appconfig.FieldAppID},
 			appconfig.FieldEnableSimulateOrder:                    {Type: field.TypeBool, Column: appconfig.FieldEnableSimulateOrder},
-			appconfig.FieldSimulateOrderUnits:                     {Type: field.TypeOther, Column: appconfig.FieldSimulateOrderUnits},
-			appconfig.FieldSimulateOrderDurationSeconds:           {Type: field.TypeUint32, Column: appconfig.FieldSimulateOrderDurationSeconds},
 			appconfig.FieldSimulateOrderCouponMode:                {Type: field.TypeString, Column: appconfig.FieldSimulateOrderCouponMode},
 			appconfig.FieldSimulateOrderCouponProbability:         {Type: field.TypeOther, Column: appconfig.FieldSimulateOrderCouponProbability},
 			appconfig.FieldSimulateOrderCashableProfitProbability: {Type: field.TypeOther, Column: appconfig.FieldSimulateOrderCashableProfitProbability},
@@ -581,16 +579,6 @@ func (f *AppConfigFilter) WhereAppID(p entql.ValueP) {
 // WhereEnableSimulateOrder applies the entql bool predicate on the enable_simulate_order field.
 func (f *AppConfigFilter) WhereEnableSimulateOrder(p entql.BoolP) {
 	f.Where(p.Field(appconfig.FieldEnableSimulateOrder))
-}
-
-// WhereSimulateOrderUnits applies the entql other predicate on the simulate_order_units field.
-func (f *AppConfigFilter) WhereSimulateOrderUnits(p entql.OtherP) {
-	f.Where(p.Field(appconfig.FieldSimulateOrderUnits))
-}
-
-// WhereSimulateOrderDurationSeconds applies the entql uint32 predicate on the simulate_order_duration_seconds field.
-func (f *AppConfigFilter) WhereSimulateOrderDurationSeconds(p entql.Uint32P) {
-	f.Where(p.Field(appconfig.FieldSimulateOrderDurationSeconds))
 }
 
 // WhereSimulateOrderCouponMode applies the entql string predicate on the simulate_order_coupon_mode field.
