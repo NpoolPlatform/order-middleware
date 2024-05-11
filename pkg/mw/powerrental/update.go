@@ -95,6 +95,9 @@ func (h *updateHandler) constructPayWithMeFeeOrderStateSQLs(ctx context.Context)
 			feeorderstate1.WithAdminSetCanceled(h.PowerRentalStateReq.AdminSetCanceled, false),
 			feeorderstate1.WithPaymentState(h.PowerRentalStateReq.PaymentState, false),
 		)
+		if err != nil {
+			return wlog.WrapError(err)
+		}
 		handler.OrderID = &_orderID
 		sql, err := handler.ConstructUpdateSQL()
 		if err != nil {
