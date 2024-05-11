@@ -400,7 +400,7 @@ func (h *updateHandler) validateUpdate(ctx context.Context) error {
 	return nil
 }
 
-//nolint:gocyclo
+//nolint:gocyclo,funlen
 func (h *Handler) UpdatePowerRentalWithTx(ctx context.Context, tx *ent.Tx) error {
 	handler := &updateHandler{
 		powerRentalQueryHandler: &powerRentalQueryHandler{
