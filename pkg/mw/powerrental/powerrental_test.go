@@ -77,6 +77,12 @@ var ret = npool.PowerRentalOrder{
 	OrderState:   types.OrderState_OrderStateCreated,
 	PaymentState: types.PaymentState_PaymentStateWait,
 	StartMode:    types.OrderStartMode_OrderStartInstantly,
+	FeeDurations: []*feeordermwpb.FeeDuration{
+		{
+			AppGoodID:            uuid.NewString(),
+			TotalDurationSeconds: 16000,
+		},
+	},
 }
 
 //nolint:unparam
@@ -86,6 +92,9 @@ func setup(t *testing.T) func(*testing.T) {
 	}
 	for _, orderCoupon := range ret.Coupons {
 		orderCoupon.OrderID = ret.OrderID
+	}
+	for _, feeDuration := range ret.FeeDurations {
+		feeDuration.ParentOrderID = ret.OrderID
 	}
 
 	ret.EndAt = ret.StartAt + ret.DurationSeconds
@@ -143,17 +152,20 @@ func createPowerRental(t *testing.T) {
 			return
 		}(), true),
 		WithPaymentTransfers([]*paymentmwpb.PaymentTransferReq{}, true),
-		WithFeeOrders([]*feeordermwpb.FeeOrderReq{
-			{
-				EntID:           func() *string { s := uuid.NewString(); return &s }(),
-				GoodID:          func() *string { s := uuid.NewString(); return &s }(),
-				GoodType:        func() *goodtypes.GoodType { e := goodtypes.GoodType_TechniqueServiceFee; return &e }(),
-				AppGoodID:       func() *string { s := uuid.NewString(); return &s }(),
-				OrderID:         func() *string { s := uuid.NewString(); return &s }(),
-				GoodValueUSD:    func() *string { s := decimal.NewFromInt(100).String(); return &s }(),
-				DurationSeconds: func() *uint32 { u := uint32(150); return &u }(),
-			},
-		}, true),
+		WithFeeOrders(func() (_reqs []*feeordermwpb.FeeOrderReq) {
+			for _, req := range ret.FeeDurations {
+				_reqs = append(_reqs, &feeordermwpb.FeeOrderReq{
+					EntID:           func() *string { s := uuid.NewString(); return &s }(),
+					GoodID:          func() *string { s := uuid.NewString(); return &s }(),
+					GoodType:        func() *goodtypes.GoodType { e := goodtypes.GoodType_TechniqueServiceFee; return &e }(),
+					AppGoodID:       &req.AppGoodID,
+					OrderID:         func() *string { s := uuid.NewString(); return &s }(),
+					GoodValueUSD:    func() *string { s := decimal.NewFromInt(100).String(); return &s }(),
+					DurationSeconds: &req.TotalDurationSeconds,
+				})
+			}
+			return
+		}(), true),
 	)
 	if assert.Nil(t, err) {
 		err = handler.CreatePowerRental(context.Background())

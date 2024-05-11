@@ -9,14 +9,18 @@ import (
 	cruder "github.com/NpoolPlatform/libent-cruder/pkg/cruder"
 	goodtypes "github.com/NpoolPlatform/message/npool/basetypes/good/v1"
 	types "github.com/NpoolPlatform/message/npool/basetypes/order/v1"
+	feeordermwpb "github.com/NpoolPlatform/message/npool/order/mw/v1/fee"
 	ordercouponmwpb "github.com/NpoolPlatform/message/npool/order/mw/v1/order/coupon"
 	paymentmwpb "github.com/NpoolPlatform/message/npool/order/mw/v1/payment"
 	npool "github.com/NpoolPlatform/message/npool/order/mw/v1/powerrental"
 	ordercouponcrud "github.com/NpoolPlatform/order-middleware/pkg/crud/order/coupon"
+	orderbasecrud "github.com/NpoolPlatform/order-middleware/pkg/crud/order/orderbase"
 	paymentbalancecrud "github.com/NpoolPlatform/order-middleware/pkg/crud/payment/balance"
 	paymenttransfercrud "github.com/NpoolPlatform/order-middleware/pkg/crud/payment/transfer"
 	"github.com/NpoolPlatform/order-middleware/pkg/db"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent"
+	entfeeorder "github.com/NpoolPlatform/order-middleware/pkg/db/ent/feeorder"
+	entorderbase "github.com/NpoolPlatform/order-middleware/pkg/db/ent/orderbase"
 	entordercoupon "github.com/NpoolPlatform/order-middleware/pkg/db/ent/ordercoupon"
 	entpaymentbalance "github.com/NpoolPlatform/order-middleware/pkg/db/ent/paymentbalance"
 	entpaymenttransfer "github.com/NpoolPlatform/order-middleware/pkg/db/ent/paymenttransfer"
@@ -33,6 +37,7 @@ type queryHandler struct {
 	orderCoupons     []*ordercouponmwpb.OrderCouponInfo
 	paymentBalances  []*paymentmwpb.PaymentBalanceInfo
 	paymentTransfers []*paymentmwpb.PaymentTransferInfo
+	feeDurations     []*feeordermwpb.FeeDuration
 	total            uint32
 }
 
@@ -142,10 +147,44 @@ func (h *queryHandler) queryPaymentTransfers(ctx context.Context, cli *ent.Clien
 	).Scan(ctx, &h.paymentTransfers)
 }
 
+func (h *queryHandler) queryFeeDurations(ctx context.Context, cli *ent.Client) error {
+	orderIDs := func() (uids []uuid.UUID) {
+		for _, info := range h.infos {
+			uids = append(uids, uuid.MustParse(info.OrderID))
+		}
+		return
+	}()
+	stm, err := orderbasecrud.SetQueryConds(
+		cli.OrderBase.Query(),
+		&orderbasecrud.Conds{
+			ParentOrderIDs: &cruder.Cond{Op: cruder.IN, Val: orderIDs},
+		},
+	)
+	if err != nil {
+		return wlog.WrapError(err)
+	}
+	return stm.GroupBy(
+		entorderbase.FieldParentOrderID,
+		entorderbase.FieldAppGoodID,
+	).Aggregate(func(s *sql.Selector) string {
+		t1 := sql.Table(entfeeorder.Table)
+		s.Join(t1).
+			On(
+				s.C(entorderbase.FieldEntID),
+				t1.C(entfeeorder.FieldOrderID),
+			)
+		return sql.As(
+			sql.Sum(entfeeorder.FieldDurationSeconds),
+			"total_duration_seconds",
+		)
+	}).Scan(ctx, &h.feeDurations)
+}
+
 func (h *queryHandler) formalize() {
 	orderCoupons := map[string][]*ordercouponmwpb.OrderCouponInfo{}
 	paymentBalances := map[string][]*paymentmwpb.PaymentBalanceInfo{}
 	paymentTransfers := map[string][]*paymentmwpb.PaymentTransferInfo{}
+	feeDurations := map[string][]*feeordermwpb.FeeDuration{}
 
 	for _, orderCoupon := range h.orderCoupons {
 		orderCoupons[orderCoupon.OrderID] = append(orderCoupons[orderCoupon.OrderID], orderCoupon)
@@ -187,6 +226,9 @@ func (h *queryHandler) formalize() {
 			return amount.String()
 		}()
 	}
+	for _, feeDuration := range h.feeDurations {
+		feeDurations[feeDuration.ParentOrderID] = append(feeDurations[feeDuration.ParentOrderID], feeDuration)
+	}
 
 	for _, info := range h.infos {
 		info.Units = func() string { amount, _ := decimal.NewFromString(info.Units); return amount.String() }()
@@ -205,6 +247,7 @@ func (h *queryHandler) formalize() {
 		info.PaymentBalances = paymentBalances[info.PaymentID]
 		info.PaymentTransfers = paymentTransfers[info.PaymentID]
 		info.EndAt = info.StartAt + info.DurationSeconds + info.CompensateSeconds
+		info.FeeDurations = feeDurations[info.OrderID]
 	}
 }
 
@@ -227,6 +270,9 @@ func (h *Handler) GetPowerRental(ctx context.Context) (*npool.PowerRentalOrder, 
 			return wlog.WrapError(err)
 		}
 		if err := handler.queryPaymentTransfers(_ctx, cli); err != nil {
+			return wlog.WrapError(err)
+		}
+		if err := handler.queryFeeDurations(_ctx, cli); err != nil {
 			return wlog.WrapError(err)
 		}
 		return handler.queryOrderCoupons(_ctx, cli)
@@ -283,6 +329,9 @@ func (h *Handler) GetPowerRentals(ctx context.Context) ([]*npool.PowerRentalOrde
 			return wlog.WrapError(err)
 		}
 		if err := handler.queryPaymentTransfers(_ctx, cli); err != nil {
+			return wlog.WrapError(err)
+		}
+		if err := handler.queryFeeDurations(_ctx, cli); err != nil {
 			return wlog.WrapError(err)
 		}
 		return handler.queryOrderCoupons(_ctx, cli)
