@@ -56,7 +56,9 @@ func (h *Handler) GetOrder(ctx context.Context) (*npool.Order, error) {
 	}
 
 	err := db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
-		handler.queryOrderBase(cli)
+		if err := handler.queryOrderBase(cli); err != nil {
+			return wlog.WrapError(err)
+		}
 		handler.queryJoin()
 		handler.stmSelect.Offset(int(0)).Limit(int(2))
 		return handler.scan(_ctx)

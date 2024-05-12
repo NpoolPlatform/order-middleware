@@ -23,15 +23,23 @@ func (h *baseQueryHandler) selectOrderBase(stm *ent.OrderBaseQuery) *ent.OrderBa
 	return stm.Select(entorderbase.FieldID)
 }
 
-func (h *baseQueryHandler) queryOrderBase(cli *ent.Client) {
-	h.stmSelect = h.selectOrderBase(
-		cli.OrderBase.
-			Query().
-			Where(
-				entorderbase.EntID(*h.EntID),
-				entorderbase.DeletedAt(0),
-			),
-	)
+func (h *baseQueryHandler) queryOrderBase(cli *ent.Client) error {
+	if h.EntID == nil || h.ID == nil {
+		return wlog.Errorf("invalid entid")
+	}
+	stm := cli.OrderBase.
+		Query().
+		Where(
+			entorderbase.DeletedAt(0),
+		)
+	if h.ID != nil {
+		stm.Where(entorderbase.ID(*h.ID))
+	}
+	if h.EntID != nil {
+		stm.Where(entorderbase.EntID(*h.EntID))
+	}
+	h.stmSelect = h.selectOrderBase(stm)
+	return nil
 }
 
 func (h *baseQueryHandler) queryOrderBases(cli *ent.Client) (*ent.OrderBaseSelect, error) {

@@ -42,6 +42,22 @@ func GetOrders(ctx context.Context, conds *npool.Conds, offset, limit int32) (in
 	return _infos.([]*npool.Order), total, nil
 }
 
+func ExistOrder(ctx context.Context, entID string) (bool, error) {
+	exist, err := withClient(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (interface{}, error) {
+		resp, err := cli.ExistOrder(ctx, &npool.ExistOrderRequest{
+			EntID: entID,
+		})
+		if err != nil {
+			return false, err
+		}
+		return resp.Info, nil
+	})
+	if err != nil {
+		return false, err
+	}
+	return exist.(bool), err
+}
+
 func ExistOrderConds(ctx context.Context, conds *npool.Conds) (bool, error) {
 	exist, err := withClient(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (interface{}, error) {
 		resp, err := cli.ExistOrderConds(ctx, &npool.ExistOrderCondsRequest{
