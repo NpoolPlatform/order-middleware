@@ -30,7 +30,9 @@ func (h *createHandler) constructSQL() {
 	}
 	_sql += comma + "app_id"
 	comma = ", "
-	_sql += comma + "enable_simulate_order"
+	if h.EnableSimulateOrder != nil {
+		_sql += comma + "enable_simulate_order"
+	}
 	if h.SimulateOrderCouponMode != nil {
 		_sql += comma + "simulate_order_coupon_mode"
 	}
@@ -54,7 +56,9 @@ func (h *createHandler) constructSQL() {
 	}
 	_sql += fmt.Sprintf("%v'%v' as app_id", comma, *h.AppID)
 	comma = ", "
-	_sql += fmt.Sprintf("%v%v as enable_simulate_order", comma, *h.EnableSimulateOrder)
+	if h.EnableSimulateOrder != nil {
+		_sql += fmt.Sprintf("%v%v as enable_simulate_order", comma, *h.EnableSimulateOrder)
+	}
 	if h.SimulateOrderCouponMode != nil {
 		_sql += fmt.Sprintf("%v'%v' as simulate_order_coupon_mode", comma, h.SimulateOrderCouponMode.String())
 	}
