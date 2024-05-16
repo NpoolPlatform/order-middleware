@@ -2,7 +2,9 @@ package powerrental
 
 import (
 	"context"
+	"time"
 
+	timedef "github.com/NpoolPlatform/go-service-framework/pkg/const/time"
 	wlog "github.com/NpoolPlatform/go-service-framework/pkg/wlog"
 	types "github.com/NpoolPlatform/message/npool/basetypes/order/v1"
 	"github.com/NpoolPlatform/order-middleware/pkg/db"
@@ -50,7 +52,6 @@ func (h *createHandler) constructOrderBaseSQL(ctx context.Context) {
 func (h *createHandler) constructOrderStateBaseSQL(ctx context.Context) {
 	handler, _ := orderstatebase1.NewHandler(ctx)
 	handler.Req = *h.OrderStateBaseReq
-	handler.Req.StartMode = func() *types.OrderStartMode { e := types.OrderStartMode_OrderStartInstantly; return &e }()
 	h.sqlOrderStateBase = handler.ConstructCreateSQL()
 }
 
@@ -278,6 +279,15 @@ func (h *createHandler) formalizePaymentType() {
 	}
 }
 
+func (h *createHandler) formalizeStartAt() {
+	switch *h.OrderStateBaseReq.StartMode {
+	case types.OrderStartMode_OrderStartInstantly:
+		h.OrderStateBaseReq.StartAt = func() *uint32 { u := uint32(time.Now().Unix() + 60); return &u }()
+	case types.OrderStartMode_OrderStartNextDay:
+		h.OrderStateBaseReq.StartAt = func() *uint32 { u := uint32(timedef.TomorrowStart().Unix()); return &u }()
+	}
+}
+
 func (h *createHandler) formalizeFeeOrders() {
 	for _, handler := range h.FeeMultiHandler.GetHandlers() {
 		handler.OrderBaseReq.AppID = h.OrderBaseReq.AppID
@@ -392,6 +402,7 @@ func (h *Handler) CreatePowerRentalWithTx(ctx context.Context, tx *ent.Tx) error
 	}
 	handler.formalizePaymentBalances()
 	handler.formalizePaymentTransfers()
+	handler.formalizeStartAt()
 	handler.formalizeFeeOrders()
 
 	handler.constructOrderBaseSQL(ctx)
