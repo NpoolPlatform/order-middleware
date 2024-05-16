@@ -411,6 +411,9 @@ func (h *baseQueryHandler) queryJoinOrderCoupon(s *sql.Selector) error {
 		s.OnP(
 			sql.EQ(t.C(entordercoupon.FieldOrderID), id),
 		)
+		s.Where(
+			sql.EQ(t.C(entordercoupon.FieldOrderID), id),
+		)
 	}
 	if h.OrderCouponConds.OrderIDs != nil {
 		uids, ok := h.OrderCouponConds.OrderIDs.Val.([]uuid.UUID)
@@ -418,6 +421,12 @@ func (h *baseQueryHandler) queryJoinOrderCoupon(s *sql.Selector) error {
 			return wlog.Errorf("invalid orderids")
 		}
 		s.OnP(sql.In(t.C(entordercoupon.FieldOrderID), func() (_uids []interface{}) {
+			for _, uid := range uids {
+				_uids = append(_uids, interface{}(uid))
+			}
+			return _uids
+		}()...))
+		s.Where(sql.In(t.C(entordercoupon.FieldOrderID), func() (_uids []interface{}) {
 			for _, uid := range uids {
 				_uids = append(_uids, interface{}(uid))
 			}
@@ -432,6 +441,9 @@ func (h *baseQueryHandler) queryJoinOrderCoupon(s *sql.Selector) error {
 		s.OnP(
 			sql.EQ(t.C(entordercoupon.FieldCouponID), id),
 		)
+		s.Where(
+			sql.EQ(t.C(entordercoupon.FieldCouponID), id),
+		)
 	}
 	if h.OrderCouponConds.CouponIDs != nil {
 		uids, ok := h.OrderCouponConds.CouponIDs.Val.([]uuid.UUID)
@@ -439,6 +451,12 @@ func (h *baseQueryHandler) queryJoinOrderCoupon(s *sql.Selector) error {
 			return wlog.Errorf("invalid couponids")
 		}
 		s.OnP(sql.In(t.C(entordercoupon.FieldCouponID), func() (_uids []interface{}) {
+			for _, uid := range uids {
+				_uids = append(_uids, interface{}(uid))
+			}
+			return _uids
+		}()...))
+		s.Where(sql.In(t.C(entordercoupon.FieldCouponID), func() (_uids []interface{}) {
 			for _, uid := range uids {
 				_uids = append(_uids, interface{}(uid))
 			}
