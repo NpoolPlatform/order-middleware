@@ -247,6 +247,28 @@ func (h *createHandler) formalizePaymentTransfers() {
 	}
 }
 
+func (h *createHandler) formalizePaymentType() {
+	if *h.OrderBaseReq.OrderType != types.OrderType_Normal {
+		return
+	}
+	if h.OrderBaseReq.Simulate != nil && *h.OrderBaseReq.Simulate {
+		h.OrderStateBaseReq.PaymentType = func() *types.PaymentType { e := types.PaymentType_PayWithNoPayment; return &e }()
+		return
+	}
+	if len(h.PaymentBalanceReqs) > 0 && len(h.PaymentTransferReqs) > 0 {
+		h.OrderStateBaseReq.PaymentType = func() *types.PaymentType { e := types.PaymentType_PayWithTransferAndBalance; return &e }()
+		return
+	}
+	if len(h.PaymentBalanceReqs) > 0 {
+		h.OrderStateBaseReq.PaymentType = func() *types.PaymentType { e := types.PaymentType_PayWithBalanceOnly; return &e }()
+		return
+	}
+	if len(h.PaymentTransferReqs) > 0 {
+		h.OrderStateBaseReq.PaymentType = func() *types.PaymentType { e := types.PaymentType_PayWithTransferOnly; return &e }()
+		return
+	}
+}
+
 func (h *createHandler) formalizeFeeOrders() {
 	for _, handler := range h.FeeMultiHandler.GetHandlers() {
 		handler.OrderBaseReq.AppID = h.OrderBaseReq.AppID
@@ -344,6 +366,10 @@ func (h *Handler) CreatePowerRentalWithTx(ctx context.Context, tx *ent.Tx) error
 	if err := handler.validatePaymentType(); err != nil {
 		return wlog.WrapError(err)
 	}
+	if err := handler.paymentChecker.ValidatePayment(); err != nil {
+		return wlog.WrapError(err)
+	}
+	handler.formalizePaymentType()
 	handler.formalizePaymentBalances()
 	handler.formalizePaymentTransfers()
 	handler.formalizeFeeOrders()
