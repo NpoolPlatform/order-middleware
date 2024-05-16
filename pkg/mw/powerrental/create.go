@@ -326,6 +326,9 @@ func (h *createHandler) validatePaymentType() error {
 
 func (h *createHandler) validatePayment() error {
 	if !h.paymentChecker.Payable() {
+		if len(h.PaymentBalanceReqs) > 0 || len(h.PaymentTransferReqs) > 0 {
+			return wlog.Errorf("invalid payment")
+		}
 		return nil
 	}
 	return h.paymentChecker.ValidatePayment()
