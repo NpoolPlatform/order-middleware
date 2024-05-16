@@ -50,7 +50,7 @@ func (h *baseQueryHandler) queryOrderBases(cli *ent.Client) (*ent.OrderBaseSelec
 }
 
 //nolint:funlen
-func (h *baseQueryHandler) queryJoinMyself(s *sql.Selector) {
+func (h *baseQueryHandler) queryJoinMyself(s *sql.Selector) error {
 	t := sql.Table(entorderbase.Table)
 	s.Join(t).
 		On(
@@ -58,90 +58,93 @@ func (h *baseQueryHandler) queryJoinMyself(s *sql.Selector) {
 			t.C(entorderbase.FieldID),
 		)
 	if h.OrderBaseConds.EntID != nil {
+		id, ok := h.OrderBaseConds.EntID.Val.(uuid.UUID)
+		if !ok {
+			return wlog.Errorf("invalid entid")
+		}
 		s.OnP(
-			sql.EQ(
-				t.C(entorderbase.FieldEntID),
-				h.OrderBaseConds.EntID.Val.(uuid.UUID),
-			),
+			sql.EQ(t.C(entorderbase.FieldEntID), id),
 		)
 	}
 	if h.OrderBaseConds.EntIDs != nil {
-		s.OnP(
-			sql.In(
-				t.C(entorderbase.FieldEntID),
-				func() (_uids []interface{}) {
-					for _, uid := range h.OrderBaseConds.EntIDs.Val.([]uuid.UUID) {
-						_uids = append(_uids, interface{}(uid))
-					}
-					return _uids
-				}()...,
-			),
-		)
+		uids, ok := h.OrderBaseConds.EntIDs.Val.([]uuid.UUID)
+		if !ok {
+			return wlog.Errorf("invalid entids")
+		}
+		s.OnP(sql.In(t.C(entorderbase.FieldEntID), func() (_uids []interface{}) {
+			for _, uid := range uids {
+				_uids = append(_uids, interface{}(uid))
+			}
+			return _uids
+		}()...))
 	}
 	if h.OrderBaseConds.AppID != nil {
+		id, ok := h.OrderBaseConds.AppID.Val.(uuid.UUID)
+		if !ok {
+			return wlog.Errorf("invalid ids")
+		}
 		s.OnP(
-			sql.EQ(
-				t.C(entorderbase.FieldAppID),
-				h.OrderBaseConds.AppID.Val.(uuid.UUID),
-			),
+			sql.EQ(t.C(entorderbase.FieldAppID), id),
 		)
 	}
 	if h.OrderBaseConds.UserID != nil {
+		id, ok := h.OrderBaseConds.UserID.Val.(uuid.UUID)
+		if !ok {
+			return wlog.Errorf("invalid userid")
+		}
 		s.OnP(
-			sql.EQ(
-				t.C(entorderbase.FieldUserID),
-				h.OrderBaseConds.UserID.Val.(uuid.UUID),
-			),
+			sql.EQ(t.C(entorderbase.FieldUserID), id),
 		)
 	}
 	if h.OrderBaseConds.GoodID != nil {
+		id, ok := h.OrderBaseConds.GoodID.Val.(uuid.UUID)
+		if !ok {
+			return wlog.Errorf("invalid goodid")
+		}
 		s.OnP(
-			sql.EQ(
-				t.C(entorderbase.FieldGoodID),
-				h.OrderBaseConds.GoodID.Val.(uuid.UUID),
-			),
+			sql.EQ(t.C(entorderbase.FieldGoodID), id),
 		)
 	}
 	if h.OrderBaseConds.GoodIDs != nil {
-		s.OnP(
-			sql.In(
-				t.C(entorderbase.FieldGoodID),
-				func() (_uids []interface{}) {
-					for _, uid := range h.OrderBaseConds.GoodIDs.Val.([]uuid.UUID) {
-						_uids = append(_uids, interface{}(uid))
-					}
-					return _uids
-				}()...,
-			),
-		)
+		uids, ok := h.OrderBaseConds.GoodIDs.Val.([]uuid.UUID)
+		if !ok {
+			return wlog.Errorf("invalid goodids")
+		}
+		s.OnP(sql.In(t.C(entorderbase.FieldGoodID), func() (_uids []interface{}) {
+			for _, uid := range uids {
+				_uids = append(_uids, interface{}(uid))
+			}
+			return _uids
+		}()...))
 	}
 	if h.OrderBaseConds.AppGoodID != nil {
+		id, ok := h.OrderBaseConds.AppGoodID.Val.(uuid.UUID)
+		if !ok {
+			return wlog.Errorf("invalid appgoodid")
+		}
 		s.OnP(
-			sql.EQ(
-				t.C(entorderbase.FieldAppGoodID),
-				h.OrderBaseConds.AppGoodID.Val.(uuid.UUID),
-			),
+			sql.EQ(t.C(entorderbase.FieldAppGoodID), id),
 		)
 	}
 	if h.OrderBaseConds.AppGoodIDs != nil {
-		s.OnP(
-			sql.In(
-				t.C(entorderbase.FieldAppGoodID),
-				func() (_uids []interface{}) {
-					for _, uid := range h.OrderBaseConds.AppGoodIDs.Val.([]uuid.UUID) {
-						_uids = append(_uids, interface{}(uid))
-					}
-					return _uids
-				}()...,
-			),
-		)
+		uids, ok := h.OrderBaseConds.AppGoodIDs.Val.([]uuid.UUID)
+		if !ok {
+			return wlog.Errorf("invalid appgoodids")
+		}
+		s.OnP(sql.In(t.C(entorderbase.FieldAppGoodID), func() (_uids []interface{}) {
+			for _, uid := range uids {
+				_uids = append(_uids, interface{}(uid))
+			}
+			return _uids
+		}()...))
 	}
 	if h.OrderBaseConds.OrderType != nil {
+		_type, ok := h.OrderBaseConds.OrderType.Val.(types.OrderType)
+		if !ok {
+			return wlog.Errorf("invalid ordertype")
+		}
 		s.OnP(
-			sql.EQ(
-				t.C(entorderbase.FieldOrderType),
-				h.OrderBaseConds.OrderType.Val.(types.OrderType).String(),
-			),
+			sql.EQ(t.C(entorderbase.FieldOrderType), _type),
 		)
 	}
 	s.AppendSelect(
@@ -155,9 +158,10 @@ func (h *baseQueryHandler) queryJoinMyself(s *sql.Selector) {
 		t.C(entorderbase.FieldCreatedAt),
 		t.C(entorderbase.FieldUpdatedAt),
 	)
+	return nil
 }
 
-func (h *baseQueryHandler) queryJoinPowerRental(s *sql.Selector) {
+func (h *baseQueryHandler) queryJoinPowerRental(s *sql.Selector) error {
 	t := sql.Table(entpowerrental.Table)
 	s.Join(t).
 		On(
@@ -168,67 +172,67 @@ func (h *baseQueryHandler) queryJoinPowerRental(s *sql.Selector) {
 			sql.EQ(t.C(entpowerrental.FieldDeletedAt), 0),
 		)
 	if h.PowerRentalConds.ID != nil {
+		id, ok := h.PowerRentalConds.ID.Val.(uint32)
+		if !ok {
+			return wlog.Errorf("invalid id")
+		}
 		s.OnP(
-			sql.EQ(
-				t.C(entpowerrental.FieldID),
-				h.PowerRentalConds.ID.Val.(uint32),
-			),
+			sql.EQ(t.C(entpowerrental.FieldID), id),
 		)
 	}
 	if h.PowerRentalConds.IDs != nil {
-		s.OnP(
-			sql.In(
-				t.C(entpowerrental.FieldID),
-				func() (_ids []interface{}) {
-					for _, id := range h.PowerRentalConds.IDs.Val.([]uint32) {
-						_ids = append(_ids, interface{}(id))
-					}
-					return _ids
-				}()...,
-			),
-		)
+		ids, ok := h.PowerRentalConds.IDs.Val.([]uint32)
+		if !ok {
+			return wlog.Errorf("invalid ids")
+		}
+		s.OnP(sql.In(t.C(entpowerrental.FieldID), func() (_ids []interface{}) {
+			for _, id := range ids {
+				_ids = append(_ids, interface{}(id))
+			}
+			return _ids
+		}()...))
 	}
 	if h.PowerRentalConds.EntID != nil {
+		id, ok := h.PowerRentalConds.EntID.Val.(uuid.UUID)
+		if !ok {
+			return wlog.Errorf("invalid entid")
+		}
 		s.OnP(
-			sql.EQ(
-				t.C(entpowerrental.FieldEntID),
-				h.PowerRentalConds.EntID.Val.(uuid.UUID),
-			),
+			sql.EQ(t.C(entpowerrental.FieldEntID), id),
 		)
 	}
 	if h.PowerRentalConds.EntIDs != nil {
-		s.OnP(
-			sql.In(
-				t.C(entpowerrental.FieldEntID),
-				func() (_uids []interface{}) {
-					for _, uid := range h.PowerRentalConds.EntIDs.Val.([]uuid.UUID) {
-						_uids = append(_uids, interface{}(uid))
-					}
-					return _uids
-				}()...,
-			),
-		)
+		uids, ok := h.PowerRentalConds.EntIDs.Val.([]uuid.UUID)
+		if !ok {
+			return wlog.Errorf("invalid entids")
+		}
+		s.OnP(sql.In(t.C(entpowerrental.FieldEntID), func() (_uids []interface{}) {
+			for _, uid := range uids {
+				_uids = append(_uids, interface{}(uid))
+			}
+			return _uids
+		}()...))
 	}
 	if h.PowerRentalConds.OrderID != nil {
+		id, ok := h.PowerRentalConds.OrderID.Val.(uuid.UUID)
+		if !ok {
+			return wlog.Errorf("invalid orderid")
+		}
 		s.OnP(
-			sql.EQ(
-				t.C(entpowerrental.FieldOrderID),
-				h.PowerRentalConds.OrderID.Val.(uuid.UUID),
-			),
+			sql.EQ(t.C(entpowerrental.FieldOrderID), id),
 		)
 	}
 	if h.PowerRentalConds.OrderIDs != nil {
-		s.OnP(
-			sql.In(
-				t.C(entpowerrental.FieldOrderID),
-				func() (_uids []interface{}) {
-					for _, uid := range h.PowerRentalConds.OrderIDs.Val.([]uuid.UUID) {
-						_uids = append(_uids, interface{}(uid))
-					}
-					return _uids
-				}()...,
-			),
-		)
+		uids, ok := h.PowerRentalConds.OrderIDs.Val.([]uuid.UUID)
+		if !ok {
+			return wlog.Errorf("invalid orderids")
+		}
+		s.OnP(sql.In(t.C(entpowerrental.FieldOrderID), func() (_uids []interface{}) {
+			for _, uid := range uids {
+				_uids = append(_uids, interface{}(uid))
+			}
+			return _uids
+		}()...))
 	}
 	s.AppendSelect(
 		t.C(entpowerrental.FieldID),
@@ -241,6 +245,7 @@ func (h *baseQueryHandler) queryJoinPowerRental(s *sql.Selector) {
 		t.C(entpowerrental.FieldDiscountAmountUsd),
 		t.C(entpowerrental.FieldPromotionID),
 	)
+	return nil
 }
 
 func (h *baseQueryHandler) queryJoinOrderStateBase(s *sql.Selector) error {
@@ -260,17 +265,16 @@ func (h *baseQueryHandler) queryJoinOrderStateBase(s *sql.Selector) error {
 		)
 	}
 	if h.OrderStateBaseConds.PaymentTypes != nil {
-		s.OnP(
-			sql.In(
-				t.C(entorderstatebase.FieldPaymentType),
-				func() (_types []interface{}) {
-					for _, _type := range h.OrderStateBaseConds.PaymentTypes.Val.([]types.PaymentType) {
-						_types = append(_types, interface{}(_type.String()))
-					}
-					return _types
-				}()...,
-			),
-		)
+		_types, ok := h.OrderStateBaseConds.PaymentTypes.Val.([]types.PaymentType)
+		if !ok {
+			return wlog.Errorf("invalid paymenttypes")
+		}
+		s.OnP(sql.In(t.C(entorderstatebase.FieldPaymentType), func() (__types []interface{}) {
+			for _, _type := range _types {
+				__types = append(__types, interface{}(_type.String()))
+			}
+			return __types
+		}()...))
 	}
 	if h.OrderStateBaseConds.OrderState != nil {
 		_state, ok := h.OrderStateBaseConds.OrderState.Val.(types.OrderState)
@@ -282,17 +286,16 @@ func (h *baseQueryHandler) queryJoinOrderStateBase(s *sql.Selector) error {
 		)
 	}
 	if h.OrderStateBaseConds.OrderStates != nil {
-		s.OnP(
-			sql.In(
-				t.C(entorderstatebase.FieldOrderState),
-				func() (_types []interface{}) {
-					for _, _type := range h.OrderStateBaseConds.OrderStates.Val.([]types.OrderState) {
-						_types = append(_types, interface{}(_type.String()))
-					}
-					return _types
-				}()...,
-			),
-		)
+		states, ok := h.OrderStateBaseConds.OrderStates.Val.([]types.OrderState)
+		if !ok {
+			return wlog.Errorf("invalid orderstate")
+		}
+		s.OnP(sql.In(t.C(entorderstatebase.FieldOrderState), func() (_states []interface{}) {
+			for _, _state := range states {
+				_states = append(_states, interface{}(_state.String()))
+			}
+			return _states
+		}()...))
 	}
 	s.AppendSelect(
 		t.C(entorderstatebase.FieldPaymentType),
@@ -320,17 +323,16 @@ func (h *baseQueryHandler) queryJoinPowerRentalState(s *sql.Selector) error {
 		)
 	}
 	if h.PowerRentalStateConds.PaymentStates != nil {
-		s.OnP(
-			sql.In(
-				t.C(entpowerrentalstate.FieldPaymentState),
-				func() (_types []interface{}) {
-					for _, _type := range h.PowerRentalStateConds.PaymentStates.Val.([]types.PaymentState) {
-						_types = append(_types, interface{}(_type.String()))
-					}
-					return
-				}()...,
-			),
-		)
+		states, ok := h.PowerRentalStateConds.PaymentStates.Val.([]types.PaymentState)
+		if !ok {
+			return wlog.Errorf("invalid paymentstates")
+		}
+		s.OnP(sql.In(t.C(entpowerrentalstate.FieldPaymentState), func() (_states []interface{}) {
+			for _, _state := range states {
+				_states = append(_states, interface{}(_state.String()))
+			}
+			return
+		}()...))
 	}
 	s.AppendSelect(
 		t.C(entpowerrentalstate.FieldPaymentID),
@@ -393,61 +395,65 @@ func (h *baseQueryHandler) queryJoinStockLock(s *sql.Selector) {
 	)
 }
 
-func (h *baseQueryHandler) queryJoinOrderCoupon(s *sql.Selector) {
+func (h *baseQueryHandler) queryJoinOrderCoupon(s *sql.Selector) error {
 	t := sql.Table(entordercoupon.Table)
 	s.LeftJoin(t).
 		On(
 			s.C(entorderbase.FieldEntID),
 			t.C(entordercoupon.FieldOrderID),
-		)
+		).
+		Distinct()
 	if h.OrderCouponConds.OrderID != nil {
+		id, ok := h.OrderCouponConds.OrderID.Val.(uuid.UUID)
+		if !ok {
+			return wlog.Errorf("invalid orderid")
+		}
 		s.OnP(
-			sql.EQ(
-				t.C(entordercoupon.FieldOrderID),
-				h.OrderCouponConds.OrderID.Val.(uuid.UUID),
-			),
+			sql.EQ(t.C(entordercoupon.FieldOrderID), id),
 		)
 	}
 	if h.OrderCouponConds.OrderIDs != nil {
-		s.OnP(
-			sql.In(
-				t.C(entordercoupon.FieldOrderID),
-				func() (_uids []interface{}) {
-					for _, uid := range h.OrderCouponConds.OrderIDs.Val.([]uuid.UUID) {
-						_uids = append(_uids, interface{}(uid))
-					}
-					return _uids
-				}()...,
-			),
-		)
+		uids, ok := h.OrderCouponConds.OrderIDs.Val.([]uuid.UUID)
+		if !ok {
+			return wlog.Errorf("invalid orderids")
+		}
+		s.OnP(sql.In(t.C(entordercoupon.FieldOrderID), func() (_uids []interface{}) {
+			for _, uid := range uids {
+				_uids = append(_uids, interface{}(uid))
+			}
+			return _uids
+		}()...))
 	}
 	if h.OrderCouponConds.CouponID != nil {
+		id, ok := h.OrderCouponConds.CouponID.Val.(uuid.UUID)
+		if !ok {
+			return wlog.Errorf("invalid couponid")
+		}
 		s.OnP(
-			sql.EQ(
-				t.C(entordercoupon.FieldCouponID),
-				h.OrderCouponConds.CouponID.Val.(uuid.UUID),
-			),
+			sql.EQ(t.C(entordercoupon.FieldCouponID), id),
 		)
 	}
 	if h.OrderCouponConds.CouponIDs != nil {
-		s.OnP(
-			sql.In(
-				t.C(entordercoupon.FieldCouponID),
-				func() (_uids []interface{}) {
-					for _, uid := range h.OrderCouponConds.CouponIDs.Val.([]uuid.UUID) {
-						_uids = append(_uids, interface{}(uid))
-					}
-					return _uids
-				}()...,
-			),
-		)
+		uids, ok := h.OrderCouponConds.CouponIDs.Val.([]uuid.UUID)
+		if !ok {
+			return wlog.Errorf("invalid couponids")
+		}
+		s.OnP(sql.In(t.C(entordercoupon.FieldCouponID), func() (_uids []interface{}) {
+			for _, uid := range uids {
+				_uids = append(_uids, interface{}(uid))
+			}
+			return _uids
+		}()...))
 	}
+	return nil
 }
 
 func (h *baseQueryHandler) queryJoin() {
 	h.stmSelect.Modify(func(s *sql.Selector) {
 		h.queryJoinMyself(s)
-		h.queryJoinPowerRental(s)
+		if err := h.queryJoinPowerRental(s); err != nil {
+			logger.Sugar().Errorw("queryJoinPowerRental", "Error", err)
+		}
 		if err := h.queryJoinOrderStateBase(s); err != nil {
 			logger.Sugar().Errorw("queryJoinOrderStateBase", "Error", err)
 		}
@@ -456,6 +462,8 @@ func (h *baseQueryHandler) queryJoin() {
 		}
 		h.queryJoinPaymentBase(s)
 		h.queryJoinStockLock(s)
-		h.queryJoinOrderCoupon(s)
+		if err := h.queryJoinOrderCoupon(s); err != nil {
+			logger.Sugar().Errorw("queryJoinOrderCoupon", "Error", err)
+		}
 	})
 }

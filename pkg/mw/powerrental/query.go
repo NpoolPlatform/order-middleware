@@ -5,6 +5,7 @@ import (
 
 	"entgo.io/ent/dialect/sql"
 
+	logger "github.com/NpoolPlatform/go-service-framework/pkg/logger"
 	wlog "github.com/NpoolPlatform/go-service-framework/pkg/wlog"
 	cruder "github.com/NpoolPlatform/libent-cruder/pkg/cruder"
 	goodtypes "github.com/NpoolPlatform/message/npool/basetypes/good/v1"
@@ -47,7 +48,20 @@ func (h *queryHandler) queryJoin() {
 		return
 	}
 	h.stmCount.Modify(func(s *sql.Selector) {
-		h.queryJoinPowerRental(s)
+		if err := h.queryJoinPowerRental(s); err != nil {
+			logger.Sugar().Errorw("queryJoinPowerRental", "Error", err)
+		}
+		if err := h.queryJoinOrderStateBase(s); err != nil {
+			logger.Sugar().Errorw("queryJoinOrderStateBase", "Error", err)
+		}
+		if err := h.queryJoinPowerRentalState(s); err != nil {
+			logger.Sugar().Errorw("queryJoinPowerRentalState", "Error", err)
+		}
+		h.queryJoinPaymentBase(s)
+		h.queryJoinStockLock(s)
+		if err := h.queryJoinOrderCoupon(s); err != nil {
+			logger.Sugar().Errorw("queryJoinOrderCoupon", "Error", err)
+		}
 	})
 }
 
