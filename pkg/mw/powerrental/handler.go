@@ -393,11 +393,11 @@ func WithPaymentType(paymentType *types.PaymentType, must bool) func(context.Con
 		case types.PaymentType_PayWithBalanceOnly:
 		case types.PaymentType_PayWithTransferOnly:
 		case types.PaymentType_PayWithTransferAndBalance:
-		case types.PaymentType_PayWithParentOrder:
+		case types.PaymentType_PayWithOtherOrder:
 		case types.PaymentType_PayWithOffline:
 		case types.PaymentType_PayWithNoPayment:
 		default:
-			return wlog.Errorf("invalid paymentType")
+			return wlog.Errorf("invalid paymenttype")
 		}
 		h.OrderStateBaseReq.PaymentType = paymentType
 		return nil
