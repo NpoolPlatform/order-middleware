@@ -13,37 +13,45 @@ import (
 )
 
 func (s *Server) CreatePowerRentalOrderWithFees(ctx context.Context, in *npool.CreatePowerRentalOrderWithFeesRequest) (*npool.CreatePowerRentalOrderWithFeesResponse, error) {
+	powerRentalOrder := in.GetPowerRentalOrder()
+	if powerRentalOrder == nil {
+		logger.Sugar().Errorw(
+			"CreatePowerRentalOrderWithFees",
+			"Req", in,
+		)
+		return &npool.CreatePowerRentalOrderWithFeesResponse{}, status.Error(codes.InvalidArgument, "invalid info")
+	}
 	handler, err := powerrental1.NewHandler(
 		ctx,
-		powerrental1.WithEntID(in.GetPowerRentalOrder().EntID, false),
-		powerrental1.WithAppID(in.GetPowerRentalOrder().AppID, true),
-		powerrental1.WithUserID(in.GetPowerRentalOrder().UserID, true),
-		powerrental1.WithGoodID(in.GetPowerRentalOrder().GoodID, true),
-		powerrental1.WithGoodType(in.GetPowerRentalOrder().GoodType, true),
-		powerrental1.WithAppGoodID(in.GetPowerRentalOrder().AppGoodID, true),
-		powerrental1.WithOrderID(in.GetPowerRentalOrder().OrderID, false),
-		powerrental1.WithOrderType(in.GetPowerRentalOrder().OrderType, true),
-		powerrental1.WithPaymentType(in.GetPowerRentalOrder().PaymentType, false),
-		powerrental1.WithSimulate(in.GetPowerRentalOrder().Simulate, false),
-		powerrental1.WithCreateMethod(in.GetPowerRentalOrder().CreateMethod, true),
+		powerrental1.WithEntID(powerRentalOrder.EntID, false),
+		powerrental1.WithAppID(powerRentalOrder.AppID, true),
+		powerrental1.WithUserID(powerRentalOrder.UserID, true),
+		powerrental1.WithGoodID(powerRentalOrder.GoodID, true),
+		powerrental1.WithGoodType(powerRentalOrder.GoodType, true),
+		powerrental1.WithAppGoodID(powerRentalOrder.AppGoodID, true),
+		powerrental1.WithOrderID(powerRentalOrder.OrderID, false),
+		powerrental1.WithOrderType(powerRentalOrder.OrderType, true),
+		powerrental1.WithPaymentType(powerRentalOrder.PaymentType, false),
+		powerrental1.WithSimulate(powerRentalOrder.Simulate, false),
+		powerrental1.WithCreateMethod(powerRentalOrder.CreateMethod, true),
 
-		powerrental1.WithAppGoodStockID(in.GetPowerRentalOrder().AppGoodStockID, false),
-		powerrental1.WithUnits(in.GetPowerRentalOrder().Units, true),
-		powerrental1.WithGoodValueUSD(in.GetPowerRentalOrder().GoodValueUSD, true),
-		powerrental1.WithPaymentAmountUSD(in.GetPowerRentalOrder().PaymentAmountUSD, false),
-		powerrental1.WithDiscountAmountUSD(in.GetPowerRentalOrder().DiscountAmountUSD, false),
-		powerrental1.WithPromotionID(in.GetPowerRentalOrder().PromotionID, false),
-		powerrental1.WithDurationSeconds(in.GetPowerRentalOrder().DurationSeconds, true),
-		powerrental1.WithInvestmentType(in.GetPowerRentalOrder().InvestmentType, false),
+		powerrental1.WithAppGoodStockID(powerRentalOrder.AppGoodStockID, false),
+		powerrental1.WithUnits(powerRentalOrder.Units, true),
+		powerrental1.WithGoodValueUSD(powerRentalOrder.GoodValueUSD, true),
+		powerrental1.WithPaymentAmountUSD(powerRentalOrder.PaymentAmountUSD, false),
+		powerrental1.WithDiscountAmountUSD(powerRentalOrder.DiscountAmountUSD, false),
+		powerrental1.WithPromotionID(powerRentalOrder.PromotionID, false),
+		powerrental1.WithDurationSeconds(powerRentalOrder.DurationSeconds, true),
+		powerrental1.WithInvestmentType(powerRentalOrder.InvestmentType, false),
 
-		powerrental1.WithStartMode(in.GetPowerRentalOrder().StartMode, true),
-		powerrental1.WithStartAt(in.GetPowerRentalOrder().StartAt, true),
-		powerrental1.WithAppGoodStockLockID(in.GetPowerRentalOrder().AppGoodStockLockID, true),
-		powerrental1.WithLedgerLockID(in.GetPowerRentalOrder().LedgerLockID, false),
-		powerrental1.WithPaymentID(in.GetPowerRentalOrder().PaymentID, false),
-		powerrental1.WithCouponIDs(in.GetPowerRentalOrder().CouponIDs, false),
-		powerrental1.WithPaymentBalances(in.GetPowerRentalOrder().PaymentBalances, false),
-		powerrental1.WithPaymentTransfers(in.GetPowerRentalOrder().PaymentTransfers, false),
+		powerrental1.WithStartMode(powerRentalOrder.StartMode, true),
+		powerrental1.WithStartAt(powerRentalOrder.StartAt, true),
+		powerrental1.WithAppGoodStockLockID(powerRentalOrder.AppGoodStockLockID, true),
+		powerrental1.WithLedgerLockID(powerRentalOrder.LedgerLockID, false),
+		powerrental1.WithPaymentID(powerRentalOrder.PaymentID, false),
+		powerrental1.WithCouponIDs(powerRentalOrder.CouponIDs, false),
+		powerrental1.WithPaymentBalances(powerRentalOrder.PaymentBalances, false),
+		powerrental1.WithPaymentTransfers(powerRentalOrder.PaymentTransfers, false),
 
 		powerrental1.WithFeeOrders(in.GetFeeOrders(), true),
 	)
