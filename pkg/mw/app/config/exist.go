@@ -12,15 +12,18 @@ import (
 )
 
 func (h *Handler) ExistAppConfig(ctx context.Context) (exist bool, err error) {
+	if h.EntID == nil && h.AppID == nil {
+		return false, wlog.Errorf("invalid id")
+	}
 	err = db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
-		exist, err = cli.
-			AppConfig.
-			Query().
-			Where(
-				entappconfig.EntID(*h.EntID),
-				entappconfig.DeletedAt(0),
-			).
-			Exist(_ctx)
+		stm := cli.AppConfig.Query().Where(entappconfig.DeletedAt(0))
+		if h.EntID != nil {
+			stm.Where(entappconfig.EntID(*h.EntID))
+		}
+		if h.AppID != nil {
+			stm.Where(entappconfig.AppID(*h.AppID))
+		}
+		exist, err = stm.Exist(_ctx)
 		return wlog.WrapError(err)
 	})
 	if err != nil {
