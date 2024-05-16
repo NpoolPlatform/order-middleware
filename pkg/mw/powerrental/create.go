@@ -252,11 +252,11 @@ func (h *createHandler) formalizePaymentType() {
 		h.OrderStateBaseReq.PaymentType = func() *types.PaymentType { e := types.PaymentType_PayWithNoPayment; return &e }()
 		return
 	}
-	if *h.OrderBaseReq.OrderType != types.OrderType_Offline {
+	if *h.OrderBaseReq.OrderType == types.OrderType_Offline {
 		h.OrderStateBaseReq.PaymentType = func() *types.PaymentType { e := types.PaymentType_PayWithOffline; return &e }()
 		return
 	}
-	if *h.OrderBaseReq.OrderType != types.OrderType_Airdrop {
+	if *h.OrderBaseReq.OrderType == types.OrderType_Airdrop {
 		h.OrderStateBaseReq.PaymentType = func() *types.PaymentType { e := types.PaymentType_PayWithNoPayment; return &e }()
 		return
 	}
