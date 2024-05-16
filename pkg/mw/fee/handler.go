@@ -794,6 +794,12 @@ func (h *Handler) withOrderBaseConds(conds *npool.Conds) error {
 			Val: conds.GetCreatedAt().GetValue(),
 		}
 	}
+	if conds.UpdatedAt != nil {
+		h.OrderBaseConds.UpdatedAt = &cruder.Cond{
+			Op:  conds.GetUpdatedAt().GetOp(),
+			Val: conds.GetUpdatedAt().GetValue(),
+		}
+	}
 	return nil
 }
 

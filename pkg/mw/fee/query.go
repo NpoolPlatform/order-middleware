@@ -43,7 +43,9 @@ func (h *queryHandler) queryJoin() {
 		return
 	}
 	h.stmCount.Modify(func(s *sql.Selector) {
-		h.queryJoinFeeOrder(s)
+		if err := h.queryJoinFeeOrder(s); err != nil {
+			logger.Sugar().Errorw("queryJoinFeeOrder", "Error", err)
+		}
 		if err := h.queryJoinOrderStateBase(s); err != nil {
 			logger.Sugar().Errorw("queryJoinOrderStateBase", "Error", err)
 		}

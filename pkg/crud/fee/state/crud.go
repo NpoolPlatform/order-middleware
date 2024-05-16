@@ -81,13 +81,16 @@ func UpdateSet(u *ent.FeeOrderStateUpdateOne, req *Req) *ent.FeeOrderStateUpdate
 }
 
 type Conds struct {
-	ID            *cruder.Cond
-	IDs           *cruder.Cond
-	EntID         *cruder.Cond
-	EntIDs        *cruder.Cond
-	OrderID       *cruder.Cond
-	PaymentState  *cruder.Cond
-	PaymentStates *cruder.Cond
+	ID               *cruder.Cond
+	IDs              *cruder.Cond
+	EntID            *cruder.Cond
+	EntIDs           *cruder.Cond
+	OrderID          *cruder.Cond
+	PaymentState     *cruder.Cond
+	PaymentStates    *cruder.Cond
+	UserSetCanceled  *cruder.Cond
+	AdminSetCanceled *cruder.Cond
+	PaidAt           *cruder.Cond
 }
 
 //nolint:gocyclo,funlen
