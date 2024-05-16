@@ -324,6 +324,13 @@ func (h *createHandler) validatePaymentType() error {
 	return nil
 }
 
+func (h *createHandler) validatePayment() error {
+	if !h.paymentChecker.Payable() {
+		return nil
+	}
+	return h.paymentChecker.ValidatePayment()
+}
+
 func (h *createHandler) validateAppGoodStock() error {
 	if h.OrderBaseReq.Simulate == nil || !*h.OrderBaseReq.Simulate {
 		return nil
@@ -366,7 +373,7 @@ func (h *Handler) CreatePowerRentalWithTx(ctx context.Context, tx *ent.Tx) error
 	if err := handler.validatePaymentType(); err != nil {
 		return wlog.WrapError(err)
 	}
-	if err := handler.paymentChecker.ValidatePayment(); err != nil {
+	if err := handler.validatePayment(); err != nil {
 		return wlog.WrapError(err)
 	}
 	handler.formalizePaymentType()
