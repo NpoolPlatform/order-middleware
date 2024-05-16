@@ -31,7 +31,7 @@ func (s *Server) CreatePowerRentalOrder(ctx context.Context, in *npool.CreatePow
 		powerrental1.WithAppGoodID(req.AppGoodID, true),
 		powerrental1.WithOrderID(req.OrderID, false),
 		powerrental1.WithOrderType(req.OrderType, true),
-		powerrental1.WithPaymentType(req.PaymentType, true),
+		powerrental1.WithPaymentType(req.PaymentType, false),
 		powerrental1.WithSimulate(req.Simulate, false),
 		powerrental1.WithCreateMethod(req.CreateMethod, true),
 

@@ -23,7 +23,7 @@ func (s *Server) CreatePowerRentalOrderWithFees(ctx context.Context, in *npool.C
 		powerrental1.WithAppGoodID(in.GetPowerRentalOrder().AppGoodID, true),
 		powerrental1.WithOrderID(in.GetPowerRentalOrder().OrderID, false),
 		powerrental1.WithOrderType(in.GetPowerRentalOrder().OrderType, true),
-		powerrental1.WithPaymentType(in.GetPowerRentalOrder().PaymentType, true),
+		powerrental1.WithPaymentType(in.GetPowerRentalOrder().PaymentType, false),
 		powerrental1.WithSimulate(in.GetPowerRentalOrder().Simulate, false),
 		powerrental1.WithCreateMethod(in.GetPowerRentalOrder().CreateMethod, true),
 

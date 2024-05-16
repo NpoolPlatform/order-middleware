@@ -248,11 +248,20 @@ func (h *createHandler) formalizePaymentTransfers() {
 }
 
 func (h *createHandler) formalizePaymentType() {
-	if *h.OrderBaseReq.OrderType != types.OrderType_Normal {
-		return
-	}
 	if h.OrderBaseReq.Simulate != nil && *h.OrderBaseReq.Simulate {
 		h.OrderStateBaseReq.PaymentType = func() *types.PaymentType { e := types.PaymentType_PayWithNoPayment; return &e }()
+		return
+	}
+	if *h.OrderBaseReq.OrderType != types.OrderType_Offline {
+		h.OrderStateBaseReq.PaymentType = func() *types.PaymentType { e := types.PaymentType_PayWithOffline; return &e }()
+		return
+	}
+	if *h.OrderBaseReq.OrderType != types.OrderType_Airdrop {
+		h.OrderStateBaseReq.PaymentType = func() *types.PaymentType { e := types.PaymentType_PayWithNoPayment; return &e }()
+		return
+	}
+	// For shop cart
+	if h.OrderStateBaseReq.PaymentType != nil && *h.OrderStateBaseReq.PaymentType == types.PaymentType_PayWithOtherOrder {
 		return
 	}
 	if len(h.PaymentBalanceReqs) > 0 && len(h.PaymentTransferReqs) > 0 {
@@ -372,6 +381,8 @@ func (h *Handler) CreatePowerRentalWithTx(ctx context.Context, tx *ent.Tx) error
 	handler.formalizeOrderLocks()
 	handler.formalizeEntIDs()
 	handler.formalizeOrderCoupons()
+	handler.formalizePaymentType()
+	handler.paymentChecker.PaymentType = h.OrderStateBaseReq.PaymentType
 	handler.formalizePaymentID()
 	if err := handler.validatePaymentType(); err != nil {
 		return wlog.WrapError(err)
@@ -379,7 +390,6 @@ func (h *Handler) CreatePowerRentalWithTx(ctx context.Context, tx *ent.Tx) error
 	if err := handler.validatePayment(); err != nil {
 		return wlog.WrapError(err)
 	}
-	handler.formalizePaymentType()
 	handler.formalizePaymentBalances()
 	handler.formalizePaymentTransfers()
 	handler.formalizeFeeOrders()
