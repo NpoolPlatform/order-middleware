@@ -417,11 +417,11 @@ func (h *Handler) UpdatePowerRentalWithTx(ctx context.Context, tx *ent.Tx) error
 	if err := handler.requirePowerRental(ctx); err != nil {
 		return wlog.WrapError(err)
 	}
+	handler.formalizeOrderID()
 	if err := handler.validateUpdate(ctx); err != nil {
 		return wlog.WrapError(err)
 	}
 
-	handler.formalizeOrderID()
 	handler.formalizeOrderLocks()
 	handler.formalizeEntIDs()
 	if err := handler.formalizePaymentID(); err != nil {
