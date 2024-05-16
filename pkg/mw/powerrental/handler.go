@@ -824,7 +824,7 @@ func WithFeeOrders(feeOrders []*feeordermwpb.FeeOrderReq, must bool) func(contex
 				feeorder1.WithGoodID(feeOrder.GoodID, true),
 				feeorder1.WithGoodType(feeOrder.GoodType, true),
 				feeorder1.WithAppGoodID(feeOrder.AppGoodID, true),
-				feeorder1.WithOrderID(feeOrder.OrderID, true),
+				feeorder1.WithOrderID(feeOrder.OrderID, false),
 				// Fill parent order id later
 				// Fill order type with parent later
 				feeorder1.WithPaymentType(func() *types.PaymentType { e := types.PaymentType_PayWithParentOrder; return &e }(), true),
