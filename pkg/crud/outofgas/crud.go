@@ -51,6 +51,7 @@ type Conds struct {
 	ID       *cruder.Cond
 	IDs      *cruder.Cond
 	OrderID  *cruder.Cond
+	OrderIDs *cruder.Cond
 	StartAt  *cruder.Cond
 	EndAt    *cruder.Cond
 	StartEnd *cruder.Cond
@@ -128,6 +129,20 @@ func SetQueryConds(q *ent.OutOfGasQuery, conds *Conds) (*ent.OutOfGasQuery, erro
 			q.Where(entoutofgas.OrderID(id))
 		default:
 			return nil, wlog.Errorf("invalid outofgas field")
+		}
+	}
+	if conds.OrderIDs != nil {
+		ids, ok := conds.OrderIDs.Val.([]uuid.UUID)
+		if !ok {
+			return nil, wlog.Errorf("invalid orderids")
+		}
+		if len(ids) > 0 {
+			switch conds.OrderIDs.Op {
+			case cruder.IN:
+				q.Where(entoutofgas.OrderIDIn(ids...))
+			default:
+				return nil, wlog.Errorf("invalid outofgas field")
+			}
 		}
 	}
 	if conds.StartAt != nil {

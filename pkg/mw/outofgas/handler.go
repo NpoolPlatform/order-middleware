@@ -132,6 +132,20 @@ func (h *Handler) withOutOfGasConds(conds *npool.Conds) error {
 			Op: conds.GetOrderID().GetOp(), Val: id,
 		}
 	}
+	if conds.OrderIDs != nil {
+		ids := []uuid.UUID{}
+		for _, id := range conds.GetOrderIDs().GetValue() {
+			_id, err := uuid.Parse(id)
+			if err != nil {
+				return wlog.WrapError(err)
+			}
+			ids = append(ids, _id)
+		}
+		h.OutOfGasConds.OrderIDs = &cruder.Cond{
+			Op:  conds.GetOrderIDs().GetOp(),
+			Val: ids,
+		}
+	}
 	if conds.StartAt != nil {
 		h.OutOfGasConds.StartAt = &cruder.Cond{
 			Op:  conds.GetStartAt().GetOp(),
@@ -142,6 +156,26 @@ func (h *Handler) withOutOfGasConds(conds *npool.Conds) error {
 		h.OutOfGasConds.EndAt = &cruder.Cond{
 			Op:  conds.GetEndAt().GetOp(),
 			Val: conds.GetEndAt().GetValue(),
+		}
+	}
+	if conds.GoodID != nil {
+		id, err := uuid.Parse(conds.GetGoodID().GetValue())
+		if err != nil {
+			return wlog.WrapError(err)
+		}
+		h.OrderBaseConds.GoodID = &cruder.Cond{
+			Op:  conds.GetGoodID().GetOp(),
+			Val: id,
+		}
+	}
+	if conds.AppGoodID != nil {
+		id, err := uuid.Parse(conds.GetAppGoodID().GetValue())
+		if err != nil {
+			return wlog.WrapError(err)
+		}
+		h.OrderBaseConds.AppGoodID = &cruder.Cond{
+			Op:  conds.GetAppGoodID().GetOp(),
+			Val: id,
 		}
 	}
 	return nil
@@ -156,6 +190,20 @@ func (h *Handler) withOrderBaseConds(conds *npool.Conds) error {
 		h.OrderBaseConds.EntID = &cruder.Cond{
 			Op:  conds.GetOrderID().GetOp(),
 			Val: id,
+		}
+	}
+	if conds.OrderIDs != nil {
+		ids := []uuid.UUID{}
+		for _, id := range conds.GetOrderIDs().GetValue() {
+			_id, err := uuid.Parse(id)
+			if err != nil {
+				return wlog.WrapError(err)
+			}
+			ids = append(ids, _id)
+		}
+		h.OrderBaseConds.EntIDs = &cruder.Cond{
+			Op:  conds.GetOrderIDs().GetOp(),
+			Val: ids,
 		}
 	}
 	if conds.AppID != nil {
