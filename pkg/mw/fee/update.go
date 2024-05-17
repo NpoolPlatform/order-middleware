@@ -380,11 +380,13 @@ func (h *updateHandler) validateUpdate(ctx context.Context) error {
 }
 
 func (h *updateHandler) validatePaymentType() error {
-	switch h._ent.OrderState() {
-	case types.OrderState_OrderStateCreated:
-	case types.OrderState_OrderStateWaitPayment:
-	default:
-		return wlog.Errorf("permission denied")
+	if h.newPayment {
+		switch h._ent.OrderState() {
+		case types.OrderState_OrderStateCreated:
+		case types.OrderState_OrderStateWaitPayment:
+		default:
+			return wlog.Errorf("permission denied")
+		}
 	}
 	switch h._ent.PaymentType() {
 	case types.PaymentType_PayWithOffline:
