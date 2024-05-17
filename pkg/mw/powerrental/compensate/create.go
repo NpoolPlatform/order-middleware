@@ -137,6 +137,9 @@ func (h *Handler) CreateCompensate(ctx context.Context) error {
 			Handler: h,
 		},
 	}
+	if h.EntID == nil {
+		h.EntID = func() *uuid.UUID { uid := uuid.New(); return &uid }()
+	}
 
 	return db.WithTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {
 		if h.OrderID != nil {
