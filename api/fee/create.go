@@ -31,7 +31,7 @@ func (s *Server) CreateFeeOrder(ctx context.Context, in *npool.CreateFeeOrderReq
 		feeorder1.WithGoodType(req.GoodType, true),
 		feeorder1.WithAppGoodID(req.AppGoodID, true),
 		feeorder1.WithOrderID(req.OrderID, false),
-		feeorder1.WithParentOrderID(req.ParentOrderID, false),
+		feeorder1.WithParentOrderID(req.ParentOrderID, true),
 		feeorder1.WithOrderType(req.OrderType, true),
 		feeorder1.WithPaymentType(req.PaymentType, true),
 		feeorder1.WithCreateMethod(req.CreateMethod, true),
