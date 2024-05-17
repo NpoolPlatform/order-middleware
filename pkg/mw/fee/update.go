@@ -322,9 +322,6 @@ func (h *updateHandler) formalizePaymentID() error {
 }
 
 func (h *updateHandler) formalizeEntIDs() {
-	if h.PaymentBaseReq.EntID == nil {
-		h.PaymentBaseReq.EntID = func() *uuid.UUID { uid := uuid.New(); return &uid }()
-	}
 	if h.PaymentBalanceLockReq.EntID == nil {
 		h.PaymentBalanceLockReq.EntID = func() *uuid.UUID { uid := uuid.New(); return &uid }()
 	}
