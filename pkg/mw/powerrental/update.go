@@ -464,6 +464,35 @@ func (h *updateHandler) validateRenewState() error {
 	if h._ent.OrderState() != types.OrderState_OrderStateInService {
 		return wlog.Errorf("permission denied")
 	}
+	switch h._ent.RenewState() {
+	case types.OrderRenewState_OrderRenewWait:
+		switch *h.PowerRentalStateReq.RenewState {
+		case types.OrderRenewState_OrderRenewCheck:
+		case types.OrderRenewState_OrderRenewFail:
+		default:
+			return wlog.Errorf("permission denied")
+		}
+	case types.OrderRenewState_OrderRenewCheck:
+		switch *h.PowerRentalStateReq.RenewState {
+		case types.OrderRenewState_OrderRenewNotify:
+		case types.OrderRenewState_OrderRenewFail:
+		default:
+			return wlog.Errorf("permission denied")
+		}
+	case types.OrderRenewState_OrderRenewNotify:
+		switch *h.PowerRentalStateReq.RenewState {
+		case types.OrderRenewState_OrderRenewExecute:
+		case types.OrderRenewState_OrderRenewFail:
+		default:
+			return wlog.Errorf("permission denied")
+		}
+	case types.OrderRenewState_OrderRenewExecute:
+		fallthrough //nolint
+	case types.OrderRenewState_OrderRenewFail:
+		if *h.PowerRentalStateReq.RenewState != types.OrderRenewState_OrderRenewWait {
+			return wlog.Errorf("permission denied")
+		}
+	}
 	return nil
 }
 

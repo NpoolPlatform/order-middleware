@@ -84,6 +84,10 @@ func (f *powerRental) CancelState() types.OrderState {
 	return types.OrderState(types.OrderState_value[f.entPowerRentalState.CancelState])
 }
 
+func (f *powerRental) RenewState() types.OrderRenewState {
+	return types.OrderRenewState(types.OrderRenewState_value[f.entPowerRentalState.RenewState])
+}
+
 func (f *powerRental) UserSetCanceled() bool {
 	return f.entPowerRentalState.UserSetCanceled
 }
