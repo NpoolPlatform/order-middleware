@@ -72,7 +72,7 @@ func (h *Handler) UpdateOutOfGas(ctx context.Context) error {
 	if err := handler.requirePowerRentalState(ctx); err != nil {
 		return wlog.WrapError(err)
 	}
-	if *h.EndAt <= handler.outOfGasHandler._ent.StartAt() {
+	if h.EndAt != nil && *h.EndAt <= handler.outOfGasHandler._ent.StartAt() {
 		return wlog.Errorf("invalid duration")
 	}
 
