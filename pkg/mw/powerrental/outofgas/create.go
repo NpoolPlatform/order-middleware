@@ -8,6 +8,8 @@ import (
 	"github.com/NpoolPlatform/order-middleware/pkg/db"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent"
 	outofgas1 "github.com/NpoolPlatform/order-middleware/pkg/mw/outofgas"
+
+	"github.com/google/uuid"
 )
 
 type createHandler struct {
@@ -40,6 +42,9 @@ func (h *createHandler) createOutOfGas(ctx context.Context, tx *ent.Tx) error {
 func (h *Handler) CreateOutOfGas(ctx context.Context) error {
 	handler := &createHandler{
 		Handler: h,
+	}
+	if h.EntID == nil {
+		h.EntID = func() *uuid.UUID { uid := uuid.New(); return &uid }()
 	}
 	handler.constructOutOfGasSQL(ctx, &h.Req)
 	return db.WithTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {
