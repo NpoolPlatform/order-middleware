@@ -61,7 +61,7 @@ func (h *validateHandler) validateAdminCancelable() error {
 	if !*h.AdminSetCanceled {
 		return wlog.Errorf("invalid cancelstate")
 	}
-	if !*h.AdminCanceled {
+	if *h.AdminCanceled {
 		return wlog.Errorf("invalid cancelstate")
 	}
 	switch h._ent.OrderType() {
