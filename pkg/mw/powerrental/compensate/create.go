@@ -45,7 +45,7 @@ func (h *createHandler) execSQL(ctx context.Context, tx *ent.Tx, sql string) err
 	}
 	n, err := rc.RowsAffected()
 	if err != nil || n != 1 {
-		return wlog.Errorf("fail run %v: %v", sql, err)
+		return wlog.Errorf("fail create compensate: %v", err)
 	}
 	return nil
 }
