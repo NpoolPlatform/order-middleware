@@ -380,6 +380,12 @@ func (h *updateHandler) validateUpdate(ctx context.Context) error {
 }
 
 func (h *updateHandler) validatePaymentType() error {
+	switch h._ent.OrderState() {
+	case types.OrderState_OrderStateCreated:
+	case types.OrderState_OrderStateWaitPayment:
+	default:
+		return wlog.Errorf("permission denied")
+	}
 	switch h._ent.PaymentType() {
 	case types.PaymentType_PayWithOffline:
 		fallthrough //nolint
@@ -435,11 +441,11 @@ func (h *Handler) UpdateFeeOrderWithTx(ctx context.Context, tx *ent.Tx) error {
 		handler.paymentChecker.PaymentType = func() *types.PaymentType { e := handler._ent.PaymentType(); return &e }()
 	}
 
+	handler.formalizeOrderID()
 	if err := handler.validateUpdate(ctx); err != nil {
 		return wlog.WrapError(err)
 	}
 
-	handler.formalizeOrderID()
 	handler.formalizeEntIDs()
 	if err := handler.formalizePaymentID(); err != nil {
 		return wlog.WrapError(err)

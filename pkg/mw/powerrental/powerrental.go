@@ -5,6 +5,7 @@ import (
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent"
 
 	"github.com/google/uuid"
+	"github.com/shopspring/decimal"
 )
 
 type PowerRental interface {
@@ -63,6 +64,10 @@ func (f *powerRental) PaymentState() types.PaymentState {
 	return types.PaymentState(types.PaymentState_value[f.entPowerRentalState.PaymentState])
 }
 
+func (f *powerRental) PaymentType() types.PaymentType {
+	return types.PaymentType(types.PaymentType_value[f.entOrderStateBase.PaymentType])
+}
+
 func (f *powerRental) OrderState() types.OrderState {
 	return types.OrderState(types.OrderState_value[f.entOrderStateBase.OrderState])
 }
@@ -77,6 +82,14 @@ func (f *powerRental) UserSetCanceled() bool {
 
 func (f *powerRental) AdminSetCanceled() bool {
 	return f.entPowerRentalState.AdminSetCanceled
+}
+
+func (f *powerRental) PaymentAmountUSD() decimal.Decimal {
+	return f.entPowerRental.PaymentAmountUsd
+}
+
+func (f *powerRental) DiscountAmountUSD() decimal.Decimal {
+	return f.entPowerRental.DiscountAmountUsd
 }
 
 func (f *powerRental) PayWithMeOrderIDs() []uuid.UUID {

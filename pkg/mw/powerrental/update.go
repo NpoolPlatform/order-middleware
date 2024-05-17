@@ -16,15 +16,18 @@ import (
 	paymentbase1 "github.com/NpoolPlatform/order-middleware/pkg/mw/payment"
 	paymentbalance1 "github.com/NpoolPlatform/order-middleware/pkg/mw/payment/balance"
 	paymentbalancelock1 "github.com/NpoolPlatform/order-middleware/pkg/mw/payment/balance/lock"
+	paymentcommon "github.com/NpoolPlatform/order-middleware/pkg/mw/payment/common"
 	paymenttransfer1 "github.com/NpoolPlatform/order-middleware/pkg/mw/payment/transfer"
 	powerrentalstate1 "github.com/NpoolPlatform/order-middleware/pkg/mw/powerrental/state"
 	orderstm1 "github.com/NpoolPlatform/order-middleware/pkg/mw/stm"
 
 	"github.com/google/uuid"
+	"github.com/shopspring/decimal"
 )
 
 type updateHandler struct {
 	*powerRentalQueryHandler
+	paymentChecker *paymentcommon.PaymentCheckHandler
 
 	newPayment             bool
 	newPaymentBalance      bool
@@ -337,10 +340,50 @@ func (h *updateHandler) formalizePaymentID() error {
 	return nil
 }
 
-func (h *updateHandler) formalizeEntIDs() {
-	if h.PaymentBaseReq.EntID == nil {
-		h.PaymentBaseReq.EntID = func() *uuid.UUID { uid := uuid.New(); return &uid }()
+func (h *updateHandler) validatePaymentType() error {
+	switch h._ent.OrderState() {
+	case types.OrderState_OrderStateCreated:
+	case types.OrderState_OrderStateWaitPayment:
+	default:
+		return wlog.Errorf("permission denied")
 	}
+	switch *h.OrderStateBaseReq.PaymentType {
+	case types.PaymentType_PayWithBalanceOnly:
+		fallthrough //nolint
+	case types.PaymentType_PayWithTransferAndBalance:
+		if h.ledgerLockID() == nil {
+			return wlog.Errorf("invalid ledgerlockid")
+		}
+		fallthrough
+	case types.PaymentType_PayWithTransferOnly:
+		if h.PaymentBaseReq.EntID == nil {
+			return wlog.Errorf("invalid paymentid")
+		}
+	case types.PaymentType_PayWithParentOrder:
+		fallthrough //nolint
+	case types.PaymentType_PayWithContract:
+		fallthrough //nolint
+	case types.PaymentType_PayWithOffline:
+		fallthrough //nolint
+	case types.PaymentType_PayWithNoPayment:
+		if h.PaymentBaseReq.EntID != nil || h.ledgerLockID() != nil {
+			return wlog.Errorf("invalid paymenttype")
+		}
+	}
+	return nil
+}
+
+func (h *updateHandler) validatePayment() error {
+	if !h.paymentChecker.Payable() {
+		if len(h.PaymentBalanceReqs) > 0 || len(h.PaymentTransferReqs) > 0 {
+			return wlog.Errorf("invalid payment")
+		}
+		return nil
+	}
+	return h.paymentChecker.ValidatePayment()
+}
+
+func (h *updateHandler) formalizeEntIDs() {
 	if h.PaymentBalanceLockReq.EntID == nil {
 		h.PaymentBalanceLockReq.EntID = func() *uuid.UUID { uid := uuid.New(); return &uid }()
 	}
@@ -364,14 +407,12 @@ func (h *updateHandler) formalizeCancelState() {
 		h.PowerRentalStateReq.CancelState = func() *types.OrderState { e := h._ent.OrderState(); return &e }()
 	}
 	if h.OrderStateBaseReq.OrderState != nil && *h.OrderStateBaseReq.OrderState == types.OrderState_OrderStatePreCancel {
-		// TODO: also set child order state
 		h.PowerRentalStateReq.CancelState = func() *types.OrderState { e := h._ent.OrderState(); return &e }()
 	}
 }
 
 func (h *updateHandler) formalizePaidAt() {
 	if h.PowerRentalStateReq.PaymentState != nil && *h.PowerRentalStateReq.PaymentState == types.PaymentState_PaymentStateDone {
-		// TODO: also set child order paid at
 		h.PowerRentalStateReq.PaidAt = func() *uint32 { u := uint32(time.Now().Unix()); return &u }()
 	}
 }
@@ -412,10 +453,22 @@ func (h *Handler) UpdatePowerRentalWithTx(ctx context.Context, tx *ent.Tx) error
 			ObseleteState: func() *types.PaymentObseleteState { e := types.PaymentObseleteState_PaymentObseleteWait; return &e }(),
 		},
 		updateNothing: true,
+		paymentChecker: &paymentcommon.PaymentCheckHandler{
+			PaymentType:         h.OrderStateBaseReq.PaymentType,
+			PaymentBalanceReqs:  h.PaymentBalanceReqs,
+			PaymentTransferReqs: h.PaymentTransferReqs,
+			PaymentAmountUSD:    h.PaymentAmountUSD,
+			DiscountAmountUSD:   h.DiscountAmountUSD,
+		},
 	}
 
 	if err := handler.requirePowerRental(ctx); err != nil {
 		return wlog.WrapError(err)
+	}
+	handler.paymentChecker.PaymentAmountUSD = func() *decimal.Decimal { d := handler._ent.PaymentAmountUSD(); return &d }()
+	handler.paymentChecker.DiscountAmountUSD = func() *decimal.Decimal { d := handler._ent.DiscountAmountUSD(); return &d }()
+	if handler.paymentChecker.PaymentType == nil {
+		handler.paymentChecker.PaymentType = func() *types.PaymentType { e := handler._ent.PaymentType(); return &e }()
 	}
 	handler.formalizeOrderID()
 	if err := handler.validateUpdate(ctx); err != nil {
@@ -429,6 +482,14 @@ func (h *Handler) UpdatePowerRentalWithTx(ctx context.Context, tx *ent.Tx) error
 	}
 	handler.formalizePaymentBalances()
 	handler.formalizePaymentTransfers()
+	if handler.newPayment {
+		if err := handler.validatePayment(); err != nil {
+			return wlog.WrapError(err)
+		}
+	}
+	if err := handler.validatePaymentType(); err != nil {
+		return wlog.WrapError(err)
+	}
 	handler.formalizeCancelState()
 	if err := handler.validateCancelState(); err != nil {
 		return wlog.WrapError(err)
