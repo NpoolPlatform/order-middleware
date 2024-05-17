@@ -70,19 +70,21 @@ func (h *baseQueryHandler) queryJoinOrder(s *sql.Selector) error { //nolint
 			sql.EQ(t.C(entorderbase.FieldDeletedAt), 0),
 		)
 	if h.OrderBaseConds.AppID != nil {
+		id, ok := h.OrderBaseConds.AppID.Val.(uuid.UUID)
+		if !ok {
+			return wlog.Errorf("invalid appid")
+		}
 		s.OnP(
-			sql.EQ(
-				t.C(entorderbase.FieldAppID),
-				h.OrderBaseConds.AppID.Val.(uuid.UUID),
-			),
+			sql.EQ(t.C(entorderbase.FieldAppID), id),
 		)
 	}
 	if h.OrderBaseConds.UserID != nil {
+		id, ok := h.OrderBaseConds.UserID.Val.(uuid.UUID)
+		if !ok {
+			return wlog.Errorf("invalid userid")
+		}
 		s.OnP(
-			sql.EQ(
-				t.C(entorderbase.FieldUserID),
-				h.OrderBaseConds.UserID.Val.(uuid.UUID),
-			),
+			sql.EQ(t.C(entorderbase.FieldUserID), id),
 		)
 	}
 	s.AppendSelect(
