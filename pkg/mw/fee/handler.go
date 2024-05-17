@@ -383,26 +383,18 @@ func WithOrderState(state *types.OrderState, must bool) func(context.Context, *H
 		case types.OrderState_OrderStateTransferGoodStockLocked:
 		case types.OrderState_OrderStateAddCommission:
 		case types.OrderState_OrderStateAchievementBookKeeping:
-		case types.OrderState_OrderStateUpdatePaidChilds:
-		case types.OrderState_OrderStateChildPaidByParent:
 		case types.OrderState_OrderStatePaymentUnlockAccount:
 		case types.OrderState_OrderStatePaid:
 		case types.OrderState_OrderStateTransferGoodStockWaitStart:
-		case types.OrderState_OrderStateUpdateInServiceChilds:
-		case types.OrderState_OrderStateChildInServiceByParent:
 		case types.OrderState_OrderStateInService:
 		case types.OrderState_OrderStatePaymentTimeout:
 		case types.OrderState_OrderStatePreCancel:
 		case types.OrderState_OrderStatePreExpired:
 		case types.OrderState_OrderStateRestoreExpiredStock:
-		case types.OrderState_OrderStateUpdateExpiredChilds:
-		case types.OrderState_OrderStateChildExpiredByParent:
 		case types.OrderState_OrderStateRestoreCanceledStock:
 		case types.OrderState_OrderStateCancelAchievement:
 		case types.OrderState_OrderStateDeductLockedCommission:
 		case types.OrderState_OrderStateReturnCanceledBalance:
-		case types.OrderState_OrderStateUpdateCanceledChilds:
-		case types.OrderState_OrderStateChildCanceledByParent:
 		case types.OrderState_OrderStateCanceledTransferBookKeeping:
 		case types.OrderState_OrderStateCancelUnlockPaymentAccount:
 		case types.OrderState_OrderStateCanceled:
