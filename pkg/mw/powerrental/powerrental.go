@@ -72,6 +72,10 @@ func (f *powerRental) OrderState() types.OrderState {
 	return types.OrderState(types.OrderState_value[f.entOrderStateBase.OrderState])
 }
 
+func (f *powerRental) BenefitState() types.BenefitState {
+	return types.BenefitState(types.BenefitState_value[f.entOrderStateBase.BenefitState])
+}
+
 func (f *powerRental) CancelState() types.OrderState {
 	return types.OrderState(types.OrderState_value[f.entPowerRentalState.CancelState])
 }

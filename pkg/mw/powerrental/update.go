@@ -406,10 +406,24 @@ func (h *updateHandler) validateBenefitState() error {
 	if h.OrderStateBaseReq.BenefitState == nil {
 		return nil
 	}
-	if h._ent.OrderState() == types.OrderState_OrderStateInService {
-		return nil
+	if h._ent.OrderState() != types.OrderState_OrderStateInService {
+		return wlog.Errorf("permission denied")
 	}
-	return wlog.Errorf("permission denied")
+	switch h._ent.BenefitState() {
+	case types.BenefitState_BenefitWait:
+		if *h.OrderStateBaseReq.BenefitState != types.BenefitState_BenefitCalculated {
+			return wlog.Errorf("permission denied")
+		}
+	case types.BenefitState_BenefitCalculated:
+		if *h.OrderStateBaseReq.BenefitState != types.BenefitState_BenefitBookKept {
+			return wlog.Errorf("permission denied")
+		}
+	case types.BenefitState_BenefitBookKept:
+		if *h.OrderStateBaseReq.BenefitState != types.BenefitState_BenefitWait {
+			return wlog.Errorf("permission denied")
+		}
+	}
+	return nil
 }
 
 func (h *updateHandler) formalizeCancelState() {
