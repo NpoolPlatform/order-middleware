@@ -426,6 +426,16 @@ func (h *updateHandler) validateBenefitState() error {
 	return nil
 }
 
+func (h *updateHandler) validateRenewState() error {
+	if h.PowerRentalStateReq.RenewState == nil {
+		return nil
+	}
+	if h._ent.OrderState() != types.OrderState_OrderStateInService {
+		return wlog.Errorf("permission denied")
+	}
+	return nil
+}
+
 func (h *updateHandler) formalizeCancelState() {
 	if (h.PowerRentalStateReq.UserSetCanceled != nil && *h.PowerRentalStateReq.UserSetCanceled) ||
 		(h.PowerRentalStateReq.AdminSetCanceled != nil && *h.PowerRentalStateReq.AdminSetCanceled) {
@@ -500,6 +510,9 @@ func (h *Handler) UpdatePowerRentalWithTx(ctx context.Context, tx *ent.Tx) error
 		return wlog.WrapError(err)
 	}
 	if err := handler.validateBenefitState(); err != nil {
+		return wlog.WrapError(err)
+	}
+	if err := handler.validateRenewState(); err != nil {
 		return wlog.WrapError(err)
 	}
 
