@@ -70,7 +70,7 @@ func (h *Handler) ConstructUpdateSQL() (string, error) {
 		set = ""
 	}
 	if h.PaidAt != nil {
-		_sql += fmt.Sprintf("%vspaid_at = %v, ", set, *h.PaidAt)
+		_sql += fmt.Sprintf("%vpaid_at = %v, ", set, *h.PaidAt)
 		set = ""
 	}
 	if h.UserSetPaid != nil {
