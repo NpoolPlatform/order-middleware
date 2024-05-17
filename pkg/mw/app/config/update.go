@@ -63,17 +63,15 @@ func (h *updateHandler) constructSQL() error {
 
 	_sql += fmt.Sprintf("updated_at = %v ", now)
 
-	whereAnd := "where "
+	_sql += "where deleted_at = 0 "
 	if h.ID != nil {
-		_sql += fmt.Sprintf("where id = %v ", *h.ID)
-		whereAnd = "and"
+		_sql += fmt.Sprintf("and id = %v ", *h.ID)
 	}
 	if h.EntID != nil {
-		_sql += fmt.Sprintf("%v ent_id = '%v'", whereAnd, *h.EntID)
-		whereAnd = "and"
+		_sql += fmt.Sprintf("and ent_id = '%v'", *h.EntID)
 	}
 	if h.AppID != nil {
-		_sql += fmt.Sprintf("%v app_id = '%v'", whereAnd, *h.AppID)
+		_sql += fmt.Sprintf("and app_id = '%v'", *h.AppID)
 	}
 
 	h.sql = _sql
