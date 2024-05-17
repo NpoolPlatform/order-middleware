@@ -264,6 +264,15 @@ func (h *createHandler) formalizePaymentID() {
 	h.PaymentBalanceLockReq.PaymentID = h.PaymentBaseReq.EntID
 }
 
+func (h *createHandler) validateOrderType() error {
+	if *h.OrderBaseReq.CreateMethod == types.OrderCreateMethod_OrderCreatedByAdmin {
+		if *h.OrderBaseReq.OrderType == types.OrderType_Normal {
+			return wlog.Errorf("invalid order type")
+		}
+	}
+	return nil
+}
+
 func (h *Handler) CreateFeeOrderWithTx(ctx context.Context, tx *ent.Tx) error {
 	handler := &createHandler{
 		Handler: h,
@@ -280,6 +289,9 @@ func (h *Handler) CreateFeeOrderWithTx(ctx context.Context, tx *ent.Tx) error {
 		h.EntID = func() *uuid.UUID { uid := uuid.New(); return &uid }()
 	}
 	if err := handler.paymentChecker.ValidatePayment(); err != nil {
+		return wlog.WrapError(err)
+	}
+	if err := handler.validateOrderType(); err != nil {
 		return wlog.WrapError(err)
 	}
 
