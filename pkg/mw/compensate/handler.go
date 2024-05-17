@@ -176,6 +176,12 @@ func (h *Handler) withCompensateConds(conds *npool.Conds) error {
 			Val: id,
 		}
 	}
+	if conds.CompensateType != nil {
+		h.CompensateConds.CompensateType = &cruder.Cond{
+			Op:  conds.GetCompensateType().GetOp(),
+			Val: types.CompensateType(conds.GetCompensateType().GetValue()),
+		}
+	}
 	return nil
 }
 
@@ -221,6 +227,26 @@ func (h *Handler) withOrderBaseConds(conds *npool.Conds) error {
 		}
 		h.OrderBaseConds.UserID = &cruder.Cond{
 			Op:  conds.GetUserID().GetOp(),
+			Val: id,
+		}
+	}
+	if conds.GoodID != nil {
+		id, err := uuid.Parse(conds.GetGoodID().GetValue())
+		if err != nil {
+			return wlog.WrapError(err)
+		}
+		h.OrderBaseConds.GoodID = &cruder.Cond{
+			Op:  conds.GetGoodID().GetOp(),
+			Val: id,
+		}
+	}
+	if conds.AppGoodID != nil {
+		id, err := uuid.Parse(conds.GetAppGoodID().GetValue())
+		if err != nil {
+			return wlog.WrapError(err)
+		}
+		h.OrderBaseConds.AppGoodID = &cruder.Cond{
+			Op:  conds.GetAppGoodID().GetOp(),
 			Val: id,
 		}
 	}

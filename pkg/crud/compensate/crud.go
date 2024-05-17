@@ -56,6 +56,8 @@ type Conds struct {
 	OrderID          *cruder.Cond
 	OrderIDs         *cruder.Cond
 	CompensateFromID *cruder.Cond
+	CompensateType   *cruder.Cond
+	CompensateTypes  *cruder.Cond
 }
 
 //nolint
@@ -153,6 +155,37 @@ func SetQueryConds(q *ent.CompensateQuery, conds *Conds) (*ent.CompensateQuery, 
 			switch conds.OrderIDs.Op {
 			case cruder.IN:
 				q.Where(entcompensate.OrderIDIn(ids...))
+			default:
+				return nil, wlog.Errorf("invalid compensate field")
+			}
+		}
+	}
+	if conds.CompensateType != nil {
+		_type, ok := conds.CompensateType.Val.(types.CompensateType)
+		if !ok {
+			return nil, wlog.Errorf("invalid compensatetype")
+		}
+		switch conds.CompensateType.Op {
+		case cruder.EQ:
+			q.Where(entcompensate.CompensateType(_type.String()))
+		default:
+			return nil, wlog.Errorf("invalid compensate field")
+		}
+	}
+	if conds.CompensateTypes != nil {
+		_types, ok := conds.CompensateTypes.Val.([]types.CompensateType)
+		if !ok {
+			return nil, wlog.Errorf("invalid compensatetypes")
+		}
+		if len(_types) > 0 {
+			switch conds.CompensateTypes.Op {
+			case cruder.IN:
+				q.Where(entcompensate.CompensateTypeIn(func() (__types []string) {
+					for _, _type := range _types {
+						__types = append(__types, _type.String())
+					}
+					return
+				}()...))
 			default:
 				return nil, wlog.Errorf("invalid compensate field")
 			}
