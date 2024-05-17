@@ -32,6 +32,10 @@ func (f *powerRental) OrderID() uuid.UUID {
 	return f.entPowerRental.OrderID
 }
 
+func (f *powerRental) OrderType() types.OrderType {
+	return types.OrderType(types.OrderType_value[f.entOrderBase.OrderType])
+}
+
 func (f *powerRental) PaymentID() uuid.UUID {
 	return f.entPaymentBase.EntID
 }

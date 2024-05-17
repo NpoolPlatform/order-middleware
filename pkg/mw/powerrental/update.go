@@ -322,6 +322,35 @@ func (h *updateHandler) formalizePaymentTransfers() {
 	}
 }
 
+func (h *updateHandler) formalizePaymentType() error {
+	switch h._ent.OrderType() {
+	case types.OrderType_Offline:
+		fallthrough //nolint
+	case types.OrderType_Airdrop:
+		return wlog.Errorf("permission denied")
+	}
+	switch h._ent.PaymentType() {
+	case types.PaymentType_PayWithBalanceOnly:
+	case types.PaymentType_PayWithTransferOnly:
+	case types.PaymentType_PayWithTransferAndBalance:
+	default:
+		return wlog.Errorf("permission denied")
+	}
+	if len(h.PaymentBalanceReqs) > 0 && len(h.PaymentTransferReqs) > 0 {
+		h.OrderStateBaseReq.PaymentType = func() *types.PaymentType { e := types.PaymentType_PayWithTransferAndBalance; return &e }()
+		return nil
+	}
+	if len(h.PaymentBalanceReqs) > 0 {
+		h.OrderStateBaseReq.PaymentType = func() *types.PaymentType { e := types.PaymentType_PayWithBalanceOnly; return &e }()
+		return nil
+	}
+	if len(h.PaymentTransferReqs) > 0 {
+		h.OrderStateBaseReq.PaymentType = func() *types.PaymentType { e := types.PaymentType_PayWithTransferOnly; return &e }()
+		return nil
+	}
+	return nil
+}
+
 func (h *updateHandler) formalizePaymentID() error {
 	if h.PaymentBaseReq.EntID == nil || h._ent.PaymentID() == *h.PaymentBaseReq.EntID {
 		return nil
@@ -341,15 +370,17 @@ func (h *updateHandler) formalizePaymentID() error {
 }
 
 func (h *updateHandler) validatePaymentType() error {
-	if h.newPayment {
-		switch h._ent.OrderState() {
-		case types.OrderState_OrderStateCreated:
-		case types.OrderState_OrderStateWaitPayment:
-		default:
-			return wlog.Errorf("permission denied")
-		}
+	switch h._ent.OrderState() {
+	case types.OrderState_OrderStateCreated:
+	case types.OrderState_OrderStateWaitPayment:
+	default:
+		return wlog.Errorf("permission denied")
 	}
-	switch *h.OrderStateBaseReq.PaymentType {
+	paymentType := h._ent.PaymentType()
+	if h.OrderStateBaseReq.PaymentType != nil {
+		paymentType = *h.OrderStateBaseReq.PaymentType
+	}
+	switch paymentType {
 	case types.PaymentType_PayWithBalanceOnly:
 		fallthrough //nolint
 	case types.PaymentType_PayWithTransferAndBalance:
@@ -524,12 +555,15 @@ func (h *Handler) UpdatePowerRentalWithTx(ctx context.Context, tx *ent.Tx) error
 	handler.formalizePaymentBalances()
 	handler.formalizePaymentTransfers()
 	if handler.newPayment {
+		if err := handler.formalizePaymentType(); err != nil {
+			return wlog.WrapError(err)
+		}
 		if err := handler.validatePayment(); err != nil {
 			return wlog.WrapError(err)
 		}
-	}
-	if err := handler.validatePaymentType(); err != nil {
-		return wlog.WrapError(err)
+		if err := handler.validatePaymentType(); err != nil {
+			return wlog.WrapError(err)
+		}
 	}
 	handler.formalizeCancelState()
 	if err := handler.validateCancelState(); err != nil {

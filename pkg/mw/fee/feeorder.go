@@ -53,6 +53,10 @@ func (f *feeOrder) OrderBaseID() uint32 {
 	return f.entOrderBase.ID
 }
 
+func (f *feeOrder) OrderType() types.OrderType {
+	return types.OrderType(types.OrderType_value[f.entOrderBase.OrderType])
+}
+
 func (f *feeOrder) OrderStateBaseID() uint32 {
 	return f.entOrderStateBase.ID
 }
