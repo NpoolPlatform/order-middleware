@@ -88,6 +88,12 @@ func WithOrderID(id *string, must bool) func(context.Context, *Handler) error {
 
 func WithStartAt(u *uint32, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
+		if u == nil {
+			if must {
+				return wlog.Errorf("invalid startat")
+			}
+			return nil
+		}
 		h.StartAt = u
 		return nil
 	}
