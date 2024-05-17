@@ -41,13 +41,13 @@ func (h *Handler) ConstructCreateSQL() string {
 	_sql += ") as tmp "
 	_sql += "where not exists ("
 	_sql += "select 1 from out_of_gas "
-	_sql += fmt.Sprintf("where order_id = '%v' ", *h.OrderID)
+	_sql += fmt.Sprintf("where order_id = '%v' and deleted_at = 0 ", *h.OrderID)
 	_sql += "and ("
 	_sql += fmt.Sprintf("start_at < %v and %v < end_at", *h.StartAt, *h.StartAt)
 	_sql += ")"
 	_sql += " limit 1) and exists ("
 	_sql += "select 1 from order_bases "
-	_sql += fmt.Sprintf("where ent_id = '%v' ", *h.OrderID)
+	_sql += fmt.Sprintf("where ent_id = '%v' and deleted_at = 0 ", *h.OrderID)
 	_sql += "limit 1)"
 
 	return _sql
