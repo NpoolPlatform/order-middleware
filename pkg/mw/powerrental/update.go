@@ -400,10 +400,19 @@ func (h *updateHandler) validateCancelState() error {
 	return nil
 }
 
+func (h *updateHandler) validateBenefitState() error {
+	if h.OrderStateBaseReq.BenefitState == nil {
+		return nil
+	}
+	if h._ent.OrderState() == types.OrderState_OrderStateInService {
+		return nil
+	}
+	return wlog.Errorf("permission denied")
+}
+
 func (h *updateHandler) formalizeCancelState() {
 	if (h.PowerRentalStateReq.UserSetCanceled != nil && *h.PowerRentalStateReq.UserSetCanceled) ||
 		(h.PowerRentalStateReq.AdminSetCanceled != nil && *h.PowerRentalStateReq.AdminSetCanceled) {
-		// TODO: also set child order state
 		h.PowerRentalStateReq.CancelState = func() *types.OrderState { e := h._ent.OrderState(); return &e }()
 	}
 	if h.OrderStateBaseReq.OrderState != nil && *h.OrderStateBaseReq.OrderState == types.OrderState_OrderStatePreCancel {
@@ -472,6 +481,9 @@ func (h *Handler) UpdatePowerRentalWithTx(ctx context.Context, tx *ent.Tx) error
 	}
 	handler.formalizeOrderID()
 	if err := handler.validateUpdate(ctx); err != nil {
+		return wlog.WrapError(err)
+	}
+	if err := handler.validateBenefitState(); err != nil {
 		return wlog.WrapError(err)
 	}
 
