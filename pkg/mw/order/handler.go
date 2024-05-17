@@ -68,6 +68,18 @@ func WithEntID(id *string, must bool) func(context.Context, *Handler) error {
 
 //nolint:gocyclo,funlen
 func (h *Handler) withOrderBaseConds(conds *npool.Conds) error {
+	if conds.ID != nil {
+		h.OrderBaseConds.ID = &cruder.Cond{
+			Op:  conds.GetID().GetOp(),
+			Val: conds.GetID().GetValue(),
+		}
+	}
+	if conds.IDs != nil {
+		h.OrderBaseConds.IDs = &cruder.Cond{
+			Op:  conds.GetIDs().GetOp(),
+			Val: conds.GetIDs().GetValue(),
+		}
+	}
 	if conds.EntID != nil {
 		id, err := uuid.Parse(conds.GetEntID().GetValue())
 		if err != nil {
@@ -196,6 +208,18 @@ func (h *Handler) withOrderBaseConds(conds *npool.Conds) error {
 			Val: conds.GetCreatedAt().GetValue(),
 		}
 	}
+	if conds.Simulate != nil {
+		h.OrderBaseConds.Simulate = &cruder.Cond{
+			Op:  conds.GetSimulate().GetOp(),
+			Val: conds.GetSimulate().GetValue(),
+		}
+	}
+	if conds.UpdatedAt != nil {
+		h.OrderBaseConds.UpdatedAt = &cruder.Cond{
+			Op:  conds.GetUpdatedAt().GetOp(),
+			Val: conds.GetUpdatedAt().GetValue(),
+		}
+	}
 	return nil
 }
 
@@ -230,6 +254,24 @@ func (h *Handler) withOrderStateBaseConds(conds *npool.Conds) error {
 		h.OrderStateBaseConds.PaymentTypes = &cruder.Cond{
 			Op:  conds.GetPaymentTypes().GetOp(),
 			Val: _types,
+		}
+	}
+	if conds.StartMode != nil {
+		h.OrderStateBaseConds.StartMode = &cruder.Cond{
+			Op:  conds.GetStartMode().GetOp(),
+			Val: types.OrderStartMode(conds.GetStartMode().GetValue()),
+		}
+	}
+	if conds.LastBenefitAt != nil {
+		h.OrderStateBaseConds.LastBenefitAt = &cruder.Cond{
+			Op:  conds.GetLastBenefitAt().GetOp(),
+			Val: conds.GetLastBenefitAt().GetValue(),
+		}
+	}
+	if conds.BenefitState != nil {
+		h.OrderStateBaseConds.BenefitState = &cruder.Cond{
+			Op:  conds.GetBenefitState().GetOp(),
+			Val: types.BenefitState(conds.GetBenefitState().GetValue()),
 		}
 	}
 	return nil

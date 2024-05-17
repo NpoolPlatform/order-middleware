@@ -10,8 +10,6 @@ import (
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent"
 	entorderbase "github.com/NpoolPlatform/order-middleware/pkg/db/ent/orderbase"
 	entorderstatebase "github.com/NpoolPlatform/order-middleware/pkg/db/ent/orderstatebase"
-
-	"github.com/google/uuid"
 )
 
 type baseQueryHandler struct {
@@ -57,128 +55,20 @@ func (h *baseQueryHandler) queryJoinMyself(s *sql.Selector) {
 		On(
 			s.C(entorderbase.FieldID),
 			t.C(entorderbase.FieldID),
+		).
+		AppendSelect(
+			t.C(entorderbase.FieldAppID),
+			t.C(entorderbase.FieldUserID),
+			t.C(entorderbase.FieldGoodID),
+			t.C(entorderbase.FieldGoodType),
+			t.C(entorderbase.FieldAppGoodID),
+			t.C(entorderbase.FieldParentOrderID),
+			t.C(entorderbase.FieldOrderType),
+			t.C(entorderbase.FieldCreateMethod),
+			t.C(entorderbase.FieldSimulate),
+			t.C(entorderbase.FieldCreatedAt),
+			t.C(entorderbase.FieldUpdatedAt),
 		)
-	if h.OrderBaseConds.EntID != nil {
-		s.OnP(
-			sql.EQ(
-				t.C(entorderbase.FieldEntID),
-				h.OrderBaseConds.EntID.Val.(uuid.UUID),
-			),
-		)
-	}
-	if h.OrderBaseConds.EntIDs != nil {
-		s.OnP(
-			sql.In(
-				t.C(entorderbase.FieldEntID),
-				func() (_uids []interface{}) {
-					for _, uid := range h.OrderBaseConds.EntIDs.Val.([]uuid.UUID) {
-						_uids = append(_uids, interface{}(uid))
-					}
-					return _uids
-				}()...,
-			),
-		)
-	}
-	if h.OrderBaseConds.AppID != nil {
-		s.OnP(
-			sql.EQ(
-				t.C(entorderbase.FieldAppID),
-				h.OrderBaseConds.AppID.Val.(uuid.UUID),
-			),
-		)
-	}
-	if h.OrderBaseConds.UserID != nil {
-		s.OnP(
-			sql.EQ(
-				t.C(entorderbase.FieldUserID),
-				h.OrderBaseConds.UserID.Val.(uuid.UUID),
-			),
-		)
-	}
-	if h.OrderBaseConds.GoodID != nil {
-		s.OnP(
-			sql.EQ(
-				t.C(entorderbase.FieldGoodID),
-				h.OrderBaseConds.GoodID.Val.(uuid.UUID),
-			),
-		)
-	}
-	if h.OrderBaseConds.GoodIDs != nil {
-		s.OnP(
-			sql.In(
-				t.C(entorderbase.FieldGoodID),
-				func() (_uids []interface{}) {
-					for _, uid := range h.OrderBaseConds.GoodIDs.Val.([]uuid.UUID) {
-						_uids = append(_uids, interface{}(uid))
-					}
-					return _uids
-				}()...,
-			),
-		)
-	}
-	if h.OrderBaseConds.AppGoodID != nil {
-		s.OnP(
-			sql.EQ(
-				t.C(entorderbase.FieldAppGoodID),
-				h.OrderBaseConds.AppGoodID.Val.(uuid.UUID),
-			),
-		)
-	}
-	if h.OrderBaseConds.AppGoodIDs != nil {
-		s.OnP(
-			sql.In(
-				t.C(entorderbase.FieldAppGoodID),
-				func() (_uids []interface{}) {
-					for _, uid := range h.OrderBaseConds.AppGoodIDs.Val.([]uuid.UUID) {
-						_uids = append(_uids, interface{}(uid))
-					}
-					return _uids
-				}()...,
-			),
-		)
-	}
-	if h.OrderBaseConds.ParentOrderID != nil {
-		s.OnP(
-			sql.EQ(
-				t.C(entorderbase.FieldParentOrderID),
-				h.OrderBaseConds.ParentOrderID.Val.(uuid.UUID),
-			),
-		)
-	}
-	if h.OrderBaseConds.ParentOrderIDs != nil {
-		s.OnP(
-			sql.In(
-				t.C(entorderbase.FieldParentOrderID),
-				func() (_uids []interface{}) {
-					for _, uid := range h.OrderBaseConds.ParentOrderIDs.Val.([]uuid.UUID) {
-						_uids = append(_uids, interface{}(uid))
-					}
-					return _uids
-				}()...,
-			),
-		)
-	}
-	if h.OrderBaseConds.OrderType != nil {
-		s.OnP(
-			sql.EQ(
-				t.C(entorderbase.FieldOrderType),
-				h.OrderBaseConds.OrderType.Val.(types.OrderType).String(),
-			),
-		)
-	}
-	s.AppendSelect(
-		t.C(entorderbase.FieldAppID),
-		t.C(entorderbase.FieldUserID),
-		t.C(entorderbase.FieldGoodID),
-		t.C(entorderbase.FieldGoodType),
-		t.C(entorderbase.FieldAppGoodID),
-		t.C(entorderbase.FieldParentOrderID),
-		t.C(entorderbase.FieldOrderType),
-		t.C(entorderbase.FieldCreateMethod),
-		t.C(entorderbase.FieldSimulate),
-		t.C(entorderbase.FieldCreatedAt),
-		t.C(entorderbase.FieldUpdatedAt),
-	)
 }
 
 func (h *baseQueryHandler) queryJoinOrderStateBase(s *sql.Selector) error {
@@ -198,17 +88,16 @@ func (h *baseQueryHandler) queryJoinOrderStateBase(s *sql.Selector) error {
 		)
 	}
 	if h.OrderStateBaseConds.PaymentTypes != nil {
-		s.OnP(
-			sql.In(
-				t.C(entorderstatebase.FieldPaymentType),
-				func() (_types []interface{}) {
-					for _, _type := range h.OrderStateBaseConds.PaymentTypes.Val.([]types.PaymentType) {
-						_types = append(_types, interface{}(_type.String()))
-					}
-					return _types
-				}()...,
-			),
-		)
+		_types, ok := h.OrderStateBaseConds.PaymentTypes.Val.([]types.PaymentType)
+		if !ok {
+			return wlog.Errorf("invalid paymenttypes")
+		}
+		s.OnP(sql.In(t.C(entorderstatebase.FieldPaymentType), func() (__types []interface{}) {
+			for _, _type := range _types {
+				__types = append(__types, interface{}(_type.String()))
+			}
+			return __types
+		}()...))
 	}
 	if h.OrderStateBaseConds.OrderState != nil {
 		_state, ok := h.OrderStateBaseConds.OrderState.Val.(types.OrderState)
@@ -220,17 +109,16 @@ func (h *baseQueryHandler) queryJoinOrderStateBase(s *sql.Selector) error {
 		)
 	}
 	if h.OrderStateBaseConds.OrderStates != nil {
-		s.OnP(
-			sql.In(
-				t.C(entorderstatebase.FieldOrderState),
-				func() (_types []interface{}) {
-					for _, _type := range h.OrderStateBaseConds.OrderStates.Val.([]types.OrderState) {
-						_types = append(_types, interface{}(_type.String()))
-					}
-					return _types
-				}()...,
-			),
-		)
+		states, ok := h.OrderStateBaseConds.OrderStates.Val.([]types.OrderState)
+		if !ok {
+			return wlog.Errorf("invalid orderstates")
+		}
+		s.OnP(sql.In(t.C(entorderstatebase.FieldOrderState), func() (_states []interface{}) {
+			for _, _state := range states {
+				_states = append(_states, interface{}(_state.String()))
+			}
+			return _states
+		}()...))
 	}
 	s.AppendSelect(
 		t.C(entorderstatebase.FieldPaymentType),
