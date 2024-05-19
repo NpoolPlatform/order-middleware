@@ -1,4 +1,4 @@
-package paymentbase
+package payment
 
 import (
 	"fmt"

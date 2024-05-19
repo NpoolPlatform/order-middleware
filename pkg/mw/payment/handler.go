@@ -1,10 +1,13 @@
-package paymentbase
+package payment
 
 import (
 	"context"
 
 	wlog "github.com/NpoolPlatform/go-service-framework/pkg/wlog"
+	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
 	types "github.com/NpoolPlatform/message/npool/basetypes/order/v1"
+	npool "github.com/NpoolPlatform/message/npool/order/mw/v1/payment"
+	constant "github.com/NpoolPlatform/order-middleware/pkg/const"
 	paymentbasecrud "github.com/NpoolPlatform/order-middleware/pkg/crud/payment"
 
 	"github.com/google/uuid"
@@ -13,10 +16,15 @@ import (
 type Handler struct {
 	ID *uint32
 	paymentbasecrud.Req
+	PaymentBaseConds *paymentbasecrud.Conds
+	Offset           int32
+	Limit            int32
 }
 
 func NewHandler(ctx context.Context, options ...func(context.Context, *Handler) error) (*Handler, error) {
-	handler := &Handler{}
+	handler := &Handler{
+		PaymentBaseConds: &paymentbasecrud.Conds{},
+	}
 	for _, opt := range options {
 		if err := opt(ctx, handler); err != nil {
 			return nil, wlog.WrapError(err)
@@ -90,6 +98,42 @@ func WithObseleteState(e *types.PaymentObseleteState, must bool) func(context.Co
 			return wlog.Errorf("invalid obseletestate")
 		}
 		h.ObseleteState = e
+		return nil
+	}
+}
+
+func (h *Handler) withPaymentConds(conds *npool.Conds) {
+	if conds.ObseleteState != nil {
+		h.PaymentBaseConds.ObseleteState = &cruder.Cond{
+			Op:  conds.GetObseleteState().GetOp(),
+			Val: types.PaymentObseleteState(conds.GetObseleteState().GetValue()),
+		}
+	}
+}
+
+func WithConds(conds *npool.Conds) func(context.Context, *Handler) error {
+	return func(ctx context.Context, h *Handler) error {
+		if conds == nil {
+			return nil
+		}
+		h.withPaymentConds(conds)
+		return nil
+	}
+}
+
+func WithOffset(offset int32) func(context.Context, *Handler) error {
+	return func(ctx context.Context, h *Handler) error {
+		h.Offset = offset
+		return nil
+	}
+}
+
+func WithLimit(limit int32) func(context.Context, *Handler) error {
+	return func(ctx context.Context, h *Handler) error {
+		if limit == 0 {
+			limit = constant.DefaultRowLimit
+		}
+		h.Limit = limit
 		return nil
 	}
 }
