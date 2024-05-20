@@ -1,3 +1,4 @@
+//nolint:dupl
 package feeorder
 
 import (
@@ -71,6 +72,7 @@ func (h *baseQueryHandler) queryJoinMyself(s *sql.Selector) {
 	)
 }
 
+//nolint:gocyclo
 func (h *baseQueryHandler) queryJoinFeeOrder(s *sql.Selector) error {
 	t := sql.Table(entfeeorder.Table)
 	s.Join(t).
@@ -213,6 +215,7 @@ func (h *baseQueryHandler) queryJoinOrderStateBase(s *sql.Selector) error {
 	return nil
 }
 
+//nolint:gocyclo
 func (h *baseQueryHandler) queryJoinFeeOrderState(s *sql.Selector) error {
 	t := sql.Table(entfeeorderstate.Table)
 	s.Join(t).

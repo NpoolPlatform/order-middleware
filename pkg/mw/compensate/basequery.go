@@ -59,7 +59,7 @@ func (h *baseQueryHandler) queryJoinMyself(s *sql.Selector) {
 	)
 }
 
-func (h *baseQueryHandler) queryJoinOrder(s *sql.Selector) error { //nolint
+func (h *baseQueryHandler) queryJoinOrder(s *sql.Selector) error {
 	t := sql.Table(entorderbase.Table)
 	s.Join(t).
 		On(

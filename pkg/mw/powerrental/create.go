@@ -282,7 +282,7 @@ func (h *createHandler) formalizePaymentType() {
 func (h *createHandler) formalizeStartAt() {
 	switch *h.OrderStateBaseReq.StartMode {
 	case types.OrderStartMode_OrderStartInstantly:
-		h.OrderStateBaseReq.StartAt = func() *uint32 { u := uint32(time.Now().Unix() + 60); return &u }()
+		h.OrderStateBaseReq.StartAt = func() *uint32 { u := uint32(time.Now().Unix() + 60); return &u }() //nolint
 	case types.OrderStartMode_OrderStartNextDay:
 		h.OrderStateBaseReq.StartAt = func() *uint32 { u := uint32(timedef.TomorrowStart().Unix()); return &u }()
 	}
@@ -368,6 +368,7 @@ func (h *createHandler) validateAppGoodStock() error {
 	return wlog.Errorf("invalid appgoodstocklock")
 }
 
+//nolint:funlen,gocyclo
 func (h *Handler) CreatePowerRentalWithTx(ctx context.Context, tx *ent.Tx) error {
 	handler := &createHandler{
 		Handler: h,

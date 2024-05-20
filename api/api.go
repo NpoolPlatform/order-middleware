@@ -9,6 +9,7 @@ import (
 	feeorder1 "github.com/NpoolPlatform/order-middleware/api/fee"
 	order1 "github.com/NpoolPlatform/order-middleware/api/order"
 	"github.com/NpoolPlatform/order-middleware/api/outofgas"
+	payment1 "github.com/NpoolPlatform/order-middleware/api/payment"
 	powerrental1 "github.com/NpoolPlatform/order-middleware/api/powerrental"
 	powerrentalcompensate1 "github.com/NpoolPlatform/order-middleware/api/powerrental/compensate"
 	powerrentaloutofgas1 "github.com/NpoolPlatform/order-middleware/api/powerrental/outofgas"
@@ -28,6 +29,7 @@ func Register(server grpc.ServiceRegistrar) {
 	powerrental1.Register(server)
 	powerrentalcompensate1.Register(server)
 	powerrentaloutofgas1.Register(server)
+	payment1.Register(server)
 	compensate.Register(server)
 	outofgas.Register(server)
 	appconfig.Register(server)
@@ -56,6 +58,9 @@ func RegisterGateway(mux *runtime.ServeMux, endpoint string, opts []grpc.DialOpt
 		return err
 	}
 	if err := powerrentaloutofgas1.RegisterGateway(mux, endpoint, opts); err != nil {
+		return err
+	}
+	if err := payment1.RegisterGateway(mux, endpoint, opts); err != nil {
 		return err
 	}
 	if err := appconfig.RegisterGateway(mux, endpoint, opts); err != nil {

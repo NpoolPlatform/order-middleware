@@ -155,6 +155,7 @@ func (h *Handler) GetPayment(ctx context.Context) (*npool.Payment, error) {
 		if err := handler.queryPaymentBase(cli); err != nil {
 			return wlog.WrapError(err)
 		}
+		handler.queryJoin()
 		handler.stmSelect.Offset(0).Limit(2)
 		if err := handler.scan(_ctx); err != nil {
 			return wlog.WrapError(err)
@@ -190,6 +191,8 @@ func (h *Handler) GetPayments(ctx context.Context) (infos []*npool.Payment, tota
 		if handler.stmCount, err = handler.queryPaymentBases(cli); err != nil {
 			return wlog.WrapError(err)
 		}
+
+		handler.queryJoin()
 
 		_total, err := handler.stmCount.Count(_ctx)
 		if err != nil {

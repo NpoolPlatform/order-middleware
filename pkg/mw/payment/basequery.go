@@ -45,7 +45,6 @@ func (h *baseQueryHandler) queryPaymentBases(cli *ent.Client) (*ent.PaymentBaseS
 	return h.selectPaymentBase(stm), nil
 }
 
-//nolint:gocyclo,funlen
 func (h *baseQueryHandler) queryJoinMyself(s *sql.Selector) {
 	t := sql.Table(entpaymentbase.Table)
 	s.Join(t).

@@ -1,3 +1,4 @@
+//nolint:dupl
 package powerrental
 
 import (
@@ -49,104 +50,13 @@ func (h *baseQueryHandler) queryOrderBases(cli *ent.Client) (*ent.OrderBaseSelec
 	return h.selectOrderBase(stm), nil
 }
 
-//nolint:funlen
-func (h *baseQueryHandler) queryJoinMyself(s *sql.Selector) error {
+func (h *baseQueryHandler) queryJoinMyself(s *sql.Selector) {
 	t := sql.Table(entorderbase.Table)
 	s.Join(t).
 		On(
 			s.C(entorderbase.FieldID),
 			t.C(entorderbase.FieldID),
 		)
-	if h.OrderBaseConds.EntID != nil {
-		id, ok := h.OrderBaseConds.EntID.Val.(uuid.UUID)
-		if !ok {
-			return wlog.Errorf("invalid entid")
-		}
-		s.OnP(
-			sql.EQ(t.C(entorderbase.FieldEntID), id),
-		)
-	}
-	if h.OrderBaseConds.EntIDs != nil {
-		uids, ok := h.OrderBaseConds.EntIDs.Val.([]uuid.UUID)
-		if !ok {
-			return wlog.Errorf("invalid entids")
-		}
-		s.OnP(sql.In(t.C(entorderbase.FieldEntID), func() (_uids []interface{}) {
-			for _, uid := range uids {
-				_uids = append(_uids, interface{}(uid))
-			}
-			return _uids
-		}()...))
-	}
-	if h.OrderBaseConds.AppID != nil {
-		id, ok := h.OrderBaseConds.AppID.Val.(uuid.UUID)
-		if !ok {
-			return wlog.Errorf("invalid ids")
-		}
-		s.OnP(
-			sql.EQ(t.C(entorderbase.FieldAppID), id),
-		)
-	}
-	if h.OrderBaseConds.UserID != nil {
-		id, ok := h.OrderBaseConds.UserID.Val.(uuid.UUID)
-		if !ok {
-			return wlog.Errorf("invalid userid")
-		}
-		s.OnP(
-			sql.EQ(t.C(entorderbase.FieldUserID), id),
-		)
-	}
-	if h.OrderBaseConds.GoodID != nil {
-		id, ok := h.OrderBaseConds.GoodID.Val.(uuid.UUID)
-		if !ok {
-			return wlog.Errorf("invalid goodid")
-		}
-		s.OnP(
-			sql.EQ(t.C(entorderbase.FieldGoodID), id),
-		)
-	}
-	if h.OrderBaseConds.GoodIDs != nil {
-		uids, ok := h.OrderBaseConds.GoodIDs.Val.([]uuid.UUID)
-		if !ok {
-			return wlog.Errorf("invalid goodids")
-		}
-		s.OnP(sql.In(t.C(entorderbase.FieldGoodID), func() (_uids []interface{}) {
-			for _, uid := range uids {
-				_uids = append(_uids, interface{}(uid))
-			}
-			return _uids
-		}()...))
-	}
-	if h.OrderBaseConds.AppGoodID != nil {
-		id, ok := h.OrderBaseConds.AppGoodID.Val.(uuid.UUID)
-		if !ok {
-			return wlog.Errorf("invalid appgoodid")
-		}
-		s.OnP(
-			sql.EQ(t.C(entorderbase.FieldAppGoodID), id),
-		)
-	}
-	if h.OrderBaseConds.AppGoodIDs != nil {
-		uids, ok := h.OrderBaseConds.AppGoodIDs.Val.([]uuid.UUID)
-		if !ok {
-			return wlog.Errorf("invalid appgoodids")
-		}
-		s.OnP(sql.In(t.C(entorderbase.FieldAppGoodID), func() (_uids []interface{}) {
-			for _, uid := range uids {
-				_uids = append(_uids, interface{}(uid))
-			}
-			return _uids
-		}()...))
-	}
-	if h.OrderBaseConds.OrderType != nil {
-		_type, ok := h.OrderBaseConds.OrderType.Val.(types.OrderType)
-		if !ok {
-			return wlog.Errorf("invalid ordertype")
-		}
-		s.OnP(
-			sql.EQ(t.C(entorderbase.FieldOrderType), _type),
-		)
-	}
 	s.AppendSelect(
 		t.C(entorderbase.FieldAppID),
 		t.C(entorderbase.FieldUserID),
@@ -158,9 +68,9 @@ func (h *baseQueryHandler) queryJoinMyself(s *sql.Selector) error {
 		t.C(entorderbase.FieldCreatedAt),
 		t.C(entorderbase.FieldUpdatedAt),
 	)
-	return nil
 }
 
+//nolint:gocyclo
 func (h *baseQueryHandler) queryJoinPowerRental(s *sql.Selector) error {
 	t := sql.Table(entpowerrental.Table)
 	s.Join(t).
