@@ -51,7 +51,7 @@ var ret = npool.PowerRentalOrder{
 	AppGoodStockID:     uuid.NewString(),
 	Units:              decimal.NewFromInt(10).String(),
 	PaymentType:        types.PaymentType_PayWithBalanceOnly,
-	CreateMethod:       types.OrderCreateMethod_OrderCreatedByAdmin,
+	CreateMethod:       types.OrderCreateMethod_OrderCreatedByPurchase,
 	GoodValueUSD:       decimal.NewFromInt(120).String(),
 	PaymentAmountUSD:   decimal.NewFromInt(110).String(),
 	DiscountAmountUSD:  decimal.NewFromInt(10).String(),
@@ -78,6 +78,7 @@ var ret = npool.PowerRentalOrder{
 	PaymentState: types.PaymentState_PaymentStateWait,
 	StartMode:    types.OrderStartMode_OrderStartInstantly,
 	StartAt:      uint32(time.Now().Unix() + 100),
+	RenewState:   types.OrderRenewState_OrderRenewWait,
 	FeeDurations: []*feeordermwpb.FeeDuration{
 		{
 			AppGoodID:            uuid.NewString(),
@@ -107,7 +108,7 @@ func setup(t *testing.T) func(*testing.T) {
 	ret.PaymentStateStr = ret.PaymentState.String()
 	ret.CancelStateStr = ret.CancelState.String()
 	ret.StartModeStr = ret.StartMode.String()
-	ret.RenewStateStr = types.OrderRenewState_OrderRenewWait.String()
+	ret.RenewStateStr = ret.RenewState.String()
 
 	return func(*testing.T) {}
 }
@@ -175,6 +176,8 @@ func createPowerRentalOrderWithFees(t *testing.T) {
 		if assert.Nil(t, err) {
 			ret.CreatedAt = info.CreatedAt
 			ret.UpdatedAt = info.UpdatedAt
+			ret.StartAt = info.StartAt
+			ret.EndAt = info.EndAt
 			ret.ID = info.ID
 			for _, paymentBalance := range ret.PaymentBalances {
 				paymentBalance.CreatedAt = ret.CreatedAt

@@ -271,13 +271,13 @@ func (h *baseQueryHandler) queryJoinPaymentBase(s *sql.Selector) {
 			s.C(entorderbase.FieldEntID),
 			t1.C(entpaymentbase.FieldOrderID),
 		).
+		OnP(
+			sql.EQ(t1.C(entpaymentbase.FieldObseleteState), types.PaymentObseleteState_PaymentObseleteNone.String()),
+		).
 		LeftJoin(t2).
 		On(
 			t1.C(entpaymentbase.FieldEntID),
 			t2.C(entpaymentbalancelock.FieldPaymentID),
-		).
-		OnP(
-			sql.EQ(t1.C(entpaymentbase.FieldObseleteState), types.PaymentObseleteState_PaymentObseleteNone.String()),
 		).
 		LeftJoin(t3).
 		On(

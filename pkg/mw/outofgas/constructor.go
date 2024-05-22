@@ -43,7 +43,7 @@ func (h *Handler) ConstructCreateSQL() string {
 	_sql += "select 1 from out_of_gas "
 	_sql += fmt.Sprintf("where order_id = '%v' and deleted_at = 0 ", *h.OrderID)
 	_sql += "and ("
-	_sql += fmt.Sprintf("start_at < %v and %v < end_at", *h.StartAt, *h.StartAt)
+	_sql += fmt.Sprintf("start_at <= %v and (%v < end_at or end_at = 0)", *h.StartAt, *h.StartAt)
 	_sql += ")"
 	_sql += " limit 1) and exists ("
 	_sql += "select 1 from order_bases "
@@ -77,6 +77,11 @@ func (h *Handler) ConstructUpdateSQL() (string, error) {
 	if h.EntID != nil {
 		_sql += fmt.Sprintf("and ent_id = '%v' ", *h.EntID)
 	}
+	_sql += "and not exists ("
+	_sql += "select * from ("
+	_sql += fmt.Sprintf("select 1 from out_of_gas as tmp where ")
+	_sql += fmt.Sprintf("start_at < %v and %v <= end_at", *h.EndAt, *h.EndAt)
+	_sql += " limit 1) as tmp limit 1)"
 
 	return _sql, nil
 }

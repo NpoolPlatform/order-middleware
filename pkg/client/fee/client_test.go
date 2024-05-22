@@ -52,7 +52,7 @@ var ret = npool.FeeOrder{
 	ParentGoodType:    goodtypes.GoodType_PowerRental,
 	OrderType:         types.OrderType_Normal,
 	PaymentType:       types.PaymentType_PayWithBalanceOnly,
-	CreateMethod:      types.OrderCreateMethod_OrderCreatedByAdmin,
+	CreateMethod:      types.OrderCreateMethod_OrderCreatedByPurchase,
 	GoodValueUSD:      decimal.NewFromInt(120).String(),
 	PaymentAmountUSD:  decimal.NewFromInt(110).String(),
 	DiscountAmountUSD: decimal.NewFromInt(10).String(),
