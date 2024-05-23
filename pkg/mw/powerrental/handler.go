@@ -933,6 +933,16 @@ func (h *Handler) withOrderBaseConds(conds *npool.Conds) error {
 			Val: types.OrderType(conds.GetOrderType().GetValue()),
 		}
 	}
+	if conds.OrderTypes != nil {
+		_types := []types.OrderType{}
+		for _, _type := range conds.GetOrderTypes().GetValue() {
+			_types = append(_types, types.OrderType(_type))
+		}
+		h.OrderBaseConds.OrderTypes = &cruder.Cond{
+			Op:  conds.GetOrderTypes().GetOp(),
+			Val: _types,
+		}
+	}
 	if conds.CreatedAt != nil {
 		h.OrderBaseConds.CreatedAt = &cruder.Cond{
 			Op:  conds.GetCreatedAt().GetOp(),

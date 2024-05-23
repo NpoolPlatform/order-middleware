@@ -81,6 +81,7 @@ type Conds struct {
 	ParentOrderID  *cruder.Cond
 	ParentOrderIDs *cruder.Cond
 	OrderType      *cruder.Cond
+	OrderTypes     *cruder.Cond
 	Simulate       *cruder.Cond
 	CreatedAt      *cruder.Cond
 	UpdatedAt      *cruder.Cond
@@ -249,13 +250,30 @@ func SetQueryConds(q *ent.OrderBaseQuery, conds *Conds) (*ent.OrderBaseQuery, er
 		}
 	}
 	if conds.OrderType != nil {
-		ordertype, ok := conds.OrderType.Val.(types.OrderType)
+		orderType, ok := conds.OrderType.Val.(types.OrderType)
 		if !ok {
 			return nil, wlog.Errorf("invalid ordertype")
 		}
 		switch conds.OrderType.Op {
 		case cruder.EQ:
-			q.Where(entorderbase.OrderType(ordertype.String()))
+			q.Where(entorderbase.OrderType(orderType.String()))
+		default:
+			return nil, wlog.Errorf("invalid order field")
+		}
+	}
+	if conds.OrderTypes != nil {
+		orderTypes, ok := conds.OrderTypes.Val.([]types.OrderType)
+		if !ok {
+			return nil, wlog.Errorf("invalid ordertypes")
+		}
+		switch conds.OrderTypes.Op {
+		case cruder.IN:
+			q.Where(entorderbase.OrderTypeIn(func() (_orderTypes []string) {
+				for _, orderType := range orderTypes {
+					_orderTypes = append(_orderTypes, orderType.String())
+				}
+				return
+			}()...))
 		default:
 			return nil, wlog.Errorf("invalid order field")
 		}
