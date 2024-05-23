@@ -84,7 +84,7 @@ func (h *updateHandler) updateAppConfig(ctx context.Context, tx *ent.Tx) error {
 		return wlog.WrapError(err)
 	}
 	if n, err := rc.RowsAffected(); err != nil || n != 1 {
-		return wlog.Errorf("fail update appconfig: %v", err)
+		return wlog.Errorf("fail update appconfig %v: %v", h.sql, err)
 	}
 	return nil
 }

@@ -52,7 +52,7 @@ func (h *updateHandler) constructOrderStateBaseSQL(ctx context.Context) (err err
 	handler, _ := orderstatebase1.NewHandler(ctx)
 	handler.Req = *h.OrderStateBaseReq
 	handler.Req.StartMode = func() *types.OrderStartMode { e := types.OrderStartMode_OrderStartInstantly; return &e }()
-	if h.sqlOrderStateBase, err = handler.ConstructUpdateSQL(); err == cruder.ErrUpdateNothing {
+	if h.sqlOrderStateBase, err = handler.ConstructUpdateSQL(); wlog.Equal(err, cruder.ErrUpdateNothing) {
 		return nil
 	}
 	return wlog.WrapError(err)
@@ -79,7 +79,7 @@ func (h *updateHandler) constructPayWithMeOrderStateBaseSQLs(ctx context.Context
 func (h *updateHandler) constructPowerRentalStateSQL(ctx context.Context) (err error) {
 	handler, _ := powerrentalstate1.NewHandler(ctx)
 	handler.Req = *h.PowerRentalStateReq
-	if h.sqlPowerRentalState, err = handler.ConstructUpdateSQL(); err == cruder.ErrUpdateNothing {
+	if h.sqlPowerRentalState, err = handler.ConstructUpdateSQL(); wlog.Equal(err, cruder.ErrUpdateNothing) {
 		return nil
 	}
 	return wlog.WrapError(err)
@@ -146,7 +146,7 @@ func (h *updateHandler) constructObseletePaymentBaseSQL(ctx context.Context) (er
 	}
 	handler, _ := paymentbase1.NewHandler(ctx)
 	handler.Req = *h.obseletePaymentBaseReq
-	if h.sqlObseletePaymentBase, err = handler.ConstructUpdateSQL(); err == cruder.ErrUpdateNothing {
+	if h.sqlObseletePaymentBase, err = handler.ConstructUpdateSQL(); wlog.Equal(err, cruder.ErrUpdateNothing) {
 		return nil
 	}
 	return wlog.WrapError(err)
@@ -171,7 +171,7 @@ func (h *updateHandler) constructPaymentTransferSQLs(ctx context.Context) error 
 			h.sqlPaymentTransfers = append(h.sqlPaymentTransfers, handler.ConstructCreateSQL())
 		} else {
 			sql, err := handler.ConstructUpdateSQL()
-			if err == cruder.ErrUpdateNothing {
+			if wlog.Equal(err, cruder.ErrUpdateNothing) {
 				continue
 			}
 			if err != nil {
