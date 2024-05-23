@@ -299,7 +299,7 @@ func (h *createHandler) validatePaymentType() error {
 		if h.PaymentBaseReq.EntID != nil {
 			return wlog.Errorf("invalid paymenttype")
 		}
-		fallthrough //nolint
+		fallthrough
 	case types.PaymentType_PayWithOtherOrder:
 		fallthrough //nolint
 	case types.PaymentType_PayWithParentOrder:

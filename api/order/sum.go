@@ -13,31 +13,31 @@ import (
 	order1 "github.com/NpoolPlatform/order-middleware/pkg/mw/order"
 )
 
-func (s *Server) CountOrders(ctx context.Context, in *npool.CountOrdersRequest) (*npool.CountOrdersResponse, error) {
+func (s *Server) SumOrdersPaymentUSD(ctx context.Context, in *npool.SumOrdersPaymentUSDRequest) (*npool.SumOrdersPaymentUSDResponse, error) {
 	handler, err := order1.NewHandler(
 		ctx,
 		order1.WithConds(in.GetConds()),
 	)
 	if err != nil {
 		logger.Sugar().Errorw(
-			"CountOrders",
+			"SumOrdersPaymentUSD",
 			"In", in,
 			"Error", err,
 		)
-		return &npool.CountOrdersResponse{}, status.Error(codes.Aborted, err.Error())
+		return &npool.SumOrdersPaymentUSDResponse{}, status.Error(codes.Aborted, err.Error())
 	}
 
-	exist, err := handler.CountOrders(ctx)
+	exist, err := handler.SumOrdersPaymentUSD(ctx)
 	if err != nil {
 		logger.Sugar().Errorw(
-			"CountOrders",
+			"SumOrdersPaymentUSD",
 			"In", in,
 			"Error", err,
 		)
-		return &npool.CountOrdersResponse{}, status.Error(codes.Aborted, err.Error())
+		return &npool.SumOrdersPaymentUSDResponse{}, status.Error(codes.Aborted, err.Error())
 	}
 
-	return &npool.CountOrdersResponse{
+	return &npool.SumOrdersPaymentUSDResponse{
 		Info: exist,
 	}, nil
 }

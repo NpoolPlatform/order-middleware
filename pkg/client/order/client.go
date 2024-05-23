@@ -9,6 +9,8 @@ import (
 	npool "github.com/NpoolPlatform/message/npool/order/mw/v1/order"
 	servicename "github.com/NpoolPlatform/order-middleware/pkg/servicename"
 	"google.golang.org/grpc"
+
+	"github.com/shopspring/decimal"
 )
 
 func withClient(ctx context.Context, handler func(context.Context, npool.MiddlewareClient) (interface{}, error)) (interface{}, error) {
@@ -128,4 +130,20 @@ func GetOrdersOnly(ctx context.Context, conds *npool.Conds) (info *npool.Order, 
 		return nil, wlog.Errorf("too many records")
 	}
 	return _infos.([]*npool.Order)[0], nil
+}
+
+func SumOrdersPaymentUSD(ctx context.Context, conds *npool.Conds) (string, error) {
+	amount, err := withClient(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (interface{}, error) {
+		resp, err := cli.SumOrdersPaymentUSD(ctx, &npool.SumOrdersPaymentUSDRequest{
+			Conds: conds,
+		})
+		if err != nil {
+			return false, err
+		}
+		return resp.Info, nil
+	})
+	if err != nil {
+		return decimal.NewFromInt(0).String(), err
+	}
+	return amount.(string), err
 }

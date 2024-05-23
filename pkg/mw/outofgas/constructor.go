@@ -79,7 +79,7 @@ func (h *Handler) ConstructUpdateSQL() (string, error) {
 	}
 	_sql += "and not exists ("
 	_sql += "select * from ("
-	_sql += fmt.Sprintf("select 1 from out_of_gas as tmp where ")
+	_sql += "select 1 from out_of_gas as tmp where "
 	_sql += fmt.Sprintf("start_at < %v and %v <= end_at", *h.EndAt, *h.EndAt)
 	_sql += " limit 1) as tmp limit 1)"
 
