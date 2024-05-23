@@ -57,7 +57,7 @@ func setup(t *testing.T) func(*testing.T) {
 		powerrental1.WithGoodType(&ret.GoodType, true),
 		powerrental1.WithAppGoodID(&ret.AppGoodID, true),
 		powerrental1.WithOrderID(&ret.OrderID, true),
-		powerrental1.WithOrderType(func() *types.OrderType { e := types.OrderType_Normal; return &e }(), true),
+		powerrental1.WithOrderType(func() *types.OrderType { e := types.OrderType_Offline; return &e }(), true),
 		powerrental1.WithAppGoodStockID(func() *string { s := uuid.NewString(); return &s }(), true),
 		powerrental1.WithUnits(func() *string { s := decimal.NewFromInt(10).String(); return &s }(), true),
 		powerrental1.WithPaymentType(func() *types.PaymentType { e := types.PaymentType_PayWithOffline; return &e }(), true),
@@ -65,6 +65,7 @@ func setup(t *testing.T) func(*testing.T) {
 		powerrental1.WithGoodValueUSD(func() *string { s := decimal.NewFromInt(100).String(); return &s }(), true),
 		powerrental1.WithDurationSeconds(func() *uint32 { u := uint32(10000); return &u }(), true),
 		powerrental1.WithAppGoodStockLockID(func() *string { s := uuid.NewString(); return &s }(), true),
+		powerrental1.WithStartMode(func() *types.OrderStartMode { e := types.OrderStartMode_OrderStartInstantly; return &e }(), true),
 	)
 	assert.Nil(t, err)
 

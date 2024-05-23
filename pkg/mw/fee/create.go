@@ -291,14 +291,19 @@ func (h *createHandler) validatePaymentType() error {
 		if h.PaymentBaseReq.EntID == nil {
 			return wlog.Errorf("invalid paymentid")
 		}
-	case types.PaymentType_PayWithParentOrder:
-		fallthrough //nolint
 	case types.PaymentType_PayWithContract:
 		fallthrough //nolint
 	case types.PaymentType_PayWithOffline:
 		fallthrough //nolint
 	case types.PaymentType_PayWithNoPayment:
-		if h.PaymentBaseReq.EntID != nil || h.LedgerLockReq.EntID != nil {
+		if h.PaymentBaseReq.EntID != nil {
+			return wlog.Errorf("invalid paymenttype")
+		}
+		fallthrough //nolint
+	case types.PaymentType_PayWithOtherOrder:
+		fallthrough //nolint
+	case types.PaymentType_PayWithParentOrder:
+		if h.LedgerLockReq.EntID != nil {
 			return wlog.Errorf("invalid paymenttype")
 		}
 	}

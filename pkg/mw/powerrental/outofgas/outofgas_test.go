@@ -65,6 +65,7 @@ func setup(t *testing.T) func(*testing.T) {
 		powerrental1.WithGoodValueUSD(func() *string { s := decimal.NewFromInt(100).String(); return &s }(), true),
 		powerrental1.WithDurationSeconds(func() *uint32 { u := uint32(10000); return &u }(), true),
 		powerrental1.WithAppGoodStockLockID(func() *string { s := uuid.NewString(); return &s }(), true),
+		powerrental1.WithStartMode(func() *types.OrderStartMode { e := types.OrderStartMode_OrderStartInstantly; return &e }(), true),
 	)
 	assert.Nil(t, err)
 
