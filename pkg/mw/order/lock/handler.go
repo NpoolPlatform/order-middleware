@@ -4,8 +4,12 @@ import (
 	"context"
 
 	wlog "github.com/NpoolPlatform/go-service-framework/pkg/wlog"
+	cruder "github.com/NpoolPlatform/libent-cruder/pkg/cruder"
 	types "github.com/NpoolPlatform/message/npool/basetypes/order/v1"
+	npool "github.com/NpoolPlatform/message/npool/order/mw/v1/order/lock"
+	constant "github.com/NpoolPlatform/order-middleware/pkg/const"
 	orderlockcrud "github.com/NpoolPlatform/order-middleware/pkg/crud/order/lock"
+	orderbasecrud "github.com/NpoolPlatform/order-middleware/pkg/crud/order/orderbase"
 
 	"github.com/google/uuid"
 )
@@ -13,10 +17,17 @@ import (
 type Handler struct {
 	ID *uint32
 	orderlockcrud.Req
+	OrderLockConds *orderlockcrud.Conds
+	OrderBaseConds *orderbasecrud.Conds
+	Offset         int32
+	Limit          int32
 }
 
 func NewHandler(ctx context.Context, options ...func(context.Context, *Handler) error) (*Handler, error) {
-	handler := &Handler{}
+	handler := &Handler{
+		OrderLockConds: &orderlockcrud.Conds{},
+		OrderBaseConds: &orderbasecrud.Conds{},
+	}
 	for _, opt := range options {
 		if err := opt(ctx, handler); err != nil {
 			return nil, wlog.WrapError(err)
@@ -88,6 +99,121 @@ func WithLockType(lockType *types.OrderLockType, must bool) func(context.Context
 			return wlog.Errorf("invalid locktype")
 		}
 		h.LockType = lockType
+		return nil
+	}
+}
+
+func (h *Handler) withOrderBaseConds(conds *npool.Conds) error {
+	if conds.AppID != nil {
+		id, err := uuid.Parse(conds.GetAppID().GetValue())
+		if err != nil {
+			return wlog.WrapError(err)
+		}
+		h.OrderBaseConds.AppID = &cruder.Cond{Op: conds.GetAppID().GetOp(), Val: id}
+	}
+	if conds.UserID != nil {
+		id, err := uuid.Parse(conds.GetUserID().GetValue())
+		if err != nil {
+			return wlog.WrapError(err)
+		}
+		h.OrderBaseConds.UserID = &cruder.Cond{Op: conds.GetUserID().GetOp(), Val: id}
+	}
+	if conds.OrderIDs != nil {
+		ids := []uuid.UUID{}
+		for _, id := range conds.GetOrderIDs().GetValue() {
+			_id, err := uuid.Parse(id)
+			if err != nil {
+				return wlog.WrapError(err)
+			}
+			ids = append(ids, _id)
+		}
+		h.OrderBaseConds.EntIDs = &cruder.Cond{Op: conds.GetOrderIDs().GetOp(), Val: ids}
+	}
+	if conds.OrderID != nil {
+		id, err := uuid.Parse(conds.GetOrderID().GetValue())
+		if err != nil {
+			return wlog.WrapError(err)
+		}
+		h.OrderBaseConds.EntID = &cruder.Cond{Op: conds.GetOrderID().GetOp(), Val: id}
+	}
+	return nil
+}
+
+func (h *Handler) withOrderLockConds(conds *npool.Conds) error {
+	if conds.ID != nil {
+		h.OrderLockConds.ID = &cruder.Cond{
+			Op: conds.GetID().GetOp(), Val: conds.GetID().GetValue(),
+		}
+	}
+	if conds.EntID != nil {
+		id, err := uuid.Parse(conds.GetEntID().GetValue())
+		if err != nil {
+			return wlog.WrapError(err)
+		}
+		h.OrderLockConds.EntID = &cruder.Cond{
+			Op: conds.GetEntID().GetOp(), Val: id,
+		}
+	}
+	if conds.IDs != nil {
+		h.OrderLockConds.IDs = &cruder.Cond{Op: conds.GetIDs().GetOp(), Val: conds.GetIDs().GetValue()}
+	}
+	if conds.OrderID != nil {
+		id, err := uuid.Parse(conds.GetOrderID().GetValue())
+		if err != nil {
+			return wlog.WrapError(err)
+		}
+		h.OrderLockConds.OrderID = &cruder.Cond{Op: conds.GetOrderID().GetOp(), Val: id}
+	}
+	if conds.LockType != nil {
+		switch conds.GetLockType().GetValue() {
+		case uint32(types.OrderLockType_LockBalance):
+		case uint32(types.OrderLockType_LockStock):
+		case uint32(types.OrderLockType_LockCommission):
+		default:
+			return wlog.Errorf("invalid locktype")
+		}
+		_type := conds.GetLockType().GetValue()
+		h.OrderLockConds.LockType = &cruder.Cond{Op: conds.GetLockType().GetOp(), Val: types.OrderLockType(_type)}
+	}
+	if conds.OrderIDs != nil {
+		ids := []uuid.UUID{}
+		for _, id := range conds.GetOrderIDs().GetValue() {
+			_id, err := uuid.Parse(id)
+			if err != nil {
+				return wlog.WrapError(err)
+			}
+			ids = append(ids, _id)
+		}
+		h.OrderLockConds.OrderIDs = &cruder.Cond{Op: conds.GetOrderIDs().GetOp(), Val: ids}
+	}
+	return nil
+}
+
+func WithConds(conds *npool.Conds) func(context.Context, *Handler) error {
+	return func(ctx context.Context, h *Handler) error {
+		if conds == nil {
+			return nil
+		}
+		if err := h.withOrderBaseConds(conds); err != nil {
+			return wlog.WrapError(err)
+		}
+		return h.withOrderLockConds(conds)
+	}
+}
+
+func WithOffset(offset int32) func(context.Context, *Handler) error {
+	return func(ctx context.Context, h *Handler) error {
+		h.Offset = offset
+		return nil
+	}
+}
+
+func WithLimit(limit int32) func(context.Context, *Handler) error {
+	return func(ctx context.Context, h *Handler) error {
+		if limit == 0 {
+			limit = constant.DefaultRowLimit
+		}
+		h.Limit = limit
 		return nil
 	}
 }
