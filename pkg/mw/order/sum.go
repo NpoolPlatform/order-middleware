@@ -49,7 +49,7 @@ func (h *sumHandler) sumOrdersPaymentUSD(ctx context.Context, cli *ent.Client) (
 	}).Scan(ctx, &amounts); err != nil {
 		return decimal.NewFromInt(0).String(), wlog.WrapError(err)
 	}
-	if len(amounts) == 0 {
+	if len(amounts) != 1 {
 		return decimal.NewFromInt(0).String(), wlog.Errorf("invalid paymentamounts")
 	}
 	return amounts[0].Amount.String(), nil
