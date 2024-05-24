@@ -83,6 +83,23 @@ func WithOrderID(id *string, must bool) func(context.Context, *Handler) error {
 	}
 }
 
+func WithUserID(id *string, must bool) func(context.Context, *Handler) error {
+	return func(ctx context.Context, h *Handler) error {
+		if id == nil {
+			if must {
+				return wlog.Errorf("invalid userid")
+			}
+			return nil
+		}
+		_id, err := uuid.Parse(*id)
+		if err != nil {
+			return wlog.WrapError(err)
+		}
+		h.UserID = &_id
+		return nil
+	}
+}
+
 func WithLockType(lockType *types.OrderLockType, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if lockType == nil {
@@ -110,13 +127,6 @@ func (h *Handler) withOrderBaseConds(conds *npool.Conds) error {
 			return wlog.WrapError(err)
 		}
 		h.OrderBaseConds.AppID = &cruder.Cond{Op: conds.GetAppID().GetOp(), Val: id}
-	}
-	if conds.UserID != nil {
-		id, err := uuid.Parse(conds.GetUserID().GetValue())
-		if err != nil {
-			return wlog.WrapError(err)
-		}
-		h.OrderBaseConds.UserID = &cruder.Cond{Op: conds.GetUserID().GetOp(), Val: id}
 	}
 	if conds.OrderIDs != nil {
 		ids := []uuid.UUID{}
@@ -185,6 +195,24 @@ func (h *Handler) withOrderLockConds(conds *npool.Conds) error {
 			ids = append(ids, _id)
 		}
 		h.OrderLockConds.OrderIDs = &cruder.Cond{Op: conds.GetOrderIDs().GetOp(), Val: ids}
+	}
+	if conds.UserID != nil {
+		id, err := uuid.Parse(conds.GetUserID().GetValue())
+		if err != nil {
+			return wlog.WrapError(err)
+		}
+		h.OrderLockConds.UserID = &cruder.Cond{Op: conds.GetUserID().GetOp(), Val: id}
+	}
+	if conds.UserIDs != nil {
+		ids := []uuid.UUID{}
+		for _, id := range conds.GetUserIDs().GetValue() {
+			_id, err := uuid.Parse(id)
+			if err != nil {
+				return wlog.WrapError(err)
+			}
+			ids = append(ids, _id)
+		}
+		h.OrderLockConds.UserIDs = &cruder.Cond{Op: conds.GetUserIDs().GetOp(), Val: ids}
 	}
 	return nil
 }

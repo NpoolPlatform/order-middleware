@@ -206,6 +206,7 @@ func (h *createHandler) formalizeOrderID() {
 func (h *createHandler) formalizeOrderLocks() {
 	for _, req := range h.OrderLockReqs {
 		req.OrderID = h.OrderID
+		req.UserID = h.UserID
 	}
 }
 

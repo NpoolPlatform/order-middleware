@@ -31,6 +31,13 @@ func (OrderLock) Fields() []ent.Field {
 			Default(func() uuid.UUID {
 				return uuid.Nil
 			}),
+		// For commission lock
+		field.
+			UUID("user_id", uuid.UUID{}).
+			Optional().
+			Default(func() uuid.UUID {
+				return uuid.Nil
+			}),
 		field.
 			String("lock_type").
 			Optional().

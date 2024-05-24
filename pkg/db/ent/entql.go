@@ -231,6 +231,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			orderlock.FieldDeletedAt: {Type: field.TypeUint32, Column: orderlock.FieldDeletedAt},
 			orderlock.FieldEntID:     {Type: field.TypeUUID, Column: orderlock.FieldEntID},
 			orderlock.FieldOrderID:   {Type: field.TypeUUID, Column: orderlock.FieldOrderID},
+			orderlock.FieldUserID:    {Type: field.TypeUUID, Column: orderlock.FieldUserID},
 			orderlock.FieldLockType:  {Type: field.TypeString, Column: orderlock.FieldLockType},
 		},
 	}
@@ -1314,6 +1315,11 @@ func (f *OrderLockFilter) WhereEntID(p entql.ValueP) {
 // WhereOrderID applies the entql [16]byte predicate on the order_id field.
 func (f *OrderLockFilter) WhereOrderID(p entql.ValueP) {
 	f.Where(p.Field(orderlock.FieldOrderID))
+}
+
+// WhereUserID applies the entql [16]byte predicate on the user_id field.
+func (f *OrderLockFilter) WhereUserID(p entql.ValueP) {
+	f.Where(p.Field(orderlock.FieldUserID))
 }
 
 // WhereLockType applies the entql string predicate on the lock_type field.

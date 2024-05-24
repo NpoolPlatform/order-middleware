@@ -548,8 +548,12 @@ func init() {
 	orderlockDescOrderID := orderlockFields[0].Descriptor()
 	// orderlock.DefaultOrderID holds the default value on creation for the order_id field.
 	orderlock.DefaultOrderID = orderlockDescOrderID.Default.(func() uuid.UUID)
+	// orderlockDescUserID is the schema descriptor for user_id field.
+	orderlockDescUserID := orderlockFields[1].Descriptor()
+	// orderlock.DefaultUserID holds the default value on creation for the user_id field.
+	orderlock.DefaultUserID = orderlockDescUserID.Default.(func() uuid.UUID)
 	// orderlockDescLockType is the schema descriptor for lock_type field.
-	orderlockDescLockType := orderlockFields[1].Descriptor()
+	orderlockDescLockType := orderlockFields[2].Descriptor()
 	// orderlock.DefaultLockType holds the default value on creation for the lock_type field.
 	orderlock.DefaultLockType = orderlockDescLockType.Default.(string)
 	orderstateMixin := schema.OrderState{}.Mixin()

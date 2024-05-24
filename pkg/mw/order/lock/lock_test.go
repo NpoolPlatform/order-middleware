@@ -12,7 +12,7 @@ import (
 	ordertypes "github.com/NpoolPlatform/message/npool/basetypes/order/v1"
 	basetypes "github.com/NpoolPlatform/message/npool/basetypes/v1"
 	ordermwpb "github.com/NpoolPlatform/message/npool/order/mw/v1/order"
-	npool "github.com/NpoolPlatform/message/npool/order/mw/v1/order/orderlock"
+	npool "github.com/NpoolPlatform/message/npool/order/mw/v1/order/lock"
 	order1 "github.com/NpoolPlatform/order-middleware/pkg/mw/order"
 
 	"github.com/google/uuid"

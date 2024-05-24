@@ -2,70 +2,24 @@ package orderlock
 
 import (
 	"context"
-	"fmt"
 
+	wlog "github.com/NpoolPlatform/go-service-framework/pkg/wlog"
 	basetypes "github.com/NpoolPlatform/message/npool/basetypes/order/v1"
+	npool "github.com/NpoolPlatform/message/npool/order/mw/v1/order/lock"
 	"github.com/NpoolPlatform/order-middleware/pkg/db"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent"
 	entorderlock "github.com/NpoolPlatform/order-middleware/pkg/db/ent/orderlock"
-
-	npool "github.com/NpoolPlatform/message/npool/order/mw/v1/order/orderlock"
-	orderlockcrud "github.com/NpoolPlatform/order-middleware/pkg/crud/order/orderlock"
 )
 
 type queryHandler struct {
-	*Handler
-	stm   *ent.OrderLockSelect
-	infos []*npool.OrderLock
-	total uint32
-}
-
-func (h *queryHandler) selectOrderLock(stm *ent.OrderLockQuery) {
-	h.stm = stm.Select(
-		entorderlock.FieldID,
-		entorderlock.FieldEntID,
-		entorderlock.FieldAppID,
-		entorderlock.FieldUserID,
-		entorderlock.FieldOrderID,
-		entorderlock.FieldLockType,
-		entorderlock.FieldCreatedAt,
-		entorderlock.FieldUpdatedAt,
-	)
-}
-
-func (h *queryHandler) queryOrderLock(cli *ent.Client) error {
-	if h.ID == nil && h.EntID == nil {
-		return fmt.Errorf("invalid id")
-	}
-	stm := cli.OrderLock.Query().Where(entorderlock.DeletedAt(0))
-	if h.ID != nil {
-		stm.Where(entorderlock.ID(*h.ID))
-	}
-	if h.EntID != nil {
-		stm.Where(entorderlock.EntID(*h.EntID))
-	}
-	h.selectOrderLock(stm)
-	return nil
-}
-
-func (h *queryHandler) queryOrderLocks(ctx context.Context, cli *ent.Client) error {
-	stm, err := orderlockcrud.SetQueryConds(cli.OrderLock.Query(), h.Conds)
-	if err != nil {
-		return err
-	}
-
-	_total, err := stm.Count(ctx)
-	if err != nil {
-		return err
-	}
-
-	h.total = uint32(_total)
-	h.selectOrderLock(stm)
-	return nil
+	*baseQueryHandler
+	stmCount *ent.OrderLockSelect
+	infos    []*npool.OrderLock
+	total    uint32
 }
 
 func (h *queryHandler) scan(ctx context.Context) error {
-	return h.stm.Scan(ctx, &h.infos)
+	return h.stmSelect.Scan(ctx, &h.infos)
 }
 
 func (h *queryHandler) formalize() {
@@ -76,7 +30,9 @@ func (h *queryHandler) formalize() {
 
 func (h *Handler) GetOrderLock(ctx context.Context) (*npool.OrderLock, error) {
 	handler := &queryHandler{
-		Handler: h,
+		baseQueryHandler: &baseQueryHandler{
+			Handler: h,
+		},
 	}
 
 	err := db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
@@ -86,13 +42,13 @@ func (h *Handler) GetOrderLock(ctx context.Context) (*npool.OrderLock, error) {
 		return handler.scan(_ctx)
 	})
 	if err != nil {
-		return nil, err
+		return nil, wlog.WrapError(err)
 	}
 	if len(handler.infos) == 0 {
 		return nil, nil
 	}
 	if len(handler.infos) > 1 {
-		return nil, fmt.Errorf("too many records")
+		return nil, wlog.Errorf("too many records")
 	}
 
 	handler.formalize()
@@ -100,18 +56,28 @@ func (h *Handler) GetOrderLock(ctx context.Context) (*npool.OrderLock, error) {
 	return handler.infos[0], nil
 }
 
-func (h *Handler) GetOrderLocks(ctx context.Context) ([]*npool.OrderLock, uint32, error) {
+func (h *Handler) GetOrderLocks(ctx context.Context) (infos []*npool.OrderLock, total uint32, err error) {
 	handler := &queryHandler{
-		Handler: h,
+		baseQueryHandler: &baseQueryHandler{
+			Handler: h,
+		},
 	}
-
-	err := db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
-		if err := handler.queryOrderLocks(_ctx, cli); err != nil {
-			return err
+	if err := db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
+		if handler.stmSelect, err = handler.queryOrderLocks(cli); err != nil {
+			return wlog.WrapError(err)
+		}
+		if handler.stmCount, err = handler.queryOrderLocks(cli); err != nil {
+			return wlog.WrapError(err)
 		}
 
+		_total, err := handler.stmCount.Count(_ctx)
+		if err != nil {
+			return wlog.WrapError(err)
+		}
+		handler.total = uint32(_total)
+
 		handler.
-			stm.
+			stmSelect.
 			Offset(int(handler.Offset)).
 			Limit(int(handler.Limit)).
 			Order(ent.Desc(entorderlock.FieldCreatedAt))
@@ -119,9 +85,8 @@ func (h *Handler) GetOrderLocks(ctx context.Context) ([]*npool.OrderLock, uint32
 			return err
 		}
 		return nil
-	})
-	if err != nil {
-		return nil, 0, err
+	}); err != nil {
+		return nil, 0, wlog.WrapError(err)
 	}
 
 	handler.formalize()

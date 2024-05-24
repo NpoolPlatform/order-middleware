@@ -18,6 +18,7 @@ func (h *Handler) ConstructCreateSQL() string {
 	}
 	_sql += comma + "order_id"
 	comma = ", "
+	_sql += comma + "user_id"
 	_sql += comma + "lock_type"
 	_sql += comma + "created_at"
 	_sql += comma + "updated_at"
@@ -31,6 +32,7 @@ func (h *Handler) ConstructCreateSQL() string {
 	}
 	_sql += fmt.Sprintf("%v'%v' as order_id", comma, *h.OrderID)
 	comma = ", "
+	_sql += fmt.Sprintf("%v'%v' as user_id", comma, *h.UserID)
 	_sql += fmt.Sprintf("%v'%v' as lock_type", comma, h.LockType.String())
 	_sql += fmt.Sprintf("%v%v as created_at", comma, now)
 	_sql += fmt.Sprintf("%v%v as updated_at", comma, now)
@@ -39,7 +41,16 @@ func (h *Handler) ConstructCreateSQL() string {
 	_sql += "where exists ("
 	_sql += "select 1 from order_bases "
 	_sql += fmt.Sprintf("where ent_id = '%v' ", *h.OrderID)
-	_sql += "limit 1)"
+	_sql += "limit 1) "
+	_sql += "and not exists ("
+	_sql += "select 1 from order_locks "
+	_sql += fmt.Sprintf(
+		"where order_id = '%v' and lock_type = '%v' and user_id = '%v' and deleted_at = 0",
+		*h.OrderID,
+		h.LockType.String(),
+		*h.UserID,
+	)
+	_sql += " limit 1)"
 
 	return _sql
 }

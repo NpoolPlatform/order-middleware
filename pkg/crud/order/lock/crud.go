@@ -14,6 +14,7 @@ type Req struct {
 	ID        *uint32
 	EntID     *uuid.UUID
 	OrderID   *uuid.UUID
+	UserID    *uuid.UUID
 	LockType  *basetypes.OrderLockType
 	DeletedAt *uint32
 }
@@ -24,6 +25,9 @@ func CreateSet(c *ent.OrderLockCreate, req *Req) *ent.OrderLockCreate {
 	}
 	if req.OrderID != nil {
 		c.SetOrderID(*req.OrderID)
+	}
+	if req.UserID != nil {
+		c.SetUserID(*req.UserID)
 	}
 	if req.LockType != nil {
 		c.SetLockType(req.LockType.String())
@@ -45,6 +49,8 @@ type Conds struct {
 	EntIDs   *cruder.Cond
 	OrderID  *cruder.Cond
 	OrderIDs *cruder.Cond
+	UserID   *cruder.Cond
+	UserIDs  *cruder.Cond
 	LockType *cruder.Cond
 }
 
@@ -129,6 +135,32 @@ func SetQueryConds(q *ent.OrderLockQuery, conds *Conds) (*ent.OrderLockQuery, er
 			switch conds.OrderIDs.Op {
 			case cruder.IN:
 				q.Where(entorderlock.OrderIDIn(ids...))
+			default:
+				return nil, wlog.Errorf("invalid orderlock field")
+			}
+		}
+	}
+	if conds.UserID != nil {
+		id, ok := conds.UserID.Val.(uuid.UUID)
+		if !ok {
+			return nil, wlog.Errorf("invalid userid")
+		}
+		switch conds.UserID.Op {
+		case cruder.EQ:
+			q.Where(entorderlock.UserID(id))
+		default:
+			return nil, wlog.Errorf("invalid orderlock field")
+		}
+	}
+	if conds.UserIDs != nil {
+		ids, ok := conds.UserIDs.Val.([]uuid.UUID)
+		if !ok {
+			return nil, wlog.Errorf("invalid userids")
+		}
+		if len(ids) > 0 {
+			switch conds.UserIDs.Op {
+			case cruder.IN:
+				q.Where(entorderlock.UserIDIn(ids...))
 			default:
 				return nil, wlog.Errorf("invalid orderlock field")
 			}

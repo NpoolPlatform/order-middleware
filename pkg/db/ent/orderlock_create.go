@@ -92,6 +92,20 @@ func (olc *OrderLockCreate) SetNillableOrderID(u *uuid.UUID) *OrderLockCreate {
 	return olc
 }
 
+// SetUserID sets the "user_id" field.
+func (olc *OrderLockCreate) SetUserID(u uuid.UUID) *OrderLockCreate {
+	olc.mutation.SetUserID(u)
+	return olc
+}
+
+// SetNillableUserID sets the "user_id" field if the given value is not nil.
+func (olc *OrderLockCreate) SetNillableUserID(u *uuid.UUID) *OrderLockCreate {
+	if u != nil {
+		olc.SetUserID(*u)
+	}
+	return olc
+}
+
 // SetLockType sets the "lock_type" field.
 func (olc *OrderLockCreate) SetLockType(s string) *OrderLockCreate {
 	olc.mutation.SetLockType(s)
@@ -226,6 +240,13 @@ func (olc *OrderLockCreate) defaults() error {
 		v := orderlock.DefaultOrderID()
 		olc.mutation.SetOrderID(v)
 	}
+	if _, ok := olc.mutation.UserID(); !ok {
+		if orderlock.DefaultUserID == nil {
+			return fmt.Errorf("ent: uninitialized orderlock.DefaultUserID (forgotten import ent/runtime?)")
+		}
+		v := orderlock.DefaultUserID()
+		olc.mutation.SetUserID(v)
+	}
 	if _, ok := olc.mutation.LockType(); !ok {
 		v := orderlock.DefaultLockType
 		olc.mutation.SetLockType(v)
@@ -320,6 +341,14 @@ func (olc *OrderLockCreate) createSpec() (*OrderLock, *sqlgraph.CreateSpec) {
 			Column: orderlock.FieldOrderID,
 		})
 		_node.OrderID = value
+	}
+	if value, ok := olc.mutation.UserID(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Value:  value,
+			Column: orderlock.FieldUserID,
+		})
+		_node.UserID = value
 	}
 	if value, ok := olc.mutation.LockType(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -464,6 +493,24 @@ func (u *OrderLockUpsert) UpdateOrderID() *OrderLockUpsert {
 // ClearOrderID clears the value of the "order_id" field.
 func (u *OrderLockUpsert) ClearOrderID() *OrderLockUpsert {
 	u.SetNull(orderlock.FieldOrderID)
+	return u
+}
+
+// SetUserID sets the "user_id" field.
+func (u *OrderLockUpsert) SetUserID(v uuid.UUID) *OrderLockUpsert {
+	u.Set(orderlock.FieldUserID, v)
+	return u
+}
+
+// UpdateUserID sets the "user_id" field to the value that was provided on create.
+func (u *OrderLockUpsert) UpdateUserID() *OrderLockUpsert {
+	u.SetExcluded(orderlock.FieldUserID)
+	return u
+}
+
+// ClearUserID clears the value of the "user_id" field.
+func (u *OrderLockUpsert) ClearUserID() *OrderLockUpsert {
+	u.SetNull(orderlock.FieldUserID)
 	return u
 }
 
@@ -630,6 +677,27 @@ func (u *OrderLockUpsertOne) UpdateOrderID() *OrderLockUpsertOne {
 func (u *OrderLockUpsertOne) ClearOrderID() *OrderLockUpsertOne {
 	return u.Update(func(s *OrderLockUpsert) {
 		s.ClearOrderID()
+	})
+}
+
+// SetUserID sets the "user_id" field.
+func (u *OrderLockUpsertOne) SetUserID(v uuid.UUID) *OrderLockUpsertOne {
+	return u.Update(func(s *OrderLockUpsert) {
+		s.SetUserID(v)
+	})
+}
+
+// UpdateUserID sets the "user_id" field to the value that was provided on create.
+func (u *OrderLockUpsertOne) UpdateUserID() *OrderLockUpsertOne {
+	return u.Update(func(s *OrderLockUpsert) {
+		s.UpdateUserID()
+	})
+}
+
+// ClearUserID clears the value of the "user_id" field.
+func (u *OrderLockUpsertOne) ClearUserID() *OrderLockUpsertOne {
+	return u.Update(func(s *OrderLockUpsert) {
+		s.ClearUserID()
 	})
 }
 
@@ -964,6 +1032,27 @@ func (u *OrderLockUpsertBulk) UpdateOrderID() *OrderLockUpsertBulk {
 func (u *OrderLockUpsertBulk) ClearOrderID() *OrderLockUpsertBulk {
 	return u.Update(func(s *OrderLockUpsert) {
 		s.ClearOrderID()
+	})
+}
+
+// SetUserID sets the "user_id" field.
+func (u *OrderLockUpsertBulk) SetUserID(v uuid.UUID) *OrderLockUpsertBulk {
+	return u.Update(func(s *OrderLockUpsert) {
+		s.SetUserID(v)
+	})
+}
+
+// UpdateUserID sets the "user_id" field to the value that was provided on create.
+func (u *OrderLockUpsertBulk) UpdateUserID() *OrderLockUpsertBulk {
+	return u.Update(func(s *OrderLockUpsert) {
+		s.UpdateUserID()
+	})
+}
+
+// ClearUserID clears the value of the "user_id" field.
+func (u *OrderLockUpsertBulk) ClearUserID() *OrderLockUpsertBulk {
+	return u.Update(func(s *OrderLockUpsert) {
+		s.ClearUserID()
 	})
 }
 

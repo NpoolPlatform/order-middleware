@@ -8981,6 +8981,7 @@ type OrderLockMutation struct {
 	adddeleted_at *int32
 	ent_id        *uuid.UUID
 	order_id      *uuid.UUID
+	user_id       *uuid.UUID
 	lock_type     *string
 	clearedFields map[string]struct{}
 	done          bool
@@ -9345,6 +9346,55 @@ func (m *OrderLockMutation) ResetOrderID() {
 	delete(m.clearedFields, orderlock.FieldOrderID)
 }
 
+// SetUserID sets the "user_id" field.
+func (m *OrderLockMutation) SetUserID(u uuid.UUID) {
+	m.user_id = &u
+}
+
+// UserID returns the value of the "user_id" field in the mutation.
+func (m *OrderLockMutation) UserID() (r uuid.UUID, exists bool) {
+	v := m.user_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUserID returns the old "user_id" field's value of the OrderLock entity.
+// If the OrderLock object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *OrderLockMutation) OldUserID(ctx context.Context) (v uuid.UUID, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUserID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUserID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUserID: %w", err)
+	}
+	return oldValue.UserID, nil
+}
+
+// ClearUserID clears the value of the "user_id" field.
+func (m *OrderLockMutation) ClearUserID() {
+	m.user_id = nil
+	m.clearedFields[orderlock.FieldUserID] = struct{}{}
+}
+
+// UserIDCleared returns if the "user_id" field was cleared in this mutation.
+func (m *OrderLockMutation) UserIDCleared() bool {
+	_, ok := m.clearedFields[orderlock.FieldUserID]
+	return ok
+}
+
+// ResetUserID resets all changes to the "user_id" field.
+func (m *OrderLockMutation) ResetUserID() {
+	m.user_id = nil
+	delete(m.clearedFields, orderlock.FieldUserID)
+}
+
 // SetLockType sets the "lock_type" field.
 func (m *OrderLockMutation) SetLockType(s string) {
 	m.lock_type = &s
@@ -9413,7 +9463,7 @@ func (m *OrderLockMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *OrderLockMutation) Fields() []string {
-	fields := make([]string, 0, 6)
+	fields := make([]string, 0, 7)
 	if m.created_at != nil {
 		fields = append(fields, orderlock.FieldCreatedAt)
 	}
@@ -9428,6 +9478,9 @@ func (m *OrderLockMutation) Fields() []string {
 	}
 	if m.order_id != nil {
 		fields = append(fields, orderlock.FieldOrderID)
+	}
+	if m.user_id != nil {
+		fields = append(fields, orderlock.FieldUserID)
 	}
 	if m.lock_type != nil {
 		fields = append(fields, orderlock.FieldLockType)
@@ -9450,6 +9503,8 @@ func (m *OrderLockMutation) Field(name string) (ent.Value, bool) {
 		return m.EntID()
 	case orderlock.FieldOrderID:
 		return m.OrderID()
+	case orderlock.FieldUserID:
+		return m.UserID()
 	case orderlock.FieldLockType:
 		return m.LockType()
 	}
@@ -9471,6 +9526,8 @@ func (m *OrderLockMutation) OldField(ctx context.Context, name string) (ent.Valu
 		return m.OldEntID(ctx)
 	case orderlock.FieldOrderID:
 		return m.OldOrderID(ctx)
+	case orderlock.FieldUserID:
+		return m.OldUserID(ctx)
 	case orderlock.FieldLockType:
 		return m.OldLockType(ctx)
 	}
@@ -9516,6 +9573,13 @@ func (m *OrderLockMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetOrderID(v)
+		return nil
+	case orderlock.FieldUserID:
+		v, ok := value.(uuid.UUID)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUserID(v)
 		return nil
 	case orderlock.FieldLockType:
 		v, ok := value.(string)
@@ -9596,6 +9660,9 @@ func (m *OrderLockMutation) ClearedFields() []string {
 	if m.FieldCleared(orderlock.FieldOrderID) {
 		fields = append(fields, orderlock.FieldOrderID)
 	}
+	if m.FieldCleared(orderlock.FieldUserID) {
+		fields = append(fields, orderlock.FieldUserID)
+	}
 	if m.FieldCleared(orderlock.FieldLockType) {
 		fields = append(fields, orderlock.FieldLockType)
 	}
@@ -9615,6 +9682,9 @@ func (m *OrderLockMutation) ClearField(name string) error {
 	switch name {
 	case orderlock.FieldOrderID:
 		m.ClearOrderID()
+		return nil
+	case orderlock.FieldUserID:
+		m.ClearUserID()
 		return nil
 	case orderlock.FieldLockType:
 		m.ClearLockType()
@@ -9641,6 +9711,9 @@ func (m *OrderLockMutation) ResetField(name string) error {
 		return nil
 	case orderlock.FieldOrderID:
 		m.ResetOrderID()
+		return nil
+	case orderlock.FieldUserID:
+		m.ResetUserID()
 		return nil
 	case orderlock.FieldLockType:
 		m.ResetLockType()

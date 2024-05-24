@@ -22,6 +22,8 @@ const (
 	FieldEntID = "ent_id"
 	// FieldOrderID holds the string denoting the order_id field in the database.
 	FieldOrderID = "order_id"
+	// FieldUserID holds the string denoting the user_id field in the database.
+	FieldUserID = "user_id"
 	// FieldLockType holds the string denoting the lock_type field in the database.
 	FieldLockType = "lock_type"
 	// Table holds the table name of the orderlock in the database.
@@ -36,6 +38,7 @@ var Columns = []string{
 	FieldDeletedAt,
 	FieldEntID,
 	FieldOrderID,
+	FieldUserID,
 	FieldLockType,
 }
 
@@ -70,6 +73,8 @@ var (
 	DefaultEntID func() uuid.UUID
 	// DefaultOrderID holds the default value on creation for the "order_id" field.
 	DefaultOrderID func() uuid.UUID
+	// DefaultUserID holds the default value on creation for the "user_id" field.
+	DefaultUserID func() uuid.UUID
 	// DefaultLockType holds the default value on creation for the "lock_type" field.
 	DefaultLockType string
 )

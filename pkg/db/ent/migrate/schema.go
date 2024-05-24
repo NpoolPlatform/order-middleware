@@ -257,6 +257,7 @@ var (
 		{Name: "deleted_at", Type: field.TypeUint32},
 		{Name: "ent_id", Type: field.TypeUUID, Unique: true},
 		{Name: "order_id", Type: field.TypeUUID, Nullable: true},
+		{Name: "user_id", Type: field.TypeUUID, Nullable: true},
 		{Name: "lock_type", Type: field.TypeString, Nullable: true, Default: "DefaultOrderLockType"},
 	}
 	// OrderLocksTable holds the schema information for the "order_locks" table.

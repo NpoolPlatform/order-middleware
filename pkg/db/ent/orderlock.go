@@ -26,6 +26,8 @@ type OrderLock struct {
 	EntID uuid.UUID `json:"ent_id,omitempty"`
 	// OrderID holds the value of the "order_id" field.
 	OrderID uuid.UUID `json:"order_id,omitempty"`
+	// UserID holds the value of the "user_id" field.
+	UserID uuid.UUID `json:"user_id,omitempty"`
 	// LockType holds the value of the "lock_type" field.
 	LockType string `json:"lock_type,omitempty"`
 }
@@ -39,7 +41,7 @@ func (*OrderLock) scanValues(columns []string) ([]interface{}, error) {
 			values[i] = new(sql.NullInt64)
 		case orderlock.FieldLockType:
 			values[i] = new(sql.NullString)
-		case orderlock.FieldEntID, orderlock.FieldOrderID:
+		case orderlock.FieldEntID, orderlock.FieldOrderID, orderlock.FieldUserID:
 			values[i] = new(uuid.UUID)
 		default:
 			return nil, fmt.Errorf("unexpected column %q for type OrderLock", columns[i])
@@ -92,6 +94,12 @@ func (ol *OrderLock) assignValues(columns []string, values []interface{}) error 
 			} else if value != nil {
 				ol.OrderID = *value
 			}
+		case orderlock.FieldUserID:
+			if value, ok := values[i].(*uuid.UUID); !ok {
+				return fmt.Errorf("unexpected type %T for field user_id", values[i])
+			} else if value != nil {
+				ol.UserID = *value
+			}
 		case orderlock.FieldLockType:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field lock_type", values[i])
@@ -140,6 +148,9 @@ func (ol *OrderLock) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("order_id=")
 	builder.WriteString(fmt.Sprintf("%v", ol.OrderID))
+	builder.WriteString(", ")
+	builder.WriteString("user_id=")
+	builder.WriteString(fmt.Sprintf("%v", ol.UserID))
 	builder.WriteString(", ")
 	builder.WriteString("lock_type=")
 	builder.WriteString(ol.LockType)
