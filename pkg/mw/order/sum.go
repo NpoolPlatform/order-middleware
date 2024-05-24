@@ -3,52 +3,67 @@ package order
 import (
 	"context"
 
+	"entgo.io/ent/dialect/sql"
+
 	wlog "github.com/NpoolPlatform/go-service-framework/pkg/wlog"
 	"github.com/NpoolPlatform/order-middleware/pkg/db"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent"
+	entfeeorder "github.com/NpoolPlatform/order-middleware/pkg/db/ent/feeorder"
+	entorderbase "github.com/NpoolPlatform/order-middleware/pkg/db/ent/orderbase"
+	entpowerrental "github.com/NpoolPlatform/order-middleware/pkg/db/ent/powerrental"
 
+	"github.com/google/uuid"
 	"github.com/shopspring/decimal"
 )
 
 type sumHandler struct {
-	*Handler
-	sql string
+	*baseQueryHandler
 }
 
-func (h *sumHandler) constructSumOrderPaymentUSDSQL() {
-	h.sql = `
-	  select
-	    sum(payment_amount_usd_total)
-	  from (
-	    select
-	      sum(payment_amount_usd)
-	    as
-	      payment_amount_usd_total
-	    from
-	      power_rentals
-	    union all
-	    select
-	      sum(payment_amount_usd)
-	    as
-	      payment_amount_usd_total
-	    from
-	      fee_orders
-	  ) as tmp
-	`
-	// TODO: if we have other order type, just append
+func (h *sumHandler) sumOrdersPaymentUSD(ctx context.Context, cli *ent.Client) (amount string, err error) {
+	if h.stmSelect, err = h.queryOrderBases(cli); err != nil {
+		return decimal.NewFromInt(0).String(), wlog.WrapError(err)
+	}
+	amounts := []struct {
+		AppID  uuid.UUID       `json:"app_id"`
+		Amount decimal.Decimal `json:"payment_amount_usd"`
+	}{}
+	if err := h.stmSelect.GroupBy(
+		entorderbase.FieldAppID,
+	).Aggregate(func(s *sql.Selector) string {
+		t1 := sql.Table(entpowerrental.Table)
+		s.LeftJoin(t1).On(
+			s.C(entorderbase.FieldEntID),
+			t1.C(entpowerrental.FieldOrderID),
+		)
+
+		t2 := sql.Table(entfeeorder.Table)
+		s.LeftJoin(t2).On(
+			s.C(entorderbase.FieldEntID),
+			t2.C(entpowerrental.FieldOrderID),
+		)
+
+		return sql.As(sql.Sum(
+			"ifnull("+t1.C(entpowerrental.FieldPaymentAmountUsd)+", 0) + ifnull("+t2.C(entfeeorder.FieldPaymentAmountUsd)+", 0)",
+		), "payment_amount_usd")
+	}).Scan(ctx, &amounts); err != nil {
+		return decimal.NewFromInt(0).String(), wlog.WrapError(err)
+	}
+	if len(amounts) == 0 {
+		return decimal.NewFromInt(0).String(), wlog.Errorf("invalid paymentamounts")
+	}
+	return amounts[0].Amount.String(), nil
 }
 
 func (h *Handler) SumOrdersPaymentUSD(ctx context.Context) (amount string, err error) {
 	handler := &sumHandler{
-		Handler: h,
+		baseQueryHandler: &baseQueryHandler{
+			Handler: h,
+		},
 	}
-	handler.constructSumOrderPaymentUSDSQL()
 	if err := db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
-		rows, err := cli.QueryContext(_ctx, handler.sql)
-		if err != nil {
-			return wlog.WrapError(err)
-		}
-		return wlog.WrapError(rows.Scan(&amount))
+		amount, err = handler.sumOrdersPaymentUSD(_ctx, cli)
+		return wlog.WrapError(err)
 	}); err != nil {
 		return decimal.NewFromInt(0).String(), wlog.WrapError(err)
 	}
