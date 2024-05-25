@@ -149,6 +149,7 @@ func (h *Handler) withOrderBaseConds(conds *npool.Conds) error {
 	return nil
 }
 
+//nolint:gocyclo
 func (h *Handler) withOrderLockConds(conds *npool.Conds) error {
 	if conds.ID != nil {
 		h.OrderLockConds.ID = &cruder.Cond{

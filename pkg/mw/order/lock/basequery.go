@@ -3,10 +3,14 @@ package orderlock
 import (
 	"entgo.io/ent/dialect/sql"
 
+	logger "github.com/NpoolPlatform/go-service-framework/pkg/logger"
 	wlog "github.com/NpoolPlatform/go-service-framework/pkg/wlog"
 	orderlockcrud "github.com/NpoolPlatform/order-middleware/pkg/crud/order/lock"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent"
+	entorderbase "github.com/NpoolPlatform/order-middleware/pkg/db/ent/orderbase"
 	entorderlock "github.com/NpoolPlatform/order-middleware/pkg/db/ent/orderlock"
+
+	"github.com/google/uuid"
 )
 
 type baseQueryHandler struct {
@@ -56,8 +60,34 @@ func (h *baseQueryHandler) queryJoinMyself(s *sql.Selector) {
 	)
 }
 
+func (h *baseQueryHandler) queryJoinOrderBase(s *sql.Selector) error {
+	t1 := sql.Table(entorderbase.Table)
+	s.Join(t1).On(
+		s.C(entorderlock.FieldOrderID),
+		t1.C(entorderbase.FieldEntID),
+	)
+	if h.OrderBaseConds.AppID != nil {
+		id, ok := h.OrderBaseConds.AppID.Val.(uuid.UUID)
+		if !ok {
+			return wlog.Errorf("invalid appid")
+		}
+		s.OnP(
+			sql.EQ(t1.C(entorderbase.FieldAppID), id),
+		)
+	}
+	s.AppendSelect(
+		t1.C(entorderbase.FieldAppID),
+		sql.As(t1.C(entorderbase.FieldUserID), "order_user_id"),
+		t1.C(entorderbase.FieldGoodType),
+	)
+	return nil
+}
+
 func (h *baseQueryHandler) queryJoin() {
 	h.stmSelect.Modify(func(s *sql.Selector) {
 		h.queryJoinMyself(s)
+		if err := h.queryJoinOrderBase(s); err != nil {
+			logger.Sugar().Errorw("queryJoinOrderBase", "Error", err)
+		}
 	})
 }

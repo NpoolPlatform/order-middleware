@@ -3,6 +3,9 @@ package orderlock
 import (
 	"context"
 
+	"entgo.io/ent/dialect/sql"
+
+	logger "github.com/NpoolPlatform/go-service-framework/pkg/logger"
 	wlog "github.com/NpoolPlatform/go-service-framework/pkg/wlog"
 	basetypes "github.com/NpoolPlatform/message/npool/basetypes/order/v1"
 	npool "github.com/NpoolPlatform/message/npool/order/mw/v1/order/lock"
@@ -16,6 +19,18 @@ type queryHandler struct {
 	stmCount *ent.OrderLockSelect
 	infos    []*npool.OrderLock
 	total    uint32
+}
+
+func (h *queryHandler) queryJoin() {
+	h.baseQueryHandler.queryJoin()
+	if h.stmCount == nil {
+		return
+	}
+	h.stmCount.Modify(func(s *sql.Selector) {
+		if err := h.queryJoinOrderBase(s); err != nil {
+			logger.Sugar().Errorw("queryJoinOrderBase", "Error", err)
+		}
+	})
 }
 
 func (h *queryHandler) scan(ctx context.Context) error {
