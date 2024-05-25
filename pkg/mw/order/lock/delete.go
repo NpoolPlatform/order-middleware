@@ -25,7 +25,7 @@ func (h *deleteHandler) deleteOrderLock(ctx context.Context, tx *ent.Tx) error {
 	return wlog.WrapError(err)
 }
 
-func (h *Handler) DeleteOrderLock(ctx context.Context) error {
+func (h *Handler) DeleteOrderLockWithTx(ctx context.Context, tx *ent.Tx) error {
 	info, err := h.GetOrderLock(ctx)
 	if err != nil {
 		return wlog.WrapError(err)
@@ -38,7 +38,11 @@ func (h *Handler) DeleteOrderLock(ctx context.Context) error {
 		now:     uint32(time.Now().Unix()),
 	}
 	h.ID = &info.ID
+	return handler.deleteOrderLock(ctx, tx)
+}
+
+func (h *Handler) DeleteOrderLock(ctx context.Context) error {
 	return db.WithTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {
-		return handler.deleteOrderLock(_ctx, tx)
+		return h.DeleteOrderLockWithTx(_ctx, tx)
 	})
 }

@@ -8,6 +8,8 @@ import (
 	"github.com/NpoolPlatform/order-middleware/api/compensate"
 	feeorder1 "github.com/NpoolPlatform/order-middleware/api/fee"
 	order1 "github.com/NpoolPlatform/order-middleware/api/order"
+	ordercoupon1 "github.com/NpoolPlatform/order-middleware/api/order/coupon"
+	orderlock1 "github.com/NpoolPlatform/order-middleware/api/order/lock"
 	"github.com/NpoolPlatform/order-middleware/api/outofgas"
 	payment1 "github.com/NpoolPlatform/order-middleware/api/payment"
 	powerrental1 "github.com/NpoolPlatform/order-middleware/api/powerrental"
@@ -26,6 +28,8 @@ func Register(server grpc.ServiceRegistrar) {
 	order.RegisterMiddlewareServer(server, &Server{})
 	order1.Register(server)
 	feeorder1.Register(server)
+	orderlock1.Register(server)
+	ordercoupon1.Register(server)
 	powerrental1.Register(server)
 	powerrentalcompensate1.Register(server)
 	powerrentaloutofgas1.Register(server)
@@ -49,6 +53,12 @@ func RegisterGateway(mux *runtime.ServeMux, endpoint string, opts []grpc.DialOpt
 		return err
 	}
 	if err := feeorder1.RegisterGateway(mux, endpoint, opts); err != nil {
+		return err
+	}
+	if err := orderlock1.RegisterGateway(mux, endpoint, opts); err != nil {
+		return err
+	}
+	if err := ordercoupon1.RegisterGateway(mux, endpoint, opts); err != nil {
 		return err
 	}
 	if err := powerrental1.RegisterGateway(mux, endpoint, opts); err != nil {

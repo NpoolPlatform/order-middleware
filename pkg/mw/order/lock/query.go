@@ -39,6 +39,7 @@ func (h *Handler) GetOrderLock(ctx context.Context) (*npool.OrderLock, error) {
 		if err := handler.queryOrderLock(cli); err != nil {
 			return err
 		}
+		handler.queryJoin()
 		return handler.scan(_ctx)
 	})
 	if err != nil {
@@ -69,6 +70,8 @@ func (h *Handler) GetOrderLocks(ctx context.Context) (infos []*npool.OrderLock, 
 		if handler.stmCount, err = handler.queryOrderLocks(cli); err != nil {
 			return wlog.WrapError(err)
 		}
+
+		handler.queryJoin()
 
 		_total, err := handler.stmCount.Count(_ctx)
 		if err != nil {
