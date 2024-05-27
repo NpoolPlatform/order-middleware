@@ -144,7 +144,6 @@ func TestOrderLock(t *testing.T) {
 	defer teardown(t)
 
 	t.Run("createOrderLock", createOrderLock)
-	return
 	t.Run("getOrderLock", getOrderLock)
 	t.Run("getOrderLocks", getOrderLocks)
 	t.Run("deleteOrderLock", deleteOrderLock)
