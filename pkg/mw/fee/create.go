@@ -204,6 +204,10 @@ func (h *createHandler) formalizeOrderID() {
 	h.PaymentBaseReq.OrderID = h.OrderID
 }
 
+func (h *createHandler) formalizeUserID() {
+	h.LedgerLockReq.UserID = h.OrderBaseReq.UserID
+}
+
 func (h *createHandler) formalizeEntIDs() {
 	if h.OrderStateBaseReq.EntID == nil {
 		h.OrderStateBaseReq.EntID = func() *uuid.UUID { uid := uuid.New(); return &uid }()
@@ -352,6 +356,7 @@ func (h *Handler) CreateFeeOrderWithTx(ctx context.Context, tx *ent.Tx) error {
 	}
 
 	handler.formalizeOrderID()
+	handler.formalizeUserID()
 	handler.formalizeEntIDs()
 	handler.formalizeOrderCoupons()
 	handler.formalizePaymentType()

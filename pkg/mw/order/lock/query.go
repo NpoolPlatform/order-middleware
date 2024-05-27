@@ -7,7 +7,8 @@ import (
 
 	logger "github.com/NpoolPlatform/go-service-framework/pkg/logger"
 	wlog "github.com/NpoolPlatform/go-service-framework/pkg/wlog"
-	basetypes "github.com/NpoolPlatform/message/npool/basetypes/order/v1"
+	goodtypes "github.com/NpoolPlatform/message/npool/basetypes/good/v1"
+	types "github.com/NpoolPlatform/message/npool/basetypes/order/v1"
 	npool "github.com/NpoolPlatform/message/npool/order/mw/v1/order/lock"
 	"github.com/NpoolPlatform/order-middleware/pkg/db"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent"
@@ -39,7 +40,8 @@ func (h *queryHandler) scan(ctx context.Context) error {
 
 func (h *queryHandler) formalize() {
 	for _, info := range h.infos {
-		info.LockType = basetypes.OrderLockType(basetypes.OrderLockType_value[info.LockTypeStr])
+		info.LockType = types.OrderLockType(types.OrderLockType_value[info.LockTypeStr])
+		info.GoodType = goodtypes.GoodType(goodtypes.GoodType_value[info.GoodTypeStr])
 	}
 }
 

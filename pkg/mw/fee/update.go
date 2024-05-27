@@ -47,8 +47,6 @@ type updateHandler struct {
 	updateNothing bool
 }
 
-// TODO: if fee order's payment contain other order, it should update other orders' state too
-
 func (h *updateHandler) constructOrderStateBaseSQL(ctx context.Context) (err error) {
 	handler, _ := orderstatebase1.NewHandler(ctx)
 	handler.Req = *h.OrderStateBaseReq
@@ -279,6 +277,10 @@ func (h *updateHandler) formalizeOrderID() {
 	h.PaymentBaseReq.OrderID = h.OrderID
 }
 
+func (h *updateHandler) formalizeUserID() {
+	h.LedgerLockReq.UserID = func() *uuid.UUID { uid := h._ent.UserID(); return &uid }()
+}
+
 func (h *updateHandler) formalizePaymentBalances() {
 	if !h.newPaymentBalance {
 		return
@@ -475,6 +477,7 @@ func (h *Handler) UpdateFeeOrderWithTx(ctx context.Context, tx *ent.Tx) error {
 	}
 
 	handler.formalizeOrderID()
+	handler.formalizeUserID()
 	if err := handler.validateUpdate(ctx); err != nil {
 		return wlog.WrapError(err)
 	}

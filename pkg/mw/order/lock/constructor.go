@@ -41,16 +41,7 @@ func (h *Handler) ConstructCreateSQL() string {
 	_sql += "where exists ("
 	_sql += "select 1 from order_bases "
 	_sql += fmt.Sprintf("where ent_id = '%v' ", *h.OrderID)
-	_sql += "limit 1) "
-	_sql += "and not exists ("
-	_sql += "select 1 from order_locks "
-	_sql += fmt.Sprintf(
-		"where order_id = '%v' and lock_type = '%v' and user_id = '%v' and deleted_at = 0",
-		*h.OrderID,
-		h.LockType.String(),
-		*h.UserID,
-	)
-	_sql += " limit 1)"
+	_sql += "limit 1)"
 
 	return _sql
 }

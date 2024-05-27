@@ -295,6 +295,7 @@ func (h *updateHandler) formalizeOrderID() {
 func (h *updateHandler) formalizeOrderLocks() {
 	for _, req := range h.OrderLockReqs {
 		req.OrderID = h.OrderID
+		req.UserID = func() *uuid.UUID { uid := h._ent.UserID(); return &uid }()
 	}
 }
 
