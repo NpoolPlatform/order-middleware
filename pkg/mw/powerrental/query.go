@@ -23,6 +23,7 @@ import (
 	entfeeorder "github.com/NpoolPlatform/order-middleware/pkg/db/ent/feeorder"
 	entorderbase "github.com/NpoolPlatform/order-middleware/pkg/db/ent/orderbase"
 	entordercoupon "github.com/NpoolPlatform/order-middleware/pkg/db/ent/ordercoupon"
+	entorderstatebase "github.com/NpoolPlatform/order-middleware/pkg/db/ent/orderstatebase"
 	entpaymentbalance "github.com/NpoolPlatform/order-middleware/pkg/db/ent/paymentbalance"
 	entpaymenttransfer "github.com/NpoolPlatform/order-middleware/pkg/db/ent/paymenttransfer"
 	entpowerrental "github.com/NpoolPlatform/order-middleware/pkg/db/ent/powerrental"
@@ -194,6 +195,68 @@ func (h *queryHandler) queryFeeDurations(ctx context.Context, cli *ent.Client) e
 	}).Scan(ctx, &h.feeDurations)
 }
 
+func (h *queryHandler) queryOrdersPaymentGoodValueUSD(ctx context.Context, cli *ent.Client) error {
+	orderIDs := func() (uids []uuid.UUID) {
+		for _, info := range h.infos {
+			uids = append(uids, uuid.MustParse(info.OrderID))
+		}
+		return
+	}()
+	stm, err := orderbasecrud.SetQueryConds(
+		cli.OrderBase.Query(),
+		&orderbasecrud.Conds{
+			ParentOrderIDs: &cruder.Cond{Op: cruder.IN, Val: orderIDs},
+		},
+	)
+	if err != nil {
+		return wlog.WrapError(err)
+	}
+	goodValueUSDs := []struct {
+		OrderID             string `json:"parent_order_id"`
+		PaymentGoodValueUSD string `json:"payment_good_value_usd"`
+	}{}
+	if err := stm.GroupBy(
+		entorderbase.FieldParentOrderID,
+	).Aggregate(func(s *sql.Selector) string {
+		t1 := sql.Table(entfeeorder.Table)
+		t2 := sql.Table(entpowerrental.Table)
+		t3 := sql.Table(entorderstatebase.Table)
+		s.Join(t1).
+			On(
+				s.C(entorderbase.FieldEntID),
+				t1.C(entfeeorder.FieldOrderID),
+			).
+			Join(t2).
+			On(
+				s.C(entorderbase.FieldParentOrderID),
+				t2.C(entpowerrental.FieldOrderID),
+			).
+			LeftJoin(t3).
+			On(
+				s.C(entorderbase.FieldEntID),
+				t3.C(entorderstatebase.FieldOrderID),
+			).
+			OnP(
+				sql.EQ(t3.C(entorderstatebase.FieldPaymentType), types.PaymentType_PayWithParentOrder.String()),
+			)
+		return sql.As(
+			sql.Sum(t1.C(entfeeorder.FieldGoodValueUsd)+"+"+t2.C(entpowerrental.FieldGoodValueUsd)),
+			"payment_good_value_usd",
+		)
+	}).Scan(ctx, &goodValueUSDs); err != nil {
+		return wlog.WrapError(err)
+	}
+	for _, info := range h.infos {
+		for _, goodValueUSD := range goodValueUSDs {
+			if info.OrderID == goodValueUSD.OrderID {
+				info.PaymentGoodValueUSD = goodValueUSD.PaymentGoodValueUSD
+				break
+			}
+		}
+	}
+	return nil
+}
+
 func (h *queryHandler) formalize() {
 	orderCoupons := map[string][]*ordercouponmwpb.OrderCouponInfo{}
 	paymentBalances := map[string][]*paymentmwpb.PaymentBalanceInfo{}
@@ -247,6 +310,7 @@ func (h *queryHandler) formalize() {
 	for _, info := range h.infos {
 		info.Units = func() string { amount, _ := decimal.NewFromString(info.Units); return amount.String() }()
 		info.GoodValueUSD = func() string { amount, _ := decimal.NewFromString(info.GoodValueUSD); return amount.String() }()
+		info.PaymentGoodValueUSD = func() string { amount, _ := decimal.NewFromString(info.PaymentGoodValueUSD); return amount.String() }()
 		info.PaymentAmountUSD = func() string { amount, _ := decimal.NewFromString(info.PaymentAmountUSD); return amount.String() }()
 		info.DiscountAmountUSD = func() string { amount, _ := decimal.NewFromString(info.DiscountAmountUSD); return amount.String() }()
 		info.GoodType = goodtypes.GoodType(goodtypes.GoodType_value[info.GoodTypeStr])
@@ -288,6 +352,9 @@ func (h *Handler) GetPowerRental(ctx context.Context) (*npool.PowerRentalOrder, 
 			return wlog.WrapError(err)
 		}
 		if err := handler.queryFeeDurations(_ctx, cli); err != nil {
+			return wlog.WrapError(err)
+		}
+		if err := handler.queryOrdersPaymentGoodValueUSD(_ctx, cli); err != nil {
 			return wlog.WrapError(err)
 		}
 		return handler.queryOrderCoupons(_ctx, cli)
@@ -347,6 +414,9 @@ func (h *Handler) GetPowerRentals(ctx context.Context) ([]*npool.PowerRentalOrde
 			return wlog.WrapError(err)
 		}
 		if err := handler.queryFeeDurations(_ctx, cli); err != nil {
+			return wlog.WrapError(err)
+		}
+		if err := handler.queryOrdersPaymentGoodValueUSD(_ctx, cli); err != nil {
 			return wlog.WrapError(err)
 		}
 		return handler.queryOrderCoupons(_ctx, cli)
