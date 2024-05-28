@@ -8,9 +8,9 @@ import (
 var rollbacks = map[types.OrderState]types.OrderState{
 	types.OrderState_OrderStatePaymentSpendBalance:         types.OrderState_OrderStatePaymentTransferBookKeeping,
 	types.OrderState_OrderStateTransferGoodStockLocked:     types.OrderState_OrderStatePaymentSpendBalance,
-	types.OrderState_OrderStateAddCommission:               types.OrderState_OrderStateTransferGoodStockLocked,
-	types.OrderState_OrderStateAchievementBookKeeping:      types.OrderState_OrderStateAddCommission,
-	types.OrderState_OrderStatePaymentUnlockAccount:        types.OrderState_OrderStateAchievementBookKeeping,
+	types.OrderState_OrderStateAchievementBookKeeping:      types.OrderState_OrderStateTransferGoodStockLocked,
+	types.OrderState_OrderStateAddCommission:               types.OrderState_OrderStateAchievementBookKeeping,
+	types.OrderState_OrderStatePaymentUnlockAccount:        types.OrderState_OrderStateAddCommission,
 	types.OrderState_OrderStatePaid:                        types.OrderState_OrderStatePaymentUnlockAccount,
 	types.OrderState_OrderStateInService:                   types.OrderState_OrderStateTransferGoodStockWaitStart,
 	types.OrderState_OrderStateRestoreExpiredStock:         types.OrderState_OrderStatePreExpired,
