@@ -52,6 +52,15 @@ func UpdatePowerRentalOrder(ctx context.Context, in *npool.PowerRentalOrderReq) 
 	return wlog.WrapError(err)
 }
 
+func UpdatePowerRentalOrders(ctx context.Context, in []*npool.PowerRentalOrderReq) error {
+	_, err := withClient(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (interface{}, error) {
+		return cli.UpdatePowerRentalOrders(ctx, &npool.UpdatePowerRentalOrdersRequest{
+			Infos: in,
+		})
+	})
+	return wlog.WrapError(err)
+}
+
 func GetPowerRentalOrder(ctx context.Context, orderID string) (*npool.PowerRentalOrder, error) {
 	info, err := withClient(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (interface{}, error) {
 		resp, err := cli.GetPowerRentalOrder(ctx, &npool.GetPowerRentalOrderRequest{
