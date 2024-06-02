@@ -22,7 +22,7 @@ func (h *baseQueryHandler) selectOrderBase(stm *ent.OrderBaseQuery) *ent.OrderBa
 }
 
 func (h *baseQueryHandler) queryOrderBase(cli *ent.Client) error {
-	if h.EntID == nil || h.ID == nil {
+	if h.EntID == nil && h.ID == nil {
 		return wlog.Errorf("invalid entid")
 	}
 	stm := cli.OrderBase.
