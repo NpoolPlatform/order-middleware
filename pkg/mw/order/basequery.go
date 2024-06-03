@@ -119,6 +119,33 @@ func (h *baseQueryHandler) queryJoinOrderStateBase(s *sql.Selector) error {
 			return _states
 		}()...))
 	}
+	if h.OrderStateBaseConds.StartMode != nil {
+		mode, ok := h.OrderStateBaseConds.StartMode.Val.(types.OrderStartMode)
+		if !ok {
+			return wlog.Errorf("invalid startmode")
+		}
+		s.OnP(
+			sql.EQ(t.C(entorderstatebase.FieldStartMode), mode.String()),
+		)
+	}
+	if h.OrderStateBaseConds.LastBenefitAt != nil {
+		at, ok := h.OrderStateBaseConds.LastBenefitAt.Val.(uint32)
+		if !ok {
+			return wlog.Errorf("invalid lastbenefitat")
+		}
+		s.OnP(
+			sql.EQ(t.C(entorderstatebase.FieldLastBenefitAt), at),
+		)
+	}
+	if h.OrderStateBaseConds.BenefitState != nil {
+		_state, ok := h.OrderStateBaseConds.BenefitState.Val.(types.BenefitState)
+		if !ok {
+			return wlog.Errorf("invalid benefitstate")
+		}
+		s.OnP(
+			sql.EQ(t.C(entorderstatebase.FieldBenefitState), _state.String()),
+		)
+	}
 	s.AppendSelect(
 		t.C(entorderstatebase.FieldPaymentType),
 		t.C(entorderstatebase.FieldOrderState),
