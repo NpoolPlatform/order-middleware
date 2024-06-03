@@ -377,6 +377,11 @@ func (h *createHandler) validateAppGoodStock() error {
 }
 
 func (h *createHandler) validateOrderType() error {
+	if h.OrderBaseReq.Simulate != nil && *h.OrderBaseReq.Simulate {
+		if *h.OrderBaseReq.CreateMethod != types.OrderCreateMethod_OrderCreatedByPurchase {
+			return wlog.Errorf("invalid createmethod")
+		}
+	}
 	switch *h.OrderBaseReq.CreateMethod {
 	case types.OrderCreateMethod_OrderCreatedByPurchase:
 		fallthrough //nolint
