@@ -322,6 +322,9 @@ func (h *queryHandler) formalize() {
 		info.RenewState = types.OrderRenewState(types.OrderRenewState_value[info.RenewStateStr])
 		info.CreateMethod = types.OrderCreateMethod(types.OrderCreateMethod_value[info.CreateMethodStr])
 		info.StartMode = types.OrderStartMode(types.OrderStartMode_value[info.StartModeStr])
+		info.BenefitState = types.BenefitState(types.BenefitState_value[info.BenefitStateStr])
+		info.InvestmentType = types.InvestmentType(types.InvestmentType_value[info.InvestmentTypeStr])
+		info.PaymentObseleteState = types.PaymentObseleteState(types.PaymentObseleteState_value[info.PaymentObseleteStateStr])
 		info.Coupons = orderCoupons[info.OrderID]
 		info.PaymentBalances = paymentBalances[info.PaymentID]
 		info.PaymentTransfers = paymentTransfers[info.PaymentID]

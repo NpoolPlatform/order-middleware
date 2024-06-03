@@ -154,6 +154,7 @@ func (h *baseQueryHandler) queryJoinPowerRental(s *sql.Selector) error {
 		t.C(entpowerrental.FieldPaymentAmountUsd),
 		t.C(entpowerrental.FieldDiscountAmountUsd),
 		t.C(entpowerrental.FieldPromotionID),
+		t.C(entpowerrental.FieldInvestmentType),
 	)
 	return nil
 }
@@ -212,6 +213,7 @@ func (h *baseQueryHandler) queryJoinOrderStateBase(s *sql.Selector) error {
 		t.C(entorderstatebase.FieldOrderState),
 		t.C(entorderstatebase.FieldStartMode),
 		t.C(entorderstatebase.FieldStartAt),
+		t.C(entorderstatebase.FieldBenefitState),
 	)
 	return nil
 }
@@ -286,6 +288,7 @@ func (h *baseQueryHandler) queryJoinPaymentBase(s *sql.Selector) {
 		)
 	s.AppendSelect(
 		sql.As(t1.C(entpaymentbase.FieldEntID), "payment_id"),
+		sql.As(t1.C(entpaymentbase.FieldObseleteState), "payment_obselete_state"),
 		sql.As(t3.C(entorderlock.FieldEntID), "ledger_lock_id"),
 	)
 }
