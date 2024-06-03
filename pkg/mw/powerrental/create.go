@@ -328,13 +328,12 @@ func (h *createHandler) validatePaymentType() error {
 	case types.PaymentType_PayWithBalanceOnly:
 		fallthrough //nolint
 	case types.PaymentType_PayWithTransferAndBalance:
-		if h.ledgerLockID() == nil {
-			return wlog.Errorf("invalid ledgerlockid")
+		if h.PaymentBaseReq.EntID == nil || h.ledgerLockID() == nil {
+			return wlog.Errorf("invalid paymentid or ledgerlockid")
 		}
-		fallthrough
 	case types.PaymentType_PayWithTransferOnly:
-		if h.PaymentBaseReq.EntID == nil {
-			return wlog.Errorf("invalid paymentid")
+		if h.PaymentBaseReq.EntID == nil || h.ledgerLockID() != nil {
+			return wlog.Errorf("invalid paymentid or ledgerlockid")
 		}
 	case types.PaymentType_PayWithOtherOrder:
 		fallthrough //nolint
