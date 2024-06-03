@@ -90,7 +90,7 @@ func (h *Handler) ConstructUpdateSQL() (string, error) {
 		set = ""
 	}
 	if h.CancelState != nil {
-		_sql += fmt.Sprintf("%vpayment_state = '%v', ", set, h.CancelState.String())
+		_sql += fmt.Sprintf("%vcancel_state = '%v', ", set, h.CancelState.String())
 		set = ""
 	}
 	if h.CanceledAt != nil {
