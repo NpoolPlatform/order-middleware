@@ -64,6 +64,12 @@ func (h *validateHandler) validateAdminCancelable() error {
 	if *h.AdminCanceled {
 		return wlog.Errorf("invalid cancelstate")
 	}
+	switch h._ent.OrderState() {
+	case types.OrderState_OrderStatePaid:
+	case types.OrderState_OrderStateInService:
+	default:
+		return wlog.Errorf("permission denied")
+	}
 	switch h._ent.OrderType() {
 	case types.OrderType_Offline:
 	case types.OrderType_Airdrop:
