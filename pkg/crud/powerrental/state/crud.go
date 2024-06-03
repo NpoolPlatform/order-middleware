@@ -95,15 +95,18 @@ func UpdateSet(u *ent.PowerRentalStateUpdateOne, req *Req) *ent.PowerRentalState
 }
 
 type Conds struct {
-	ID            *cruder.Cond
-	IDs           *cruder.Cond
-	EntID         *cruder.Cond
-	EntIDs        *cruder.Cond
-	OrderID       *cruder.Cond
-	PaymentState  *cruder.Cond
-	PaymentStates *cruder.Cond
-	RenewState    *cruder.Cond
-	RenewNotifyAt *cruder.Cond
+	ID               *cruder.Cond
+	IDs              *cruder.Cond
+	EntID            *cruder.Cond
+	EntIDs           *cruder.Cond
+	OrderID          *cruder.Cond
+	PaymentState     *cruder.Cond
+	PaymentStates    *cruder.Cond
+	RenewState       *cruder.Cond
+	RenewNotifyAt    *cruder.Cond
+	UserSetCanceled  *cruder.Cond
+	AdminSetCanceled *cruder.Cond
+	PaidAt           *cruder.Cond
 }
 
 //nolint:gocyclo,funlen

@@ -6,6 +6,7 @@ import (
 
 	logger "github.com/NpoolPlatform/go-service-framework/pkg/logger"
 	wlog "github.com/NpoolPlatform/go-service-framework/pkg/wlog"
+	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
 	types "github.com/NpoolPlatform/message/npool/basetypes/order/v1"
 	orderbasecrud "github.com/NpoolPlatform/order-middleware/pkg/crud/order/orderbase"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent"
@@ -65,6 +66,7 @@ func (h *baseQueryHandler) queryJoinMyself(s *sql.Selector) {
 		t.C(entorderbase.FieldAppGoodID),
 		t.C(entorderbase.FieldOrderType),
 		t.C(entorderbase.FieldCreateMethod),
+		t.C(entorderbase.FieldSimulate),
 		t.C(entorderbase.FieldCreatedAt),
 		t.C(entorderbase.FieldUpdatedAt),
 	)
@@ -208,11 +210,39 @@ func (h *baseQueryHandler) queryJoinOrderStateBase(s *sql.Selector) error {
 			return _states
 		}()...))
 	}
+	if h.OrderStateBaseConds.StartMode != nil {
+		mode, ok := h.OrderStateBaseConds.StartMode.Val.(types.OrderStartMode)
+		if !ok {
+			return wlog.Errorf("invalid startmode")
+		}
+		s.OnP(
+			sql.EQ(t.C(entorderstatebase.FieldStartMode), mode.String()),
+		)
+	}
+	if h.OrderStateBaseConds.LastBenefitAt != nil {
+		at, ok := h.OrderStateBaseConds.LastBenefitAt.Val.(uint32)
+		if !ok {
+			return wlog.Errorf("invalid lastbenefitat")
+		}
+		s.OnP(
+			sql.EQ(t.C(entorderstatebase.FieldLastBenefitAt), at),
+		)
+	}
+	if h.OrderStateBaseConds.BenefitState != nil {
+		_state, ok := h.OrderStateBaseConds.BenefitState.Val.(types.BenefitState)
+		if !ok {
+			return wlog.Errorf("invalid benefitstate")
+		}
+		s.OnP(
+			sql.EQ(t.C(entorderstatebase.FieldBenefitState), _state.String()),
+		)
+	}
 	s.AppendSelect(
 		t.C(entorderstatebase.FieldPaymentType),
 		t.C(entorderstatebase.FieldOrderState),
 		t.C(entorderstatebase.FieldStartMode),
 		t.C(entorderstatebase.FieldStartAt),
+		t.C(entorderstatebase.FieldLastBenefitAt),
 		t.C(entorderstatebase.FieldBenefitState),
 	)
 	return nil
@@ -245,6 +275,93 @@ func (h *baseQueryHandler) queryJoinPowerRentalState(s *sql.Selector) error {
 			}
 			return
 		}()...))
+	}
+	if h.PowerRentalStateConds.UserSetCanceled != nil {
+		b, ok := h.PowerRentalStateConds.UserSetCanceled.Val.(bool)
+		if !ok {
+			return wlog.Errorf("invalid usersetcanceled")
+		}
+		s.OnP(
+			sql.EQ(t.C(entpowerrentalstate.FieldUserSetCanceled), b),
+		)
+	}
+	if h.PowerRentalStateConds.AdminSetCanceled != nil {
+		b, ok := h.PowerRentalStateConds.AdminSetCanceled.Val.(bool)
+		if !ok {
+			return wlog.Errorf("invalid adminsetcanceled")
+		}
+		s.OnP(
+			sql.EQ(t.C(entpowerrentalstate.FieldAdminSetCanceled), b),
+		)
+	}
+	if h.PowerRentalStateConds.PaidAt != nil {
+		b, ok := h.PowerRentalStateConds.PaidAt.Val.(uint32)
+		if !ok {
+			return wlog.Errorf("invalid paidat")
+		}
+		switch h.PowerRentalStateConds.PaidAt.Op {
+		case cruder.EQ:
+			s.OnP(
+				sql.EQ(t.C(entpowerrentalstate.FieldPaidAt), b),
+			)
+		case cruder.LT:
+			s.OnP(
+				sql.LT(t.C(entpowerrentalstate.FieldPaidAt), b),
+			)
+		case cruder.LTE:
+			s.OnP(
+				sql.LTE(t.C(entpowerrentalstate.FieldPaidAt), b),
+			)
+		case cruder.GT:
+			s.OnP(
+				sql.GT(t.C(entpowerrentalstate.FieldPaidAt), b),
+			)
+		case cruder.GTE:
+			s.OnP(
+				sql.GTE(t.C(entpowerrentalstate.FieldPaidAt), b),
+			)
+		default:
+			return wlog.Errorf("invalid paidat")
+		}
+	}
+	if h.PowerRentalStateConds.RenewState != nil {
+		state, ok := h.PowerRentalStateConds.RenewState.Val.(types.OrderRenewState)
+		if !ok {
+			return wlog.Errorf("invalid renewstate")
+		}
+		s.OnP(
+			sql.EQ(t.C(entpowerrentalstate.FieldRenewState), state.String()),
+		)
+	}
+	if h.PowerRentalStateConds.RenewNotifyAt != nil {
+		b, ok := h.PowerRentalStateConds.RenewNotifyAt.Val.(uint32)
+		if !ok {
+			return wlog.Errorf("invalid renewnotifyat")
+		}
+		switch h.PowerRentalStateConds.RenewNotifyAt.Op {
+		case cruder.EQ:
+			s.OnP(
+				sql.EQ(t.C(entpowerrentalstate.FieldRenewNotifyAt), b),
+			)
+		case cruder.LT:
+			s.OnP(
+				sql.LT(t.C(entpowerrentalstate.FieldRenewNotifyAt), b),
+			)
+		case cruder.LTE:
+			s.OnP(
+				sql.LTE(t.C(entpowerrentalstate.FieldRenewNotifyAt), b),
+			)
+		case cruder.GT:
+			s.OnP(
+				sql.GT(t.C(entpowerrentalstate.FieldRenewNotifyAt), b),
+			)
+		case cruder.GTE:
+			s.OnP(
+				sql.GTE(t.C(entpowerrentalstate.FieldRenewNotifyAt), b),
+			)
+		default:
+			return wlog.Errorf("invalid renewnotifyat")
+		}
 	}
 	s.AppendSelect(
 		t.C(entpowerrentalstate.FieldPaymentID),

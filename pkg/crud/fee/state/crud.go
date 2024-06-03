@@ -194,5 +194,29 @@ func SetQueryConds(q *ent.FeeOrderStateQuery, conds *Conds) (*ent.FeeOrderStateQ
 			return nil, wlog.Errorf("invalid feeorder field")
 		}
 	}
+	if conds.UserSetCanceled != nil {
+		b, ok := conds.UserSetCanceled.Val.(bool)
+		if !ok {
+			return nil, wlog.Errorf("invalid usersetcanceled")
+		}
+		switch conds.UserSetCanceled.Op {
+		case cruder.EQ:
+			q.Where(entfeeorderstate.UserSetCanceled(b))
+		default:
+			return nil, wlog.Errorf("invalid feeorder field")
+		}
+	}
+	if conds.AdminSetCanceled != nil {
+		b, ok := conds.AdminSetCanceled.Val.(bool)
+		if !ok {
+			return nil, wlog.Errorf("invalid adminsetcanceled")
+		}
+		switch conds.AdminSetCanceled.Op {
+		case cruder.EQ:
+			q.Where(entfeeorderstate.AdminSetCanceled(b))
+		default:
+			return nil, wlog.Errorf("invalid feeorder field")
+		}
+	}
 	return q, nil
 }

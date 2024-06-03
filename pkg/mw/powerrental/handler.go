@@ -942,10 +942,22 @@ func (h *Handler) withOrderBaseConds(conds *npool.Conds) error {
 			Val: _types,
 		}
 	}
+	if conds.Simulate != nil {
+		h.OrderBaseConds.Simulate = &cruder.Cond{
+			Op:  conds.GetSimulate().GetOp(),
+			Val: conds.GetSimulate().GetValue(),
+		}
+	}
 	if conds.CreatedAt != nil {
 		h.OrderBaseConds.CreatedAt = &cruder.Cond{
 			Op:  conds.GetCreatedAt().GetOp(),
 			Val: conds.GetCreatedAt().GetValue(),
+		}
+	}
+	if conds.UpdatedAt != nil {
+		h.OrderBaseConds.UpdatedAt = &cruder.Cond{
+			Op:  conds.GetUpdatedAt().GetOp(),
+			Val: conds.GetUpdatedAt().GetValue(),
 		}
 	}
 	return nil
@@ -1048,6 +1060,18 @@ func (h *Handler) withOrderStateBaseConds(conds *npool.Conds) {
 			Val: _types,
 		}
 	}
+	if conds.StartMode != nil {
+		h.OrderStateBaseConds.StartMode = &cruder.Cond{
+			Op:  conds.GetStartMode().GetOp(),
+			Val: types.OrderStartMode(conds.GetStartMode().GetValue()),
+		}
+	}
+	if conds.BenefitState != nil {
+		h.OrderStateBaseConds.BenefitState = &cruder.Cond{
+			Op:  conds.GetBenefitState().GetOp(),
+			Val: types.BenefitState(conds.GetBenefitState().GetValue()),
+		}
+	}
 }
 
 func (h *Handler) withPowerRentalStateConds(conds *npool.Conds) error {
@@ -1065,6 +1089,36 @@ func (h *Handler) withPowerRentalStateConds(conds *npool.Conds) error {
 		h.PowerRentalStateConds.PaymentStates = &cruder.Cond{
 			Op:  conds.GetPaymentStates().GetOp(),
 			Val: _types,
+		}
+	}
+	if conds.UserSetCanceled != nil {
+		h.PowerRentalStateConds.UserSetCanceled = &cruder.Cond{
+			Op:  conds.GetUserSetCanceled().GetOp(),
+			Val: conds.GetUserSetCanceled().GetValue(),
+		}
+	}
+	if conds.AdminSetCanceled != nil {
+		h.PowerRentalStateConds.AdminSetCanceled = &cruder.Cond{
+			Op:  conds.GetAdminSetCanceled().GetOp(),
+			Val: conds.GetAdminSetCanceled().GetValue(),
+		}
+	}
+	if conds.PaidAt != nil {
+		h.PowerRentalStateConds.PaidAt = &cruder.Cond{
+			Op:  conds.GetPaidAt().GetOp(),
+			Val: conds.GetPaidAt().GetValue(),
+		}
+	}
+	if conds.RenewState != nil {
+		h.PowerRentalStateConds.RenewState = &cruder.Cond{
+			Op:  conds.GetRenewState().GetOp(),
+			Val: types.OrderRenewState(conds.GetRenewState().GetValue()),
+		}
+	}
+	if conds.RenewNotifyAt != nil {
+		h.PowerRentalStateConds.RenewNotifyAt = &cruder.Cond{
+			Op:  conds.GetRenewNotifyAt().GetOp(),
+			Val: conds.GetRenewNotifyAt().GetValue(),
 		}
 	}
 	return nil
