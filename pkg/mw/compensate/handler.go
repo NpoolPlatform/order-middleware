@@ -100,6 +100,24 @@ func WithCompensateFromID(id *string, must bool) func(context.Context, *Handler)
 	}
 }
 
+func WithCompensateFromIDs(ids []string, must bool) func(context.Context, *Handler) error {
+	return func(ctx context.Context, h *Handler) error {
+		_ids := []uuid.UUID{}
+		for _, id := range ids {
+			_id, err := uuid.Parse(id)
+			if err != nil {
+				return wlog.WrapError(err)
+			}
+			_ids = append(_ids, _id)
+		}
+		h.CompensateConds.CompensateFromIDs = &cruder.Cond{
+			Op:  cruder.IN,
+			Val: _ids,
+		}
+		return nil
+	}
+}
+
 func WithCompensateType(e *types.CompensateType, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if e == nil {

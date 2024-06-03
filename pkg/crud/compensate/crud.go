@@ -49,15 +49,16 @@ func UpdateSet(u *ent.CompensateUpdateOne, req *Req) *ent.CompensateUpdateOne {
 }
 
 type Conds struct {
-	ID               *cruder.Cond
-	IDs              *cruder.Cond
-	EntID            *cruder.Cond
-	EntIDs           *cruder.Cond
-	OrderID          *cruder.Cond
-	OrderIDs         *cruder.Cond
-	CompensateFromID *cruder.Cond
-	CompensateType   *cruder.Cond
-	CompensateTypes  *cruder.Cond
+	ID                *cruder.Cond
+	IDs               *cruder.Cond
+	EntID             *cruder.Cond
+	EntIDs            *cruder.Cond
+	OrderID           *cruder.Cond
+	OrderIDs          *cruder.Cond
+	CompensateFromID  *cruder.Cond
+	CompensateFromIDs *cruder.Cond
+	CompensateType    *cruder.Cond
+	CompensateTypes   *cruder.Cond
 }
 
 //nolint
@@ -144,6 +145,20 @@ func SetQueryConds(q *ent.CompensateQuery, conds *Conds) (*ent.CompensateQuery, 
 			q.Where(entcompensate.CompensateFromID(id))
 		default:
 			return nil, wlog.Errorf("invalid compensate field")
+		}
+	}
+	if conds.CompensateFromIDs != nil {
+		ids, ok := conds.CompensateFromIDs.Val.([]uuid.UUID)
+		if !ok {
+			return nil, wlog.Errorf("invalid compensatefromids")
+		}
+		if len(ids) > 0 {
+			switch conds.CompensateFromIDs.Op {
+			case cruder.IN:
+				q.Where(entcompensate.CompensateFromIDIn(ids...))
+			default:
+				return nil, wlog.Errorf("invalid compensate field")
+			}
 		}
 	}
 	if conds.OrderIDs != nil {

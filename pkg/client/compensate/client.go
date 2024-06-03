@@ -115,3 +115,35 @@ func ExistCompensateConds(ctx context.Context, conds *npool.Conds) (bool, error)
 	}
 	return exist.(bool), err
 }
+
+func CountCompensates(ctx context.Context, conds *npool.Conds) (uint32, error) {
+	total, err := withClient(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (interface{}, error) {
+		resp, err := cli.CountCompensates(ctx, &npool.CountCompensatesRequest{
+			Conds: conds,
+		})
+		if err != nil {
+			return false, err
+		}
+		return resp.Info, nil
+	})
+	if err != nil {
+		return 0, err
+	}
+	return total.(uint32), err
+}
+
+func CountCompensateOrders(ctx context.Context, compensateFromIDs []string) ([]*npool.CompensateOrderNumber, error) {
+	infos, err := withClient(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (interface{}, error) {
+		resp, err := cli.CountCompensateOrders(ctx, &npool.CountCompensateOrdersRequest{
+			CompensateFromIDs: compensateFromIDs,
+		})
+		if err != nil {
+			return nil, err
+		}
+		return resp.Infos, nil
+	})
+	if err != nil {
+		return nil, err
+	}
+	return infos.([]*npool.CompensateOrderNumber), err
+}
