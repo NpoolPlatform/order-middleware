@@ -457,7 +457,6 @@ func WithCreateMethod(e *types.OrderCreateMethod, must bool) func(context.Contex
 		switch *e {
 		case types.OrderCreateMethod_OrderCreatedByPurchase:
 		case types.OrderCreateMethod_OrderCreatedByAdmin:
-		case types.OrderCreateMethod_OrderCreatedByRenew:
 		default:
 			return wlog.Errorf("invalid createmethod")
 		}
