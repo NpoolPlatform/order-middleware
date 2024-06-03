@@ -85,6 +85,24 @@ func (h *baseQueryHandler) queryJoinOrder(s *sql.Selector) error {
 			sql.EQ(t.C(entorderbase.FieldUserID), id),
 		)
 	}
+	if h.OrderBaseConds.GoodID != nil {
+		id, ok := h.OrderBaseConds.GoodID.Val.(uuid.UUID)
+		if !ok {
+			return wlog.Errorf("invalid goodid")
+		}
+		s.OnP(
+			sql.EQ(t.C(entorderbase.FieldGoodID), id),
+		)
+	}
+	if h.OrderBaseConds.AppGoodID != nil {
+		id, ok := h.OrderBaseConds.AppGoodID.Val.(uuid.UUID)
+		if !ok {
+			return wlog.Errorf("invalid appgoodid")
+		}
+		s.OnP(
+			sql.EQ(t.C(entorderbase.FieldAppGoodID), id),
+		)
+	}
 	s.AppendSelect(
 		t.C(entorderbase.FieldAppID),
 		t.C(entorderbase.FieldUserID),
