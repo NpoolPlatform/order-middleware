@@ -263,7 +263,7 @@ func (h *baseQueryHandler) queryJoinFeeOrderState(s *sql.Selector) error {
 		)
 	}
 	if h.FeeOrderStateConds.PaidAt != nil {
-		b, ok := h.FeeOrderStateConds.PaidAt.Val.(bool)
+		b, ok := h.FeeOrderStateConds.PaidAt.Val.(uint32)
 		if !ok {
 			return wlog.Errorf("invalid usersetcanceled")
 		}

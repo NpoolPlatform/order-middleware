@@ -911,6 +911,24 @@ func (h *Handler) withFeeOrderStateConds(conds *npool.Conds) error {
 			Val: _types,
 		}
 	}
+	if conds.UserSetCanceled != nil {
+		h.FeeOrderStateConds.UserSetCanceled = &cruder.Cond{
+			Op:  conds.GetUserSetCanceled().GetOp(),
+			Val: conds.GetUserSetCanceled().GetValue(),
+		}
+	}
+	if conds.AdminSetCanceled != nil {
+		h.FeeOrderStateConds.AdminSetCanceled = &cruder.Cond{
+			Op:  conds.GetAdminSetCanceled().GetOp(),
+			Val: conds.GetAdminSetCanceled().GetValue(),
+		}
+	}
+	if conds.PaidAt != nil {
+		h.FeeOrderStateConds.PaidAt = &cruder.Cond{
+			Op:  conds.GetPaidAt().GetOp(),
+			Val: conds.GetPaidAt().GetValue(),
+		}
+	}
 	return nil
 }
 

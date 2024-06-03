@@ -28,6 +28,9 @@ type rollbackHandler struct {
 }
 
 func (h *rollbackHandler) rollback() (*types.OrderState, error) {
+	if h.OrderState == nil || *h.OrderState != h._ent.OrderState() {
+		return nil, wlog.Errorf("invalid orderstate")
+	}
 	state, ok := rollbacks[h._ent.OrderState()]
 	if !ok {
 		return nil, wlog.Errorf("invalid orderstate")
