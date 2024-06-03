@@ -318,6 +318,12 @@ func (h *createHandler) createFeeOrders(ctx context.Context, tx *ent.Tx) error {
 }
 
 func (h *createHandler) validatePaymentType() error {
+	if h.OrderStateBaseReq.PaymentType == nil {
+		if h.ledgerLockID() != nil || h.PaymentBaseReq.EntID != nil {
+			return wlog.Errorf("invalid paymenttype")
+		}
+		return nil
+	}
 	switch *h.OrderStateBaseReq.PaymentType {
 	case types.PaymentType_PayWithBalanceOnly:
 		fallthrough //nolint

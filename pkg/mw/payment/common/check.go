@@ -84,6 +84,9 @@ func (h *PaymentCheckHandler) ValidatePayment() error {
 }
 
 func (h *PaymentCheckHandler) Payable() bool {
+	if h.PaymentType == nil {
+		return false
+	}
 	switch *h.PaymentType {
 	case types.PaymentType_PayWithParentOrder:
 		fallthrough //nolint

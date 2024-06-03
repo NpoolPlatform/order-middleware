@@ -23,7 +23,9 @@ func (h *Handler) ConstructCreateSQL() string {
 	_sql += comma + "order_id"
 	comma = ", "
 	_sql += comma + "order_state"
-	_sql += comma + "payment_type"
+	if h.PaymentType != nil {
+		_sql += comma + "payment_type"
+	}
 	_sql += comma + "start_mode"
 	if h.StartAt != nil {
 		_sql += comma + "start_at"
@@ -41,7 +43,9 @@ func (h *Handler) ConstructCreateSQL() string {
 	_sql += fmt.Sprintf("%v'%v' as order_id", comma, *h.OrderID)
 	comma = ", "
 	_sql += fmt.Sprintf("%v'%v' as order_state", comma, types.OrderState_OrderStateCreated.String())
-	_sql += fmt.Sprintf("%v'%v' as payment_type", comma, h.PaymentType.String())
+	if h.PaymentType != nil {
+		_sql += fmt.Sprintf("%v'%v' as payment_type", comma, h.PaymentType.String())
+	}
 	_sql += fmt.Sprintf("%v'%v' as start_mode", comma, h.StartMode.String())
 	if h.StartAt != nil {
 		_sql += fmt.Sprintf("%v%v as start_at", comma, *h.StartAt)
