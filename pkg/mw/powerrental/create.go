@@ -361,7 +361,7 @@ func (h *createHandler) validatePayment() error {
 }
 
 func (h *createHandler) validateAppGoodStock() error {
-	if h.OrderBaseReq.Simulate == nil || !*h.OrderBaseReq.Simulate {
+	if h.OrderBaseReq.Simulate != nil && *h.OrderBaseReq.Simulate {
 		return nil
 	}
 	if h.AppGoodStockID == nil {
