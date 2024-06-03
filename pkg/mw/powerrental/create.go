@@ -381,6 +381,9 @@ func (h *createHandler) validateOrderType() error {
 		if *h.OrderBaseReq.CreateMethod != types.OrderCreateMethod_OrderCreatedByPurchase {
 			return wlog.Errorf("invalid createmethod")
 		}
+		if len(h.OrderCouponReqs) > 0 {
+			return wlog.Errorf("invalid ordercoupons")
+		}
 	}
 	switch *h.OrderBaseReq.CreateMethod {
 	case types.OrderCreateMethod_OrderCreatedByPurchase:
@@ -395,7 +398,11 @@ func (h *createHandler) validateOrderType() error {
 	case types.OrderCreateMethod_OrderCreatedByAdmin:
 		switch *h.OrderBaseReq.OrderType {
 		case types.OrderType_Offline:
+			fallthrough //nolint
 		case types.OrderType_Airdrop:
+			if len(h.OrderCouponReqs) > 0 {
+				return wlog.Errorf("invalid ordercoupons")
+			}
 		default:
 			return wlog.Errorf("invalid ordertype")
 		}
