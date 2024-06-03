@@ -376,6 +376,28 @@ func (h *createHandler) validateAppGoodStock() error {
 	return wlog.Errorf("invalid appgoodstocklock")
 }
 
+func (h *createHandler) validateOrderType() error {
+	switch *h.OrderBaseReq.CreateMethod {
+	case types.OrderCreateMethod_OrderCreatedByPurchase:
+		fallthrough //nolint
+	case types.OrderCreateMethod_OrderCreatedByRenew:
+		switch *h.OrderBaseReq.OrderType {
+		case types.OrderType_Offline:
+			fallthrough //nolint
+		case types.OrderType_Airdrop:
+			return wlog.Errorf("invalid ordertype")
+		}
+	case types.OrderCreateMethod_OrderCreatedByAdmin:
+		switch *h.OrderBaseReq.OrderType {
+		case types.OrderType_Offline:
+		case types.OrderType_Airdrop:
+		default:
+			return wlog.Errorf("invalid ordertype")
+		}
+	}
+	return nil
+}
+
 //nolint:funlen,gocyclo
 func (h *Handler) CreatePowerRentalWithTx(ctx context.Context, tx *ent.Tx) error {
 	handler := &createHandler{
@@ -407,6 +429,9 @@ func (h *Handler) CreatePowerRentalWithTx(ctx context.Context, tx *ent.Tx) error
 		return wlog.WrapError(err)
 	}
 	if err := handler.validatePayment(); err != nil {
+		return wlog.WrapError(err)
+	}
+	if err := handler.validateOrderType(); err != nil {
 		return wlog.WrapError(err)
 	}
 	handler.formalizePaymentBalances()
