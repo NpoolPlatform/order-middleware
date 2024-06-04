@@ -21,6 +21,7 @@ type sumHandler struct {
 }
 
 func (h *sumHandler) sumOrdersPaymentUSD(ctx context.Context, cli *ent.Client) (amount string, err error) {
+	cli = cli.Debug()
 	if h.stmSelect, err = h.queryOrderBases(cli); err != nil {
 		return decimal.NewFromInt(0).String(), wlog.WrapError(err)
 	}
@@ -49,8 +50,11 @@ func (h *sumHandler) sumOrdersPaymentUSD(ctx context.Context, cli *ent.Client) (
 	}).Scan(ctx, &amounts); err != nil {
 		return decimal.NewFromInt(0).String(), wlog.WrapError(err)
 	}
-	if len(amounts) != 1 {
+	if len(amounts) > 1 {
 		return decimal.NewFromInt(0).String(), wlog.Errorf("invalid paymentamounts")
+	}
+	if len(amounts) == 0 {
+		return decimal.NewFromInt(0).String(), nil
 	}
 	return amounts[0].Amount.String(), nil
 }
