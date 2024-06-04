@@ -376,6 +376,9 @@ func (h *updateHandler) validatePaymentType() error {
 	default:
 		return wlog.Errorf("permission denied")
 	}
+	if h._ent.PaymentState() != types.PaymentState_PaymentStateWait {
+		return wlog.Errorf("permission denied")
+	}
 	paymentType := h._ent.PaymentType()
 	if h.OrderStateBaseReq.PaymentType != nil {
 		paymentType = *h.OrderStateBaseReq.PaymentType
