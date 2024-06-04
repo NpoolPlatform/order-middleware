@@ -283,31 +283,33 @@ func (h *createHandler) formalizePaymentID() {
 }
 
 func (h *createHandler) validatePaymentType() error {
+	if h.OrderStateBaseReq.PaymentType == nil {
+		if h.LedgerLockReq.EntID != nil || h.PaymentBaseReq.EntID != nil {
+			return wlog.Errorf("invalid paymenttype")
+		}
+		return nil
+	}
 	switch *h.OrderStateBaseReq.PaymentType {
 	case types.PaymentType_PayWithBalanceOnly:
 		fallthrough //nolint
 	case types.PaymentType_PayWithTransferAndBalance:
-		if h.LedgerLockReq.EntID == nil {
-			return wlog.Errorf("invalid ledgerlockid")
+		if h.PaymentBaseReq.EntID == nil || h.LedgerLockReq.EntID == nil {
+			return wlog.Errorf("invalid paymentid or ledgerlockid")
 		}
-		fallthrough
 	case types.PaymentType_PayWithTransferOnly:
-		if h.PaymentBaseReq.EntID == nil {
-			return wlog.Errorf("invalid paymentid")
+		if h.PaymentBaseReq.EntID == nil || h.LedgerLockReq.EntID != nil {
+			return wlog.Errorf("invalid paymentid or ledgerlockid")
 		}
+	case types.PaymentType_PayWithOtherOrder:
+		fallthrough //nolint
+	case types.PaymentType_PayWithParentOrder:
+		fallthrough //nolint
 	case types.PaymentType_PayWithContract:
 		fallthrough //nolint
 	case types.PaymentType_PayWithOffline:
 		fallthrough //nolint
 	case types.PaymentType_PayWithNoPayment:
-		if h.PaymentBaseReq.EntID != nil {
-			return wlog.Errorf("invalid paymenttype")
-		}
-		fallthrough
-	case types.PaymentType_PayWithOtherOrder:
-		fallthrough //nolint
-	case types.PaymentType_PayWithParentOrder:
-		if h.LedgerLockReq.EntID != nil {
+		if h.PaymentBaseReq.EntID != nil || h.LedgerLockReq.EntID != nil {
 			return wlog.Errorf("invalid paymenttype")
 		}
 	}
