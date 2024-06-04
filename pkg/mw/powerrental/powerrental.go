@@ -49,6 +49,9 @@ func (f *powerRental) Exist() bool {
 }
 
 func (f *powerRental) LedgerLockID() uuid.UUID {
+	if f.entLedgerLock == nil {
+		return uuid.Nil
+	}
 	return f.entLedgerLock.EntID
 }
 
