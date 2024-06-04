@@ -370,6 +370,16 @@ func (h *updateHandler) formalizePaymentID() error {
 	return nil
 }
 
+func (h *updateHandler) validatePaymentState() error {
+	if h.PowerRentalStateReq.PaymentState == nil {
+		return nil
+	}
+	if h._ent.PaymentState() != types.PaymentState_PaymentStateWait {
+		return wlog.Errorf("permission denied")
+	}
+	return nil
+}
+
 func (h *updateHandler) validatePaymentType() error {
 	switch h._ent.OrderState() {
 	case types.OrderState_OrderStateCreated:
@@ -600,6 +610,9 @@ func (h *Handler) UpdatePowerRentalWithTx(ctx context.Context, tx *ent.Tx) error
 		if err := handler.validatePaymentType(); err != nil {
 			return wlog.WrapError(err)
 		}
+	}
+	if err := handler.validatePaymentState(); err != nil {
+		return wlog.WrapError(err)
 	}
 	handler.formalizeCancelState()
 	if err := handler.validateCancelState(); err != nil {
