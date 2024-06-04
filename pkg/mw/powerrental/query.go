@@ -2,6 +2,7 @@ package powerrental
 
 import (
 	"context"
+	"fmt"
 
 	"entgo.io/ent/dialect/sql"
 
@@ -21,12 +22,14 @@ import (
 	"github.com/NpoolPlatform/order-middleware/pkg/db"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent"
 	entfeeorder "github.com/NpoolPlatform/order-middleware/pkg/db/ent/feeorder"
+	entfeeorderstate "github.com/NpoolPlatform/order-middleware/pkg/db/ent/feeorderstate"
 	entorderbase "github.com/NpoolPlatform/order-middleware/pkg/db/ent/orderbase"
 	entordercoupon "github.com/NpoolPlatform/order-middleware/pkg/db/ent/ordercoupon"
 	entorderstatebase "github.com/NpoolPlatform/order-middleware/pkg/db/ent/orderstatebase"
 	entpaymentbalance "github.com/NpoolPlatform/order-middleware/pkg/db/ent/paymentbalance"
 	entpaymenttransfer "github.com/NpoolPlatform/order-middleware/pkg/db/ent/paymenttransfer"
 	entpowerrental "github.com/NpoolPlatform/order-middleware/pkg/db/ent/powerrental"
+	entpowerrentalstate "github.com/NpoolPlatform/order-middleware/pkg/db/ent/powerrentalstate"
 
 	"github.com/google/uuid"
 	"github.com/shopspring/decimal"
@@ -172,7 +175,7 @@ func (h *queryHandler) queryFeeDurations(ctx context.Context, cli *ent.Client) e
 	stm, err := orderbasecrud.SetQueryConds(
 		cli.OrderBase.Query(),
 		&orderbasecrud.Conds{
-			ParentOrderIDs: &cruder.Cond{Op: cruder.IN, Val: orderIDs},
+			EntIDs: &cruder.Cond{Op: cruder.IN, Val: orderIDs},
 		},
 	)
 	if err != nil {
@@ -205,47 +208,93 @@ func (h *queryHandler) queryOrdersPaymentGoodValueUSD(ctx context.Context, cli *
 	stm, err := orderbasecrud.SetQueryConds(
 		cli.OrderBase.Query(),
 		&orderbasecrud.Conds{
-			ParentOrderIDs: &cruder.Cond{Op: cruder.IN, Val: orderIDs},
+			EntIDs: &cruder.Cond{Op: cruder.IN, Val: orderIDs},
 		},
 	)
 	if err != nil {
 		return wlog.WrapError(err)
 	}
 	goodValueUSDs := []struct {
-		OrderID             string `json:"parent_order_id"`
+		OrderID             string `json:"ent_id"`
 		PaymentGoodValueUSD string `json:"payment_good_value_usd"`
 	}{}
 	if err := stm.GroupBy(
-		entorderbase.FieldParentOrderID,
+		entorderbase.FieldEntID,
 	).Aggregate(func(s *sql.Selector) string {
-		t1 := sql.Table(entfeeorder.Table)
-		t2 := sql.Table(entpowerrental.Table)
-		t3 := sql.Table(entorderstatebase.Table)
-		s.Join(t1).
+		t0 := sql.Table(entorderstatebase.Table)
+		t1 := sql.Table(entpowerrentalstate.Table)
+		t2 := sql.Table(entfeeorderstate.Table)
+		t3 := sql.Table(entfeeorderstate.Table)
+		t4 := sql.Table(entfeeorderstate.Table)
+		t5 := sql.Table(entpowerrental.Table)
+		t6 := sql.Table(entfeeorder.Table)
+		t7 := sql.Table(entfeeorder.Table)
+		t8 := sql.Table(entfeeorder.Table)
+		s.Join(t0).
 			On(
 				s.C(entorderbase.FieldEntID),
-				t1.C(entfeeorder.FieldOrderID),
+				t0.C(entorderstatebase.FieldOrderID),
 			).
-			Join(t2).
+			OnP(
+				sql.Or(
+					sql.EQ(t0.C(entorderstatebase.FieldPaymentType), types.PaymentType_PayWithBalanceOnly.String()),
+					sql.EQ(t0.C(entorderstatebase.FieldPaymentType), types.PaymentType_PayWithTransferOnly.String()),
+					sql.EQ(t0.C(entorderstatebase.FieldPaymentType), types.PaymentType_PayWithTransferAndBalance.String()),
+				),
+			).
+			LeftJoin(t1).
 			On(
-				s.C(entorderbase.FieldParentOrderID),
-				t2.C(entpowerrental.FieldOrderID),
+				s.C(entorderbase.FieldEntID),
+				t1.C(entpowerrentalstate.FieldOrderID),
+			).
+			LeftJoin(t2).
+			On(
+				s.C(entorderbase.FieldEntID),
+				t2.C(entfeeorderstate.FieldOrderID),
 			).
 			LeftJoin(t3).
 			On(
-				s.C(entorderbase.FieldEntID),
-				t3.C(entorderstatebase.FieldOrderID),
+				t1.C(entpowerrentalstate.FieldPaymentID),
+				t3.C(entfeeorderstate.FieldPaymentID),
 			).
-			OnP(
-				sql.EQ(t3.C(entorderstatebase.FieldPaymentType), types.PaymentType_PayWithParentOrder.String()),
+			LeftJoin(t4).
+			On(
+				t2.C(entfeeorderstate.FieldPaymentID),
+				t4.C(entfeeorderstate.FieldPaymentID),
+			).
+			LeftJoin(t5).
+			On(
+				t1.C(entpowerrentalstate.FieldOrderID),
+				t5.C(entpowerrental.FieldOrderID),
+			).
+			LeftJoin(t6).
+			On(
+				t2.C(entfeeorderstate.FieldOrderID),
+				t6.C(entfeeorder.FieldOrderID),
+			).
+			LeftJoin(t7).
+			On(
+				t3.C(entfeeorderstate.FieldOrderID),
+				t7.C(entfeeorder.FieldOrderID),
+			).
+			LeftJoin(t8).
+			On(
+				t4.C(entfeeorderstate.FieldOrderID),
+				t8.C(entfeeorder.FieldOrderID),
 			)
 		return sql.As(
-			sql.Sum(t1.C(entfeeorder.FieldGoodValueUsd)+"+"+t2.C(entpowerrental.FieldGoodValueUsd)),
+			sql.Sum(
+				"ifnull("+t5.C(entpowerrental.FieldGoodValueUsd)+", 0)+"+
+					"ifnull("+t6.C(entfeeorder.FieldGoodValueUsd)+", 0)+"+
+					"ifnull("+t7.C(entfeeorder.FieldGoodValueUsd)+", 0)+"+
+					"ifnull("+t8.C(entfeeorder.FieldGoodValueUsd)+", 0)",
+			),
 			"payment_good_value_usd",
 		)
 	}).Scan(ctx, &goodValueUSDs); err != nil {
 		return wlog.WrapError(err)
 	}
+	fmt.Printf("%v\n", goodValueUSDs)
 	for _, info := range h.infos {
 		for _, goodValueUSD := range goodValueUSDs {
 			if info.OrderID == goodValueUSD.OrderID {
