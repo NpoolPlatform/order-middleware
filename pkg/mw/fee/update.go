@@ -335,7 +335,8 @@ func (h *updateHandler) formalizePaymentType() error {
 }
 
 func (h *updateHandler) formalizePaymentID() error {
-	if h.PaymentBaseReq.EntID == nil || h._ent.PaymentID() == *h.PaymentBaseReq.EntID {
+	if (h.PaymentBaseReq.EntID == nil || h._ent.PaymentID() == *h.PaymentBaseReq.EntID) &&
+		(h.OrderStateBaseReq.PaymentType == nil || h._ent.PaymentType() == *h.OrderStateBaseReq.PaymentType) {
 		return nil
 	}
 
@@ -410,6 +411,16 @@ func (h *updateHandler) validateUpdate(ctx context.Context) error {
 	return nil
 }
 
+func (h *updateHandler) validatePaymentState() error {
+	if h.FeeOrderStateReq.PaymentState == nil {
+		return nil
+	}
+	if h._ent.PaymentState() != types.PaymentState_PaymentStateWait {
+		return wlog.Errorf("permission denied")
+	}
+	return nil
+}
+
 func (h *updateHandler) validatePaymentType() error {
 	switch h._ent.OrderState() {
 	case types.OrderState_OrderStateCreated:
@@ -417,31 +428,34 @@ func (h *updateHandler) validatePaymentType() error {
 	default:
 		return wlog.Errorf("permission denied")
 	}
+	if h._ent.PaymentState() != types.PaymentState_PaymentStateWait {
+		return wlog.Errorf("permission denied")
+	}
 	paymentType := h._ent.PaymentType()
 	if h.OrderStateBaseReq.PaymentType != nil {
 		paymentType = *h.OrderStateBaseReq.PaymentType
 	}
 	switch paymentType {
+	case types.PaymentType_PayWithBalanceOnly:
+		fallthrough //nolint
+	case types.PaymentType_PayWithTransferAndBalance:
+		if h.LedgerLockReq.EntID == nil {
+			return wlog.Errorf("invalid ledgerlockid")
+		}
+		fallthrough
+	case types.PaymentType_PayWithTransferOnly:
+		if h.PaymentBaseReq.EntID == nil {
+			return wlog.Errorf("invalid paymentid")
+		}
+	case types.PaymentType_PayWithParentOrder:
+		fallthrough //nolint
+	case types.PaymentType_PayWithContract:
+		fallthrough //nolint
 	case types.PaymentType_PayWithOffline:
 		fallthrough //nolint
 	case types.PaymentType_PayWithNoPayment:
-		fallthrough //nolint
-	case types.PaymentType_PayWithParentOrder:
-		fallthrough //nolint
-	case types.PaymentType_PayWithOtherOrder:
-		if h.OrderStateBaseReq.PaymentType != nil && *h.OrderStateBaseReq.PaymentType != h._ent.PaymentType() {
-			return wlog.Errorf("permission denied")
-		}
-	}
-	switch paymentType {
-	case types.PaymentType_PayWithParentOrder:
-		fallthrough //nolint
-	case types.PaymentType_PayWithOtherOrder:
-		if h.OrderStateBaseReq.OrderState != nil {
-			return wlog.Errorf("permission denied")
-		}
-		if h.FeeOrderStateReq.CancelState != nil {
-			return wlog.Errorf("permission denied")
+		if h.PaymentBaseReq.EntID != nil || h.LedgerLockReq.EntID != nil {
+			return wlog.Errorf("invalid paymenttype")
 		}
 	}
 	return nil
@@ -492,12 +506,18 @@ func (h *Handler) UpdateFeeOrderWithTx(ctx context.Context, tx *ent.Tx) error {
 		if err := handler.formalizePaymentType(); err != nil {
 			return wlog.WrapError(err)
 		}
+		if h.OrderStateBaseReq.PaymentType != nil {
+			handler.paymentChecker.PaymentType = h.OrderStateBaseReq.PaymentType
+		}
 		if err := handler.paymentChecker.ValidatePayment(); err != nil {
 			return wlog.WrapError(err)
 		}
 		if err := handler.validatePaymentType(); err != nil {
 			return wlog.WrapError(err)
 		}
+	}
+	if err := handler.validatePaymentState(); err != nil {
+		return wlog.WrapError(err)
 	}
 	handler.formalizeCancelState()
 	if err := handler.validateCancelState(); err != nil {
