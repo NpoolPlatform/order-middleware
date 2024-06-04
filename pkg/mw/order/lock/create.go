@@ -6,6 +6,8 @@ import (
 	wlog "github.com/NpoolPlatform/go-service-framework/pkg/wlog"
 	"github.com/NpoolPlatform/order-middleware/pkg/db"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent"
+
+	"github.com/google/uuid"
 )
 
 type createHandler struct {
@@ -34,6 +36,9 @@ func (h *Handler) CreateOrderLock(ctx context.Context) error {
 func (h *Handler) CreateOrderLockWithTx(ctx context.Context, tx *ent.Tx) error {
 	handler := &createHandler{
 		Handler: h,
+	}
+	if h.EntID == nil {
+		h.EntID = func() *uuid.UUID { uid := uuid.New(); return &uid }()
 	}
 	handler.sql = handler.ConstructCreateSQL()
 	return handler.createOrderLock(ctx, tx)
