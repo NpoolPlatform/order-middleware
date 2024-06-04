@@ -94,6 +94,9 @@ func WithStartAt(u *uint32, must bool) func(context.Context, *Handler) error {
 			}
 			return nil
 		}
+		if *u == 0 {
+			return wlog.Errorf("invalid startat")
+		}
 		h.StartAt = u
 		return nil
 	}
@@ -101,6 +104,15 @@ func WithStartAt(u *uint32, must bool) func(context.Context, *Handler) error {
 
 func WithEndAt(u *uint32, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
+		if u == nil {
+			if must {
+				return wlog.Errorf("invalid endat")
+			}
+			return nil
+		}
+		if *u == 0 {
+			return wlog.Errorf("invalid endat")
+		}
 		h.EndAt = u
 		return nil
 	}
