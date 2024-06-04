@@ -7,6 +7,7 @@ import (
 	"google.golang.org/grpc/status"
 
 	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
+	types "github.com/NpoolPlatform/message/npool/basetypes/order/v1"
 	npool "github.com/NpoolPlatform/message/npool/order/mw/v1/order/lock"
 
 	orderlock1 "github.com/NpoolPlatform/order-middleware/pkg/mw/order/lock"
@@ -23,6 +24,13 @@ func (s *Server) CreateOrderLocks(ctx context.Context, in *npool.CreateOrderLock
 	}
 	multiHandler := &orderlock1.MultiHandler{}
 	for _, req := range reqs {
+		if req.LockType == nil || *req.LockType != types.OrderLockType_LockCommission {
+			logger.Sugar().Errorw(
+				"CreateOrderLocks",
+				"In", in,
+			)
+			return &npool.CreateOrderLocksResponse{}, status.Error(codes.Aborted, "invalid locktype")
+		}
 		handler, err := orderlock1.NewHandler(
 			ctx,
 			orderlock1.WithEntID(req.EntID, false),
