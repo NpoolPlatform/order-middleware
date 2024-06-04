@@ -24,6 +24,7 @@ type updateHandler struct {
 func (h *updateHandler) constructOutOfGasSQL(ctx context.Context, req *outofgascrud.Req) (err error) {
 	handler, _ := outofgas1.NewHandler(ctx)
 	handler.Req = *req
+	handler.ID = h.ID
 	h.sqlOutOfGas, err = handler.ConstructUpdateSQL()
 	return wlog.WrapError(err)
 }
