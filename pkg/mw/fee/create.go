@@ -70,7 +70,7 @@ func (h *createHandler) constructLedgerLockSQL(ctx context.Context) {
 }
 
 func (h *createHandler) constructPaymentBalanceLockSQL(ctx context.Context) {
-	if h.LedgerLockReq.EntID == nil {
+	if h.PaymentBalanceLockReq.EntID == nil {
 		return
 	}
 	handler, _ := paymentbalancelock1.NewHandler(ctx)
@@ -274,10 +274,9 @@ func (h *createHandler) formalizePaymentID() {
 	if !h.paymentChecker.Payable() {
 		return
 	}
-	if h.PaymentBaseReq.EntID != nil {
-		return
+	if h.PaymentBaseReq.EntID == nil {
+		h.PaymentBaseReq.EntID = func() *uuid.UUID { uid := uuid.New(); return &uid }()
 	}
-	h.PaymentBaseReq.EntID = func() *uuid.UUID { uid := uuid.New(); return &uid }()
 	h.FeeOrderStateReq.PaymentID = h.PaymentBaseReq.EntID
 	h.PaymentBalanceLockReq.PaymentID = h.PaymentBaseReq.EntID
 }
