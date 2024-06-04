@@ -21,10 +21,10 @@ type sumHandler struct {
 }
 
 func (h *sumHandler) sumOrdersPaymentUSD(ctx context.Context, cli *ent.Client) (amount string, err error) {
-	cli = cli.Debug()
 	if h.stmSelect, err = h.queryOrderBases(cli); err != nil {
 		return decimal.NewFromInt(0).String(), wlog.WrapError(err)
 	}
+	h.queryJoin()
 	amounts := []struct {
 		AppID  uuid.UUID       `json:"app_id"`
 		Amount decimal.Decimal `json:"payment_amount_usd"`
