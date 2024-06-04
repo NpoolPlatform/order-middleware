@@ -352,7 +352,8 @@ func (h *updateHandler) formalizePaymentType() error {
 }
 
 func (h *updateHandler) formalizePaymentID() error {
-	if h.PaymentBaseReq.EntID == nil || h._ent.PaymentID() == *h.PaymentBaseReq.EntID {
+	if (h.PaymentBaseReq.EntID == nil || h._ent.PaymentID() == *h.PaymentBaseReq.EntID) &&
+		(h.OrderStateBaseReq.PaymentType == nil || h._ent.PaymentType() == *h.OrderStateBaseReq.PaymentType) {
 		return nil
 	}
 
@@ -589,6 +590,9 @@ func (h *Handler) UpdatePowerRentalWithTx(ctx context.Context, tx *ent.Tx) error
 	if handler.newPayment {
 		if err := handler.formalizePaymentType(); err != nil {
 			return wlog.WrapError(err)
+		}
+		if h.OrderStateBaseReq.PaymentType != nil {
+			handler.paymentChecker.PaymentType = h.OrderStateBaseReq.PaymentType
 		}
 		if err := handler.validatePayment(); err != nil {
 			return wlog.WrapError(err)
