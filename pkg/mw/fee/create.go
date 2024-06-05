@@ -280,6 +280,7 @@ func (h *createHandler) formalizePaymentID() {
 	}
 }
 
+//nolint:gocyclo
 func (h *createHandler) validatePaymentType() error {
 	if h.OrderStateBaseReq.PaymentType == nil {
 		if h.LedgerLockReq.EntID != nil || h.PaymentBaseReq.EntID != nil {
