@@ -161,6 +161,7 @@ func (h *baseQueryHandler) queryJoinPowerRental(s *sql.Selector) error {
 	return nil
 }
 
+//nolint:gocyclo
 func (h *baseQueryHandler) queryJoinOrderStateBase(s *sql.Selector) error {
 	t := sql.Table(entorderstatebase.Table)
 	s.Join(t).

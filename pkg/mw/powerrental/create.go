@@ -316,6 +316,7 @@ func (h *createHandler) createFeeOrders(ctx context.Context, tx *ent.Tx) error {
 	return h.FeeMultiHandler.CreateFeeOrdersWithTx(ctx, tx)
 }
 
+//nolint:gocyclo
 func (h *createHandler) validatePaymentType() error {
 	if h.OrderStateBaseReq.PaymentType == nil {
 		if h.ledgerLockID() != nil || h.PaymentBaseReq.EntID != nil {

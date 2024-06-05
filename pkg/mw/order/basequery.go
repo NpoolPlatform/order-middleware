@@ -70,6 +70,7 @@ func (h *baseQueryHandler) queryJoinMyself(s *sql.Selector) {
 		)
 }
 
+//nolint:gocyclo
 func (h *baseQueryHandler) queryJoinOrderStateBase(s *sql.Selector) error {
 	t := sql.Table(entorderstatebase.Table)
 	s.Join(t).

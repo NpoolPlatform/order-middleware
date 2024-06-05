@@ -384,6 +384,7 @@ func (h *updateHandler) validatePaymentState() error {
 	return nil
 }
 
+//nolint:gocyclo
 func (h *updateHandler) validatePaymentType() error {
 	switch h._ent.OrderState() {
 	case types.OrderState_OrderStateCreated:
