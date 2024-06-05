@@ -57,7 +57,7 @@ func setup(t *testing.T) func(*testing.T) {
 		powerrental1.WithGoodType(&ret.GoodType, true),
 		powerrental1.WithAppGoodID(&ret.AppGoodID, true),
 		powerrental1.WithOrderID(&ret.OrderID, true),
-		powerrental1.WithOrderType(func() *types.OrderType { e := types.OrderType_Normal; return &e }(), true),
+		powerrental1.WithOrderType(func() *types.OrderType { e := types.OrderType_Offline; return &e }(), true),
 		powerrental1.WithAppGoodStockID(func() *string { s := uuid.NewString(); return &s }(), true),
 		powerrental1.WithUnits(func() *string { s := decimal.NewFromInt(10).String(); return &s }(), true),
 		powerrental1.WithPaymentType(func() *types.PaymentType { e := types.PaymentType_PayWithOffline; return &e }(), true),

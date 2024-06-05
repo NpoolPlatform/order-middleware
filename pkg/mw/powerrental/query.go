@@ -2,7 +2,6 @@ package powerrental
 
 import (
 	"context"
-	"fmt"
 
 	"entgo.io/ent/dialect/sql"
 
@@ -166,6 +165,7 @@ func (h *queryHandler) queryPaymentTransfers(ctx context.Context, cli *ent.Clien
 }
 
 func (h *queryHandler) queryFeeDurations(ctx context.Context, cli *ent.Client) error {
+	cli = cli.Debug()
 	orderIDs := func() (uids []uuid.UUID) {
 		for _, info := range h.infos {
 			uids = append(uids, uuid.MustParse(info.OrderID))
@@ -175,7 +175,7 @@ func (h *queryHandler) queryFeeDurations(ctx context.Context, cli *ent.Client) e
 	stm, err := orderbasecrud.SetQueryConds(
 		cli.OrderBase.Query(),
 		&orderbasecrud.Conds{
-			EntIDs: &cruder.Cond{Op: cruder.IN, Val: orderIDs},
+			ParentOrderIDs: &cruder.Cond{Op: cruder.IN, Val: orderIDs},
 		},
 	)
 	if err != nil {
@@ -192,13 +192,14 @@ func (h *queryHandler) queryFeeDurations(ctx context.Context, cli *ent.Client) e
 				t1.C(entfeeorder.FieldOrderID),
 			)
 		return sql.As(
-			sql.Sum(entfeeorder.FieldDurationSeconds),
+			sql.Sum(t1.C(entfeeorder.FieldDurationSeconds)),
 			"total_duration_seconds",
 		)
 	}).Scan(ctx, &h.feeDurations)
 }
 
 func (h *queryHandler) queryOrdersPaymentGoodValueUSD(ctx context.Context, cli *ent.Client) error {
+	cli = cli.Debug()
 	orderIDs := func() (uids []uuid.UUID) {
 		for _, info := range h.infos {
 			uids = append(uids, uuid.MustParse(info.OrderID))
@@ -294,7 +295,6 @@ func (h *queryHandler) queryOrdersPaymentGoodValueUSD(ctx context.Context, cli *
 	}).Scan(ctx, &goodValueUSDs); err != nil {
 		return wlog.WrapError(err)
 	}
-	fmt.Printf("%v\n", goodValueUSDs)
 	for _, info := range h.infos {
 		for _, goodValueUSD := range goodValueUSDs {
 			if info.OrderID == goodValueUSD.OrderID {
@@ -373,7 +373,6 @@ func (h *queryHandler) formalize() {
 		info.StartMode = types.OrderStartMode(types.OrderStartMode_value[info.StartModeStr])
 		info.BenefitState = types.BenefitState(types.BenefitState_value[info.BenefitStateStr])
 		info.InvestmentType = types.InvestmentType(types.InvestmentType_value[info.InvestmentTypeStr])
-		info.PaymentObseleteState = types.PaymentObseleteState(types.PaymentObseleteState_value[info.PaymentObseleteStateStr])
 		info.Coupons = orderCoupons[info.OrderID]
 		info.PaymentBalances = paymentBalances[info.PaymentID]
 		info.PaymentTransfers = paymentTransfers[info.PaymentID]

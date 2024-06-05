@@ -405,7 +405,6 @@ func (h *baseQueryHandler) queryJoinPaymentBase(s *sql.Selector) {
 		)
 	s.AppendSelect(
 		sql.As(t1.C(entpaymentbase.FieldEntID), "payment_id"),
-		sql.As(t1.C(entpaymentbase.FieldObseleteState), "payment_obselete_state"),
 		sql.As(t3.C(entorderlock.FieldEntID), "ledger_lock_id"),
 	)
 }

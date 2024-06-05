@@ -73,6 +73,23 @@ func WithOrderID(id *string, must bool) func(context.Context, *Handler) error {
 	}
 }
 
+func WithPaymentID(id *string, must bool) func(context.Context, *Handler) error {
+	return func(ctx context.Context, h *Handler) error {
+		if id == nil {
+			if must {
+				return wlog.Errorf("invalid paymentid")
+			}
+			return nil
+		}
+		_id, err := uuid.Parse(*id)
+		if err != nil {
+			return wlog.WrapError(err)
+		}
+		h.PaymentID = &_id
+		return nil
+	}
+}
+
 //nolint:gocyclo
 func WithCancelState(state *types.OrderState, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {

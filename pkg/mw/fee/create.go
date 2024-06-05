@@ -76,7 +76,6 @@ func (h *createHandler) constructPaymentBalanceLockSQL(ctx context.Context) {
 	handler, _ := paymentbalancelock1.NewHandler(ctx)
 	handler.Req = *h.PaymentBalanceLockReq
 	h.sqlPaymentBalanceLock = handler.ConstructCreateSQL()
-	h.payWithBalance = true
 }
 
 func (h *createHandler) constructOrderCouponSQLs(ctx context.Context) {
@@ -215,9 +214,6 @@ func (h *createHandler) formalizeEntIDs() {
 	if h.FeeOrderStateReq.EntID == nil {
 		h.FeeOrderStateReq.EntID = func() *uuid.UUID { uid := uuid.New(); return &uid }()
 	}
-	if h.PaymentBalanceLockReq.EntID == nil {
-		h.PaymentBalanceLockReq.EntID = func() *uuid.UUID { uid := uuid.New(); return &uid }()
-	}
 }
 
 func (h *createHandler) formalizeOrderCoupons() {
@@ -279,6 +275,9 @@ func (h *createHandler) formalizePaymentID() {
 	}
 	h.FeeOrderStateReq.PaymentID = h.PaymentBaseReq.EntID
 	h.PaymentBalanceLockReq.PaymentID = h.PaymentBaseReq.EntID
+	if h.payWithBalance && h.PaymentBalanceLockReq.EntID == nil {
+		h.PaymentBalanceLockReq.EntID = func() *uuid.UUID { uid := uuid.New(); return &uid }()
+	}
 }
 
 func (h *createHandler) validatePaymentType() error {
@@ -302,7 +301,9 @@ func (h *createHandler) validatePaymentType() error {
 	case types.PaymentType_PayWithOtherOrder:
 		fallthrough //nolint
 	case types.PaymentType_PayWithParentOrder:
-		fallthrough //nolint
+		if h.PaymentBaseReq.EntID == nil || h.LedgerLockReq.EntID != nil {
+			return wlog.Errorf("invalid paymenttype")
+		}
 	case types.PaymentType_PayWithContract:
 		fallthrough //nolint
 	case types.PaymentType_PayWithOffline:
@@ -344,6 +345,7 @@ func (h *Handler) CreateFeeOrderWithTx(ctx context.Context, tx *ent.Tx) error {
 			PaymentAmountUSD:    h.PaymentAmountUSD,
 			DiscountAmountUSD:   h.DiscountAmountUSD,
 		},
+		payWithBalance: len(h.PaymentBalanceReqs) > 0,
 	}
 
 	if h.EntID == nil {
