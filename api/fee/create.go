@@ -8,7 +8,6 @@ import (
 	"google.golang.org/grpc/status"
 
 	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
-	types "github.com/NpoolPlatform/message/npool/basetypes/order/v1"
 	npool "github.com/NpoolPlatform/message/npool/order/mw/v1/fee"
 
 	feeorder1 "github.com/NpoolPlatform/order-middleware/pkg/mw/fee"
@@ -22,19 +21,6 @@ func (s *Server) CreateFeeOrder(ctx context.Context, in *npool.CreateFeeOrderReq
 			"In", in,
 		)
 		return &npool.CreateFeeOrderResponse{}, status.Error(codes.Aborted, "invalid argument")
-	}
-	switch req.GetPaymentType() {
-	case types.PaymentType_DefaultPaymentType:
-		fallthrough //nolint
-	case types.PaymentType_PayWithOtherOrder:
-		fallthrough //nolint
-	case types.PaymentType_PayWithNoPayment:
-	default:
-		logger.Sugar().Errorw(
-			"CreateFeeOrder",
-			"In", in,
-		)
-		return &npool.CreateFeeOrderResponse{}, status.Error(codes.Aborted, "invalid paymenttype")
 	}
 	handler, err := feeorder1.NewHandler(
 		ctx,
