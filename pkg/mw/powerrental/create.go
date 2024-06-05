@@ -249,35 +249,39 @@ func (h *createHandler) formalizePaymentTransfers() {
 	}
 }
 
-func (h *createHandler) formalizePaymentType() {
+func (h *createHandler) formalizePaymentType() error {
 	if h.OrderBaseReq.Simulate != nil && *h.OrderBaseReq.Simulate {
 		h.OrderStateBaseReq.PaymentType = func() *types.PaymentType { e := types.PaymentType_PayWithNoPayment; return &e }()
-		return
+		return nil
 	}
 	if *h.OrderBaseReq.OrderType == types.OrderType_Offline {
 		h.OrderStateBaseReq.PaymentType = func() *types.PaymentType { e := types.PaymentType_PayWithOffline; return &e }()
-		return
+		return nil
 	}
 	if *h.OrderBaseReq.OrderType == types.OrderType_Airdrop {
 		h.OrderStateBaseReq.PaymentType = func() *types.PaymentType { e := types.PaymentType_PayWithNoPayment; return &e }()
-		return
+		return nil
 	}
 	// For shop cart
 	if h.OrderStateBaseReq.PaymentType != nil && *h.OrderStateBaseReq.PaymentType == types.PaymentType_PayWithOtherOrder {
-		return
+		return nil
 	}
 	if len(h.PaymentBalanceReqs) > 0 && len(h.PaymentTransferReqs) > 0 {
 		h.OrderStateBaseReq.PaymentType = func() *types.PaymentType { e := types.PaymentType_PayWithTransferAndBalance; return &e }()
-		return
+		return nil
 	}
 	if len(h.PaymentBalanceReqs) > 0 {
 		h.OrderStateBaseReq.PaymentType = func() *types.PaymentType { e := types.PaymentType_PayWithBalanceOnly; return &e }()
-		return
+		return nil
 	}
 	if len(h.PaymentTransferReqs) > 0 {
 		h.OrderStateBaseReq.PaymentType = func() *types.PaymentType { e := types.PaymentType_PayWithTransferOnly; return &e }()
-		return
+		return nil
 	}
+	if h.OrderStateBaseReq.PaymentType == nil {
+		return wlog.Errorf("invalid paymenttype")
+	}
+	return nil
 }
 
 func (h *createHandler) formalizeStartAt() {
@@ -434,7 +438,9 @@ func (h *Handler) CreatePowerRentalWithTx(ctx context.Context, tx *ent.Tx) error
 	handler.formalizeOrderLocks()
 	handler.formalizeEntIDs()
 	handler.formalizeOrderCoupons()
-	handler.formalizePaymentType()
+	if err := handler.formalizePaymentType(); err != nil {
+		return wlog.WrapError(err)
+	}
 	handler.paymentChecker.PaymentType = h.OrderStateBaseReq.PaymentType
 	handler.formalizePaymentID()
 	if err := handler.validatePaymentType(); err != nil {
