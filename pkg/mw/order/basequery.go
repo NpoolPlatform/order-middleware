@@ -56,6 +56,7 @@ func (h *baseQueryHandler) queryJoinMyself(s *sql.Selector) {
 			t.C(entorderbase.FieldID),
 		).
 		AppendSelect(
+			t.C(entorderbase.FieldEntID),
 			t.C(entorderbase.FieldAppID),
 			t.C(entorderbase.FieldUserID),
 			t.C(entorderbase.FieldGoodID),
