@@ -122,7 +122,7 @@ func (h *createHandler) execSQL(ctx context.Context, tx *ent.Tx, sql string) err
 	}
 	n, err := rc.RowsAffected()
 	if err != nil || n != 1 {
-		return wlog.Errorf("fail create powerrental: %v", err)
+		return wlog.Errorf("fail create fee: %v", err)
 	}
 	return nil
 }
@@ -351,9 +351,6 @@ func (h *Handler) CreateFeeOrderWithTx(ctx context.Context, tx *ent.Tx) error {
 
 	if h.EntID == nil {
 		h.EntID = func() *uuid.UUID { uid := uuid.New(); return &uid }()
-	}
-	if err := handler.paymentChecker.ValidatePayment(); err != nil {
-		return wlog.WrapError(err)
 	}
 	if err := handler.validateOrderType(); err != nil {
 		return wlog.WrapError(err)
