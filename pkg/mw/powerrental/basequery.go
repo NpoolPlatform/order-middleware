@@ -249,6 +249,7 @@ func (h *baseQueryHandler) queryJoinOrderStateBase(s *sql.Selector) error {
 	return nil
 }
 
+//nolint:funlen
 func (h *baseQueryHandler) queryJoinPowerRentalState(s *sql.Selector) error {
 	t := sql.Table(entpowerrentalstate.Table)
 	s.Join(t).
