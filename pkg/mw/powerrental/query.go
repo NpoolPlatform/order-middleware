@@ -198,6 +198,7 @@ func (h *queryHandler) queryFeeDurations(ctx context.Context, cli *ent.Client) e
 	}).Scan(ctx, &h.feeDurations)
 }
 
+//nolint:funlen
 func (h *queryHandler) queryOrdersPaymentGoodValueUSD(ctx context.Context, cli *ent.Client) error {
 	cli = cli.Debug()
 	orderIDs := func() (uids []uuid.UUID) {
