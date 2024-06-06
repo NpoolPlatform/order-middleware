@@ -368,7 +368,7 @@ func (h *updateHandler) formalizePaymentID() error {
 
 	h.obseletePaymentBaseReq.EntID = func() *uuid.UUID { uid := h._ent.PaymentID(); return &uid }()
 	if h.PaymentBaseReq.EntID == nil {
-		h.PaymentBaseReq.EntID = func() *uuid.UUID { uid := h._ent.PaymentID(); return &uid }()
+		h.PaymentBaseReq.EntID = func() *uuid.UUID { uid := uuid.New(); return &uid }()
 	}
 	h.PowerRentalStateReq.PaymentID = h.PaymentBaseReq.EntID
 	h.PaymentBalanceLockReq.PaymentID = h.PaymentBaseReq.EntID
@@ -686,7 +686,7 @@ func (h *Handler) UpdatePowerRentalWithTx(ctx context.Context, tx *ent.Tx) error
 }
 
 func (h *Handler) UpdatePowerRental(ctx context.Context) error {
-	return db.WithDebugTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {
+	return db.WithTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {
 		return h.UpdatePowerRentalWithTx(_ctx, tx)
 	})
 }
