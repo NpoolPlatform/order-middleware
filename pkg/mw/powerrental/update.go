@@ -63,6 +63,7 @@ func (h *updateHandler) constructPayWithMeOrderStateBaseSQLs(ctx context.Context
 		handler, _ := orderstatebase1.NewHandler(ctx)
 		handler.Req = *h.OrderStateBaseReq
 		handler.OrderID = &_orderID
+		handler.PaymentType = types.PaymentType_PayWithParentOrder.Enum()
 		sql, err := handler.ConstructUpdateSQL()
 		if err != nil {
 			if wlog.Equal(err, cruder.ErrUpdateNothing) {
@@ -685,7 +686,7 @@ func (h *Handler) UpdatePowerRentalWithTx(ctx context.Context, tx *ent.Tx) error
 }
 
 func (h *Handler) UpdatePowerRental(ctx context.Context) error {
-	return db.WithTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {
+	return db.WithDebugTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {
 		return h.UpdatePowerRentalWithTx(_ctx, tx)
 	})
 }
