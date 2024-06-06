@@ -58,11 +58,22 @@ func (h *Handler) ConstructCreateSQL() string {
 	_sql += fmt.Sprintf("%v%v as updated_at", comma, now)
 	_sql += fmt.Sprintf("%v0 as deleted_at", comma)
 	_sql += ") as tmp "
+	whereAnd := "where"
 	if h.ParentOrderID != nil {
 		_sql += "where exists ("
 		_sql += "select 1 from order_bases "
 		_sql += fmt.Sprintf("where ent_id = '%v' ", *h.ParentOrderID)
 		_sql += "limit 1)"
+		whereAnd = "and"
+	}
+	if h.Simulate != nil && *h.Simulate {
+		_sql += fmt.Sprintf(" %v exists (", whereAnd)
+		_sql += "select 1 from app_configs "
+		_sql += fmt.Sprintf(
+			"where app_id = '%v' and enable_simulate_order = true and deleted_at = 0",
+			*h.AppID,
+		)
+		_sql += " limit 1)"
 	}
 
 	return _sql
