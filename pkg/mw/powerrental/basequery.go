@@ -204,12 +204,24 @@ func (h *baseQueryHandler) queryJoinOrderStateBase(s *sql.Selector) error {
 		if !ok {
 			return wlog.Errorf("invalid orderstate")
 		}
-		s.OnP(sql.In(t.C(entorderstatebase.FieldOrderState), func() (_states []interface{}) {
-			for _, _state := range states {
-				_states = append(_states, interface{}(_state.String()))
-			}
-			return _states
-		}()...))
+		switch h.OrderStateBaseConds.OrderStates.Op {
+		case cruder.IN:
+			s.OnP(sql.In(t.C(entorderstatebase.FieldOrderState), func() (_states []interface{}) {
+				for _, _state := range states {
+					_states = append(_states, interface{}(_state.String()))
+				}
+				return _states
+			}()...))
+		case cruder.NIN:
+			s.OnP(sql.NotIn(t.C(entorderstatebase.FieldOrderState), func() (_states []interface{}) {
+				for _, _state := range states {
+					_states = append(_states, interface{}(_state.String()))
+				}
+				return _states
+			}()...))
+		default:
+			return wlog.Errorf("invalid renewnotifyat")
+		}
 	}
 	if h.OrderStateBaseConds.StartMode != nil {
 		mode, ok := h.OrderStateBaseConds.StartMode.Val.(types.OrderStartMode)
