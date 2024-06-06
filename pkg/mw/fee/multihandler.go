@@ -23,19 +23,30 @@ func (h *MultiHandler) GetHandlers() []*Handler {
 	return h.Handlers
 }
 
-func (h *MultiHandler) validatePaymentOrder() error {
+func (h *MultiHandler) validatePaymentOrder() (bool, error) {
 	paymentOrders := 0
 	payWithParents := 0
 	payWithOthers := 0
+	offlineOrder := false
 
 	for _, handler := range h.Handlers {
-		switch *handler.OrderStateBaseReq.PaymentType {
-		case types.PaymentType_PayWithBalanceOnly:
+		switch *handler.OrderBaseReq.OrderType {
+		case types.OrderType_Offline:
 			fallthrough //nolint
-		case types.PaymentType_PayWithTransferOnly:
-			fallthrough //nolint
-		case types.PaymentType_PayWithTransferAndBalance:
+		case types.OrderType_Airdrop:
+			offlineOrder = true
+			continue
+		}
+		if offlineOrder {
+			return false, wlog.Errorf("invalid ordertype")
+		}
+		if len(handler.PaymentTransferReqs) > 0 || len(handler.PaymentBalanceReqs) > 0 {
 			paymentOrders += 1
+		}
+		if handler.OrderStateBaseReq.PaymentType == nil {
+			continue
+		}
+		switch *handler.OrderStateBaseReq.PaymentType {
 		case types.PaymentType_PayWithParentOrder:
 			payWithParents += 1
 		case types.PaymentType_PayWithOtherOrder:
@@ -44,17 +55,17 @@ func (h *MultiHandler) validatePaymentOrder() error {
 	}
 	switch paymentOrders {
 	case 0:
-		if payWithParents != len(h.Handlers) {
-			return wlog.Errorf("invalid paywithparents")
+		if !offlineOrder && payWithParents != len(h.Handlers) {
+			return false, wlog.Errorf("invalid paywithparents")
 		}
 	case 1:
 		if payWithOthers != len(h.Handlers)-1 {
-			return wlog.Errorf("invalid paywithothers")
+			return false, wlog.Errorf("invalid paywithothers")
 		}
 	default:
-		return wlog.Errorf("invalid paymentorder")
+		return false, wlog.Errorf("invalid paymentorder")
 	}
-	return nil
+	return paymentOrders > 0, nil
 }
 
 //nolint:gocyclo
@@ -107,11 +118,14 @@ func (h *MultiHandler) validatePaymentID() error {
 }
 
 func (h *MultiHandler) CreateFeeOrdersWithTx(ctx context.Context, tx *ent.Tx) error {
-	if err := h.validatePaymentOrder(); err != nil {
+	shouldPay, err := h.validatePaymentOrder()
+	if err != nil {
 		return wlog.WrapError(err)
 	}
-	if err := h.validatePaymentID(); err != nil {
-		return wlog.WrapError(err)
+	if shouldPay {
+		if err := h.validatePaymentID(); err != nil {
+			return wlog.WrapError(err)
+		}
 	}
 	for _, handler := range h.Handlers {
 		if err := handler.CreateFeeOrderWithTx(ctx, tx); err != nil {

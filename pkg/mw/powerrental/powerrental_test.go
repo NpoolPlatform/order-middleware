@@ -85,6 +85,8 @@ var ret = npool.PowerRentalOrder{
 			TotalDurationSeconds: 16000,
 		},
 	},
+	InvestmentType: types.InvestmentType_FullPayment,
+	BenefitState:   types.BenefitState_BenefitWait,
 }
 
 //nolint:unparam
@@ -109,6 +111,8 @@ func setup(t *testing.T) func(*testing.T) {
 	ret.CancelStateStr = ret.CancelState.String()
 	ret.RenewStateStr = ret.RenewState.String()
 	ret.StartModeStr = ret.StartMode.String()
+	ret.InvestmentTypeStr = ret.InvestmentType.String()
+	ret.BenefitStateStr = ret.BenefitState.String()
 
 	return func(*testing.T) {}
 }

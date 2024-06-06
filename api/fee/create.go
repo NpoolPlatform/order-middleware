@@ -8,7 +8,6 @@ import (
 	"google.golang.org/grpc/status"
 
 	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
-	types "github.com/NpoolPlatform/message/npool/basetypes/order/v1"
 	npool "github.com/NpoolPlatform/message/npool/order/mw/v1/fee"
 
 	feeorder1 "github.com/NpoolPlatform/order-middleware/pkg/mw/fee"
@@ -23,18 +22,6 @@ func (s *Server) CreateFeeOrder(ctx context.Context, in *npool.CreateFeeOrderReq
 		)
 		return &npool.CreateFeeOrderResponse{}, status.Error(codes.Aborted, "invalid argument")
 	}
-	switch req.GetPaymentType() {
-	case types.PaymentType_DefaultPaymentType:
-		fallthrough //nolint
-	case types.PaymentType_PayWithOtherOrder:
-		fallthrough //nolint
-	case types.PaymentType_PayWithParentOrder:
-		logger.Sugar().Errorw(
-			"CreateFeeOrder",
-			"In", in,
-		)
-		return &npool.CreateFeeOrderResponse{}, status.Error(codes.Aborted, "invalid paymenttype")
-	}
 	handler, err := feeorder1.NewHandler(
 		ctx,
 		feeorder1.WithEntID(req.EntID, false),
@@ -46,7 +33,7 @@ func (s *Server) CreateFeeOrder(ctx context.Context, in *npool.CreateFeeOrderReq
 		feeorder1.WithOrderID(req.OrderID, false),
 		feeorder1.WithParentOrderID(req.ParentOrderID, true),
 		feeorder1.WithOrderType(req.OrderType, true),
-		feeorder1.WithPaymentType(req.PaymentType, true),
+		feeorder1.WithPaymentType(req.PaymentType, false),
 		feeorder1.WithCreateMethod(req.CreateMethod, true),
 
 		feeorder1.WithGoodValueUSD(req.GoodValueUSD, true),

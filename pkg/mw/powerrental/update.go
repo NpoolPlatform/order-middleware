@@ -100,6 +100,7 @@ func (h *updateHandler) constructPayWithMeFeeOrderStateSQLs(ctx context.Context)
 		if err != nil {
 			return wlog.WrapError(err)
 		}
+		handler.PaymentID = h.PaymentBaseReq.EntID
 		handler.OrderID = &_orderID
 		sql, err := handler.ConstructUpdateSQL()
 		if err != nil {
@@ -365,6 +366,9 @@ func (h *updateHandler) formalizePaymentID() error {
 	}
 
 	h.obseletePaymentBaseReq.EntID = func() *uuid.UUID { uid := h._ent.PaymentID(); return &uid }()
+	if h.PaymentBaseReq.EntID == nil {
+		h.PaymentBaseReq.EntID = func() *uuid.UUID { uid := h._ent.PaymentID(); return &uid }()
+	}
 	h.PowerRentalStateReq.PaymentID = h.PaymentBaseReq.EntID
 	h.PaymentBalanceLockReq.PaymentID = h.PaymentBaseReq.EntID
 	return nil
@@ -380,6 +384,7 @@ func (h *updateHandler) validatePaymentState() error {
 	return nil
 }
 
+//nolint:gocyclo
 func (h *updateHandler) validatePaymentType() error {
 	switch h._ent.OrderState() {
 	case types.OrderState_OrderStateCreated:
