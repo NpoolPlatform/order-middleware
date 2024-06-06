@@ -15,6 +15,7 @@ type PaymentCheckHandler struct {
 	PaymentTransferReqs []*paymenttransfercrud.Req
 	PaymentAmountUSD    *decimal.Decimal
 	DiscountAmountUSD   *decimal.Decimal
+	Simulate            *bool
 }
 
 //nolint:gocyclo
@@ -85,6 +86,9 @@ func (h *PaymentCheckHandler) ValidatePayment() error {
 
 func (h *PaymentCheckHandler) Payable() bool {
 	if h.PaymentType == nil {
+		return false
+	}
+	if h.Simulate != nil && *h.Simulate {
 		return false
 	}
 	switch *h.PaymentType {

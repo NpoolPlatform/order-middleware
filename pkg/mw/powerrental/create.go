@@ -424,6 +424,7 @@ func (h *Handler) CreatePowerRentalWithTx(ctx context.Context, tx *ent.Tx) error
 			PaymentTransferReqs: h.PaymentTransferReqs,
 			PaymentAmountUSD:    h.PaymentAmountUSD,
 			DiscountAmountUSD:   h.DiscountAmountUSD,
+			Simulate:            h.OrderBaseReq.Simulate,
 		},
 	}
 
