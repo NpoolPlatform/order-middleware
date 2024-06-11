@@ -171,7 +171,7 @@ func (h *queryHandler) queryOrdersPaymentGoodValueUSD(ctx context.Context, cli *
 	stm, err := orderbasecrud.SetQueryConds(
 		cli.OrderBase.Query(),
 		&orderbasecrud.Conds{
-			ParentOrderIDs: &cruder.Cond{Op: cruder.IN, Val: orderIDs},
+			EntIDs: &cruder.Cond{Op: cruder.IN, Val: orderIDs},
 		},
 	)
 	if err != nil {
@@ -184,41 +184,41 @@ func (h *queryHandler) queryOrdersPaymentGoodValueUSD(ctx context.Context, cli *
 	if err := stm.GroupBy(
 		entorderbase.FieldEntID,
 	).Aggregate(func(s *sql.Selector) string {
-		t1 := sql.Table(entfeeorder.Table)
+		t0 := sql.Table(entorderstatebase.Table)
+		t1 := sql.Table(entfeeorderstate.Table)
 		t2 := sql.Table(entfeeorderstate.Table)
-		t3 := sql.Table(entfeeorderstate.Table)
-		t4 := sql.Table(entorderstatebase.Table)
-		t5 := sql.Table(entfeeorder.Table)
-		s.Join(t1).
+		t3 := sql.Table(entfeeorder.Table)
+		s.Join(t0).
 			On(
 				s.C(entorderbase.FieldEntID),
-				t1.C(entfeeorder.FieldOrderID),
+				t0.C(entorderstatebase.FieldOrderID),
 			).
-			Join(t2).
+			OnP(
+				sql.Or(
+					sql.EQ(t0.C(entorderstatebase.FieldPaymentType), types.PaymentType_PayWithBalanceOnly.String()),
+					sql.EQ(t0.C(entorderstatebase.FieldPaymentType), types.PaymentType_PayWithTransferOnly.String()),
+					sql.EQ(t0.C(entorderstatebase.FieldPaymentType), types.PaymentType_PayWithTransferAndBalance.String()),
+				),
+			).
+			LeftJoin(t1).
 			On(
 				s.C(entorderbase.FieldEntID),
-				t2.C(entfeeorderstate.FieldOrderID),
+				t1.C(entfeeorderstate.FieldOrderID),
+			).
+			LeftJoin(t2).
+			On(
+				t1.C(entfeeorderstate.FieldPaymentID),
+				t2.C(entfeeorderstate.FieldPaymentID),
 			).
 			LeftJoin(t3).
 			On(
-				t2.C(entfeeorderstate.FieldPaymentID),
-				t3.C(entfeeorderstate.FieldPaymentID),
-			).
-			Join(t4).
-			On(
-				t3.C(entfeeorderstate.FieldOrderID),
-				t4.C(entorderstatebase.FieldOrderID),
-			).
-			OnP(
-				sql.EQ(t4.C(entorderstatebase.FieldPaymentType), types.PaymentType_PayWithOtherOrder.String()),
-			).
-			Join(t5).
-			On(
-				t4.C(entorderstatebase.FieldOrderID),
-				t5.C(entfeeorder.FieldOrderID),
+				t2.C(entfeeorderstate.FieldOrderID),
+				t3.C(entfeeorder.FieldOrderID),
 			)
 		return sql.As(
-			sql.Sum(t1.C(entfeeorder.FieldGoodValueUsd)+"+"+t5.C(entfeeorder.FieldGoodValueUsd)),
+			sql.Sum(
+				"ifnull("+t3.C(entfeeorder.FieldGoodValueUsd)+", 0)",
+			),
 			"payment_good_value_usd",
 		)
 	}).Scan(ctx, &goodValueUSDs); err != nil {
