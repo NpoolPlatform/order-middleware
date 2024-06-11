@@ -70,50 +70,25 @@ func (h *MultiHandler) validatePaymentOrder() (bool, error) {
 
 //nolint:gocyclo
 func (h *MultiHandler) validatePaymentID() error {
-	paymentIDs := map[uuid.UUID]struct{}{}
+	var paymentID *uuid.UUID
 
 	for _, handler := range h.Handlers {
-		if len(paymentIDs) > 0 && handler.PaymentBaseReq.EntID == nil {
-			return wlog.Errorf("invalid paymentid")
-		}
 		if handler.PaymentBaseReq.EntID != nil {
-			paymentIDs[*handler.PaymentBaseReq.EntID] = struct{}{}
-		}
-		for _, balance := range handler.PaymentBalanceReqs {
-			if len(paymentIDs) > 0 && balance.PaymentID == nil {
-				return wlog.Errorf("invalid paymentid")
-			}
-			if balance.PaymentID != nil {
-				paymentIDs[*balance.PaymentID] = struct{}{}
-			}
-		}
-		for _, transfer := range handler.PaymentTransferReqs {
-			if len(paymentIDs) > 0 && transfer.PaymentID == nil {
-				return wlog.Errorf("invalid paymentid")
-			}
-			if transfer.PaymentID != nil {
-				paymentIDs[*transfer.PaymentID] = struct{}{}
-			}
+			paymentID = handler.PaymentBaseReq.EntID
+			break
 		}
 	}
-	if len(paymentIDs) > 1 {
-		return wlog.Errorf("invalid paymentid")
+	if paymentID == nil {
+		paymentID = func() *uuid.UUID { uid := uuid.New(); return &uid }()
 	}
-	if len(paymentIDs) == 1 {
-		return nil
-	}
-
-	paymentID := uuid.New()
 	for _, handler := range h.Handlers {
-		handler.PaymentBaseReq.EntID = &paymentID
 		for _, balance := range handler.PaymentBalanceReqs {
-			balance.PaymentID = &paymentID
+			balance.PaymentID = paymentID
 		}
 		for _, transfer := range handler.PaymentTransferReqs {
-			transfer.PaymentID = &paymentID
+			transfer.PaymentID = paymentID
 		}
 	}
-
 	return nil
 }
 
