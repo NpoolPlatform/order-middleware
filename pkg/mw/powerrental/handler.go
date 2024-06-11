@@ -1072,6 +1072,12 @@ func (h *Handler) withOrderStateBaseConds(conds *npool.Conds) {
 			Val: types.BenefitState(conds.GetBenefitState().GetValue()),
 		}
 	}
+	if conds.LastBenefitAt != nil {
+		h.OrderStateBaseConds.LastBenefitAt = &cruder.Cond{
+			Op:  conds.GetLastBenefitAt().GetOp(),
+			Val: conds.GetLastBenefitAt().GetValue(),
+		}
+	}
 }
 
 func (h *Handler) withPowerRentalStateConds(conds *npool.Conds) error {
