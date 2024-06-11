@@ -284,8 +284,7 @@ func (h *queryHandler) queryOrdersPaymentGoodValueUSD(ctx context.Context, cli *
 			)
 		return sql.As(
 			sql.Sum(
-				"ifnull("+t5.C(entpowerrental.FieldGoodValueUsd)+", 0)+"+
-					"ifnull("+t6.C(entfeeorder.FieldGoodValueUsd)+", 0)+"+
+				"ifnull("+t6.C(entfeeorder.FieldGoodValueUsd)+", 0)+"+
 					"ifnull("+t7.C(entfeeorder.FieldGoodValueUsd)+", 0)+"+
 					"ifnull("+t8.C(entfeeorder.FieldGoodValueUsd)+", 0)",
 			),
@@ -297,7 +296,9 @@ func (h *queryHandler) queryOrdersPaymentGoodValueUSD(ctx context.Context, cli *
 	for _, info := range h.infos {
 		for _, goodValueUSD := range goodValueUSDs {
 			if info.OrderID == goodValueUSD.OrderID {
-				info.PaymentGoodValueUSD = goodValueUSD.PaymentGoodValueUSD
+				_childGoodValueUSD, _ := decimal.NewFromString(goodValueUSD.PaymentGoodValueUSD)
+				_goodValueUSD, _ := decimal.NewFromString(info.GoodValueUSD)
+				info.PaymentGoodValueUSD = _goodValueUSD.Add(_childGoodValueUSD).String()
 				break
 			}
 		}
