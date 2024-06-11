@@ -444,8 +444,28 @@ func (h *updateHandler) validatePaymentState() error {
 	if h.FeeOrderStateReq.PaymentState == nil {
 		return nil
 	}
+	if h._ent.PaymentType() == types.PaymentType_PayWithOtherOrder {
+		return wlog.Errorf("permission denied")
+	}
 	if h._ent.PaymentState() != types.PaymentState_PaymentStateWait {
 		return wlog.Errorf("permission denied")
+	}
+	if h.OrderStateBaseReq.OrderState == nil || (h.Rollback != nil && *h.Rollback) {
+		return wlog.Errorf("permission denied")
+	}
+	switch *h.OrderStateBaseReq.OrderState {
+	case types.OrderState_OrderStatePaid:
+		if *h.FeeOrderStateReq.PaymentState != types.PaymentState_PaymentStateDone {
+			return wlog.Errorf("permission denied")
+		}
+	case types.OrderState_OrderStatePaymentTimeout:
+		if *h.FeeOrderStateReq.PaymentState != types.PaymentState_PaymentStateTimeout {
+			return wlog.Errorf("permission denied")
+		}
+	case types.OrderState_OrderStatePreCancel:
+		if *h.FeeOrderStateReq.PaymentState != types.PaymentState_PaymentStateCanceled {
+			return wlog.Errorf("permission denied")
+		}
 	}
 	return nil
 }
