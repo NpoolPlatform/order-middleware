@@ -171,6 +171,7 @@ func (h *feeOrderQueryHandler) getPayWithMeOrders(ctx context.Context, cli *ent.
 		Query().
 		Where(
 			entfeeorderstate.PaymentID(h._ent.entFeeOrderState.PaymentID),
+			entfeeorderstate.OrderIDNEQ(h._ent.entFeeOrder.OrderID),
 			entfeeorderstate.DeletedAt(0),
 		).
 		All(ctx)
