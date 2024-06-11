@@ -66,6 +66,7 @@ func (h *updateHandler) constructStatedOrderStateBaseSQLs(ctx context.Context, o
 		handler.PaymentType = types.PaymentType_PayWithParentOrder.Enum()
 		handler.BenefitState = nil
 		handler.LastBenefitAt = nil
+		handler.StartAt = nil
 		sql, err := handler.ConstructUpdateSQL()
 		if err != nil {
 			if wlog.Equal(err, cruder.ErrUpdateNothing) {
