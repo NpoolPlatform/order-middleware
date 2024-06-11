@@ -5,6 +5,7 @@ import (
 
 	wlog "github.com/NpoolPlatform/go-service-framework/pkg/wlog"
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
+	goodtypes "github.com/NpoolPlatform/message/npool/basetypes/good/v1"
 	types "github.com/NpoolPlatform/message/npool/basetypes/order/v1"
 	npool "github.com/NpoolPlatform/message/npool/order/mw/v1/order"
 	constant "github.com/NpoolPlatform/order-middleware/pkg/const"
@@ -146,6 +147,22 @@ func (h *Handler) withOrderBaseConds(conds *npool.Conds) error {
 		h.OrderBaseConds.GoodIDs = &cruder.Cond{
 			Op:  conds.GetGoodIDs().GetOp(),
 			Val: ids,
+		}
+	}
+	if conds.GoodType != nil {
+		h.OrderBaseConds.GoodType = &cruder.Cond{
+			Op:  conds.GetGoodType().GetOp(),
+			Val: goodtypes.GoodType(conds.GetGoodType().GetValue()),
+		}
+	}
+	if conds.GoodTypes != nil {
+		_types := []goodtypes.GoodType{}
+		for _, _type := range conds.GetGoodTypes().GetValue() {
+			_types = append(_types, goodtypes.GoodType(_type))
+		}
+		h.OrderBaseConds.GoodTypes = &cruder.Cond{
+			Op:  conds.GetGoodTypes().GetOp(),
+			Val: _types,
 		}
 	}
 	if conds.AppGoodID != nil {

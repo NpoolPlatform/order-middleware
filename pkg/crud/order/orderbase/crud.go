@@ -76,6 +76,8 @@ type Conds struct {
 	UserID         *cruder.Cond
 	GoodID         *cruder.Cond
 	GoodIDs        *cruder.Cond
+	GoodType       *cruder.Cond
+	GoodTypes      *cruder.Cond
 	AppGoodID      *cruder.Cond
 	AppGoodIDs     *cruder.Cond
 	ParentOrderID  *cruder.Cond
@@ -195,6 +197,35 @@ func SetQueryConds(q *ent.OrderBaseQuery, conds *Conds) (*ent.OrderBaseQuery, er
 			default:
 				return nil, wlog.Errorf("invalid order field")
 			}
+		}
+	}
+	if conds.GoodType != nil {
+		_type, ok := conds.GoodType.Val.(goodtypes.GoodType)
+		if !ok {
+			return nil, wlog.Errorf("invalid goodtype")
+		}
+		switch conds.GoodType.Op {
+		case cruder.EQ:
+			q.Where(entorderbase.GoodType(_type.String()))
+		default:
+			return nil, wlog.Errorf("invalid order field")
+		}
+	}
+	if conds.GoodTypes != nil {
+		_types, ok := conds.GoodTypes.Val.([]goodtypes.GoodType)
+		if !ok {
+			return nil, wlog.Errorf("invalid goodtypes")
+		}
+		switch conds.GoodTypes.Op {
+		case cruder.IN:
+			q.Where(entorderbase.GoodTypeIn(func() (__types []string) {
+				for _, _type := range _types {
+					__types = append(__types, _type.String())
+				}
+				return
+			}()...))
+		default:
+			return nil, wlog.Errorf("invalid order field")
 		}
 	}
 	if conds.AppGoodID != nil {
