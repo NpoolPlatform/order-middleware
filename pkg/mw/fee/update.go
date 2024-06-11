@@ -42,6 +42,7 @@ type updateHandler struct {
 	sqlPaymentTransfers   []string
 
 	sqlPayWithMeOrderStateBases []string
+	sqlPayWithMeFeeOrderStates  []string
 
 	updateNothing bool
 }
@@ -71,6 +72,24 @@ func (h *updateHandler) constructPayWithMeOrderStateBaseSQLs(ctx context.Context
 			return wlog.WrapError(err)
 		}
 		h.sqlPayWithMeOrderStateBases = append(h.sqlPayWithMeOrderStateBases, sql)
+	}
+	return nil
+}
+
+func (h *updateHandler) constructPayWithMeFeeOrderStateSQLs(ctx context.Context) error {
+	for _, orderID := range h._ent.PayWithMeOrderIDs() {
+		_orderID := orderID
+		handler, _ := feeorderstate1.NewHandler(ctx)
+		handler.Req = *h.FeeOrderStateReq
+		handler.OrderID = &_orderID
+		sql, err := handler.ConstructUpdateSQL()
+		if err != nil {
+			if wlog.Equal(err, cruder.ErrUpdateNothing) {
+				continue
+			}
+			return wlog.WrapError(err)
+		}
+		h.sqlPayWithMeFeeOrderStates = append(h.sqlPayWithMeFeeOrderStates, sql)
 	}
 	return nil
 }
@@ -178,6 +197,15 @@ func (h *updateHandler) updateOrderStateBase(ctx context.Context, tx *ent.Tx) er
 
 func (h *updateHandler) updatePayWithMeOrderStateBases(ctx context.Context, tx *ent.Tx) error {
 	for _, sql := range h.sqlPayWithMeOrderStateBases {
+		if err := h.execSQL(ctx, tx, sql); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func (h *updateHandler) updatePayWithMeFeeOrderStates(ctx context.Context, tx *ent.Tx) error {
+	for _, sql := range h.sqlPayWithMeFeeOrderStates {
 		if err := h.execSQL(ctx, tx, sql); err != nil {
 			return err
 		}
@@ -346,14 +374,24 @@ func (h *updateHandler) validateCancelState() error {
 	return nil
 }
 
-func (h *updateHandler) formalizeCancelState() {
+func (h *updateHandler) formalizeCancelState() error {
 	if (h.FeeOrderStateReq.UserSetCanceled != nil && *h.FeeOrderStateReq.UserSetCanceled) ||
 		(h.FeeOrderStateReq.AdminSetCanceled != nil && *h.FeeOrderStateReq.AdminSetCanceled) {
+		switch h._ent.PaymentType() {
+		case types.PaymentType_PayWithBalanceOnly:
+			fallthrough //nolint
+		case types.PaymentType_PayWithTransferAndBalance:
+			fallthrough
+		case types.PaymentType_PayWithTransferOnly:
+		default:
+			return wlog.Errorf("permission denied")
+		}
 		h.FeeOrderStateReq.CancelState = func() *types.OrderState { e := h._ent.OrderState(); return &e }()
 	}
 	if h.OrderStateBaseReq.OrderState != nil && *h.OrderStateBaseReq.OrderState == types.OrderState_OrderStatePreCancel {
 		h.FeeOrderStateReq.CancelState = func() *types.OrderState { e := h._ent.OrderState(); return &e }()
 	}
+	return nil
 }
 
 func (h *updateHandler) formalizePaidAt() {
@@ -496,7 +534,9 @@ func (h *Handler) UpdateFeeOrderWithTx(ctx context.Context, tx *ent.Tx) error {
 	if err := handler.validatePaymentState(); err != nil {
 		return wlog.WrapError(err)
 	}
-	handler.formalizeCancelState()
+	if err := handler.formalizeCancelState(); err != nil {
+		return wlog.WrapError(err)
+	}
 	if err := handler.validateCancelState(); err != nil {
 		return wlog.WrapError(err)
 	}
@@ -506,6 +546,9 @@ func (h *Handler) UpdateFeeOrderWithTx(ctx context.Context, tx *ent.Tx) error {
 		return wlog.WrapError(err)
 	}
 	if err := handler.constructPayWithMeOrderStateBaseSQLs(ctx); err != nil {
+		return wlog.WrapError(err)
+	}
+	if err := handler.constructPayWithMeFeeOrderStateSQLs(ctx); err != nil {
 		return wlog.WrapError(err)
 	}
 	if err := handler.constructFeeOrderStateSQL(ctx); err != nil {
@@ -526,6 +569,9 @@ func (h *Handler) UpdateFeeOrderWithTx(ctx context.Context, tx *ent.Tx) error {
 		return wlog.WrapError(err)
 	}
 	if err := handler.updatePayWithMeOrderStateBases(ctx, tx); err != nil {
+		return wlog.WrapError(err)
+	}
+	if err := handler.updatePayWithMeFeeOrderStates(ctx, tx); err != nil {
 		return wlog.WrapError(err)
 	}
 	if err := handler.updateFeeOrderState(ctx, tx); err != nil {

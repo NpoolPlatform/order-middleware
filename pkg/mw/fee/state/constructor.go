@@ -111,11 +111,11 @@ func (h *Handler) ConstructUpdateSQL() (string, error) {
 		whereAnd = "and"
 	}
 	if h.EntID != nil {
-		_sql += fmt.Sprintf("%v ent_id = '%v'", whereAnd, *h.EntID)
+		_sql += fmt.Sprintf("%v ent_id = '%v' ", whereAnd, *h.EntID)
 		whereAnd = "and"
 	}
 	if h.OrderID != nil {
-		_sql += fmt.Sprintf("%v order_id = '%v'", whereAnd, *h.OrderID)
+		_sql += fmt.Sprintf("%v order_id = '%v' ", whereAnd, *h.OrderID)
 	}
 
 	return _sql, nil
