@@ -332,11 +332,29 @@ func (h *createHandler) validatePayment() error {
 }
 
 func (h *createHandler) validateOrderType() error {
-	if *h.OrderBaseReq.CreateMethod == types.OrderCreateMethod_OrderCreatedByAdmin {
-		if *h.OrderBaseReq.OrderType == types.OrderType_Normal {
-			return wlog.Errorf("invalid order type")
+	switch *h.OrderBaseReq.CreateMethod {
+	case types.OrderCreateMethod_OrderCreatedByPurchase:
+		fallthrough //nolint
+	case types.OrderCreateMethod_OrderCreatedByRenew:
+		switch *h.OrderBaseReq.OrderType {
+		case types.OrderType_Offline:
+			fallthrough //nolint
+		case types.OrderType_Airdrop:
+			return wlog.Errorf("invalid ordertype")
+		}
+	case types.OrderCreateMethod_OrderCreatedByAdmin:
+		switch *h.OrderBaseReq.OrderType {
+		case types.OrderType_Offline:
+			fallthrough //nolint
+		case types.OrderType_Airdrop:
+			if len(h.OrderCouponReqs) > 0 {
+				return wlog.Errorf("invalid ordercoupons")
+			}
+		default:
+			return wlog.Errorf("invalid ordertype")
 		}
 	}
+	return nil
 	return nil
 }
 
