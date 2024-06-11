@@ -35,7 +35,7 @@ func (h *PaymentCheckHandler) ValidatePayment() error {
 		}
 		totalAmount = totalAmount.Add(transfer.Amount.Mul(*handler.FormalizeCoinUSDCurrency()))
 	}
-	if h.PaymentAmountUSD != nil && !h.PaymentAmountUSD.Equal(totalAmount) {
+	if h.PaymentAmountUSD != nil && h.PaymentAmountUSD.Sub(totalAmount).Abs().GreaterThan(decimal.RequireFromString("0.00000001")) {
 		return wlog.Errorf("invalid paymentamount")
 	}
 
