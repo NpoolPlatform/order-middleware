@@ -165,7 +165,6 @@ func (h *queryHandler) queryPaymentTransfers(ctx context.Context, cli *ent.Clien
 }
 
 func (h *queryHandler) queryFeeDurations(ctx context.Context, cli *ent.Client) error {
-	cli = cli.Debug()
 	orderIDs := func() (uids []uuid.UUID) {
 		for _, info := range h.infos {
 			uids = append(uids, uuid.MustParse(info.OrderID))
@@ -200,7 +199,6 @@ func (h *queryHandler) queryFeeDurations(ctx context.Context, cli *ent.Client) e
 
 //nolint:funlen
 func (h *queryHandler) queryOrdersPaymentGoodValueUSD(ctx context.Context, cli *ent.Client) error {
-	cli = cli.Debug()
 	orderIDs := func() (uids []uuid.UUID) {
 		for _, info := range h.infos {
 			uids = append(uids, uuid.MustParse(info.OrderID))

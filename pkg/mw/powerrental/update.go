@@ -42,8 +42,8 @@ type updateHandler struct {
 	sqlPaymentBalances    []string
 	sqlPaymentTransfers   []string
 
-	sqlPayWithMeOrderStateBases []string
-	sqlPayWithMeFeeOrderStates  []string
+	sqlStatedOrderStateBases   []string
+	sqlPayWithMeFeeOrderStates []string
 
 	updateNothing bool
 }
@@ -57,8 +57,8 @@ func (h *updateHandler) constructOrderStateBaseSQL(ctx context.Context) (err err
 	return wlog.WrapError(err)
 }
 
-func (h *updateHandler) constructPayWithMeOrderStateBaseSQLs(ctx context.Context) error {
-	for _, orderID := range h._ent.PayWithMeOrderIDs() {
+func (h *updateHandler) constructStatedOrderStateBaseSQLs(ctx context.Context, orderIDs []uuid.UUID) error {
+	for _, orderID := range orderIDs {
 		_orderID := orderID
 		handler, _ := orderstatebase1.NewHandler(ctx)
 		handler.Req = *h.OrderStateBaseReq
@@ -71,7 +71,7 @@ func (h *updateHandler) constructPayWithMeOrderStateBaseSQLs(ctx context.Context
 			}
 			return wlog.WrapError(err)
 		}
-		h.sqlPayWithMeOrderStateBases = append(h.sqlPayWithMeOrderStateBases, sql)
+		h.sqlStatedOrderStateBases = append(h.sqlStatedOrderStateBases, sql)
 	}
 	return nil
 }
@@ -206,8 +206,8 @@ func (h *updateHandler) updateOrderStateBase(ctx context.Context, tx *ent.Tx) er
 	return h.execSQL(ctx, tx, h.sqlOrderStateBase)
 }
 
-func (h *updateHandler) updatePayWithMeOrderStateBases(ctx context.Context, tx *ent.Tx) error {
-	for _, sql := range h.sqlPayWithMeOrderStateBases {
+func (h *updateHandler) updateStatedOrderStateBases(ctx context.Context, tx *ent.Tx) error {
+	for _, sql := range h.sqlStatedOrderStateBases {
 		if err := h.execSQL(ctx, tx, sql); err != nil {
 			return err
 		}
@@ -629,7 +629,11 @@ func (h *Handler) UpdatePowerRentalWithTx(ctx context.Context, tx *ent.Tx) error
 	if err := handler.constructOrderStateBaseSQL(ctx); err != nil {
 		return wlog.WrapError(err)
 	}
-	if err := handler.constructPayWithMeOrderStateBaseSQLs(ctx); err != nil {
+	statedOrderIDs := handler._ent.PayWithMeOrderIDs()
+	if h.OrderStateBaseReq.OrderState != nil && *h.OrderStateBaseReq.OrderState == types.OrderState_OrderStateExpired {
+		statedOrderIDs = handler._ent.ChildOrderIDs()
+	}
+	if err := handler.constructStatedOrderStateBaseSQLs(ctx, statedOrderIDs); err != nil {
 		return wlog.WrapError(err)
 	}
 	if err := handler.constructPowerRentalStateSQL(ctx); err != nil {
@@ -652,7 +656,7 @@ func (h *Handler) UpdatePowerRentalWithTx(ctx context.Context, tx *ent.Tx) error
 	if err := handler.updateOrderStateBase(ctx, tx); err != nil {
 		return wlog.WrapError(err)
 	}
-	if err := handler.updatePayWithMeOrderStateBases(ctx, tx); err != nil {
+	if err := handler.updateStatedOrderStateBases(ctx, tx); err != nil {
 		return wlog.WrapError(err)
 	}
 	if err := handler.updatePowerRentalState(ctx, tx); err != nil {

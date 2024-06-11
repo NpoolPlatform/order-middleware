@@ -26,6 +26,7 @@ type powerRental struct {
 	entStockLock        *ent.OrderLock
 	entOrderCoupons     []*ent.OrderCoupon
 	payWithMeOrderIDs   []uuid.UUID
+	childOrderIDs       []uuid.UUID
 }
 
 func (f *powerRental) OrderID() uuid.UUID {
@@ -113,4 +114,8 @@ func (f *powerRental) DiscountAmountUSD() decimal.Decimal {
 
 func (f *powerRental) PayWithMeOrderIDs() []uuid.UUID {
 	return f.payWithMeOrderIDs
+}
+
+func (f *powerRental) ChildOrderIDs() []uuid.UUID {
+	return f.childOrderIDs
 }

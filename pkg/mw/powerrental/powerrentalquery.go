@@ -202,6 +202,24 @@ func (h *powerRentalQueryHandler) getPayWithMeOrders(ctx context.Context, cli *e
 	return nil
 }
 
+func (h *powerRentalQueryHandler) getChildOrders(ctx context.Context, cli *ent.Client) error {
+	infos, err := cli.
+		OrderBase.
+		Query().
+		Where(
+			entorderbase.ParentOrderID(h._ent.entPowerRental.OrderID),
+			entorderbase.DeletedAt(0),
+		).
+		All(ctx)
+	if err != nil {
+		return wlog.WrapError(err)
+	}
+	for _, info := range infos {
+		h._ent.childOrderIDs = append(h._ent.childOrderIDs, info.EntID)
+	}
+	return nil
+}
+
 func (h *powerRentalQueryHandler) _getPowerRental(ctx context.Context, must bool) error {
 	if h.ID == nil && h.EntID == nil && h.OrderID == nil {
 		return wlog.Errorf("invalid id")
@@ -238,6 +256,9 @@ func (h *powerRentalQueryHandler) _getPowerRental(ctx context.Context, must bool
 			return wlog.WrapError(err)
 		}
 		if err := h.getPayWithMeOrders(_ctx, cli); err != nil {
+			return wlog.WrapError(err)
+		}
+		if err := h.getChildOrders(_ctx, cli); err != nil {
 			return wlog.WrapError(err)
 		}
 		return h.getOrderCoupons(_ctx, cli)
