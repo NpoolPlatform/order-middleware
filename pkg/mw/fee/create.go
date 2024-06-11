@@ -243,27 +243,31 @@ func (h *createHandler) formalizePaymentTransfers() {
 	}
 }
 
-func (h *createHandler) formalizePaymentType() {
+func (h *createHandler) formalizePaymentType() error {
 	if *h.OrderBaseReq.OrderType == types.OrderType_Offline {
 		h.OrderStateBaseReq.PaymentType = func() *types.PaymentType { e := types.PaymentType_PayWithOffline; return &e }()
-		return
+		return nil
 	}
 	if *h.OrderBaseReq.OrderType == types.OrderType_Airdrop {
 		h.OrderStateBaseReq.PaymentType = func() *types.PaymentType { e := types.PaymentType_PayWithNoPayment; return &e }()
-		return
+		return nil
 	}
 	if len(h.PaymentBalanceReqs) > 0 && len(h.PaymentTransferReqs) > 0 {
 		h.OrderStateBaseReq.PaymentType = func() *types.PaymentType { e := types.PaymentType_PayWithTransferAndBalance; return &e }()
-		return
+		return nil
 	}
 	if len(h.PaymentBalanceReqs) > 0 {
 		h.OrderStateBaseReq.PaymentType = func() *types.PaymentType { e := types.PaymentType_PayWithBalanceOnly; return &e }()
-		return
+		return nil
 	}
 	if len(h.PaymentTransferReqs) > 0 {
 		h.OrderStateBaseReq.PaymentType = func() *types.PaymentType { e := types.PaymentType_PayWithTransferOnly; return &e }()
-		return
+		return nil
 	}
+	if h.OrderStateBaseReq.PaymentType == nil {
+		return wlog.Errorf("invalid paymenttype")
+	}
+	return nil
 }
 
 func (h *createHandler) formalizePaymentID() {
@@ -360,7 +364,9 @@ func (h *Handler) CreateFeeOrderWithTx(ctx context.Context, tx *ent.Tx) error {
 	handler.formalizeUserID()
 	handler.formalizeEntIDs()
 	handler.formalizeOrderCoupons()
-	handler.formalizePaymentType()
+	if err := handler.formalizePaymentType(); err != nil {
+		return wlog.WrapError(err)
+	}
 	handler.paymentChecker.PaymentType = h.OrderStateBaseReq.PaymentType
 	handler.formalizePaymentID()
 	if err := handler.validatePaymentType(); err != nil {
