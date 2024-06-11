@@ -46,7 +46,7 @@ func (s *Server) CreatePowerRentalOrderWithFees(ctx context.Context, in *npool.C
 
 		powerrental1.WithStartMode(powerRentalOrder.StartMode, true),
 		powerrental1.WithStartAt(powerRentalOrder.StartAt, true),
-		powerrental1.WithAppGoodStockLockID(powerRentalOrder.AppGoodStockLockID, true),
+		powerrental1.WithAppGoodStockLockID(powerRentalOrder.AppGoodStockLockID, false),
 		powerrental1.WithLedgerLockID(powerRentalOrder.LedgerLockID, false),
 		powerrental1.WithPaymentID(powerRentalOrder.PaymentID, false),
 		powerrental1.WithCouponIDs(powerRentalOrder.CouponIDs, false),
