@@ -19,7 +19,7 @@ func (h *baseQueryHandler) selectPaymentBase(stm *ent.PaymentBaseQuery) *ent.Pay
 }
 
 func (h *baseQueryHandler) queryPaymentBase(cli *ent.Client) error {
-	if h.EntID == nil || h.ID == nil {
+	if h.EntID == nil && h.ID == nil {
 		return wlog.Errorf("invalid entid")
 	}
 	stm := cli.PaymentBase.
