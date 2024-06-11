@@ -374,6 +374,21 @@ func (h *updateHandler) validateCancelState() error {
 	return nil
 }
 
+func (h *updateHandler) validateUserSetPaid() error {
+	if h.FeeOrderStateReq.UserSetPaid != nil && *h.FeeOrderStateReq.UserSetPaid {
+		switch h._ent.PaymentType() {
+		case types.PaymentType_PayWithBalanceOnly:
+			fallthrough //nolint
+		case types.PaymentType_PayWithTransferAndBalance:
+			fallthrough
+		case types.PaymentType_PayWithTransferOnly:
+		default:
+			return wlog.Errorf("permission denied")
+		}
+	}
+	return nil
+}
+
 func (h *updateHandler) formalizeCancelState() error {
 	if (h.FeeOrderStateReq.UserSetCanceled != nil && *h.FeeOrderStateReq.UserSetCanceled) ||
 		(h.FeeOrderStateReq.AdminSetCanceled != nil && *h.FeeOrderStateReq.AdminSetCanceled) {
@@ -532,6 +547,9 @@ func (h *Handler) UpdateFeeOrderWithTx(ctx context.Context, tx *ent.Tx) error {
 		}
 	}
 	if err := handler.validatePaymentState(); err != nil {
+		return wlog.WrapError(err)
+	}
+	if err := handler.validateUserSetPaid(); err != nil {
 		return wlog.WrapError(err)
 	}
 	if err := handler.formalizeCancelState(); err != nil {
