@@ -185,10 +185,22 @@ func (h *queryHandler) queryFeeDurations(ctx context.Context, cli *ent.Client) e
 		entorderbase.FieldAppGoodID,
 	).Aggregate(func(s *sql.Selector) string {
 		t1 := sql.Table(entfeeorder.Table)
+		t2 := sql.Table(entfeeorderstate.Table)
 		s.Join(t1).
 			On(
 				s.C(entorderbase.FieldEntID),
 				t1.C(entfeeorder.FieldOrderID),
+			).
+			Join(t2).
+			On(
+				s.C(entorderbase.FieldEntID),
+				t2.C(entfeeorderstate.FieldOrderID),
+			).
+			OnP(
+				sql.Or(
+					sql.EQ(t2.C(entfeeorderstate.FieldPaymentState), types.PaymentState_PaymentStateDone.String()),
+					sql.EQ(t2.C(entfeeorderstate.FieldPaymentState), types.PaymentState_PaymentStateNoPayment.String()),
+				),
 			)
 		return sql.As(
 			sql.Sum(t1.C(entfeeorder.FieldDurationSeconds)),
