@@ -53,7 +53,8 @@ func (h *Handler) UpdatePayment(ctx context.Context) error {
 
 	h.ID = &info.ID
 	handler := &updateHandler{
-		Handler: h,
+		Handler:       h,
+		obseleteState: info.ObseleteState,
 	}
 	if err := handler.validateObseleteState(); err != nil {
 		return wlog.WrapError(err)
