@@ -355,7 +355,6 @@ func (h *createHandler) validateOrderType() error {
 		}
 	}
 	return nil
-	return nil
 }
 
 func (h *Handler) CreateFeeOrderWithTx(ctx context.Context, tx *ent.Tx) error {

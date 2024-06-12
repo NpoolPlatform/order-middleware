@@ -335,6 +335,7 @@ func (h *updateHandler) formalizePaymentType() error {
 	return nil
 }
 
+//nolint:gocritic
 func (h *updateHandler) formalizePaymentID() error {
 	if (h.PaymentBaseReq.EntID == nil || h._ent.PaymentID() == *h.PaymentBaseReq.EntID) &&
 		(h.OrderStateBaseReq.PaymentType == nil || h._ent.PaymentType() == *h.OrderStateBaseReq.PaymentType) {
@@ -380,7 +381,7 @@ func (h *updateHandler) validateUserSetPaid() error {
 		case types.PaymentType_PayWithBalanceOnly:
 			fallthrough //nolint
 		case types.PaymentType_PayWithTransferAndBalance:
-			fallthrough
+			fallthrough //nolint
 		case types.PaymentType_PayWithTransferOnly:
 		default:
 			return wlog.Errorf("permission denied")

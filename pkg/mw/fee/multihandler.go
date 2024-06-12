@@ -68,7 +68,7 @@ func (h *MultiHandler) validatePaymentOrder() (bool, error) {
 	return paymentOrders > 0, nil
 }
 
-//nolint:gocyclo
+//nolint:unparam
 func (h *MultiHandler) validatePaymentID() error {
 	var paymentID *uuid.UUID
 

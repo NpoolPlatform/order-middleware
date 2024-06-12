@@ -220,6 +220,7 @@ func (h *powerRentalQueryHandler) getChildOrders(ctx context.Context, cli *ent.C
 	return nil
 }
 
+//nolint:gocyclo
 func (h *powerRentalQueryHandler) _getPowerRental(ctx context.Context, must bool) error {
 	if h.ID == nil && h.EntID == nil && h.OrderID == nil {
 		return wlog.Errorf("invalid id")
