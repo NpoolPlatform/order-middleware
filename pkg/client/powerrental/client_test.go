@@ -184,6 +184,7 @@ func createPowerRentalOrderWithFees(t *testing.T) {
 			ret.StartAt = info.StartAt
 			ret.EndAt = info.EndAt
 			ret.ID = info.ID
+			ret.FeeDurations = info.FeeDurations
 			for _, paymentBalance := range ret.PaymentBalances {
 				paymentBalance.CreatedAt = ret.CreatedAt
 			}

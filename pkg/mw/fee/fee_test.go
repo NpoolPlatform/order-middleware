@@ -47,7 +47,7 @@ var ret = npool.FeeOrder{
 	PaymentType:         types.PaymentType_PayWithBalanceOnly,
 	CreateMethod:        types.OrderCreateMethod_OrderCreatedByPurchase,
 	GoodValueUSD:        decimal.NewFromInt(120).String(),
-	PaymentGoodValueUSD: decimal.NewFromInt(0).String(),
+	PaymentGoodValueUSD: decimal.NewFromInt(120).String(),
 	PaymentAmountUSD:    decimal.NewFromInt(110).String(),
 	DiscountAmountUSD:   decimal.NewFromInt(10).String(),
 	PromotionID:         uuid.NewString(),
