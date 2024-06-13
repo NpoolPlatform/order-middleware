@@ -220,7 +220,7 @@ func (h *baseQueryHandler) queryJoinOrderStateBase(s *sql.Selector) error {
 				return _states
 			}()...))
 		default:
-			return wlog.Errorf("invalid renewnotifyat")
+			return wlog.Errorf("invalid orderstates")
 		}
 	}
 	if h.OrderStateBaseConds.StartMode != nil {
