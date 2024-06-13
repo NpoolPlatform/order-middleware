@@ -185,7 +185,8 @@ func (h *queryHandler) queryFeeDurations(ctx context.Context, cli *ent.Client) e
 		entorderbase.FieldAppGoodID,
 	).Aggregate(func(s *sql.Selector) string {
 		t1 := sql.Table(entfeeorder.Table)
-		t2 := sql.Table(entfeeorderstate.Table)
+		t2 := sql.Table(entorderstatebase.Table)
+		t3 := sql.Table(entfeeorderstate.Table)
 		s.Join(t1).
 			On(
 				s.C(entorderbase.FieldEntID),
@@ -194,12 +195,24 @@ func (h *queryHandler) queryFeeDurations(ctx context.Context, cli *ent.Client) e
 			Join(t2).
 			On(
 				s.C(entorderbase.FieldEntID),
-				t2.C(entfeeorderstate.FieldOrderID),
+				t2.C(entorderstatebase.FieldOrderID),
 			).
 			OnP(
 				sql.Or(
-					sql.EQ(t2.C(entfeeorderstate.FieldPaymentState), types.PaymentState_PaymentStateDone.String()),
-					sql.EQ(t2.C(entfeeorderstate.FieldPaymentState), types.PaymentState_PaymentStateNoPayment.String()),
+					sql.EQ(t2.C(entorderstatebase.FieldOrderState), types.OrderState_OrderStatePaid.String()),
+					sql.EQ(t2.C(entorderstatebase.FieldOrderState), types.OrderState_OrderStateInService.String()),
+					sql.EQ(t2.C(entorderstatebase.FieldOrderState), types.OrderState_OrderStateExpired.String()),
+				),
+			).
+			Join(t3).
+			On(
+				s.C(entorderbase.FieldEntID),
+				t3.C(entfeeorderstate.FieldOrderID),
+			).
+			OnP(
+				sql.Or(
+					sql.EQ(t3.C(entfeeorderstate.FieldPaymentState), types.PaymentState_PaymentStateDone.String()),
+					sql.EQ(t3.C(entfeeorderstate.FieldPaymentState), types.PaymentState_PaymentStateNoPayment.String()),
 				),
 			)
 		return sql.As(
