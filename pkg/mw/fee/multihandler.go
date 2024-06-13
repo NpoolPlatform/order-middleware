@@ -69,7 +69,7 @@ func (h *MultiHandler) validatePaymentOrder() (bool, error) {
 }
 
 //nolint:unparam
-func (h *MultiHandler) validatePaymentID() error {
+func (h *MultiHandler) formalizePaymentID() error {
 	var paymentID *uuid.UUID
 
 	for _, handler := range h.Handlers {
@@ -82,6 +82,7 @@ func (h *MultiHandler) validatePaymentID() error {
 		paymentID = func() *uuid.UUID { uid := uuid.New(); return &uid }()
 	}
 	for _, handler := range h.Handlers {
+		handler.PaymentBaseReq.EntID = paymentID
 		for _, balance := range handler.PaymentBalanceReqs {
 			balance.PaymentID = paymentID
 		}
@@ -98,7 +99,7 @@ func (h *MultiHandler) CreateFeeOrdersWithTx(ctx context.Context, tx *ent.Tx) er
 		return wlog.WrapError(err)
 	}
 	if shouldPay {
-		if err := h.validatePaymentID(); err != nil {
+		if err := h.formalizePaymentID(); err != nil {
 			return wlog.WrapError(err)
 		}
 	}
