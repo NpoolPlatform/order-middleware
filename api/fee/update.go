@@ -38,6 +38,8 @@ func (s *Server) UpdateFeeOrder(ctx context.Context, in *npool.UpdateFeeOrderReq
 		feeorder1.WithPaymentID(req.PaymentID, false),
 		feeorder1.WithPaymentBalances(req.PaymentBalances, false),
 		feeorder1.WithPaymentTransfers(req.PaymentTransfers, false),
+
+		feeorder1.WithMainOrder(func() *bool { b := true; return &b }(), true),
 	)
 	if err != nil {
 		logger.Sugar().Errorw(

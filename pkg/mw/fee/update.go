@@ -534,6 +534,15 @@ func (h *Handler) UpdateFeeOrderWithTx(ctx context.Context, tx *ent.Tx) error {
 	if err := handler.requireFeeOrder(ctx); err != nil {
 		return wlog.WrapError(err)
 	}
+	if h.MainOrder != nil && *h.MainOrder {
+		switch handler._ent.PaymentType() {
+		case types.PaymentType_PayWithBalanceOnly:
+		case types.PaymentType_PayWithTransferOnly:
+		case types.PaymentType_PayWithTransferAndBalance:
+		default:
+			return wlog.Errorf("permission denied")
+		}
+	}
 	handler.paymentChecker.PaymentAmountUSD = func() *decimal.Decimal { d := handler._ent.PaymentAmountUSD(); return &d }()
 	handler.paymentChecker.DiscountAmountUSD = func() *decimal.Decimal { d := handler._ent.DiscountAmountUSD(); return &d }()
 	if handler.paymentChecker.PaymentType == nil {

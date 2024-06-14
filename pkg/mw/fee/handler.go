@@ -27,8 +27,9 @@ import (
 )
 
 type Handler struct {
-	ID       *uint32
-	Rollback *bool
+	ID        *uint32
+	Rollback  *bool
+	MainOrder *bool
 	feeordercrud.Req
 	OrderBaseReq          *orderbasecrud.Req
 	OrderStateBaseReq     *orderstatebasecrud.Req
@@ -497,6 +498,13 @@ func WithRollback(rollback *bool, must bool) func(context.Context, *Handler) err
 			return nil
 		}
 		h.Rollback = rollback
+		return nil
+	}
+}
+
+func WithMainOrder(mainOrder *bool, must bool) func(context.Context, *Handler) error {
+	return func(ctx context.Context, h *Handler) error {
+		h.MainOrder = mainOrder
 		return nil
 	}
 }
