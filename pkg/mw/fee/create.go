@@ -270,6 +270,13 @@ func (h *createHandler) formalizePaymentType() error {
 	return nil
 }
 
+func (h *createHandler) formalizePaymentState() {
+	if *h.OrderStateBaseReq.PaymentType != types.PaymentType_PayWithNoPayment {
+		return
+	}
+	h.FeeOrderStateReq.PaymentState = types.PaymentState_PaymentStateNoPayment.Enum()
+}
+
 func (h *createHandler) formalizePaymentID() {
 	if !h.paymentChecker.Payable() {
 		return
@@ -384,6 +391,7 @@ func (h *Handler) CreateFeeOrderWithTx(ctx context.Context, tx *ent.Tx) error {
 	if err := handler.formalizePaymentType(); err != nil {
 		return wlog.WrapError(err)
 	}
+	handler.formalizePaymentState()
 	handler.paymentChecker.PaymentType = h.OrderStateBaseReq.PaymentType
 	handler.formalizePaymentID()
 	if err := handler.validatePaymentType(); err != nil {

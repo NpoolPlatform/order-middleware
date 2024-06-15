@@ -284,6 +284,13 @@ func (h *createHandler) formalizePaymentType() error {
 	return nil
 }
 
+func (h *createHandler) formalizePaymentState() {
+	if *h.OrderStateBaseReq.PaymentType != types.PaymentType_PayWithNoPayment {
+		return
+	}
+	h.PowerRentalStateReq.PaymentState = types.PaymentState_PaymentStateNoPayment.Enum()
+}
+
 func (h *createHandler) formalizeStartAt() {
 	switch *h.OrderStateBaseReq.StartMode {
 	case types.OrderStartMode_OrderStartInstantly:
@@ -442,6 +449,7 @@ func (h *Handler) CreatePowerRentalWithTx(ctx context.Context, tx *ent.Tx) error
 	if err := handler.formalizePaymentType(); err != nil {
 		return wlog.WrapError(err)
 	}
+	handler.formalizePaymentState()
 	handler.paymentChecker.PaymentType = h.OrderStateBaseReq.PaymentType
 	handler.formalizePaymentID()
 	if err := handler.validatePaymentType(); err != nil {
