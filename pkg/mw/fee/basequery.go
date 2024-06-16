@@ -382,6 +382,7 @@ func (h *baseQueryHandler) queryJoinParentOrder(s *sql.Selector) {
 			t1.C(entorderbase.FieldEntID),
 		).
 		AppendSelect(
+			sql.As(t1.C(entorderbase.FieldGoodID), "parent_good_id"),
 			sql.As(t1.C(entorderbase.FieldAppGoodID), "parent_app_good_id"),
 			sql.As(t1.C(entorderbase.FieldGoodType), "parent_good_type"),
 		)
