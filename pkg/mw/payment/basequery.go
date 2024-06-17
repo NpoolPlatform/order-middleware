@@ -6,6 +6,7 @@ import (
 	wlog "github.com/NpoolPlatform/go-service-framework/pkg/wlog"
 	paymentbasecrud "github.com/NpoolPlatform/order-middleware/pkg/crud/payment"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent"
+	entorderbase "github.com/NpoolPlatform/order-middleware/pkg/db/ent/orderbase"
 	entpaymentbalancelock "github.com/NpoolPlatform/order-middleware/pkg/db/ent/paymentbalancelock"
 	entpaymentbase "github.com/NpoolPlatform/order-middleware/pkg/db/ent/paymentbase"
 )
@@ -74,9 +75,23 @@ func (h *baseQueryHandler) queryJoinLedgerLock(s *sql.Selector) {
 		)
 }
 
+func (h *baseQueryHandler) queryJoinOrderBase(s *sql.Selector) {
+	t := sql.Table(entorderbase.Table)
+	s.Join(t).
+		On(
+			s.C(entpaymentbase.FieldOrderID),
+			t.C(entorderbase.FieldEntID),
+		).
+		AppendSelect(
+			t.C(entorderbase.FieldAppID),
+			t.C(entorderbase.FieldUserID),
+		)
+}
+
 func (h *baseQueryHandler) queryJoin() {
 	h.stmSelect.Modify(func(s *sql.Selector) {
 		h.queryJoinMyself(s)
 		h.queryJoinLedgerLock(s)
+		h.queryJoinOrderBase(s)
 	})
 }
