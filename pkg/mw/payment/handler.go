@@ -91,7 +91,9 @@ func WithObseleteState(e *types.PaymentObseleteState, must bool) func(context.Co
 		switch *e {
 		case types.PaymentObseleteState_PaymentObseleteNone:
 		case types.PaymentObseleteState_PaymentObseleteWait:
-		case types.PaymentObseleteState_PaymentObseleteUnlock:
+		case types.PaymentObseleteState_PaymentObseleteUnlockBalance:
+		case types.PaymentObseleteState_PaymentObseleteTransferBookKeeping:
+		case types.PaymentObseleteState_PaymentObseleteTransferUnlockAccount:
 		case types.PaymentObseleteState_PaymentObseleted:
 		case types.PaymentObseleteState_PaymentObseleteFail:
 		default:

@@ -15,6 +15,7 @@ type updateHandler struct {
 	obseleteState types.PaymentObseleteState
 }
 
+//nolint:gocyclo
 func (h *updateHandler) validateObseleteState() error {
 	if h.ObseleteState == nil {
 		return nil
@@ -23,10 +24,26 @@ func (h *updateHandler) validateObseleteState() error {
 	case types.PaymentObseleteState_PaymentObseleteNone:
 		return wlog.Errorf("permission denied")
 	case types.PaymentObseleteState_PaymentObseleteWait:
-		if *h.ObseleteState == types.PaymentObseleteState_PaymentObseleteUnlock {
+		if *h.ObseleteState == types.PaymentObseleteState_PaymentObseleteUnlockBalance {
 			return wlog.Errorf("permission denied")
 		}
-	case types.PaymentObseleteState_PaymentObseleteUnlock:
+	case types.PaymentObseleteState_PaymentObseleteUnlockBalance:
+		switch *h.ObseleteState {
+		case types.PaymentObseleteState_PaymentObseleteTransferBookKeeping:
+			fallthrough //nolint
+		case types.PaymentObseleteState_PaymentObseleteFail:
+		default:
+			return wlog.Errorf("permission denied")
+		}
+	case types.PaymentObseleteState_PaymentObseleteTransferBookKeeping:
+		switch *h.ObseleteState {
+		case types.PaymentObseleteState_PaymentObseleteTransferUnlockAccount:
+			fallthrough //nolint
+		case types.PaymentObseleteState_PaymentObseleteFail:
+		default:
+			return wlog.Errorf("permission denied")
+		}
+	case types.PaymentObseleteState_PaymentObseleteTransferUnlockAccount:
 		switch *h.ObseleteState {
 		case types.PaymentObseleteState_PaymentObseleted:
 			fallthrough //nolint
