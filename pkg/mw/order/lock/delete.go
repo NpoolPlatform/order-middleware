@@ -26,7 +26,7 @@ func (h *deleteHandler) deleteOrderLock(ctx context.Context, tx *ent.Tx) error {
 }
 
 func (h *Handler) DeleteOrderLockWithTx(ctx context.Context, tx *ent.Tx) error {
-	info, err := h.GetOrderLock(ctx)
+	info, err := h.GetOrderLockWithTx(ctx, tx)
 	if err != nil {
 		return wlog.WrapError(err)
 	}

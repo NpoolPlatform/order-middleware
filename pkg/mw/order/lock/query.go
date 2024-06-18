@@ -45,32 +45,51 @@ func (h *queryHandler) formalize() {
 	}
 }
 
+func (h *queryHandler) getOrderLockWithClient(ctx context.Context, cli *ent.Client) error {
+	if err := h.queryOrderLock(cli); err != nil {
+		return wlog.WrapError(err)
+	}
+	h.queryJoin()
+	if err := h.scan(ctx); err != nil {
+		return wlog.WrapError(err)
+	}
+	if len(h.infos) > 1 {
+		return wlog.Errorf("too many records")
+	}
+
+	h.formalize()
+	return nil
+}
+
+func (h *Handler) GetOrderLockWithTx(ctx context.Context, tx *ent.Tx) (*npool.OrderLock, error) {
+	handler := &queryHandler{
+		baseQueryHandler: &baseQueryHandler{
+			Handler: h,
+		},
+	}
+	if err := handler.getOrderLockWithClient(ctx, tx.Client()); err != nil {
+		return nil, wlog.WrapError(err)
+	}
+	if len(handler.infos) == 0 {
+		return nil, nil
+	}
+	return handler.infos[0], nil
+}
+
 func (h *Handler) GetOrderLock(ctx context.Context) (*npool.OrderLock, error) {
 	handler := &queryHandler{
 		baseQueryHandler: &baseQueryHandler{
 			Handler: h,
 		},
 	}
-
-	err := db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
-		if err := handler.queryOrderLock(cli); err != nil {
-			return err
-		}
-		handler.queryJoin()
-		return handler.scan(_ctx)
-	})
-	if err != nil {
+	if err := db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
+		return handler.getOrderLockWithClient(_ctx, cli)
+	}); err != nil {
 		return nil, wlog.WrapError(err)
 	}
 	if len(handler.infos) == 0 {
 		return nil, nil
 	}
-	if len(handler.infos) > 1 {
-		return nil, wlog.Errorf("too many records")
-	}
-
-	handler.formalize()
-
 	return handler.infos[0], nil
 }
 
@@ -102,7 +121,7 @@ func (h *Handler) GetOrderLocks(ctx context.Context) (infos []*npool.OrderLock, 
 			Limit(int(handler.Limit)).
 			Order(ent.Desc(entorderlock.FieldCreatedAt))
 		if err := handler.scan(ctx); err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		return nil
 	}); err != nil {
