@@ -531,7 +531,7 @@ func (h *Handler) UpdateFeeOrderWithTx(ctx context.Context, tx *ent.Tx) error {
 		},
 	}
 
-	if err := handler.requireFeeOrder(ctx); err != nil {
+	if err := handler.requireFeeOrderWithTx(ctx, tx); err != nil {
 		return wlog.WrapError(err)
 	}
 	if h.MainOrder != nil && *h.MainOrder {

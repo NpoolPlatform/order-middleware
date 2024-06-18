@@ -184,49 +184,59 @@ func (h *feeOrderQueryHandler) getPayWithMeOrders(ctx context.Context, cli *ent.
 	return nil
 }
 
-func (h *feeOrderQueryHandler) _getFeeOrder(ctx context.Context, must bool) error {
+func (h *feeOrderQueryHandler) _getFeeOrder(ctx context.Context, cli *ent.Client, must bool) error {
 	if h.ID == nil && h.EntID == nil && h.OrderID == nil {
 		return wlog.Errorf("invalid id")
 	}
-	return db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
-		if err := h.getFeeOrderEnt(_ctx, cli, must); err != nil {
-			return wlog.WrapError(err)
-		}
-		if h._ent.entFeeOrder == nil {
-			return nil
-		}
-		if err := h.getFeeOrderState(_ctx, cli); err != nil {
-			return wlog.WrapError(err)
-		}
-		if err := h.getOrderBase(_ctx, cli); err != nil {
-			return wlog.WrapError(err)
-		}
-		if err := h.getOrderStateBase(_ctx, cli); err != nil {
-			return wlog.WrapError(err)
-		}
-		if err := h.getPaymentBase(_ctx, cli); err != nil {
-			return wlog.WrapError(err)
-		}
-		if err := h.getLedgerLock(_ctx, cli); err != nil {
-			return wlog.WrapError(err)
-		}
-		if err := h.getPaymentBalances(_ctx, cli); err != nil {
-			return wlog.WrapError(err)
-		}
-		if err := h.getPaymentTransfers(_ctx, cli); err != nil {
-			return wlog.WrapError(err)
-		}
-		if err := h.getPayWithMeOrders(_ctx, cli); err != nil {
-			return wlog.WrapError(err)
-		}
-		return h.getOrderCoupons(_ctx, cli)
-	})
+	if err := h.getFeeOrderEnt(ctx, cli, must); err != nil {
+		return wlog.WrapError(err)
+	}
+	if h._ent.entFeeOrder == nil {
+		return nil
+	}
+	if err := h.getFeeOrderState(ctx, cli); err != nil {
+		return wlog.WrapError(err)
+	}
+	if err := h.getOrderBase(ctx, cli); err != nil {
+		return wlog.WrapError(err)
+	}
+	if err := h.getOrderStateBase(ctx, cli); err != nil {
+		return wlog.WrapError(err)
+	}
+	if err := h.getPaymentBase(ctx, cli); err != nil {
+		return wlog.WrapError(err)
+	}
+	if err := h.getLedgerLock(ctx, cli); err != nil {
+		return wlog.WrapError(err)
+	}
+	if err := h.getPaymentBalances(ctx, cli); err != nil {
+		return wlog.WrapError(err)
+	}
+	if err := h.getPaymentTransfers(ctx, cli); err != nil {
+		return wlog.WrapError(err)
+	}
+	if err := h.getPayWithMeOrders(ctx, cli); err != nil {
+		return wlog.WrapError(err)
+	}
+	return h.getOrderCoupons(ctx, cli)
+}
+
+func (h *feeOrderQueryHandler) getFeeOrderWithTx(ctx context.Context, tx *ent.Tx) error {
+	return h._getFeeOrder(ctx, tx.Client(), false)
+}
+
+func (h *feeOrderQueryHandler) requireFeeOrderWithTx(ctx context.Context, tx *ent.Tx) error {
+	return h._getFeeOrder(ctx, tx.Client(), true)
 }
 
 func (h *feeOrderQueryHandler) getFeeOrder(ctx context.Context) error {
-	return h._getFeeOrder(ctx, false)
+	return db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
+		return h._getFeeOrder(_ctx, cli, false)
+	})
 }
 
 func (h *feeOrderQueryHandler) requireFeeOrder(ctx context.Context) error {
-	return h._getFeeOrder(ctx, true)
+	return db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
+		return h._getFeeOrder(_ctx, cli, true)
+	})
 }
