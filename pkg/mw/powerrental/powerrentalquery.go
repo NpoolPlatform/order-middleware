@@ -221,55 +221,65 @@ func (h *powerRentalQueryHandler) getChildOrders(ctx context.Context, cli *ent.C
 }
 
 //nolint:gocyclo
-func (h *powerRentalQueryHandler) _getPowerRental(ctx context.Context, must bool) error {
+func (h *powerRentalQueryHandler) _getPowerRental(ctx context.Context, cli *ent.Client, must bool) error {
 	if h.ID == nil && h.EntID == nil && h.OrderID == nil {
 		return wlog.Errorf("invalid id")
 	}
-	return db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
-		if err := h.getPowerRentalEnt(_ctx, cli, must); err != nil {
-			return wlog.WrapError(err)
-		}
-		if h._ent.entPowerRental == nil {
-			return nil
-		}
-		if err := h.getPowerRentalState(_ctx, cli); err != nil {
-			return wlog.WrapError(err)
-		}
-		if err := h.getOrderBase(_ctx, cli); err != nil {
-			return wlog.WrapError(err)
-		}
-		if err := h.getOrderStateBase(_ctx, cli); err != nil {
-			return wlog.WrapError(err)
-		}
-		if err := h.getPaymentBase(_ctx, cli); err != nil {
-			return wlog.WrapError(err)
-		}
-		if err := h.getLedgerLock(_ctx, cli); err != nil {
-			return wlog.WrapError(err)
-		}
-		if err := h.getStockLock(_ctx, cli); err != nil {
-			return wlog.WrapError(err)
-		}
-		if err := h.getPaymentBalances(_ctx, cli); err != nil {
-			return wlog.WrapError(err)
-		}
-		if err := h.getPaymentTransfers(_ctx, cli); err != nil {
-			return wlog.WrapError(err)
-		}
-		if err := h.getPayWithMeOrders(_ctx, cli); err != nil {
-			return wlog.WrapError(err)
-		}
-		if err := h.getChildOrders(_ctx, cli); err != nil {
-			return wlog.WrapError(err)
-		}
-		return h.getOrderCoupons(_ctx, cli)
-	})
+	if err := h.getPowerRentalEnt(ctx, cli, must); err != nil {
+		return wlog.WrapError(err)
+	}
+	if h._ent.entPowerRental == nil {
+		return nil
+	}
+	if err := h.getPowerRentalState(ctx, cli); err != nil {
+		return wlog.WrapError(err)
+	}
+	if err := h.getOrderBase(ctx, cli); err != nil {
+		return wlog.WrapError(err)
+	}
+	if err := h.getOrderStateBase(ctx, cli); err != nil {
+		return wlog.WrapError(err)
+	}
+	if err := h.getPaymentBase(ctx, cli); err != nil {
+		return wlog.WrapError(err)
+	}
+	if err := h.getLedgerLock(ctx, cli); err != nil {
+		return wlog.WrapError(err)
+	}
+	if err := h.getStockLock(ctx, cli); err != nil {
+		return wlog.WrapError(err)
+	}
+	if err := h.getPaymentBalances(ctx, cli); err != nil {
+		return wlog.WrapError(err)
+	}
+	if err := h.getPaymentTransfers(ctx, cli); err != nil {
+		return wlog.WrapError(err)
+	}
+	if err := h.getPayWithMeOrders(ctx, cli); err != nil {
+		return wlog.WrapError(err)
+	}
+	if err := h.getChildOrders(ctx, cli); err != nil {
+		return wlog.WrapError(err)
+	}
+	return h.getOrderCoupons(ctx, cli)
+}
+
+func (h *powerRentalQueryHandler) getPowerRentalWithTx(ctx context.Context, tx *ent.Tx) error {
+	return h._getPowerRental(ctx, tx.Client(), false)
+}
+
+func (h *powerRentalQueryHandler) requirePowerRentalWithTx(ctx context.Context, tx *ent.Tx) error {
+	return h._getPowerRental(ctx, tx.Client(), true)
 }
 
 func (h *powerRentalQueryHandler) getPowerRental(ctx context.Context) error {
-	return h._getPowerRental(ctx, false)
+	return db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
+		return h._getPowerRental(_ctx, cli, false)
+	})
 }
 
 func (h *powerRentalQueryHandler) requirePowerRental(ctx context.Context) error {
-	return h._getPowerRental(ctx, true)
+	return db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
+		return h._getPowerRental(_ctx, cli, true)
+	})
 }

@@ -555,7 +555,7 @@ func (h *updateHandler) formalizePaidAt() {
 	}
 }
 
-func (h *updateHandler) validateUpdate(ctx context.Context) error {
+func (h *updateHandler) validateUpdate(ctx context.Context, tx *ent.Tx) error {
 	handler, err := orderstm1.NewHandler(
 		ctx,
 		orderstm1.WithOrderID(h.OrderID, true),
@@ -572,7 +572,7 @@ func (h *updateHandler) validateUpdate(ctx context.Context) error {
 	if err != nil {
 		return wlog.WrapError(err)
 	}
-	state, err := handler.ValidateUpdateForNewState(ctx)
+	state, err := handler.ValidateUpdateForNewState(ctx, tx)
 	if err != nil {
 		return wlog.WrapError(err)
 	}
@@ -600,7 +600,7 @@ func (h *Handler) UpdatePowerRentalWithTx(ctx context.Context, tx *ent.Tx) error
 		},
 	}
 
-	if err := handler.requirePowerRental(ctx); err != nil {
+	if err := handler.requirePowerRentalWithTx(ctx, tx); err != nil {
 		return wlog.WrapError(err)
 	}
 	handler.paymentChecker.PaymentAmountUSD = func() *decimal.Decimal { d := handler._ent.PaymentAmountUSD(); return &d }()
@@ -609,7 +609,7 @@ func (h *Handler) UpdatePowerRentalWithTx(ctx context.Context, tx *ent.Tx) error
 		handler.paymentChecker.PaymentType = func() *types.PaymentType { e := handler._ent.PaymentType(); return &e }()
 	}
 	handler.formalizeOrderID()
-	if err := handler.validateUpdate(ctx); err != nil {
+	if err := handler.validateUpdate(ctx, tx); err != nil {
 		return wlog.WrapError(err)
 	}
 	if err := handler.validateBenefitState(); err != nil {

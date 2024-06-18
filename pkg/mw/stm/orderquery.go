@@ -41,21 +41,25 @@ func (h *orderQueryHandler) getOrderStateBase(ctx context.Context, cli *ent.Clie
 	return wlog.WrapError(err)
 }
 
-func (h *orderQueryHandler) _getOrder(ctx context.Context, must bool) error {
+func (h *orderQueryHandler) _getOrder(ctx context.Context, cli *ent.Client, must bool) error {
 	if h.OrderID == nil {
 		return wlog.Errorf("invalid orderid")
 	}
-	return db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
-		if err := h.getOrderBaseEnt(_ctx, cli, must); err != nil {
-			return wlog.WrapError(err)
-		}
-		if h._ent.entOrderBase == nil {
-			return nil
-		}
-		return h.getOrderStateBase(_ctx, cli)
-	})
+	if err := h.getOrderBaseEnt(ctx, cli, must); err != nil {
+		return wlog.WrapError(err)
+	}
+	if h._ent.entOrderBase == nil {
+		return nil
+	}
+	return h.getOrderStateBase(ctx, cli)
 }
 
 func (h *orderQueryHandler) requireOrder(ctx context.Context) error {
-	return h._getOrder(ctx, true)
+	return db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
+		return h._getOrder(_ctx, cli, true)
+	})
+}
+
+func (h *orderQueryHandler) requireOrderWithTx(ctx context.Context, tx *ent.Tx) error {
+	return h._getOrder(ctx, tx.Client(), true)
 }

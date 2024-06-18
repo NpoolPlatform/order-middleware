@@ -5,6 +5,7 @@ import (
 
 	wlog "github.com/NpoolPlatform/go-service-framework/pkg/wlog"
 	types "github.com/NpoolPlatform/message/npool/basetypes/order/v1"
+	"github.com/NpoolPlatform/order-middleware/pkg/db/ent"
 )
 
 type validateHandler struct {
@@ -130,7 +131,7 @@ func (h *validateHandler) validateOrderState() (*types.OrderState, error) {
 	return h.forward()
 }
 
-func (h *Handler) ValidateUpdateForNewState(ctx context.Context) (*types.OrderState, error) {
+func (h *Handler) ValidateUpdateForNewState(ctx context.Context, tx *ent.Tx) (*types.OrderState, error) {
 	handler := &validateHandler{
 		Handler: h,
 		orderQueryHandler: &orderQueryHandler{
@@ -138,7 +139,7 @@ func (h *Handler) ValidateUpdateForNewState(ctx context.Context) (*types.OrderSt
 		},
 	}
 
-	if err := handler.requireOrder(ctx); err != nil {
+	if err := handler.requireOrderWithTx(ctx, tx); err != nil {
 		return nil, wlog.WrapError(err)
 	}
 	handler.rollbackHandler = &rollbackHandler{
