@@ -1,7 +1,6 @@
 package testinit
 
 import (
-	"context"
 	"fmt"
 	"path"
 	"runtime"
