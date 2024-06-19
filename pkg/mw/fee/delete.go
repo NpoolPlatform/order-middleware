@@ -66,7 +66,7 @@ func (h *Handler) DeleteFeeOrderWithTx(ctx context.Context, tx *ent.Tx) error {
 		now: uint32(time.Now().Unix()),
 	}
 
-	if err := handler.getFeeOrder(ctx); err != nil {
+	if err := handler.getFeeOrderWithTx(ctx, tx); err != nil {
 		return wlog.WrapError(err)
 	}
 	if !handler._ent.Exist() {

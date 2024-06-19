@@ -66,7 +66,7 @@ func (h *Handler) DeletePowerRentalWithTx(ctx context.Context, tx *ent.Tx) error
 		now: uint32(time.Now().Unix()),
 	}
 
-	if err := handler.getPowerRental(ctx); err != nil {
+	if err := handler.getPowerRentalWithTx(ctx, tx); err != nil {
 		return wlog.WrapError(err)
 	}
 	if !handler._ent.Exist() {
