@@ -539,6 +539,8 @@ func (h *Handler) UpdateFeeOrderWithTx(ctx context.Context, tx *ent.Tx) error {
 		case types.PaymentType_PayWithBalanceOnly:
 		case types.PaymentType_PayWithTransferOnly:
 		case types.PaymentType_PayWithTransferAndBalance:
+		case types.PaymentType_PayWithOffline:
+		case types.PaymentType_PayWithNoPayment:
 		default:
 			return wlog.Errorf("permission denied")
 		}
