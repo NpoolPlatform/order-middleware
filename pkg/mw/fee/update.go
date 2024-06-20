@@ -398,6 +398,10 @@ func (h *updateHandler) formalizeCancelState() error {
 		case types.PaymentType_PayWithTransferAndBalance:
 			fallthrough //nolint
 		case types.PaymentType_PayWithTransferOnly:
+			fallthrough //nolint
+		case types.PaymentType_PayWithOffline:
+			fallthrough //nolint
+		case types.PaymentType_PayWithNoPayment:
 		default:
 			return wlog.Errorf("permission denied")
 		}
