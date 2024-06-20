@@ -3,6 +3,8 @@ package orderbase
 import (
 	"fmt"
 	"time"
+
+	types "github.com/NpoolPlatform/message/npool/basetypes/order/v1"
 )
 
 //nolint:goconst,funlen
@@ -72,6 +74,16 @@ func (h *Handler) ConstructCreateSQL() string {
 		_sql += fmt.Sprintf(
 			"where app_id = '%v' and enable_simulate_order = true and deleted_at = 0",
 			*h.AppID,
+		)
+		_sql += " limit 1)"
+		_sql += " and not exists ("
+		_sql += "select 1 from order_bases as t1 join order_state_bases as t2 on t1.ent_id = t2.order_id "
+		_sql += fmt.Sprintf(
+			"where t1.app_good_id = '%v' and t2.user_id = '%v' and t1.deleted—at = 0 and t2.order_state not in ('%v', '%v') ",
+			*h.AppGoodID,
+			*h.UserID,
+			types.OrderState_OrderStateCanceled.String(),
+			types.OrderState_OrderStateExpired.String(),
 		)
 		_sql += " limit 1)"
 	}
