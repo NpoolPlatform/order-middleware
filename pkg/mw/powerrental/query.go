@@ -421,6 +421,9 @@ func (h *Handler) GetPowerRental(ctx context.Context) (*npool.PowerRentalOrder, 
 		if err := handler.scan(_ctx); err != nil {
 			return wlog.WrapError(err)
 		}
+		if len(handler.infos) == 0 {
+			return nil
+		}
 		if err := handler.queryPaymentBalances(_ctx, cli); err != nil {
 			return wlog.WrapError(err)
 		}
@@ -482,6 +485,9 @@ func (h *Handler) GetPowerRentals(ctx context.Context) ([]*npool.PowerRentalOrde
 
 		if err := handler.scan(_ctx); err != nil {
 			return wlog.WrapError(err)
+		}
+		if len(handler.infos) == 0 {
+			return nil
 		}
 		if err := handler.queryPaymentBalances(_ctx, cli); err != nil {
 			return wlog.WrapError(err)
