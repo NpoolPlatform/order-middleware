@@ -41,6 +41,8 @@ type PowerRental struct {
 	PromotionID uuid.UUID `json:"promotion_id,omitempty"`
 	// InvestmentType holds the value of the "investment_type" field.
 	InvestmentType string `json:"investment_type,omitempty"`
+	// DurationSeconds holds the value of the "duration_seconds" field.
+	DurationSeconds uint32 `json:"duration_seconds,omitempty"`
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -50,7 +52,7 @@ func (*PowerRental) scanValues(columns []string) ([]interface{}, error) {
 		switch columns[i] {
 		case powerrental.FieldUnits, powerrental.FieldGoodValueUsd, powerrental.FieldPaymentAmountUsd, powerrental.FieldDiscountAmountUsd:
 			values[i] = new(decimal.Decimal)
-		case powerrental.FieldID, powerrental.FieldCreatedAt, powerrental.FieldUpdatedAt, powerrental.FieldDeletedAt:
+		case powerrental.FieldID, powerrental.FieldCreatedAt, powerrental.FieldUpdatedAt, powerrental.FieldDeletedAt, powerrental.FieldDurationSeconds:
 			values[i] = new(sql.NullInt64)
 		case powerrental.FieldInvestmentType:
 			values[i] = new(sql.NullString)
@@ -149,6 +151,12 @@ func (pr *PowerRental) assignValues(columns []string, values []interface{}) erro
 			} else if value.Valid {
 				pr.InvestmentType = value.String
 			}
+		case powerrental.FieldDurationSeconds:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field duration_seconds", values[i])
+			} else if value.Valid {
+				pr.DurationSeconds = uint32(value.Int64)
+			}
 		}
 	}
 	return nil
@@ -212,6 +220,9 @@ func (pr *PowerRental) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("investment_type=")
 	builder.WriteString(pr.InvestmentType)
+	builder.WriteString(", ")
+	builder.WriteString("duration_seconds=")
+	builder.WriteString(fmt.Sprintf("%v", pr.DurationSeconds))
 	builder.WriteByte(')')
 	return builder.String()
 }

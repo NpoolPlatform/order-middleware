@@ -19614,6 +19614,8 @@ type PowerRentalMutation struct {
 	discount_amount_usd *decimal.Decimal
 	promotion_id        *uuid.UUID
 	investment_type     *string
+	duration_seconds    *uint32
+	addduration_seconds *int32
 	clearedFields       map[string]struct{}
 	done                bool
 	oldValue            func(context.Context) (*PowerRental, error)
@@ -20320,6 +20322,76 @@ func (m *PowerRentalMutation) ResetInvestmentType() {
 	delete(m.clearedFields, powerrental.FieldInvestmentType)
 }
 
+// SetDurationSeconds sets the "duration_seconds" field.
+func (m *PowerRentalMutation) SetDurationSeconds(u uint32) {
+	m.duration_seconds = &u
+	m.addduration_seconds = nil
+}
+
+// DurationSeconds returns the value of the "duration_seconds" field in the mutation.
+func (m *PowerRentalMutation) DurationSeconds() (r uint32, exists bool) {
+	v := m.duration_seconds
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDurationSeconds returns the old "duration_seconds" field's value of the PowerRental entity.
+// If the PowerRental object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PowerRentalMutation) OldDurationSeconds(ctx context.Context) (v uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDurationSeconds is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDurationSeconds requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDurationSeconds: %w", err)
+	}
+	return oldValue.DurationSeconds, nil
+}
+
+// AddDurationSeconds adds u to the "duration_seconds" field.
+func (m *PowerRentalMutation) AddDurationSeconds(u int32) {
+	if m.addduration_seconds != nil {
+		*m.addduration_seconds += u
+	} else {
+		m.addduration_seconds = &u
+	}
+}
+
+// AddedDurationSeconds returns the value that was added to the "duration_seconds" field in this mutation.
+func (m *PowerRentalMutation) AddedDurationSeconds() (r int32, exists bool) {
+	v := m.addduration_seconds
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearDurationSeconds clears the value of the "duration_seconds" field.
+func (m *PowerRentalMutation) ClearDurationSeconds() {
+	m.duration_seconds = nil
+	m.addduration_seconds = nil
+	m.clearedFields[powerrental.FieldDurationSeconds] = struct{}{}
+}
+
+// DurationSecondsCleared returns if the "duration_seconds" field was cleared in this mutation.
+func (m *PowerRentalMutation) DurationSecondsCleared() bool {
+	_, ok := m.clearedFields[powerrental.FieldDurationSeconds]
+	return ok
+}
+
+// ResetDurationSeconds resets all changes to the "duration_seconds" field.
+func (m *PowerRentalMutation) ResetDurationSeconds() {
+	m.duration_seconds = nil
+	m.addduration_seconds = nil
+	delete(m.clearedFields, powerrental.FieldDurationSeconds)
+}
+
 // Where appends a list predicates to the PowerRentalMutation builder.
 func (m *PowerRentalMutation) Where(ps ...predicate.PowerRental) {
 	m.predicates = append(m.predicates, ps...)
@@ -20339,7 +20411,7 @@ func (m *PowerRentalMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *PowerRentalMutation) Fields() []string {
-	fields := make([]string, 0, 12)
+	fields := make([]string, 0, 13)
 	if m.created_at != nil {
 		fields = append(fields, powerrental.FieldCreatedAt)
 	}
@@ -20376,6 +20448,9 @@ func (m *PowerRentalMutation) Fields() []string {
 	if m.investment_type != nil {
 		fields = append(fields, powerrental.FieldInvestmentType)
 	}
+	if m.duration_seconds != nil {
+		fields = append(fields, powerrental.FieldDurationSeconds)
+	}
 	return fields
 }
 
@@ -20408,6 +20483,8 @@ func (m *PowerRentalMutation) Field(name string) (ent.Value, bool) {
 		return m.PromotionID()
 	case powerrental.FieldInvestmentType:
 		return m.InvestmentType()
+	case powerrental.FieldDurationSeconds:
+		return m.DurationSeconds()
 	}
 	return nil, false
 }
@@ -20441,6 +20518,8 @@ func (m *PowerRentalMutation) OldField(ctx context.Context, name string) (ent.Va
 		return m.OldPromotionID(ctx)
 	case powerrental.FieldInvestmentType:
 		return m.OldInvestmentType(ctx)
+	case powerrental.FieldDurationSeconds:
+		return m.OldDurationSeconds(ctx)
 	}
 	return nil, fmt.Errorf("unknown PowerRental field %s", name)
 }
@@ -20534,6 +20613,13 @@ func (m *PowerRentalMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetInvestmentType(v)
 		return nil
+	case powerrental.FieldDurationSeconds:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDurationSeconds(v)
+		return nil
 	}
 	return fmt.Errorf("unknown PowerRental field %s", name)
 }
@@ -20551,6 +20637,9 @@ func (m *PowerRentalMutation) AddedFields() []string {
 	if m.adddeleted_at != nil {
 		fields = append(fields, powerrental.FieldDeletedAt)
 	}
+	if m.addduration_seconds != nil {
+		fields = append(fields, powerrental.FieldDurationSeconds)
+	}
 	return fields
 }
 
@@ -20565,6 +20654,8 @@ func (m *PowerRentalMutation) AddedField(name string) (ent.Value, bool) {
 		return m.AddedUpdatedAt()
 	case powerrental.FieldDeletedAt:
 		return m.AddedDeletedAt()
+	case powerrental.FieldDurationSeconds:
+		return m.AddedDurationSeconds()
 	}
 	return nil, false
 }
@@ -20594,6 +20685,13 @@ func (m *PowerRentalMutation) AddField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.AddDeletedAt(v)
+		return nil
+	case powerrental.FieldDurationSeconds:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddDurationSeconds(v)
 		return nil
 	}
 	return fmt.Errorf("unknown PowerRental numeric field %s", name)
@@ -20626,6 +20724,9 @@ func (m *PowerRentalMutation) ClearedFields() []string {
 	}
 	if m.FieldCleared(powerrental.FieldInvestmentType) {
 		fields = append(fields, powerrental.FieldInvestmentType)
+	}
+	if m.FieldCleared(powerrental.FieldDurationSeconds) {
+		fields = append(fields, powerrental.FieldDurationSeconds)
 	}
 	return fields
 }
@@ -20664,6 +20765,9 @@ func (m *PowerRentalMutation) ClearField(name string) error {
 		return nil
 	case powerrental.FieldInvestmentType:
 		m.ClearInvestmentType()
+		return nil
+	case powerrental.FieldDurationSeconds:
+		m.ClearDurationSeconds()
 		return nil
 	}
 	return fmt.Errorf("unknown PowerRental nullable field %s", name)
@@ -20708,6 +20812,9 @@ func (m *PowerRentalMutation) ResetField(name string) error {
 		return nil
 	case powerrental.FieldInvestmentType:
 		m.ResetInvestmentType()
+		return nil
+	case powerrental.FieldDurationSeconds:
+		m.ResetDurationSeconds()
 		return nil
 	}
 	return fmt.Errorf("unknown PowerRental field %s", name)
@@ -20778,8 +20885,6 @@ type PowerRentalStateMutation struct {
 	cancel_state          *string
 	canceled_at           *uint32
 	addcanceled_at        *int32
-	duration_seconds      *uint32
-	addduration_seconds   *int32
 	payment_id            *uuid.UUID
 	paid_at               *uint32
 	addpaid_at            *int32
@@ -21274,76 +21379,6 @@ func (m *PowerRentalStateMutation) ResetCanceledAt() {
 	m.canceled_at = nil
 	m.addcanceled_at = nil
 	delete(m.clearedFields, powerrentalstate.FieldCanceledAt)
-}
-
-// SetDurationSeconds sets the "duration_seconds" field.
-func (m *PowerRentalStateMutation) SetDurationSeconds(u uint32) {
-	m.duration_seconds = &u
-	m.addduration_seconds = nil
-}
-
-// DurationSeconds returns the value of the "duration_seconds" field in the mutation.
-func (m *PowerRentalStateMutation) DurationSeconds() (r uint32, exists bool) {
-	v := m.duration_seconds
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldDurationSeconds returns the old "duration_seconds" field's value of the PowerRentalState entity.
-// If the PowerRentalState object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *PowerRentalStateMutation) OldDurationSeconds(ctx context.Context) (v uint32, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldDurationSeconds is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldDurationSeconds requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldDurationSeconds: %w", err)
-	}
-	return oldValue.DurationSeconds, nil
-}
-
-// AddDurationSeconds adds u to the "duration_seconds" field.
-func (m *PowerRentalStateMutation) AddDurationSeconds(u int32) {
-	if m.addduration_seconds != nil {
-		*m.addduration_seconds += u
-	} else {
-		m.addduration_seconds = &u
-	}
-}
-
-// AddedDurationSeconds returns the value that was added to the "duration_seconds" field in this mutation.
-func (m *PowerRentalStateMutation) AddedDurationSeconds() (r int32, exists bool) {
-	v := m.addduration_seconds
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// ClearDurationSeconds clears the value of the "duration_seconds" field.
-func (m *PowerRentalStateMutation) ClearDurationSeconds() {
-	m.duration_seconds = nil
-	m.addduration_seconds = nil
-	m.clearedFields[powerrentalstate.FieldDurationSeconds] = struct{}{}
-}
-
-// DurationSecondsCleared returns if the "duration_seconds" field was cleared in this mutation.
-func (m *PowerRentalStateMutation) DurationSecondsCleared() bool {
-	_, ok := m.clearedFields[powerrentalstate.FieldDurationSeconds]
-	return ok
-}
-
-// ResetDurationSeconds resets all changes to the "duration_seconds" field.
-func (m *PowerRentalStateMutation) ResetDurationSeconds() {
-	m.duration_seconds = nil
-	m.addduration_seconds = nil
-	delete(m.clearedFields, powerrentalstate.FieldDurationSeconds)
 }
 
 // SetPaymentID sets the "payment_id" field.
@@ -21939,7 +21974,7 @@ func (m *PowerRentalStateMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *PowerRentalStateMutation) Fields() []string {
-	fields := make([]string, 0, 18)
+	fields := make([]string, 0, 17)
 	if m.created_at != nil {
 		fields = append(fields, powerrentalstate.FieldCreatedAt)
 	}
@@ -21960,9 +21995,6 @@ func (m *PowerRentalStateMutation) Fields() []string {
 	}
 	if m.canceled_at != nil {
 		fields = append(fields, powerrentalstate.FieldCanceledAt)
-	}
-	if m.duration_seconds != nil {
-		fields = append(fields, powerrentalstate.FieldDurationSeconds)
 	}
 	if m.payment_id != nil {
 		fields = append(fields, powerrentalstate.FieldPaymentID)
@@ -22016,8 +22048,6 @@ func (m *PowerRentalStateMutation) Field(name string) (ent.Value, bool) {
 		return m.CancelState()
 	case powerrentalstate.FieldCanceledAt:
 		return m.CanceledAt()
-	case powerrentalstate.FieldDurationSeconds:
-		return m.DurationSeconds()
 	case powerrentalstate.FieldPaymentID:
 		return m.PaymentID()
 	case powerrentalstate.FieldPaidAt:
@@ -22061,8 +22091,6 @@ func (m *PowerRentalStateMutation) OldField(ctx context.Context, name string) (e
 		return m.OldCancelState(ctx)
 	case powerrentalstate.FieldCanceledAt:
 		return m.OldCanceledAt(ctx)
-	case powerrentalstate.FieldDurationSeconds:
-		return m.OldDurationSeconds(ctx)
 	case powerrentalstate.FieldPaymentID:
 		return m.OldPaymentID(ctx)
 	case powerrentalstate.FieldPaidAt:
@@ -22140,13 +22168,6 @@ func (m *PowerRentalStateMutation) SetField(name string, value ent.Value) error 
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetCanceledAt(v)
-		return nil
-	case powerrentalstate.FieldDurationSeconds:
-		v, ok := value.(uint32)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetDurationSeconds(v)
 		return nil
 	case powerrentalstate.FieldPaymentID:
 		v, ok := value.(uuid.UUID)
@@ -22238,9 +22259,6 @@ func (m *PowerRentalStateMutation) AddedFields() []string {
 	if m.addcanceled_at != nil {
 		fields = append(fields, powerrentalstate.FieldCanceledAt)
 	}
-	if m.addduration_seconds != nil {
-		fields = append(fields, powerrentalstate.FieldDurationSeconds)
-	}
 	if m.addpaid_at != nil {
 		fields = append(fields, powerrentalstate.FieldPaidAt)
 	}
@@ -22269,8 +22287,6 @@ func (m *PowerRentalStateMutation) AddedField(name string) (ent.Value, bool) {
 		return m.AddedDeletedAt()
 	case powerrentalstate.FieldCanceledAt:
 		return m.AddedCanceledAt()
-	case powerrentalstate.FieldDurationSeconds:
-		return m.AddedDurationSeconds()
 	case powerrentalstate.FieldPaidAt:
 		return m.AddedPaidAt()
 	case powerrentalstate.FieldOutofgasSeconds:
@@ -22316,13 +22332,6 @@ func (m *PowerRentalStateMutation) AddField(name string, value ent.Value) error 
 		}
 		m.AddCanceledAt(v)
 		return nil
-	case powerrentalstate.FieldDurationSeconds:
-		v, ok := value.(int32)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.AddDurationSeconds(v)
-		return nil
 	case powerrentalstate.FieldPaidAt:
 		v, ok := value.(int32)
 		if !ok {
@@ -22367,9 +22376,6 @@ func (m *PowerRentalStateMutation) ClearedFields() []string {
 	}
 	if m.FieldCleared(powerrentalstate.FieldCanceledAt) {
 		fields = append(fields, powerrentalstate.FieldCanceledAt)
-	}
-	if m.FieldCleared(powerrentalstate.FieldDurationSeconds) {
-		fields = append(fields, powerrentalstate.FieldDurationSeconds)
 	}
 	if m.FieldCleared(powerrentalstate.FieldPaymentID) {
 		fields = append(fields, powerrentalstate.FieldPaymentID)
@@ -22423,9 +22429,6 @@ func (m *PowerRentalStateMutation) ClearField(name string) error {
 		return nil
 	case powerrentalstate.FieldCanceledAt:
 		m.ClearCanceledAt()
-		return nil
-	case powerrentalstate.FieldDurationSeconds:
-		m.ClearDurationSeconds()
 		return nil
 	case powerrentalstate.FieldPaymentID:
 		m.ClearPaymentID()
@@ -22485,9 +22488,6 @@ func (m *PowerRentalStateMutation) ResetField(name string) error {
 		return nil
 	case powerrentalstate.FieldCanceledAt:
 		m.ResetCanceledAt()
-		return nil
-	case powerrentalstate.FieldDurationSeconds:
-		m.ResetDurationSeconds()
 		return nil
 	case powerrentalstate.FieldPaymentID:
 		m.ResetPaymentID()

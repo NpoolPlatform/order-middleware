@@ -21,7 +21,6 @@ func (h *Handler) ConstructCreateSQL() string {
 	}
 	_sql += comma + "order_id"
 	comma = ", "
-	_sql += comma + "duration_seconds"
 	if h.PaymentID != nil {
 		_sql += comma + "payment_id"
 	}
@@ -37,7 +36,6 @@ func (h *Handler) ConstructCreateSQL() string {
 	}
 	_sql += fmt.Sprintf("%v'%v' as order_id", comma, *h.OrderID)
 	comma = ", "
-	_sql += fmt.Sprintf("%v'%v' as duration_seconds", comma, *h.DurationSeconds)
 	if h.PaymentID != nil {
 		_sql += fmt.Sprintf("%v'%v' as payment_id", comma, *h.PaymentID)
 	}
@@ -72,10 +70,6 @@ func (h *Handler) ConstructUpdateSQL() (string, error) {
 	}
 	if h.CanceledAt != nil {
 		_sql += fmt.Sprintf("%vcanceled_at = %v, ", set, *h.CanceledAt)
-		set = ""
-	}
-	if h.DurationSeconds != nil {
-		_sql += fmt.Sprintf("%vduration_seconds = '%v', ", set, *h.DurationSeconds)
 		set = ""
 	}
 	if h.PaymentID != nil {

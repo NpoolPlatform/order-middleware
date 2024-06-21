@@ -157,6 +157,7 @@ func (h *baseQueryHandler) queryJoinPowerRental(s *sql.Selector) error {
 		t.C(entpowerrental.FieldDiscountAmountUsd),
 		t.C(entpowerrental.FieldPromotionID),
 		t.C(entpowerrental.FieldInvestmentType),
+		t.C(entpowerrental.FieldDurationSeconds),
 	)
 	return nil
 }
@@ -388,7 +389,6 @@ func (h *baseQueryHandler) queryJoinPowerRentalState(s *sql.Selector) error {
 		t.C(entpowerrentalstate.FieldCompensateSeconds),
 		t.C(entpowerrentalstate.FieldCancelState),
 		t.C(entpowerrentalstate.FieldCanceledAt),
-		t.C(entpowerrentalstate.FieldDurationSeconds),
 		t.C(entpowerrentalstate.FieldRenewState),
 		t.C(entpowerrentalstate.FieldRenewNotifyAt),
 	)

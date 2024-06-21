@@ -78,6 +78,10 @@ func (PowerRental) Fields() []ent.Field {
 			String("investment_type").
 			Optional().
 			Default(types.InvestmentType_FullPayment.String()),
+		field.
+			Uint32("duration_seconds").
+			Optional().
+			Default(0),
 	}
 }
 

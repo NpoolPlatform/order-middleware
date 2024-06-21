@@ -30,8 +30,6 @@ type PowerRentalState struct {
 	CancelState string `json:"cancel_state,omitempty"`
 	// CanceledAt holds the value of the "canceled_at" field.
 	CanceledAt uint32 `json:"canceled_at,omitempty"`
-	// DurationSeconds holds the value of the "duration_seconds" field.
-	DurationSeconds uint32 `json:"duration_seconds,omitempty"`
 	// PaymentID holds the value of the "payment_id" field.
 	PaymentID uuid.UUID `json:"payment_id,omitempty"`
 	// PaidAt holds the value of the "paid_at" field.
@@ -61,7 +59,7 @@ func (*PowerRentalState) scanValues(columns []string) ([]interface{}, error) {
 		switch columns[i] {
 		case powerrentalstate.FieldUserSetPaid, powerrentalstate.FieldUserSetCanceled, powerrentalstate.FieldAdminSetCanceled:
 			values[i] = new(sql.NullBool)
-		case powerrentalstate.FieldID, powerrentalstate.FieldCreatedAt, powerrentalstate.FieldUpdatedAt, powerrentalstate.FieldDeletedAt, powerrentalstate.FieldCanceledAt, powerrentalstate.FieldDurationSeconds, powerrentalstate.FieldPaidAt, powerrentalstate.FieldOutofgasSeconds, powerrentalstate.FieldCompensateSeconds, powerrentalstate.FieldRenewNotifyAt:
+		case powerrentalstate.FieldID, powerrentalstate.FieldCreatedAt, powerrentalstate.FieldUpdatedAt, powerrentalstate.FieldDeletedAt, powerrentalstate.FieldCanceledAt, powerrentalstate.FieldPaidAt, powerrentalstate.FieldOutofgasSeconds, powerrentalstate.FieldCompensateSeconds, powerrentalstate.FieldRenewNotifyAt:
 			values[i] = new(sql.NullInt64)
 		case powerrentalstate.FieldCancelState, powerrentalstate.FieldPaymentState, powerrentalstate.FieldRenewState:
 			values[i] = new(sql.NullString)
@@ -129,12 +127,6 @@ func (prs *PowerRentalState) assignValues(columns []string, values []interface{}
 				return fmt.Errorf("unexpected type %T for field canceled_at", values[i])
 			} else if value.Valid {
 				prs.CanceledAt = uint32(value.Int64)
-			}
-		case powerrentalstate.FieldDurationSeconds:
-			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for field duration_seconds", values[i])
-			} else if value.Valid {
-				prs.DurationSeconds = uint32(value.Int64)
 			}
 		case powerrentalstate.FieldPaymentID:
 			if value, ok := values[i].(*uuid.UUID); !ok {
@@ -244,9 +236,6 @@ func (prs *PowerRentalState) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("canceled_at=")
 	builder.WriteString(fmt.Sprintf("%v", prs.CanceledAt))
-	builder.WriteString(", ")
-	builder.WriteString("duration_seconds=")
-	builder.WriteString(fmt.Sprintf("%v", prs.DurationSeconds))
 	builder.WriteString(", ")
 	builder.WriteString("payment_id=")
 	builder.WriteString(fmt.Sprintf("%v", prs.PaymentID))

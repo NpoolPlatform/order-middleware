@@ -337,7 +337,7 @@ func WithDurationSeconds(duration *uint32, must bool) func(context.Context, *Han
 		if *duration == 0 {
 			return wlog.Errorf("invalid durationseconds")
 		}
-		h.PowerRentalStateReq.DurationSeconds = duration
+		h.DurationSeconds = duration
 		return nil
 	}
 }
