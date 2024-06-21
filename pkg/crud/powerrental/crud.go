@@ -22,6 +22,7 @@ type Req struct {
 	DiscountAmountUSD *decimal.Decimal
 	PromotionID       *uuid.UUID
 	InvestmentType    *types.InvestmentType
+	DurationSeconds   *uint32
 	DeletedAt         *uint32
 }
 
@@ -52,6 +53,9 @@ func CreateSet(c *ent.PowerRentalCreate, req *Req) *ent.PowerRentalCreate {
 	}
 	if req.InvestmentType != nil {
 		c.SetInvestmentType(req.InvestmentType.String())
+	}
+	if req.DurationSeconds != nil {
+		c.SetDurationSeconds(*req.DurationSeconds)
 	}
 	return c
 }

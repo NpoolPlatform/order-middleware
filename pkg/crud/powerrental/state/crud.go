@@ -23,7 +23,6 @@ type Req struct {
 	PaymentState      *types.PaymentState
 	OutOfGasSeconds   *uint32
 	CompensateSeconds *uint32
-	DurationSeconds   *uint32
 	RenewState        *types.OrderRenewState
 	RenewNotifyAt     *uint32
 	DeletedAt         *uint32
@@ -41,9 +40,6 @@ func CreateSet(c *ent.PowerRentalStateCreate, req *Req) *ent.PowerRentalStateCre
 	}
 	if req.UserSetPaid != nil {
 		c.SetUserSetPaid(*req.UserSetPaid)
-	}
-	if req.DurationSeconds != nil {
-		c.SetDurationSeconds(*req.DurationSeconds)
 	}
 	return c
 }
@@ -84,9 +80,6 @@ func UpdateSet(u *ent.PowerRentalStateUpdateOne, req *Req) *ent.PowerRentalState
 	}
 	if req.RenewNotifyAt != nil {
 		u.SetRenewNotifyAt(*req.RenewNotifyAt)
-	}
-	if req.DurationSeconds != nil {
-		u.SetDurationSeconds(*req.DurationSeconds)
 	}
 	if req.DeletedAt != nil {
 		u.SetDeletedAt(*req.DeletedAt)

@@ -164,6 +164,13 @@ func InvestmentType(v string) predicate.PowerRental {
 	})
 }
 
+// DurationSeconds applies equality check predicate on the "duration_seconds" field. It's identical to DurationSecondsEQ.
+func DurationSeconds(v uint32) predicate.PowerRental {
+	return predicate.PowerRental(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldDurationSeconds), v))
+	})
+}
+
 // CreatedAtEQ applies the EQ predicate on the "created_at" field.
 func CreatedAtEQ(v uint32) predicate.PowerRental {
 	return predicate.PowerRental(func(s *sql.Selector) {
@@ -1076,6 +1083,84 @@ func InvestmentTypeEqualFold(v string) predicate.PowerRental {
 func InvestmentTypeContainsFold(v string) predicate.PowerRental {
 	return predicate.PowerRental(func(s *sql.Selector) {
 		s.Where(sql.ContainsFold(s.C(FieldInvestmentType), v))
+	})
+}
+
+// DurationSecondsEQ applies the EQ predicate on the "duration_seconds" field.
+func DurationSecondsEQ(v uint32) predicate.PowerRental {
+	return predicate.PowerRental(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldDurationSeconds), v))
+	})
+}
+
+// DurationSecondsNEQ applies the NEQ predicate on the "duration_seconds" field.
+func DurationSecondsNEQ(v uint32) predicate.PowerRental {
+	return predicate.PowerRental(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldDurationSeconds), v))
+	})
+}
+
+// DurationSecondsIn applies the In predicate on the "duration_seconds" field.
+func DurationSecondsIn(vs ...uint32) predicate.PowerRental {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.PowerRental(func(s *sql.Selector) {
+		s.Where(sql.In(s.C(FieldDurationSeconds), v...))
+	})
+}
+
+// DurationSecondsNotIn applies the NotIn predicate on the "duration_seconds" field.
+func DurationSecondsNotIn(vs ...uint32) predicate.PowerRental {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.PowerRental(func(s *sql.Selector) {
+		s.Where(sql.NotIn(s.C(FieldDurationSeconds), v...))
+	})
+}
+
+// DurationSecondsGT applies the GT predicate on the "duration_seconds" field.
+func DurationSecondsGT(v uint32) predicate.PowerRental {
+	return predicate.PowerRental(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldDurationSeconds), v))
+	})
+}
+
+// DurationSecondsGTE applies the GTE predicate on the "duration_seconds" field.
+func DurationSecondsGTE(v uint32) predicate.PowerRental {
+	return predicate.PowerRental(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldDurationSeconds), v))
+	})
+}
+
+// DurationSecondsLT applies the LT predicate on the "duration_seconds" field.
+func DurationSecondsLT(v uint32) predicate.PowerRental {
+	return predicate.PowerRental(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldDurationSeconds), v))
+	})
+}
+
+// DurationSecondsLTE applies the LTE predicate on the "duration_seconds" field.
+func DurationSecondsLTE(v uint32) predicate.PowerRental {
+	return predicate.PowerRental(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldDurationSeconds), v))
+	})
+}
+
+// DurationSecondsIsNil applies the IsNil predicate on the "duration_seconds" field.
+func DurationSecondsIsNil() predicate.PowerRental {
+	return predicate.PowerRental(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldDurationSeconds)))
+	})
+}
+
+// DurationSecondsNotNil applies the NotNil predicate on the "duration_seconds" field.
+func DurationSecondsNotNil() predicate.PowerRental {
+	return predicate.PowerRental(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldDurationSeconds)))
 	})
 }
 

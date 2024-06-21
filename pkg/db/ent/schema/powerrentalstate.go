@@ -40,10 +40,6 @@ func (PowerRentalState) Fields() []ent.Field {
 			Optional().
 			Default(0),
 		field.
-			Uint32("duration_seconds").
-			Optional().
-			Default(0),
-		field.
 			UUID("payment_id", uuid.UUID{}).
 			Optional().
 			Default(func() uuid.UUID {

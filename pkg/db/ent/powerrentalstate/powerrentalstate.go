@@ -26,8 +26,6 @@ const (
 	FieldCancelState = "cancel_state"
 	// FieldCanceledAt holds the string denoting the canceled_at field in the database.
 	FieldCanceledAt = "canceled_at"
-	// FieldDurationSeconds holds the string denoting the duration_seconds field in the database.
-	FieldDurationSeconds = "duration_seconds"
 	// FieldPaymentID holds the string denoting the payment_id field in the database.
 	FieldPaymentID = "payment_id"
 	// FieldPaidAt holds the string denoting the paid_at field in the database.
@@ -62,7 +60,6 @@ var Columns = []string{
 	FieldOrderID,
 	FieldCancelState,
 	FieldCanceledAt,
-	FieldDurationSeconds,
 	FieldPaymentID,
 	FieldPaidAt,
 	FieldUserSetPaid,
@@ -110,8 +107,6 @@ var (
 	DefaultCancelState string
 	// DefaultCanceledAt holds the default value on creation for the "canceled_at" field.
 	DefaultCanceledAt uint32
-	// DefaultDurationSeconds holds the default value on creation for the "duration_seconds" field.
-	DefaultDurationSeconds uint32
 	// DefaultPaymentID holds the default value on creation for the "payment_id" field.
 	DefaultPaymentID func() uuid.UUID
 	// DefaultPaidAt holds the default value on creation for the "paid_at" field.

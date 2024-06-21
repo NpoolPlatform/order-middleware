@@ -470,6 +470,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			powerrental.FieldDiscountAmountUsd: {Type: field.TypeOther, Column: powerrental.FieldDiscountAmountUsd},
 			powerrental.FieldPromotionID:       {Type: field.TypeUUID, Column: powerrental.FieldPromotionID},
 			powerrental.FieldInvestmentType:    {Type: field.TypeString, Column: powerrental.FieldInvestmentType},
+			powerrental.FieldDurationSeconds:   {Type: field.TypeUint32, Column: powerrental.FieldDurationSeconds},
 		},
 	}
 	graph.Nodes[18] = &sqlgraph.Node{
@@ -490,7 +491,6 @@ var schemaGraph = func() *sqlgraph.Schema {
 			powerrentalstate.FieldOrderID:           {Type: field.TypeUUID, Column: powerrentalstate.FieldOrderID},
 			powerrentalstate.FieldCancelState:       {Type: field.TypeString, Column: powerrentalstate.FieldCancelState},
 			powerrentalstate.FieldCanceledAt:        {Type: field.TypeUint32, Column: powerrentalstate.FieldCanceledAt},
-			powerrentalstate.FieldDurationSeconds:   {Type: field.TypeUint32, Column: powerrentalstate.FieldDurationSeconds},
 			powerrentalstate.FieldPaymentID:         {Type: field.TypeUUID, Column: powerrentalstate.FieldPaymentID},
 			powerrentalstate.FieldPaidAt:            {Type: field.TypeUint32, Column: powerrentalstate.FieldPaidAt},
 			powerrentalstate.FieldUserSetPaid:       {Type: field.TypeBool, Column: powerrentalstate.FieldUserSetPaid},
@@ -2262,6 +2262,11 @@ func (f *PowerRentalFilter) WhereInvestmentType(p entql.StringP) {
 	f.Where(p.Field(powerrental.FieldInvestmentType))
 }
 
+// WhereDurationSeconds applies the entql uint32 predicate on the duration_seconds field.
+func (f *PowerRentalFilter) WhereDurationSeconds(p entql.Uint32P) {
+	f.Where(p.Field(powerrental.FieldDurationSeconds))
+}
+
 // addPredicate implements the predicateAdder interface.
 func (prsq *PowerRentalStateQuery) addPredicate(pred func(s *sql.Selector)) {
 	prsq.predicates = append(prsq.predicates, pred)
@@ -2335,11 +2340,6 @@ func (f *PowerRentalStateFilter) WhereCancelState(p entql.StringP) {
 // WhereCanceledAt applies the entql uint32 predicate on the canceled_at field.
 func (f *PowerRentalStateFilter) WhereCanceledAt(p entql.Uint32P) {
 	f.Where(p.Field(powerrentalstate.FieldCanceledAt))
-}
-
-// WhereDurationSeconds applies the entql uint32 predicate on the duration_seconds field.
-func (f *PowerRentalStateFilter) WhereDurationSeconds(p entql.Uint32P) {
-	f.Where(p.Field(powerrentalstate.FieldDurationSeconds))
 }
 
 // WherePaymentID applies the entql [16]byte predicate on the payment_id field.

@@ -165,33 +165,6 @@ func (prsu *PowerRentalStateUpdate) ClearCanceledAt() *PowerRentalStateUpdate {
 	return prsu
 }
 
-// SetDurationSeconds sets the "duration_seconds" field.
-func (prsu *PowerRentalStateUpdate) SetDurationSeconds(u uint32) *PowerRentalStateUpdate {
-	prsu.mutation.ResetDurationSeconds()
-	prsu.mutation.SetDurationSeconds(u)
-	return prsu
-}
-
-// SetNillableDurationSeconds sets the "duration_seconds" field if the given value is not nil.
-func (prsu *PowerRentalStateUpdate) SetNillableDurationSeconds(u *uint32) *PowerRentalStateUpdate {
-	if u != nil {
-		prsu.SetDurationSeconds(*u)
-	}
-	return prsu
-}
-
-// AddDurationSeconds adds u to the "duration_seconds" field.
-func (prsu *PowerRentalStateUpdate) AddDurationSeconds(u int32) *PowerRentalStateUpdate {
-	prsu.mutation.AddDurationSeconds(u)
-	return prsu
-}
-
-// ClearDurationSeconds clears the value of the "duration_seconds" field.
-func (prsu *PowerRentalStateUpdate) ClearDurationSeconds() *PowerRentalStateUpdate {
-	prsu.mutation.ClearDurationSeconds()
-	return prsu
-}
-
 // SetPaymentID sets the "payment_id" field.
 func (prsu *PowerRentalStateUpdate) SetPaymentID(u uuid.UUID) *PowerRentalStateUpdate {
 	prsu.mutation.SetPaymentID(u)
@@ -613,26 +586,6 @@ func (prsu *PowerRentalStateUpdate) sqlSave(ctx context.Context) (n int, err err
 			Column: powerrentalstate.FieldCanceledAt,
 		})
 	}
-	if value, ok := prsu.mutation.DurationSeconds(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeUint32,
-			Value:  value,
-			Column: powerrentalstate.FieldDurationSeconds,
-		})
-	}
-	if value, ok := prsu.mutation.AddedDurationSeconds(); ok {
-		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
-			Type:   field.TypeUint32,
-			Value:  value,
-			Column: powerrentalstate.FieldDurationSeconds,
-		})
-	}
-	if prsu.mutation.DurationSecondsCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeUint32,
-			Column: powerrentalstate.FieldDurationSeconds,
-		})
-	}
 	if value, ok := prsu.mutation.PaymentID(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeUUID,
@@ -945,33 +898,6 @@ func (prsuo *PowerRentalStateUpdateOne) AddCanceledAt(u int32) *PowerRentalState
 // ClearCanceledAt clears the value of the "canceled_at" field.
 func (prsuo *PowerRentalStateUpdateOne) ClearCanceledAt() *PowerRentalStateUpdateOne {
 	prsuo.mutation.ClearCanceledAt()
-	return prsuo
-}
-
-// SetDurationSeconds sets the "duration_seconds" field.
-func (prsuo *PowerRentalStateUpdateOne) SetDurationSeconds(u uint32) *PowerRentalStateUpdateOne {
-	prsuo.mutation.ResetDurationSeconds()
-	prsuo.mutation.SetDurationSeconds(u)
-	return prsuo
-}
-
-// SetNillableDurationSeconds sets the "duration_seconds" field if the given value is not nil.
-func (prsuo *PowerRentalStateUpdateOne) SetNillableDurationSeconds(u *uint32) *PowerRentalStateUpdateOne {
-	if u != nil {
-		prsuo.SetDurationSeconds(*u)
-	}
-	return prsuo
-}
-
-// AddDurationSeconds adds u to the "duration_seconds" field.
-func (prsuo *PowerRentalStateUpdateOne) AddDurationSeconds(u int32) *PowerRentalStateUpdateOne {
-	prsuo.mutation.AddDurationSeconds(u)
-	return prsuo
-}
-
-// ClearDurationSeconds clears the value of the "duration_seconds" field.
-func (prsuo *PowerRentalStateUpdateOne) ClearDurationSeconds() *PowerRentalStateUpdateOne {
-	prsuo.mutation.ClearDurationSeconds()
 	return prsuo
 }
 
@@ -1424,26 +1350,6 @@ func (prsuo *PowerRentalStateUpdateOne) sqlSave(ctx context.Context) (_node *Pow
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeUint32,
 			Column: powerrentalstate.FieldCanceledAt,
-		})
-	}
-	if value, ok := prsuo.mutation.DurationSeconds(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeUint32,
-			Value:  value,
-			Column: powerrentalstate.FieldDurationSeconds,
-		})
-	}
-	if value, ok := prsuo.mutation.AddedDurationSeconds(); ok {
-		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
-			Type:   field.TypeUint32,
-			Value:  value,
-			Column: powerrentalstate.FieldDurationSeconds,
-		})
-	}
-	if prsuo.mutation.DurationSecondsCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeUint32,
-			Column: powerrentalstate.FieldDurationSeconds,
 		})
 	}
 	if value, ok := prsuo.mutation.PaymentID(); ok {

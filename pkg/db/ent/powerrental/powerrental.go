@@ -37,6 +37,8 @@ const (
 	FieldPromotionID = "promotion_id"
 	// FieldInvestmentType holds the string denoting the investment_type field in the database.
 	FieldInvestmentType = "investment_type"
+	// FieldDurationSeconds holds the string denoting the duration_seconds field in the database.
+	FieldDurationSeconds = "duration_seconds"
 	// Table holds the table name of the powerrental in the database.
 	Table = "power_rentals"
 )
@@ -56,6 +58,7 @@ var Columns = []string{
 	FieldDiscountAmountUsd,
 	FieldPromotionID,
 	FieldInvestmentType,
+	FieldDurationSeconds,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -103,4 +106,6 @@ var (
 	DefaultPromotionID func() uuid.UUID
 	// DefaultInvestmentType holds the default value on creation for the "investment_type" field.
 	DefaultInvestmentType string
+	// DefaultDurationSeconds holds the default value on creation for the "duration_seconds" field.
+	DefaultDurationSeconds uint32
 )
