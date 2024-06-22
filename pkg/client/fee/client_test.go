@@ -167,9 +167,7 @@ func createFeeOrder(t *testing.T) {
 			ret.CreatedAt = info.CreatedAt
 			ret.UpdatedAt = info.UpdatedAt
 			ret.ID = info.ID
-			for _, paymentBalance := range ret.PaymentBalances {
-				paymentBalance.CreatedAt = ret.CreatedAt
-			}
+			ret.PaymentBalances = info.PaymentBalances
 			for _, orderCoupon := range ret.Coupons {
 				orderCoupon.CreatedAt = ret.CreatedAt
 			}
@@ -214,6 +212,7 @@ func updateFeeOrder(t *testing.T) {
 		info, err := GetFeeOrder(context.Background(), ret.OrderID)
 		if assert.Nil(t, err) {
 			ret.UpdatedAt = info.UpdatedAt
+			ret.PaymentBalances = info.PaymentBalances
 			assert.Equal(t, info.String(), ret.String())
 		}
 	}
