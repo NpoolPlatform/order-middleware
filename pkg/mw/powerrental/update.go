@@ -540,10 +540,6 @@ func (h *updateHandler) validateRenewState() error {
 }
 
 func (h *updateHandler) formalizeCancelState() {
-	if (h.PowerRentalStateReq.UserSetCanceled != nil && *h.PowerRentalStateReq.UserSetCanceled) ||
-		(h.PowerRentalStateReq.AdminSetCanceled != nil && *h.PowerRentalStateReq.AdminSetCanceled) {
-		h.PowerRentalStateReq.CancelState = func() *types.OrderState { e := h._ent.OrderState(); return &e }()
-	}
 	if h.OrderStateBaseReq.OrderState != nil && *h.OrderStateBaseReq.OrderState == types.OrderState_OrderStatePreCancel {
 		h.PowerRentalStateReq.CancelState = func() *types.OrderState { e := h._ent.OrderState(); return &e }()
 	}
