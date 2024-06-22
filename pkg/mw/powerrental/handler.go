@@ -749,6 +749,14 @@ func WithPaymentTransfers(bs []*paymentmwpb.PaymentTransferReq, must bool) func(
 		for _, b := range bs {
 			req := &paymenttransfercrud.Req{}
 
+			if b.EntID != nil {
+				id0, err := uuid.Parse(b.GetEntID())
+				if err != nil {
+					return wlog.WrapError(err)
+				}
+				req.EntID = &id0
+			}
+
 			if b.CoinTypeID != nil {
 				id1, err := uuid.Parse(b.GetCoinTypeID())
 				if err != nil {
@@ -765,29 +773,37 @@ func WithPaymentTransfers(bs []*paymentmwpb.PaymentTransferReq, must bool) func(
 				req.LocalCoinUSDCurrency = &amount
 			}
 
-			id2, err := uuid.Parse(b.GetAccountID())
-			if err != nil {
-				return wlog.WrapError(err)
+			if b.AccountID != nil {
+				id2, err := uuid.Parse(b.GetAccountID())
+				if err != nil {
+					return wlog.WrapError(err)
+				}
+				req.AccountID = &id2
 			}
-			req.AccountID = &id2
 
-			amount1, err := decimal.NewFromString(b.GetAmount())
-			if err != nil {
-				return wlog.WrapError(err)
+			if b.Amount != nil {
+				amount1, err := decimal.NewFromString(b.GetAmount())
+				if err != nil {
+					return wlog.WrapError(err)
+				}
+				req.Amount = &amount1
 			}
-			req.Amount = &amount1
 
-			amount2, err := decimal.NewFromString(b.GetStartAmount())
-			if err != nil {
-				return wlog.WrapError(err)
+			if b.StartAmount != nil {
+				amount2, err := decimal.NewFromString(b.GetStartAmount())
+				if err != nil {
+					return wlog.WrapError(err)
+				}
+				req.StartAmount = &amount2
 			}
-			req.StartAmount = &amount2
 
-			amount3, err := decimal.NewFromString(*b.LiveCoinUSDCurrency)
-			if err != nil {
-				return wlog.WrapError(err)
+			if b.LiveCoinUSDCurrency != nil {
+				amount3, err := decimal.NewFromString(*b.LiveCoinUSDCurrency)
+				if err != nil {
+					return wlog.WrapError(err)
+				}
+				req.LiveCoinUSDCurrency = &amount3
 			}
-			req.LiveCoinUSDCurrency = &amount3
 
 			if b.FinishAmount != nil {
 				amount4, err := decimal.NewFromString(b.GetFinishAmount())
