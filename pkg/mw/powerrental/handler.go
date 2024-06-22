@@ -749,11 +749,13 @@ func WithPaymentTransfers(bs []*paymentmwpb.PaymentTransferReq, must bool) func(
 		for _, b := range bs {
 			req := &paymenttransfercrud.Req{}
 
-			id1, err := uuid.Parse(b.GetCoinTypeID())
-			if err != nil {
-				return wlog.WrapError(err)
+			if b.CoinTypeID != nil {
+				id1, err := uuid.Parse(b.GetCoinTypeID())
+				if err != nil {
+					return wlog.WrapError(err)
+				}
+				req.CoinTypeID = &id1
 			}
-			req.CoinTypeID = &id1
 
 			if b.LocalCoinUSDCurrency != nil {
 				amount, err := decimal.NewFromString(*b.LocalCoinUSDCurrency)
