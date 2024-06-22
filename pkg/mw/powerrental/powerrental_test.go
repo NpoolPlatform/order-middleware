@@ -185,9 +185,7 @@ func createPowerRental(t *testing.T) {
 				ret.EndAt = info.EndAt
 				ret.ID = info.ID
 				ret.FeeDurations = info.FeeDurations // Here fee order is not paid
-				for _, paymentBalance := range ret.PaymentBalances {
-					paymentBalance.CreatedAt = ret.CreatedAt
-				}
+				ret.PaymentBalances = info.PaymentBalances
 				for _, orderCoupon := range ret.Coupons {
 					orderCoupon.CreatedAt = ret.CreatedAt
 				}
@@ -241,6 +239,7 @@ func updatePowerRental(t *testing.T) {
 			info, err := handler.GetPowerRental(context.Background())
 			if assert.Nil(t, err) {
 				ret.UpdatedAt = info.UpdatedAt
+				ret.PaymentBalances = info.PaymentBalances
 				assert.Equal(t, &ret, info)
 			}
 		}

@@ -2,7 +2,6 @@ package powerrental
 
 import (
 	"context"
-	"fmt"
 	"time"
 
 	wlog "github.com/NpoolPlatform/go-service-framework/pkg/wlog"
@@ -198,7 +197,6 @@ func (h *updateHandler) execSQL(ctx context.Context, tx *ent.Tx, sql string) err
 		return wlog.WrapError(err)
 	}
 	if n == 1 {
-		fmt.Printf("Updated %v\n", sql)
 		h.updateNothing = false
 	}
 	return nil
