@@ -175,9 +175,16 @@ func (h *baseQueryHandler) queryJoinOrderStateBase(s *sql.Selector) error {
 		if !ok {
 			return wlog.Errorf("invalid paymenttype")
 		}
-		s.OnP(
-			sql.EQ(t.C(entorderstatebase.FieldPaymentType), _type.String()),
-		)
+		switch h.OrderStateBaseConds.PaymentType.Op {
+		case cruder.EQ:
+			s.OnP(
+				sql.EQ(t.C(entorderstatebase.FieldPaymentType), _type.String()),
+			)
+		case cruder.NEQ:
+			s.OnP(
+				sql.NEQ(t.C(entorderstatebase.FieldPaymentType), _type.String()),
+			)
+		}
 	}
 	if h.OrderStateBaseConds.PaymentTypes != nil {
 		_types, ok := h.OrderStateBaseConds.PaymentTypes.Val.([]types.PaymentType)
