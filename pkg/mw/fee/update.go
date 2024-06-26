@@ -405,7 +405,6 @@ func (h *updateHandler) formalizeCancelState() error {
 		default:
 			return wlog.Errorf("permission denied")
 		}
-		h.FeeOrderStateReq.CancelState = func() *types.OrderState { e := h._ent.OrderState(); return &e }()
 	}
 	if h.OrderStateBaseReq.OrderState != nil && *h.OrderStateBaseReq.OrderState == types.OrderState_OrderStatePreCancel {
 		h.FeeOrderStateReq.CancelState = func() *types.OrderState { e := h._ent.OrderState(); return &e }()
