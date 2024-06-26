@@ -599,7 +599,7 @@ func WithPaymentBalances(bs []*paymentmwpb.PaymentBalanceReq, must bool) func(co
 	}
 }
 
-func WithPaymentTransfers(bs []*paymentmwpb.PaymentTransferReq, must bool) func(context.Context, *Handler) error {
+func WithPaymentTransfers(bs []*paymentmwpb.PaymentTransferReq, must bool) func(context.Context, *Handler) error { //nolint:gocyclo
 	return func(ctx context.Context, h *Handler) error {
 		for _, b := range bs {
 			req := &paymenttransfercrud.Req{}
