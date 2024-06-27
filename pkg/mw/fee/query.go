@@ -199,6 +199,8 @@ func (h *queryHandler) queryOrdersPaymentGoodValueUSD(ctx context.Context, cli *
 					sql.EQ(t0.C(entorderstatebase.FieldPaymentType), types.PaymentType_PayWithBalanceOnly.String()),
 					sql.EQ(t0.C(entorderstatebase.FieldPaymentType), types.PaymentType_PayWithTransferOnly.String()),
 					sql.EQ(t0.C(entorderstatebase.FieldPaymentType), types.PaymentType_PayWithTransferAndBalance.String()),
+					sql.EQ(t0.C(entorderstatebase.FieldPaymentType), types.PaymentType_PayWithOffline.String()),
+					sql.EQ(t0.C(entorderstatebase.FieldPaymentType), types.PaymentType_PayWithNoPayment.String()),
 				),
 			).
 			LeftJoin(t1).
