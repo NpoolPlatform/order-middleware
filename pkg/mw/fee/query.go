@@ -179,8 +179,8 @@ func (h *queryHandler) queryOrdersPaymentGoodValueUSD(ctx context.Context, cli *
 		return wlog.WrapError(err)
 	}
 	goodValueUSDs := []struct {
-		OrderID             string `json:"ent_id"`
-		PaymentGoodValueUSD string `json:"payment_good_value_usd"`
+		OrderID             string          `json:"ent_id"`
+		PaymentGoodValueUSD decimal.Decimal `json:"payment_good_value_usd"`
 	}{}
 	if err := stm.GroupBy(
 		entorderbase.FieldEntID,
@@ -230,7 +230,11 @@ func (h *queryHandler) queryOrdersPaymentGoodValueUSD(ctx context.Context, cli *
 	for _, info := range h.infos {
 		for _, goodValueUSD := range goodValueUSDs {
 			if info.OrderID == goodValueUSD.OrderID {
-				info.PaymentGoodValueUSD = goodValueUSD.PaymentGoodValueUSD
+				if goodValueUSD.PaymentGoodValueUSD.GreaterThan(decimal.NewFromInt(0)) {
+					info.PaymentGoodValueUSD = goodValueUSD.PaymentGoodValueUSD.String()
+				} else {
+					info.PaymentGoodValueUSD = info.GoodValueUSD
+				}
 				break
 			}
 		}
