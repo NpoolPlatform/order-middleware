@@ -515,6 +515,7 @@ func (h *updateHandler) validateRenewState() error {
 		}
 	case types.OrderRenewState_OrderRenewCheck:
 		switch *h.PowerRentalStateReq.RenewState {
+		case types.OrderRenewState_OrderRenewWait:
 		case types.OrderRenewState_OrderRenewNotify:
 		case types.OrderRenewState_OrderRenewFail:
 		default:
