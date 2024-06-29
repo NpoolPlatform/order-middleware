@@ -498,7 +498,7 @@ func (h *updateHandler) validateBenefitState() error {
 	return nil
 }
 
-func (h *updateHandler) validateRenewState() error {
+func (h *updateHandler) validateRenewState() error { //nolint:gocyclo
 	if h.PowerRentalStateReq.RenewState == nil {
 		return nil
 	}
