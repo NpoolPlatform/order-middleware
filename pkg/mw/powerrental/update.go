@@ -523,6 +523,7 @@ func (h *updateHandler) validateRenewState() error { //nolint:gocyclo
 		}
 	case types.OrderRenewState_OrderRenewNotify:
 		switch *h.PowerRentalStateReq.RenewState {
+		case types.OrderRenewState_OrderRenewWait:
 		case types.OrderRenewState_OrderRenewExecute:
 		case types.OrderRenewState_OrderRenewFail:
 		default:
