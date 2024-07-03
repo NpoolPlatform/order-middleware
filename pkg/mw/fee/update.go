@@ -4,6 +4,7 @@ import (
 	"context"
 	"time"
 
+	logger "github.com/NpoolPlatform/go-service-framework/pkg/logger"
 	wlog "github.com/NpoolPlatform/go-service-framework/pkg/wlog"
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
 	types "github.com/NpoolPlatform/message/npool/basetypes/order/v1"
@@ -654,6 +655,8 @@ func (h *Handler) UpdateFeeOrderWithTx(ctx context.Context, tx *ent.Tx) error {
 }
 
 func (h *Handler) UpdateFeeOrder(ctx context.Context) error {
+	logger.Sugar().Infow("UpdateFeeOrder start", "OrderID", h.OrderID)
+	defer logger.Sugar().Infow("UpdateFeeOrder done", "OrderID", h.OrderID)
 	return db.WithTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {
 		return h.UpdateFeeOrderWithTx(_ctx, tx)
 	})
