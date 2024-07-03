@@ -212,7 +212,7 @@ func (h *updateHandler) updateOrderStateBase(ctx context.Context, tx *ent.Tx) er
 func (h *updateHandler) updateStatedOrderStateBases(ctx context.Context, tx *ent.Tx) error {
 	for _, sql := range h.sqlStatedOrderStateBases {
 		if err := h.execSQL(ctx, tx, sql); err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 	}
 	return nil
@@ -228,7 +228,7 @@ func (h *updateHandler) updatePowerRentalState(ctx context.Context, tx *ent.Tx) 
 func (h *updateHandler) updatePayWithMeFeeOrderStates(ctx context.Context, tx *ent.Tx) error {
 	for _, sql := range h.sqlPayWithMeFeeOrderStates {
 		if err := h.execSQL(ctx, tx, sql); err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 	}
 	return nil
@@ -703,13 +703,13 @@ func (h *Handler) UpdatePowerRentalWithTx(ctx context.Context, tx *ent.Tx) error
 		return wlog.WrapError(err)
 	}
 	if handler.updateNothing {
-		return cruder.ErrUpdateNothing
+		return wlog.WrapError(cruder.ErrUpdateNothing)
 	}
-	return handler.FeeMultiHandler.UpdateFeeOrdersWithTx(ctx, tx)
+	return wlog.WrapError(handler.FeeMultiHandler.UpdateFeeOrdersWithTx(ctx, tx))
 }
 
 func (h *Handler) UpdatePowerRental(ctx context.Context) error {
-	return db.WithTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {
-		return h.UpdatePowerRentalWithTx(_ctx, tx)
-	})
+	return wlog.WrapError(db.WithTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {
+		return wlog.WrapError(h.UpdatePowerRentalWithTx(_ctx, tx))
+	}))
 }
