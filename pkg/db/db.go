@@ -2,10 +2,9 @@ package db
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
-
+	"github.com/NpoolPlatform/go-service-framework/pkg/wlog"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent"
 
 	"entgo.io/ent/dialect"
@@ -28,7 +27,7 @@ func client() (*ent.Client, error) {
 func Init(hooks ...ent.Hook) error {
 	cli, err := client()
 	if err != nil {
-		return err
+		return wlog.WrapError(err)
 	}
 	cli.Use(hooks...)
 	return cli.Schema.Create(context.Background())
@@ -39,8 +38,10 @@ func Client() (*ent.Client, error) {
 }
 
 func txRun(ctx context.Context, tx *ent.Tx, fn func(ctx context.Context, tx *ent.Tx) error) error {
+	logger.Sugar().Infow("txRun start")
 	succ := false
 	defer func() {
+		logger.Sugar().Infow("txRun end", "Success", succ)
 		if !succ {
 			err := tx.Rollback()
 			if err != nil {
@@ -51,11 +52,11 @@ func txRun(ctx context.Context, tx *ent.Tx, fn func(ctx context.Context, tx *ent
 	}()
 
 	if err := fn(ctx, tx); err != nil {
-		return err
+		return wlog.WrapError(err)
 	}
 
 	if err := tx.Commit(); err != nil {
-		return fmt.Errorf("committing transaction: %v", err)
+		return wlog.Errorf("committing transaction: %v", err)
 	}
 
 	succ = true
@@ -65,11 +66,11 @@ func txRun(ctx context.Context, tx *ent.Tx, fn func(ctx context.Context, tx *ent
 func WithTx(ctx context.Context, fn func(ctx context.Context, tx *ent.Tx) error) error {
 	cli, err := Client()
 	if err != nil {
-		return err
+		return wlog.WrapError(err)
 	}
 	tx, err := cli.Debug().Tx(ctx)
 	if err != nil {
-		return fmt.Errorf("fail get client transaction: %v", err)
+		return wlog.Errorf("fail get client transaction: %v", err)
 	}
 	return txRun(ctx, tx, fn)
 }
@@ -77,11 +78,11 @@ func WithTx(ctx context.Context, fn func(ctx context.Context, tx *ent.Tx) error)
 func WithDebugTx(ctx context.Context, fn func(ctx context.Context, tx *ent.Tx) error) error {
 	cli, err := Client()
 	if err != nil {
-		return err
+		return wlog.WrapError(err)
 	}
 	tx, err := cli.Debug().Tx(ctx)
 	if err != nil {
-		return fmt.Errorf("fail get client transaction: %v", err)
+		return wlog.Errorf("fail get client transaction: %v", err)
 	}
 	return txRun(ctx, tx, fn)
 }
@@ -89,11 +90,14 @@ func WithDebugTx(ctx context.Context, fn func(ctx context.Context, tx *ent.Tx) e
 func WithClient(ctx context.Context, fn func(ctx context.Context, cli *ent.Client) error) error {
 	cli, err := Client()
 	if err != nil {
-		return fmt.Errorf("fail get db client: %v", err)
+		return wlog.Errorf("fail get db client: %v", err)
 	}
 
+	logger.Sugar().Infow("ClientRun start")
+	defer logger.Sugar().Infow("ClientRun done")
+
 	if err := fn(ctx, cli.Debug()); err != nil {
-		return err
+		return wlog.WrapError(err)
 	}
 	return nil
 }
