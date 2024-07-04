@@ -4,7 +4,6 @@ import (
 	"context"
 	"time"
 
-	logger "github.com/NpoolPlatform/go-service-framework/pkg/logger"
 	wlog "github.com/NpoolPlatform/go-service-framework/pkg/wlog"
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
 	types "github.com/NpoolPlatform/message/npool/basetypes/order/v1"
@@ -710,18 +709,6 @@ func (h *Handler) UpdatePowerRentalWithTx(ctx context.Context, tx *ent.Tx) error
 }
 
 func (h *Handler) UpdatePowerRental(ctx context.Context) error {
-	logger.Sugar().Infow("UpdatePowerRentalOrder start", "OrderID", h.OrderID, "ID", h.ID, "OrderState", h.OrderStateBaseReq.OrderState)
-	finished := false
-	go func() {
-		time.Sleep(5 * time.Second) //nolint:gomnd
-		if !finished {
-			logger.Sugar().Infow("UpdatePowerRentalOrder waiting", "OrderID", h.OrderID, "ID", h.ID, "OrderState", h.OrderStateBaseReq.OrderState)
-		}
-	}()
-	defer logger.Sugar().Infow("UpdatePowerRentalOrder done", "OrderID", h.OrderID, "ID", h.ID, "OrderState", h.OrderStateBaseReq.OrderState)
-	defer func() {
-		finished = true
-	}()
 	return wlog.WrapError(db.WithTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {
 		return wlog.WrapError(h.UpdatePowerRentalWithTx(_ctx, tx))
 	}))

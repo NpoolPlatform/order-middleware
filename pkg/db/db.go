@@ -13,7 +13,6 @@ import (
 
 	// ent policy runtime
 	_ "github.com/NpoolPlatform/order-middleware/pkg/db/ent/runtime"
-	"github.com/google/uuid"
 )
 
 func client() (*ent.Client, error) {
@@ -40,11 +39,8 @@ func Client() (*ent.Client, error) {
 }
 
 func txRun(ctx context.Context, tx *ent.Tx, fn func(ctx context.Context, tx *ent.Tx) error) error {
-	runUuid := uuid.New() //nolint:stylecheck
-	logger.Sugar().Infow("txRun start", "RunUuid", runUuid, "Tx", tx)
 	succ := false
 	defer func() {
-		logger.Sugar().Infow("txRun end", "Success", succ, "RunUuid", runUuid)
 		if !succ {
 			err := tx.Rollback()
 			if err != nil {
@@ -71,7 +67,7 @@ func WithTx(ctx context.Context, fn func(ctx context.Context, tx *ent.Tx) error)
 	if err != nil {
 		return wlog.WrapError(err)
 	}
-	tx, err := cli.Debug().Tx(ctx)
+	tx, err := cli.Tx(ctx)
 	if err != nil {
 		return wlog.Errorf("fail get client transaction: %v", err)
 	}
@@ -96,11 +92,7 @@ func WithClient(ctx context.Context, fn func(ctx context.Context, cli *ent.Clien
 		return wlog.Errorf("fail get db client: %v", err)
 	}
 
-	runUuid := uuid.New() //nolint:stylecheck
-	logger.Sugar().Infow("ClientRun start", "RunUuid", runUuid, "Client", cli)
-	defer logger.Sugar().Infow("ClientRun done", "RunUuid", runUuid)
-
-	if err := fn(ctx, cli.Debug()); err != nil {
+	if err := fn(ctx, cli); err != nil {
 		return wlog.WrapError(err)
 	}
 	return nil
