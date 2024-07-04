@@ -714,8 +714,8 @@ func (h *Handler) UpdatePowerRental(ctx context.Context) error {
 	finished := false
 	go func() {
 		for !finished {
-			logger.Sugar().Infow("UpdatePowerRentalOrder waiting", "OrderID", h.OrderID, "ID", h.ID, "OrderState", h.OrderStateBaseReq.OrderState)
 			time.Sleep(5 * time.Second) //nolint:gomnd
+			logger.Sugar().Infow("UpdatePowerRentalOrder waiting", "OrderID", h.OrderID, "ID", h.ID, "OrderState", h.OrderStateBaseReq.OrderState)
 		}
 	}()
 	defer logger.Sugar().Infow("UpdatePowerRentalOrder done", "OrderID", h.OrderID, "ID", h.ID, "OrderState", h.OrderStateBaseReq.OrderState)
