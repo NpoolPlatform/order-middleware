@@ -21,6 +21,7 @@ func client() (*ent.Client, error) {
 	if err != nil {
 		return nil, err
 	}
+	logger.Sugar().Infow("client", "DBStats", conn.Stats())
 	drv := entsql.OpenDB(dialect.MySQL, conn)
 	return ent.NewClient(ent.Driver(drv)), nil
 }
