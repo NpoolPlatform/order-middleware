@@ -95,7 +95,7 @@ func WithClient(ctx context.Context, fn func(ctx context.Context, cli *ent.Clien
 		return wlog.Errorf("fail get db client: %v", err)
 	}
 
-	runUuid := uuid.New() //notlint:stylecheck
+	runUuid := uuid.New() //nolint:stylecheck
 	logger.Sugar().Infow("ClientRun start", "RunUuid", runUuid, "Client", cli)
 	defer logger.Sugar().Infow("ClientRun done", "RunUuid", runUuid)
 
