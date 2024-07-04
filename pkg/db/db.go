@@ -39,7 +39,7 @@ func Client() (*ent.Client, error) {
 }
 
 func txRun(ctx context.Context, tx *ent.Tx, fn func(ctx context.Context, tx *ent.Tx) error) error {
-	runUuid := uuid.New()
+	runUuid := uuid.New() //nolint:stylecheck
 	logger.Sugar().Infow("txRun start", "RunUuid", runUuid, "Tx", tx)
 	succ := false
 	defer func() {
@@ -95,7 +95,7 @@ func WithClient(ctx context.Context, fn func(ctx context.Context, cli *ent.Clien
 		return wlog.Errorf("fail get db client: %v", err)
 	}
 
-	runUuid := uuid.New()
+	runUuid := uuid.New() //notlint:stylecheck
 	logger.Sugar().Infow("ClientRun start", "RunUuid", runUuid, "Client", cli)
 	defer logger.Sugar().Infow("ClientRun done", "RunUuid", runUuid)
 
