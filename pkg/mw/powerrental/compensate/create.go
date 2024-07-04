@@ -72,7 +72,7 @@ func (h *createHandler) createGoodCompensates(ctx context.Context, tx *ent.Tx) e
 	h.limit = constant.DefaultRowLimit
 
 	for {
-		if err := h.requirePowerRentalStates(ctx); err != nil {
+		if err := h.requirePowerRentalStatesWithTx(ctx, tx); err != nil {
 			return wlog.WrapError(err)
 		}
 		if h._ent.Exhausted() {

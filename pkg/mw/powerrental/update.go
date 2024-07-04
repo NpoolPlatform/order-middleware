@@ -711,7 +711,17 @@ func (h *Handler) UpdatePowerRentalWithTx(ctx context.Context, tx *ent.Tx) error
 
 func (h *Handler) UpdatePowerRental(ctx context.Context) error {
 	logger.Sugar().Infow("UpdatePowerRentalOrder start", "OrderID", h.OrderID, "ID", h.ID, "OrderState", h.OrderStateBaseReq.OrderState)
+	finished := false
+	go func() {
+		for !finished {
+			logger.Sugar().Infow("UpdatePowerRentalOrder waiting", "OrderID", h.OrderID, "ID", h.ID, "OrderState", h.OrderStateBaseReq.OrderState)
+			time.Sleep(5 * time.Second)
+		}
+	}()
 	defer logger.Sugar().Infow("UpdatePowerRentalOrder done", "OrderID", h.OrderID, "ID", h.ID, "OrderState", h.OrderStateBaseReq.OrderState)
+	defer func() {
+		finished = true
+	}()
 	return wlog.WrapError(db.WithTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {
 		return wlog.WrapError(h.UpdatePowerRentalWithTx(_ctx, tx))
 	}))

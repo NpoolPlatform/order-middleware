@@ -67,7 +67,7 @@ func WithTx(ctx context.Context, fn func(ctx context.Context, tx *ent.Tx) error)
 	if err != nil {
 		return err
 	}
-	tx, err := cli.Tx(ctx)
+	tx, err := cli.Debug().Tx(ctx)
 	if err != nil {
 		return fmt.Errorf("fail get client transaction: %v", err)
 	}
@@ -92,7 +92,7 @@ func WithClient(ctx context.Context, fn func(ctx context.Context, cli *ent.Clien
 		return fmt.Errorf("fail get db client: %v", err)
 	}
 
-	if err := fn(ctx, cli); err != nil {
+	if err := fn(ctx, cli.Debug()); err != nil {
 		return err
 	}
 	return nil

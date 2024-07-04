@@ -69,19 +69,23 @@ func (h *powerRentalStateQueryHandler) getOrderPowerRentalStateEnt(ctx context.C
 	return nil
 }
 
-func (h *powerRentalStateQueryHandler) _getPowerRentalStates(ctx context.Context, must bool) error {
+func (h *powerRentalStateQueryHandler) _getPowerRentalStates(ctx context.Context, cli *ent.Client, must bool) error {
 	if h.OrderID == nil && h.GoodID == nil {
 		return wlog.Errorf("invalid id")
 	}
 	h._ent.entPowerRentalStates = []*ent.PowerRentalState{}
-	return db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
-		if h.OrderID != nil {
-			return h.getOrderPowerRentalStateEnt(ctx, cli, must)
-		}
-		return h.getGoodPowerRentalStateEnts(_ctx, cli)
-	})
+	if h.OrderID != nil {
+		return h.getOrderPowerRentalStateEnt(ctx, cli, must)
+	}
+	return h.getGoodPowerRentalStateEnts(ctx, cli)
 }
 
 func (h *powerRentalStateQueryHandler) requirePowerRentalStates(ctx context.Context) error {
-	return h._getPowerRentalStates(ctx, true)
+	return db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
+		return h._getPowerRentalStates(_ctx, cli, true)
+	})
+}
+
+func (h *powerRentalStateQueryHandler) requirePowerRentalStatesWithTx(ctx context.Context, tx *ent.Tx) error {
+	return h._getPowerRentalStates(ctx, tx.Client(), true)
 }
