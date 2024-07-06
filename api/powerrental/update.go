@@ -55,7 +55,7 @@ func (s *Server) UpdatePowerRentalOrder(ctx context.Context, in *npool.UpdatePow
 			"Req", req,
 			"error", err,
 		)
-		return &npool.UpdatePowerRentalOrderResponse{}, status.Error(codes.InvalidArgument, err.Error())
+		return &npool.UpdatePowerRentalOrderResponse{}, status.Error(codes.InvalidArgument, "internal error")
 	}
 	if err := handler.UpdatePowerRental(ctx); err != nil {
 		logger.Sugar().Errorw(
@@ -63,7 +63,7 @@ func (s *Server) UpdatePowerRentalOrder(ctx context.Context, in *npool.UpdatePow
 			"Req", req,
 			"error", err,
 		)
-		return &npool.UpdatePowerRentalOrderResponse{}, status.Error(codes.Aborted, err.Error())
+		return &npool.UpdatePowerRentalOrderResponse{}, status.Error(codes.Aborted, "internal error")
 	}
 
 	return &npool.UpdatePowerRentalOrderResponse{}, nil
@@ -105,7 +105,7 @@ func (s *Server) UpdatePowerRentalOrders(ctx context.Context, in *npool.UpdatePo
 				"Req", req,
 				"error", err,
 			)
-			return &npool.UpdatePowerRentalOrdersResponse{}, status.Error(codes.InvalidArgument, err.Error())
+			return &npool.UpdatePowerRentalOrdersResponse{}, status.Error(codes.InvalidArgument, "internal error")
 		}
 		multiHandler.AppendHandler(handler)
 	}
@@ -115,7 +115,7 @@ func (s *Server) UpdatePowerRentalOrders(ctx context.Context, in *npool.UpdatePo
 			"Req", in,
 			"error", err,
 		)
-		return &npool.UpdatePowerRentalOrdersResponse{}, status.Error(codes.Aborted, err.Error())
+		return &npool.UpdatePowerRentalOrdersResponse{}, status.Error(codes.Aborted, "internal error")
 	}
 
 	return &npool.UpdatePowerRentalOrdersResponse{}, nil
