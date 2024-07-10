@@ -106,6 +106,7 @@ func (h *validateHandler) validatePaymentState() error {
 		case types.PaymentState_PaymentStateDone:
 		case types.PaymentState_PaymentStateCanceled:
 		case types.PaymentState_PaymentStateTimeout:
+		case types.PaymentState_PaymentStateNoPayment:
 		default:
 			return wlog.Errorf("permission denied")
 		}

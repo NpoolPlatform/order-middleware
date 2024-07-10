@@ -24,7 +24,7 @@ func (h *updateHandler) validateObseleteState() error {
 	case types.PaymentObseleteState_PaymentObseleteNone:
 		return wlog.Errorf("permission denied")
 	case types.PaymentObseleteState_PaymentObseleteWait:
-		if *h.ObseleteState == types.PaymentObseleteState_PaymentObseleteUnlockBalance {
+		if *h.ObseleteState != types.PaymentObseleteState_PaymentObseleteUnlockBalance {
 			return wlog.Errorf("permission denied")
 		}
 	case types.PaymentObseleteState_PaymentObseleteUnlockBalance:
