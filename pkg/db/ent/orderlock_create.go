@@ -78,9 +78,17 @@ func (olc *OrderLockCreate) SetNillableEntID(u *uuid.UUID) *OrderLockCreate {
 	return olc
 }
 
-// SetAppID sets the "app_id" field.
-func (olc *OrderLockCreate) SetAppID(u uuid.UUID) *OrderLockCreate {
-	olc.mutation.SetAppID(u)
+// SetOrderID sets the "order_id" field.
+func (olc *OrderLockCreate) SetOrderID(u uuid.UUID) *OrderLockCreate {
+	olc.mutation.SetOrderID(u)
+	return olc
+}
+
+// SetNillableOrderID sets the "order_id" field if the given value is not nil.
+func (olc *OrderLockCreate) SetNillableOrderID(u *uuid.UUID) *OrderLockCreate {
+	if u != nil {
+		olc.SetOrderID(*u)
+	}
 	return olc
 }
 
@@ -90,9 +98,11 @@ func (olc *OrderLockCreate) SetUserID(u uuid.UUID) *OrderLockCreate {
 	return olc
 }
 
-// SetOrderID sets the "order_id" field.
-func (olc *OrderLockCreate) SetOrderID(u uuid.UUID) *OrderLockCreate {
-	olc.mutation.SetOrderID(u)
+// SetNillableUserID sets the "user_id" field if the given value is not nil.
+func (olc *OrderLockCreate) SetNillableUserID(u *uuid.UUID) *OrderLockCreate {
+	if u != nil {
+		olc.SetUserID(*u)
+	}
 	return olc
 }
 
@@ -223,6 +233,20 @@ func (olc *OrderLockCreate) defaults() error {
 		v := orderlock.DefaultEntID()
 		olc.mutation.SetEntID(v)
 	}
+	if _, ok := olc.mutation.OrderID(); !ok {
+		if orderlock.DefaultOrderID == nil {
+			return fmt.Errorf("ent: uninitialized orderlock.DefaultOrderID (forgotten import ent/runtime?)")
+		}
+		v := orderlock.DefaultOrderID()
+		olc.mutation.SetOrderID(v)
+	}
+	if _, ok := olc.mutation.UserID(); !ok {
+		if orderlock.DefaultUserID == nil {
+			return fmt.Errorf("ent: uninitialized orderlock.DefaultUserID (forgotten import ent/runtime?)")
+		}
+		v := orderlock.DefaultUserID()
+		olc.mutation.SetUserID(v)
+	}
 	if _, ok := olc.mutation.LockType(); !ok {
 		v := orderlock.DefaultLockType
 		olc.mutation.SetLockType(v)
@@ -243,15 +267,6 @@ func (olc *OrderLockCreate) check() error {
 	}
 	if _, ok := olc.mutation.EntID(); !ok {
 		return &ValidationError{Name: "ent_id", err: errors.New(`ent: missing required field "OrderLock.ent_id"`)}
-	}
-	if _, ok := olc.mutation.AppID(); !ok {
-		return &ValidationError{Name: "app_id", err: errors.New(`ent: missing required field "OrderLock.app_id"`)}
-	}
-	if _, ok := olc.mutation.UserID(); !ok {
-		return &ValidationError{Name: "user_id", err: errors.New(`ent: missing required field "OrderLock.user_id"`)}
-	}
-	if _, ok := olc.mutation.OrderID(); !ok {
-		return &ValidationError{Name: "order_id", err: errors.New(`ent: missing required field "OrderLock.order_id"`)}
 	}
 	return nil
 }
@@ -319,13 +334,13 @@ func (olc *OrderLockCreate) createSpec() (*OrderLock, *sqlgraph.CreateSpec) {
 		})
 		_node.EntID = value
 	}
-	if value, ok := olc.mutation.AppID(); ok {
+	if value, ok := olc.mutation.OrderID(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
 			Type:   field.TypeUUID,
 			Value:  value,
-			Column: orderlock.FieldAppID,
+			Column: orderlock.FieldOrderID,
 		})
-		_node.AppID = value
+		_node.OrderID = value
 	}
 	if value, ok := olc.mutation.UserID(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -334,14 +349,6 @@ func (olc *OrderLockCreate) createSpec() (*OrderLock, *sqlgraph.CreateSpec) {
 			Column: orderlock.FieldUserID,
 		})
 		_node.UserID = value
-	}
-	if value, ok := olc.mutation.OrderID(); ok {
-		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
-			Type:   field.TypeUUID,
-			Value:  value,
-			Column: orderlock.FieldOrderID,
-		})
-		_node.OrderID = value
 	}
 	if value, ok := olc.mutation.LockType(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -471,15 +478,21 @@ func (u *OrderLockUpsert) UpdateEntID() *OrderLockUpsert {
 	return u
 }
 
-// SetAppID sets the "app_id" field.
-func (u *OrderLockUpsert) SetAppID(v uuid.UUID) *OrderLockUpsert {
-	u.Set(orderlock.FieldAppID, v)
+// SetOrderID sets the "order_id" field.
+func (u *OrderLockUpsert) SetOrderID(v uuid.UUID) *OrderLockUpsert {
+	u.Set(orderlock.FieldOrderID, v)
 	return u
 }
 
-// UpdateAppID sets the "app_id" field to the value that was provided on create.
-func (u *OrderLockUpsert) UpdateAppID() *OrderLockUpsert {
-	u.SetExcluded(orderlock.FieldAppID)
+// UpdateOrderID sets the "order_id" field to the value that was provided on create.
+func (u *OrderLockUpsert) UpdateOrderID() *OrderLockUpsert {
+	u.SetExcluded(orderlock.FieldOrderID)
+	return u
+}
+
+// ClearOrderID clears the value of the "order_id" field.
+func (u *OrderLockUpsert) ClearOrderID() *OrderLockUpsert {
+	u.SetNull(orderlock.FieldOrderID)
 	return u
 }
 
@@ -495,15 +508,9 @@ func (u *OrderLockUpsert) UpdateUserID() *OrderLockUpsert {
 	return u
 }
 
-// SetOrderID sets the "order_id" field.
-func (u *OrderLockUpsert) SetOrderID(v uuid.UUID) *OrderLockUpsert {
-	u.Set(orderlock.FieldOrderID, v)
-	return u
-}
-
-// UpdateOrderID sets the "order_id" field to the value that was provided on create.
-func (u *OrderLockUpsert) UpdateOrderID() *OrderLockUpsert {
-	u.SetExcluded(orderlock.FieldOrderID)
+// ClearUserID clears the value of the "user_id" field.
+func (u *OrderLockUpsert) ClearUserID() *OrderLockUpsert {
+	u.SetNull(orderlock.FieldUserID)
 	return u
 }
 
@@ -652,17 +659,24 @@ func (u *OrderLockUpsertOne) UpdateEntID() *OrderLockUpsertOne {
 	})
 }
 
-// SetAppID sets the "app_id" field.
-func (u *OrderLockUpsertOne) SetAppID(v uuid.UUID) *OrderLockUpsertOne {
+// SetOrderID sets the "order_id" field.
+func (u *OrderLockUpsertOne) SetOrderID(v uuid.UUID) *OrderLockUpsertOne {
 	return u.Update(func(s *OrderLockUpsert) {
-		s.SetAppID(v)
+		s.SetOrderID(v)
 	})
 }
 
-// UpdateAppID sets the "app_id" field to the value that was provided on create.
-func (u *OrderLockUpsertOne) UpdateAppID() *OrderLockUpsertOne {
+// UpdateOrderID sets the "order_id" field to the value that was provided on create.
+func (u *OrderLockUpsertOne) UpdateOrderID() *OrderLockUpsertOne {
 	return u.Update(func(s *OrderLockUpsert) {
-		s.UpdateAppID()
+		s.UpdateOrderID()
+	})
+}
+
+// ClearOrderID clears the value of the "order_id" field.
+func (u *OrderLockUpsertOne) ClearOrderID() *OrderLockUpsertOne {
+	return u.Update(func(s *OrderLockUpsert) {
+		s.ClearOrderID()
 	})
 }
 
@@ -680,17 +694,10 @@ func (u *OrderLockUpsertOne) UpdateUserID() *OrderLockUpsertOne {
 	})
 }
 
-// SetOrderID sets the "order_id" field.
-func (u *OrderLockUpsertOne) SetOrderID(v uuid.UUID) *OrderLockUpsertOne {
+// ClearUserID clears the value of the "user_id" field.
+func (u *OrderLockUpsertOne) ClearUserID() *OrderLockUpsertOne {
 	return u.Update(func(s *OrderLockUpsert) {
-		s.SetOrderID(v)
-	})
-}
-
-// UpdateOrderID sets the "order_id" field to the value that was provided on create.
-func (u *OrderLockUpsertOne) UpdateOrderID() *OrderLockUpsertOne {
-	return u.Update(func(s *OrderLockUpsert) {
-		s.UpdateOrderID()
+		s.ClearUserID()
 	})
 }
 
@@ -1007,17 +1014,24 @@ func (u *OrderLockUpsertBulk) UpdateEntID() *OrderLockUpsertBulk {
 	})
 }
 
-// SetAppID sets the "app_id" field.
-func (u *OrderLockUpsertBulk) SetAppID(v uuid.UUID) *OrderLockUpsertBulk {
+// SetOrderID sets the "order_id" field.
+func (u *OrderLockUpsertBulk) SetOrderID(v uuid.UUID) *OrderLockUpsertBulk {
 	return u.Update(func(s *OrderLockUpsert) {
-		s.SetAppID(v)
+		s.SetOrderID(v)
 	})
 }
 
-// UpdateAppID sets the "app_id" field to the value that was provided on create.
-func (u *OrderLockUpsertBulk) UpdateAppID() *OrderLockUpsertBulk {
+// UpdateOrderID sets the "order_id" field to the value that was provided on create.
+func (u *OrderLockUpsertBulk) UpdateOrderID() *OrderLockUpsertBulk {
 	return u.Update(func(s *OrderLockUpsert) {
-		s.UpdateAppID()
+		s.UpdateOrderID()
+	})
+}
+
+// ClearOrderID clears the value of the "order_id" field.
+func (u *OrderLockUpsertBulk) ClearOrderID() *OrderLockUpsertBulk {
+	return u.Update(func(s *OrderLockUpsert) {
+		s.ClearOrderID()
 	})
 }
 
@@ -1035,17 +1049,10 @@ func (u *OrderLockUpsertBulk) UpdateUserID() *OrderLockUpsertBulk {
 	})
 }
 
-// SetOrderID sets the "order_id" field.
-func (u *OrderLockUpsertBulk) SetOrderID(v uuid.UUID) *OrderLockUpsertBulk {
+// ClearUserID clears the value of the "user_id" field.
+func (u *OrderLockUpsertBulk) ClearUserID() *OrderLockUpsertBulk {
 	return u.Update(func(s *OrderLockUpsert) {
-		s.SetOrderID(v)
-	})
-}
-
-// UpdateOrderID sets the "order_id" field to the value that was provided on create.
-func (u *OrderLockUpsertBulk) UpdateOrderID() *OrderLockUpsertBulk {
-	return u.Update(func(s *OrderLockUpsert) {
-		s.UpdateOrderID()
+		s.ClearUserID()
 	})
 }
 

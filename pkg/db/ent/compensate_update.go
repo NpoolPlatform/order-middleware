@@ -104,57 +104,37 @@ func (cu *CompensateUpdate) SetOrderID(u uuid.UUID) *CompensateUpdate {
 	return cu
 }
 
-// SetStartAt sets the "start_at" field.
-func (cu *CompensateUpdate) SetStartAt(u uint32) *CompensateUpdate {
-	cu.mutation.ResetStartAt()
-	cu.mutation.SetStartAt(u)
-	return cu
-}
-
-// SetNillableStartAt sets the "start_at" field if the given value is not nil.
-func (cu *CompensateUpdate) SetNillableStartAt(u *uint32) *CompensateUpdate {
+// SetNillableOrderID sets the "order_id" field if the given value is not nil.
+func (cu *CompensateUpdate) SetNillableOrderID(u *uuid.UUID) *CompensateUpdate {
 	if u != nil {
-		cu.SetStartAt(*u)
+		cu.SetOrderID(*u)
 	}
 	return cu
 }
 
-// AddStartAt adds u to the "start_at" field.
-func (cu *CompensateUpdate) AddStartAt(u int32) *CompensateUpdate {
-	cu.mutation.AddStartAt(u)
+// ClearOrderID clears the value of the "order_id" field.
+func (cu *CompensateUpdate) ClearOrderID() *CompensateUpdate {
+	cu.mutation.ClearOrderID()
 	return cu
 }
 
-// ClearStartAt clears the value of the "start_at" field.
-func (cu *CompensateUpdate) ClearStartAt() *CompensateUpdate {
-	cu.mutation.ClearStartAt()
+// SetCompensateFromID sets the "compensate_from_id" field.
+func (cu *CompensateUpdate) SetCompensateFromID(u uuid.UUID) *CompensateUpdate {
+	cu.mutation.SetCompensateFromID(u)
 	return cu
 }
 
-// SetEndAt sets the "end_at" field.
-func (cu *CompensateUpdate) SetEndAt(u uint32) *CompensateUpdate {
-	cu.mutation.ResetEndAt()
-	cu.mutation.SetEndAt(u)
-	return cu
-}
-
-// SetNillableEndAt sets the "end_at" field if the given value is not nil.
-func (cu *CompensateUpdate) SetNillableEndAt(u *uint32) *CompensateUpdate {
+// SetNillableCompensateFromID sets the "compensate_from_id" field if the given value is not nil.
+func (cu *CompensateUpdate) SetNillableCompensateFromID(u *uuid.UUID) *CompensateUpdate {
 	if u != nil {
-		cu.SetEndAt(*u)
+		cu.SetCompensateFromID(*u)
 	}
 	return cu
 }
 
-// AddEndAt adds u to the "end_at" field.
-func (cu *CompensateUpdate) AddEndAt(u int32) *CompensateUpdate {
-	cu.mutation.AddEndAt(u)
-	return cu
-}
-
-// ClearEndAt clears the value of the "end_at" field.
-func (cu *CompensateUpdate) ClearEndAt() *CompensateUpdate {
-	cu.mutation.ClearEndAt()
+// ClearCompensateFromID clears the value of the "compensate_from_id" field.
+func (cu *CompensateUpdate) ClearCompensateFromID() *CompensateUpdate {
+	cu.mutation.ClearCompensateFromID()
 	return cu
 }
 
@@ -178,43 +158,30 @@ func (cu *CompensateUpdate) ClearCompensateType() *CompensateUpdate {
 	return cu
 }
 
-// SetTitle sets the "title" field.
-func (cu *CompensateUpdate) SetTitle(s string) *CompensateUpdate {
-	cu.mutation.SetTitle(s)
+// SetCompensateSeconds sets the "compensate_seconds" field.
+func (cu *CompensateUpdate) SetCompensateSeconds(u uint32) *CompensateUpdate {
+	cu.mutation.ResetCompensateSeconds()
+	cu.mutation.SetCompensateSeconds(u)
 	return cu
 }
 
-// SetNillableTitle sets the "title" field if the given value is not nil.
-func (cu *CompensateUpdate) SetNillableTitle(s *string) *CompensateUpdate {
-	if s != nil {
-		cu.SetTitle(*s)
+// SetNillableCompensateSeconds sets the "compensate_seconds" field if the given value is not nil.
+func (cu *CompensateUpdate) SetNillableCompensateSeconds(u *uint32) *CompensateUpdate {
+	if u != nil {
+		cu.SetCompensateSeconds(*u)
 	}
 	return cu
 }
 
-// ClearTitle clears the value of the "title" field.
-func (cu *CompensateUpdate) ClearTitle() *CompensateUpdate {
-	cu.mutation.ClearTitle()
+// AddCompensateSeconds adds u to the "compensate_seconds" field.
+func (cu *CompensateUpdate) AddCompensateSeconds(u int32) *CompensateUpdate {
+	cu.mutation.AddCompensateSeconds(u)
 	return cu
 }
 
-// SetMessage sets the "message" field.
-func (cu *CompensateUpdate) SetMessage(s string) *CompensateUpdate {
-	cu.mutation.SetMessage(s)
-	return cu
-}
-
-// SetNillableMessage sets the "message" field if the given value is not nil.
-func (cu *CompensateUpdate) SetNillableMessage(s *string) *CompensateUpdate {
-	if s != nil {
-		cu.SetMessage(*s)
-	}
-	return cu
-}
-
-// ClearMessage clears the value of the "message" field.
-func (cu *CompensateUpdate) ClearMessage() *CompensateUpdate {
-	cu.mutation.ClearMessage()
+// ClearCompensateSeconds clears the value of the "compensate_seconds" field.
+func (cu *CompensateUpdate) ClearCompensateSeconds() *CompensateUpdate {
+	cu.mutation.ClearCompensateSeconds()
 	return cu
 }
 
@@ -372,44 +339,23 @@ func (cu *CompensateUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: compensate.FieldOrderID,
 		})
 	}
-	if value, ok := cu.mutation.StartAt(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeUint32,
-			Value:  value,
-			Column: compensate.FieldStartAt,
-		})
-	}
-	if value, ok := cu.mutation.AddedStartAt(); ok {
-		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
-			Type:   field.TypeUint32,
-			Value:  value,
-			Column: compensate.FieldStartAt,
-		})
-	}
-	if cu.mutation.StartAtCleared() {
+	if cu.mutation.OrderIDCleared() {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeUint32,
-			Column: compensate.FieldStartAt,
+			Type:   field.TypeUUID,
+			Column: compensate.FieldOrderID,
 		})
 	}
-	if value, ok := cu.mutation.EndAt(); ok {
+	if value, ok := cu.mutation.CompensateFromID(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeUint32,
+			Type:   field.TypeUUID,
 			Value:  value,
-			Column: compensate.FieldEndAt,
+			Column: compensate.FieldCompensateFromID,
 		})
 	}
-	if value, ok := cu.mutation.AddedEndAt(); ok {
-		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
-			Type:   field.TypeUint32,
-			Value:  value,
-			Column: compensate.FieldEndAt,
-		})
-	}
-	if cu.mutation.EndAtCleared() {
+	if cu.mutation.CompensateFromIDCleared() {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeUint32,
-			Column: compensate.FieldEndAt,
+			Type:   field.TypeUUID,
+			Column: compensate.FieldCompensateFromID,
 		})
 	}
 	if value, ok := cu.mutation.CompensateType(); ok {
@@ -425,30 +371,24 @@ func (cu *CompensateUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: compensate.FieldCompensateType,
 		})
 	}
-	if value, ok := cu.mutation.Title(); ok {
+	if value, ok := cu.mutation.CompensateSeconds(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
+			Type:   field.TypeUint32,
 			Value:  value,
-			Column: compensate.FieldTitle,
+			Column: compensate.FieldCompensateSeconds,
 		})
 	}
-	if cu.mutation.TitleCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Column: compensate.FieldTitle,
-		})
-	}
-	if value, ok := cu.mutation.Message(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
+	if value, ok := cu.mutation.AddedCompensateSeconds(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeUint32,
 			Value:  value,
-			Column: compensate.FieldMessage,
+			Column: compensate.FieldCompensateSeconds,
 		})
 	}
-	if cu.mutation.MessageCleared() {
+	if cu.mutation.CompensateSecondsCleared() {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Column: compensate.FieldMessage,
+			Type:   field.TypeUint32,
+			Column: compensate.FieldCompensateSeconds,
 		})
 	}
 	_spec.Modifiers = cu.modifiers
@@ -547,57 +487,37 @@ func (cuo *CompensateUpdateOne) SetOrderID(u uuid.UUID) *CompensateUpdateOne {
 	return cuo
 }
 
-// SetStartAt sets the "start_at" field.
-func (cuo *CompensateUpdateOne) SetStartAt(u uint32) *CompensateUpdateOne {
-	cuo.mutation.ResetStartAt()
-	cuo.mutation.SetStartAt(u)
-	return cuo
-}
-
-// SetNillableStartAt sets the "start_at" field if the given value is not nil.
-func (cuo *CompensateUpdateOne) SetNillableStartAt(u *uint32) *CompensateUpdateOne {
+// SetNillableOrderID sets the "order_id" field if the given value is not nil.
+func (cuo *CompensateUpdateOne) SetNillableOrderID(u *uuid.UUID) *CompensateUpdateOne {
 	if u != nil {
-		cuo.SetStartAt(*u)
+		cuo.SetOrderID(*u)
 	}
 	return cuo
 }
 
-// AddStartAt adds u to the "start_at" field.
-func (cuo *CompensateUpdateOne) AddStartAt(u int32) *CompensateUpdateOne {
-	cuo.mutation.AddStartAt(u)
+// ClearOrderID clears the value of the "order_id" field.
+func (cuo *CompensateUpdateOne) ClearOrderID() *CompensateUpdateOne {
+	cuo.mutation.ClearOrderID()
 	return cuo
 }
 
-// ClearStartAt clears the value of the "start_at" field.
-func (cuo *CompensateUpdateOne) ClearStartAt() *CompensateUpdateOne {
-	cuo.mutation.ClearStartAt()
+// SetCompensateFromID sets the "compensate_from_id" field.
+func (cuo *CompensateUpdateOne) SetCompensateFromID(u uuid.UUID) *CompensateUpdateOne {
+	cuo.mutation.SetCompensateFromID(u)
 	return cuo
 }
 
-// SetEndAt sets the "end_at" field.
-func (cuo *CompensateUpdateOne) SetEndAt(u uint32) *CompensateUpdateOne {
-	cuo.mutation.ResetEndAt()
-	cuo.mutation.SetEndAt(u)
-	return cuo
-}
-
-// SetNillableEndAt sets the "end_at" field if the given value is not nil.
-func (cuo *CompensateUpdateOne) SetNillableEndAt(u *uint32) *CompensateUpdateOne {
+// SetNillableCompensateFromID sets the "compensate_from_id" field if the given value is not nil.
+func (cuo *CompensateUpdateOne) SetNillableCompensateFromID(u *uuid.UUID) *CompensateUpdateOne {
 	if u != nil {
-		cuo.SetEndAt(*u)
+		cuo.SetCompensateFromID(*u)
 	}
 	return cuo
 }
 
-// AddEndAt adds u to the "end_at" field.
-func (cuo *CompensateUpdateOne) AddEndAt(u int32) *CompensateUpdateOne {
-	cuo.mutation.AddEndAt(u)
-	return cuo
-}
-
-// ClearEndAt clears the value of the "end_at" field.
-func (cuo *CompensateUpdateOne) ClearEndAt() *CompensateUpdateOne {
-	cuo.mutation.ClearEndAt()
+// ClearCompensateFromID clears the value of the "compensate_from_id" field.
+func (cuo *CompensateUpdateOne) ClearCompensateFromID() *CompensateUpdateOne {
+	cuo.mutation.ClearCompensateFromID()
 	return cuo
 }
 
@@ -621,43 +541,30 @@ func (cuo *CompensateUpdateOne) ClearCompensateType() *CompensateUpdateOne {
 	return cuo
 }
 
-// SetTitle sets the "title" field.
-func (cuo *CompensateUpdateOne) SetTitle(s string) *CompensateUpdateOne {
-	cuo.mutation.SetTitle(s)
+// SetCompensateSeconds sets the "compensate_seconds" field.
+func (cuo *CompensateUpdateOne) SetCompensateSeconds(u uint32) *CompensateUpdateOne {
+	cuo.mutation.ResetCompensateSeconds()
+	cuo.mutation.SetCompensateSeconds(u)
 	return cuo
 }
 
-// SetNillableTitle sets the "title" field if the given value is not nil.
-func (cuo *CompensateUpdateOne) SetNillableTitle(s *string) *CompensateUpdateOne {
-	if s != nil {
-		cuo.SetTitle(*s)
+// SetNillableCompensateSeconds sets the "compensate_seconds" field if the given value is not nil.
+func (cuo *CompensateUpdateOne) SetNillableCompensateSeconds(u *uint32) *CompensateUpdateOne {
+	if u != nil {
+		cuo.SetCompensateSeconds(*u)
 	}
 	return cuo
 }
 
-// ClearTitle clears the value of the "title" field.
-func (cuo *CompensateUpdateOne) ClearTitle() *CompensateUpdateOne {
-	cuo.mutation.ClearTitle()
+// AddCompensateSeconds adds u to the "compensate_seconds" field.
+func (cuo *CompensateUpdateOne) AddCompensateSeconds(u int32) *CompensateUpdateOne {
+	cuo.mutation.AddCompensateSeconds(u)
 	return cuo
 }
 
-// SetMessage sets the "message" field.
-func (cuo *CompensateUpdateOne) SetMessage(s string) *CompensateUpdateOne {
-	cuo.mutation.SetMessage(s)
-	return cuo
-}
-
-// SetNillableMessage sets the "message" field if the given value is not nil.
-func (cuo *CompensateUpdateOne) SetNillableMessage(s *string) *CompensateUpdateOne {
-	if s != nil {
-		cuo.SetMessage(*s)
-	}
-	return cuo
-}
-
-// ClearMessage clears the value of the "message" field.
-func (cuo *CompensateUpdateOne) ClearMessage() *CompensateUpdateOne {
-	cuo.mutation.ClearMessage()
+// ClearCompensateSeconds clears the value of the "compensate_seconds" field.
+func (cuo *CompensateUpdateOne) ClearCompensateSeconds() *CompensateUpdateOne {
+	cuo.mutation.ClearCompensateSeconds()
 	return cuo
 }
 
@@ -845,44 +752,23 @@ func (cuo *CompensateUpdateOne) sqlSave(ctx context.Context) (_node *Compensate,
 			Column: compensate.FieldOrderID,
 		})
 	}
-	if value, ok := cuo.mutation.StartAt(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeUint32,
-			Value:  value,
-			Column: compensate.FieldStartAt,
-		})
-	}
-	if value, ok := cuo.mutation.AddedStartAt(); ok {
-		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
-			Type:   field.TypeUint32,
-			Value:  value,
-			Column: compensate.FieldStartAt,
-		})
-	}
-	if cuo.mutation.StartAtCleared() {
+	if cuo.mutation.OrderIDCleared() {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeUint32,
-			Column: compensate.FieldStartAt,
+			Type:   field.TypeUUID,
+			Column: compensate.FieldOrderID,
 		})
 	}
-	if value, ok := cuo.mutation.EndAt(); ok {
+	if value, ok := cuo.mutation.CompensateFromID(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeUint32,
+			Type:   field.TypeUUID,
 			Value:  value,
-			Column: compensate.FieldEndAt,
+			Column: compensate.FieldCompensateFromID,
 		})
 	}
-	if value, ok := cuo.mutation.AddedEndAt(); ok {
-		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
-			Type:   field.TypeUint32,
-			Value:  value,
-			Column: compensate.FieldEndAt,
-		})
-	}
-	if cuo.mutation.EndAtCleared() {
+	if cuo.mutation.CompensateFromIDCleared() {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeUint32,
-			Column: compensate.FieldEndAt,
+			Type:   field.TypeUUID,
+			Column: compensate.FieldCompensateFromID,
 		})
 	}
 	if value, ok := cuo.mutation.CompensateType(); ok {
@@ -898,30 +784,24 @@ func (cuo *CompensateUpdateOne) sqlSave(ctx context.Context) (_node *Compensate,
 			Column: compensate.FieldCompensateType,
 		})
 	}
-	if value, ok := cuo.mutation.Title(); ok {
+	if value, ok := cuo.mutation.CompensateSeconds(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
+			Type:   field.TypeUint32,
 			Value:  value,
-			Column: compensate.FieldTitle,
+			Column: compensate.FieldCompensateSeconds,
 		})
 	}
-	if cuo.mutation.TitleCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Column: compensate.FieldTitle,
-		})
-	}
-	if value, ok := cuo.mutation.Message(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
+	if value, ok := cuo.mutation.AddedCompensateSeconds(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeUint32,
 			Value:  value,
-			Column: compensate.FieldMessage,
+			Column: compensate.FieldCompensateSeconds,
 		})
 	}
-	if cuo.mutation.MessageCleared() {
+	if cuo.mutation.CompensateSecondsCleared() {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Column: compensate.FieldMessage,
+			Type:   field.TypeUint32,
+			Column: compensate.FieldCompensateSeconds,
 		})
 	}
 	_spec.Modifiers = cuo.modifiers

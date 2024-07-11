@@ -98,9 +98,23 @@ func (olu *OrderLockUpdate) SetNillableEntID(u *uuid.UUID) *OrderLockUpdate {
 	return olu
 }
 
-// SetAppID sets the "app_id" field.
-func (olu *OrderLockUpdate) SetAppID(u uuid.UUID) *OrderLockUpdate {
-	olu.mutation.SetAppID(u)
+// SetOrderID sets the "order_id" field.
+func (olu *OrderLockUpdate) SetOrderID(u uuid.UUID) *OrderLockUpdate {
+	olu.mutation.SetOrderID(u)
+	return olu
+}
+
+// SetNillableOrderID sets the "order_id" field if the given value is not nil.
+func (olu *OrderLockUpdate) SetNillableOrderID(u *uuid.UUID) *OrderLockUpdate {
+	if u != nil {
+		olu.SetOrderID(*u)
+	}
+	return olu
+}
+
+// ClearOrderID clears the value of the "order_id" field.
+func (olu *OrderLockUpdate) ClearOrderID() *OrderLockUpdate {
+	olu.mutation.ClearOrderID()
 	return olu
 }
 
@@ -110,9 +124,17 @@ func (olu *OrderLockUpdate) SetUserID(u uuid.UUID) *OrderLockUpdate {
 	return olu
 }
 
-// SetOrderID sets the "order_id" field.
-func (olu *OrderLockUpdate) SetOrderID(u uuid.UUID) *OrderLockUpdate {
-	olu.mutation.SetOrderID(u)
+// SetNillableUserID sets the "user_id" field if the given value is not nil.
+func (olu *OrderLockUpdate) SetNillableUserID(u *uuid.UUID) *OrderLockUpdate {
+	if u != nil {
+		olu.SetUserID(*u)
+	}
+	return olu
+}
+
+// ClearUserID clears the value of the "user_id" field.
+func (olu *OrderLockUpdate) ClearUserID() *OrderLockUpdate {
+	olu.mutation.ClearUserID()
 	return olu
 }
 
@@ -283,11 +305,17 @@ func (olu *OrderLockUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: orderlock.FieldEntID,
 		})
 	}
-	if value, ok := olu.mutation.AppID(); ok {
+	if value, ok := olu.mutation.OrderID(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeUUID,
 			Value:  value,
-			Column: orderlock.FieldAppID,
+			Column: orderlock.FieldOrderID,
+		})
+	}
+	if olu.mutation.OrderIDCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Column: orderlock.FieldOrderID,
 		})
 	}
 	if value, ok := olu.mutation.UserID(); ok {
@@ -297,11 +325,10 @@ func (olu *OrderLockUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: orderlock.FieldUserID,
 		})
 	}
-	if value, ok := olu.mutation.OrderID(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+	if olu.mutation.UserIDCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeUUID,
-			Value:  value,
-			Column: orderlock.FieldOrderID,
+			Column: orderlock.FieldUserID,
 		})
 	}
 	if value, ok := olu.mutation.LockType(); ok {
@@ -407,9 +434,23 @@ func (oluo *OrderLockUpdateOne) SetNillableEntID(u *uuid.UUID) *OrderLockUpdateO
 	return oluo
 }
 
-// SetAppID sets the "app_id" field.
-func (oluo *OrderLockUpdateOne) SetAppID(u uuid.UUID) *OrderLockUpdateOne {
-	oluo.mutation.SetAppID(u)
+// SetOrderID sets the "order_id" field.
+func (oluo *OrderLockUpdateOne) SetOrderID(u uuid.UUID) *OrderLockUpdateOne {
+	oluo.mutation.SetOrderID(u)
+	return oluo
+}
+
+// SetNillableOrderID sets the "order_id" field if the given value is not nil.
+func (oluo *OrderLockUpdateOne) SetNillableOrderID(u *uuid.UUID) *OrderLockUpdateOne {
+	if u != nil {
+		oluo.SetOrderID(*u)
+	}
+	return oluo
+}
+
+// ClearOrderID clears the value of the "order_id" field.
+func (oluo *OrderLockUpdateOne) ClearOrderID() *OrderLockUpdateOne {
+	oluo.mutation.ClearOrderID()
 	return oluo
 }
 
@@ -419,9 +460,17 @@ func (oluo *OrderLockUpdateOne) SetUserID(u uuid.UUID) *OrderLockUpdateOne {
 	return oluo
 }
 
-// SetOrderID sets the "order_id" field.
-func (oluo *OrderLockUpdateOne) SetOrderID(u uuid.UUID) *OrderLockUpdateOne {
-	oluo.mutation.SetOrderID(u)
+// SetNillableUserID sets the "user_id" field if the given value is not nil.
+func (oluo *OrderLockUpdateOne) SetNillableUserID(u *uuid.UUID) *OrderLockUpdateOne {
+	if u != nil {
+		oluo.SetUserID(*u)
+	}
+	return oluo
+}
+
+// ClearUserID clears the value of the "user_id" field.
+func (oluo *OrderLockUpdateOne) ClearUserID() *OrderLockUpdateOne {
+	oluo.mutation.ClearUserID()
 	return oluo
 }
 
@@ -622,11 +671,17 @@ func (oluo *OrderLockUpdateOne) sqlSave(ctx context.Context) (_node *OrderLock, 
 			Column: orderlock.FieldEntID,
 		})
 	}
-	if value, ok := oluo.mutation.AppID(); ok {
+	if value, ok := oluo.mutation.OrderID(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeUUID,
 			Value:  value,
-			Column: orderlock.FieldAppID,
+			Column: orderlock.FieldOrderID,
+		})
+	}
+	if oluo.mutation.OrderIDCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Column: orderlock.FieldOrderID,
 		})
 	}
 	if value, ok := oluo.mutation.UserID(); ok {
@@ -636,11 +691,10 @@ func (oluo *OrderLockUpdateOne) sqlSave(ctx context.Context) (_node *OrderLock, 
 			Column: orderlock.FieldUserID,
 		})
 	}
-	if value, ok := oluo.mutation.OrderID(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+	if oluo.mutation.UserIDCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeUUID,
-			Value:  value,
-			Column: orderlock.FieldOrderID,
+			Column: orderlock.FieldUserID,
 		})
 	}
 	if value, ok := oluo.mutation.LockType(); ok {

@@ -84,30 +84,24 @@ func (cc *CompensateCreate) SetOrderID(u uuid.UUID) *CompensateCreate {
 	return cc
 }
 
-// SetStartAt sets the "start_at" field.
-func (cc *CompensateCreate) SetStartAt(u uint32) *CompensateCreate {
-	cc.mutation.SetStartAt(u)
-	return cc
-}
-
-// SetNillableStartAt sets the "start_at" field if the given value is not nil.
-func (cc *CompensateCreate) SetNillableStartAt(u *uint32) *CompensateCreate {
+// SetNillableOrderID sets the "order_id" field if the given value is not nil.
+func (cc *CompensateCreate) SetNillableOrderID(u *uuid.UUID) *CompensateCreate {
 	if u != nil {
-		cc.SetStartAt(*u)
+		cc.SetOrderID(*u)
 	}
 	return cc
 }
 
-// SetEndAt sets the "end_at" field.
-func (cc *CompensateCreate) SetEndAt(u uint32) *CompensateCreate {
-	cc.mutation.SetEndAt(u)
+// SetCompensateFromID sets the "compensate_from_id" field.
+func (cc *CompensateCreate) SetCompensateFromID(u uuid.UUID) *CompensateCreate {
+	cc.mutation.SetCompensateFromID(u)
 	return cc
 }
 
-// SetNillableEndAt sets the "end_at" field if the given value is not nil.
-func (cc *CompensateCreate) SetNillableEndAt(u *uint32) *CompensateCreate {
+// SetNillableCompensateFromID sets the "compensate_from_id" field if the given value is not nil.
+func (cc *CompensateCreate) SetNillableCompensateFromID(u *uuid.UUID) *CompensateCreate {
 	if u != nil {
-		cc.SetEndAt(*u)
+		cc.SetCompensateFromID(*u)
 	}
 	return cc
 }
@@ -126,30 +120,16 @@ func (cc *CompensateCreate) SetNillableCompensateType(s *string) *CompensateCrea
 	return cc
 }
 
-// SetTitle sets the "title" field.
-func (cc *CompensateCreate) SetTitle(s string) *CompensateCreate {
-	cc.mutation.SetTitle(s)
+// SetCompensateSeconds sets the "compensate_seconds" field.
+func (cc *CompensateCreate) SetCompensateSeconds(u uint32) *CompensateCreate {
+	cc.mutation.SetCompensateSeconds(u)
 	return cc
 }
 
-// SetNillableTitle sets the "title" field if the given value is not nil.
-func (cc *CompensateCreate) SetNillableTitle(s *string) *CompensateCreate {
-	if s != nil {
-		cc.SetTitle(*s)
-	}
-	return cc
-}
-
-// SetMessage sets the "message" field.
-func (cc *CompensateCreate) SetMessage(s string) *CompensateCreate {
-	cc.mutation.SetMessage(s)
-	return cc
-}
-
-// SetNillableMessage sets the "message" field if the given value is not nil.
-func (cc *CompensateCreate) SetNillableMessage(s *string) *CompensateCreate {
-	if s != nil {
-		cc.SetMessage(*s)
+// SetNillableCompensateSeconds sets the "compensate_seconds" field if the given value is not nil.
+func (cc *CompensateCreate) SetNillableCompensateSeconds(u *uint32) *CompensateCreate {
+	if u != nil {
+		cc.SetCompensateSeconds(*u)
 	}
 	return cc
 }
@@ -267,25 +247,27 @@ func (cc *CompensateCreate) defaults() error {
 		v := compensate.DefaultEntID()
 		cc.mutation.SetEntID(v)
 	}
-	if _, ok := cc.mutation.StartAt(); !ok {
-		v := compensate.DefaultStartAt
-		cc.mutation.SetStartAt(v)
+	if _, ok := cc.mutation.OrderID(); !ok {
+		if compensate.DefaultOrderID == nil {
+			return fmt.Errorf("ent: uninitialized compensate.DefaultOrderID (forgotten import ent/runtime?)")
+		}
+		v := compensate.DefaultOrderID()
+		cc.mutation.SetOrderID(v)
 	}
-	if _, ok := cc.mutation.EndAt(); !ok {
-		v := compensate.DefaultEndAt
-		cc.mutation.SetEndAt(v)
+	if _, ok := cc.mutation.CompensateFromID(); !ok {
+		if compensate.DefaultCompensateFromID == nil {
+			return fmt.Errorf("ent: uninitialized compensate.DefaultCompensateFromID (forgotten import ent/runtime?)")
+		}
+		v := compensate.DefaultCompensateFromID()
+		cc.mutation.SetCompensateFromID(v)
 	}
 	if _, ok := cc.mutation.CompensateType(); !ok {
 		v := compensate.DefaultCompensateType
 		cc.mutation.SetCompensateType(v)
 	}
-	if _, ok := cc.mutation.Title(); !ok {
-		v := compensate.DefaultTitle
-		cc.mutation.SetTitle(v)
-	}
-	if _, ok := cc.mutation.Message(); !ok {
-		v := compensate.DefaultMessage
-		cc.mutation.SetMessage(v)
+	if _, ok := cc.mutation.CompensateSeconds(); !ok {
+		v := compensate.DefaultCompensateSeconds
+		cc.mutation.SetCompensateSeconds(v)
 	}
 	return nil
 }
@@ -303,9 +285,6 @@ func (cc *CompensateCreate) check() error {
 	}
 	if _, ok := cc.mutation.EntID(); !ok {
 		return &ValidationError{Name: "ent_id", err: errors.New(`ent: missing required field "Compensate.ent_id"`)}
-	}
-	if _, ok := cc.mutation.OrderID(); !ok {
-		return &ValidationError{Name: "order_id", err: errors.New(`ent: missing required field "Compensate.order_id"`)}
 	}
 	return nil
 }
@@ -381,21 +360,13 @@ func (cc *CompensateCreate) createSpec() (*Compensate, *sqlgraph.CreateSpec) {
 		})
 		_node.OrderID = value
 	}
-	if value, ok := cc.mutation.StartAt(); ok {
+	if value, ok := cc.mutation.CompensateFromID(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
-			Type:   field.TypeUint32,
+			Type:   field.TypeUUID,
 			Value:  value,
-			Column: compensate.FieldStartAt,
+			Column: compensate.FieldCompensateFromID,
 		})
-		_node.StartAt = value
-	}
-	if value, ok := cc.mutation.EndAt(); ok {
-		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
-			Type:   field.TypeUint32,
-			Value:  value,
-			Column: compensate.FieldEndAt,
-		})
-		_node.EndAt = value
+		_node.CompensateFromID = value
 	}
 	if value, ok := cc.mutation.CompensateType(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -405,21 +376,13 @@ func (cc *CompensateCreate) createSpec() (*Compensate, *sqlgraph.CreateSpec) {
 		})
 		_node.CompensateType = value
 	}
-	if value, ok := cc.mutation.Title(); ok {
+	if value, ok := cc.mutation.CompensateSeconds(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
+			Type:   field.TypeUint32,
 			Value:  value,
-			Column: compensate.FieldTitle,
+			Column: compensate.FieldCompensateSeconds,
 		})
-		_node.Title = value
-	}
-	if value, ok := cc.mutation.Message(); ok {
-		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Value:  value,
-			Column: compensate.FieldMessage,
-		})
-		_node.Message = value
+		_node.CompensateSeconds = value
 	}
 	return _node, _spec
 }
@@ -553,51 +516,27 @@ func (u *CompensateUpsert) UpdateOrderID() *CompensateUpsert {
 	return u
 }
 
-// SetStartAt sets the "start_at" field.
-func (u *CompensateUpsert) SetStartAt(v uint32) *CompensateUpsert {
-	u.Set(compensate.FieldStartAt, v)
+// ClearOrderID clears the value of the "order_id" field.
+func (u *CompensateUpsert) ClearOrderID() *CompensateUpsert {
+	u.SetNull(compensate.FieldOrderID)
 	return u
 }
 
-// UpdateStartAt sets the "start_at" field to the value that was provided on create.
-func (u *CompensateUpsert) UpdateStartAt() *CompensateUpsert {
-	u.SetExcluded(compensate.FieldStartAt)
+// SetCompensateFromID sets the "compensate_from_id" field.
+func (u *CompensateUpsert) SetCompensateFromID(v uuid.UUID) *CompensateUpsert {
+	u.Set(compensate.FieldCompensateFromID, v)
 	return u
 }
 
-// AddStartAt adds v to the "start_at" field.
-func (u *CompensateUpsert) AddStartAt(v uint32) *CompensateUpsert {
-	u.Add(compensate.FieldStartAt, v)
+// UpdateCompensateFromID sets the "compensate_from_id" field to the value that was provided on create.
+func (u *CompensateUpsert) UpdateCompensateFromID() *CompensateUpsert {
+	u.SetExcluded(compensate.FieldCompensateFromID)
 	return u
 }
 
-// ClearStartAt clears the value of the "start_at" field.
-func (u *CompensateUpsert) ClearStartAt() *CompensateUpsert {
-	u.SetNull(compensate.FieldStartAt)
-	return u
-}
-
-// SetEndAt sets the "end_at" field.
-func (u *CompensateUpsert) SetEndAt(v uint32) *CompensateUpsert {
-	u.Set(compensate.FieldEndAt, v)
-	return u
-}
-
-// UpdateEndAt sets the "end_at" field to the value that was provided on create.
-func (u *CompensateUpsert) UpdateEndAt() *CompensateUpsert {
-	u.SetExcluded(compensate.FieldEndAt)
-	return u
-}
-
-// AddEndAt adds v to the "end_at" field.
-func (u *CompensateUpsert) AddEndAt(v uint32) *CompensateUpsert {
-	u.Add(compensate.FieldEndAt, v)
-	return u
-}
-
-// ClearEndAt clears the value of the "end_at" field.
-func (u *CompensateUpsert) ClearEndAt() *CompensateUpsert {
-	u.SetNull(compensate.FieldEndAt)
+// ClearCompensateFromID clears the value of the "compensate_from_id" field.
+func (u *CompensateUpsert) ClearCompensateFromID() *CompensateUpsert {
+	u.SetNull(compensate.FieldCompensateFromID)
 	return u
 }
 
@@ -619,39 +558,27 @@ func (u *CompensateUpsert) ClearCompensateType() *CompensateUpsert {
 	return u
 }
 
-// SetTitle sets the "title" field.
-func (u *CompensateUpsert) SetTitle(v string) *CompensateUpsert {
-	u.Set(compensate.FieldTitle, v)
+// SetCompensateSeconds sets the "compensate_seconds" field.
+func (u *CompensateUpsert) SetCompensateSeconds(v uint32) *CompensateUpsert {
+	u.Set(compensate.FieldCompensateSeconds, v)
 	return u
 }
 
-// UpdateTitle sets the "title" field to the value that was provided on create.
-func (u *CompensateUpsert) UpdateTitle() *CompensateUpsert {
-	u.SetExcluded(compensate.FieldTitle)
+// UpdateCompensateSeconds sets the "compensate_seconds" field to the value that was provided on create.
+func (u *CompensateUpsert) UpdateCompensateSeconds() *CompensateUpsert {
+	u.SetExcluded(compensate.FieldCompensateSeconds)
 	return u
 }
 
-// ClearTitle clears the value of the "title" field.
-func (u *CompensateUpsert) ClearTitle() *CompensateUpsert {
-	u.SetNull(compensate.FieldTitle)
+// AddCompensateSeconds adds v to the "compensate_seconds" field.
+func (u *CompensateUpsert) AddCompensateSeconds(v uint32) *CompensateUpsert {
+	u.Add(compensate.FieldCompensateSeconds, v)
 	return u
 }
 
-// SetMessage sets the "message" field.
-func (u *CompensateUpsert) SetMessage(v string) *CompensateUpsert {
-	u.Set(compensate.FieldMessage, v)
-	return u
-}
-
-// UpdateMessage sets the "message" field to the value that was provided on create.
-func (u *CompensateUpsert) UpdateMessage() *CompensateUpsert {
-	u.SetExcluded(compensate.FieldMessage)
-	return u
-}
-
-// ClearMessage clears the value of the "message" field.
-func (u *CompensateUpsert) ClearMessage() *CompensateUpsert {
-	u.SetNull(compensate.FieldMessage)
+// ClearCompensateSeconds clears the value of the "compensate_seconds" field.
+func (u *CompensateUpsert) ClearCompensateSeconds() *CompensateUpsert {
+	u.SetNull(compensate.FieldCompensateSeconds)
 	return u
 }
 
@@ -796,59 +723,31 @@ func (u *CompensateUpsertOne) UpdateOrderID() *CompensateUpsertOne {
 	})
 }
 
-// SetStartAt sets the "start_at" field.
-func (u *CompensateUpsertOne) SetStartAt(v uint32) *CompensateUpsertOne {
+// ClearOrderID clears the value of the "order_id" field.
+func (u *CompensateUpsertOne) ClearOrderID() *CompensateUpsertOne {
 	return u.Update(func(s *CompensateUpsert) {
-		s.SetStartAt(v)
+		s.ClearOrderID()
 	})
 }
 
-// AddStartAt adds v to the "start_at" field.
-func (u *CompensateUpsertOne) AddStartAt(v uint32) *CompensateUpsertOne {
+// SetCompensateFromID sets the "compensate_from_id" field.
+func (u *CompensateUpsertOne) SetCompensateFromID(v uuid.UUID) *CompensateUpsertOne {
 	return u.Update(func(s *CompensateUpsert) {
-		s.AddStartAt(v)
+		s.SetCompensateFromID(v)
 	})
 }
 
-// UpdateStartAt sets the "start_at" field to the value that was provided on create.
-func (u *CompensateUpsertOne) UpdateStartAt() *CompensateUpsertOne {
+// UpdateCompensateFromID sets the "compensate_from_id" field to the value that was provided on create.
+func (u *CompensateUpsertOne) UpdateCompensateFromID() *CompensateUpsertOne {
 	return u.Update(func(s *CompensateUpsert) {
-		s.UpdateStartAt()
+		s.UpdateCompensateFromID()
 	})
 }
 
-// ClearStartAt clears the value of the "start_at" field.
-func (u *CompensateUpsertOne) ClearStartAt() *CompensateUpsertOne {
+// ClearCompensateFromID clears the value of the "compensate_from_id" field.
+func (u *CompensateUpsertOne) ClearCompensateFromID() *CompensateUpsertOne {
 	return u.Update(func(s *CompensateUpsert) {
-		s.ClearStartAt()
-	})
-}
-
-// SetEndAt sets the "end_at" field.
-func (u *CompensateUpsertOne) SetEndAt(v uint32) *CompensateUpsertOne {
-	return u.Update(func(s *CompensateUpsert) {
-		s.SetEndAt(v)
-	})
-}
-
-// AddEndAt adds v to the "end_at" field.
-func (u *CompensateUpsertOne) AddEndAt(v uint32) *CompensateUpsertOne {
-	return u.Update(func(s *CompensateUpsert) {
-		s.AddEndAt(v)
-	})
-}
-
-// UpdateEndAt sets the "end_at" field to the value that was provided on create.
-func (u *CompensateUpsertOne) UpdateEndAt() *CompensateUpsertOne {
-	return u.Update(func(s *CompensateUpsert) {
-		s.UpdateEndAt()
-	})
-}
-
-// ClearEndAt clears the value of the "end_at" field.
-func (u *CompensateUpsertOne) ClearEndAt() *CompensateUpsertOne {
-	return u.Update(func(s *CompensateUpsert) {
-		s.ClearEndAt()
+		s.ClearCompensateFromID()
 	})
 }
 
@@ -873,45 +772,31 @@ func (u *CompensateUpsertOne) ClearCompensateType() *CompensateUpsertOne {
 	})
 }
 
-// SetTitle sets the "title" field.
-func (u *CompensateUpsertOne) SetTitle(v string) *CompensateUpsertOne {
+// SetCompensateSeconds sets the "compensate_seconds" field.
+func (u *CompensateUpsertOne) SetCompensateSeconds(v uint32) *CompensateUpsertOne {
 	return u.Update(func(s *CompensateUpsert) {
-		s.SetTitle(v)
+		s.SetCompensateSeconds(v)
 	})
 }
 
-// UpdateTitle sets the "title" field to the value that was provided on create.
-func (u *CompensateUpsertOne) UpdateTitle() *CompensateUpsertOne {
+// AddCompensateSeconds adds v to the "compensate_seconds" field.
+func (u *CompensateUpsertOne) AddCompensateSeconds(v uint32) *CompensateUpsertOne {
 	return u.Update(func(s *CompensateUpsert) {
-		s.UpdateTitle()
+		s.AddCompensateSeconds(v)
 	})
 }
 
-// ClearTitle clears the value of the "title" field.
-func (u *CompensateUpsertOne) ClearTitle() *CompensateUpsertOne {
+// UpdateCompensateSeconds sets the "compensate_seconds" field to the value that was provided on create.
+func (u *CompensateUpsertOne) UpdateCompensateSeconds() *CompensateUpsertOne {
 	return u.Update(func(s *CompensateUpsert) {
-		s.ClearTitle()
+		s.UpdateCompensateSeconds()
 	})
 }
 
-// SetMessage sets the "message" field.
-func (u *CompensateUpsertOne) SetMessage(v string) *CompensateUpsertOne {
+// ClearCompensateSeconds clears the value of the "compensate_seconds" field.
+func (u *CompensateUpsertOne) ClearCompensateSeconds() *CompensateUpsertOne {
 	return u.Update(func(s *CompensateUpsert) {
-		s.SetMessage(v)
-	})
-}
-
-// UpdateMessage sets the "message" field to the value that was provided on create.
-func (u *CompensateUpsertOne) UpdateMessage() *CompensateUpsertOne {
-	return u.Update(func(s *CompensateUpsert) {
-		s.UpdateMessage()
-	})
-}
-
-// ClearMessage clears the value of the "message" field.
-func (u *CompensateUpsertOne) ClearMessage() *CompensateUpsertOne {
-	return u.Update(func(s *CompensateUpsert) {
-		s.ClearMessage()
+		s.ClearCompensateSeconds()
 	})
 }
 
@@ -1221,59 +1106,31 @@ func (u *CompensateUpsertBulk) UpdateOrderID() *CompensateUpsertBulk {
 	})
 }
 
-// SetStartAt sets the "start_at" field.
-func (u *CompensateUpsertBulk) SetStartAt(v uint32) *CompensateUpsertBulk {
+// ClearOrderID clears the value of the "order_id" field.
+func (u *CompensateUpsertBulk) ClearOrderID() *CompensateUpsertBulk {
 	return u.Update(func(s *CompensateUpsert) {
-		s.SetStartAt(v)
+		s.ClearOrderID()
 	})
 }
 
-// AddStartAt adds v to the "start_at" field.
-func (u *CompensateUpsertBulk) AddStartAt(v uint32) *CompensateUpsertBulk {
+// SetCompensateFromID sets the "compensate_from_id" field.
+func (u *CompensateUpsertBulk) SetCompensateFromID(v uuid.UUID) *CompensateUpsertBulk {
 	return u.Update(func(s *CompensateUpsert) {
-		s.AddStartAt(v)
+		s.SetCompensateFromID(v)
 	})
 }
 
-// UpdateStartAt sets the "start_at" field to the value that was provided on create.
-func (u *CompensateUpsertBulk) UpdateStartAt() *CompensateUpsertBulk {
+// UpdateCompensateFromID sets the "compensate_from_id" field to the value that was provided on create.
+func (u *CompensateUpsertBulk) UpdateCompensateFromID() *CompensateUpsertBulk {
 	return u.Update(func(s *CompensateUpsert) {
-		s.UpdateStartAt()
+		s.UpdateCompensateFromID()
 	})
 }
 
-// ClearStartAt clears the value of the "start_at" field.
-func (u *CompensateUpsertBulk) ClearStartAt() *CompensateUpsertBulk {
+// ClearCompensateFromID clears the value of the "compensate_from_id" field.
+func (u *CompensateUpsertBulk) ClearCompensateFromID() *CompensateUpsertBulk {
 	return u.Update(func(s *CompensateUpsert) {
-		s.ClearStartAt()
-	})
-}
-
-// SetEndAt sets the "end_at" field.
-func (u *CompensateUpsertBulk) SetEndAt(v uint32) *CompensateUpsertBulk {
-	return u.Update(func(s *CompensateUpsert) {
-		s.SetEndAt(v)
-	})
-}
-
-// AddEndAt adds v to the "end_at" field.
-func (u *CompensateUpsertBulk) AddEndAt(v uint32) *CompensateUpsertBulk {
-	return u.Update(func(s *CompensateUpsert) {
-		s.AddEndAt(v)
-	})
-}
-
-// UpdateEndAt sets the "end_at" field to the value that was provided on create.
-func (u *CompensateUpsertBulk) UpdateEndAt() *CompensateUpsertBulk {
-	return u.Update(func(s *CompensateUpsert) {
-		s.UpdateEndAt()
-	})
-}
-
-// ClearEndAt clears the value of the "end_at" field.
-func (u *CompensateUpsertBulk) ClearEndAt() *CompensateUpsertBulk {
-	return u.Update(func(s *CompensateUpsert) {
-		s.ClearEndAt()
+		s.ClearCompensateFromID()
 	})
 }
 
@@ -1298,45 +1155,31 @@ func (u *CompensateUpsertBulk) ClearCompensateType() *CompensateUpsertBulk {
 	})
 }
 
-// SetTitle sets the "title" field.
-func (u *CompensateUpsertBulk) SetTitle(v string) *CompensateUpsertBulk {
+// SetCompensateSeconds sets the "compensate_seconds" field.
+func (u *CompensateUpsertBulk) SetCompensateSeconds(v uint32) *CompensateUpsertBulk {
 	return u.Update(func(s *CompensateUpsert) {
-		s.SetTitle(v)
+		s.SetCompensateSeconds(v)
 	})
 }
 
-// UpdateTitle sets the "title" field to the value that was provided on create.
-func (u *CompensateUpsertBulk) UpdateTitle() *CompensateUpsertBulk {
+// AddCompensateSeconds adds v to the "compensate_seconds" field.
+func (u *CompensateUpsertBulk) AddCompensateSeconds(v uint32) *CompensateUpsertBulk {
 	return u.Update(func(s *CompensateUpsert) {
-		s.UpdateTitle()
+		s.AddCompensateSeconds(v)
 	})
 }
 
-// ClearTitle clears the value of the "title" field.
-func (u *CompensateUpsertBulk) ClearTitle() *CompensateUpsertBulk {
+// UpdateCompensateSeconds sets the "compensate_seconds" field to the value that was provided on create.
+func (u *CompensateUpsertBulk) UpdateCompensateSeconds() *CompensateUpsertBulk {
 	return u.Update(func(s *CompensateUpsert) {
-		s.ClearTitle()
+		s.UpdateCompensateSeconds()
 	})
 }
 
-// SetMessage sets the "message" field.
-func (u *CompensateUpsertBulk) SetMessage(v string) *CompensateUpsertBulk {
+// ClearCompensateSeconds clears the value of the "compensate_seconds" field.
+func (u *CompensateUpsertBulk) ClearCompensateSeconds() *CompensateUpsertBulk {
 	return u.Update(func(s *CompensateUpsert) {
-		s.SetMessage(v)
-	})
-}
-
-// UpdateMessage sets the "message" field to the value that was provided on create.
-func (u *CompensateUpsertBulk) UpdateMessage() *CompensateUpsertBulk {
-	return u.Update(func(s *CompensateUpsert) {
-		s.UpdateMessage()
-	})
-}
-
-// ClearMessage clears the value of the "message" field.
-func (u *CompensateUpsertBulk) ClearMessage() *CompensateUpsertBulk {
-	return u.Update(func(s *CompensateUpsert) {
-		s.ClearMessage()
+		s.ClearCompensateSeconds()
 	})
 }
 

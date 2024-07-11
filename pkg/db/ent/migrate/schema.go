@@ -8,6 +8,34 @@ import (
 )
 
 var (
+	// AppConfigsColumns holds the columns for the "app_configs" table.
+	AppConfigsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true},
+		{Name: "created_at", Type: field.TypeUint32},
+		{Name: "updated_at", Type: field.TypeUint32},
+		{Name: "deleted_at", Type: field.TypeUint32},
+		{Name: "ent_id", Type: field.TypeUUID, Unique: true},
+		{Name: "app_id", Type: field.TypeUUID, Nullable: true},
+		{Name: "enable_simulate_order", Type: field.TypeBool, Nullable: true, Default: false},
+		{Name: "simulate_order_coupon_mode", Type: field.TypeString, Nullable: true, Default: "WithoutCoupon"},
+		{Name: "simulate_order_coupon_probability", Type: field.TypeOther, Nullable: true, SchemaType: map[string]string{"mysql": "decimal(37,18)"}},
+		{Name: "simulate_order_cashable_profit_probability", Type: field.TypeOther, Nullable: true, SchemaType: map[string]string{"mysql": "decimal(37,18)"}},
+		{Name: "max_unpaid_orders", Type: field.TypeUint32, Nullable: true, Default: 5},
+		{Name: "max_typed_coupons_per_order", Type: field.TypeUint32, Nullable: true, Default: 1},
+	}
+	// AppConfigsTable holds the schema information for the "app_configs" table.
+	AppConfigsTable = &schema.Table{
+		Name:       "app_configs",
+		Columns:    AppConfigsColumns,
+		PrimaryKey: []*schema.Column{AppConfigsColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "appconfig_ent_id",
+				Unique:  true,
+				Columns: []*schema.Column{AppConfigsColumns[4]},
+			},
+		},
+	}
 	// CompensatesColumns holds the columns for the "compensates" table.
 	CompensatesColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUint32, Increment: true},
@@ -15,12 +43,10 @@ var (
 		{Name: "updated_at", Type: field.TypeUint32},
 		{Name: "deleted_at", Type: field.TypeUint32},
 		{Name: "ent_id", Type: field.TypeUUID, Unique: true},
-		{Name: "order_id", Type: field.TypeUUID},
-		{Name: "start_at", Type: field.TypeUint32, Nullable: true, Default: 0},
-		{Name: "end_at", Type: field.TypeUint32, Nullable: true, Default: 0},
+		{Name: "order_id", Type: field.TypeUUID, Nullable: true},
+		{Name: "compensate_from_id", Type: field.TypeUUID, Nullable: true},
 		{Name: "compensate_type", Type: field.TypeString, Nullable: true, Default: "DefaultCompensateType"},
-		{Name: "title", Type: field.TypeString, Nullable: true, Default: ""},
-		{Name: "message", Type: field.TypeString, Nullable: true, Default: ""},
+		{Name: "compensate_seconds", Type: field.TypeUint32, Nullable: true, Default: 0},
 	}
 	// CompensatesTable holds the schema information for the "compensates" table.
 	CompensatesTable = &schema.Table{
@@ -37,6 +63,73 @@ var (
 				Name:    "compensate_order_id",
 				Unique:  false,
 				Columns: []*schema.Column{CompensatesColumns[5]},
+			},
+		},
+	}
+	// FeeOrdersColumns holds the columns for the "fee_orders" table.
+	FeeOrdersColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true},
+		{Name: "created_at", Type: field.TypeUint32},
+		{Name: "updated_at", Type: field.TypeUint32},
+		{Name: "deleted_at", Type: field.TypeUint32},
+		{Name: "ent_id", Type: field.TypeUUID, Unique: true},
+		{Name: "order_id", Type: field.TypeUUID, Nullable: true},
+		{Name: "good_value_usd", Type: field.TypeOther, Nullable: true, SchemaType: map[string]string{"mysql": "decimal(37,18)"}},
+		{Name: "payment_amount_usd", Type: field.TypeOther, Nullable: true, SchemaType: map[string]string{"mysql": "decimal(37,18)"}},
+		{Name: "discount_amount_usd", Type: field.TypeOther, Nullable: true, SchemaType: map[string]string{"mysql": "decimal(37,18)"}},
+		{Name: "promotion_id", Type: field.TypeUUID, Nullable: true},
+		{Name: "duration_seconds", Type: field.TypeUint32, Nullable: true, Default: 0},
+	}
+	// FeeOrdersTable holds the schema information for the "fee_orders" table.
+	FeeOrdersTable = &schema.Table{
+		Name:       "fee_orders",
+		Columns:    FeeOrdersColumns,
+		PrimaryKey: []*schema.Column{FeeOrdersColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "feeorder_ent_id",
+				Unique:  true,
+				Columns: []*schema.Column{FeeOrdersColumns[4]},
+			},
+			{
+				Name:    "feeorder_order_id",
+				Unique:  false,
+				Columns: []*schema.Column{FeeOrdersColumns[5]},
+			},
+		},
+	}
+	// FeeOrderStatesColumns holds the columns for the "fee_order_states" table.
+	FeeOrderStatesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true},
+		{Name: "created_at", Type: field.TypeUint32},
+		{Name: "updated_at", Type: field.TypeUint32},
+		{Name: "deleted_at", Type: field.TypeUint32},
+		{Name: "ent_id", Type: field.TypeUUID, Unique: true},
+		{Name: "order_id", Type: field.TypeUUID, Nullable: true},
+		{Name: "payment_id", Type: field.TypeUUID, Nullable: true},
+		{Name: "paid_at", Type: field.TypeUint32, Nullable: true, Default: 0},
+		{Name: "user_set_paid", Type: field.TypeBool, Nullable: true, Default: false},
+		{Name: "user_set_canceled", Type: field.TypeBool, Nullable: true, Default: false},
+		{Name: "admin_set_canceled", Type: field.TypeBool, Nullable: true, Default: false},
+		{Name: "payment_state", Type: field.TypeString, Nullable: true, Default: "PaymentStateWait"},
+		{Name: "cancel_state", Type: field.TypeString, Nullable: true, Default: "DefaultOrderState"},
+		{Name: "canceled_at", Type: field.TypeUint32, Nullable: true, Default: 0},
+	}
+	// FeeOrderStatesTable holds the schema information for the "fee_order_states" table.
+	FeeOrderStatesTable = &schema.Table{
+		Name:       "fee_order_states",
+		Columns:    FeeOrderStatesColumns,
+		PrimaryKey: []*schema.Column{FeeOrderStatesColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "feeorderstate_ent_id",
+				Unique:  true,
+				Columns: []*schema.Column{FeeOrderStatesColumns[4]},
+			},
+			{
+				Name:    "feeorderstate_order_id",
+				Unique:  false,
+				Columns: []*schema.Column{FeeOrderStatesColumns[5]},
 			},
 		},
 	}
@@ -74,7 +167,6 @@ var (
 		{Name: "simulate", Type: field.TypeBool, Nullable: true, Default: false},
 		{Name: "create_method", Type: field.TypeString, Nullable: true, Default: "OrderCreatedByPurchase"},
 		{Name: "multi_payment_coins", Type: field.TypeBool, Nullable: true, Default: false},
-		{Name: "payment_amounts", Type: field.TypeJSON, Nullable: true},
 	}
 	// OrdersTable holds the schema information for the "orders" table.
 	OrdersTable = &schema.Table{
@@ -94,6 +186,69 @@ var (
 			},
 		},
 	}
+	// OrderBasesColumns holds the columns for the "order_bases" table.
+	OrderBasesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true},
+		{Name: "created_at", Type: field.TypeUint32},
+		{Name: "updated_at", Type: field.TypeUint32},
+		{Name: "deleted_at", Type: field.TypeUint32},
+		{Name: "ent_id", Type: field.TypeUUID, Unique: true},
+		{Name: "app_id", Type: field.TypeUUID, Nullable: true},
+		{Name: "user_id", Type: field.TypeUUID, Nullable: true},
+		{Name: "good_id", Type: field.TypeUUID, Nullable: true},
+		{Name: "app_good_id", Type: field.TypeUUID, Nullable: true},
+		{Name: "good_type", Type: field.TypeString, Nullable: true, Default: ""},
+		{Name: "parent_order_id", Type: field.TypeUUID, Nullable: true},
+		{Name: "order_type", Type: field.TypeString, Nullable: true, Default: "Normal"},
+		{Name: "create_method", Type: field.TypeString, Nullable: true, Default: "OrderCreatedByPurchase"},
+		{Name: "simulate", Type: field.TypeBool, Nullable: true, Default: false},
+	}
+	// OrderBasesTable holds the schema information for the "order_bases" table.
+	OrderBasesTable = &schema.Table{
+		Name:       "order_bases",
+		Columns:    OrderBasesColumns,
+		PrimaryKey: []*schema.Column{OrderBasesColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "orderbase_ent_id",
+				Unique:  true,
+				Columns: []*schema.Column{OrderBasesColumns[4]},
+			},
+			{
+				Name:    "orderbase_user_id_app_good_id",
+				Unique:  false,
+				Columns: []*schema.Column{OrderBasesColumns[6], OrderBasesColumns[8]},
+			},
+		},
+	}
+	// OrderCouponsColumns holds the columns for the "order_coupons" table.
+	OrderCouponsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true},
+		{Name: "created_at", Type: field.TypeUint32},
+		{Name: "updated_at", Type: field.TypeUint32},
+		{Name: "deleted_at", Type: field.TypeUint32},
+		{Name: "ent_id", Type: field.TypeUUID, Unique: true},
+		{Name: "order_id", Type: field.TypeUUID, Nullable: true},
+		{Name: "coupon_id", Type: field.TypeUUID, Nullable: true},
+	}
+	// OrderCouponsTable holds the schema information for the "order_coupons" table.
+	OrderCouponsTable = &schema.Table{
+		Name:       "order_coupons",
+		Columns:    OrderCouponsColumns,
+		PrimaryKey: []*schema.Column{OrderCouponsColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "ordercoupon_ent_id",
+				Unique:  true,
+				Columns: []*schema.Column{OrderCouponsColumns[4]},
+			},
+			{
+				Name:    "ordercoupon_order_id",
+				Unique:  false,
+				Columns: []*schema.Column{OrderCouponsColumns[5]},
+			},
+		},
+	}
 	// OrderLocksColumns holds the columns for the "order_locks" table.
 	OrderLocksColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUint32, Increment: true},
@@ -101,9 +256,8 @@ var (
 		{Name: "updated_at", Type: field.TypeUint32},
 		{Name: "deleted_at", Type: field.TypeUint32},
 		{Name: "ent_id", Type: field.TypeUUID, Unique: true},
-		{Name: "app_id", Type: field.TypeUUID},
-		{Name: "user_id", Type: field.TypeUUID},
-		{Name: "order_id", Type: field.TypeUUID},
+		{Name: "order_id", Type: field.TypeUUID, Nullable: true},
+		{Name: "user_id", Type: field.TypeUUID, Nullable: true},
 		{Name: "lock_type", Type: field.TypeString, Nullable: true, Default: "DefaultOrderLockType"},
 	}
 	// OrderLocksTable holds the schema information for the "order_locks" table.
@@ -120,7 +274,7 @@ var (
 			{
 				Name:    "orderlock_order_id",
 				Unique:  false,
-				Columns: []*schema.Column{OrderLocksColumns[7]},
+				Columns: []*schema.Column{OrderLocksColumns[5]},
 			},
 		},
 	}
@@ -169,6 +323,39 @@ var (
 			},
 		},
 	}
+	// OrderStateBasesColumns holds the columns for the "order_state_bases" table.
+	OrderStateBasesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true},
+		{Name: "created_at", Type: field.TypeUint32},
+		{Name: "updated_at", Type: field.TypeUint32},
+		{Name: "deleted_at", Type: field.TypeUint32},
+		{Name: "ent_id", Type: field.TypeUUID, Unique: true},
+		{Name: "order_id", Type: field.TypeUUID, Nullable: true},
+		{Name: "order_state", Type: field.TypeString, Nullable: true, Default: "OrderStateCreated"},
+		{Name: "start_mode", Type: field.TypeString, Nullable: true, Default: "OrderStartConfirmed"},
+		{Name: "start_at", Type: field.TypeUint32, Nullable: true, Default: 0},
+		{Name: "last_benefit_at", Type: field.TypeUint32, Nullable: true, Default: 0},
+		{Name: "benefit_state", Type: field.TypeString, Nullable: true, Default: "BenefitWait"},
+		{Name: "payment_type", Type: field.TypeString, Nullable: true, Default: "PayWithBalanceOnly"},
+	}
+	// OrderStateBasesTable holds the schema information for the "order_state_bases" table.
+	OrderStateBasesTable = &schema.Table{
+		Name:       "order_state_bases",
+		Columns:    OrderStateBasesColumns,
+		PrimaryKey: []*schema.Column{OrderStateBasesColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "orderstatebase_ent_id",
+				Unique:  true,
+				Columns: []*schema.Column{OrderStateBasesColumns[4]},
+			},
+			{
+				Name:    "orderstatebase_order_id",
+				Unique:  false,
+				Columns: []*schema.Column{OrderStateBasesColumns[5]},
+			},
+		},
+	}
 	// OutOfGasColumns holds the columns for the "out_of_gas" table.
 	OutOfGasColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUint32, Increment: true},
@@ -176,7 +363,7 @@ var (
 		{Name: "updated_at", Type: field.TypeUint32},
 		{Name: "deleted_at", Type: field.TypeUint32},
 		{Name: "ent_id", Type: field.TypeUUID, Unique: true},
-		{Name: "order_id", Type: field.TypeUUID},
+		{Name: "order_id", Type: field.TypeUUID, Nullable: true},
 		{Name: "start_at", Type: field.TypeUint32, Nullable: true, Default: 0},
 		{Name: "end_at", Type: field.TypeUint32, Nullable: true, Default: 0},
 	}
@@ -190,6 +377,11 @@ var (
 				Name:    "outofgas_ent_id",
 				Unique:  true,
 				Columns: []*schema.Column{OutOfGasColumns[4]},
+			},
+			{
+				Name:    "outofgas_order_id",
+				Unique:  false,
+				Columns: []*schema.Column{OutOfGasColumns[5]},
 			},
 		},
 	}
@@ -227,41 +419,253 @@ var (
 			},
 		},
 	}
-	// SimulateConfigsColumns holds the columns for the "simulate_configs" table.
-	SimulateConfigsColumns = []*schema.Column{
+	// PaymentBalancesColumns holds the columns for the "payment_balances" table.
+	PaymentBalancesColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUint32, Increment: true},
 		{Name: "created_at", Type: field.TypeUint32},
 		{Name: "updated_at", Type: field.TypeUint32},
 		{Name: "deleted_at", Type: field.TypeUint32},
 		{Name: "ent_id", Type: field.TypeUUID, Unique: true},
-		{Name: "app_id", Type: field.TypeUUID},
-		{Name: "send_coupon_mode", Type: field.TypeString, Nullable: true, Default: "WithoutCoupon"},
-		{Name: "send_coupon_probability", Type: field.TypeOther, Nullable: true, SchemaType: map[string]string{"mysql": "decimal(37,18)"}},
-		{Name: "cashable_profit_probability", Type: field.TypeOther, Nullable: true, SchemaType: map[string]string{"mysql": "decimal(37,18)"}},
-		{Name: "enabled", Type: field.TypeBool, Nullable: true, Default: false},
+		{Name: "payment_id", Type: field.TypeUUID, Nullable: true},
+		{Name: "coin_type_id", Type: field.TypeUUID, Nullable: true},
+		{Name: "amount", Type: field.TypeOther, Nullable: true, SchemaType: map[string]string{"mysql": "decimal(37,18)"}},
+		{Name: "coin_usd_currency", Type: field.TypeOther, Nullable: true, SchemaType: map[string]string{"mysql": "decimal(37, 18)"}},
+		{Name: "local_coin_usd_currency", Type: field.TypeOther, Nullable: true, SchemaType: map[string]string{"mysql": "decimal(37, 18)"}},
+		{Name: "live_coin_usd_currency", Type: field.TypeOther, Nullable: true, SchemaType: map[string]string{"mysql": "decimal(37, 18)"}},
 	}
-	// SimulateConfigsTable holds the schema information for the "simulate_configs" table.
-	SimulateConfigsTable = &schema.Table{
-		Name:       "simulate_configs",
-		Columns:    SimulateConfigsColumns,
-		PrimaryKey: []*schema.Column{SimulateConfigsColumns[0]},
+	// PaymentBalancesTable holds the schema information for the "payment_balances" table.
+	PaymentBalancesTable = &schema.Table{
+		Name:       "payment_balances",
+		Columns:    PaymentBalancesColumns,
+		PrimaryKey: []*schema.Column{PaymentBalancesColumns[0]},
 		Indexes: []*schema.Index{
 			{
-				Name:    "simulateconfig_ent_id",
+				Name:    "paymentbalance_ent_id",
 				Unique:  true,
-				Columns: []*schema.Column{SimulateConfigsColumns[4]},
+				Columns: []*schema.Column{PaymentBalancesColumns[4]},
+			},
+			{
+				Name:    "paymentbalance_payment_id",
+				Unique:  false,
+				Columns: []*schema.Column{PaymentBalancesColumns[5]},
+			},
+		},
+	}
+	// PaymentBalanceLocksColumns holds the columns for the "payment_balance_locks" table.
+	PaymentBalanceLocksColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true},
+		{Name: "created_at", Type: field.TypeUint32},
+		{Name: "updated_at", Type: field.TypeUint32},
+		{Name: "deleted_at", Type: field.TypeUint32},
+		{Name: "ent_id", Type: field.TypeUUID, Unique: true},
+		{Name: "payment_id", Type: field.TypeUUID, Nullable: true},
+		{Name: "ledger_lock_id", Type: field.TypeUUID, Nullable: true},
+	}
+	// PaymentBalanceLocksTable holds the schema information for the "payment_balance_locks" table.
+	PaymentBalanceLocksTable = &schema.Table{
+		Name:       "payment_balance_locks",
+		Columns:    PaymentBalanceLocksColumns,
+		PrimaryKey: []*schema.Column{PaymentBalanceLocksColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "paymentbalancelock_ent_id",
+				Unique:  true,
+				Columns: []*schema.Column{PaymentBalanceLocksColumns[4]},
+			},
+			{
+				Name:    "paymentbalancelock_payment_id",
+				Unique:  false,
+				Columns: []*schema.Column{PaymentBalanceLocksColumns[5]},
+			},
+		},
+	}
+	// PaymentBasesColumns holds the columns for the "payment_bases" table.
+	PaymentBasesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true},
+		{Name: "created_at", Type: field.TypeUint32},
+		{Name: "updated_at", Type: field.TypeUint32},
+		{Name: "deleted_at", Type: field.TypeUint32},
+		{Name: "ent_id", Type: field.TypeUUID, Unique: true},
+		{Name: "order_id", Type: field.TypeUUID, Nullable: true},
+		{Name: "obselete_state", Type: field.TypeString, Nullable: true, Default: "PaymentObseleteNone"},
+	}
+	// PaymentBasesTable holds the schema information for the "payment_bases" table.
+	PaymentBasesTable = &schema.Table{
+		Name:       "payment_bases",
+		Columns:    PaymentBasesColumns,
+		PrimaryKey: []*schema.Column{PaymentBasesColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "paymentbase_ent_id",
+				Unique:  true,
+				Columns: []*schema.Column{PaymentBasesColumns[4]},
+			},
+			{
+				Name:    "paymentbase_order_id",
+				Unique:  false,
+				Columns: []*schema.Column{PaymentBasesColumns[5]},
+			},
+		},
+	}
+	// PaymentContractsColumns holds the columns for the "payment_contracts" table.
+	PaymentContractsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true},
+		{Name: "created_at", Type: field.TypeUint32},
+		{Name: "updated_at", Type: field.TypeUint32},
+		{Name: "deleted_at", Type: field.TypeUint32},
+		{Name: "ent_id", Type: field.TypeUUID, Unique: true},
+		{Name: "order_id", Type: field.TypeUUID, Nullable: true},
+		{Name: "coin_type_id", Type: field.TypeUUID, Nullable: true},
+		{Name: "amount", Type: field.TypeOther, Nullable: true, SchemaType: map[string]string{"mysql": "decimal(37,18)"}},
+	}
+	// PaymentContractsTable holds the schema information for the "payment_contracts" table.
+	PaymentContractsTable = &schema.Table{
+		Name:       "payment_contracts",
+		Columns:    PaymentContractsColumns,
+		PrimaryKey: []*schema.Column{PaymentContractsColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "paymentcontract_ent_id",
+				Unique:  true,
+				Columns: []*schema.Column{PaymentContractsColumns[4]},
+			},
+			{
+				Name:    "paymentcontract_order_id",
+				Unique:  false,
+				Columns: []*schema.Column{PaymentContractsColumns[5]},
+			},
+		},
+	}
+	// PaymentTransfersColumns holds the columns for the "payment_transfers" table.
+	PaymentTransfersColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true},
+		{Name: "created_at", Type: field.TypeUint32},
+		{Name: "updated_at", Type: field.TypeUint32},
+		{Name: "deleted_at", Type: field.TypeUint32},
+		{Name: "ent_id", Type: field.TypeUUID, Unique: true},
+		{Name: "payment_id", Type: field.TypeUUID, Nullable: true},
+		{Name: "coin_type_id", Type: field.TypeUUID, Nullable: true},
+		{Name: "account_id", Type: field.TypeUUID, Nullable: true},
+		{Name: "amount", Type: field.TypeOther, Nullable: true, SchemaType: map[string]string{"mysql": "decimal(37,18)"}},
+		{Name: "start_amount", Type: field.TypeOther, Nullable: true, SchemaType: map[string]string{"mysql": "decimal(37,18)"}},
+		{Name: "finish_amount", Type: field.TypeOther, Nullable: true, SchemaType: map[string]string{"mysql": "decimal(37,18)"}},
+		{Name: "coin_usd_currency", Type: field.TypeOther, Nullable: true, SchemaType: map[string]string{"mysql": "decimal(37, 18)"}},
+		{Name: "local_coin_usd_currency", Type: field.TypeOther, Nullable: true, SchemaType: map[string]string{"mysql": "decimal(37, 18)"}},
+		{Name: "live_coin_usd_currency", Type: field.TypeOther, Nullable: true, SchemaType: map[string]string{"mysql": "decimal(37, 18)"}},
+	}
+	// PaymentTransfersTable holds the schema information for the "payment_transfers" table.
+	PaymentTransfersTable = &schema.Table{
+		Name:       "payment_transfers",
+		Columns:    PaymentTransfersColumns,
+		PrimaryKey: []*schema.Column{PaymentTransfersColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "paymenttransfer_ent_id",
+				Unique:  true,
+				Columns: []*schema.Column{PaymentTransfersColumns[4]},
+			},
+			{
+				Name:    "paymenttransfer_payment_id",
+				Unique:  false,
+				Columns: []*schema.Column{PaymentTransfersColumns[5]},
+			},
+		},
+	}
+	// PowerRentalsColumns holds the columns for the "power_rentals" table.
+	PowerRentalsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true},
+		{Name: "created_at", Type: field.TypeUint32},
+		{Name: "updated_at", Type: field.TypeUint32},
+		{Name: "deleted_at", Type: field.TypeUint32},
+		{Name: "ent_id", Type: field.TypeUUID, Unique: true},
+		{Name: "order_id", Type: field.TypeUUID, Nullable: true},
+		{Name: "app_good_stock_id", Type: field.TypeUUID, Nullable: true},
+		{Name: "units", Type: field.TypeOther, Nullable: true, SchemaType: map[string]string{"mysql": "decimal(37,18)"}},
+		{Name: "good_value_usd", Type: field.TypeOther, Nullable: true, SchemaType: map[string]string{"mysql": "decimal(37,18)"}},
+		{Name: "payment_amount_usd", Type: field.TypeOther, Nullable: true, SchemaType: map[string]string{"mysql": "decimal(37,18)"}},
+		{Name: "discount_amount_usd", Type: field.TypeOther, Nullable: true, SchemaType: map[string]string{"mysql": "decimal(37,18)"}},
+		{Name: "promotion_id", Type: field.TypeUUID, Nullable: true},
+		{Name: "investment_type", Type: field.TypeString, Nullable: true, Default: "FullPayment"},
+		{Name: "duration_seconds", Type: field.TypeUint32, Nullable: true, Default: 0},
+	}
+	// PowerRentalsTable holds the schema information for the "power_rentals" table.
+	PowerRentalsTable = &schema.Table{
+		Name:       "power_rentals",
+		Columns:    PowerRentalsColumns,
+		PrimaryKey: []*schema.Column{PowerRentalsColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "powerrental_ent_id",
+				Unique:  true,
+				Columns: []*schema.Column{PowerRentalsColumns[4]},
+			},
+			{
+				Name:    "powerrental_order_id",
+				Unique:  false,
+				Columns: []*schema.Column{PowerRentalsColumns[5]},
+			},
+		},
+	}
+	// PowerRentalStatesColumns holds the columns for the "power_rental_states" table.
+	PowerRentalStatesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true},
+		{Name: "created_at", Type: field.TypeUint32},
+		{Name: "updated_at", Type: field.TypeUint32},
+		{Name: "deleted_at", Type: field.TypeUint32},
+		{Name: "ent_id", Type: field.TypeUUID, Unique: true},
+		{Name: "order_id", Type: field.TypeUUID, Nullable: true},
+		{Name: "cancel_state", Type: field.TypeString, Nullable: true, Default: "DefaultOrderState"},
+		{Name: "canceled_at", Type: field.TypeUint32, Nullable: true, Default: 0},
+		{Name: "payment_id", Type: field.TypeUUID, Nullable: true},
+		{Name: "paid_at", Type: field.TypeUint32, Nullable: true, Default: 0},
+		{Name: "user_set_paid", Type: field.TypeBool, Nullable: true, Default: false},
+		{Name: "user_set_canceled", Type: field.TypeBool, Nullable: true, Default: false},
+		{Name: "admin_set_canceled", Type: field.TypeBool, Nullable: true, Default: false},
+		{Name: "payment_state", Type: field.TypeString, Nullable: true, Default: "PaymentStateWait"},
+		{Name: "outofgas_seconds", Type: field.TypeUint32, Nullable: true, Default: 0},
+		{Name: "compensate_seconds", Type: field.TypeUint32, Nullable: true, Default: 0},
+		{Name: "renew_state", Type: field.TypeString, Nullable: true, Default: "OrderRenewWait"},
+		{Name: "renew_notify_at", Type: field.TypeUint32, Nullable: true, Default: 0},
+	}
+	// PowerRentalStatesTable holds the schema information for the "power_rental_states" table.
+	PowerRentalStatesTable = &schema.Table{
+		Name:       "power_rental_states",
+		Columns:    PowerRentalStatesColumns,
+		PrimaryKey: []*schema.Column{PowerRentalStatesColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "powerrentalstate_ent_id",
+				Unique:  true,
+				Columns: []*schema.Column{PowerRentalStatesColumns[4]},
+			},
+			{
+				Name:    "powerrentalstate_order_id",
+				Unique:  false,
+				Columns: []*schema.Column{PowerRentalStatesColumns[5]},
 			},
 		},
 	}
 	// Tables holds all the tables in the schema.
 	Tables = []*schema.Table{
+		AppConfigsTable,
 		CompensatesTable,
+		FeeOrdersTable,
+		FeeOrderStatesTable,
 		OrdersTable,
+		OrderBasesTable,
+		OrderCouponsTable,
 		OrderLocksTable,
 		OrderStatesTable,
+		OrderStateBasesTable,
 		OutOfGasTable,
 		PaymentsTable,
-		SimulateConfigsTable,
+		PaymentBalancesTable,
+		PaymentBalanceLocksTable,
+		PaymentBasesTable,
+		PaymentContractsTable,
+		PaymentTransfersTable,
+		PowerRentalsTable,
+		PowerRentalStatesTable,
 	}
 )
 

@@ -22,16 +22,12 @@ const (
 	FieldEntID = "ent_id"
 	// FieldOrderID holds the string denoting the order_id field in the database.
 	FieldOrderID = "order_id"
-	// FieldStartAt holds the string denoting the start_at field in the database.
-	FieldStartAt = "start_at"
-	// FieldEndAt holds the string denoting the end_at field in the database.
-	FieldEndAt = "end_at"
+	// FieldCompensateFromID holds the string denoting the compensate_from_id field in the database.
+	FieldCompensateFromID = "compensate_from_id"
 	// FieldCompensateType holds the string denoting the compensate_type field in the database.
 	FieldCompensateType = "compensate_type"
-	// FieldTitle holds the string denoting the title field in the database.
-	FieldTitle = "title"
-	// FieldMessage holds the string denoting the message field in the database.
-	FieldMessage = "message"
+	// FieldCompensateSeconds holds the string denoting the compensate_seconds field in the database.
+	FieldCompensateSeconds = "compensate_seconds"
 	// Table holds the table name of the compensate in the database.
 	Table = "compensates"
 )
@@ -44,11 +40,9 @@ var Columns = []string{
 	FieldDeletedAt,
 	FieldEntID,
 	FieldOrderID,
-	FieldStartAt,
-	FieldEndAt,
+	FieldCompensateFromID,
 	FieldCompensateType,
-	FieldTitle,
-	FieldMessage,
+	FieldCompensateSeconds,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -80,14 +74,12 @@ var (
 	DefaultDeletedAt func() uint32
 	// DefaultEntID holds the default value on creation for the "ent_id" field.
 	DefaultEntID func() uuid.UUID
-	// DefaultStartAt holds the default value on creation for the "start_at" field.
-	DefaultStartAt uint32
-	// DefaultEndAt holds the default value on creation for the "end_at" field.
-	DefaultEndAt uint32
+	// DefaultOrderID holds the default value on creation for the "order_id" field.
+	DefaultOrderID func() uuid.UUID
+	// DefaultCompensateFromID holds the default value on creation for the "compensate_from_id" field.
+	DefaultCompensateFromID func() uuid.UUID
 	// DefaultCompensateType holds the default value on creation for the "compensate_type" field.
 	DefaultCompensateType string
-	// DefaultTitle holds the default value on creation for the "title" field.
-	DefaultTitle string
-	// DefaultMessage holds the default value on creation for the "message" field.
-	DefaultMessage string
+	// DefaultCompensateSeconds holds the default value on creation for the "compensate_seconds" field.
+	DefaultCompensateSeconds uint32
 )

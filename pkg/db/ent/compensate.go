@@ -26,16 +26,12 @@ type Compensate struct {
 	EntID uuid.UUID `json:"ent_id,omitempty"`
 	// OrderID holds the value of the "order_id" field.
 	OrderID uuid.UUID `json:"order_id,omitempty"`
-	// StartAt holds the value of the "start_at" field.
-	StartAt uint32 `json:"start_at,omitempty"`
-	// EndAt holds the value of the "end_at" field.
-	EndAt uint32 `json:"end_at,omitempty"`
+	// CompensateFromID holds the value of the "compensate_from_id" field.
+	CompensateFromID uuid.UUID `json:"compensate_from_id,omitempty"`
 	// CompensateType holds the value of the "compensate_type" field.
 	CompensateType string `json:"compensate_type,omitempty"`
-	// Title holds the value of the "title" field.
-	Title string `json:"title,omitempty"`
-	// Message holds the value of the "message" field.
-	Message string `json:"message,omitempty"`
+	// CompensateSeconds holds the value of the "compensate_seconds" field.
+	CompensateSeconds uint32 `json:"compensate_seconds,omitempty"`
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -43,11 +39,11 @@ func (*Compensate) scanValues(columns []string) ([]interface{}, error) {
 	values := make([]interface{}, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case compensate.FieldID, compensate.FieldCreatedAt, compensate.FieldUpdatedAt, compensate.FieldDeletedAt, compensate.FieldStartAt, compensate.FieldEndAt:
+		case compensate.FieldID, compensate.FieldCreatedAt, compensate.FieldUpdatedAt, compensate.FieldDeletedAt, compensate.FieldCompensateSeconds:
 			values[i] = new(sql.NullInt64)
-		case compensate.FieldCompensateType, compensate.FieldTitle, compensate.FieldMessage:
+		case compensate.FieldCompensateType:
 			values[i] = new(sql.NullString)
-		case compensate.FieldEntID, compensate.FieldOrderID:
+		case compensate.FieldEntID, compensate.FieldOrderID, compensate.FieldCompensateFromID:
 			values[i] = new(uuid.UUID)
 		default:
 			return nil, fmt.Errorf("unexpected column %q for type Compensate", columns[i])
@@ -100,17 +96,11 @@ func (c *Compensate) assignValues(columns []string, values []interface{}) error 
 			} else if value != nil {
 				c.OrderID = *value
 			}
-		case compensate.FieldStartAt:
-			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for field start_at", values[i])
-			} else if value.Valid {
-				c.StartAt = uint32(value.Int64)
-			}
-		case compensate.FieldEndAt:
-			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for field end_at", values[i])
-			} else if value.Valid {
-				c.EndAt = uint32(value.Int64)
+		case compensate.FieldCompensateFromID:
+			if value, ok := values[i].(*uuid.UUID); !ok {
+				return fmt.Errorf("unexpected type %T for field compensate_from_id", values[i])
+			} else if value != nil {
+				c.CompensateFromID = *value
 			}
 		case compensate.FieldCompensateType:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -118,17 +108,11 @@ func (c *Compensate) assignValues(columns []string, values []interface{}) error 
 			} else if value.Valid {
 				c.CompensateType = value.String
 			}
-		case compensate.FieldTitle:
-			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field title", values[i])
+		case compensate.FieldCompensateSeconds:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field compensate_seconds", values[i])
 			} else if value.Valid {
-				c.Title = value.String
-			}
-		case compensate.FieldMessage:
-			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field message", values[i])
-			} else if value.Valid {
-				c.Message = value.String
+				c.CompensateSeconds = uint32(value.Int64)
 			}
 		}
 	}
@@ -173,20 +157,14 @@ func (c *Compensate) String() string {
 	builder.WriteString("order_id=")
 	builder.WriteString(fmt.Sprintf("%v", c.OrderID))
 	builder.WriteString(", ")
-	builder.WriteString("start_at=")
-	builder.WriteString(fmt.Sprintf("%v", c.StartAt))
-	builder.WriteString(", ")
-	builder.WriteString("end_at=")
-	builder.WriteString(fmt.Sprintf("%v", c.EndAt))
+	builder.WriteString("compensate_from_id=")
+	builder.WriteString(fmt.Sprintf("%v", c.CompensateFromID))
 	builder.WriteString(", ")
 	builder.WriteString("compensate_type=")
 	builder.WriteString(c.CompensateType)
 	builder.WriteString(", ")
-	builder.WriteString("title=")
-	builder.WriteString(c.Title)
-	builder.WriteString(", ")
-	builder.WriteString("message=")
-	builder.WriteString(c.Message)
+	builder.WriteString("compensate_seconds=")
+	builder.WriteString(fmt.Sprintf("%v", c.CompensateSeconds))
 	builder.WriteByte(')')
 	return builder.String()
 }

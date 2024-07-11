@@ -26,27 +26,28 @@ func (Compensate) Mixin() []ent.Mixin {
 func (Compensate) Fields() []ent.Field {
 	return []ent.Field{
 		field.
-			UUID("order_id", uuid.UUID{}),
-		field.
-			Uint32("start_at").
+			UUID("order_id", uuid.UUID{}).
 			Optional().
-			Default(0),
+			Default(func() uuid.UUID {
+				return uuid.Nil
+			}),
+		// Malfunction: ID is from good_manager.good_malfunction
+		// Walfare: ID is from inspire_manager.npool_walfares
+		// StarterDelay: ID is from good_manager.starter_delays
 		field.
-			Uint32("end_at").
+			UUID("compensate_from_id", uuid.UUID{}).
 			Optional().
-			Default(0),
+			Default(func() uuid.UUID {
+				return uuid.Nil
+			}),
 		field.
 			String("compensate_type").
 			Optional().
 			Default(types.CompensateType_DefaultCompensateType.String()),
 		field.
-			String("title").
+			Uint32("compensate_seconds").
 			Optional().
-			Default(""),
-		field.
-			String("message").
-			Optional().
-			Default(""),
+			Default(0),
 	}
 }
 

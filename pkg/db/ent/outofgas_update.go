@@ -104,6 +104,20 @@ func (oogu *OutOfGasUpdate) SetOrderID(u uuid.UUID) *OutOfGasUpdate {
 	return oogu
 }
 
+// SetNillableOrderID sets the "order_id" field if the given value is not nil.
+func (oogu *OutOfGasUpdate) SetNillableOrderID(u *uuid.UUID) *OutOfGasUpdate {
+	if u != nil {
+		oogu.SetOrderID(*u)
+	}
+	return oogu
+}
+
+// ClearOrderID clears the value of the "order_id" field.
+func (oogu *OutOfGasUpdate) ClearOrderID() *OutOfGasUpdate {
+	oogu.mutation.ClearOrderID()
+	return oogu
+}
+
 // SetStartAt sets the "start_at" field.
 func (oogu *OutOfGasUpdate) SetStartAt(u uint32) *OutOfGasUpdate {
 	oogu.mutation.ResetStartAt()
@@ -312,6 +326,12 @@ func (oogu *OutOfGasUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: outofgas.FieldOrderID,
 		})
 	}
+	if oogu.mutation.OrderIDCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Column: outofgas.FieldOrderID,
+		})
+	}
 	if value, ok := oogu.mutation.StartAt(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeUint32,
@@ -445,6 +465,20 @@ func (ooguo *OutOfGasUpdateOne) SetNillableEntID(u *uuid.UUID) *OutOfGasUpdateOn
 // SetOrderID sets the "order_id" field.
 func (ooguo *OutOfGasUpdateOne) SetOrderID(u uuid.UUID) *OutOfGasUpdateOne {
 	ooguo.mutation.SetOrderID(u)
+	return ooguo
+}
+
+// SetNillableOrderID sets the "order_id" field if the given value is not nil.
+func (ooguo *OutOfGasUpdateOne) SetNillableOrderID(u *uuid.UUID) *OutOfGasUpdateOne {
+	if u != nil {
+		ooguo.SetOrderID(*u)
+	}
+	return ooguo
+}
+
+// ClearOrderID clears the value of the "order_id" field.
+func (ooguo *OutOfGasUpdateOne) ClearOrderID() *OutOfGasUpdateOne {
+	ooguo.mutation.ClearOrderID()
 	return ooguo
 }
 
@@ -683,6 +717,12 @@ func (ooguo *OutOfGasUpdateOne) sqlSave(ctx context.Context) (_node *OutOfGas, e
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeUUID,
 			Value:  value,
+			Column: outofgas.FieldOrderID,
+		})
+	}
+	if ooguo.mutation.OrderIDCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
 			Column: outofgas.FieldOrderID,
 		})
 	}

@@ -3,30 +3,28 @@ package outofgas
 import (
 	"context"
 
+	wlog "github.com/NpoolPlatform/go-service-framework/pkg/wlog"
 	"github.com/NpoolPlatform/order-middleware/pkg/db"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent"
-
-	outofgascrud "github.com/NpoolPlatform/order-middleware/pkg/crud/outofgas"
-	entoutofgas "github.com/NpoolPlatform/order-middleware/pkg/db/ent/outofgas"
 )
 
-func (h *Handler) ExistOutOfGas(ctx context.Context) (bool, error) {
-	exist := false
-	var err error
+type existHandler struct {
+	*baseQueryHandler
+}
 
+func (h *Handler) ExistOutOfGas(ctx context.Context) (exist bool, err error) {
+	handler := &existHandler{
+		baseQueryHandler: &baseQueryHandler{
+			Handler: h,
+		},
+	}
 	err = db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
-		exist, err = cli.
-			OutOfGas.
-			Query().
-			Where(
-				entoutofgas.EntID(*h.EntID),
-				entoutofgas.DeletedAt(0),
-			).
-			Exist(_ctx)
-		if err != nil {
-			return err
+		if err := handler.queryOutOfGas(cli); err != nil {
+			return wlog.WrapError(err)
 		}
-		return nil
+		handler.queryJoin()
+		exist, err = handler.stmSelect.Exist(_ctx)
+		return wlog.WrapError(err)
 	})
 	if err != nil {
 		return false, err
@@ -34,19 +32,20 @@ func (h *Handler) ExistOutOfGas(ctx context.Context) (bool, error) {
 	return exist, nil
 }
 
-func (h *Handler) ExistOutOfGasConds(ctx context.Context) (bool, error) {
-	exist := false
-
-	err := db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
-		stm, err := outofgascrud.SetQueryConds(cli.OutOfGas.Query(), h.Conds)
+func (h *Handler) ExistOutOfGasConds(ctx context.Context) (exist bool, err error) {
+	handler := &existHandler{
+		baseQueryHandler: &baseQueryHandler{
+			Handler: h,
+		},
+	}
+	err = db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
+		handler.stmSelect, err = handler.queryOutOfGases(cli)
 		if err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
-		exist, err = stm.Exist(_ctx)
-		if err != nil {
-			return err
-		}
-		return nil
+		handler.queryJoin()
+		exist, err = handler.stmSelect.Exist(_ctx)
+		return wlog.WrapError(err)
 	})
 	if err != nil {
 		return false, err

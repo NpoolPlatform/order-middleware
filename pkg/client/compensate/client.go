@@ -2,156 +2,90 @@ package compensate
 
 import (
 	"context"
-	"fmt"
 	"time"
 
 	grpc2 "github.com/NpoolPlatform/go-service-framework/pkg/grpc"
-
-	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
+	wlog "github.com/NpoolPlatform/go-service-framework/pkg/wlog"
 	npool "github.com/NpoolPlatform/message/npool/order/mw/v1/compensate"
-
 	servicename "github.com/NpoolPlatform/order-middleware/pkg/servicename"
+	"google.golang.org/grpc"
 )
 
-var timeout = 10 * time.Second
-
-type handler func(context.Context, npool.MiddlewareClient) (cruder.Any, error)
-
-func do(ctx context.Context, handler handler) (cruder.Any, error) {
-	_ctx, cancel := context.WithTimeout(ctx, timeout)
-	defer cancel()
-
-	conn, err := grpc2.GetGRPCConn(servicename.ServiceDomain, grpc2.GRPCTAG)
-	if err != nil {
-		return nil, err
-	}
-
-	defer conn.Close()
-
-	cli := npool.NewMiddlewareClient(conn)
-
-	return handler(_ctx, cli)
-}
-
-func CreateCompensate(ctx context.Context, in *npool.CompensateReq) (*npool.Compensate, error) {
-	info, err := do(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
-		resp, err := cli.CreateCompensate(ctx, &npool.CreateCompensateRequest{
-			Info: in,
-		})
-		if err != nil {
-			return nil, err
-		}
-		return resp.Info, nil
-	})
-	if err != nil {
-		return nil, err
-	}
-	return info.(*npool.Compensate), nil
-}
-
-func UpdateCompensate(ctx context.Context, in *npool.CompensateReq) (*npool.Compensate, error) {
-	info, err := do(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
-		resp, err := cli.UpdateCompensate(ctx, &npool.UpdateCompensateRequest{
-			Info: in,
-		})
-		if err != nil {
-			return nil, err
-		}
-		return resp.Info, nil
-	})
-	if err != nil {
-		return nil, err
-	}
-	return info.(*npool.Compensate), nil
+func withClient(ctx context.Context, handler func(context.Context, npool.MiddlewareClient) (interface{}, error)) (interface{}, error) {
+	return grpc2.WithGRPCConn(
+		ctx,
+		servicename.ServiceDomain,
+		10*time.Second, //nolint
+		func(_ctx context.Context, conn *grpc.ClientConn) (interface{}, error) {
+			return handler(_ctx, npool.NewMiddlewareClient(conn))
+		},
+		grpc2.GRPCTAG,
+	)
 }
 
 func GetCompensate(ctx context.Context, id string) (*npool.Compensate, error) {
-	info, err := do(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
+	info, err := withClient(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (interface{}, error) {
 		resp, err := cli.GetCompensate(ctx, &npool.GetCompensateRequest{
 			EntID: id,
 		})
 		if err != nil {
-			return nil, err
+			return nil, wlog.WrapError(err)
 		}
 		return resp.Info, nil
 	})
 	if err != nil {
-		return nil, err
+		return nil, wlog.WrapError(err)
 	}
 	return info.(*npool.Compensate), nil
 }
 
-func GetCompensates(ctx context.Context, conds *npool.Conds, offset, limit int32) ([]*npool.Compensate, uint32, error) {
-	total := uint32(0)
-
-	infos, err := do(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
+func GetCompensates(ctx context.Context, conds *npool.Conds, offset, limit int32) (infos []*npool.Compensate, total uint32, err error) {
+	_infos, err := withClient(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (interface{}, error) {
 		resp, err := cli.GetCompensates(ctx, &npool.GetCompensatesRequest{
 			Conds:  conds,
 			Offset: offset,
 			Limit:  limit,
 		})
 		if err != nil {
-			return nil, err
+			return nil, wlog.WrapError(err)
 		}
-
 		total = resp.Total
-
 		return resp.Infos, nil
 	})
 	if err != nil {
 		return nil, 0, err
 	}
-	return infos.([]*npool.Compensate), total, nil
+	return _infos.([]*npool.Compensate), total, nil
 }
 
 func GetCompensateOnly(ctx context.Context, conds *npool.Conds) (*npool.Compensate, error) {
-	const limit = 2
-	infos, err := do(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
+	infos, err := withClient(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (interface{}, error) {
 		resp, err := cli.GetCompensates(ctx, &npool.GetCompensatesRequest{
 			Conds:  conds,
 			Offset: 0,
-			Limit:  limit,
+			Limit:  2,
 		})
 		if err != nil {
-			return nil, err
+			return nil, wlog.WrapError(err)
 		}
 		return resp.Infos, nil
 	})
 	if err != nil {
-		return nil, err
-	}
-	if err != nil {
-		return nil, err
+		return nil, wlog.WrapError(err)
 	}
 	if len(infos.([]*npool.Compensate)) == 0 {
 		return nil, nil
 	}
 	if len(infos.([]*npool.Compensate)) > 1 {
-		return nil, fmt.Errorf("too many records")
+		return nil, wlog.Errorf("too many records")
 	}
 	return infos.([]*npool.Compensate)[0], nil
 }
 
-func DeleteCompensate(ctx context.Context, in *npool.CompensateReq) (*npool.Compensate, error) {
-	info, err := do(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
-		resp, err := cli.DeleteCompensate(ctx, &npool.DeleteCompensateRequest{
-			Info: in,
-		})
-		if err != nil {
-			return nil, err
-		}
-		return resp.Info, nil
-	})
-	if err != nil {
-		return nil, err
-	}
-	return info.(*npool.Compensate), nil
-}
-
-func ExistCompensate(ctx context.Context, id string) (bool, error) {
-	exist, err := do(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
+func ExistCompensate(ctx context.Context, entID string) (bool, error) {
+	exist, err := withClient(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (interface{}, error) {
 		resp, err := cli.ExistCompensate(ctx, &npool.ExistCompensateRequest{
-			EntID: id,
+			EntID: entID,
 		})
 		if err != nil {
 			return false, err
@@ -166,7 +100,7 @@ func ExistCompensate(ctx context.Context, id string) (bool, error) {
 }
 
 func ExistCompensateConds(ctx context.Context, conds *npool.Conds) (bool, error) {
-	exist, err := do(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
+	exist, err := withClient(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (interface{}, error) {
 		resp, err := cli.ExistCompensateConds(ctx, &npool.ExistCompensateCondsRequest{
 			Conds: conds,
 		})
@@ -180,4 +114,36 @@ func ExistCompensateConds(ctx context.Context, conds *npool.Conds) (bool, error)
 		return false, err
 	}
 	return exist.(bool), err
+}
+
+func CountCompensates(ctx context.Context, conds *npool.Conds) (uint32, error) {
+	total, err := withClient(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (interface{}, error) {
+		resp, err := cli.CountCompensates(ctx, &npool.CountCompensatesRequest{
+			Conds: conds,
+		})
+		if err != nil {
+			return false, err
+		}
+		return resp.Info, nil
+	})
+	if err != nil {
+		return 0, err
+	}
+	return total.(uint32), err
+}
+
+func CountCompensateOrders(ctx context.Context, compensateFromIDs []string) ([]*npool.CompensateOrderNumber, error) {
+	infos, err := withClient(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (interface{}, error) {
+		resp, err := cli.CountCompensateOrders(ctx, &npool.CountCompensateOrdersRequest{
+			CompensateFromIDs: compensateFromIDs,
+		})
+		if err != nil {
+			return nil, err
+		}
+		return resp.Infos, nil
+	})
+	if err != nil {
+		return nil, err
+	}
+	return infos.([]*npool.CompensateOrderNumber), err
 }

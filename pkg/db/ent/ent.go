@@ -10,13 +10,25 @@ import (
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
+	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/appconfig"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/compensate"
-	entorder "github.com/NpoolPlatform/order-middleware/pkg/db/ent/order"
+	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/feeorder"
+	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/feeorderstate"
+	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/order"
+	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/orderbase"
+	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/ordercoupon"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/orderlock"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/orderstate"
+	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/orderstatebase"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/outofgas"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/payment"
-	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/simulateconfig"
+	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/paymentbalance"
+	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/paymentbalancelock"
+	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/paymentbase"
+	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/paymentcontract"
+	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/paymenttransfer"
+	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/powerrental"
+	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/powerrentalstate"
 )
 
 // ent aliases to avoid import conflicts in user's code.
@@ -37,13 +49,25 @@ type OrderFunc func(*sql.Selector)
 // columnChecker returns a function indicates if the column exists in the given column.
 func columnChecker(table string) func(string) error {
 	checks := map[string]func(string) bool{
-		compensate.Table:     compensate.ValidColumn,
-		entorder.Table:       entorder.ValidColumn,
-		orderlock.Table:      orderlock.ValidColumn,
-		orderstate.Table:     orderstate.ValidColumn,
-		outofgas.Table:       outofgas.ValidColumn,
-		payment.Table:        payment.ValidColumn,
-		simulateconfig.Table: simulateconfig.ValidColumn,
+		appconfig.Table:          appconfig.ValidColumn,
+		compensate.Table:         compensate.ValidColumn,
+		feeorder.Table:           feeorder.ValidColumn,
+		feeorderstate.Table:      feeorderstate.ValidColumn,
+		order.Table:              order.ValidColumn,
+		orderbase.Table:          orderbase.ValidColumn,
+		ordercoupon.Table:        ordercoupon.ValidColumn,
+		orderlock.Table:          orderlock.ValidColumn,
+		orderstate.Table:         orderstate.ValidColumn,
+		orderstatebase.Table:     orderstatebase.ValidColumn,
+		outofgas.Table:           outofgas.ValidColumn,
+		payment.Table:            payment.ValidColumn,
+		paymentbalance.Table:     paymentbalance.ValidColumn,
+		paymentbalancelock.Table: paymentbalancelock.ValidColumn,
+		paymentbase.Table:        paymentbase.ValidColumn,
+		paymentcontract.Table:    paymentcontract.ValidColumn,
+		paymenttransfer.Table:    paymenttransfer.ValidColumn,
+		powerrental.Table:        powerrental.ValidColumn,
+		powerrentalstate.Table:   powerrentalstate.ValidColumn,
 	}
 	check, ok := checks[table]
 	if !ok {

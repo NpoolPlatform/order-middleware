@@ -9,7 +9,6 @@ import (
 
 	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
 	npool "github.com/NpoolPlatform/message/npool/order/mw/v1/order"
-
 	order1 "github.com/NpoolPlatform/order-middleware/pkg/mw/order"
 )
 
@@ -59,74 +58,5 @@ func (s *Server) GetOrders(ctx context.Context, in *npool.GetOrdersRequest) (*np
 	return &npool.GetOrdersResponse{
 		Infos: infos,
 		Total: total,
-	}, nil
-}
-
-func (s *Server) SumOrderUnits(ctx context.Context, in *npool.SumOrderUnitsRequest) (*npool.SumOrderUnitsResponse, error) {
-	handler, err := order1.NewHandler(
-		ctx,
-		order1.WithConds(in.GetConds()),
-	)
-	if err != nil {
-		logger.Sugar().Errorw(
-			"SumOrderUnits",
-			"In", in,
-			"error", err,
-		)
-		return &npool.SumOrderUnitsResponse{}, status.Error(codes.InvalidArgument, err.Error())
-	}
-	count, err := handler.SumOrderUnits(ctx)
-	if err != nil {
-		return &npool.SumOrderUnitsResponse{}, status.Error(codes.Internal, err.Error())
-	}
-
-	return &npool.SumOrderUnitsResponse{
-		Info: count,
-	}, nil
-}
-
-func (s *Server) SumOrderPaymentAmounts(ctx context.Context, in *npool.SumOrderPaymentAmountsRequest) (*npool.SumOrderPaymentAmountsResponse, error) {
-	handler, err := order1.NewHandler(
-		ctx,
-		order1.WithConds(in.GetConds()),
-	)
-	if err != nil {
-		logger.Sugar().Errorw(
-			"SumOrderPaymentAmounts",
-			"In", in,
-			"error", err,
-		)
-		return &npool.SumOrderPaymentAmountsResponse{}, status.Error(codes.InvalidArgument, err.Error())
-	}
-	amounts, err := handler.SumOrderPaymentAmounts(ctx)
-	if err != nil {
-		return &npool.SumOrderPaymentAmountsResponse{}, status.Error(codes.Internal, err.Error())
-	}
-
-	return &npool.SumOrderPaymentAmountsResponse{
-		Info: amounts,
-	}, nil
-}
-
-func (s *Server) CountOrders(ctx context.Context, in *npool.CountOrdersRequest) (*npool.CountOrdersResponse, error) {
-	handler, err := order1.NewHandler(
-		ctx,
-		order1.WithConds(in.GetConds()),
-	)
-	if err != nil {
-		logger.Sugar().Errorw(
-			"CountOrders",
-			"In", in,
-			"error", err,
-		)
-		return &npool.CountOrdersResponse{}, status.Error(codes.InvalidArgument, err.Error())
-	}
-	count, err := handler.CountOrders(ctx)
-	if err != nil {
-		return &npool.CountOrdersResponse{}, status.Error(codes.Internal, err.Error())
-	}
-
-	return &npool.CountOrdersResponse{
-		Info: count,
 	}, nil
 }

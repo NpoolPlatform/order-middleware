@@ -107,10 +107,10 @@ func EntID(v uuid.UUID) predicate.OrderLock {
 	})
 }
 
-// AppID applies equality check predicate on the "app_id" field. It's identical to AppIDEQ.
-func AppID(v uuid.UUID) predicate.OrderLock {
+// OrderID applies equality check predicate on the "order_id" field. It's identical to OrderIDEQ.
+func OrderID(v uuid.UUID) predicate.OrderLock {
 	return predicate.OrderLock(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldAppID), v))
+		s.Where(sql.EQ(s.C(FieldOrderID), v))
 	})
 }
 
@@ -118,13 +118,6 @@ func AppID(v uuid.UUID) predicate.OrderLock {
 func UserID(v uuid.UUID) predicate.OrderLock {
 	return predicate.OrderLock(func(s *sql.Selector) {
 		s.Where(sql.EQ(s.C(FieldUserID), v))
-	})
-}
-
-// OrderID applies equality check predicate on the "order_id" field. It's identical to OrderIDEQ.
-func OrderID(v uuid.UUID) predicate.OrderLock {
-	return predicate.OrderLock(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldOrderID), v))
 	})
 }
 
@@ -391,67 +384,81 @@ func EntIDLTE(v uuid.UUID) predicate.OrderLock {
 	})
 }
 
-// AppIDEQ applies the EQ predicate on the "app_id" field.
-func AppIDEQ(v uuid.UUID) predicate.OrderLock {
+// OrderIDEQ applies the EQ predicate on the "order_id" field.
+func OrderIDEQ(v uuid.UUID) predicate.OrderLock {
 	return predicate.OrderLock(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldAppID), v))
+		s.Where(sql.EQ(s.C(FieldOrderID), v))
 	})
 }
 
-// AppIDNEQ applies the NEQ predicate on the "app_id" field.
-func AppIDNEQ(v uuid.UUID) predicate.OrderLock {
+// OrderIDNEQ applies the NEQ predicate on the "order_id" field.
+func OrderIDNEQ(v uuid.UUID) predicate.OrderLock {
 	return predicate.OrderLock(func(s *sql.Selector) {
-		s.Where(sql.NEQ(s.C(FieldAppID), v))
+		s.Where(sql.NEQ(s.C(FieldOrderID), v))
 	})
 }
 
-// AppIDIn applies the In predicate on the "app_id" field.
-func AppIDIn(vs ...uuid.UUID) predicate.OrderLock {
+// OrderIDIn applies the In predicate on the "order_id" field.
+func OrderIDIn(vs ...uuid.UUID) predicate.OrderLock {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
 	}
 	return predicate.OrderLock(func(s *sql.Selector) {
-		s.Where(sql.In(s.C(FieldAppID), v...))
+		s.Where(sql.In(s.C(FieldOrderID), v...))
 	})
 }
 
-// AppIDNotIn applies the NotIn predicate on the "app_id" field.
-func AppIDNotIn(vs ...uuid.UUID) predicate.OrderLock {
+// OrderIDNotIn applies the NotIn predicate on the "order_id" field.
+func OrderIDNotIn(vs ...uuid.UUID) predicate.OrderLock {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
 	}
 	return predicate.OrderLock(func(s *sql.Selector) {
-		s.Where(sql.NotIn(s.C(FieldAppID), v...))
+		s.Where(sql.NotIn(s.C(FieldOrderID), v...))
 	})
 }
 
-// AppIDGT applies the GT predicate on the "app_id" field.
-func AppIDGT(v uuid.UUID) predicate.OrderLock {
+// OrderIDGT applies the GT predicate on the "order_id" field.
+func OrderIDGT(v uuid.UUID) predicate.OrderLock {
 	return predicate.OrderLock(func(s *sql.Selector) {
-		s.Where(sql.GT(s.C(FieldAppID), v))
+		s.Where(sql.GT(s.C(FieldOrderID), v))
 	})
 }
 
-// AppIDGTE applies the GTE predicate on the "app_id" field.
-func AppIDGTE(v uuid.UUID) predicate.OrderLock {
+// OrderIDGTE applies the GTE predicate on the "order_id" field.
+func OrderIDGTE(v uuid.UUID) predicate.OrderLock {
 	return predicate.OrderLock(func(s *sql.Selector) {
-		s.Where(sql.GTE(s.C(FieldAppID), v))
+		s.Where(sql.GTE(s.C(FieldOrderID), v))
 	})
 }
 
-// AppIDLT applies the LT predicate on the "app_id" field.
-func AppIDLT(v uuid.UUID) predicate.OrderLock {
+// OrderIDLT applies the LT predicate on the "order_id" field.
+func OrderIDLT(v uuid.UUID) predicate.OrderLock {
 	return predicate.OrderLock(func(s *sql.Selector) {
-		s.Where(sql.LT(s.C(FieldAppID), v))
+		s.Where(sql.LT(s.C(FieldOrderID), v))
 	})
 }
 
-// AppIDLTE applies the LTE predicate on the "app_id" field.
-func AppIDLTE(v uuid.UUID) predicate.OrderLock {
+// OrderIDLTE applies the LTE predicate on the "order_id" field.
+func OrderIDLTE(v uuid.UUID) predicate.OrderLock {
 	return predicate.OrderLock(func(s *sql.Selector) {
-		s.Where(sql.LTE(s.C(FieldAppID), v))
+		s.Where(sql.LTE(s.C(FieldOrderID), v))
+	})
+}
+
+// OrderIDIsNil applies the IsNil predicate on the "order_id" field.
+func OrderIDIsNil() predicate.OrderLock {
+	return predicate.OrderLock(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldOrderID)))
+	})
+}
+
+// OrderIDNotNil applies the NotNil predicate on the "order_id" field.
+func OrderIDNotNil() predicate.OrderLock {
+	return predicate.OrderLock(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldOrderID)))
 	})
 }
 
@@ -519,67 +526,17 @@ func UserIDLTE(v uuid.UUID) predicate.OrderLock {
 	})
 }
 
-// OrderIDEQ applies the EQ predicate on the "order_id" field.
-func OrderIDEQ(v uuid.UUID) predicate.OrderLock {
+// UserIDIsNil applies the IsNil predicate on the "user_id" field.
+func UserIDIsNil() predicate.OrderLock {
 	return predicate.OrderLock(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldOrderID), v))
+		s.Where(sql.IsNull(s.C(FieldUserID)))
 	})
 }
 
-// OrderIDNEQ applies the NEQ predicate on the "order_id" field.
-func OrderIDNEQ(v uuid.UUID) predicate.OrderLock {
+// UserIDNotNil applies the NotNil predicate on the "user_id" field.
+func UserIDNotNil() predicate.OrderLock {
 	return predicate.OrderLock(func(s *sql.Selector) {
-		s.Where(sql.NEQ(s.C(FieldOrderID), v))
-	})
-}
-
-// OrderIDIn applies the In predicate on the "order_id" field.
-func OrderIDIn(vs ...uuid.UUID) predicate.OrderLock {
-	v := make([]interface{}, len(vs))
-	for i := range v {
-		v[i] = vs[i]
-	}
-	return predicate.OrderLock(func(s *sql.Selector) {
-		s.Where(sql.In(s.C(FieldOrderID), v...))
-	})
-}
-
-// OrderIDNotIn applies the NotIn predicate on the "order_id" field.
-func OrderIDNotIn(vs ...uuid.UUID) predicate.OrderLock {
-	v := make([]interface{}, len(vs))
-	for i := range v {
-		v[i] = vs[i]
-	}
-	return predicate.OrderLock(func(s *sql.Selector) {
-		s.Where(sql.NotIn(s.C(FieldOrderID), v...))
-	})
-}
-
-// OrderIDGT applies the GT predicate on the "order_id" field.
-func OrderIDGT(v uuid.UUID) predicate.OrderLock {
-	return predicate.OrderLock(func(s *sql.Selector) {
-		s.Where(sql.GT(s.C(FieldOrderID), v))
-	})
-}
-
-// OrderIDGTE applies the GTE predicate on the "order_id" field.
-func OrderIDGTE(v uuid.UUID) predicate.OrderLock {
-	return predicate.OrderLock(func(s *sql.Selector) {
-		s.Where(sql.GTE(s.C(FieldOrderID), v))
-	})
-}
-
-// OrderIDLT applies the LT predicate on the "order_id" field.
-func OrderIDLT(v uuid.UUID) predicate.OrderLock {
-	return predicate.OrderLock(func(s *sql.Selector) {
-		s.Where(sql.LT(s.C(FieldOrderID), v))
-	})
-}
-
-// OrderIDLTE applies the LTE predicate on the "order_id" field.
-func OrderIDLTE(v uuid.UUID) predicate.OrderLock {
-	return predicate.OrderLock(func(s *sql.Selector) {
-		s.Where(sql.LTE(s.C(FieldOrderID), v))
+		s.Where(sql.NotNull(s.C(FieldUserID)))
 	})
 }
 

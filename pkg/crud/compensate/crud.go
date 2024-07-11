@@ -1,23 +1,22 @@
 package compensate
 
 import (
-	"fmt"
-
+	wlog "github.com/NpoolPlatform/go-service-framework/pkg/wlog"
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
+	types "github.com/NpoolPlatform/message/npool/basetypes/order/v1"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent"
 	entcompensate "github.com/NpoolPlatform/order-middleware/pkg/db/ent/compensate"
+
 	"github.com/google/uuid"
 )
 
 type Req struct {
-	EntID     *uuid.UUID
-	OrderID   *uuid.UUID
-	StartAt   *uint32
-	EndAt     *uint32
-	Title     *string
-	Message   *string
-	CreatedAt *uint32
-	DeletedAt *uint32
+	EntID             *uuid.UUID
+	OrderID           *uuid.UUID
+	CompensateFromID  *uuid.UUID
+	CompensateType    *types.CompensateType
+	CompensateSeconds *uint32
+	DeletedAt         *uint32
 }
 
 func CreateSet(c *ent.CompensateCreate, req *Req) *ent.CompensateCreate {
@@ -27,36 +26,21 @@ func CreateSet(c *ent.CompensateCreate, req *Req) *ent.CompensateCreate {
 	if req.OrderID != nil {
 		c.SetOrderID(*req.OrderID)
 	}
-	if req.StartAt != nil {
-		c.SetStartAt(*req.StartAt)
+	if req.CompensateFromID != nil {
+		c.SetCompensateFromID(*req.CompensateFromID)
 	}
-	if req.EndAt != nil {
-		c.SetEndAt(*req.EndAt)
+	if req.CompensateType != nil {
+		c.SetCompensateType(req.CompensateType.String())
 	}
-	if req.Title != nil {
-		c.SetTitle(*req.Title)
-	}
-	if req.Message != nil {
-		c.SetMessage(*req.Message)
-	}
-	if req.CreatedAt != nil {
-		c.SetCreatedAt(*req.CreatedAt)
+	if req.CompensateSeconds != nil {
+		c.SetCompensateSeconds(*req.CompensateSeconds)
 	}
 	return c
 }
 
 func UpdateSet(u *ent.CompensateUpdateOne, req *Req) *ent.CompensateUpdateOne {
-	if req.StartAt != nil {
-		u.SetStartAt(*req.StartAt)
-	}
-	if req.EndAt != nil {
-		u.SetEndAt(*req.EndAt)
-	}
-	if req.Title != nil {
-		u.SetTitle(*req.Title)
-	}
-	if req.Message != nil {
-		u.SetMessage(*req.Message)
+	if req.CompensateSeconds != nil {
+		u.SetCompensateSeconds(*req.CompensateSeconds)
 	}
 	if req.DeletedAt != nil {
 		u.SetDeletedAt(*req.DeletedAt)
@@ -65,14 +49,16 @@ func UpdateSet(u *ent.CompensateUpdateOne, req *Req) *ent.CompensateUpdateOne {
 }
 
 type Conds struct {
-	EntID    *cruder.Cond
-	EntIDs   *cruder.Cond
-	ID       *cruder.Cond
-	IDs      *cruder.Cond
-	OrderID  *cruder.Cond
-	StartAt  *cruder.Cond
-	EndAt    *cruder.Cond
-	StartEnd *cruder.Cond
+	ID                *cruder.Cond
+	IDs               *cruder.Cond
+	EntID             *cruder.Cond
+	EntIDs            *cruder.Cond
+	OrderID           *cruder.Cond
+	OrderIDs          *cruder.Cond
+	CompensateFromID  *cruder.Cond
+	CompensateFromIDs *cruder.Cond
+	CompensateType    *cruder.Cond
+	CompensateTypes   *cruder.Cond
 }
 
 //nolint
@@ -81,38 +67,10 @@ func SetQueryConds(q *ent.CompensateQuery, conds *Conds) (*ent.CompensateQuery, 
 	if conds == nil {
 		return q, nil
 	}
-	if conds.EntID != nil {
-		id, ok := conds.EntID.Val.(uuid.UUID)
-		if !ok {
-			return nil, fmt.Errorf("invalid entid")
-		}
-		switch conds.EntID.Op {
-		case cruder.EQ:
-			q.Where(entcompensate.EntID(id))
-		case cruder.NEQ:
-			q.Where(entcompensate.EntIDNEQ(id))
-		default:
-			return nil, fmt.Errorf("invalid compensate field")
-		}
-	}
-	if conds.EntIDs != nil {
-		ids, ok := conds.EntIDs.Val.([]uuid.UUID)
-		if !ok {
-			return nil, fmt.Errorf("invalid entids")
-		}
-		if len(ids) > 0 {
-			switch conds.EntIDs.Op {
-			case cruder.IN:
-				q.Where(entcompensate.EntIDIn(ids...))
-			default:
-				return nil, fmt.Errorf("invalid compensate field")
-			}
-		}
-	}
 	if conds.ID != nil {
 		id, ok := conds.ID.Val.(uint32)
 		if !ok {
-			return nil, fmt.Errorf("invalid id")
+			return nil, wlog.Errorf("invalid id")
 		}
 		switch conds.ID.Op {
 		case cruder.EQ:
@@ -120,100 +78,132 @@ func SetQueryConds(q *ent.CompensateQuery, conds *Conds) (*ent.CompensateQuery, 
 		case cruder.NEQ:
 			q.Where(entcompensate.IDNEQ(id))
 		default:
-			return nil, fmt.Errorf("invalid compensate field")
+			return nil, wlog.Errorf("invalid compensate field")
 		}
 	}
 	if conds.IDs != nil {
 		ids, ok := conds.IDs.Val.([]uint32)
 		if !ok {
-			return nil, fmt.Errorf("invalid ids")
+			return nil, wlog.Errorf("invalid ids")
 		}
 		if len(ids) > 0 {
 			switch conds.IDs.Op {
 			case cruder.IN:
 				q.Where(entcompensate.IDIn(ids...))
 			default:
-				return nil, fmt.Errorf("invalid compensate field")
+				return nil, wlog.Errorf("invalid compensate field")
+			}
+		}
+	}
+	if conds.EntID != nil {
+		id, ok := conds.EntID.Val.(uuid.UUID)
+		if !ok {
+			return nil, wlog.Errorf("invalid entid")
+		}
+		switch conds.EntID.Op {
+		case cruder.EQ:
+			q.Where(entcompensate.EntID(id))
+		case cruder.NEQ:
+			q.Where(entcompensate.EntIDNEQ(id))
+		default:
+			return nil, wlog.Errorf("invalid compensate field")
+		}
+	}
+	if conds.EntIDs != nil {
+		ids, ok := conds.EntIDs.Val.([]uuid.UUID)
+		if !ok {
+			return nil, wlog.Errorf("invalid entids")
+		}
+		if len(ids) > 0 {
+			switch conds.EntIDs.Op {
+			case cruder.IN:
+				q.Where(entcompensate.EntIDIn(ids...))
+			default:
+				return nil, wlog.Errorf("invalid compensate field")
 			}
 		}
 	}
 	if conds.OrderID != nil {
 		id, ok := conds.OrderID.Val.(uuid.UUID)
 		if !ok {
-			return nil, fmt.Errorf("invalid orderid")
+			return nil, wlog.Errorf("invalid orderid")
 		}
 		switch conds.OrderID.Op {
 		case cruder.EQ:
 			q.Where(entcompensate.OrderID(id))
 		default:
-			return nil, fmt.Errorf("invalid compensate field")
+			return nil, wlog.Errorf("invalid compensate field")
 		}
 	}
-	if conds.StartAt != nil {
-		start, ok := conds.StartAt.Val.(uint32)
+	if conds.CompensateFromID != nil {
+		id, ok := conds.CompensateFromID.Val.(uuid.UUID)
 		if !ok {
-			return nil, fmt.Errorf("invalid startat")
+			return nil, wlog.Errorf("invalid compensateid")
 		}
-		switch conds.StartAt.Op {
-		case cruder.LT:
-			q.Where(entcompensate.StartAtLT(start))
-		case cruder.LTE:
-			q.Where(entcompensate.StartAtLTE(start))
-		case cruder.GT:
-			q.Where(entcompensate.StartAtGT(start))
-		case cruder.GTE:
-			q.Where(entcompensate.StartAtGTE(start))
+		switch conds.CompensateFromID.Op {
 		case cruder.EQ:
-			q.Where(entcompensate.StartAt(start))
+			q.Where(entcompensate.CompensateFromID(id))
 		default:
-			return nil, fmt.Errorf("invalid compensate field")
+			return nil, wlog.Errorf("invalid compensate field")
 		}
 	}
-	if conds.EndAt != nil {
-		end, ok := conds.EndAt.Val.(uint32)
+	if conds.CompensateFromIDs != nil {
+		ids, ok := conds.CompensateFromIDs.Val.([]uuid.UUID)
 		if !ok {
-			return nil, fmt.Errorf("invalid endat")
+			return nil, wlog.Errorf("invalid compensatefromids")
 		}
-		switch conds.EndAt.Op {
-		case cruder.LT:
-			q.Where(entcompensate.EndAtLT(end))
-		case cruder.LTE:
-			q.Where(entcompensate.EndAtLTE(end))
-		case cruder.GT:
-			q.Where(entcompensate.EndAtGT(end))
-		case cruder.GTE:
-			q.Where(entcompensate.EndAtGTE(end))
-		case cruder.EQ:
-			q.Where(entcompensate.EndAtEQ(end))
-		default:
-			return nil, fmt.Errorf("invalid compensate field")
+		if len(ids) > 0 {
+			switch conds.CompensateFromIDs.Op {
+			case cruder.IN:
+				q.Where(entcompensate.CompensateFromIDIn(ids...))
+			default:
+				return nil, wlog.Errorf("invalid compensate field")
+			}
 		}
 	}
-	if conds.StartEnd != nil {
-		ats, ok := conds.StartEnd.Val.([]uint32)
-		if !ok || len(ats) != 2 {
-			return nil, fmt.Errorf("invalid startend")
+	if conds.OrderIDs != nil {
+		ids, ok := conds.OrderIDs.Val.([]uuid.UUID)
+		if !ok {
+			return nil, wlog.Errorf("invalid orderids")
 		}
-		switch conds.StartEnd.Op {
-		case cruder.OVERLAP:
-			q.Where(
-				entcompensate.Or(
-					entcompensate.And(
-						entcompensate.StartAtLTE(ats[0]),
-						entcompensate.EndAtGTE(ats[0]),
-					),
-					entcompensate.And(
-						entcompensate.StartAtLTE(ats[1]),
-						entcompensate.EndAtGTE(ats[1]),
-					),
-					entcompensate.And(
-						entcompensate.StartAtGTE(ats[0]),
-						entcompensate.EndAtLTE(ats[1]),
-					),
-				),
-			)
+		if len(ids) > 0 {
+			switch conds.OrderIDs.Op {
+			case cruder.IN:
+				q.Where(entcompensate.OrderIDIn(ids...))
+			default:
+				return nil, wlog.Errorf("invalid compensate field")
+			}
+		}
+	}
+	if conds.CompensateType != nil {
+		_type, ok := conds.CompensateType.Val.(types.CompensateType)
+		if !ok {
+			return nil, wlog.Errorf("invalid compensatetype")
+		}
+		switch conds.CompensateType.Op {
+		case cruder.EQ:
+			q.Where(entcompensate.CompensateType(_type.String()))
 		default:
-			return nil, fmt.Errorf("invalid compensate field")
+			return nil, wlog.Errorf("invalid compensate field")
+		}
+	}
+	if conds.CompensateTypes != nil {
+		_types, ok := conds.CompensateTypes.Val.([]types.CompensateType)
+		if !ok {
+			return nil, wlog.Errorf("invalid compensatetypes")
+		}
+		if len(_types) > 0 {
+			switch conds.CompensateTypes.Op {
+			case cruder.IN:
+				q.Where(entcompensate.CompensateTypeIn(func() (__types []string) {
+					for _, _type := range _types {
+						__types = append(__types, _type.String())
+					}
+					return
+				}()...))
+			default:
+				return nil, wlog.Errorf("invalid compensate field")
+			}
 		}
 	}
 	return q, nil

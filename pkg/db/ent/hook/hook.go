@@ -9,6 +9,19 @@ import (
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent"
 )
 
+// The AppConfigFunc type is an adapter to allow the use of ordinary
+// function as AppConfig mutator.
+type AppConfigFunc func(context.Context, *ent.AppConfigMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f AppConfigFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	mv, ok := m.(*ent.AppConfigMutation)
+	if !ok {
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.AppConfigMutation", m)
+	}
+	return f(ctx, mv)
+}
+
 // The CompensateFunc type is an adapter to allow the use of ordinary
 // function as Compensate mutator.
 type CompensateFunc func(context.Context, *ent.CompensateMutation) (ent.Value, error)
@@ -22,6 +35,32 @@ func (f CompensateFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, 
 	return f(ctx, mv)
 }
 
+// The FeeOrderFunc type is an adapter to allow the use of ordinary
+// function as FeeOrder mutator.
+type FeeOrderFunc func(context.Context, *ent.FeeOrderMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f FeeOrderFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	mv, ok := m.(*ent.FeeOrderMutation)
+	if !ok {
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.FeeOrderMutation", m)
+	}
+	return f(ctx, mv)
+}
+
+// The FeeOrderStateFunc type is an adapter to allow the use of ordinary
+// function as FeeOrderState mutator.
+type FeeOrderStateFunc func(context.Context, *ent.FeeOrderStateMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f FeeOrderStateFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	mv, ok := m.(*ent.FeeOrderStateMutation)
+	if !ok {
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.FeeOrderStateMutation", m)
+	}
+	return f(ctx, mv)
+}
+
 // The OrderFunc type is an adapter to allow the use of ordinary
 // function as Order mutator.
 type OrderFunc func(context.Context, *ent.OrderMutation) (ent.Value, error)
@@ -31,6 +70,32 @@ func (f OrderFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error
 	mv, ok := m.(*ent.OrderMutation)
 	if !ok {
 		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.OrderMutation", m)
+	}
+	return f(ctx, mv)
+}
+
+// The OrderBaseFunc type is an adapter to allow the use of ordinary
+// function as OrderBase mutator.
+type OrderBaseFunc func(context.Context, *ent.OrderBaseMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f OrderBaseFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	mv, ok := m.(*ent.OrderBaseMutation)
+	if !ok {
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.OrderBaseMutation", m)
+	}
+	return f(ctx, mv)
+}
+
+// The OrderCouponFunc type is an adapter to allow the use of ordinary
+// function as OrderCoupon mutator.
+type OrderCouponFunc func(context.Context, *ent.OrderCouponMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f OrderCouponFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	mv, ok := m.(*ent.OrderCouponMutation)
+	if !ok {
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.OrderCouponMutation", m)
 	}
 	return f(ctx, mv)
 }
@@ -61,6 +126,19 @@ func (f OrderStateFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, 
 	return f(ctx, mv)
 }
 
+// The OrderStateBaseFunc type is an adapter to allow the use of ordinary
+// function as OrderStateBase mutator.
+type OrderStateBaseFunc func(context.Context, *ent.OrderStateBaseMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f OrderStateBaseFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	mv, ok := m.(*ent.OrderStateBaseMutation)
+	if !ok {
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.OrderStateBaseMutation", m)
+	}
+	return f(ctx, mv)
+}
+
 // The OutOfGasFunc type is an adapter to allow the use of ordinary
 // function as OutOfGas mutator.
 type OutOfGasFunc func(context.Context, *ent.OutOfGasMutation) (ent.Value, error)
@@ -87,15 +165,93 @@ func (f PaymentFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, err
 	return f(ctx, mv)
 }
 
-// The SimulateConfigFunc type is an adapter to allow the use of ordinary
-// function as SimulateConfig mutator.
-type SimulateConfigFunc func(context.Context, *ent.SimulateConfigMutation) (ent.Value, error)
+// The PaymentBalanceFunc type is an adapter to allow the use of ordinary
+// function as PaymentBalance mutator.
+type PaymentBalanceFunc func(context.Context, *ent.PaymentBalanceMutation) (ent.Value, error)
 
 // Mutate calls f(ctx, m).
-func (f SimulateConfigFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
-	mv, ok := m.(*ent.SimulateConfigMutation)
+func (f PaymentBalanceFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	mv, ok := m.(*ent.PaymentBalanceMutation)
 	if !ok {
-		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.SimulateConfigMutation", m)
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.PaymentBalanceMutation", m)
+	}
+	return f(ctx, mv)
+}
+
+// The PaymentBalanceLockFunc type is an adapter to allow the use of ordinary
+// function as PaymentBalanceLock mutator.
+type PaymentBalanceLockFunc func(context.Context, *ent.PaymentBalanceLockMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f PaymentBalanceLockFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	mv, ok := m.(*ent.PaymentBalanceLockMutation)
+	if !ok {
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.PaymentBalanceLockMutation", m)
+	}
+	return f(ctx, mv)
+}
+
+// The PaymentBaseFunc type is an adapter to allow the use of ordinary
+// function as PaymentBase mutator.
+type PaymentBaseFunc func(context.Context, *ent.PaymentBaseMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f PaymentBaseFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	mv, ok := m.(*ent.PaymentBaseMutation)
+	if !ok {
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.PaymentBaseMutation", m)
+	}
+	return f(ctx, mv)
+}
+
+// The PaymentContractFunc type is an adapter to allow the use of ordinary
+// function as PaymentContract mutator.
+type PaymentContractFunc func(context.Context, *ent.PaymentContractMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f PaymentContractFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	mv, ok := m.(*ent.PaymentContractMutation)
+	if !ok {
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.PaymentContractMutation", m)
+	}
+	return f(ctx, mv)
+}
+
+// The PaymentTransferFunc type is an adapter to allow the use of ordinary
+// function as PaymentTransfer mutator.
+type PaymentTransferFunc func(context.Context, *ent.PaymentTransferMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f PaymentTransferFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	mv, ok := m.(*ent.PaymentTransferMutation)
+	if !ok {
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.PaymentTransferMutation", m)
+	}
+	return f(ctx, mv)
+}
+
+// The PowerRentalFunc type is an adapter to allow the use of ordinary
+// function as PowerRental mutator.
+type PowerRentalFunc func(context.Context, *ent.PowerRentalMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f PowerRentalFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	mv, ok := m.(*ent.PowerRentalMutation)
+	if !ok {
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.PowerRentalMutation", m)
+	}
+	return f(ctx, mv)
+}
+
+// The PowerRentalStateFunc type is an adapter to allow the use of ordinary
+// function as PowerRentalState mutator.
+type PowerRentalStateFunc func(context.Context, *ent.PowerRentalStateMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f PowerRentalStateFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	mv, ok := m.(*ent.PowerRentalStateMutation)
+	if !ok {
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.PowerRentalStateMutation", m)
 	}
 	return f(ctx, mv)
 }
