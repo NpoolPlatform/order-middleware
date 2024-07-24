@@ -105,6 +105,11 @@ func (h *Handler) withOrderCouponConds(conds *npool.Conds) error {
 			Op: conds.GetID().GetOp(), Val: conds.GetID().GetValue(),
 		}
 	}
+	if conds.IDs != nil {
+		h.OrderCouponConds.IDs = &cruder.Cond{
+			Op: conds.GetIDs().GetOp(), Val: conds.GetIDs().GetValue(),
+		}
+	}
 	if conds.EntID != nil {
 		id, err := uuid.Parse(conds.GetEntID().GetValue())
 		if err != nil {
@@ -112,6 +117,19 @@ func (h *Handler) withOrderCouponConds(conds *npool.Conds) error {
 		}
 		h.OrderCouponConds.EntID = &cruder.Cond{
 			Op: conds.GetEntID().GetOp(), Val: id,
+		}
+	}
+	if conds.EntIDs != nil {
+		ids := []uuid.UUID{}
+		for _, id := range conds.GetEntIDs().GetValue() {
+			_id, err := uuid.Parse(id)
+			if err != nil {
+				return wlog.WrapError(err)
+			}
+			ids = append(ids, _id)
+		}
+		h.OrderCouponConds.EntIDs = &cruder.Cond{
+			Op: conds.GetEntIDs().GetOp(), Val: ids,
 		}
 	}
 	if conds.OrderID != nil {
@@ -124,6 +142,19 @@ func (h *Handler) withOrderCouponConds(conds *npool.Conds) error {
 			Val: id,
 		}
 	}
+	if conds.OrderIDs != nil {
+		ids := []uuid.UUID{}
+		for _, id := range conds.GetOrderIDs().GetValue() {
+			_id, err := uuid.Parse(id)
+			if err != nil {
+				return wlog.WrapError(err)
+			}
+			ids = append(ids, _id)
+		}
+		h.OrderCouponConds.OrderIDs = &cruder.Cond{
+			Op: conds.GetOrderIDs().GetOp(), Val: ids,
+		}
+	}
 	if conds.CouponID != nil {
 		id, err := uuid.Parse(conds.GetCouponID().GetValue())
 		if err != nil {
@@ -132,6 +163,19 @@ func (h *Handler) withOrderCouponConds(conds *npool.Conds) error {
 		h.OrderCouponConds.CouponID = &cruder.Cond{
 			Op:  conds.GetCouponID().GetOp(),
 			Val: id,
+		}
+	}
+	if conds.CouponIDs != nil {
+		ids := []uuid.UUID{}
+		for _, id := range conds.GetCouponIDs().GetValue() {
+			_id, err := uuid.Parse(id)
+			if err != nil {
+				return wlog.WrapError(err)
+			}
+			ids = append(ids, _id)
+		}
+		h.OrderCouponConds.CouponIDs = &cruder.Cond{
+			Op: conds.GetCouponIDs().GetOp(), Val: ids,
 		}
 	}
 	return nil
