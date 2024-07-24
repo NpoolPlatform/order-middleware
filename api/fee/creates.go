@@ -64,7 +64,7 @@ func (s *Server) CreateFeeOrders(ctx context.Context, in *npool.CreateFeeOrdersR
 				"Req", req,
 				"error", err,
 			)
-			return &npool.CreateFeeOrdersResponse{}, status.Error(codes.InvalidArgument, err.Error())
+			return &npool.CreateFeeOrdersResponse{}, status.Error(codes.InvalidArgument, "invalid ordertype")
 		}
 		multiHandler.AppendHandler(handler)
 	}
