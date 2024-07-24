@@ -3,13 +3,17 @@ package compensate
 import (
 	"context"
 
+	"entgo.io/ent/dialect/sql"
+
 	wlog "github.com/NpoolPlatform/go-service-framework/pkg/wlog"
+	cruder "github.com/NpoolPlatform/libent-cruder/pkg/cruder"
+	types "github.com/NpoolPlatform/message/npool/basetypes/order/v1"
+	orderbasecrud "github.com/NpoolPlatform/order-middleware/pkg/crud/order/orderbase"
 	"github.com/NpoolPlatform/order-middleware/pkg/db"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent"
 	entorderbase "github.com/NpoolPlatform/order-middleware/pkg/db/ent/orderbase"
+	entorderstatebase "github.com/NpoolPlatform/order-middleware/pkg/db/ent/orderstatebase"
 	entpowerrentalstate "github.com/NpoolPlatform/order-middleware/pkg/db/ent/powerrentalstate"
-
-	"github.com/google/uuid"
 )
 
 type powerRentalStateQueryHandler struct {
@@ -19,73 +23,65 @@ type powerRentalStateQueryHandler struct {
 	_ent   powerRentalStates
 }
 
-func (h *powerRentalStateQueryHandler) getGoodPowerRentalStateEnts(ctx context.Context, cli *ent.Client) error {
-	orders, err := cli.
-		OrderBase.
-		Query().
-		Where(
-			entorderbase.GoodID(*h.GoodID),
-		).
-		Offset(int(h.offset)).
-		Limit(int(h.limit)).
-		All(ctx)
+func (h *powerRentalStateQueryHandler) getPowerRentalStates(ctx context.Context, cli *ent.Client) error {
+	conds := &orderbasecrud.Conds{}
+	if h.OrderID != nil {
+		conds.EntID = &cruder.Cond{Op: cruder.EQ, Val: *h.OrderID}
+	}
+	if h.GoodID != nil {
+		conds.GoodID = &cruder.Cond{Op: cruder.EQ, Val: *h.GoodID}
+	}
+	stm, err := orderbasecrud.SetQueryConds(cli.OrderBase.Query(), conds)
 	if err != nil {
 		return wlog.WrapError(err)
 	}
-	if len(orders) == 0 {
-		return nil
+	stmSelect := stm.Select(
+		entorderbase.FieldEntID,
+	).Modify(func(s *sql.Selector) {
+		t1 := sql.Table(entorderstatebase.Table)
+		t2 := sql.Table(entpowerrentalstate.Table)
+		s.Join(t1).
+			On(
+				s.C(entorderbase.FieldEntID),
+				t1.C(entorderstatebase.FieldOrderID),
+			).
+			OnP(
+				sql.EQ(
+					t1.C(entorderstatebase.FieldOrderState),
+					types.OrderState_OrderStateInService.String(),
+				),
+			).
+			Join(t2).
+			On(
+				s.C(entorderbase.FieldEntID),
+				t2.C(entpowerrentalstate.FieldOrderID),
+			).
+			AppendSelect(
+				t2.C(entpowerrentalstate.FieldID),
+			)
+	})
+	stmSelect.Offset(int(h.offset))
+	if h.limit == 0 {
+		h.limit = 2
 	}
-
-	h._ent.entPowerRentalStates, err = cli.
-		PowerRentalState.
-		Query().
-		Where(
-			entpowerrentalstate.OrderIDIn(func() (_uids []uuid.UUID) {
-				for _, order := range orders {
-					_uids = append(_uids, order.EntID)
-				}
-				return
-			}()...),
-		).
-		All(ctx)
-	return wlog.WrapError(err)
+	stmSelect.Limit(int(h.limit))
+	return wlog.WrapError(stmSelect.Scan(ctx, &h._ent.powerRentalStates))
 }
 
-func (h *powerRentalStateQueryHandler) getOrderPowerRentalStateEnt(ctx context.Context, cli *ent.Client, must bool) error {
-	_ent, err := cli.
-		PowerRentalState.
-		Query().
-		Where(
-			entpowerrentalstate.OrderID(*h.OrderID),
-		).
-		Only(ctx)
-	if err != nil {
-		if ent.IsNotFound(err) && !must {
-			return nil
-		}
-		return wlog.WrapError(err)
-	}
-	h._ent.entPowerRentalStates = append(h._ent.entPowerRentalStates, _ent)
-	return nil
-}
-
-func (h *powerRentalStateQueryHandler) _getPowerRentalStates(ctx context.Context, cli *ent.Client, must bool) error {
+func (h *powerRentalStateQueryHandler) _getPowerRentalStates(ctx context.Context, cli *ent.Client) error {
 	if h.OrderID == nil && h.GoodID == nil {
 		return wlog.Errorf("invalid id")
 	}
-	h._ent.entPowerRentalStates = []*ent.PowerRentalState{}
-	if h.OrderID != nil {
-		return h.getOrderPowerRentalStateEnt(ctx, cli, must)
-	}
-	return h.getGoodPowerRentalStateEnts(ctx, cli)
+	h._ent.Drain()
+	return h.getPowerRentalStates(ctx, cli)
 }
 
 func (h *powerRentalStateQueryHandler) requirePowerRentalStates(ctx context.Context) error {
 	return db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
-		return h._getPowerRentalStates(_ctx, cli, true)
+		return h._getPowerRentalStates(_ctx, cli)
 	})
 }
 
 func (h *powerRentalStateQueryHandler) requirePowerRentalStatesWithTx(ctx context.Context, tx *ent.Tx) error {
-	return h._getPowerRentalStates(ctx, tx.Client(), true)
+	return h._getPowerRentalStates(ctx, tx.Client())
 }

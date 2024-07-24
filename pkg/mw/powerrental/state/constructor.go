@@ -97,11 +97,11 @@ func (h *Handler) ConstructUpdateSQL() (string, error) {
 		set = ""
 	}
 	if h.OutOfGasSeconds != nil {
-		_sql += fmt.Sprintf("%voutofgas_seconds = %v, ", set, *h.OutOfGasSeconds)
+		_sql += fmt.Sprintf("%voutofgas_seconds = outofgas_seconds + %v, ", set, *h.OutOfGasSeconds)
 		set = ""
 	}
 	if h.CompensateSeconds != nil {
-		_sql += fmt.Sprintf("%vcompensate_seconds = %v, ", set, *h.CompensateSeconds)
+		_sql += fmt.Sprintf("%vcompensate_seconds = compensate_seconds + %v, ", set, *h.CompensateSeconds)
 		set = ""
 	}
 	if h.RenewState != nil {

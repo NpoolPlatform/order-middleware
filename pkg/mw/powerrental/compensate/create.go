@@ -81,7 +81,7 @@ func (h *createHandler) createGoodCompensates(ctx context.Context, tx *ent.Tx) e
 
 		h.sqlCompensates = []string{}
 		h.sqlPowerRentalStates = []string{}
-		for i, state := range h._ent.entPowerRentalStates {
+		for _, state := range h._ent.powerRentalStates {
 			h.constructCompensateSQL(ctx, &compensatecrud.Req{
 				EntID:             func() *uuid.UUID { uid := uuid.New(); return &uid }(),
 				OrderID:           &state.OrderID,
@@ -91,7 +91,7 @@ func (h *createHandler) createGoodCompensates(ctx context.Context, tx *ent.Tx) e
 			})
 			if err := h.constructPowerRentalStateSQL(ctx, &powerrentalstatecrud.Req{
 				OrderID:           &state.OrderID,
-				CompensateSeconds: func() *uint32 { u := *h.CompensateSeconds + h._ent.CompensateSecondsWithIndex(i); return &u }(),
+				CompensateSeconds: h.CompensateSeconds,
 			}); err != nil {
 				return wlog.WrapError(err)
 			}
@@ -109,14 +109,21 @@ func (h *createHandler) createGoodCompensates(ctx context.Context, tx *ent.Tx) e
 }
 
 func (h *createHandler) createOrderCompensate(ctx context.Context, tx *ent.Tx) error {
-	if err := h.requirePowerRentalStates(ctx); err != nil {
+	if err := h.requirePowerRentalStatesWithTx(ctx, tx); err != nil {
 		return wlog.WrapError(err)
+	}
+	if h._ent.Exhausted() {
+		return wlog.Errorf("invalid powerrentalorder")
+	}
+
+	if h.EntID == nil {
+		h.EntID = func() *uuid.UUID { uid := uuid.New(); return &uid }()
 	}
 
 	h.constructCompensateSQL(ctx, &h.Req)
 	if err := h.constructPowerRentalStateSQL(ctx, &powerrentalstatecrud.Req{
 		OrderID:           h.OrderID,
-		CompensateSeconds: func() *uint32 { u := *h.CompensateSeconds + h._ent.CompensateSeconds(); return &u }(),
+		CompensateSeconds: h.CompensateSeconds,
 	}); err != nil {
 		return wlog.WrapError(err)
 	}
@@ -136,9 +143,6 @@ func (h *Handler) CreateCompensate(ctx context.Context) error {
 		powerRentalStateQueryHandler: &powerRentalStateQueryHandler{
 			Handler: h,
 		},
-	}
-	if h.EntID == nil {
-		h.EntID = func() *uuid.UUID { uid := uuid.New(); return &uid }()
 	}
 
 	return db.WithTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {

@@ -4,8 +4,10 @@ import (
 	"context"
 
 	wlog "github.com/NpoolPlatform/go-service-framework/pkg/wlog"
+	types "github.com/NpoolPlatform/message/npool/basetypes/order/v1"
 	"github.com/NpoolPlatform/order-middleware/pkg/db"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent"
+	entorderstatebase "github.com/NpoolPlatform/order-middleware/pkg/db/ent/orderstatebase"
 	entpowerrentalstate "github.com/NpoolPlatform/order-middleware/pkg/db/ent/powerrentalstate"
 )
 
@@ -15,6 +17,20 @@ type powerRentalStateQueryHandler struct {
 }
 
 func (h *powerRentalStateQueryHandler) getPowerRentalStateEnt(ctx context.Context, cli *ent.Client, must bool) (err error) {
+	if _, err := cli.
+		OrderStateBase.
+		Query().
+		Where(
+			entorderstatebase.OrderID(*h.OrderID),
+			entorderstatebase.OrderState(types.OrderState_OrderStateInService.String()),
+		).
+		Only(ctx); err != nil {
+		if ent.IsNotFound(err) && !must {
+			return nil
+		}
+		return wlog.WrapError(err)
+	}
+
 	if h._ent.entPowerRentalState, err = cli.
 		PowerRentalState.
 		Query().

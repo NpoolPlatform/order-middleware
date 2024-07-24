@@ -45,6 +45,7 @@ var ret = outofgasmwpb.OutOfGas{
 	StartAt:   uint32(time.Now().Unix()),
 }
 
+//nolint: funlen
 func setup(t *testing.T) func(*testing.T) {
 	ret.GoodTypeStr = ret.GoodType.String()
 
@@ -70,6 +71,116 @@ func setup(t *testing.T) func(*testing.T) {
 	assert.Nil(t, err)
 
 	err = h1.CreatePowerRental(context.Background())
+	assert.Nil(t, err)
+
+	h1, err = powerrental1.NewHandler(
+		context.Background(),
+		powerrental1.WithOrderID(&ret.OrderID, true),
+		powerrental1.WithOrderState(types.OrderState_OrderStateWaitPayment.Enum(), true),
+	)
+	assert.Nil(t, err)
+
+	err = h1.UpdatePowerRental(context.Background())
+	assert.Nil(t, err)
+
+	h1, err = powerrental1.NewHandler(
+		context.Background(),
+		powerrental1.WithOrderID(&ret.OrderID, true),
+		powerrental1.WithOrderState(types.OrderState_OrderStatePaymentTransferReceived.Enum(), true),
+	)
+	assert.Nil(t, err)
+
+	err = h1.UpdatePowerRental(context.Background())
+	assert.Nil(t, err)
+
+	h1, err = powerrental1.NewHandler(
+		context.Background(),
+		powerrental1.WithOrderID(&ret.OrderID, true),
+		powerrental1.WithOrderState(types.OrderState_OrderStatePaymentTransferBookKeeping.Enum(), true),
+	)
+	assert.Nil(t, err)
+
+	err = h1.UpdatePowerRental(context.Background())
+	assert.Nil(t, err)
+
+	h1, err = powerrental1.NewHandler(
+		context.Background(),
+		powerrental1.WithOrderID(&ret.OrderID, true),
+		powerrental1.WithOrderState(types.OrderState_OrderStatePaymentSpendBalance.Enum(), true),
+	)
+	assert.Nil(t, err)
+
+	err = h1.UpdatePowerRental(context.Background())
+	assert.Nil(t, err)
+
+	h1, err = powerrental1.NewHandler(
+		context.Background(),
+		powerrental1.WithOrderID(&ret.OrderID, true),
+		powerrental1.WithOrderState(types.OrderState_OrderStateTransferGoodStockLocked.Enum(), true),
+	)
+	assert.Nil(t, err)
+
+	err = h1.UpdatePowerRental(context.Background())
+	assert.Nil(t, err)
+
+	h1, err = powerrental1.NewHandler(
+		context.Background(),
+		powerrental1.WithOrderID(&ret.OrderID, true),
+		powerrental1.WithOrderState(types.OrderState_OrderStateAchievementBookKeeping.Enum(), true),
+	)
+	assert.Nil(t, err)
+
+	err = h1.UpdatePowerRental(context.Background())
+	assert.Nil(t, err)
+
+	h1, err = powerrental1.NewHandler(
+		context.Background(),
+		powerrental1.WithOrderID(&ret.OrderID, true),
+		powerrental1.WithOrderState(types.OrderState_OrderStateAddCommission.Enum(), true),
+	)
+	assert.Nil(t, err)
+
+	err = h1.UpdatePowerRental(context.Background())
+	assert.Nil(t, err)
+
+	h1, err = powerrental1.NewHandler(
+		context.Background(),
+		powerrental1.WithOrderID(&ret.OrderID, true),
+		powerrental1.WithOrderState(types.OrderState_OrderStatePaymentUnlockAccount.Enum(), true),
+	)
+	assert.Nil(t, err)
+
+	err = h1.UpdatePowerRental(context.Background())
+	assert.Nil(t, err)
+
+	h1, err = powerrental1.NewHandler(
+		context.Background(),
+		powerrental1.WithOrderID(&ret.OrderID, true),
+		powerrental1.WithOrderState(types.OrderState_OrderStatePaid.Enum(), true),
+	)
+	assert.Nil(t, err)
+
+	err = h1.UpdatePowerRental(context.Background())
+	assert.Nil(t, err)
+
+	h1, err = powerrental1.NewHandler(
+		context.Background(),
+		powerrental1.WithOrderID(&ret.OrderID, true),
+		powerrental1.WithOrderState(types.OrderState_OrderStateTransferGoodStockWaitStart.Enum(), true),
+	)
+	assert.Nil(t, err)
+
+	err = h1.UpdatePowerRental(context.Background())
+	assert.Nil(t, err)
+
+	h1, err = powerrental1.NewHandler(
+		context.Background(),
+		powerrental1.WithOrderID(&ret.OrderID, true),
+		powerrental1.WithOrderState(types.OrderState_OrderStateInService.Enum(), true),
+	)
+	assert.Nil(t, err)
+
+	err = h1.UpdatePowerRental(context.Background())
 	assert.Nil(t, err)
 
 	return func(t *testing.T) {

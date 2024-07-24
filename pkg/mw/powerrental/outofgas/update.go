@@ -83,7 +83,7 @@ func (h *Handler) UpdateOutOfGas(ctx context.Context) error {
 	if err := handler.constructPowerRentalStateSQL(ctx, &powerrentalstatecrud.Req{
 		OrderID: h.OrderID,
 		OutOfGasSeconds: func() *uint32 {
-			u := *h.EndAt - handler.outOfGasHandler._ent.StartAt() + handler._ent.OutOfGasSeconds()
+			u := *h.EndAt - handler.outOfGasHandler._ent.StartAt()
 			return &u
 		}(),
 	}); err != nil {

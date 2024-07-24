@@ -31,7 +31,7 @@ func (h *deleteHandler) deleteCompensate(ctx context.Context, tx *ent.Tx) error 
 func (h *deleteHandler) updatePowerRentalState(ctx context.Context, tx *ent.Tx) error {
 	_, err := tx.
 		PowerRentalState.
-		UpdateOneID(h._ent.PowerRentalStateID()).
+		UpdateOneID(h._ent.powerRentalStates[0].ID).
 		AddCompensateSeconds(0 - int32(*h.CompensateSeconds)).
 		Save(ctx)
 	return wlog.WrapError(err)
@@ -82,6 +82,9 @@ func (h *Handler) DeleteCompensate(ctx context.Context) error {
 
 	if err := handler.requirePowerRentalStates(ctx); err != nil {
 		return wlog.WrapError(err)
+	}
+	if handler._ent.Exhausted() {
+		return wlog.Errorf("invalid powerrentalorder")
 	}
 
 	return db.WithTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {

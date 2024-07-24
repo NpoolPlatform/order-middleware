@@ -17,7 +17,3 @@ func (f *powerRentalState) PowerRentalStateID() uint32 {
 func (f *powerRentalState) OrderID() uuid.UUID {
 	return f.entPowerRentalState.OrderID
 }
-
-func (f *powerRentalState) OutOfGasSeconds() uint32 {
-	return f.entPowerRentalState.OutofgasSeconds
-}
