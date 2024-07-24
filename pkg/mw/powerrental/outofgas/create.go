@@ -13,7 +13,7 @@ import (
 )
 
 type createHandler struct {
-	*Handler
+	*powerRentalStateQueryHandler
 	sqlOutOfGas string
 }
 
@@ -41,7 +41,12 @@ func (h *createHandler) createOutOfGas(ctx context.Context, tx *ent.Tx) error {
 
 func (h *Handler) CreateOutOfGas(ctx context.Context) error {
 	handler := &createHandler{
-		Handler: h,
+		powerRentalStateQueryHandler: &powerRentalStateQueryHandler{
+			Handler: h,
+		},
+	}
+	if err := handler.requirePowerRentalState(ctx); err != nil {
+		return wlog.WrapError(err)
 	}
 	if h.EntID == nil {
 		h.EntID = func() *uuid.UUID { uid := uuid.New(); return &uid }()
