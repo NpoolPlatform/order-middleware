@@ -513,7 +513,7 @@ func (h *Handler) CreatePowerRentalWithTx(ctx context.Context, tx *ent.Tx) error
 }
 
 func (h *Handler) CreatePowerRental(ctx context.Context) error {
-	return db.WithTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {
+	return db.WithDebugTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {
 		return h.CreatePowerRentalWithTx(_ctx, tx)
 	})
 }
