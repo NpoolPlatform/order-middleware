@@ -99,7 +99,7 @@ func WithCouponID(id *string, must bool) func(context.Context, *Handler) error {
 	}
 }
 
-func (h *Handler) withOrderCouponConds(conds *npool.Conds) error {
+func (h *Handler) withOrderCouponConds(conds *npool.Conds) error { //nolint:gocyclo
 	if conds.ID != nil {
 		h.OrderCouponConds.ID = &cruder.Cond{
 			Op: conds.GetID().GetOp(), Val: conds.GetID().GetValue(),
