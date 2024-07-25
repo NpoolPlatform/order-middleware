@@ -79,7 +79,8 @@ func (h *Handler) ConstructCreateSQL() string {
 		_sql += " and not exists ("
 		_sql += "select 1 from order_bases as t1 join order_state_bases as t2 on t1.ent_id = t2.order_id "
 		_sql += fmt.Sprintf(
-			"where t1.app_good_id = '%v' and t1.user_id = '%v' and t1.deleted_at = 0 and t2.order_state not in ('%v', '%v') ",
+			"where t1.simulate = 1 and t1.app_good_id = '%v' and "+
+				"t1.user_id = '%v' and t1.deleted_at = 0 and t2.order_state not in ('%v', '%v') ",
 			*h.AppGoodID,
 			*h.UserID,
 			types.OrderState_OrderStateCanceled.String(),
