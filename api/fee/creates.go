@@ -8,7 +8,6 @@ import (
 	"google.golang.org/grpc/status"
 
 	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
-	types "github.com/NpoolPlatform/message/npool/basetypes/order/v1"
 	npool "github.com/NpoolPlatform/message/npool/order/mw/v1/fee"
 
 	feeorder1 "github.com/NpoolPlatform/order-middleware/pkg/mw/fee"
@@ -57,14 +56,6 @@ func (s *Server) CreateFeeOrders(ctx context.Context, in *npool.CreateFeeOrdersR
 				"error", err,
 			)
 			return &npool.CreateFeeOrdersResponse{}, status.Error(codes.InvalidArgument, err.Error())
-		}
-		if *req.OrderType != types.OrderType_Normal {
-			logger.Sugar().Errorw(
-				"CreateFeeOrders",
-				"Req", req,
-				"error", err,
-			)
-			return &npool.CreateFeeOrdersResponse{}, status.Error(codes.InvalidArgument, "invalid ordertype")
 		}
 		multiHandler.AppendHandler(handler)
 	}
