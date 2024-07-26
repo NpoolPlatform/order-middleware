@@ -67,7 +67,7 @@ func (s *Server) CreatePowerRentalOrder(ctx context.Context, in *npool.CreatePow
 			"Req", req,
 			"error", err,
 		)
-		return &npool.CreatePowerRentalOrderResponse{}, status.Error(codes.Aborted, err.Error())
+		return &npool.CreatePowerRentalOrderResponse{}, status.Error(codes.Aborted, "internal error")
 	}
 
 	return &npool.CreatePowerRentalOrderResponse{}, nil
