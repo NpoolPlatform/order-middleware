@@ -351,7 +351,6 @@ func (occ *OrderCouponCreate) createSpec() (*OrderCoupon, *sqlgraph.CreateSpec) 
 //			SetCreatedAt(v+v).
 //		}).
 //		Exec(ctx)
-//
 func (occ *OrderCouponCreate) OnConflict(opts ...sql.ConflictOption) *OrderCouponUpsertOne {
 	occ.conflict = opts
 	return &OrderCouponUpsertOne{
@@ -365,7 +364,6 @@ func (occ *OrderCouponCreate) OnConflict(opts ...sql.ConflictOption) *OrderCoupo
 //	client.OrderCoupon.Create().
 //		OnConflict(sql.ConflictColumns(columns...)).
 //		Exec(ctx)
-//
 func (occ *OrderCouponCreate) OnConflictColumns(columns ...string) *OrderCouponUpsertOne {
 	occ.conflict = append(occ.conflict, sql.ConflictColumns(columns...))
 	return &OrderCouponUpsertOne{
@@ -499,7 +497,6 @@ func (u *OrderCouponUpsert) ClearCouponID() *OrderCouponUpsert {
 //			}),
 //		).
 //		Exec(ctx)
-//
 func (u *OrderCouponUpsertOne) UpdateNewValues() *OrderCouponUpsertOne {
 	u.create.conflict = append(u.create.conflict, sql.ResolveWithNewValues())
 	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(s *sql.UpdateSet) {
@@ -513,10 +510,9 @@ func (u *OrderCouponUpsertOne) UpdateNewValues() *OrderCouponUpsertOne {
 // Ignore sets each column to itself in case of conflict.
 // Using this option is equivalent to using:
 //
-//  client.OrderCoupon.Create().
-//      OnConflict(sql.ResolveWithIgnore()).
-//      Exec(ctx)
-//
+//	client.OrderCoupon.Create().
+//	    OnConflict(sql.ResolveWithIgnore()).
+//	    Exec(ctx)
 func (u *OrderCouponUpsertOne) Ignore() *OrderCouponUpsertOne {
 	u.create.conflict = append(u.create.conflict, sql.ResolveWithIgnore())
 	return u
@@ -791,7 +787,6 @@ func (occb *OrderCouponCreateBulk) ExecX(ctx context.Context) {
 //			SetCreatedAt(v+v).
 //		}).
 //		Exec(ctx)
-//
 func (occb *OrderCouponCreateBulk) OnConflict(opts ...sql.ConflictOption) *OrderCouponUpsertBulk {
 	occb.conflict = opts
 	return &OrderCouponUpsertBulk{
@@ -805,7 +800,6 @@ func (occb *OrderCouponCreateBulk) OnConflict(opts ...sql.ConflictOption) *Order
 //	client.OrderCoupon.Create().
 //		OnConflict(sql.ConflictColumns(columns...)).
 //		Exec(ctx)
-//
 func (occb *OrderCouponCreateBulk) OnConflictColumns(columns ...string) *OrderCouponUpsertBulk {
 	occb.conflict = append(occb.conflict, sql.ConflictColumns(columns...))
 	return &OrderCouponUpsertBulk{
@@ -830,7 +824,6 @@ type OrderCouponUpsertBulk struct {
 //			}),
 //		).
 //		Exec(ctx)
-//
 func (u *OrderCouponUpsertBulk) UpdateNewValues() *OrderCouponUpsertBulk {
 	u.create.conflict = append(u.create.conflict, sql.ResolveWithNewValues())
 	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(s *sql.UpdateSet) {
@@ -850,7 +843,6 @@ func (u *OrderCouponUpsertBulk) UpdateNewValues() *OrderCouponUpsertBulk {
 //	client.OrderCoupon.Create().
 //		OnConflict(sql.ResolveWithIgnore()).
 //		Exec(ctx)
-//
 func (u *OrderCouponUpsertBulk) Ignore() *OrderCouponUpsertBulk {
 	u.create.conflict = append(u.create.conflict, sql.ResolveWithIgnore())
 	return u

@@ -264,7 +264,6 @@ func (cq *CompensateQuery) Clone() *CompensateQuery {
 //		GroupBy(compensate.FieldCreatedAt).
 //		Aggregate(ent.Count()).
 //		Scan(ctx, &v)
-//
 func (cq *CompensateQuery) GroupBy(field string, fields ...string) *CompensateGroupBy {
 	grbuild := &CompensateGroupBy{config: cq.config}
 	grbuild.fields = append([]string{field}, fields...)
@@ -291,7 +290,6 @@ func (cq *CompensateQuery) GroupBy(field string, fields ...string) *CompensateGr
 //	client.Compensate.Query().
 //		Select(compensate.FieldCreatedAt).
 //		Scan(ctx, &v)
-//
 func (cq *CompensateQuery) Select(fields ...string) *CompensateSelect {
 	cq.fields = append(cq.fields, fields...)
 	selbuild := &CompensateSelect{CompensateQuery: cq}

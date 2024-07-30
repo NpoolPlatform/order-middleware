@@ -264,7 +264,6 @@ func (ocq *OrderCouponQuery) Clone() *OrderCouponQuery {
 //		GroupBy(ordercoupon.FieldCreatedAt).
 //		Aggregate(ent.Count()).
 //		Scan(ctx, &v)
-//
 func (ocq *OrderCouponQuery) GroupBy(field string, fields ...string) *OrderCouponGroupBy {
 	grbuild := &OrderCouponGroupBy{config: ocq.config}
 	grbuild.fields = append([]string{field}, fields...)
@@ -291,7 +290,6 @@ func (ocq *OrderCouponQuery) GroupBy(field string, fields ...string) *OrderCoupo
 //	client.OrderCoupon.Query().
 //		Select(ordercoupon.FieldCreatedAt).
 //		Scan(ctx, &v)
-//
 func (ocq *OrderCouponQuery) Select(fields ...string) *OrderCouponSelect {
 	ocq.fields = append(ocq.fields, fields...)
 	selbuild := &OrderCouponSelect{OrderCouponQuery: ocq}

@@ -52,6 +52,7 @@ func (s *Server) CreatePowerRentalOrder(ctx context.Context, in *npool.CreatePow
 		powerrental1.WithCouponIDs(req.CouponIDs, false),
 		powerrental1.WithPaymentBalances(req.PaymentBalances, false),
 		powerrental1.WithPaymentTransfers(req.PaymentTransfers, false),
+		powerrental1.WithPoolOrderUserID(req.PoolOrderUserID, false),
 	)
 	if err != nil {
 		logger.Sugar().Errorw(

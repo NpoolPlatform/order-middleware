@@ -264,7 +264,6 @@ func (oogq *OutOfGasQuery) Clone() *OutOfGasQuery {
 //		GroupBy(outofgas.FieldCreatedAt).
 //		Aggregate(ent.Count()).
 //		Scan(ctx, &v)
-//
 func (oogq *OutOfGasQuery) GroupBy(field string, fields ...string) *OutOfGasGroupBy {
 	grbuild := &OutOfGasGroupBy{config: oogq.config}
 	grbuild.fields = append([]string{field}, fields...)
@@ -291,7 +290,6 @@ func (oogq *OutOfGasQuery) GroupBy(field string, fields ...string) *OutOfGasGrou
 //	client.OutOfGas.Query().
 //		Select(outofgas.FieldCreatedAt).
 //		Scan(ctx, &v)
-//
 func (oogq *OutOfGasQuery) Select(fields ...string) *OutOfGasSelect {
 	oogq.fields = append(oogq.fields, fields...)
 	selbuild := &OutOfGasSelect{OutOfGasQuery: oogq}

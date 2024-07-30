@@ -264,7 +264,6 @@ func (pblq *PaymentBalanceLockQuery) Clone() *PaymentBalanceLockQuery {
 //		GroupBy(paymentbalancelock.FieldCreatedAt).
 //		Aggregate(ent.Count()).
 //		Scan(ctx, &v)
-//
 func (pblq *PaymentBalanceLockQuery) GroupBy(field string, fields ...string) *PaymentBalanceLockGroupBy {
 	grbuild := &PaymentBalanceLockGroupBy{config: pblq.config}
 	grbuild.fields = append([]string{field}, fields...)
@@ -291,7 +290,6 @@ func (pblq *PaymentBalanceLockQuery) GroupBy(field string, fields ...string) *Pa
 //	client.PaymentBalanceLock.Query().
 //		Select(paymentbalancelock.FieldCreatedAt).
 //		Scan(ctx, &v)
-//
 func (pblq *PaymentBalanceLockQuery) Select(fields ...string) *PaymentBalanceLockSelect {
 	pblq.fields = append(pblq.fields, fields...)
 	selbuild := &PaymentBalanceLockSelect{PaymentBalanceLockQuery: pblq}

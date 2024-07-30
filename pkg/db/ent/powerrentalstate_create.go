@@ -637,7 +637,6 @@ func (prsc *PowerRentalStateCreate) createSpec() (*PowerRentalState, *sqlgraph.C
 //			SetCreatedAt(v+v).
 //		}).
 //		Exec(ctx)
-//
 func (prsc *PowerRentalStateCreate) OnConflict(opts ...sql.ConflictOption) *PowerRentalStateUpsertOne {
 	prsc.conflict = opts
 	return &PowerRentalStateUpsertOne{
@@ -651,7 +650,6 @@ func (prsc *PowerRentalStateCreate) OnConflict(opts ...sql.ConflictOption) *Powe
 //	client.PowerRentalState.Create().
 //		OnConflict(sql.ConflictColumns(columns...)).
 //		Exec(ctx)
-//
 func (prsc *PowerRentalStateCreate) OnConflictColumns(columns ...string) *PowerRentalStateUpsertOne {
 	prsc.conflict = append(prsc.conflict, sql.ConflictColumns(columns...))
 	return &PowerRentalStateUpsertOne{
@@ -1013,7 +1011,6 @@ func (u *PowerRentalStateUpsert) ClearRenewNotifyAt() *PowerRentalStateUpsert {
 //			}),
 //		).
 //		Exec(ctx)
-//
 func (u *PowerRentalStateUpsertOne) UpdateNewValues() *PowerRentalStateUpsertOne {
 	u.create.conflict = append(u.create.conflict, sql.ResolveWithNewValues())
 	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(s *sql.UpdateSet) {
@@ -1027,10 +1024,9 @@ func (u *PowerRentalStateUpsertOne) UpdateNewValues() *PowerRentalStateUpsertOne
 // Ignore sets each column to itself in case of conflict.
 // Using this option is equivalent to using:
 //
-//  client.PowerRentalState.Create().
-//      OnConflict(sql.ResolveWithIgnore()).
-//      Exec(ctx)
-//
+//	client.PowerRentalState.Create().
+//	    OnConflict(sql.ResolveWithIgnore()).
+//	    Exec(ctx)
 func (u *PowerRentalStateUpsertOne) Ignore() *PowerRentalStateUpsertOne {
 	u.create.conflict = append(u.create.conflict, sql.ResolveWithIgnore())
 	return u
@@ -1571,7 +1567,6 @@ func (prscb *PowerRentalStateCreateBulk) ExecX(ctx context.Context) {
 //			SetCreatedAt(v+v).
 //		}).
 //		Exec(ctx)
-//
 func (prscb *PowerRentalStateCreateBulk) OnConflict(opts ...sql.ConflictOption) *PowerRentalStateUpsertBulk {
 	prscb.conflict = opts
 	return &PowerRentalStateUpsertBulk{
@@ -1585,7 +1580,6 @@ func (prscb *PowerRentalStateCreateBulk) OnConflict(opts ...sql.ConflictOption) 
 //	client.PowerRentalState.Create().
 //		OnConflict(sql.ConflictColumns(columns...)).
 //		Exec(ctx)
-//
 func (prscb *PowerRentalStateCreateBulk) OnConflictColumns(columns ...string) *PowerRentalStateUpsertBulk {
 	prscb.conflict = append(prscb.conflict, sql.ConflictColumns(columns...))
 	return &PowerRentalStateUpsertBulk{
@@ -1610,7 +1604,6 @@ type PowerRentalStateUpsertBulk struct {
 //			}),
 //		).
 //		Exec(ctx)
-//
 func (u *PowerRentalStateUpsertBulk) UpdateNewValues() *PowerRentalStateUpsertBulk {
 	u.create.conflict = append(u.create.conflict, sql.ResolveWithNewValues())
 	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(s *sql.UpdateSet) {
@@ -1630,7 +1623,6 @@ func (u *PowerRentalStateUpsertBulk) UpdateNewValues() *PowerRentalStateUpsertBu
 //	client.PowerRentalState.Create().
 //		OnConflict(sql.ResolveWithIgnore()).
 //		Exec(ctx)
-//
 func (u *PowerRentalStateUpsertBulk) Ignore() *PowerRentalStateUpsertBulk {
 	u.create.conflict = append(u.create.conflict, sql.ResolveWithIgnore())
 	return u

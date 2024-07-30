@@ -351,7 +351,6 @@ func (pblc *PaymentBalanceLockCreate) createSpec() (*PaymentBalanceLock, *sqlgra
 //			SetCreatedAt(v+v).
 //		}).
 //		Exec(ctx)
-//
 func (pblc *PaymentBalanceLockCreate) OnConflict(opts ...sql.ConflictOption) *PaymentBalanceLockUpsertOne {
 	pblc.conflict = opts
 	return &PaymentBalanceLockUpsertOne{
@@ -365,7 +364,6 @@ func (pblc *PaymentBalanceLockCreate) OnConflict(opts ...sql.ConflictOption) *Pa
 //	client.PaymentBalanceLock.Create().
 //		OnConflict(sql.ConflictColumns(columns...)).
 //		Exec(ctx)
-//
 func (pblc *PaymentBalanceLockCreate) OnConflictColumns(columns ...string) *PaymentBalanceLockUpsertOne {
 	pblc.conflict = append(pblc.conflict, sql.ConflictColumns(columns...))
 	return &PaymentBalanceLockUpsertOne{
@@ -499,7 +497,6 @@ func (u *PaymentBalanceLockUpsert) ClearLedgerLockID() *PaymentBalanceLockUpsert
 //			}),
 //		).
 //		Exec(ctx)
-//
 func (u *PaymentBalanceLockUpsertOne) UpdateNewValues() *PaymentBalanceLockUpsertOne {
 	u.create.conflict = append(u.create.conflict, sql.ResolveWithNewValues())
 	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(s *sql.UpdateSet) {
@@ -513,10 +510,9 @@ func (u *PaymentBalanceLockUpsertOne) UpdateNewValues() *PaymentBalanceLockUpser
 // Ignore sets each column to itself in case of conflict.
 // Using this option is equivalent to using:
 //
-//  client.PaymentBalanceLock.Create().
-//      OnConflict(sql.ResolveWithIgnore()).
-//      Exec(ctx)
-//
+//	client.PaymentBalanceLock.Create().
+//	    OnConflict(sql.ResolveWithIgnore()).
+//	    Exec(ctx)
 func (u *PaymentBalanceLockUpsertOne) Ignore() *PaymentBalanceLockUpsertOne {
 	u.create.conflict = append(u.create.conflict, sql.ResolveWithIgnore())
 	return u
@@ -791,7 +787,6 @@ func (pblcb *PaymentBalanceLockCreateBulk) ExecX(ctx context.Context) {
 //			SetCreatedAt(v+v).
 //		}).
 //		Exec(ctx)
-//
 func (pblcb *PaymentBalanceLockCreateBulk) OnConflict(opts ...sql.ConflictOption) *PaymentBalanceLockUpsertBulk {
 	pblcb.conflict = opts
 	return &PaymentBalanceLockUpsertBulk{
@@ -805,7 +800,6 @@ func (pblcb *PaymentBalanceLockCreateBulk) OnConflict(opts ...sql.ConflictOption
 //	client.PaymentBalanceLock.Create().
 //		OnConflict(sql.ConflictColumns(columns...)).
 //		Exec(ctx)
-//
 func (pblcb *PaymentBalanceLockCreateBulk) OnConflictColumns(columns ...string) *PaymentBalanceLockUpsertBulk {
 	pblcb.conflict = append(pblcb.conflict, sql.ConflictColumns(columns...))
 	return &PaymentBalanceLockUpsertBulk{
@@ -830,7 +824,6 @@ type PaymentBalanceLockUpsertBulk struct {
 //			}),
 //		).
 //		Exec(ctx)
-//
 func (u *PaymentBalanceLockUpsertBulk) UpdateNewValues() *PaymentBalanceLockUpsertBulk {
 	u.create.conflict = append(u.create.conflict, sql.ResolveWithNewValues())
 	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(s *sql.UpdateSet) {
@@ -850,7 +843,6 @@ func (u *PaymentBalanceLockUpsertBulk) UpdateNewValues() *PaymentBalanceLockUpse
 //	client.PaymentBalanceLock.Create().
 //		OnConflict(sql.ResolveWithIgnore()).
 //		Exec(ctx)
-//
 func (u *PaymentBalanceLockUpsertBulk) Ignore() *PaymentBalanceLockUpsertBulk {
 	u.create.conflict = append(u.create.conflict, sql.ResolveWithIgnore())
 	return u

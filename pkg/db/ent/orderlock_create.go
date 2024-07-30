@@ -377,7 +377,6 @@ func (olc *OrderLockCreate) createSpec() (*OrderLock, *sqlgraph.CreateSpec) {
 //			SetCreatedAt(v+v).
 //		}).
 //		Exec(ctx)
-//
 func (olc *OrderLockCreate) OnConflict(opts ...sql.ConflictOption) *OrderLockUpsertOne {
 	olc.conflict = opts
 	return &OrderLockUpsertOne{
@@ -391,7 +390,6 @@ func (olc *OrderLockCreate) OnConflict(opts ...sql.ConflictOption) *OrderLockUps
 //	client.OrderLock.Create().
 //		OnConflict(sql.ConflictColumns(columns...)).
 //		Exec(ctx)
-//
 func (olc *OrderLockCreate) OnConflictColumns(columns ...string) *OrderLockUpsertOne {
 	olc.conflict = append(olc.conflict, sql.ConflictColumns(columns...))
 	return &OrderLockUpsertOne{
@@ -543,7 +541,6 @@ func (u *OrderLockUpsert) ClearLockType() *OrderLockUpsert {
 //			}),
 //		).
 //		Exec(ctx)
-//
 func (u *OrderLockUpsertOne) UpdateNewValues() *OrderLockUpsertOne {
 	u.create.conflict = append(u.create.conflict, sql.ResolveWithNewValues())
 	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(s *sql.UpdateSet) {
@@ -557,10 +554,9 @@ func (u *OrderLockUpsertOne) UpdateNewValues() *OrderLockUpsertOne {
 // Ignore sets each column to itself in case of conflict.
 // Using this option is equivalent to using:
 //
-//  client.OrderLock.Create().
-//      OnConflict(sql.ResolveWithIgnore()).
-//      Exec(ctx)
-//
+//	client.OrderLock.Create().
+//	    OnConflict(sql.ResolveWithIgnore()).
+//	    Exec(ctx)
 func (u *OrderLockUpsertOne) Ignore() *OrderLockUpsertOne {
 	u.create.conflict = append(u.create.conflict, sql.ResolveWithIgnore())
 	return u
@@ -856,7 +852,6 @@ func (olcb *OrderLockCreateBulk) ExecX(ctx context.Context) {
 //			SetCreatedAt(v+v).
 //		}).
 //		Exec(ctx)
-//
 func (olcb *OrderLockCreateBulk) OnConflict(opts ...sql.ConflictOption) *OrderLockUpsertBulk {
 	olcb.conflict = opts
 	return &OrderLockUpsertBulk{
@@ -870,7 +865,6 @@ func (olcb *OrderLockCreateBulk) OnConflict(opts ...sql.ConflictOption) *OrderLo
 //	client.OrderLock.Create().
 //		OnConflict(sql.ConflictColumns(columns...)).
 //		Exec(ctx)
-//
 func (olcb *OrderLockCreateBulk) OnConflictColumns(columns ...string) *OrderLockUpsertBulk {
 	olcb.conflict = append(olcb.conflict, sql.ConflictColumns(columns...))
 	return &OrderLockUpsertBulk{
@@ -895,7 +889,6 @@ type OrderLockUpsertBulk struct {
 //			}),
 //		).
 //		Exec(ctx)
-//
 func (u *OrderLockUpsertBulk) UpdateNewValues() *OrderLockUpsertBulk {
 	u.create.conflict = append(u.create.conflict, sql.ResolveWithNewValues())
 	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(s *sql.UpdateSet) {
@@ -915,7 +908,6 @@ func (u *OrderLockUpsertBulk) UpdateNewValues() *OrderLockUpsertBulk {
 //	client.OrderLock.Create().
 //		OnConflict(sql.ResolveWithIgnore()).
 //		Exec(ctx)
-//
 func (u *OrderLockUpsertBulk) Ignore() *OrderLockUpsertBulk {
 	u.create.conflict = append(u.create.conflict, sql.ResolveWithIgnore())
 	return u

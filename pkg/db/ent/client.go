@@ -27,6 +27,7 @@ import (
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/paymentbase"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/paymentcontract"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/paymenttransfer"
+	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/poolorderuser"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/powerrental"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/powerrentalstate"
 
@@ -73,6 +74,8 @@ type Client struct {
 	PaymentContract *PaymentContractClient
 	// PaymentTransfer is the client for interacting with the PaymentTransfer builders.
 	PaymentTransfer *PaymentTransferClient
+	// PoolOrderUser is the client for interacting with the PoolOrderUser builders.
+	PoolOrderUser *PoolOrderUserClient
 	// PowerRental is the client for interacting with the PowerRental builders.
 	PowerRental *PowerRentalClient
 	// PowerRentalState is the client for interacting with the PowerRentalState builders.
@@ -107,6 +110,7 @@ func (c *Client) init() {
 	c.PaymentBase = NewPaymentBaseClient(c.config)
 	c.PaymentContract = NewPaymentContractClient(c.config)
 	c.PaymentTransfer = NewPaymentTransferClient(c.config)
+	c.PoolOrderUser = NewPoolOrderUserClient(c.config)
 	c.PowerRental = NewPowerRentalClient(c.config)
 	c.PowerRentalState = NewPowerRentalStateClient(c.config)
 }
@@ -159,6 +163,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		PaymentBase:        NewPaymentBaseClient(cfg),
 		PaymentContract:    NewPaymentContractClient(cfg),
 		PaymentTransfer:    NewPaymentTransferClient(cfg),
+		PoolOrderUser:      NewPoolOrderUserClient(cfg),
 		PowerRental:        NewPowerRentalClient(cfg),
 		PowerRentalState:   NewPowerRentalStateClient(cfg),
 	}, nil
@@ -197,6 +202,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		PaymentBase:        NewPaymentBaseClient(cfg),
 		PaymentContract:    NewPaymentContractClient(cfg),
 		PaymentTransfer:    NewPaymentTransferClient(cfg),
+		PoolOrderUser:      NewPoolOrderUserClient(cfg),
 		PowerRental:        NewPowerRentalClient(cfg),
 		PowerRentalState:   NewPowerRentalStateClient(cfg),
 	}, nil
@@ -208,7 +214,6 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 //		AppConfig.
 //		Query().
 //		Count(ctx)
-//
 func (c *Client) Debug() *Client {
 	if c.debug {
 		return c
@@ -245,6 +250,7 @@ func (c *Client) Use(hooks ...Hook) {
 	c.PaymentBase.Use(hooks...)
 	c.PaymentContract.Use(hooks...)
 	c.PaymentTransfer.Use(hooks...)
+	c.PoolOrderUser.Use(hooks...)
 	c.PowerRental.Use(hooks...)
 	c.PowerRentalState.Use(hooks...)
 }
@@ -1794,6 +1800,97 @@ func (c *PaymentTransferClient) GetX(ctx context.Context, id uint32) *PaymentTra
 func (c *PaymentTransferClient) Hooks() []Hook {
 	hooks := c.hooks.PaymentTransfer
 	return append(hooks[:len(hooks):len(hooks)], paymenttransfer.Hooks[:]...)
+}
+
+// PoolOrderUserClient is a client for the PoolOrderUser schema.
+type PoolOrderUserClient struct {
+	config
+}
+
+// NewPoolOrderUserClient returns a client for the PoolOrderUser from the given config.
+func NewPoolOrderUserClient(c config) *PoolOrderUserClient {
+	return &PoolOrderUserClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `poolorderuser.Hooks(f(g(h())))`.
+func (c *PoolOrderUserClient) Use(hooks ...Hook) {
+	c.hooks.PoolOrderUser = append(c.hooks.PoolOrderUser, hooks...)
+}
+
+// Create returns a builder for creating a PoolOrderUser entity.
+func (c *PoolOrderUserClient) Create() *PoolOrderUserCreate {
+	mutation := newPoolOrderUserMutation(c.config, OpCreate)
+	return &PoolOrderUserCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of PoolOrderUser entities.
+func (c *PoolOrderUserClient) CreateBulk(builders ...*PoolOrderUserCreate) *PoolOrderUserCreateBulk {
+	return &PoolOrderUserCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for PoolOrderUser.
+func (c *PoolOrderUserClient) Update() *PoolOrderUserUpdate {
+	mutation := newPoolOrderUserMutation(c.config, OpUpdate)
+	return &PoolOrderUserUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *PoolOrderUserClient) UpdateOne(pou *PoolOrderUser) *PoolOrderUserUpdateOne {
+	mutation := newPoolOrderUserMutation(c.config, OpUpdateOne, withPoolOrderUser(pou))
+	return &PoolOrderUserUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *PoolOrderUserClient) UpdateOneID(id uint32) *PoolOrderUserUpdateOne {
+	mutation := newPoolOrderUserMutation(c.config, OpUpdateOne, withPoolOrderUserID(id))
+	return &PoolOrderUserUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for PoolOrderUser.
+func (c *PoolOrderUserClient) Delete() *PoolOrderUserDelete {
+	mutation := newPoolOrderUserMutation(c.config, OpDelete)
+	return &PoolOrderUserDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *PoolOrderUserClient) DeleteOne(pou *PoolOrderUser) *PoolOrderUserDeleteOne {
+	return c.DeleteOneID(pou.ID)
+}
+
+// DeleteOne returns a builder for deleting the given entity by its id.
+func (c *PoolOrderUserClient) DeleteOneID(id uint32) *PoolOrderUserDeleteOne {
+	builder := c.Delete().Where(poolorderuser.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &PoolOrderUserDeleteOne{builder}
+}
+
+// Query returns a query builder for PoolOrderUser.
+func (c *PoolOrderUserClient) Query() *PoolOrderUserQuery {
+	return &PoolOrderUserQuery{
+		config: c.config,
+	}
+}
+
+// Get returns a PoolOrderUser entity by its id.
+func (c *PoolOrderUserClient) Get(ctx context.Context, id uint32) (*PoolOrderUser, error) {
+	return c.Query().Where(poolorderuser.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *PoolOrderUserClient) GetX(ctx context.Context, id uint32) *PoolOrderUser {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *PoolOrderUserClient) Hooks() []Hook {
+	hooks := c.hooks.PoolOrderUser
+	return append(hooks[:len(hooks):len(hooks)], poolorderuser.Hooks[:]...)
 }
 
 // PowerRentalClient is a client for the PowerRental schema.

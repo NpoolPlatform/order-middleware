@@ -22,6 +22,7 @@ import (
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/paymentbase"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/paymentcontract"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/paymenttransfer"
+	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/poolorderuser"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/powerrental"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/powerrentalstate"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/schema"
@@ -1066,6 +1067,40 @@ func init() {
 	paymenttransferDescLiveCoinUsdCurrency := paymenttransferFields[8].Descriptor()
 	// paymenttransfer.DefaultLiveCoinUsdCurrency holds the default value on creation for the live_coin_usd_currency field.
 	paymenttransfer.DefaultLiveCoinUsdCurrency = paymenttransferDescLiveCoinUsdCurrency.Default.(decimal.Decimal)
+	poolorderuserMixin := schema.PoolOrderUser{}.Mixin()
+	poolorderuser.Policy = privacy.NewPolicies(poolorderuserMixin[0], schema.PoolOrderUser{})
+	poolorderuser.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+			if err := poolorderuser.Policy.EvalMutation(ctx, m); err != nil {
+				return nil, err
+			}
+			return next.Mutate(ctx, m)
+		})
+	}
+	poolorderuserMixinFields0 := poolorderuserMixin[0].Fields()
+	_ = poolorderuserMixinFields0
+	poolorderuserMixinFields1 := poolorderuserMixin[1].Fields()
+	_ = poolorderuserMixinFields1
+	poolorderuserFields := schema.PoolOrderUser{}.Fields()
+	_ = poolorderuserFields
+	// poolorderuserDescCreatedAt is the schema descriptor for created_at field.
+	poolorderuserDescCreatedAt := poolorderuserMixinFields0[0].Descriptor()
+	// poolorderuser.DefaultCreatedAt holds the default value on creation for the created_at field.
+	poolorderuser.DefaultCreatedAt = poolorderuserDescCreatedAt.Default.(func() uint32)
+	// poolorderuserDescUpdatedAt is the schema descriptor for updated_at field.
+	poolorderuserDescUpdatedAt := poolorderuserMixinFields0[1].Descriptor()
+	// poolorderuser.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	poolorderuser.DefaultUpdatedAt = poolorderuserDescUpdatedAt.Default.(func() uint32)
+	// poolorderuser.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	poolorderuser.UpdateDefaultUpdatedAt = poolorderuserDescUpdatedAt.UpdateDefault.(func() uint32)
+	// poolorderuserDescDeletedAt is the schema descriptor for deleted_at field.
+	poolorderuserDescDeletedAt := poolorderuserMixinFields0[2].Descriptor()
+	// poolorderuser.DefaultDeletedAt holds the default value on creation for the deleted_at field.
+	poolorderuser.DefaultDeletedAt = poolorderuserDescDeletedAt.Default.(func() uint32)
+	// poolorderuserDescEntID is the schema descriptor for ent_id field.
+	poolorderuserDescEntID := poolorderuserMixinFields1[1].Descriptor()
+	// poolorderuser.DefaultEntID holds the default value on creation for the ent_id field.
+	poolorderuser.DefaultEntID = poolorderuserDescEntID.Default.(func() uuid.UUID)
 	powerrentalMixin := schema.PowerRental{}.Mixin()
 	powerrental.Policy = privacy.NewPolicies(powerrentalMixin[0], schema.PowerRental{})
 	powerrental.Hooks[0] = func(next ent.Mutator) ent.Mutator {
