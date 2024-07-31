@@ -112,6 +112,22 @@ func CountPowerRentalOrders(ctx context.Context, conds *npool.Conds) (count uint
 	return _info.(uint32), nil
 }
 
+func SumPowerRentalOrderUnits(ctx context.Context, conds *npool.Conds) (units string, err error) {
+	_info, err := withClient(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (interface{}, error) {
+		resp, err := cli.SumPowerRentalOrderUnits(ctx, &npool.SumPowerRentalOrderUnitsRequest{
+			Conds: conds,
+		})
+		if err != nil {
+			return nil, wlog.WrapError(err)
+		}
+		return resp.Info, nil
+	})
+	if err != nil {
+		return "0", err
+	}
+	return _info.(string), nil
+}
+
 func GetPowerRentalOrderOnly(ctx context.Context, conds *npool.Conds) (*npool.PowerRentalOrder, error) {
 	infos, err := withClient(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (interface{}, error) {
 		resp, err := cli.GetPowerRentalOrders(ctx, &npool.GetPowerRentalOrdersRequest{

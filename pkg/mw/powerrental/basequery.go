@@ -203,9 +203,16 @@ func (h *baseQueryHandler) queryJoinOrderStateBase(s *sql.Selector) error {
 		if !ok {
 			return wlog.Errorf("invalid orderstate")
 		}
-		s.OnP(
-			sql.EQ(t.C(entorderstatebase.FieldOrderState), _state.String()),
-		)
+		switch h.OrderStateBaseConds.OrderState.Op {
+		case cruder.EQ:
+			s.OnP(
+				sql.EQ(t.C(entorderstatebase.FieldOrderState), _state.String()),
+			)
+		case cruder.NEQ:
+			s.OnP(
+				sql.NEQ(t.C(entorderstatebase.FieldOrderState), _state.String()),
+			)
+		}
 	}
 	if h.OrderStateBaseConds.OrderStates != nil {
 		states, ok := h.OrderStateBaseConds.OrderStates.Val.([]types.OrderState)

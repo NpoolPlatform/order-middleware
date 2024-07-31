@@ -198,7 +198,7 @@ func (h *updateHandler) constructPoolOrderUserSQL(ctx context.Context) error {
 	}
 	handler, err := poolorderuser.NewHandler(ctx, poolorderuser.WithReq(h.PoolOrderUserReq, true))
 	if err != nil {
-		wlog.WrapError(err)
+		return wlog.WrapError(err)
 	}
 
 	if h.existPoolOrderUser {
@@ -726,7 +726,9 @@ func (h *Handler) UpdatePowerRentalWithTx(ctx context.Context, tx *ent.Tx) error
 	handler.constructPaymentBalanceLockSQL(ctx)
 	handler.constructPaymentBaseSQL(ctx)
 	handler.constructPaymentBalanceSQLs(ctx)
-	handler.constructPoolOrderUserSQL(ctx)
+	if err := handler.constructPoolOrderUserSQL(ctx); err != nil {
+		return wlog.WrapError(err)
+	}
 	if err := handler.constructPaymentTransferSQLs(ctx); err != nil {
 		return wlog.WrapError(err)
 	}
