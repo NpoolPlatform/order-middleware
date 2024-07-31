@@ -104,11 +104,10 @@ func (h *createHandler) constructPaymentBaseSQL(ctx context.Context) {
 }
 
 func (h *createHandler) constructPoolOrderUserSQL(ctx context.Context) {
-	if h.PoolOrderUserReq == nil {
+	if h.PoolOrderUserReq.PoolOrderUserID == nil {
 		return
 	}
-	handler, _ := poolorderuser.NewHandler(ctx)
-	handler.Req = *h.PoolOrderUserReq
+	handler, _ := poolorderuser.NewHandler(ctx, poolorderuser.WithReq(h.PoolOrderUserReq, true))
 	h.sqlPoolOrderUser = handler.ConstructCreateSQL()
 }
 
@@ -200,7 +199,7 @@ func (h *createHandler) createPaymentTransfers(ctx context.Context, tx *ent.Tx) 
 }
 
 func (h *createHandler) createPoolOrderUser(ctx context.Context, tx *ent.Tx) error {
-	if h.PoolOrderUserReq == nil {
+	if h.PoolOrderUserReq.PoolOrderUserID == nil {
 		return nil
 	}
 	if err := h.execSQL(ctx, tx, h.sqlPoolOrderUser); err != nil {

@@ -29,6 +29,19 @@ func NewHandler(ctx context.Context, options ...func(context.Context, *Handler) 
 	return handler, nil
 }
 
+func WithReq(req *poolorderusercrud.Req, must bool) func(context.Context, *Handler) error {
+	return func(ctx context.Context, h *Handler) error {
+		if req == nil {
+			if must {
+				return wlog.Errorf("invalid req")
+			}
+			return nil
+		}
+		h.Req = *req
+		return nil
+	}
+}
+
 func WithID(u *uint32, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if u == nil {
