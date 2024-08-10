@@ -18,7 +18,6 @@ import (
 	paymentbalancelock1 "github.com/NpoolPlatform/order-middleware/pkg/mw/payment/balance/lock"
 	paymentcommon "github.com/NpoolPlatform/order-middleware/pkg/mw/payment/common"
 	paymenttransfer1 "github.com/NpoolPlatform/order-middleware/pkg/mw/payment/transfer"
-	poolorderuser "github.com/NpoolPlatform/order-middleware/pkg/mw/powerrental/poolorderuser"
 	powerrentalstate1 "github.com/NpoolPlatform/order-middleware/pkg/mw/powerrental/state"
 
 	"github.com/google/uuid"
@@ -101,14 +100,6 @@ func (h *createHandler) constructPaymentBaseSQL(ctx context.Context) {
 	handler, _ := paymentbase1.NewHandler(ctx)
 	handler.Req = *h.PaymentBaseReq
 	h.sqlPaymentBase = handler.ConstructCreateSQL()
-}
-
-func (h *createHandler) constructPoolOrderUserSQL(ctx context.Context) {
-	if h.PoolOrderUserReq.PoolOrderUserID == nil {
-		return
-	}
-	handler, _ := poolorderuser.NewHandler(ctx, poolorderuser.WithReq(h.PoolOrderUserReq, true))
-	h.sqlPoolOrderUser = handler.ConstructCreateSQL()
 }
 
 func (h *createHandler) constructPaymentBalanceSQLs(ctx context.Context) {
@@ -194,16 +185,6 @@ func (h *createHandler) createPaymentTransfers(ctx context.Context, tx *ent.Tx) 
 		if err := h.execSQL(ctx, tx, sql); err != nil {
 			return wlog.WrapError(err)
 		}
-	}
-	return nil
-}
-
-func (h *createHandler) createPoolOrderUser(ctx context.Context, tx *ent.Tx) error {
-	if h.PoolOrderUserReq.PoolOrderUserID == nil {
-		return nil
-	}
-	if err := h.execSQL(ctx, tx, h.sqlPoolOrderUser); err != nil {
-		return wlog.WrapError(err)
 	}
 	return nil
 }
@@ -496,7 +477,6 @@ func (h *Handler) CreatePowerRentalWithTx(ctx context.Context, tx *ent.Tx) error
 	handler.constructPaymentBaseSQL(ctx)
 	handler.constructPaymentBalanceSQLs(ctx)
 	handler.constructPaymentTransferSQLs(ctx)
-	handler.constructPoolOrderUserSQL(ctx)
 	handler.constructSQL()
 
 	if err := handler.createOrderBase(ctx, tx); err != nil {
@@ -529,9 +509,6 @@ func (h *Handler) CreatePowerRentalWithTx(ctx context.Context, tx *ent.Tx) error
 		return wlog.WrapError(err)
 	}
 	if err := handler.createFeeOrders(ctx, tx); err != nil {
-		return wlog.WrapError(err)
-	}
-	if err := handler.createPoolOrderUser(ctx, tx); err != nil {
 		return wlog.WrapError(err)
 	}
 	return handler.createPowerRental(ctx, tx)
