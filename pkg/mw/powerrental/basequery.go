@@ -157,6 +157,7 @@ func (h *baseQueryHandler) queryJoinPowerRental(s *sql.Selector) error {
 		t.C(entpowerrental.FieldDiscountAmountUsd),
 		t.C(entpowerrental.FieldPromotionID),
 		t.C(entpowerrental.FieldInvestmentType),
+		t.C(entpowerrental.FieldGoodStockMode),
 		t.C(entpowerrental.FieldDurationSeconds),
 	)
 	return nil

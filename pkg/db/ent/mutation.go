@@ -20305,6 +20305,7 @@ type PowerRentalMutation struct {
 	discount_amount_usd *decimal.Decimal
 	promotion_id        *uuid.UUID
 	investment_type     *string
+	good_stock_mode     *string
 	duration_seconds    *uint32
 	addduration_seconds *int32
 	clearedFields       map[string]struct{}
@@ -21013,6 +21014,55 @@ func (m *PowerRentalMutation) ResetInvestmentType() {
 	delete(m.clearedFields, powerrental.FieldInvestmentType)
 }
 
+// SetGoodStockMode sets the "good_stock_mode" field.
+func (m *PowerRentalMutation) SetGoodStockMode(s string) {
+	m.good_stock_mode = &s
+}
+
+// GoodStockMode returns the value of the "good_stock_mode" field in the mutation.
+func (m *PowerRentalMutation) GoodStockMode() (r string, exists bool) {
+	v := m.good_stock_mode
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldGoodStockMode returns the old "good_stock_mode" field's value of the PowerRental entity.
+// If the PowerRental object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PowerRentalMutation) OldGoodStockMode(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldGoodStockMode is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldGoodStockMode requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldGoodStockMode: %w", err)
+	}
+	return oldValue.GoodStockMode, nil
+}
+
+// ClearGoodStockMode clears the value of the "good_stock_mode" field.
+func (m *PowerRentalMutation) ClearGoodStockMode() {
+	m.good_stock_mode = nil
+	m.clearedFields[powerrental.FieldGoodStockMode] = struct{}{}
+}
+
+// GoodStockModeCleared returns if the "good_stock_mode" field was cleared in this mutation.
+func (m *PowerRentalMutation) GoodStockModeCleared() bool {
+	_, ok := m.clearedFields[powerrental.FieldGoodStockMode]
+	return ok
+}
+
+// ResetGoodStockMode resets all changes to the "good_stock_mode" field.
+func (m *PowerRentalMutation) ResetGoodStockMode() {
+	m.good_stock_mode = nil
+	delete(m.clearedFields, powerrental.FieldGoodStockMode)
+}
+
 // SetDurationSeconds sets the "duration_seconds" field.
 func (m *PowerRentalMutation) SetDurationSeconds(u uint32) {
 	m.duration_seconds = &u
@@ -21102,7 +21152,7 @@ func (m *PowerRentalMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *PowerRentalMutation) Fields() []string {
-	fields := make([]string, 0, 13)
+	fields := make([]string, 0, 14)
 	if m.created_at != nil {
 		fields = append(fields, powerrental.FieldCreatedAt)
 	}
@@ -21139,6 +21189,9 @@ func (m *PowerRentalMutation) Fields() []string {
 	if m.investment_type != nil {
 		fields = append(fields, powerrental.FieldInvestmentType)
 	}
+	if m.good_stock_mode != nil {
+		fields = append(fields, powerrental.FieldGoodStockMode)
+	}
 	if m.duration_seconds != nil {
 		fields = append(fields, powerrental.FieldDurationSeconds)
 	}
@@ -21174,6 +21227,8 @@ func (m *PowerRentalMutation) Field(name string) (ent.Value, bool) {
 		return m.PromotionID()
 	case powerrental.FieldInvestmentType:
 		return m.InvestmentType()
+	case powerrental.FieldGoodStockMode:
+		return m.GoodStockMode()
 	case powerrental.FieldDurationSeconds:
 		return m.DurationSeconds()
 	}
@@ -21209,6 +21264,8 @@ func (m *PowerRentalMutation) OldField(ctx context.Context, name string) (ent.Va
 		return m.OldPromotionID(ctx)
 	case powerrental.FieldInvestmentType:
 		return m.OldInvestmentType(ctx)
+	case powerrental.FieldGoodStockMode:
+		return m.OldGoodStockMode(ctx)
 	case powerrental.FieldDurationSeconds:
 		return m.OldDurationSeconds(ctx)
 	}
@@ -21303,6 +21360,13 @@ func (m *PowerRentalMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetInvestmentType(v)
+		return nil
+	case powerrental.FieldGoodStockMode:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetGoodStockMode(v)
 		return nil
 	case powerrental.FieldDurationSeconds:
 		v, ok := value.(uint32)
@@ -21416,6 +21480,9 @@ func (m *PowerRentalMutation) ClearedFields() []string {
 	if m.FieldCleared(powerrental.FieldInvestmentType) {
 		fields = append(fields, powerrental.FieldInvestmentType)
 	}
+	if m.FieldCleared(powerrental.FieldGoodStockMode) {
+		fields = append(fields, powerrental.FieldGoodStockMode)
+	}
 	if m.FieldCleared(powerrental.FieldDurationSeconds) {
 		fields = append(fields, powerrental.FieldDurationSeconds)
 	}
@@ -21456,6 +21523,9 @@ func (m *PowerRentalMutation) ClearField(name string) error {
 		return nil
 	case powerrental.FieldInvestmentType:
 		m.ClearInvestmentType()
+		return nil
+	case powerrental.FieldGoodStockMode:
+		m.ClearGoodStockMode()
 		return nil
 	case powerrental.FieldDurationSeconds:
 		m.ClearDurationSeconds()
@@ -21503,6 +21573,9 @@ func (m *PowerRentalMutation) ResetField(name string) error {
 		return nil
 	case powerrental.FieldInvestmentType:
 		m.ResetInvestmentType()
+		return nil
+	case powerrental.FieldGoodStockMode:
+		m.ResetGoodStockMode()
 		return nil
 	case powerrental.FieldDurationSeconds:
 		m.ResetDurationSeconds()

@@ -385,6 +385,25 @@ func WithInvestmentType(_type *types.InvestmentType, must bool) func(context.Con
 	}
 }
 
+func WithGoodStockMode(_type *goodtypes.GoodStockMode, must bool) func(context.Context, *Handler) error {
+	return func(ctx context.Context, h *Handler) error {
+		if _type == nil {
+			if must {
+				return wlog.Errorf("invalid goodstockmode")
+			}
+			return nil
+		}
+		switch *_type {
+		case goodtypes.GoodStockMode_GoodStockByUnique:
+		case goodtypes.GoodStockMode_GoodStockByMiningpool:
+		default:
+			return wlog.Errorf("invalid goodstockmode")
+		}
+		h.GoodStockMode = _type
+		return nil
+	}
+}
+
 func WithPaymentType(paymentType *types.PaymentType, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if paymentType == nil {

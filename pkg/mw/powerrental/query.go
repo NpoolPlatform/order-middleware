@@ -402,6 +402,7 @@ func (h *queryHandler) formalize() {
 		info.StartMode = types.OrderStartMode(types.OrderStartMode_value[info.StartModeStr])
 		info.BenefitState = types.BenefitState(types.BenefitState_value[info.BenefitStateStr])
 		info.InvestmentType = types.InvestmentType(types.InvestmentType_value[info.InvestmentTypeStr])
+		info.GoodStockMode = goodtypes.GoodStockMode(goodtypes.GoodStockMode_value[info.GoodStockModeStr])
 		info.Coupons = orderCoupons[info.OrderID]
 		info.PaymentBalances = paymentBalances[info.PaymentID]
 		info.PaymentTransfers = paymentTransfers[info.PaymentID]

@@ -1167,8 +1167,12 @@ func init() {
 	powerrentalDescInvestmentType := powerrentalFields[7].Descriptor()
 	// powerrental.DefaultInvestmentType holds the default value on creation for the investment_type field.
 	powerrental.DefaultInvestmentType = powerrentalDescInvestmentType.Default.(string)
+	// powerrentalDescGoodStockMode is the schema descriptor for good_stock_mode field.
+	powerrentalDescGoodStockMode := powerrentalFields[8].Descriptor()
+	// powerrental.DefaultGoodStockMode holds the default value on creation for the good_stock_mode field.
+	powerrental.DefaultGoodStockMode = powerrentalDescGoodStockMode.Default.(string)
 	// powerrentalDescDurationSeconds is the schema descriptor for duration_seconds field.
-	powerrentalDescDurationSeconds := powerrentalFields[8].Descriptor()
+	powerrentalDescDurationSeconds := powerrentalFields[9].Descriptor()
 	// powerrental.DefaultDurationSeconds holds the default value on creation for the duration_seconds field.
 	powerrental.DefaultDurationSeconds = powerrentalDescDurationSeconds.Default.(uint32)
 	powerrentalstateMixin := schema.PowerRentalState{}.Mixin()

@@ -191,6 +191,20 @@ func (prc *PowerRentalCreate) SetNillableInvestmentType(s *string) *PowerRentalC
 	return prc
 }
 
+// SetGoodStockMode sets the "good_stock_mode" field.
+func (prc *PowerRentalCreate) SetGoodStockMode(s string) *PowerRentalCreate {
+	prc.mutation.SetGoodStockMode(s)
+	return prc
+}
+
+// SetNillableGoodStockMode sets the "good_stock_mode" field if the given value is not nil.
+func (prc *PowerRentalCreate) SetNillableGoodStockMode(s *string) *PowerRentalCreate {
+	if s != nil {
+		prc.SetGoodStockMode(*s)
+	}
+	return prc
+}
+
 // SetDurationSeconds sets the "duration_seconds" field.
 func (prc *PowerRentalCreate) SetDurationSeconds(u uint32) *PowerRentalCreate {
 	prc.mutation.SetDurationSeconds(u)
@@ -359,6 +373,10 @@ func (prc *PowerRentalCreate) defaults() error {
 		v := powerrental.DefaultInvestmentType
 		prc.mutation.SetInvestmentType(v)
 	}
+	if _, ok := prc.mutation.GoodStockMode(); !ok {
+		v := powerrental.DefaultGoodStockMode
+		prc.mutation.SetGoodStockMode(v)
+	}
 	if _, ok := prc.mutation.DurationSeconds(); !ok {
 		v := powerrental.DefaultDurationSeconds
 		prc.mutation.SetDurationSeconds(v)
@@ -509,6 +527,14 @@ func (prc *PowerRentalCreate) createSpec() (*PowerRental, *sqlgraph.CreateSpec) 
 			Column: powerrental.FieldInvestmentType,
 		})
 		_node.InvestmentType = value
+	}
+	if value, ok := prc.mutation.GoodStockMode(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: powerrental.FieldGoodStockMode,
+		})
+		_node.GoodStockMode = value
 	}
 	if value, ok := prc.mutation.DurationSeconds(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -777,6 +803,24 @@ func (u *PowerRentalUpsert) UpdateInvestmentType() *PowerRentalUpsert {
 // ClearInvestmentType clears the value of the "investment_type" field.
 func (u *PowerRentalUpsert) ClearInvestmentType() *PowerRentalUpsert {
 	u.SetNull(powerrental.FieldInvestmentType)
+	return u
+}
+
+// SetGoodStockMode sets the "good_stock_mode" field.
+func (u *PowerRentalUpsert) SetGoodStockMode(v string) *PowerRentalUpsert {
+	u.Set(powerrental.FieldGoodStockMode, v)
+	return u
+}
+
+// UpdateGoodStockMode sets the "good_stock_mode" field to the value that was provided on create.
+func (u *PowerRentalUpsert) UpdateGoodStockMode() *PowerRentalUpsert {
+	u.SetExcluded(powerrental.FieldGoodStockMode)
+	return u
+}
+
+// ClearGoodStockMode clears the value of the "good_stock_mode" field.
+func (u *PowerRentalUpsert) ClearGoodStockMode() *PowerRentalUpsert {
+	u.SetNull(powerrental.FieldGoodStockMode)
 	return u
 }
 
@@ -1094,6 +1138,27 @@ func (u *PowerRentalUpsertOne) UpdateInvestmentType() *PowerRentalUpsertOne {
 func (u *PowerRentalUpsertOne) ClearInvestmentType() *PowerRentalUpsertOne {
 	return u.Update(func(s *PowerRentalUpsert) {
 		s.ClearInvestmentType()
+	})
+}
+
+// SetGoodStockMode sets the "good_stock_mode" field.
+func (u *PowerRentalUpsertOne) SetGoodStockMode(v string) *PowerRentalUpsertOne {
+	return u.Update(func(s *PowerRentalUpsert) {
+		s.SetGoodStockMode(v)
+	})
+}
+
+// UpdateGoodStockMode sets the "good_stock_mode" field to the value that was provided on create.
+func (u *PowerRentalUpsertOne) UpdateGoodStockMode() *PowerRentalUpsertOne {
+	return u.Update(func(s *PowerRentalUpsert) {
+		s.UpdateGoodStockMode()
+	})
+}
+
+// ClearGoodStockMode clears the value of the "good_stock_mode" field.
+func (u *PowerRentalUpsertOne) ClearGoodStockMode() *PowerRentalUpsertOne {
+	return u.Update(func(s *PowerRentalUpsert) {
+		s.ClearGoodStockMode()
 	})
 }
 
@@ -1578,6 +1643,27 @@ func (u *PowerRentalUpsertBulk) UpdateInvestmentType() *PowerRentalUpsertBulk {
 func (u *PowerRentalUpsertBulk) ClearInvestmentType() *PowerRentalUpsertBulk {
 	return u.Update(func(s *PowerRentalUpsert) {
 		s.ClearInvestmentType()
+	})
+}
+
+// SetGoodStockMode sets the "good_stock_mode" field.
+func (u *PowerRentalUpsertBulk) SetGoodStockMode(v string) *PowerRentalUpsertBulk {
+	return u.Update(func(s *PowerRentalUpsert) {
+		s.SetGoodStockMode(v)
+	})
+}
+
+// UpdateGoodStockMode sets the "good_stock_mode" field to the value that was provided on create.
+func (u *PowerRentalUpsertBulk) UpdateGoodStockMode() *PowerRentalUpsertBulk {
+	return u.Update(func(s *PowerRentalUpsert) {
+		s.UpdateGoodStockMode()
+	})
+}
+
+// ClearGoodStockMode clears the value of the "good_stock_mode" field.
+func (u *PowerRentalUpsertBulk) ClearGoodStockMode() *PowerRentalUpsertBulk {
+	return u.Update(func(s *PowerRentalUpsert) {
+		s.ClearGoodStockMode()
 	})
 }
 

@@ -490,6 +490,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			powerrental.FieldDiscountAmountUsd: {Type: field.TypeOther, Column: powerrental.FieldDiscountAmountUsd},
 			powerrental.FieldPromotionID:       {Type: field.TypeUUID, Column: powerrental.FieldPromotionID},
 			powerrental.FieldInvestmentType:    {Type: field.TypeString, Column: powerrental.FieldInvestmentType},
+			powerrental.FieldGoodStockMode:     {Type: field.TypeString, Column: powerrental.FieldGoodStockMode},
 			powerrental.FieldDurationSeconds:   {Type: field.TypeUint32, Column: powerrental.FieldDurationSeconds},
 		},
 	}
@@ -2350,6 +2351,11 @@ func (f *PowerRentalFilter) WherePromotionID(p entql.ValueP) {
 // WhereInvestmentType applies the entql string predicate on the investment_type field.
 func (f *PowerRentalFilter) WhereInvestmentType(p entql.StringP) {
 	f.Where(p.Field(powerrental.FieldInvestmentType))
+}
+
+// WhereGoodStockMode applies the entql string predicate on the good_stock_mode field.
+func (f *PowerRentalFilter) WhereGoodStockMode(p entql.StringP) {
+	f.Where(p.Field(powerrental.FieldGoodStockMode))
 }
 
 // WhereDurationSeconds applies the entql uint32 predicate on the duration_seconds field.

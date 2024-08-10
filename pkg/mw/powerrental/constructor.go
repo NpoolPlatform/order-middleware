@@ -31,6 +31,9 @@ func (h *Handler) ConstructCreateSQL() string {
 	if h.InvestmentType != nil {
 		_sql += comma + "investment_type"
 	}
+	if h.GoodStockMode != nil {
+		_sql += comma + "good_stock_mode"
+	}
 	_sql += comma + "duration_seconds"
 	_sql += comma + "created_at"
 	_sql += comma + "updated_at"
@@ -64,6 +67,9 @@ func (h *Handler) ConstructCreateSQL() string {
 	}
 	if h.InvestmentType != nil {
 		_sql += fmt.Sprintf("%v'%v' as investment_type", comma, h.InvestmentType.String())
+	}
+	if h.GoodStockMode != nil {
+		_sql += fmt.Sprintf("%v'%v' as good_stock_mode", comma, h.GoodStockMode.String())
 	}
 	_sql += fmt.Sprintf("%v'%v' as duration_seconds", comma, *h.DurationSeconds)
 	_sql += fmt.Sprintf("%v%v as created_at", comma, now)

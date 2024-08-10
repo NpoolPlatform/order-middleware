@@ -614,6 +614,7 @@ var (
 		{Name: "discount_amount_usd", Type: field.TypeOther, Nullable: true, SchemaType: map[string]string{"mysql": "decimal(37,18)"}},
 		{Name: "promotion_id", Type: field.TypeUUID, Nullable: true},
 		{Name: "investment_type", Type: field.TypeString, Nullable: true, Default: "FullPayment"},
+		{Name: "good_stock_mode", Type: field.TypeString, Nullable: true, Default: "DefaultGoodStockMode"},
 		{Name: "duration_seconds", Type: field.TypeUint32, Nullable: true, Default: 0},
 	}
 	// PowerRentalsTable holds the schema information for the "power_rentals" table.

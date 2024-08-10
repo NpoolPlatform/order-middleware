@@ -86,6 +86,7 @@ var ret = npool.PowerRentalOrder{
 		},
 	},
 	InvestmentType: types.InvestmentType_FullPayment,
+	GoodStockMode:  goodtypes.GoodStockMode_GoodStockByUnique,
 	BenefitState:   types.BenefitState_BenefitWait,
 }
 
@@ -112,6 +113,7 @@ func setup(t *testing.T) func(*testing.T) {
 	ret.RenewStateStr = ret.RenewState.String()
 	ret.StartModeStr = ret.StartMode.String()
 	ret.InvestmentTypeStr = ret.InvestmentType.String()
+	ret.GoodStockModeStr = ret.GoodStockMode.String()
 	ret.BenefitStateStr = ret.BenefitState.String()
 
 	return func(*testing.T) {}

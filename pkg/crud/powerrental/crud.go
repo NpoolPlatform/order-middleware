@@ -3,6 +3,7 @@ package powerrental
 import (
 	wlog "github.com/NpoolPlatform/go-service-framework/pkg/wlog"
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
+	goodtypes "github.com/NpoolPlatform/message/npool/basetypes/good/v1"
 	types "github.com/NpoolPlatform/message/npool/basetypes/order/v1"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent"
 	entpowerrental "github.com/NpoolPlatform/order-middleware/pkg/db/ent/powerrental"
@@ -22,6 +23,7 @@ type Req struct {
 	DiscountAmountUSD *decimal.Decimal
 	PromotionID       *uuid.UUID
 	InvestmentType    *types.InvestmentType
+	GoodStockMode     *goodtypes.GoodStockMode
 	DurationSeconds   *uint32
 	DeletedAt         *uint32
 }
@@ -54,6 +56,9 @@ func CreateSet(c *ent.PowerRentalCreate, req *Req) *ent.PowerRentalCreate {
 	if req.InvestmentType != nil {
 		c.SetInvestmentType(req.InvestmentType.String())
 	}
+	if req.GoodStockMode != nil {
+		c.SetGoodStockMode(req.GoodStockMode.String())
+	}
 	if req.DurationSeconds != nil {
 		c.SetDurationSeconds(*req.DurationSeconds)
 	}
@@ -75,9 +80,10 @@ type Conds struct {
 	OrderID        *cruder.Cond
 	OrderIDs       *cruder.Cond
 	InvestmentType *cruder.Cond
+	GoodStockMode  *cruder.Cond
 }
 
-//nolint
+// nolint
 func SetQueryConds(q *ent.PowerRentalQuery, conds *Conds) (*ent.PowerRentalQuery, error) {
 	q.Where(entpowerrental.DeletedAt(0))
 	if conds == nil {
@@ -171,6 +177,18 @@ func SetQueryConds(q *ent.PowerRentalQuery, conds *Conds) (*ent.PowerRentalQuery
 		switch conds.InvestmentType.Op {
 		case cruder.EQ:
 			q.Where(entpowerrental.InvestmentType(_type.String()))
+		default:
+			return nil, wlog.Errorf("invalid powerrental field")
+		}
+	}
+	if conds.GoodStockMode != nil {
+		_type, ok := conds.GoodStockMode.Val.(goodtypes.GoodStockMode)
+		if !ok {
+			return nil, wlog.Errorf("invalid goodstockmode")
+		}
+		switch conds.GoodStockMode.Op {
+		case cruder.EQ:
+			q.Where(entpowerrental.GoodStockMode(_type.String()))
 		default:
 			return nil, wlog.Errorf("invalid powerrental field")
 		}

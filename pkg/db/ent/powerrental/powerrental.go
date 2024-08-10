@@ -37,6 +37,8 @@ const (
 	FieldPromotionID = "promotion_id"
 	// FieldInvestmentType holds the string denoting the investment_type field in the database.
 	FieldInvestmentType = "investment_type"
+	// FieldGoodStockMode holds the string denoting the good_stock_mode field in the database.
+	FieldGoodStockMode = "good_stock_mode"
 	// FieldDurationSeconds holds the string denoting the duration_seconds field in the database.
 	FieldDurationSeconds = "duration_seconds"
 	// Table holds the table name of the powerrental in the database.
@@ -58,6 +60,7 @@ var Columns = []string{
 	FieldDiscountAmountUsd,
 	FieldPromotionID,
 	FieldInvestmentType,
+	FieldGoodStockMode,
 	FieldDurationSeconds,
 }
 
@@ -105,6 +108,8 @@ var (
 	DefaultPromotionID func() uuid.UUID
 	// DefaultInvestmentType holds the default value on creation for the "investment_type" field.
 	DefaultInvestmentType string
+	// DefaultGoodStockMode holds the default value on creation for the "good_stock_mode" field.
+	DefaultGoodStockMode string
 	// DefaultDurationSeconds holds the default value on creation for the "duration_seconds" field.
 	DefaultDurationSeconds uint32
 )
