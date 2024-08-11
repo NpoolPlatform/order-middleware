@@ -7,6 +7,7 @@ import (
 	logger "github.com/NpoolPlatform/go-service-framework/pkg/logger"
 	wlog "github.com/NpoolPlatform/go-service-framework/pkg/wlog"
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
+	goodtypes "github.com/NpoolPlatform/message/npool/basetypes/good/v1"
 	types "github.com/NpoolPlatform/message/npool/basetypes/order/v1"
 	orderbasecrud "github.com/NpoolPlatform/order-middleware/pkg/crud/order/orderbase"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent"
@@ -145,6 +146,22 @@ func (h *baseQueryHandler) queryJoinPowerRental(s *sql.Selector) error {
 			}
 			return _uids
 		}()...))
+	}
+	if h.PowerRentalConds.GoodStockMode != nil {
+		_type, ok := h.PowerRentalConds.GoodStockMode.Val.(goodtypes.GoodStockMode)
+		if !ok {
+			return wlog.Errorf("invalid goodstockmode")
+		}
+		switch h.PowerRentalConds.GoodStockMode.Op {
+		case cruder.EQ:
+			s.OnP(
+				sql.EQ(t.C(entpowerrental.FieldGoodStockMode), _type.String()),
+			)
+		case cruder.NEQ:
+			s.OnP(
+				sql.NEQ(t.C(entpowerrental.FieldGoodStockMode), _type.String()),
+			)
+		}
 	}
 	s.AppendSelect(
 		t.C(entpowerrental.FieldID),

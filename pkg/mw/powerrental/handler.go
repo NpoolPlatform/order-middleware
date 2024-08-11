@@ -448,10 +448,15 @@ func WithOrderState(state *types.OrderState, must bool) func(context.Context, *H
 		case types.OrderState_OrderStatePaymentUnlockAccount:
 		case types.OrderState_OrderStatePaid:
 		case types.OrderState_OrderStateTransferGoodStockWaitStart:
+		case types.OrderState_OrderStateCreateOrderUser:
+		case types.OrderState_OrderStateSetProportion:
+		case types.OrderState_OrderStateSetRevenueAddress:
 		case types.OrderState_OrderStateInService:
 		case types.OrderState_OrderStatePaymentTimeout:
 		case types.OrderState_OrderStatePreCancel:
 		case types.OrderState_OrderStatePreExpired:
+		case types.OrderState_OrderStateDeleteProportion:
+		case types.OrderState_OrderStateDeleteRevenueAddress:
 		case types.OrderState_OrderStateRestoreExpiredStock:
 		case types.OrderState_OrderStateRestoreCanceledStock:
 		case types.OrderState_OrderStateCancelAchievement:
@@ -1080,6 +1085,12 @@ func (h *Handler) withPowerRentalConds(conds *npool.Conds) error {
 		h.PowerRentalConds.OrderIDs = &cruder.Cond{
 			Op:  conds.GetOrderIDs().GetOp(),
 			Val: ids,
+		}
+	}
+	if conds.GoodStockMode != nil {
+		h.PowerRentalConds.GoodStockMode = &cruder.Cond{
+			Op:  conds.GetGoodStockMode().GetOp(),
+			Val: goodtypes.GoodStockMode(conds.GetGoodStockMode().GetValue()),
 		}
 	}
 	return nil
