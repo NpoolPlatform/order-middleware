@@ -17,6 +17,7 @@ import (
 	entorderstatebase "github.com/NpoolPlatform/order-middleware/pkg/db/ent/orderstatebase"
 	entpaymentbalancelock "github.com/NpoolPlatform/order-middleware/pkg/db/ent/paymentbalancelock"
 	entpaymentbase "github.com/NpoolPlatform/order-middleware/pkg/db/ent/paymentbase"
+	entpoolorderuser "github.com/NpoolPlatform/order-middleware/pkg/db/ent/poolorderuser"
 	entpowerrental "github.com/NpoolPlatform/order-middleware/pkg/db/ent/powerrental"
 	entpowerrentalstate "github.com/NpoolPlatform/order-middleware/pkg/db/ent/powerrentalstate"
 
@@ -514,6 +515,23 @@ func (h *baseQueryHandler) queryJoinOrderCoupon(s *sql.Selector) error {
 	return nil
 }
 
+func (h *baseQueryHandler) queryJoinPoolOrderUser(s *sql.Selector) {
+	t := sql.Table(entpoolorderuser.Table)
+	s.LeftJoin(t).
+		On(
+			s.C(entorderbase.FieldEntID),
+			t.C(entpoolorderuser.FieldOrderID),
+		).
+		OnP(
+			sql.And(
+				sql.EQ(t.C(entpoolorderuser.FieldDeletedAt), 0),
+			),
+		)
+	s.AppendSelect(
+		sql.As(t.C(entpoolorderuser.FieldPoolOrderUserID), "mining_pool_order_user_id"),
+	)
+}
+
 func (h *baseQueryHandler) queryJoin() {
 	h.stmSelect.Modify(func(s *sql.Selector) {
 		h.queryJoinMyself(s)
@@ -528,6 +546,7 @@ func (h *baseQueryHandler) queryJoin() {
 		}
 		h.queryJoinPaymentBase(s)
 		h.queryJoinStockLock(s)
+		h.queryJoinPoolOrderUser(s)
 		if err := h.queryJoinOrderCoupon(s); err != nil {
 			logger.Sugar().Errorw("queryJoinOrderCoupon", "Error", err)
 		}

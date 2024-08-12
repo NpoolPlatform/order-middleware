@@ -62,6 +62,7 @@ func (h *queryHandler) queryJoin() {
 		}
 		h.queryJoinPaymentBase(s)
 		h.queryJoinStockLock(s)
+		h.queryJoinPoolOrderUser(s)
 		if err := h.queryJoinOrderCoupon(s); err != nil {
 			logger.Sugar().Errorw("queryJoinOrderCoupon", "Error", err)
 		}

@@ -34,7 +34,7 @@ type updateHandler struct {
 
 	newPayment             bool
 	newPaymentBalance      bool
-	existPoolOrderUser     bool
+	oldPoolOrderUser       *poolorderusermwpb.PoolOrderUser
 	obseletePaymentBaseReq *paymentbasecrud.Req
 	sqlObseletePaymentBase string
 
@@ -201,9 +201,11 @@ func (h *updateHandler) constructPoolOrderUserSQL(ctx context.Context) error {
 		return wlog.WrapError(err)
 	}
 
-	if h.existPoolOrderUser {
+	if h.oldPoolOrderUser != nil {
+		handler.ID = &h.oldPoolOrderUser.ID
 		h.sqlPoolOrderUser, err = handler.ConstructUpdateSQL()
 	} else {
+		handler.EntID = func() *uuid.UUID { id := uuid.New(); return &id }()
 		h.sqlPoolOrderUser = handler.ConstructCreateSQL()
 	}
 	return wlog.WrapError(err)
@@ -424,11 +426,14 @@ func (h *updateHandler) validatePoolOrderUser(ctx context.Context) error {
 		return wlog.WrapError(err)
 	}
 
-	_, total, err := handler.GetPoolOrderUsers(ctx)
+	infos, _, err := handler.GetPoolOrderUsers(ctx)
 	if err != nil {
 		return wlog.WrapError(err)
 	}
-	h.existPoolOrderUser = total > 0
+	if len(infos) > 0 {
+		h.oldPoolOrderUser = &infos[0]
+	}
+
 	return nil
 }
 

@@ -16,6 +16,7 @@ import (
 	entpaymentbalancelock "github.com/NpoolPlatform/order-middleware/pkg/db/ent/paymentbalancelock"
 	entpaymentbase "github.com/NpoolPlatform/order-middleware/pkg/db/ent/paymentbase"
 	entpaymenttransfer "github.com/NpoolPlatform/order-middleware/pkg/db/ent/paymenttransfer"
+	entpoolorderuser "github.com/NpoolPlatform/order-middleware/pkg/db/ent/poolorderuser"
 	entpowerrental "github.com/NpoolPlatform/order-middleware/pkg/db/ent/powerrental"
 	entpowerrentalstate "github.com/NpoolPlatform/order-middleware/pkg/db/ent/powerrentalstate"
 )
@@ -220,6 +221,22 @@ func (h *powerRentalQueryHandler) getChildOrders(ctx context.Context, cli *ent.C
 	return nil
 }
 
+func (h *powerRentalQueryHandler) getPoolOrderUserID(ctx context.Context, cli *ent.Client) (err error) {
+	if h._ent.poolOrderUser, err = cli.
+		PoolOrderUser.
+		Query().
+		Where(
+			entpoolorderuser.OrderID(h._ent.entPowerRental.OrderID),
+		).
+		Only(ctx); err != nil {
+		if ent.IsNotFound(err) {
+			return nil
+		}
+
+	}
+	return wlog.WrapError(err)
+}
+
 //nolint:gocyclo
 func (h *powerRentalQueryHandler) _getPowerRental(ctx context.Context, cli *ent.Client, must bool) error {
 	if h.ID == nil && h.EntID == nil && h.OrderID == nil {
@@ -261,6 +278,9 @@ func (h *powerRentalQueryHandler) _getPowerRental(ctx context.Context, cli *ent.
 	if err := h.getChildOrders(ctx, cli); err != nil {
 		return wlog.WrapError(err)
 	}
+	if err := h.getPoolOrderUserID(ctx, cli); err != nil {
+		return wlog.WrapError(err)
+	}
 	return h.getOrderCoupons(ctx, cli)
 }
 
@@ -272,14 +292,14 @@ func (h *powerRentalQueryHandler) requirePowerRentalWithTx(ctx context.Context, 
 	return h._getPowerRental(ctx, tx.Client(), true)
 }
 
-//nolint
+// nolint
 func (h *powerRentalQueryHandler) getPowerRental(ctx context.Context) error {
 	return db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
 		return h._getPowerRental(_ctx, cli, false)
 	})
 }
 
-//nolint
+// nolint
 func (h *powerRentalQueryHandler) requirePowerRental(ctx context.Context) error {
 	return db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
 		return h._getPowerRental(_ctx, cli, true)

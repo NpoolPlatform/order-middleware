@@ -87,6 +87,9 @@ func (h *Handler) GetPoolOrderUser(ctx context.Context) (*poolorderusermwpb.Pool
 }
 
 func (h *Handler) GetPoolOrderUsers(ctx context.Context) ([]poolorderusermwpb.PoolOrderUser, uint32, error) {
+	if h.PoolOrderUserID == nil {
+		return nil, 0, nil
+	}
 	handler := &queryHandler{
 		Handler: h,
 	}
