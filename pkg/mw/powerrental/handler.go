@@ -456,7 +456,7 @@ func WithOrderState(state *types.OrderState, must bool) func(context.Context, *H
 		case types.OrderState_OrderStatePreCancel:
 		case types.OrderState_OrderStatePreExpired:
 		case types.OrderState_OrderStateDeleteProportion:
-		case types.OrderState_OrderStateDeleteRevenueAddress:
+		case types.OrderState_OrderStateCheckPoolBalance:
 		case types.OrderState_OrderStateRestoreExpiredStock:
 		case types.OrderState_OrderStateRestoreCanceledStock:
 		case types.OrderState_OrderStateCancelAchievement:
