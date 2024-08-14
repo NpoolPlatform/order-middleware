@@ -153,7 +153,7 @@ func (h *Handler) GetAppConfigs(ctx context.Context) (infos []*npool.AppConfig, 
 		return handler.scan(_ctx)
 	})
 	if err != nil {
-		return nil, 0, err
+		return nil, 0, wlog.WrapError(err)
 	}
 
 	handler.formalize()

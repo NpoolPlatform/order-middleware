@@ -2,8 +2,8 @@ package poolorderuser
 
 import (
 	"context"
-	"fmt"
 
+	"github.com/NpoolPlatform/go-service-framework/pkg/wlog"
 	poolorderusermwpb "github.com/NpoolPlatform/message/npool/order/mw/v1/powerrental/poolorderuser"
 	poolorderusercrud "github.com/NpoolPlatform/order-middleware/pkg/crud/powerrental/poolorderuser"
 	"github.com/NpoolPlatform/order-middleware/pkg/db"
@@ -29,7 +29,7 @@ func (h *queryHandler) selectPoolOrderUser(stm *ent.PoolOrderUserQuery) {
 
 func (h *queryHandler) queryPoolOrderUser(cli *ent.Client) error {
 	if h.ID == nil && h.EntID == nil {
-		return fmt.Errorf("invalid id")
+		return wlog.Errorf("invalid id")
 	}
 	stm := cli.PoolOrderUser.Query().Where(poolorderuserent.DeletedAt(0))
 	if h.ID != nil {
@@ -74,13 +74,13 @@ func (h *Handler) GetPoolOrderUser(ctx context.Context) (*poolorderusermwpb.Pool
 		return handler.scan(_ctx)
 	})
 	if err != nil {
-		return nil, err
+		return nil, wlog.WrapError(err)
 	}
 	if len(handler.infos) == 0 {
 		return nil, nil
 	}
 	if len(handler.infos) > 1 {
-		return nil, fmt.Errorf("too many record")
+		return nil, wlog.Errorf("too many record")
 	}
 
 	return &handler.infos[0], nil
@@ -104,7 +104,7 @@ func (h *Handler) GetPoolOrderUsers(ctx context.Context) ([]poolorderusermwpb.Po
 		return handler.scan(_ctx)
 	})
 	if err != nil {
-		return nil, 0, err
+		return nil, 0, wlog.WrapError(err)
 	}
 
 	return handler.infos, handler.total, nil
