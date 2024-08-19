@@ -13,10 +13,6 @@ import (
 )
 
 func (s *Server) UpdateFeeOrder(ctx context.Context, in *npool.UpdateFeeOrderRequest) (*npool.UpdateFeeOrderResponse, error) {
-	logger.Sugar().Errorw(
-		"UpdateFeeOrder",
-		"In", in,
-	)
 	req := in.GetInfo()
 	if req == nil {
 		logger.Sugar().Errorw(

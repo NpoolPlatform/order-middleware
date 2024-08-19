@@ -654,7 +654,7 @@ func (h *Handler) UpdateFeeOrderWithTx(ctx context.Context, tx *ent.Tx) error {
 }
 
 func (h *Handler) UpdateFeeOrder(ctx context.Context) error {
-	return db.WithDebugTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {
+	return db.WithTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {
 		return h.UpdateFeeOrderWithTx(_ctx, tx)
 	})
 }
