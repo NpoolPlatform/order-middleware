@@ -164,6 +164,13 @@ func InvestmentType(v string) predicate.PowerRental {
 	})
 }
 
+// GoodStockMode applies equality check predicate on the "good_stock_mode" field. It's identical to GoodStockModeEQ.
+func GoodStockMode(v string) predicate.PowerRental {
+	return predicate.PowerRental(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldGoodStockMode), v))
+	})
+}
+
 // DurationSeconds applies equality check predicate on the "duration_seconds" field. It's identical to DurationSecondsEQ.
 func DurationSeconds(v uint32) predicate.PowerRental {
 	return predicate.PowerRental(func(s *sql.Selector) {
@@ -1083,6 +1090,119 @@ func InvestmentTypeEqualFold(v string) predicate.PowerRental {
 func InvestmentTypeContainsFold(v string) predicate.PowerRental {
 	return predicate.PowerRental(func(s *sql.Selector) {
 		s.Where(sql.ContainsFold(s.C(FieldInvestmentType), v))
+	})
+}
+
+// GoodStockModeEQ applies the EQ predicate on the "good_stock_mode" field.
+func GoodStockModeEQ(v string) predicate.PowerRental {
+	return predicate.PowerRental(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldGoodStockMode), v))
+	})
+}
+
+// GoodStockModeNEQ applies the NEQ predicate on the "good_stock_mode" field.
+func GoodStockModeNEQ(v string) predicate.PowerRental {
+	return predicate.PowerRental(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldGoodStockMode), v))
+	})
+}
+
+// GoodStockModeIn applies the In predicate on the "good_stock_mode" field.
+func GoodStockModeIn(vs ...string) predicate.PowerRental {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.PowerRental(func(s *sql.Selector) {
+		s.Where(sql.In(s.C(FieldGoodStockMode), v...))
+	})
+}
+
+// GoodStockModeNotIn applies the NotIn predicate on the "good_stock_mode" field.
+func GoodStockModeNotIn(vs ...string) predicate.PowerRental {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.PowerRental(func(s *sql.Selector) {
+		s.Where(sql.NotIn(s.C(FieldGoodStockMode), v...))
+	})
+}
+
+// GoodStockModeGT applies the GT predicate on the "good_stock_mode" field.
+func GoodStockModeGT(v string) predicate.PowerRental {
+	return predicate.PowerRental(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldGoodStockMode), v))
+	})
+}
+
+// GoodStockModeGTE applies the GTE predicate on the "good_stock_mode" field.
+func GoodStockModeGTE(v string) predicate.PowerRental {
+	return predicate.PowerRental(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldGoodStockMode), v))
+	})
+}
+
+// GoodStockModeLT applies the LT predicate on the "good_stock_mode" field.
+func GoodStockModeLT(v string) predicate.PowerRental {
+	return predicate.PowerRental(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldGoodStockMode), v))
+	})
+}
+
+// GoodStockModeLTE applies the LTE predicate on the "good_stock_mode" field.
+func GoodStockModeLTE(v string) predicate.PowerRental {
+	return predicate.PowerRental(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldGoodStockMode), v))
+	})
+}
+
+// GoodStockModeContains applies the Contains predicate on the "good_stock_mode" field.
+func GoodStockModeContains(v string) predicate.PowerRental {
+	return predicate.PowerRental(func(s *sql.Selector) {
+		s.Where(sql.Contains(s.C(FieldGoodStockMode), v))
+	})
+}
+
+// GoodStockModeHasPrefix applies the HasPrefix predicate on the "good_stock_mode" field.
+func GoodStockModeHasPrefix(v string) predicate.PowerRental {
+	return predicate.PowerRental(func(s *sql.Selector) {
+		s.Where(sql.HasPrefix(s.C(FieldGoodStockMode), v))
+	})
+}
+
+// GoodStockModeHasSuffix applies the HasSuffix predicate on the "good_stock_mode" field.
+func GoodStockModeHasSuffix(v string) predicate.PowerRental {
+	return predicate.PowerRental(func(s *sql.Selector) {
+		s.Where(sql.HasSuffix(s.C(FieldGoodStockMode), v))
+	})
+}
+
+// GoodStockModeIsNil applies the IsNil predicate on the "good_stock_mode" field.
+func GoodStockModeIsNil() predicate.PowerRental {
+	return predicate.PowerRental(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldGoodStockMode)))
+	})
+}
+
+// GoodStockModeNotNil applies the NotNil predicate on the "good_stock_mode" field.
+func GoodStockModeNotNil() predicate.PowerRental {
+	return predicate.PowerRental(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldGoodStockMode)))
+	})
+}
+
+// GoodStockModeEqualFold applies the EqualFold predicate on the "good_stock_mode" field.
+func GoodStockModeEqualFold(v string) predicate.PowerRental {
+	return predicate.PowerRental(func(s *sql.Selector) {
+		s.Where(sql.EqualFold(s.C(FieldGoodStockMode), v))
+	})
+}
+
+// GoodStockModeContainsFold applies the ContainsFold predicate on the "good_stock_mode" field.
+func GoodStockModeContainsFold(v string) predicate.PowerRental {
+	return predicate.PowerRental(func(s *sql.Selector) {
+		s.Where(sql.ContainsFold(s.C(FieldGoodStockMode), v))
 	})
 }
 

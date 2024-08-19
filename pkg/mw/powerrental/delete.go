@@ -8,6 +8,7 @@ import (
 	orderbasecrud "github.com/NpoolPlatform/order-middleware/pkg/crud/order/orderbase"
 	orderstatebasecrud "github.com/NpoolPlatform/order-middleware/pkg/crud/order/statebase"
 	powerrentalcrud "github.com/NpoolPlatform/order-middleware/pkg/crud/powerrental"
+	poolorderusercrud "github.com/NpoolPlatform/order-middleware/pkg/crud/powerrental/poolorderuser"
 	powerrentalstatecrud "github.com/NpoolPlatform/order-middleware/pkg/crud/powerrental/state"
 	"github.com/NpoolPlatform/order-middleware/pkg/db"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent"
@@ -58,6 +59,16 @@ func (h *deleteHandler) deletePowerRentalState(ctx context.Context, tx *ent.Tx) 
 	return wlog.WrapError(err)
 }
 
+func (h *deleteHandler) deletePoolOrderUser(ctx context.Context, tx *ent.Tx) error {
+	_, err := poolorderusercrud.UpdateSet(
+		tx.PoolOrderUser.UpdateOneID(h._ent.PoolOrderUserRecordID()),
+		&poolorderusercrud.Req{
+			DeletedAt: &h.now,
+		},
+	).Save(ctx)
+	return wlog.WrapError(err)
+}
+
 func (h *Handler) DeletePowerRentalWithTx(ctx context.Context, tx *ent.Tx) error {
 	handler := &deleteHandler{
 		powerRentalQueryHandler: &powerRentalQueryHandler{
@@ -77,6 +88,9 @@ func (h *Handler) DeletePowerRentalWithTx(ctx context.Context, tx *ent.Tx) error
 		return wlog.WrapError(err)
 	}
 	if err := handler.deleteOrderStateBase(ctx, tx); err != nil {
+		return wlog.WrapError(err)
+	}
+	if err := handler.deletePoolOrderUser(ctx, tx); err != nil {
 		return wlog.WrapError(err)
 	}
 	if err := handler.deletePowerRental(ctx, tx); err != nil {

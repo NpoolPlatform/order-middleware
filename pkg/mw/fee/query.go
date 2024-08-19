@@ -393,7 +393,7 @@ func (h *Handler) GetFeeOrders(ctx context.Context) ([]*npool.FeeOrder, uint32, 
 		return handler.queryOrderCoupons(_ctx, cli)
 	})
 	if err != nil {
-		return nil, 0, err
+		return nil, 0, wlog.WrapError(err)
 	}
 
 	handler.formalize()

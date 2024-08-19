@@ -26,7 +26,7 @@ func (h *Handler) CountOrders(ctx context.Context) (count uint32, err error) {
 		return nil
 	})
 	if err != nil {
-		return 0, err
+		return 0, wlog.WrapError(err)
 	}
 	return count, nil
 }

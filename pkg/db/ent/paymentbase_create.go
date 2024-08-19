@@ -348,7 +348,6 @@ func (pbc *PaymentBaseCreate) createSpec() (*PaymentBase, *sqlgraph.CreateSpec) 
 //			SetCreatedAt(v+v).
 //		}).
 //		Exec(ctx)
-//
 func (pbc *PaymentBaseCreate) OnConflict(opts ...sql.ConflictOption) *PaymentBaseUpsertOne {
 	pbc.conflict = opts
 	return &PaymentBaseUpsertOne{
@@ -362,7 +361,6 @@ func (pbc *PaymentBaseCreate) OnConflict(opts ...sql.ConflictOption) *PaymentBas
 //	client.PaymentBase.Create().
 //		OnConflict(sql.ConflictColumns(columns...)).
 //		Exec(ctx)
-//
 func (pbc *PaymentBaseCreate) OnConflictColumns(columns ...string) *PaymentBaseUpsertOne {
 	pbc.conflict = append(pbc.conflict, sql.ConflictColumns(columns...))
 	return &PaymentBaseUpsertOne{
@@ -496,7 +494,6 @@ func (u *PaymentBaseUpsert) ClearObseleteState() *PaymentBaseUpsert {
 //			}),
 //		).
 //		Exec(ctx)
-//
 func (u *PaymentBaseUpsertOne) UpdateNewValues() *PaymentBaseUpsertOne {
 	u.create.conflict = append(u.create.conflict, sql.ResolveWithNewValues())
 	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(s *sql.UpdateSet) {
@@ -510,10 +507,9 @@ func (u *PaymentBaseUpsertOne) UpdateNewValues() *PaymentBaseUpsertOne {
 // Ignore sets each column to itself in case of conflict.
 // Using this option is equivalent to using:
 //
-//  client.PaymentBase.Create().
-//      OnConflict(sql.ResolveWithIgnore()).
-//      Exec(ctx)
-//
+//	client.PaymentBase.Create().
+//	    OnConflict(sql.ResolveWithIgnore()).
+//	    Exec(ctx)
 func (u *PaymentBaseUpsertOne) Ignore() *PaymentBaseUpsertOne {
 	u.create.conflict = append(u.create.conflict, sql.ResolveWithIgnore())
 	return u
@@ -788,7 +784,6 @@ func (pbcb *PaymentBaseCreateBulk) ExecX(ctx context.Context) {
 //			SetCreatedAt(v+v).
 //		}).
 //		Exec(ctx)
-//
 func (pbcb *PaymentBaseCreateBulk) OnConflict(opts ...sql.ConflictOption) *PaymentBaseUpsertBulk {
 	pbcb.conflict = opts
 	return &PaymentBaseUpsertBulk{
@@ -802,7 +797,6 @@ func (pbcb *PaymentBaseCreateBulk) OnConflict(opts ...sql.ConflictOption) *Payme
 //	client.PaymentBase.Create().
 //		OnConflict(sql.ConflictColumns(columns...)).
 //		Exec(ctx)
-//
 func (pbcb *PaymentBaseCreateBulk) OnConflictColumns(columns ...string) *PaymentBaseUpsertBulk {
 	pbcb.conflict = append(pbcb.conflict, sql.ConflictColumns(columns...))
 	return &PaymentBaseUpsertBulk{
@@ -827,7 +821,6 @@ type PaymentBaseUpsertBulk struct {
 //			}),
 //		).
 //		Exec(ctx)
-//
 func (u *PaymentBaseUpsertBulk) UpdateNewValues() *PaymentBaseUpsertBulk {
 	u.create.conflict = append(u.create.conflict, sql.ResolveWithNewValues())
 	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(s *sql.UpdateSet) {
@@ -847,7 +840,6 @@ func (u *PaymentBaseUpsertBulk) UpdateNewValues() *PaymentBaseUpsertBulk {
 //	client.PaymentBase.Create().
 //		OnConflict(sql.ResolveWithIgnore()).
 //		Exec(ctx)
-//
 func (u *PaymentBaseUpsertBulk) Ignore() *PaymentBaseUpsertBulk {
 	u.create.conflict = append(u.create.conflict, sql.ResolveWithIgnore())
 	return u

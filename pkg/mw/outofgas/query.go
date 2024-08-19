@@ -105,7 +105,7 @@ func (h *Handler) GetOutOfGases(ctx context.Context) ([]*npool.OutOfGas, uint32,
 		return handler.scan(_ctx)
 	})
 	if err != nil {
-		return nil, 0, err
+		return nil, 0, wlog.WrapError(err)
 	}
 
 	handler.formalize()

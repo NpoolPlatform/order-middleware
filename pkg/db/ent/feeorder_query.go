@@ -264,7 +264,6 @@ func (foq *FeeOrderQuery) Clone() *FeeOrderQuery {
 //		GroupBy(feeorder.FieldCreatedAt).
 //		Aggregate(ent.Count()).
 //		Scan(ctx, &v)
-//
 func (foq *FeeOrderQuery) GroupBy(field string, fields ...string) *FeeOrderGroupBy {
 	grbuild := &FeeOrderGroupBy{config: foq.config}
 	grbuild.fields = append([]string{field}, fields...)
@@ -291,7 +290,6 @@ func (foq *FeeOrderQuery) GroupBy(field string, fields ...string) *FeeOrderGroup
 //	client.FeeOrder.Query().
 //		Select(feeorder.FieldCreatedAt).
 //		Scan(ctx, &v)
-//
 func (foq *FeeOrderQuery) Select(fields ...string) *FeeOrderSelect {
 	foq.fields = append(foq.fields, fields...)
 	selbuild := &FeeOrderSelect{FeeOrderQuery: foq}

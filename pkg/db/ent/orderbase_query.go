@@ -264,7 +264,6 @@ func (obq *OrderBaseQuery) Clone() *OrderBaseQuery {
 //		GroupBy(orderbase.FieldCreatedAt).
 //		Aggregate(ent.Count()).
 //		Scan(ctx, &v)
-//
 func (obq *OrderBaseQuery) GroupBy(field string, fields ...string) *OrderBaseGroupBy {
 	grbuild := &OrderBaseGroupBy{config: obq.config}
 	grbuild.fields = append([]string{field}, fields...)
@@ -291,7 +290,6 @@ func (obq *OrderBaseQuery) GroupBy(field string, fields ...string) *OrderBaseGro
 //	client.OrderBase.Query().
 //		Select(orderbase.FieldCreatedAt).
 //		Scan(ctx, &v)
-//
 func (obq *OrderBaseQuery) Select(fields ...string) *OrderBaseSelect {
 	obq.fields = append(obq.fields, fields...)
 	selbuild := &OrderBaseSelect{OrderBaseQuery: obq}

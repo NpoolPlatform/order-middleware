@@ -374,7 +374,6 @@ func (oogc *OutOfGasCreate) createSpec() (*OutOfGas, *sqlgraph.CreateSpec) {
 //			SetCreatedAt(v+v).
 //		}).
 //		Exec(ctx)
-//
 func (oogc *OutOfGasCreate) OnConflict(opts ...sql.ConflictOption) *OutOfGasUpsertOne {
 	oogc.conflict = opts
 	return &OutOfGasUpsertOne{
@@ -388,7 +387,6 @@ func (oogc *OutOfGasCreate) OnConflict(opts ...sql.ConflictOption) *OutOfGasUpse
 //	client.OutOfGas.Create().
 //		OnConflict(sql.ConflictColumns(columns...)).
 //		Exec(ctx)
-//
 func (oogc *OutOfGasCreate) OnConflictColumns(columns ...string) *OutOfGasUpsertOne {
 	oogc.conflict = append(oogc.conflict, sql.ConflictColumns(columns...))
 	return &OutOfGasUpsertOne{
@@ -552,7 +550,6 @@ func (u *OutOfGasUpsert) ClearEndAt() *OutOfGasUpsert {
 //			}),
 //		).
 //		Exec(ctx)
-//
 func (u *OutOfGasUpsertOne) UpdateNewValues() *OutOfGasUpsertOne {
 	u.create.conflict = append(u.create.conflict, sql.ResolveWithNewValues())
 	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(s *sql.UpdateSet) {
@@ -566,10 +563,9 @@ func (u *OutOfGasUpsertOne) UpdateNewValues() *OutOfGasUpsertOne {
 // Ignore sets each column to itself in case of conflict.
 // Using this option is equivalent to using:
 //
-//  client.OutOfGas.Create().
-//      OnConflict(sql.ResolveWithIgnore()).
-//      Exec(ctx)
-//
+//	client.OutOfGas.Create().
+//	    OnConflict(sql.ResolveWithIgnore()).
+//	    Exec(ctx)
 func (u *OutOfGasUpsertOne) Ignore() *OutOfGasUpsertOne {
 	u.create.conflict = append(u.create.conflict, sql.ResolveWithIgnore())
 	return u
@@ -879,7 +875,6 @@ func (oogcb *OutOfGasCreateBulk) ExecX(ctx context.Context) {
 //			SetCreatedAt(v+v).
 //		}).
 //		Exec(ctx)
-//
 func (oogcb *OutOfGasCreateBulk) OnConflict(opts ...sql.ConflictOption) *OutOfGasUpsertBulk {
 	oogcb.conflict = opts
 	return &OutOfGasUpsertBulk{
@@ -893,7 +888,6 @@ func (oogcb *OutOfGasCreateBulk) OnConflict(opts ...sql.ConflictOption) *OutOfGa
 //	client.OutOfGas.Create().
 //		OnConflict(sql.ConflictColumns(columns...)).
 //		Exec(ctx)
-//
 func (oogcb *OutOfGasCreateBulk) OnConflictColumns(columns ...string) *OutOfGasUpsertBulk {
 	oogcb.conflict = append(oogcb.conflict, sql.ConflictColumns(columns...))
 	return &OutOfGasUpsertBulk{
@@ -918,7 +912,6 @@ type OutOfGasUpsertBulk struct {
 //			}),
 //		).
 //		Exec(ctx)
-//
 func (u *OutOfGasUpsertBulk) UpdateNewValues() *OutOfGasUpsertBulk {
 	u.create.conflict = append(u.create.conflict, sql.ResolveWithNewValues())
 	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(s *sql.UpdateSet) {
@@ -938,7 +931,6 @@ func (u *OutOfGasUpsertBulk) UpdateNewValues() *OutOfGasUpsertBulk {
 //	client.OutOfGas.Create().
 //		OnConflict(sql.ResolveWithIgnore()).
 //		Exec(ctx)
-//
 func (u *OutOfGasUpsertBulk) Ignore() *OutOfGasUpsertBulk {
 	u.create.conflict = append(u.create.conflict, sql.ResolveWithIgnore())
 	return u

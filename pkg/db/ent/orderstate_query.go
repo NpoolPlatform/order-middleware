@@ -264,7 +264,6 @@ func (osq *OrderStateQuery) Clone() *OrderStateQuery {
 //		GroupBy(orderstate.FieldCreatedAt).
 //		Aggregate(ent.Count()).
 //		Scan(ctx, &v)
-//
 func (osq *OrderStateQuery) GroupBy(field string, fields ...string) *OrderStateGroupBy {
 	grbuild := &OrderStateGroupBy{config: osq.config}
 	grbuild.fields = append([]string{field}, fields...)
@@ -291,7 +290,6 @@ func (osq *OrderStateQuery) GroupBy(field string, fields ...string) *OrderStateG
 //	client.OrderState.Query().
 //		Select(orderstate.FieldCreatedAt).
 //		Scan(ctx, &v)
-//
 func (osq *OrderStateQuery) Select(fields ...string) *OrderStateSelect {
 	osq.fields = append(osq.fields, fields...)
 	selbuild := &OrderStateSelect{OrderStateQuery: osq}

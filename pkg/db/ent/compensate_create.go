@@ -403,7 +403,6 @@ func (cc *CompensateCreate) createSpec() (*Compensate, *sqlgraph.CreateSpec) {
 //			SetCreatedAt(v+v).
 //		}).
 //		Exec(ctx)
-//
 func (cc *CompensateCreate) OnConflict(opts ...sql.ConflictOption) *CompensateUpsertOne {
 	cc.conflict = opts
 	return &CompensateUpsertOne{
@@ -417,7 +416,6 @@ func (cc *CompensateCreate) OnConflict(opts ...sql.ConflictOption) *CompensateUp
 //	client.Compensate.Create().
 //		OnConflict(sql.ConflictColumns(columns...)).
 //		Exec(ctx)
-//
 func (cc *CompensateCreate) OnConflictColumns(columns ...string) *CompensateUpsertOne {
 	cc.conflict = append(cc.conflict, sql.ConflictColumns(columns...))
 	return &CompensateUpsertOne{
@@ -593,7 +591,6 @@ func (u *CompensateUpsert) ClearCompensateSeconds() *CompensateUpsert {
 //			}),
 //		).
 //		Exec(ctx)
-//
 func (u *CompensateUpsertOne) UpdateNewValues() *CompensateUpsertOne {
 	u.create.conflict = append(u.create.conflict, sql.ResolveWithNewValues())
 	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(s *sql.UpdateSet) {
@@ -607,10 +604,9 @@ func (u *CompensateUpsertOne) UpdateNewValues() *CompensateUpsertOne {
 // Ignore sets each column to itself in case of conflict.
 // Using this option is equivalent to using:
 //
-//  client.Compensate.Create().
-//      OnConflict(sql.ResolveWithIgnore()).
-//      Exec(ctx)
-//
+//	client.Compensate.Create().
+//	    OnConflict(sql.ResolveWithIgnore()).
+//	    Exec(ctx)
 func (u *CompensateUpsertOne) Ignore() *CompensateUpsertOne {
 	u.create.conflict = append(u.create.conflict, sql.ResolveWithIgnore())
 	return u
@@ -934,7 +930,6 @@ func (ccb *CompensateCreateBulk) ExecX(ctx context.Context) {
 //			SetCreatedAt(v+v).
 //		}).
 //		Exec(ctx)
-//
 func (ccb *CompensateCreateBulk) OnConflict(opts ...sql.ConflictOption) *CompensateUpsertBulk {
 	ccb.conflict = opts
 	return &CompensateUpsertBulk{
@@ -948,7 +943,6 @@ func (ccb *CompensateCreateBulk) OnConflict(opts ...sql.ConflictOption) *Compens
 //	client.Compensate.Create().
 //		OnConflict(sql.ConflictColumns(columns...)).
 //		Exec(ctx)
-//
 func (ccb *CompensateCreateBulk) OnConflictColumns(columns ...string) *CompensateUpsertBulk {
 	ccb.conflict = append(ccb.conflict, sql.ConflictColumns(columns...))
 	return &CompensateUpsertBulk{
@@ -973,7 +967,6 @@ type CompensateUpsertBulk struct {
 //			}),
 //		).
 //		Exec(ctx)
-//
 func (u *CompensateUpsertBulk) UpdateNewValues() *CompensateUpsertBulk {
 	u.create.conflict = append(u.create.conflict, sql.ResolveWithNewValues())
 	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(s *sql.UpdateSet) {
@@ -993,7 +986,6 @@ func (u *CompensateUpsertBulk) UpdateNewValues() *CompensateUpsertBulk {
 //	client.Compensate.Create().
 //		OnConflict(sql.ResolveWithIgnore()).
 //		Exec(ctx)
-//
 func (u *CompensateUpsertBulk) Ignore() *CompensateUpsertBulk {
 	u.create.conflict = append(u.create.conflict, sql.ResolveWithIgnore())
 	return u

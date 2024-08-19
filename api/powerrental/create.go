@@ -43,6 +43,7 @@ func (s *Server) CreatePowerRentalOrder(ctx context.Context, in *npool.CreatePow
 		powerrental1.WithPromotionID(req.PromotionID, false),
 		powerrental1.WithDurationSeconds(req.DurationSeconds, true),
 		powerrental1.WithInvestmentType(req.InvestmentType, false),
+		powerrental1.WithGoodStockMode(req.GoodStockMode, true),
 
 		powerrental1.WithStartMode(req.StartMode, true),
 		powerrental1.WithStartAt(req.StartAt, true),

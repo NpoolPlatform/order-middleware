@@ -45,6 +45,7 @@ type hooks struct {
 	PaymentBase        []ent.Hook
 	PaymentContract    []ent.Hook
 	PaymentTransfer    []ent.Hook
+	PoolOrderUser      []ent.Hook
 	PowerRental        []ent.Hook
 	PowerRentalState   []ent.Hook
 }

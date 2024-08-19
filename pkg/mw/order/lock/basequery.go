@@ -40,7 +40,7 @@ func (h *baseQueryHandler) queryOrderLock(cli *ent.Client) error {
 func (h *baseQueryHandler) queryOrderLocks(cli *ent.Client) (*ent.OrderLockSelect, error) {
 	stm, err := orderlockcrud.SetQueryConds(cli.OrderLock.Query(), h.OrderLockConds)
 	if err != nil {
-		return nil, err
+		return nil, wlog.WrapError(err)
 	}
 	return h.selectOrderLock(stm), nil
 }

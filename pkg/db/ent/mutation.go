@@ -25,6 +25,7 @@ import (
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/paymentbase"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/paymentcontract"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/paymenttransfer"
+	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/poolorderuser"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/powerrental"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/powerrentalstate"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/predicate"
@@ -60,6 +61,7 @@ const (
 	TypePaymentBase        = "PaymentBase"
 	TypePaymentContract    = "PaymentContract"
 	TypePaymentTransfer    = "PaymentTransfer"
+	TypePoolOrderUser      = "PoolOrderUser"
 	TypePowerRental        = "PowerRental"
 	TypePowerRentalState   = "PowerRentalState"
 )
@@ -19593,6 +19595,695 @@ func (m *PaymentTransferMutation) ResetEdge(name string) error {
 	return fmt.Errorf("unknown PaymentTransfer edge %s", name)
 }
 
+// PoolOrderUserMutation represents an operation that mutates the PoolOrderUser nodes in the graph.
+type PoolOrderUserMutation struct {
+	config
+	op                 Op
+	typ                string
+	id                 *uint32
+	created_at         *uint32
+	addcreated_at      *int32
+	updated_at         *uint32
+	addupdated_at      *int32
+	deleted_at         *uint32
+	adddeleted_at      *int32
+	ent_id             *uuid.UUID
+	order_id           *uuid.UUID
+	pool_order_user_id *uuid.UUID
+	clearedFields      map[string]struct{}
+	done               bool
+	oldValue           func(context.Context) (*PoolOrderUser, error)
+	predicates         []predicate.PoolOrderUser
+}
+
+var _ ent.Mutation = (*PoolOrderUserMutation)(nil)
+
+// poolorderuserOption allows management of the mutation configuration using functional options.
+type poolorderuserOption func(*PoolOrderUserMutation)
+
+// newPoolOrderUserMutation creates new mutation for the PoolOrderUser entity.
+func newPoolOrderUserMutation(c config, op Op, opts ...poolorderuserOption) *PoolOrderUserMutation {
+	m := &PoolOrderUserMutation{
+		config:        c,
+		op:            op,
+		typ:           TypePoolOrderUser,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withPoolOrderUserID sets the ID field of the mutation.
+func withPoolOrderUserID(id uint32) poolorderuserOption {
+	return func(m *PoolOrderUserMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *PoolOrderUser
+		)
+		m.oldValue = func(ctx context.Context) (*PoolOrderUser, error) {
+			once.Do(func() {
+				if m.done {
+					err = errors.New("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().PoolOrderUser.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withPoolOrderUser sets the old PoolOrderUser of the mutation.
+func withPoolOrderUser(node *PoolOrderUser) poolorderuserOption {
+	return func(m *PoolOrderUserMutation) {
+		m.oldValue = func(context.Context) (*PoolOrderUser, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m PoolOrderUserMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m PoolOrderUserMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, errors.New("ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// SetID sets the value of the id field. Note that this
+// operation is only accepted on creation of PoolOrderUser entities.
+func (m *PoolOrderUserMutation) SetID(id uint32) {
+	m.id = &id
+}
+
+// ID returns the ID value in the mutation. Note that the ID is only available
+// if it was provided to the builder or after it was returned from the database.
+func (m *PoolOrderUserMutation) ID() (id uint32, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// IDs queries the database and returns the entity ids that match the mutation's predicate.
+// That means, if the mutation is applied within a transaction with an isolation level such
+// as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
+// or updated by the mutation.
+func (m *PoolOrderUserMutation) IDs(ctx context.Context) ([]uint32, error) {
+	switch {
+	case m.op.Is(OpUpdateOne | OpDeleteOne):
+		id, exists := m.ID()
+		if exists {
+			return []uint32{id}, nil
+		}
+		fallthrough
+	case m.op.Is(OpUpdate | OpDelete):
+		return m.Client().PoolOrderUser.Query().Where(m.predicates...).IDs(ctx)
+	default:
+		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
+	}
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (m *PoolOrderUserMutation) SetCreatedAt(u uint32) {
+	m.created_at = &u
+	m.addcreated_at = nil
+}
+
+// CreatedAt returns the value of the "created_at" field in the mutation.
+func (m *PoolOrderUserMutation) CreatedAt() (r uint32, exists bool) {
+	v := m.created_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedAt returns the old "created_at" field's value of the PoolOrderUser entity.
+// If the PoolOrderUser object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PoolOrderUserMutation) OldCreatedAt(ctx context.Context) (v uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedAt: %w", err)
+	}
+	return oldValue.CreatedAt, nil
+}
+
+// AddCreatedAt adds u to the "created_at" field.
+func (m *PoolOrderUserMutation) AddCreatedAt(u int32) {
+	if m.addcreated_at != nil {
+		*m.addcreated_at += u
+	} else {
+		m.addcreated_at = &u
+	}
+}
+
+// AddedCreatedAt returns the value that was added to the "created_at" field in this mutation.
+func (m *PoolOrderUserMutation) AddedCreatedAt() (r int32, exists bool) {
+	v := m.addcreated_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetCreatedAt resets all changes to the "created_at" field.
+func (m *PoolOrderUserMutation) ResetCreatedAt() {
+	m.created_at = nil
+	m.addcreated_at = nil
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (m *PoolOrderUserMutation) SetUpdatedAt(u uint32) {
+	m.updated_at = &u
+	m.addupdated_at = nil
+}
+
+// UpdatedAt returns the value of the "updated_at" field in the mutation.
+func (m *PoolOrderUserMutation) UpdatedAt() (r uint32, exists bool) {
+	v := m.updated_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedAt returns the old "updated_at" field's value of the PoolOrderUser entity.
+// If the PoolOrderUser object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PoolOrderUserMutation) OldUpdatedAt(ctx context.Context) (v uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedAt: %w", err)
+	}
+	return oldValue.UpdatedAt, nil
+}
+
+// AddUpdatedAt adds u to the "updated_at" field.
+func (m *PoolOrderUserMutation) AddUpdatedAt(u int32) {
+	if m.addupdated_at != nil {
+		*m.addupdated_at += u
+	} else {
+		m.addupdated_at = &u
+	}
+}
+
+// AddedUpdatedAt returns the value that was added to the "updated_at" field in this mutation.
+func (m *PoolOrderUserMutation) AddedUpdatedAt() (r int32, exists bool) {
+	v := m.addupdated_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetUpdatedAt resets all changes to the "updated_at" field.
+func (m *PoolOrderUserMutation) ResetUpdatedAt() {
+	m.updated_at = nil
+	m.addupdated_at = nil
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (m *PoolOrderUserMutation) SetDeletedAt(u uint32) {
+	m.deleted_at = &u
+	m.adddeleted_at = nil
+}
+
+// DeletedAt returns the value of the "deleted_at" field in the mutation.
+func (m *PoolOrderUserMutation) DeletedAt() (r uint32, exists bool) {
+	v := m.deleted_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDeletedAt returns the old "deleted_at" field's value of the PoolOrderUser entity.
+// If the PoolOrderUser object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PoolOrderUserMutation) OldDeletedAt(ctx context.Context) (v uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDeletedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDeletedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDeletedAt: %w", err)
+	}
+	return oldValue.DeletedAt, nil
+}
+
+// AddDeletedAt adds u to the "deleted_at" field.
+func (m *PoolOrderUserMutation) AddDeletedAt(u int32) {
+	if m.adddeleted_at != nil {
+		*m.adddeleted_at += u
+	} else {
+		m.adddeleted_at = &u
+	}
+}
+
+// AddedDeletedAt returns the value that was added to the "deleted_at" field in this mutation.
+func (m *PoolOrderUserMutation) AddedDeletedAt() (r int32, exists bool) {
+	v := m.adddeleted_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetDeletedAt resets all changes to the "deleted_at" field.
+func (m *PoolOrderUserMutation) ResetDeletedAt() {
+	m.deleted_at = nil
+	m.adddeleted_at = nil
+}
+
+// SetEntID sets the "ent_id" field.
+func (m *PoolOrderUserMutation) SetEntID(u uuid.UUID) {
+	m.ent_id = &u
+}
+
+// EntID returns the value of the "ent_id" field in the mutation.
+func (m *PoolOrderUserMutation) EntID() (r uuid.UUID, exists bool) {
+	v := m.ent_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldEntID returns the old "ent_id" field's value of the PoolOrderUser entity.
+// If the PoolOrderUser object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PoolOrderUserMutation) OldEntID(ctx context.Context) (v uuid.UUID, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldEntID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldEntID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldEntID: %w", err)
+	}
+	return oldValue.EntID, nil
+}
+
+// ResetEntID resets all changes to the "ent_id" field.
+func (m *PoolOrderUserMutation) ResetEntID() {
+	m.ent_id = nil
+}
+
+// SetOrderID sets the "order_id" field.
+func (m *PoolOrderUserMutation) SetOrderID(u uuid.UUID) {
+	m.order_id = &u
+}
+
+// OrderID returns the value of the "order_id" field in the mutation.
+func (m *PoolOrderUserMutation) OrderID() (r uuid.UUID, exists bool) {
+	v := m.order_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldOrderID returns the old "order_id" field's value of the PoolOrderUser entity.
+// If the PoolOrderUser object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PoolOrderUserMutation) OldOrderID(ctx context.Context) (v uuid.UUID, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldOrderID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldOrderID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldOrderID: %w", err)
+	}
+	return oldValue.OrderID, nil
+}
+
+// ResetOrderID resets all changes to the "order_id" field.
+func (m *PoolOrderUserMutation) ResetOrderID() {
+	m.order_id = nil
+}
+
+// SetPoolOrderUserID sets the "pool_order_user_id" field.
+func (m *PoolOrderUserMutation) SetPoolOrderUserID(u uuid.UUID) {
+	m.pool_order_user_id = &u
+}
+
+// PoolOrderUserID returns the value of the "pool_order_user_id" field in the mutation.
+func (m *PoolOrderUserMutation) PoolOrderUserID() (r uuid.UUID, exists bool) {
+	v := m.pool_order_user_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldPoolOrderUserID returns the old "pool_order_user_id" field's value of the PoolOrderUser entity.
+// If the PoolOrderUser object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PoolOrderUserMutation) OldPoolOrderUserID(ctx context.Context) (v uuid.UUID, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldPoolOrderUserID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldPoolOrderUserID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldPoolOrderUserID: %w", err)
+	}
+	return oldValue.PoolOrderUserID, nil
+}
+
+// ResetPoolOrderUserID resets all changes to the "pool_order_user_id" field.
+func (m *PoolOrderUserMutation) ResetPoolOrderUserID() {
+	m.pool_order_user_id = nil
+}
+
+// Where appends a list predicates to the PoolOrderUserMutation builder.
+func (m *PoolOrderUserMutation) Where(ps ...predicate.PoolOrderUser) {
+	m.predicates = append(m.predicates, ps...)
+}
+
+// Op returns the operation name.
+func (m *PoolOrderUserMutation) Op() Op {
+	return m.op
+}
+
+// Type returns the node type of this mutation (PoolOrderUser).
+func (m *PoolOrderUserMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *PoolOrderUserMutation) Fields() []string {
+	fields := make([]string, 0, 6)
+	if m.created_at != nil {
+		fields = append(fields, poolorderuser.FieldCreatedAt)
+	}
+	if m.updated_at != nil {
+		fields = append(fields, poolorderuser.FieldUpdatedAt)
+	}
+	if m.deleted_at != nil {
+		fields = append(fields, poolorderuser.FieldDeletedAt)
+	}
+	if m.ent_id != nil {
+		fields = append(fields, poolorderuser.FieldEntID)
+	}
+	if m.order_id != nil {
+		fields = append(fields, poolorderuser.FieldOrderID)
+	}
+	if m.pool_order_user_id != nil {
+		fields = append(fields, poolorderuser.FieldPoolOrderUserID)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *PoolOrderUserMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case poolorderuser.FieldCreatedAt:
+		return m.CreatedAt()
+	case poolorderuser.FieldUpdatedAt:
+		return m.UpdatedAt()
+	case poolorderuser.FieldDeletedAt:
+		return m.DeletedAt()
+	case poolorderuser.FieldEntID:
+		return m.EntID()
+	case poolorderuser.FieldOrderID:
+		return m.OrderID()
+	case poolorderuser.FieldPoolOrderUserID:
+		return m.PoolOrderUserID()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *PoolOrderUserMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case poolorderuser.FieldCreatedAt:
+		return m.OldCreatedAt(ctx)
+	case poolorderuser.FieldUpdatedAt:
+		return m.OldUpdatedAt(ctx)
+	case poolorderuser.FieldDeletedAt:
+		return m.OldDeletedAt(ctx)
+	case poolorderuser.FieldEntID:
+		return m.OldEntID(ctx)
+	case poolorderuser.FieldOrderID:
+		return m.OldOrderID(ctx)
+	case poolorderuser.FieldPoolOrderUserID:
+		return m.OldPoolOrderUserID(ctx)
+	}
+	return nil, fmt.Errorf("unknown PoolOrderUser field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *PoolOrderUserMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case poolorderuser.FieldCreatedAt:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedAt(v)
+		return nil
+	case poolorderuser.FieldUpdatedAt:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedAt(v)
+		return nil
+	case poolorderuser.FieldDeletedAt:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDeletedAt(v)
+		return nil
+	case poolorderuser.FieldEntID:
+		v, ok := value.(uuid.UUID)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetEntID(v)
+		return nil
+	case poolorderuser.FieldOrderID:
+		v, ok := value.(uuid.UUID)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetOrderID(v)
+		return nil
+	case poolorderuser.FieldPoolOrderUserID:
+		v, ok := value.(uuid.UUID)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetPoolOrderUserID(v)
+		return nil
+	}
+	return fmt.Errorf("unknown PoolOrderUser field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *PoolOrderUserMutation) AddedFields() []string {
+	var fields []string
+	if m.addcreated_at != nil {
+		fields = append(fields, poolorderuser.FieldCreatedAt)
+	}
+	if m.addupdated_at != nil {
+		fields = append(fields, poolorderuser.FieldUpdatedAt)
+	}
+	if m.adddeleted_at != nil {
+		fields = append(fields, poolorderuser.FieldDeletedAt)
+	}
+	return fields
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *PoolOrderUserMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	case poolorderuser.FieldCreatedAt:
+		return m.AddedCreatedAt()
+	case poolorderuser.FieldUpdatedAt:
+		return m.AddedUpdatedAt()
+	case poolorderuser.FieldDeletedAt:
+		return m.AddedDeletedAt()
+	}
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *PoolOrderUserMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	case poolorderuser.FieldCreatedAt:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddCreatedAt(v)
+		return nil
+	case poolorderuser.FieldUpdatedAt:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddUpdatedAt(v)
+		return nil
+	case poolorderuser.FieldDeletedAt:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddDeletedAt(v)
+		return nil
+	}
+	return fmt.Errorf("unknown PoolOrderUser numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *PoolOrderUserMutation) ClearedFields() []string {
+	return nil
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *PoolOrderUserMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *PoolOrderUserMutation) ClearField(name string) error {
+	return fmt.Errorf("unknown PoolOrderUser nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *PoolOrderUserMutation) ResetField(name string) error {
+	switch name {
+	case poolorderuser.FieldCreatedAt:
+		m.ResetCreatedAt()
+		return nil
+	case poolorderuser.FieldUpdatedAt:
+		m.ResetUpdatedAt()
+		return nil
+	case poolorderuser.FieldDeletedAt:
+		m.ResetDeletedAt()
+		return nil
+	case poolorderuser.FieldEntID:
+		m.ResetEntID()
+		return nil
+	case poolorderuser.FieldOrderID:
+		m.ResetOrderID()
+		return nil
+	case poolorderuser.FieldPoolOrderUserID:
+		m.ResetPoolOrderUserID()
+		return nil
+	}
+	return fmt.Errorf("unknown PoolOrderUser field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *PoolOrderUserMutation) AddedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *PoolOrderUserMutation) AddedIDs(name string) []ent.Value {
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *PoolOrderUserMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *PoolOrderUserMutation) RemovedIDs(name string) []ent.Value {
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *PoolOrderUserMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *PoolOrderUserMutation) EdgeCleared(name string) bool {
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *PoolOrderUserMutation) ClearEdge(name string) error {
+	return fmt.Errorf("unknown PoolOrderUser unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *PoolOrderUserMutation) ResetEdge(name string) error {
+	return fmt.Errorf("unknown PoolOrderUser edge %s", name)
+}
+
 // PowerRentalMutation represents an operation that mutates the PowerRental nodes in the graph.
 type PowerRentalMutation struct {
 	config
@@ -19614,6 +20305,7 @@ type PowerRentalMutation struct {
 	discount_amount_usd *decimal.Decimal
 	promotion_id        *uuid.UUID
 	investment_type     *string
+	good_stock_mode     *string
 	duration_seconds    *uint32
 	addduration_seconds *int32
 	clearedFields       map[string]struct{}
@@ -20322,6 +21014,55 @@ func (m *PowerRentalMutation) ResetInvestmentType() {
 	delete(m.clearedFields, powerrental.FieldInvestmentType)
 }
 
+// SetGoodStockMode sets the "good_stock_mode" field.
+func (m *PowerRentalMutation) SetGoodStockMode(s string) {
+	m.good_stock_mode = &s
+}
+
+// GoodStockMode returns the value of the "good_stock_mode" field in the mutation.
+func (m *PowerRentalMutation) GoodStockMode() (r string, exists bool) {
+	v := m.good_stock_mode
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldGoodStockMode returns the old "good_stock_mode" field's value of the PowerRental entity.
+// If the PowerRental object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PowerRentalMutation) OldGoodStockMode(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldGoodStockMode is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldGoodStockMode requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldGoodStockMode: %w", err)
+	}
+	return oldValue.GoodStockMode, nil
+}
+
+// ClearGoodStockMode clears the value of the "good_stock_mode" field.
+func (m *PowerRentalMutation) ClearGoodStockMode() {
+	m.good_stock_mode = nil
+	m.clearedFields[powerrental.FieldGoodStockMode] = struct{}{}
+}
+
+// GoodStockModeCleared returns if the "good_stock_mode" field was cleared in this mutation.
+func (m *PowerRentalMutation) GoodStockModeCleared() bool {
+	_, ok := m.clearedFields[powerrental.FieldGoodStockMode]
+	return ok
+}
+
+// ResetGoodStockMode resets all changes to the "good_stock_mode" field.
+func (m *PowerRentalMutation) ResetGoodStockMode() {
+	m.good_stock_mode = nil
+	delete(m.clearedFields, powerrental.FieldGoodStockMode)
+}
+
 // SetDurationSeconds sets the "duration_seconds" field.
 func (m *PowerRentalMutation) SetDurationSeconds(u uint32) {
 	m.duration_seconds = &u
@@ -20411,7 +21152,7 @@ func (m *PowerRentalMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *PowerRentalMutation) Fields() []string {
-	fields := make([]string, 0, 13)
+	fields := make([]string, 0, 14)
 	if m.created_at != nil {
 		fields = append(fields, powerrental.FieldCreatedAt)
 	}
@@ -20448,6 +21189,9 @@ func (m *PowerRentalMutation) Fields() []string {
 	if m.investment_type != nil {
 		fields = append(fields, powerrental.FieldInvestmentType)
 	}
+	if m.good_stock_mode != nil {
+		fields = append(fields, powerrental.FieldGoodStockMode)
+	}
 	if m.duration_seconds != nil {
 		fields = append(fields, powerrental.FieldDurationSeconds)
 	}
@@ -20483,6 +21227,8 @@ func (m *PowerRentalMutation) Field(name string) (ent.Value, bool) {
 		return m.PromotionID()
 	case powerrental.FieldInvestmentType:
 		return m.InvestmentType()
+	case powerrental.FieldGoodStockMode:
+		return m.GoodStockMode()
 	case powerrental.FieldDurationSeconds:
 		return m.DurationSeconds()
 	}
@@ -20518,6 +21264,8 @@ func (m *PowerRentalMutation) OldField(ctx context.Context, name string) (ent.Va
 		return m.OldPromotionID(ctx)
 	case powerrental.FieldInvestmentType:
 		return m.OldInvestmentType(ctx)
+	case powerrental.FieldGoodStockMode:
+		return m.OldGoodStockMode(ctx)
 	case powerrental.FieldDurationSeconds:
 		return m.OldDurationSeconds(ctx)
 	}
@@ -20612,6 +21360,13 @@ func (m *PowerRentalMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetInvestmentType(v)
+		return nil
+	case powerrental.FieldGoodStockMode:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetGoodStockMode(v)
 		return nil
 	case powerrental.FieldDurationSeconds:
 		v, ok := value.(uint32)
@@ -20725,6 +21480,9 @@ func (m *PowerRentalMutation) ClearedFields() []string {
 	if m.FieldCleared(powerrental.FieldInvestmentType) {
 		fields = append(fields, powerrental.FieldInvestmentType)
 	}
+	if m.FieldCleared(powerrental.FieldGoodStockMode) {
+		fields = append(fields, powerrental.FieldGoodStockMode)
+	}
 	if m.FieldCleared(powerrental.FieldDurationSeconds) {
 		fields = append(fields, powerrental.FieldDurationSeconds)
 	}
@@ -20765,6 +21523,9 @@ func (m *PowerRentalMutation) ClearField(name string) error {
 		return nil
 	case powerrental.FieldInvestmentType:
 		m.ClearInvestmentType()
+		return nil
+	case powerrental.FieldGoodStockMode:
+		m.ClearGoodStockMode()
 		return nil
 	case powerrental.FieldDurationSeconds:
 		m.ClearDurationSeconds()
@@ -20812,6 +21573,9 @@ func (m *PowerRentalMutation) ResetField(name string) error {
 		return nil
 	case powerrental.FieldInvestmentType:
 		m.ResetInvestmentType()
+		return nil
+	case powerrental.FieldGoodStockMode:
+		m.ResetGoodStockMode()
 		return nil
 	case powerrental.FieldDurationSeconds:
 		m.ResetDurationSeconds()

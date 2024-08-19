@@ -29,7 +29,7 @@ func (h *Handler) CountPowerRentals(ctx context.Context) (count uint32, err erro
 		return wlog.WrapError(err)
 	})
 	if err != nil {
-		return 0, err
+		return 0, wlog.WrapError(err)
 	}
 	return count, nil
 }

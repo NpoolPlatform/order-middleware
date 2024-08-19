@@ -6,6 +6,7 @@ import (
 	"entgo.io/ent/schema/field"
 	"entgo.io/ent/schema/index"
 	crudermixin "github.com/NpoolPlatform/libent-cruder/pkg/mixin"
+	goodtypes "github.com/NpoolPlatform/message/npool/basetypes/good/v1"
 	types "github.com/NpoolPlatform/message/npool/basetypes/order/v1"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/mixin"
 	"github.com/google/uuid"
@@ -78,6 +79,10 @@ func (PowerRental) Fields() []ent.Field {
 			String("investment_type").
 			Optional().
 			Default(types.InvestmentType_FullPayment.String()),
+		field.
+			String("good_stock_mode").
+			Optional().
+			Default(goodtypes.GoodStockMode_DefaultGoodStockMode.String()),
 		field.
 			Uint32("duration_seconds").
 			Optional().

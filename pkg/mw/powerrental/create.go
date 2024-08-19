@@ -201,6 +201,7 @@ func (h *createHandler) formalizeOrderID() {
 	h.OrderStateBaseReq.OrderID = h.OrderID
 	h.PowerRentalStateReq.OrderID = h.OrderID
 	h.PaymentBaseReq.OrderID = h.OrderID
+	h.PoolOrderUserReq.OrderID = h.OrderID
 }
 
 func (h *createHandler) formalizeOrderLocks() {

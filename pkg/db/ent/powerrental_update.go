@@ -259,6 +259,26 @@ func (pru *PowerRentalUpdate) ClearInvestmentType() *PowerRentalUpdate {
 	return pru
 }
 
+// SetGoodStockMode sets the "good_stock_mode" field.
+func (pru *PowerRentalUpdate) SetGoodStockMode(s string) *PowerRentalUpdate {
+	pru.mutation.SetGoodStockMode(s)
+	return pru
+}
+
+// SetNillableGoodStockMode sets the "good_stock_mode" field if the given value is not nil.
+func (pru *PowerRentalUpdate) SetNillableGoodStockMode(s *string) *PowerRentalUpdate {
+	if s != nil {
+		pru.SetGoodStockMode(*s)
+	}
+	return pru
+}
+
+// ClearGoodStockMode clears the value of the "good_stock_mode" field.
+func (pru *PowerRentalUpdate) ClearGoodStockMode() *PowerRentalUpdate {
+	pru.mutation.ClearGoodStockMode()
+	return pru
+}
+
 // SetDurationSeconds sets the "duration_seconds" field.
 func (pru *PowerRentalUpdate) SetDurationSeconds(u uint32) *PowerRentalUpdate {
 	pru.mutation.ResetDurationSeconds()
@@ -537,6 +557,19 @@ func (pru *PowerRentalUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: powerrental.FieldInvestmentType,
 		})
 	}
+	if value, ok := pru.mutation.GoodStockMode(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: powerrental.FieldGoodStockMode,
+		})
+	}
+	if pru.mutation.GoodStockModeCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Column: powerrental.FieldGoodStockMode,
+		})
+	}
 	if value, ok := pru.mutation.DurationSeconds(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeUint32,
@@ -804,6 +837,26 @@ func (pruo *PowerRentalUpdateOne) SetNillableInvestmentType(s *string) *PowerRen
 // ClearInvestmentType clears the value of the "investment_type" field.
 func (pruo *PowerRentalUpdateOne) ClearInvestmentType() *PowerRentalUpdateOne {
 	pruo.mutation.ClearInvestmentType()
+	return pruo
+}
+
+// SetGoodStockMode sets the "good_stock_mode" field.
+func (pruo *PowerRentalUpdateOne) SetGoodStockMode(s string) *PowerRentalUpdateOne {
+	pruo.mutation.SetGoodStockMode(s)
+	return pruo
+}
+
+// SetNillableGoodStockMode sets the "good_stock_mode" field if the given value is not nil.
+func (pruo *PowerRentalUpdateOne) SetNillableGoodStockMode(s *string) *PowerRentalUpdateOne {
+	if s != nil {
+		pruo.SetGoodStockMode(*s)
+	}
+	return pruo
+}
+
+// ClearGoodStockMode clears the value of the "good_stock_mode" field.
+func (pruo *PowerRentalUpdateOne) ClearGoodStockMode() *PowerRentalUpdateOne {
+	pruo.mutation.ClearGoodStockMode()
 	return pruo
 }
 
@@ -1113,6 +1166,19 @@ func (pruo *PowerRentalUpdateOne) sqlSave(ctx context.Context) (_node *PowerRent
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
 			Column: powerrental.FieldInvestmentType,
+		})
+	}
+	if value, ok := pruo.mutation.GoodStockMode(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: powerrental.FieldGoodStockMode,
+		})
+	}
+	if pruo.mutation.GoodStockModeCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Column: powerrental.FieldGoodStockMode,
 		})
 	}
 	if value, ok := pruo.mutation.DurationSeconds(); ok {

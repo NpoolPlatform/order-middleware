@@ -264,7 +264,6 @@ func (ptq *PaymentTransferQuery) Clone() *PaymentTransferQuery {
 //		GroupBy(paymenttransfer.FieldCreatedAt).
 //		Aggregate(ent.Count()).
 //		Scan(ctx, &v)
-//
 func (ptq *PaymentTransferQuery) GroupBy(field string, fields ...string) *PaymentTransferGroupBy {
 	grbuild := &PaymentTransferGroupBy{config: ptq.config}
 	grbuild.fields = append([]string{field}, fields...)
@@ -291,7 +290,6 @@ func (ptq *PaymentTransferQuery) GroupBy(field string, fields ...string) *Paymen
 //	client.PaymentTransfer.Query().
 //		Select(paymenttransfer.FieldCreatedAt).
 //		Scan(ctx, &v)
-//
 func (ptq *PaymentTransferQuery) Select(fields ...string) *PaymentTransferSelect {
 	ptq.fields = append(ptq.fields, fields...)
 	selbuild := &PaymentTransferSelect{PaymentTransferQuery: ptq}

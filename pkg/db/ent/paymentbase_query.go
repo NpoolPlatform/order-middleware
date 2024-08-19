@@ -264,7 +264,6 @@ func (pbq *PaymentBaseQuery) Clone() *PaymentBaseQuery {
 //		GroupBy(paymentbase.FieldCreatedAt).
 //		Aggregate(ent.Count()).
 //		Scan(ctx, &v)
-//
 func (pbq *PaymentBaseQuery) GroupBy(field string, fields ...string) *PaymentBaseGroupBy {
 	grbuild := &PaymentBaseGroupBy{config: pbq.config}
 	grbuild.fields = append([]string{field}, fields...)
@@ -291,7 +290,6 @@ func (pbq *PaymentBaseQuery) GroupBy(field string, fields ...string) *PaymentBas
 //	client.PaymentBase.Query().
 //		Select(paymentbase.FieldCreatedAt).
 //		Scan(ctx, &v)
-//
 func (pbq *PaymentBaseQuery) Select(fields ...string) *PaymentBaseSelect {
 	pbq.fields = append(pbq.fields, fields...)
 	selbuild := &PaymentBaseSelect{PaymentBaseQuery: pbq}

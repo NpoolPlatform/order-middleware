@@ -264,7 +264,6 @@ func (acq *AppConfigQuery) Clone() *AppConfigQuery {
 //		GroupBy(appconfig.FieldCreatedAt).
 //		Aggregate(ent.Count()).
 //		Scan(ctx, &v)
-//
 func (acq *AppConfigQuery) GroupBy(field string, fields ...string) *AppConfigGroupBy {
 	grbuild := &AppConfigGroupBy{config: acq.config}
 	grbuild.fields = append([]string{field}, fields...)
@@ -291,7 +290,6 @@ func (acq *AppConfigQuery) GroupBy(field string, fields ...string) *AppConfigGro
 //	client.AppConfig.Query().
 //		Select(appconfig.FieldCreatedAt).
 //		Scan(ctx, &v)
-//
 func (acq *AppConfigQuery) Select(fields ...string) *AppConfigSelect {
 	acq.fields = append(acq.fields, fields...)
 	selbuild := &AppConfigSelect{AppConfigQuery: acq}

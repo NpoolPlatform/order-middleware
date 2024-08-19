@@ -264,7 +264,6 @@ func (olq *OrderLockQuery) Clone() *OrderLockQuery {
 //		GroupBy(orderlock.FieldCreatedAt).
 //		Aggregate(ent.Count()).
 //		Scan(ctx, &v)
-//
 func (olq *OrderLockQuery) GroupBy(field string, fields ...string) *OrderLockGroupBy {
 	grbuild := &OrderLockGroupBy{config: olq.config}
 	grbuild.fields = append([]string{field}, fields...)
@@ -291,7 +290,6 @@ func (olq *OrderLockQuery) GroupBy(field string, fields ...string) *OrderLockGro
 //	client.OrderLock.Query().
 //		Select(orderlock.FieldCreatedAt).
 //		Scan(ctx, &v)
-//
 func (olq *OrderLockQuery) Select(fields ...string) *OrderLockSelect {
 	olq.fields = append(olq.fields, fields...)
 	selbuild := &OrderLockSelect{OrderLockQuery: olq}

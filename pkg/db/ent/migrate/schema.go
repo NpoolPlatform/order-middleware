@@ -571,6 +571,34 @@ var (
 			},
 		},
 	}
+	// PoolOrderUsersColumns holds the columns for the "pool_order_users" table.
+	PoolOrderUsersColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true},
+		{Name: "created_at", Type: field.TypeUint32},
+		{Name: "updated_at", Type: field.TypeUint32},
+		{Name: "deleted_at", Type: field.TypeUint32},
+		{Name: "ent_id", Type: field.TypeUUID, Unique: true},
+		{Name: "order_id", Type: field.TypeUUID},
+		{Name: "pool_order_user_id", Type: field.TypeUUID},
+	}
+	// PoolOrderUsersTable holds the schema information for the "pool_order_users" table.
+	PoolOrderUsersTable = &schema.Table{
+		Name:       "pool_order_users",
+		Columns:    PoolOrderUsersColumns,
+		PrimaryKey: []*schema.Column{PoolOrderUsersColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "poolorderuser_ent_id",
+				Unique:  true,
+				Columns: []*schema.Column{PoolOrderUsersColumns[4]},
+			},
+			{
+				Name:    "poolorderuser_order_id",
+				Unique:  false,
+				Columns: []*schema.Column{PoolOrderUsersColumns[5]},
+			},
+		},
+	}
 	// PowerRentalsColumns holds the columns for the "power_rentals" table.
 	PowerRentalsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUint32, Increment: true},
@@ -586,6 +614,7 @@ var (
 		{Name: "discount_amount_usd", Type: field.TypeOther, Nullable: true, SchemaType: map[string]string{"mysql": "decimal(37,18)"}},
 		{Name: "promotion_id", Type: field.TypeUUID, Nullable: true},
 		{Name: "investment_type", Type: field.TypeString, Nullable: true, Default: "FullPayment"},
+		{Name: "good_stock_mode", Type: field.TypeString, Nullable: true, Default: "DefaultGoodStockMode"},
 		{Name: "duration_seconds", Type: field.TypeUint32, Nullable: true, Default: 0},
 	}
 	// PowerRentalsTable holds the schema information for the "power_rentals" table.
@@ -664,6 +693,7 @@ var (
 		PaymentBasesTable,
 		PaymentContractsTable,
 		PaymentTransfersTable,
+		PoolOrderUsersTable,
 		PowerRentalsTable,
 		PowerRentalStatesTable,
 	}

@@ -57,6 +57,9 @@ type PaymentContract func(*sql.Selector)
 // PaymentTransfer is the predicate function for paymenttransfer builders.
 type PaymentTransfer func(*sql.Selector)
 
+// PoolOrderUser is the predicate function for poolorderuser builders.
+type PoolOrderUser func(*sql.Selector)
+
 // PowerRental is the predicate function for powerrental builders.
 type PowerRental func(*sql.Selector)
 

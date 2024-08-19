@@ -479,7 +479,6 @@ func (acc *AppConfigCreate) createSpec() (*AppConfig, *sqlgraph.CreateSpec) {
 //			SetCreatedAt(v+v).
 //		}).
 //		Exec(ctx)
-//
 func (acc *AppConfigCreate) OnConflict(opts ...sql.ConflictOption) *AppConfigUpsertOne {
 	acc.conflict = opts
 	return &AppConfigUpsertOne{
@@ -493,7 +492,6 @@ func (acc *AppConfigCreate) OnConflict(opts ...sql.ConflictOption) *AppConfigUps
 //	client.AppConfig.Create().
 //		OnConflict(sql.ConflictColumns(columns...)).
 //		Exec(ctx)
-//
 func (acc *AppConfigCreate) OnConflictColumns(columns ...string) *AppConfigUpsertOne {
 	acc.conflict = append(acc.conflict, sql.ConflictColumns(columns...))
 	return &AppConfigUpsertOne{
@@ -729,7 +727,6 @@ func (u *AppConfigUpsert) ClearMaxTypedCouponsPerOrder() *AppConfigUpsert {
 //			}),
 //		).
 //		Exec(ctx)
-//
 func (u *AppConfigUpsertOne) UpdateNewValues() *AppConfigUpsertOne {
 	u.create.conflict = append(u.create.conflict, sql.ResolveWithNewValues())
 	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(s *sql.UpdateSet) {
@@ -743,10 +740,9 @@ func (u *AppConfigUpsertOne) UpdateNewValues() *AppConfigUpsertOne {
 // Ignore sets each column to itself in case of conflict.
 // Using this option is equivalent to using:
 //
-//  client.AppConfig.Create().
-//      OnConflict(sql.ResolveWithIgnore()).
-//      Exec(ctx)
-//
+//	client.AppConfig.Create().
+//	    OnConflict(sql.ResolveWithIgnore()).
+//	    Exec(ctx)
 func (u *AppConfigUpsertOne) Ignore() *AppConfigUpsertOne {
 	u.create.conflict = append(u.create.conflict, sql.ResolveWithIgnore())
 	return u
@@ -1140,7 +1136,6 @@ func (accb *AppConfigCreateBulk) ExecX(ctx context.Context) {
 //			SetCreatedAt(v+v).
 //		}).
 //		Exec(ctx)
-//
 func (accb *AppConfigCreateBulk) OnConflict(opts ...sql.ConflictOption) *AppConfigUpsertBulk {
 	accb.conflict = opts
 	return &AppConfigUpsertBulk{
@@ -1154,7 +1149,6 @@ func (accb *AppConfigCreateBulk) OnConflict(opts ...sql.ConflictOption) *AppConf
 //	client.AppConfig.Create().
 //		OnConflict(sql.ConflictColumns(columns...)).
 //		Exec(ctx)
-//
 func (accb *AppConfigCreateBulk) OnConflictColumns(columns ...string) *AppConfigUpsertBulk {
 	accb.conflict = append(accb.conflict, sql.ConflictColumns(columns...))
 	return &AppConfigUpsertBulk{
@@ -1179,7 +1173,6 @@ type AppConfigUpsertBulk struct {
 //			}),
 //		).
 //		Exec(ctx)
-//
 func (u *AppConfigUpsertBulk) UpdateNewValues() *AppConfigUpsertBulk {
 	u.create.conflict = append(u.create.conflict, sql.ResolveWithNewValues())
 	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(s *sql.UpdateSet) {
@@ -1199,7 +1192,6 @@ func (u *AppConfigUpsertBulk) UpdateNewValues() *AppConfigUpsertBulk {
 //	client.AppConfig.Create().
 //		OnConflict(sql.ResolveWithIgnore()).
 //		Exec(ctx)
-//
 func (u *AppConfigUpsertBulk) Ignore() *AppConfigUpsertBulk {
 	u.create.conflict = append(u.create.conflict, sql.ResolveWithIgnore())
 	return u

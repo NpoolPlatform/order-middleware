@@ -264,7 +264,6 @@ func (prsq *PowerRentalStateQuery) Clone() *PowerRentalStateQuery {
 //		GroupBy(powerrentalstate.FieldCreatedAt).
 //		Aggregate(ent.Count()).
 //		Scan(ctx, &v)
-//
 func (prsq *PowerRentalStateQuery) GroupBy(field string, fields ...string) *PowerRentalStateGroupBy {
 	grbuild := &PowerRentalStateGroupBy{config: prsq.config}
 	grbuild.fields = append([]string{field}, fields...)
@@ -291,7 +290,6 @@ func (prsq *PowerRentalStateQuery) GroupBy(field string, fields ...string) *Powe
 //	client.PowerRentalState.Query().
 //		Select(powerrentalstate.FieldCreatedAt).
 //		Scan(ctx, &v)
-//
 func (prsq *PowerRentalStateQuery) Select(fields ...string) *PowerRentalStateSelect {
 	prsq.fields = append(prsq.fields, fields...)
 	selbuild := &PowerRentalStateSelect{PowerRentalStateQuery: prsq}

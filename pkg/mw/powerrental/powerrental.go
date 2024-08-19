@@ -27,6 +27,7 @@ type powerRental struct {
 	entOrderCoupons     []*ent.OrderCoupon
 	payWithMeOrderIDs   []uuid.UUID
 	childOrderIDs       []uuid.UUID
+	poolOrderUser       *ent.PoolOrderUser
 }
 
 func (f *powerRental) OrderID() uuid.UUID {
@@ -70,6 +71,10 @@ func (f *powerRental) PowerRentalID() uint32 {
 
 func (f *powerRental) PowerRentalStateID() uint32 {
 	return f.entPowerRentalState.ID
+}
+
+func (f *powerRental) PoolOrderUserRecordID() uint32 {
+	return f.poolOrderUser.ID
 }
 
 func (f *powerRental) PaymentState() types.PaymentState {

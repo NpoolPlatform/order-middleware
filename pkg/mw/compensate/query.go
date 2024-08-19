@@ -107,7 +107,7 @@ func (h *Handler) GetCompensates(ctx context.Context) ([]*npool.Compensate, uint
 		return handler.scan(_ctx)
 	})
 	if err != nil {
-		return nil, 0, err
+		return nil, 0, wlog.WrapError(err)
 	}
 
 	handler.formalize()
