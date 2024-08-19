@@ -173,12 +173,23 @@ func (h *updateHandler) constructPaymentTransferSQLs(ctx context.Context) error 
 	return nil
 }
 
-func (h *updateHandler) execSQL(ctx context.Context, tx *ent.Tx, sql string) error {
+func (h *updateHandler) execSQL(ctx context.Context, tx *ent.Tx, sql string) (int64, error) {
 	rc, err := tx.ExecContext(ctx, sql)
 	if err != nil {
-		return wlog.WrapError(err)
+		return 0, wlog.WrapError(err)
 	}
 	n, err := rc.RowsAffected()
+	if err != nil {
+		return 0, wlog.WrapError(err)
+	}
+	return n, nil
+}
+
+func (h *updateHandler) updateOrderStateBase(ctx context.Context, tx *ent.Tx) error {
+	if h.sqlOrderStateBase == "" {
+		return nil
+	}
+	n, err := h.execSQL(ctx, tx, h.sqlOrderStateBase)
 	if err != nil {
 		return wlog.WrapError(err)
 	}
@@ -188,17 +199,14 @@ func (h *updateHandler) execSQL(ctx context.Context, tx *ent.Tx, sql string) err
 	return nil
 }
 
-func (h *updateHandler) updateOrderStateBase(ctx context.Context, tx *ent.Tx) error {
-	if h.sqlOrderStateBase == "" {
-		return nil
-	}
-	return h.execSQL(ctx, tx, h.sqlOrderStateBase)
-}
-
 func (h *updateHandler) updatePayWithMeOrderStateBases(ctx context.Context, tx *ent.Tx) error {
 	for _, sql := range h.sqlPayWithMeOrderStateBases {
-		if err := h.execSQL(ctx, tx, sql); err != nil {
-			return err
+		n, err := h.execSQL(ctx, tx, sql)
+		if err != nil {
+			return wlog.WrapError(err)
+		}
+		if n == 1 {
+			h.updateNothing = false
 		}
 	}
 	return nil
@@ -206,8 +214,12 @@ func (h *updateHandler) updatePayWithMeOrderStateBases(ctx context.Context, tx *
 
 func (h *updateHandler) updatePayWithMeFeeOrderStates(ctx context.Context, tx *ent.Tx) error {
 	for _, sql := range h.sqlPayWithMeFeeOrderStates {
-		if err := h.execSQL(ctx, tx, sql); err != nil {
-			return err
+		n, err := h.execSQL(ctx, tx, sql)
+		if err != nil {
+			return wlog.WrapError(err)
+		}
+		if n == 1 {
+			h.updateNothing = false
 		}
 	}
 	return nil
@@ -217,50 +229,101 @@ func (h *updateHandler) updateFeeOrderState(ctx context.Context, tx *ent.Tx) err
 	if h.sqlFeeOrderState == "" {
 		return nil
 	}
-	return h.execSQL(ctx, tx, h.sqlFeeOrderState)
+	n, err := h.execSQL(ctx, tx, h.sqlFeeOrderState)
+	if err != nil {
+		return wlog.WrapError(err)
+	}
+	if n == 1 {
+		h.updateNothing = false
+	}
+	return nil
 }
 
 func (h *updateHandler) createLedgerLock(ctx context.Context, tx *ent.Tx) error {
 	if !h.newPaymentBalance {
 		return nil
 	}
-	return h.execSQL(ctx, tx, h.sqlLedgerLock)
+	n, err := h.execSQL(ctx, tx, h.sqlLedgerLock)
+	if err != nil {
+		return wlog.WrapError(err)
+	}
+	if n != 1 {
+		return wlog.Errorf("fail create ledgerlock")
+	}
+	h.updateNothing = false
+	return nil
 }
 
 func (h *updateHandler) createPaymentBalanceLock(ctx context.Context, tx *ent.Tx) error {
 	if !h.newPaymentBalance {
 		return nil
 	}
-	return h.execSQL(ctx, tx, h.sqlPaymentBalanceLock)
+	n, err := h.execSQL(ctx, tx, h.sqlPaymentBalanceLock)
+	if err != nil {
+		return wlog.WrapError(err)
+	}
+	if n != 1 {
+		return wlog.Errorf("fail create paymentbalancelock")
+	}
+	h.updateNothing = false
+	return nil
 }
 
 func (h *updateHandler) createPaymentBase(ctx context.Context, tx *ent.Tx) error {
 	if !h.newPayment {
 		return nil
 	}
-	return h.execSQL(ctx, tx, h.sqlPaymentBase)
+	n, err := h.execSQL(ctx, tx, h.sqlPaymentBase)
+	if err != nil {
+		return wlog.WrapError(err)
+	}
+	if n != 1 {
+		return wlog.Errorf("fail create paymentbase")
+	}
+	h.updateNothing = false
+	return nil
 }
 
 func (h *updateHandler) updateObseletePaymentBase(ctx context.Context, tx *ent.Tx) error {
 	if !h.newPayment {
 		return nil
 	}
-	return h.execSQL(ctx, tx, h.sqlObseletePaymentBase)
+	n, err := h.execSQL(ctx, tx, h.sqlObseletePaymentBase)
+	if err != nil {
+		return wlog.WrapError(err)
+	}
+	if n == 1 {
+		h.updateNothing = false
+	}
+	return nil
 }
 
 func (h *updateHandler) createPaymentBalances(ctx context.Context, tx *ent.Tx) error {
 	for _, sql := range h.sqlPaymentBalances {
-		if err := h.execSQL(ctx, tx, sql); err != nil {
+		n, err := h.execSQL(ctx, tx, sql)
+		if err != nil {
 			return wlog.WrapError(err)
 		}
+		if n != 1 {
+			return wlog.Errorf("fail create paymentbalance")
+		}
+		h.updateNothing = false
 	}
 	return nil
 }
 
 func (h *updateHandler) createOrUpdatePaymentTransfers(ctx context.Context, tx *ent.Tx) error {
 	for _, sql := range h.sqlPaymentTransfers {
-		if err := h.execSQL(ctx, tx, sql); err != nil {
+		n, err := h.execSQL(ctx, tx, sql)
+		if err != nil {
 			return wlog.WrapError(err)
+		}
+		if n == 1 {
+			h.updateNothing = false
+			continue
+		}
+		if h.newPayment {
+			return wlog.Errorf("fail create paymenttransfer")
 		}
 	}
 	return nil
