@@ -74,7 +74,7 @@ func (h *baseQueryHandler) queryJoinMyself(s *sql.Selector) {
 	)
 }
 
-//nolint:gocyclo
+//nolint:gocyclo,funlen
 func (h *baseQueryHandler) queryJoinPowerRental(s *sql.Selector) error {
 	t := sql.Table(entpowerrental.Table)
 	s.Join(t).

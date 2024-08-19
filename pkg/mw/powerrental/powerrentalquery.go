@@ -232,7 +232,6 @@ func (h *powerRentalQueryHandler) getPoolOrderUserID(ctx context.Context, cli *e
 		if ent.IsNotFound(err) {
 			return nil
 		}
-
 	}
 	return wlog.WrapError(err)
 }

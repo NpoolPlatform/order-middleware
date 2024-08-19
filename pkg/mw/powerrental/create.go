@@ -35,7 +35,6 @@ type createHandler struct {
 	sqlPaymentBalanceLock string
 	sqlOrderCoupons       []string
 	sqlPaymentBase        string
-	sqlPoolOrderUser      string
 	sqlPaymentBalances    []string
 	sqlPaymentTransfers   []string
 }
