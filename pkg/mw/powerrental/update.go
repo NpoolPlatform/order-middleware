@@ -421,7 +421,10 @@ func (h *updateHandler) validatePoolOrderUser(ctx context.Context) error {
 				Op:    cruder.EQ,
 				Value: h.PoolOrderUserReq.OrderID.String(),
 			},
-		}))
+		}),
+		poolorderuser.WithLimit(1),
+		poolorderuser.WithOffset(0),
+	)
 	if err != nil {
 		return wlog.WrapError(err)
 	}

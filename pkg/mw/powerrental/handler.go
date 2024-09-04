@@ -395,7 +395,7 @@ func WithGoodStockMode(_type *goodtypes.GoodStockMode, must bool) func(context.C
 		}
 		switch *_type {
 		case goodtypes.GoodStockMode_GoodStockByUnique:
-		case goodtypes.GoodStockMode_GoodStockByMiningpool:
+		case goodtypes.GoodStockMode_GoodStockByMiningPool:
 		default:
 			return wlog.Errorf("invalid goodstockmode")
 		}

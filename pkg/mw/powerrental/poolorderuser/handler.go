@@ -6,6 +6,7 @@ import (
 	wlog "github.com/NpoolPlatform/go-service-framework/pkg/wlog"
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
 	poolorderusermwpb "github.com/NpoolPlatform/message/npool/order/mw/v1/powerrental/poolorderuser"
+	constant "github.com/NpoolPlatform/order-middleware/pkg/const"
 	poolorderusercrud "github.com/NpoolPlatform/order-middleware/pkg/crud/powerrental/poolorderuser"
 
 	"github.com/google/uuid"
@@ -142,6 +143,23 @@ func WithConds(conds *poolorderusermwpb.Conds) func(context.Context, *Handler) e
 				Val: id,
 			}
 		}
+		return nil
+	}
+}
+
+func WithOffset(offset int32) func(context.Context, *Handler) error {
+	return func(ctx context.Context, h *Handler) error {
+		h.Offset = offset
+		return nil
+	}
+}
+
+func WithLimit(limit int32) func(context.Context, *Handler) error {
+	return func(ctx context.Context, h *Handler) error {
+		if limit == 0 {
+			limit = constant.DefaultRowLimit
+		}
+		h.Limit = limit
 		return nil
 	}
 }

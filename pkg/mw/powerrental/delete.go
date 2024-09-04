@@ -60,8 +60,13 @@ func (h *deleteHandler) deletePowerRentalState(ctx context.Context, tx *ent.Tx) 
 }
 
 func (h *deleteHandler) deletePoolOrderUser(ctx context.Context, tx *ent.Tx) error {
+	id := h._ent.PoolOrderUserRecordID()
+	if id == nil {
+		return nil
+	}
+
 	_, err := poolorderusercrud.UpdateSet(
-		tx.PoolOrderUser.UpdateOneID(h._ent.PoolOrderUserRecordID()),
+		tx.PoolOrderUser.UpdateOneID(*id),
 		&poolorderusercrud.Req{
 			DeletedAt: &h.now,
 		},

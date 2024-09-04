@@ -73,8 +73,11 @@ func (f *powerRental) PowerRentalStateID() uint32 {
 	return f.entPowerRentalState.ID
 }
 
-func (f *powerRental) PoolOrderUserRecordID() uint32 {
-	return f.poolOrderUser.ID
+func (f *powerRental) PoolOrderUserRecordID() *uint32 {
+	if f.poolOrderUser == nil {
+		return nil
+	}
+	return &f.poolOrderUser.ID
 }
 
 func (f *powerRental) PaymentState() types.PaymentState {
