@@ -485,7 +485,8 @@ func (h *Handler) GetPowerRentals(ctx context.Context) ([]*npool.PowerRentalOrde
 		handler.stmSelect.
 			Offset(int(h.Offset)).
 			Limit(int(h.Limit)).
-			Order(ent.Desc(entpowerrental.FieldCreatedAt))
+			Order(ent.Desc(entpowerrental.FieldCreatedAt)).
+			Order(ent.Desc(entpowerrental.FieldID))
 
 		if err := handler.scan(_ctx); err != nil {
 			return wlog.WrapError(err)
