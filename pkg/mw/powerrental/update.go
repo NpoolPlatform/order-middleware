@@ -551,10 +551,6 @@ func (h *updateHandler) validateBenefitState() error {
 			return wlog.Errorf("permission denied")
 		}
 	case types.BenefitState_BenefitBookKept:
-		if h.Rollback != nil && *h.Rollback {
-			*h.OrderStateBaseReq.BenefitState = types.BenefitState_BenefitCalculated
-			return nil
-		}
 		if *h.OrderStateBaseReq.BenefitState != types.BenefitState_BenefitWait {
 			return wlog.Errorf("permission denied")
 		}
