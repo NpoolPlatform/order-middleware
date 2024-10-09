@@ -143,6 +143,7 @@ func createPowerRental(t *testing.T) {
 		WithAppGoodStockLockID(&ret.AppGoodStockLockID, true),
 		WithLedgerLockID(&ret.LedgerLockID, true),
 		WithPaymentID(&ret.PaymentID, true),
+		WithGoodStockMode(&ret.GoodStockMode, true),
 		WithCouponIDs(func() (_couponIDs []string) {
 			for _, coupon := range ret.Coupons {
 				_couponIDs = append(_couponIDs, coupon.CouponID)
