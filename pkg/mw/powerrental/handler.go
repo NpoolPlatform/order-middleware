@@ -3,6 +3,7 @@ package powerrental
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	wlog "github.com/NpoolPlatform/go-service-framework/pkg/wlog"
@@ -400,6 +401,8 @@ func WithGoodStockMode(_type *goodtypes.GoodStockMode, must bool) func(context.C
 			return wlog.Errorf("invalid goodstockmode")
 		}
 		h.GoodStockMode = _type
+		fmt.Println("error ssssssssssssssssssssssssssss", _type.String())
+
 		return nil
 	}
 }
