@@ -115,6 +115,7 @@ func setup(t *testing.T) func(*testing.T) {
 		AppGoodStockLockID: func() *string { s := uuid.NewString(); return &s }(),
 		StartMode:          func() *types.OrderStartMode { e := types.OrderStartMode_OrderStartInstantly; return &e }(),
 		StartAt:            func() *uint32 { u := uint32(time.Now().Unix()); return &u }(),
+		GoodStockMode:      goodtypes.GoodStockMode_GoodStockByUnique.Enum(),
 	})
 	assert.Nil(t, err)
 
