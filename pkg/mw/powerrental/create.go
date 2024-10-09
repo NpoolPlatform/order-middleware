@@ -2,7 +2,6 @@ package powerrental
 
 import (
 	"context"
-	"fmt"
 	"time"
 
 	timedef "github.com/NpoolPlatform/go-service-framework/pkg/const/time"
@@ -42,7 +41,6 @@ type createHandler struct {
 
 func (h *createHandler) constructSQL() {
 	h.sql = h.ConstructCreateSQL()
-	fmt.Println("error rrrrrrrrrrrrrrrrrrrrrrrrrrrrr", h.sql)
 }
 
 func (h *createHandler) constructOrderBaseSQL(ctx context.Context) {
