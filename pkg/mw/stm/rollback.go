@@ -19,6 +19,7 @@ var rollbacks = map[types.OrderState]types.OrderState{
 	types.OrderState_OrderStateRestoreExpiredStock:         types.OrderState_OrderStatePreExpired,
 	types.OrderState_OrderStateExpired:                     types.OrderState_OrderStateRestoreExpiredStock,
 	types.OrderState_OrderStateDeleteProportion:            types.OrderState_OrderStatePreExpired,
+	types.OrderState_OrderStateCheckProportion:             types.OrderState_OrderStateDeleteProportion,
 	types.OrderState_OrderStateCheckPoolBalance:            types.OrderState_OrderStateRestoreExpiredStock,
 	types.OrderState_OrderStateDeductLockedCommission:      types.OrderState_OrderStateRestoreCanceledStock,
 	types.OrderState_OrderStateCancelAchievement:           types.OrderState_OrderStateDeductLockedCommission,
