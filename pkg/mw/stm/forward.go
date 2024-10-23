@@ -20,7 +20,7 @@ var forwards = map[types.OrderState][]types.OrderState{
 	types.OrderState_OrderStateAddCommission:               {types.OrderState_OrderStatePaymentUnlockAccount},
 	types.OrderState_OrderStatePaymentUnlockAccount:        {types.OrderState_OrderStatePaid},
 	types.OrderState_OrderStatePaid:                        {types.OrderState_OrderStateTransferGoodStockWaitStart, types.OrderState_OrderStatePreCancel},
-	types.OrderState_OrderStateTransferGoodStockWaitStart:  {types.OrderState_OrderStateInService, types.OrderState_OrderStateCreateOrderUser},
+	types.OrderState_OrderStateTransferGoodStockWaitStart:  {types.OrderState_OrderStateCreateOrderUser},
 	types.OrderState_OrderStateCreateOrderUser:             {types.OrderState_OrderStateSetProportion},
 	types.OrderState_OrderStateSetProportion:               {types.OrderState_OrderStateSetRevenueAddress},
 	types.OrderState_OrderStateSetRevenueAddress:           {types.OrderState_OrderStateInService},
