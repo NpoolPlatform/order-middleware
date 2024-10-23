@@ -170,6 +170,9 @@ func setup(t *testing.T) func(*testing.T) {
 	)
 	assert.Nil(t, err)
 
+	err = h1.UpdatePowerRental(context.Background())
+	assert.Nil(t, err)
+
 	h1, err = powerrental1.NewHandler(
 		context.Background(),
 		powerrental1.WithOrderID(&ret.OrderID, true),
@@ -195,9 +198,6 @@ func setup(t *testing.T) func(*testing.T) {
 		powerrental1.WithOrderID(&ret.OrderID, true),
 		powerrental1.WithOrderState(types.OrderState_OrderStateSetRevenueAddress.Enum(), true),
 	)
-	assert.Nil(t, err)
-
-	err = h1.UpdatePowerRental(context.Background())
 	assert.Nil(t, err)
 
 	err = h1.UpdatePowerRental(context.Background())
