@@ -26,6 +26,7 @@ func (s *Server) UpdatePayment(ctx context.Context, in *npool.UpdatePaymentReque
 		payment1.WithID(req.ID, false),
 		payment1.WithEntID(req.EntID, false),
 		payment1.WithObseleteState(req.ObseleteState, false),
+		payment1.WithPaymentTransfers(req.PaymentTransfers, true),
 	)
 	if err != nil {
 		logger.Sugar().Errorw(

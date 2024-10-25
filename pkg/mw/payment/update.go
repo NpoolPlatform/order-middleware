@@ -8,6 +8,7 @@ import (
 	paymentbasecrud "github.com/NpoolPlatform/order-middleware/pkg/crud/payment"
 	"github.com/NpoolPlatform/order-middleware/pkg/db"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent"
+	entpaymenttransfer "github.com/NpoolPlatform/order-middleware/pkg/db/ent/paymenttransfer"
 )
 
 type updateHandler struct {
@@ -76,11 +77,26 @@ func (h *Handler) UpdatePayment(ctx context.Context) error {
 	if err := handler.validateObseleteState(); err != nil {
 		return wlog.WrapError(err)
 	}
-	return db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
-		_, err := paymentbasecrud.UpdateSet(
-			cli.PaymentBase.UpdateOneID(*h.ID),
+	return db.WithTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {
+		if _, err := paymentbasecrud.UpdateSet(
+			tx.PaymentBase.UpdateOneID(*h.ID),
 			&h.Req,
-		).Save(_ctx)
-		return wlog.WrapError(err)
+		).Save(_ctx); err != nil {
+			return wlog.WrapError(err)
+		}
+		for _, paymentTransfer := range h.PaymentTransferReqs {
+			if _, err := tx.
+				PaymentTransfer.
+				Update().
+				Where(
+					entpaymenttransfer.EntID(*paymentTransfer.EntID),
+					entpaymenttransfer.DeletedAt(0),
+				).
+				SetFinishAmount(*paymentTransfer.FinishAmount).
+				Save(_ctx); err != nil {
+				return wlog.WrapError(err)
+			}
+		}
+		return nil
 	})
 }

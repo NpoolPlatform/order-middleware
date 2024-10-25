@@ -9,16 +9,19 @@ import (
 	npool "github.com/NpoolPlatform/message/npool/order/mw/v1/payment"
 	constant "github.com/NpoolPlatform/order-middleware/pkg/const"
 	paymentbasecrud "github.com/NpoolPlatform/order-middleware/pkg/crud/payment"
+	paymenttransfercrud "github.com/NpoolPlatform/order-middleware/pkg/crud/payment/transfer"
 
 	"github.com/google/uuid"
+	"github.com/shopspring/decimal"
 )
 
 type Handler struct {
 	ID *uint32
 	paymentbasecrud.Req
-	PaymentBaseConds *paymentbasecrud.Conds
-	Offset           int32
-	Limit            int32
+	PaymentBaseConds    *paymentbasecrud.Conds
+	PaymentTransferReqs []*paymenttransfercrud.Req
+	Offset              int32
+	Limit               int32
 }
 
 func NewHandler(ctx context.Context, options ...func(context.Context, *Handler) error) (*Handler, error) {
@@ -100,6 +103,29 @@ func WithObseleteState(e *types.PaymentObseleteState, must bool) func(context.Co
 			return wlog.Errorf("invalid obseletestate")
 		}
 		h.ObseleteState = e
+		return nil
+	}
+}
+
+func WithPaymentTransfers(bs []*npool.PaymentTransferReq, must bool) func(context.Context, *Handler) error {
+	return func(ctx context.Context, h *Handler) error {
+		for _, b := range bs {
+			req := &paymenttransfercrud.Req{}
+
+			id, err := uuid.Parse(b.GetEntID())
+			if err != nil {
+				return wlog.WrapError(err)
+			}
+			req.EntID = &id
+
+			finishAmount, err := decimal.NewFromString(b.GetFinishAmount())
+			if err != nil {
+				return wlog.WrapError(err)
+			}
+			req.FinishAmount = &finishAmount
+
+			h.PaymentTransferReqs = append(h.PaymentTransferReqs, req)
+		}
 		return nil
 	}
 }

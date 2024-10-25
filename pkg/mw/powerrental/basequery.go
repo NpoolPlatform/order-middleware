@@ -275,6 +275,34 @@ func (h *baseQueryHandler) queryJoinOrderStateBase(s *sql.Selector) error {
 			sql.EQ(t.C(entorderstatebase.FieldLastBenefitAt), at),
 		)
 	}
+	if h.OrderStateBaseConds.StartAt != nil {
+		at, ok := h.OrderStateBaseConds.StartAt.Val.(uint32)
+		if !ok {
+			return wlog.Errorf("invalid lastbenefitat")
+		}
+		switch h.OrderStateBaseConds.StartAt.Op {
+		case cruder.LT:
+			s.OnP(
+				sql.LT(t.C(entorderstatebase.FieldStartAt), at),
+			)
+		case cruder.LTE:
+			s.OnP(
+				sql.LTE(t.C(entorderstatebase.FieldStartAt), at),
+			)
+		case cruder.GT:
+			s.OnP(
+				sql.GT(t.C(entorderstatebase.FieldStartAt), at),
+			)
+		case cruder.GTE:
+			s.OnP(
+				sql.GTE(t.C(entorderstatebase.FieldStartAt), at),
+			)
+		case cruder.EQ:
+			s.OnP(
+				sql.EQ(t.C(entorderstatebase.FieldStartAt), at),
+			)
+		}
+	}
 	if h.OrderStateBaseConds.BenefitState != nil {
 		_state, ok := h.OrderStateBaseConds.BenefitState.Val.(types.BenefitState)
 		if !ok {

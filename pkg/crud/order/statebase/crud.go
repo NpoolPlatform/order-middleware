@@ -85,6 +85,7 @@ type Conds struct {
 	OrderStates   *cruder.Cond
 	StartMode     *cruder.Cond
 	LastBenefitAt *cruder.Cond
+	StartAt       *cruder.Cond
 	BenefitState  *cruder.Cond
 	PaymentType   *cruder.Cond
 	PaymentTypes  *cruder.Cond

@@ -211,12 +211,23 @@ func (h *updateHandler) constructPoolOrderUserSQL(ctx context.Context) error {
 	return wlog.WrapError(err)
 }
 
-func (h *updateHandler) execSQL(ctx context.Context, tx *ent.Tx, sql string) error {
+func (h *updateHandler) execSQL(ctx context.Context, tx *ent.Tx, sql string) (int64, error) {
 	rc, err := tx.ExecContext(ctx, sql)
 	if err != nil {
-		return wlog.WrapError(err)
+		return 0, wlog.WrapError(err)
 	}
 	n, err := rc.RowsAffected()
+	if err != nil {
+		return n, wlog.WrapError(err)
+	}
+	return n, nil
+}
+
+func (h *updateHandler) updateOrderStateBase(ctx context.Context, tx *ent.Tx) error {
+	if h.sqlOrderStateBase == "" {
+		return nil
+	}
+	n, err := h.execSQL(ctx, tx, h.sqlOrderStateBase)
 	if err != nil {
 		return wlog.WrapError(err)
 	}
@@ -226,17 +237,14 @@ func (h *updateHandler) execSQL(ctx context.Context, tx *ent.Tx, sql string) err
 	return nil
 }
 
-func (h *updateHandler) updateOrderStateBase(ctx context.Context, tx *ent.Tx) error {
-	if h.sqlOrderStateBase == "" {
-		return nil
-	}
-	return h.execSQL(ctx, tx, h.sqlOrderStateBase)
-}
-
 func (h *updateHandler) updateStatedOrderStateBases(ctx context.Context, tx *ent.Tx) error {
 	for _, sql := range h.sqlStatedOrderStateBases {
-		if err := h.execSQL(ctx, tx, sql); err != nil {
+		n, err := h.execSQL(ctx, tx, sql)
+		if err != nil {
 			return wlog.WrapError(err)
+		}
+		if n == 1 {
+			h.updateNothing = false
 		}
 	}
 	return nil
@@ -246,13 +254,24 @@ func (h *updateHandler) updatePowerRentalState(ctx context.Context, tx *ent.Tx) 
 	if h.sqlPowerRentalState == "" {
 		return nil
 	}
-	return h.execSQL(ctx, tx, h.sqlPowerRentalState)
+	n, err := h.execSQL(ctx, tx, h.sqlPowerRentalState)
+	if err != nil {
+		return wlog.WrapError(err)
+	}
+	if n == 1 {
+		h.updateNothing = false
+	}
+	return nil
 }
 
 func (h *updateHandler) updatePayWithMeFeeOrderStates(ctx context.Context, tx *ent.Tx) error {
 	for _, sql := range h.sqlPayWithMeFeeOrderStates {
-		if err := h.execSQL(ctx, tx, sql); err != nil {
+		n, err := h.execSQL(ctx, tx, sql)
+		if err != nil {
 			return wlog.WrapError(err)
+		}
+		if n == 1 {
+			h.updateNothing = false
 		}
 	}
 	return nil
@@ -263,9 +282,14 @@ func (h *updateHandler) createOrderLocks(ctx context.Context, tx *ent.Tx) error 
 		return nil
 	}
 	for _, sql := range h.sqlOrderLocks {
-		if err := h.execSQL(ctx, tx, sql); err != nil {
+		n, err := h.execSQL(ctx, tx, sql)
+		if err != nil {
 			return wlog.WrapError(err)
 		}
+		if n != 1 {
+			return wlog.Errorf("fail create orderlock")
+		}
+		h.updateNothing = false
 	}
 	return nil
 }
@@ -274,44 +298,77 @@ func (h *updateHandler) createPaymentBalanceLock(ctx context.Context, tx *ent.Tx
 	if !h.newPaymentBalance {
 		return nil
 	}
-	return h.execSQL(ctx, tx, h.sqlPaymentBalanceLock)
+	n, err := h.execSQL(ctx, tx, h.sqlPaymentBalanceLock)
+	if err != nil {
+		return wlog.WrapError(err)
+	}
+	if n != 1 {
+		return wlog.Errorf("fail create paymentbalancelock")
+	}
+	h.updateNothing = false
+	return nil
 }
 
 func (h *updateHandler) createPaymentBase(ctx context.Context, tx *ent.Tx) error {
 	if !h.newPayment {
 		return nil
 	}
-	return h.execSQL(ctx, tx, h.sqlPaymentBase)
+	n, err := h.execSQL(ctx, tx, h.sqlPaymentBase)
+	if err != nil {
+		return wlog.WrapError(err)
+	}
+	if n != 1 {
+		return wlog.Errorf("fail create paymentbase")
+	}
+	h.updateNothing = false
+	return nil
 }
 
 func (h *updateHandler) updateObseletePaymentBase(ctx context.Context, tx *ent.Tx) error {
 	if !h.newPayment {
 		return nil
 	}
-	return h.execSQL(ctx, tx, h.sqlObseletePaymentBase)
+	n, err := h.execSQL(ctx, tx, h.sqlObseletePaymentBase)
+	if err != nil {
+		return wlog.WrapError(err)
+	}
+	if n == 1 {
+		h.updateNothing = false
+	}
+	return nil
 }
 
-func (h *updateHandler) upsertPoolOrderUser(ctx context.Context, tx *ent.Tx) error {
+func (h *updateHandler) upsertPoolOrderUser(ctx context.Context, tx *ent.Tx) (int64, error) {
 	if h.PoolOrderUserReq.PoolOrderUserID == nil {
-		return nil
+		return 0, nil
 	}
 	return h.execSQL(ctx, tx, h.sqlPoolOrderUser)
 }
 
 func (h *updateHandler) createPaymentBalances(ctx context.Context, tx *ent.Tx) error {
 	for _, sql := range h.sqlPaymentBalances {
-		if err := h.execSQL(ctx, tx, sql); err != nil {
+		n, err := h.execSQL(ctx, tx, sql)
+		if err != nil {
 			return wlog.WrapError(err)
 		}
+		if n != 1 {
+			return wlog.Errorf("fail create orderlock")
+		}
+		h.updateNothing = false
 	}
 	return nil
 }
 
 func (h *updateHandler) createOrUpdatePaymentTransfers(ctx context.Context, tx *ent.Tx) error {
 	for _, sql := range h.sqlPaymentTransfers {
-		if err := h.execSQL(ctx, tx, sql); err != nil {
+		n, err := h.execSQL(ctx, tx, sql)
+		if err != nil {
 			return wlog.WrapError(err)
 		}
+		if n != 1 {
+			return wlog.Errorf("fail create orderlock")
+		}
+		h.updateNothing = false
 	}
 	return nil
 }
@@ -744,7 +801,7 @@ func (h *Handler) UpdatePowerRentalWithTx(ctx context.Context, tx *ent.Tx) error
 		return wlog.WrapError(err)
 	}
 
-	if err := handler.upsertPoolOrderUser(ctx, tx); err != nil {
+	if _, err := handler.upsertPoolOrderUser(ctx, tx); err != nil {
 		return wlog.WrapError(err)
 	}
 	if err := handler.updateOrderStateBase(ctx, tx); err != nil {

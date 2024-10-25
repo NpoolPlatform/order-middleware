@@ -59,7 +59,7 @@ func (h *Handler) ConstructCreateSQL() string {
 	return _sql
 }
 
-//nolint:gocyclo
+//nolint:gocyclo,goconst,funlen
 func (h *Handler) ConstructUpdateSQL() (string, error) {
 	if h.ID == nil && h.EntID == nil && h.OrderID == nil {
 		return "", wlog.Errorf("invalid id")
@@ -116,6 +116,115 @@ func (h *Handler) ConstructUpdateSQL() (string, error) {
 	}
 	if h.OrderID != nil {
 		_sql += fmt.Sprintf("%v order_id = '%v' ", whereAnd, *h.OrderID)
+		whereAnd = "and"
+	}
+	if (h.UserSetCanceled != nil && *h.UserSetCanceled) ||
+		(h.AdminSetCanceled != nil && *h.AdminSetCanceled) {
+		_sql += fmt.Sprintf("%v exists (", whereAnd)
+		_sql += "select 1 from fee_orders as t1 "
+		_sql += "join order_bases as t2 "
+		_sql += "join order_state_bases as t3 "
+		_sql += "join order_state_bases as t4 "
+		_sql += "on t1.order_id=t2.ent_id "
+		_sql += "and t1.order_id=t3.order_id "
+		_sql += "and t2.parent_order_id=t4.order_id "
+		_sql += "where "
+		localWhereAnd := ""
+		if h.ID != nil {
+			_sql += fmt.Sprintf("t1.id=%v ", *h.ID)
+			localWhereAnd = "and"
+		}
+		if h.EntID != nil {
+			_sql += fmt.Sprintf("%v t1.ent_id='%v' ", localWhereAnd, *h.EntID)
+			localWhereAnd = "and"
+		}
+		if h.OrderID != nil {
+			_sql += fmt.Sprintf("%v t1.order_id='%v' ", localWhereAnd, *h.OrderID)
+		}
+		_sql += "and ("
+		_sql += fmt.Sprintf(
+			"t4.order_state != '%v' ",
+			types.OrderState_OrderStateInService,
+		)
+		_sql += fmt.Sprintf(
+			"or t3.order_state not in ('%v', '%v') ",
+			types.OrderState_OrderStatePaid,
+			types.OrderState_OrderStateInService,
+		)
+		_sql += "or ("
+		_sql += "select unix_timestamp(NOW()) - start_at - compensate_seconds - outofgas_seconds "
+		_sql += "from power_rentals as t1 "
+		_sql += "join order_state_bases as t2 "
+		_sql += "join power_rental_states as t3 "
+		_sql += "join order_bases as t4 "
+		_sql += "join fee_orders as t5 "
+		_sql += "on t4.parent_order_id=t1.order_id "
+		if h.ID != nil {
+			_sql += fmt.Sprintf("and t5.id=%v ", *h.ID)
+		}
+		if h.EntID != nil {
+			_sql += fmt.Sprintf("and t5.ent_id='%v' ", *h.EntID)
+		}
+		if h.OrderID != nil {
+			_sql += fmt.Sprintf("and t4.ent_id='%v' ", *h.OrderID)
+		}
+		_sql += "and t1.order_id=t2.order_id "
+		_sql += fmt.Sprintf("and t2.order_state='%v' ", types.OrderState_OrderStateInService)
+		_sql += "and t1.order_id=t3.order_id "
+		_sql += "and t4.ent_id=t5.order_id"
+		_sql += ") <= ("
+		_sql += "select sum(duration_seconds) - ("
+		_sql += "select duration_seconds from fee_orders as t1 "
+		_sql += "join order_state_bases as t2 where "
+		localWhereAnd = ""
+		if h.ID != nil {
+			_sql += fmt.Sprintf("t1.id=%v ", *h.ID)
+			localWhereAnd = "and"
+		}
+		if h.EntID != nil {
+			_sql += fmt.Sprintf("%v t1.ent_id='%v' ", localWhereAnd, *h.EntID)
+			localWhereAnd = "and"
+		}
+		if h.OrderID != nil {
+			_sql += fmt.Sprintf("%v t1.order_id='%v' ", localWhereAnd, *h.OrderID)
+		}
+		_sql += "and t1.order_id=t2.order_id "
+		_sql += fmt.Sprintf(
+			"and t2.order_state in ('%v', '%v')",
+			types.OrderState_OrderStatePaid,
+			types.OrderState_OrderStateInService,
+		)
+		_sql += ") from (select duration_seconds "
+		_sql += "from order_bases as t1 "
+		_sql += "join order_state_bases as t2 "
+		_sql += "join fee_orders as t3 "
+		_sql += "join order_bases as t4 "
+		_sql += "join fee_order_states as t5 "
+		_sql += "on t4.parent_order_id=t1.parent_order_id "
+		_sql += "and t1.ent_id=t2.order_id "
+		_sql += "and t1.ent_id=t3.order_id "
+		_sql += "and t4.ent_id=t5.order_id "
+		_sql += "where "
+		localWhereAnd = ""
+		if h.ID != nil {
+			_sql += fmt.Sprintf("t3.id=%v ", *h.ID)
+			localWhereAnd = "and"
+		}
+		if h.EntID != nil {
+			_sql += fmt.Sprintf("%v t3.ent_id='%v' ", localWhereAnd, *h.EntID)
+			localWhereAnd = "and"
+		}
+		if h.OrderID != nil {
+			_sql += fmt.Sprintf("%v t3.order_id='%v' ", localWhereAnd, *h.OrderID)
+		}
+		_sql += fmt.Sprintf(
+			"and t2.order_state in ('%v', '%v') ",
+			types.OrderState_OrderStatePaid,
+			types.OrderState_OrderStateInService,
+		)
+		_sql += "and t5.user_set_canceled=0 "
+		_sql += "and t5.admin_set_canceled=0 "
+		_sql += ")as tmp)))"
 	}
 
 	return _sql, nil
