@@ -450,6 +450,11 @@ func (h *Handler) CreatePowerRentalWithTx(ctx context.Context, tx *ent.Tx) error
 	if err := handler.validateAppGoodStock(); err != nil {
 		return err
 	}
+
+	if err := handler.validateGoodStockMode(); err != nil {
+		return err
+	}
+
 	if h.EntID == nil {
 		h.EntID = func() *uuid.UUID { uid := uuid.New(); return &uid }()
 	}
@@ -464,6 +469,7 @@ func (h *Handler) CreatePowerRentalWithTx(ctx context.Context, tx *ent.Tx) error
 	handler.formalizePaymentState()
 	handler.paymentChecker.PaymentType = h.OrderStateBaseReq.PaymentType
 	handler.formalizePaymentID()
+
 	if err := handler.validatePaymentType(); err != nil {
 		return wlog.WrapError(err)
 	}
