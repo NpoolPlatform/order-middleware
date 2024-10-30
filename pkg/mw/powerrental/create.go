@@ -6,6 +6,7 @@ import (
 
 	timedef "github.com/NpoolPlatform/go-service-framework/pkg/const/time"
 	wlog "github.com/NpoolPlatform/go-service-framework/pkg/wlog"
+	goodtypes "github.com/NpoolPlatform/message/npool/basetypes/good/v1"
 	types "github.com/NpoolPlatform/message/npool/basetypes/order/v1"
 	"github.com/NpoolPlatform/order-middleware/pkg/db"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent"
@@ -371,6 +372,16 @@ func (h *createHandler) validatePayment() error {
 		return nil
 	}
 	return h.paymentChecker.ValidatePayment()
+}
+
+func (h *createHandler) validateGoodStockMode() error {
+	if h.OrderBaseReq.Simulate == nil || !*h.OrderBaseReq.Simulate {
+		return nil
+	}
+	if *h.GoodStockMode == goodtypes.GoodStockMode_GoodStockByMiningPool {
+		return wlog.Errorf("disable simulate order of good is goodstockbyminingpool")
+	}
+	return nil
 }
 
 func (h *createHandler) validateAppGoodStock() error {
