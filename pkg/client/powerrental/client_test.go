@@ -61,6 +61,7 @@ var ret = npool.PowerRentalOrder{
 	AppGoodStockLockID:  uuid.NewString(),
 	LedgerLockID:        uuid.NewString(),
 	PaymentID:           uuid.NewString(),
+	GoodStockMode:       goodtypes.GoodStockMode_GoodStockByUnique,
 	Coupons: []*ordercouponmwpb.OrderCouponInfo{
 		{
 			CouponID: uuid.NewString(),
@@ -114,6 +115,7 @@ func setup(t *testing.T) func(*testing.T) {
 	ret.RenewStateStr = ret.RenewState.String()
 	ret.InvestmentTypeStr = ret.InvestmentType.String()
 	ret.BenefitStateStr = ret.BenefitState.String()
+	ret.GoodStockModeStr = ret.GoodStockMode.String()
 
 	return func(*testing.T) {}
 }
@@ -142,6 +144,7 @@ func createPowerRentalOrderWithFees(t *testing.T) {
 			AppGoodStockLockID: &ret.AppGoodStockLockID,
 			LedgerLockID:       &ret.LedgerLockID,
 			PaymentID:          &ret.PaymentID,
+			GoodStockMode:      &ret.GoodStockMode,
 			CouponIDs: func() (_couponIDs []string) {
 				for _, coupon := range ret.Coupons {
 					_couponIDs = append(_couponIDs, coupon.CouponID)

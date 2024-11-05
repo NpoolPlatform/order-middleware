@@ -62,6 +62,7 @@ func (h *queryHandler) queryJoin() {
 		}
 		h.queryJoinPaymentBase(s)
 		h.queryJoinStockLock(s)
+		h.queryJoinPoolOrderUser(s)
 		if err := h.queryJoinOrderCoupon(s); err != nil {
 			logger.Sugar().Errorw("queryJoinOrderCoupon", "Error", err)
 		}
@@ -402,6 +403,7 @@ func (h *queryHandler) formalize() {
 		info.StartMode = types.OrderStartMode(types.OrderStartMode_value[info.StartModeStr])
 		info.BenefitState = types.BenefitState(types.BenefitState_value[info.BenefitStateStr])
 		info.InvestmentType = types.InvestmentType(types.InvestmentType_value[info.InvestmentTypeStr])
+		info.GoodStockMode = goodtypes.GoodStockMode(goodtypes.GoodStockMode_value[info.GoodStockModeStr])
 		info.Coupons = orderCoupons[info.OrderID]
 		info.PaymentBalances = paymentBalances[info.PaymentID]
 		info.PaymentTransfers = paymentTransfers[info.PaymentID]
@@ -509,7 +511,7 @@ func (h *Handler) GetPowerRentals(ctx context.Context) ([]*npool.PowerRentalOrde
 		return handler.queryOrderCoupons(_ctx, cli)
 	})
 	if err != nil {
-		return nil, 0, err
+		return nil, 0, wlog.WrapError(err)
 	}
 
 	handler.formalize()

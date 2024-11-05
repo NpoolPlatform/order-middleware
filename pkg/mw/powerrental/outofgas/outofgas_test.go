@@ -45,7 +45,7 @@ var ret = outofgasmwpb.OutOfGas{
 	StartAt:   uint32(time.Now().Unix()),
 }
 
-//nolint: funlen
+// nolint: funlen
 func setup(t *testing.T) func(*testing.T) {
 	ret.GoodTypeStr = ret.GoodType.String()
 
@@ -167,6 +167,36 @@ func setup(t *testing.T) func(*testing.T) {
 		context.Background(),
 		powerrental1.WithOrderID(&ret.OrderID, true),
 		powerrental1.WithOrderState(types.OrderState_OrderStateTransferGoodStockWaitStart.Enum(), true),
+	)
+	assert.Nil(t, err)
+
+	err = h1.UpdatePowerRental(context.Background())
+	assert.Nil(t, err)
+
+	h1, err = powerrental1.NewHandler(
+		context.Background(),
+		powerrental1.WithOrderID(&ret.OrderID, true),
+		powerrental1.WithOrderState(types.OrderState_OrderStateCreateOrderUser.Enum(), true),
+	)
+	assert.Nil(t, err)
+
+	err = h1.UpdatePowerRental(context.Background())
+	assert.Nil(t, err)
+
+	h1, err = powerrental1.NewHandler(
+		context.Background(),
+		powerrental1.WithOrderID(&ret.OrderID, true),
+		powerrental1.WithOrderState(types.OrderState_OrderStateSetProportion.Enum(), true),
+	)
+	assert.Nil(t, err)
+
+	err = h1.UpdatePowerRental(context.Background())
+	assert.Nil(t, err)
+
+	h1, err = powerrental1.NewHandler(
+		context.Background(),
+		powerrental1.WithOrderID(&ret.OrderID, true),
+		powerrental1.WithOrderState(types.OrderState_OrderStateSetRevenueAddress.Enum(), true),
 	)
 	assert.Nil(t, err)
 

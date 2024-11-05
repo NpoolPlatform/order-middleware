@@ -41,6 +41,8 @@ type PowerRental struct {
 	PromotionID uuid.UUID `json:"promotion_id,omitempty"`
 	// InvestmentType holds the value of the "investment_type" field.
 	InvestmentType string `json:"investment_type,omitempty"`
+	// GoodStockMode holds the value of the "good_stock_mode" field.
+	GoodStockMode string `json:"good_stock_mode,omitempty"`
 	// DurationSeconds holds the value of the "duration_seconds" field.
 	DurationSeconds uint32 `json:"duration_seconds,omitempty"`
 }
@@ -54,7 +56,7 @@ func (*PowerRental) scanValues(columns []string) ([]interface{}, error) {
 			values[i] = new(decimal.Decimal)
 		case powerrental.FieldID, powerrental.FieldCreatedAt, powerrental.FieldUpdatedAt, powerrental.FieldDeletedAt, powerrental.FieldDurationSeconds:
 			values[i] = new(sql.NullInt64)
-		case powerrental.FieldInvestmentType:
+		case powerrental.FieldInvestmentType, powerrental.FieldGoodStockMode:
 			values[i] = new(sql.NullString)
 		case powerrental.FieldEntID, powerrental.FieldOrderID, powerrental.FieldAppGoodStockID, powerrental.FieldPromotionID:
 			values[i] = new(uuid.UUID)
@@ -151,6 +153,12 @@ func (pr *PowerRental) assignValues(columns []string, values []interface{}) erro
 			} else if value.Valid {
 				pr.InvestmentType = value.String
 			}
+		case powerrental.FieldGoodStockMode:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field good_stock_mode", values[i])
+			} else if value.Valid {
+				pr.GoodStockMode = value.String
+			}
 		case powerrental.FieldDurationSeconds:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field duration_seconds", values[i])
@@ -220,6 +228,9 @@ func (pr *PowerRental) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("investment_type=")
 	builder.WriteString(pr.InvestmentType)
+	builder.WriteString(", ")
+	builder.WriteString("good_stock_mode=")
+	builder.WriteString(pr.GoodStockMode)
 	builder.WriteString(", ")
 	builder.WriteString("duration_seconds=")
 	builder.WriteString(fmt.Sprintf("%v", pr.DurationSeconds))

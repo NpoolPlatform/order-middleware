@@ -456,7 +456,6 @@ func (foc *FeeOrderCreate) createSpec() (*FeeOrder, *sqlgraph.CreateSpec) {
 //			SetCreatedAt(v+v).
 //		}).
 //		Exec(ctx)
-//
 func (foc *FeeOrderCreate) OnConflict(opts ...sql.ConflictOption) *FeeOrderUpsertOne {
 	foc.conflict = opts
 	return &FeeOrderUpsertOne{
@@ -470,7 +469,6 @@ func (foc *FeeOrderCreate) OnConflict(opts ...sql.ConflictOption) *FeeOrderUpser
 //	client.FeeOrder.Create().
 //		OnConflict(sql.ConflictColumns(columns...)).
 //		Exec(ctx)
-//
 func (foc *FeeOrderCreate) OnConflictColumns(columns ...string) *FeeOrderUpsertOne {
 	foc.conflict = append(foc.conflict, sql.ConflictColumns(columns...))
 	return &FeeOrderUpsertOne{
@@ -682,7 +680,6 @@ func (u *FeeOrderUpsert) ClearDurationSeconds() *FeeOrderUpsert {
 //			}),
 //		).
 //		Exec(ctx)
-//
 func (u *FeeOrderUpsertOne) UpdateNewValues() *FeeOrderUpsertOne {
 	u.create.conflict = append(u.create.conflict, sql.ResolveWithNewValues())
 	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(s *sql.UpdateSet) {
@@ -696,10 +693,9 @@ func (u *FeeOrderUpsertOne) UpdateNewValues() *FeeOrderUpsertOne {
 // Ignore sets each column to itself in case of conflict.
 // Using this option is equivalent to using:
 //
-//  client.FeeOrder.Create().
-//      OnConflict(sql.ResolveWithIgnore()).
-//      Exec(ctx)
-//
+//	client.FeeOrder.Create().
+//	    OnConflict(sql.ResolveWithIgnore()).
+//	    Exec(ctx)
 func (u *FeeOrderUpsertOne) Ignore() *FeeOrderUpsertOne {
 	u.create.conflict = append(u.create.conflict, sql.ResolveWithIgnore())
 	return u
@@ -1065,7 +1061,6 @@ func (focb *FeeOrderCreateBulk) ExecX(ctx context.Context) {
 //			SetCreatedAt(v+v).
 //		}).
 //		Exec(ctx)
-//
 func (focb *FeeOrderCreateBulk) OnConflict(opts ...sql.ConflictOption) *FeeOrderUpsertBulk {
 	focb.conflict = opts
 	return &FeeOrderUpsertBulk{
@@ -1079,7 +1074,6 @@ func (focb *FeeOrderCreateBulk) OnConflict(opts ...sql.ConflictOption) *FeeOrder
 //	client.FeeOrder.Create().
 //		OnConflict(sql.ConflictColumns(columns...)).
 //		Exec(ctx)
-//
 func (focb *FeeOrderCreateBulk) OnConflictColumns(columns ...string) *FeeOrderUpsertBulk {
 	focb.conflict = append(focb.conflict, sql.ConflictColumns(columns...))
 	return &FeeOrderUpsertBulk{
@@ -1104,7 +1098,6 @@ type FeeOrderUpsertBulk struct {
 //			}),
 //		).
 //		Exec(ctx)
-//
 func (u *FeeOrderUpsertBulk) UpdateNewValues() *FeeOrderUpsertBulk {
 	u.create.conflict = append(u.create.conflict, sql.ResolveWithNewValues())
 	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(s *sql.UpdateSet) {
@@ -1124,7 +1117,6 @@ func (u *FeeOrderUpsertBulk) UpdateNewValues() *FeeOrderUpsertBulk {
 //	client.FeeOrder.Create().
 //		OnConflict(sql.ResolveWithIgnore()).
 //		Exec(ctx)
-//
 func (u *FeeOrderUpsertBulk) Ignore() *FeeOrderUpsertBulk {
 	u.create.conflict = append(u.create.conflict, sql.ResolveWithIgnore())
 	return u

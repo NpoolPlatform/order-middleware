@@ -558,6 +558,30 @@ func (f PaymentTransferMutationRuleFunc) EvalMutation(ctx context.Context, m ent
 	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.PaymentTransferMutation", m)
 }
 
+// The PoolOrderUserQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type PoolOrderUserQueryRuleFunc func(context.Context, *ent.PoolOrderUserQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f PoolOrderUserQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.PoolOrderUserQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("ent/privacy: unexpected query type %T, expect *ent.PoolOrderUserQuery", q)
+}
+
+// The PoolOrderUserMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type PoolOrderUserMutationRuleFunc func(context.Context, *ent.PoolOrderUserMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f PoolOrderUserMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
+	if m, ok := m.(*ent.PoolOrderUserMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.PoolOrderUserMutation", m)
+}
+
 // The PowerRentalQueryRuleFunc type is an adapter to allow the use of ordinary
 // functions as a query rule.
 type PowerRentalQueryRuleFunc func(context.Context, *ent.PowerRentalQuery) error
@@ -675,6 +699,8 @@ func queryFilter(q ent.Query) (Filter, error) {
 		return q.Filter(), nil
 	case *ent.PaymentTransferQuery:
 		return q.Filter(), nil
+	case *ent.PoolOrderUserQuery:
+		return q.Filter(), nil
 	case *ent.PowerRentalQuery:
 		return q.Filter(), nil
 	case *ent.PowerRentalStateQuery:
@@ -719,6 +745,8 @@ func mutationFilter(m ent.Mutation) (Filter, error) {
 	case *ent.PaymentContractMutation:
 		return m.Filter(), nil
 	case *ent.PaymentTransferMutation:
+		return m.Filter(), nil
+	case *ent.PoolOrderUserMutation:
 		return m.Filter(), nil
 	case *ent.PowerRentalMutation:
 		return m.Filter(), nil

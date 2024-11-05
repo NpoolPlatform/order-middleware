@@ -22,6 +22,7 @@ import (
 	paymentbalancelockcrud "github.com/NpoolPlatform/order-middleware/pkg/crud/payment/balance/lock"
 	paymenttransfercrud "github.com/NpoolPlatform/order-middleware/pkg/crud/payment/transfer"
 	powerrentalcrud "github.com/NpoolPlatform/order-middleware/pkg/crud/powerrental"
+	poolorderusercrud "github.com/NpoolPlatform/order-middleware/pkg/crud/powerrental/poolorderuser"
 	powerrentalstatecrud "github.com/NpoolPlatform/order-middleware/pkg/crud/powerrental/state"
 	feeorder1 "github.com/NpoolPlatform/order-middleware/pkg/mw/fee"
 
@@ -41,6 +42,7 @@ type Handler struct {
 	PaymentBalanceReqs    []*paymentbalancecrud.Req
 	PaymentTransferReqs   []*paymenttransfercrud.Req
 	OrderCouponReqs       []*ordercouponcrud.Req
+	PoolOrderUserReq      *poolorderusercrud.Req
 	PowerRentalConds      *powerrentalcrud.Conds
 	OrderBaseConds        *orderbasecrud.Conds
 	OrderStateBaseConds   *orderstatebasecrud.Conds
@@ -59,6 +61,7 @@ func NewHandler(ctx context.Context, options ...func(context.Context, *Handler) 
 		PowerRentalStateReq:   &powerrentalstatecrud.Req{},
 		PaymentBaseReq:        &paymentbasecrud.Req{},
 		PaymentBalanceLockReq: &paymentbalancelockcrud.Req{},
+		PoolOrderUserReq:      &poolorderusercrud.Req{},
 		PowerRentalConds:      &powerrentalcrud.Conds{},
 		OrderBaseConds:        &orderbasecrud.Conds{},
 		OrderStateBaseConds:   &orderstatebasecrud.Conds{},
@@ -208,6 +211,7 @@ func WithOrderID(id *string, must bool) func(context.Context, *Handler) error {
 		h.OrderStateBaseReq.OrderID = &_id
 		h.PowerRentalStateReq.OrderID = &_id
 		h.PaymentBaseReq.OrderID = &_id
+		h.PoolOrderUserReq.OrderID = &_id
 		return nil
 	}
 }
@@ -381,6 +385,26 @@ func WithInvestmentType(_type *types.InvestmentType, must bool) func(context.Con
 	}
 }
 
+func WithGoodStockMode(_type *goodtypes.GoodStockMode, must bool) func(context.Context, *Handler) error {
+	return func(ctx context.Context, h *Handler) error {
+		if _type == nil {
+			if must {
+				return wlog.Errorf("invalid goodstockmode")
+			}
+			return nil
+		}
+		switch *_type {
+		case goodtypes.GoodStockMode_GoodStockByUnique:
+		case goodtypes.GoodStockMode_GoodStockByMiningPool:
+		default:
+			return wlog.Errorf("invalid goodstockmode")
+		}
+		h.GoodStockMode = _type
+
+		return nil
+	}
+}
+
 func WithPaymentType(paymentType *types.PaymentType, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if paymentType == nil {
@@ -425,10 +449,16 @@ func WithOrderState(state *types.OrderState, must bool) func(context.Context, *H
 		case types.OrderState_OrderStatePaymentUnlockAccount:
 		case types.OrderState_OrderStatePaid:
 		case types.OrderState_OrderStateTransferGoodStockWaitStart:
+		case types.OrderState_OrderStateCreateOrderUser:
+		case types.OrderState_OrderStateSetProportion:
+		case types.OrderState_OrderStateSetRevenueAddress:
 		case types.OrderState_OrderStateInService:
 		case types.OrderState_OrderStatePaymentTimeout:
 		case types.OrderState_OrderStatePreCancel:
 		case types.OrderState_OrderStatePreExpired:
+		case types.OrderState_OrderStateDeleteProportion:
+		case types.OrderState_OrderStateCheckProportion:
+		case types.OrderState_OrderStateCheckPoolBalance:
 		case types.OrderState_OrderStateRestoreExpiredStock:
 		case types.OrderState_OrderStateRestoreCanceledStock:
 		case types.OrderState_OrderStateCancelAchievement:
@@ -687,6 +717,23 @@ func WithRenewNotifyAt(n *uint32, must bool) func(context.Context, *Handler) err
 func WithSimulate(value *bool, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		h.OrderBaseReq.Simulate = value
+		return nil
+	}
+}
+
+func WithPoolOrderUserID(id *string, must bool) func(context.Context, *Handler) error {
+	return func(ctx context.Context, h *Handler) error {
+		if id == nil {
+			if must {
+				return wlog.Errorf("invalid poolorderuserid")
+			}
+			return nil
+		}
+		_id, err := uuid.Parse(*id)
+		if err != nil {
+			return wlog.WrapError(err)
+		}
+		h.PoolOrderUserReq.PoolOrderUserID = &_id
 		return nil
 	}
 }
@@ -1040,6 +1087,12 @@ func (h *Handler) withPowerRentalConds(conds *npool.Conds) error {
 		h.PowerRentalConds.OrderIDs = &cruder.Cond{
 			Op:  conds.GetOrderIDs().GetOp(),
 			Val: ids,
+		}
+	}
+	if conds.GoodStockMode != nil {
+		h.PowerRentalConds.GoodStockMode = &cruder.Cond{
+			Op:  conds.GetGoodStockMode().GetOp(),
+			Val: goodtypes.GoodStockMode(conds.GetGoodStockMode().GetValue()),
 		}
 	}
 	return nil

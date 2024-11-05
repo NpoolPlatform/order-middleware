@@ -264,7 +264,6 @@ func (pcq *PaymentContractQuery) Clone() *PaymentContractQuery {
 //		GroupBy(paymentcontract.FieldCreatedAt).
 //		Aggregate(ent.Count()).
 //		Scan(ctx, &v)
-//
 func (pcq *PaymentContractQuery) GroupBy(field string, fields ...string) *PaymentContractGroupBy {
 	grbuild := &PaymentContractGroupBy{config: pcq.config}
 	grbuild.fields = append([]string{field}, fields...)
@@ -291,7 +290,6 @@ func (pcq *PaymentContractQuery) GroupBy(field string, fields ...string) *Paymen
 //	client.PaymentContract.Query().
 //		Select(paymentcontract.FieldCreatedAt).
 //		Scan(ctx, &v)
-//
 func (pcq *PaymentContractQuery) Select(fields ...string) *PaymentContractSelect {
 	pcq.fields = append(pcq.fields, fields...)
 	selbuild := &PaymentContractSelect{PaymentContractQuery: pcq}

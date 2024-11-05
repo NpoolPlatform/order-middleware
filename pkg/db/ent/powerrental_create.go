@@ -191,6 +191,20 @@ func (prc *PowerRentalCreate) SetNillableInvestmentType(s *string) *PowerRentalC
 	return prc
 }
 
+// SetGoodStockMode sets the "good_stock_mode" field.
+func (prc *PowerRentalCreate) SetGoodStockMode(s string) *PowerRentalCreate {
+	prc.mutation.SetGoodStockMode(s)
+	return prc
+}
+
+// SetNillableGoodStockMode sets the "good_stock_mode" field if the given value is not nil.
+func (prc *PowerRentalCreate) SetNillableGoodStockMode(s *string) *PowerRentalCreate {
+	if s != nil {
+		prc.SetGoodStockMode(*s)
+	}
+	return prc
+}
+
 // SetDurationSeconds sets the "duration_seconds" field.
 func (prc *PowerRentalCreate) SetDurationSeconds(u uint32) *PowerRentalCreate {
 	prc.mutation.SetDurationSeconds(u)
@@ -359,6 +373,10 @@ func (prc *PowerRentalCreate) defaults() error {
 		v := powerrental.DefaultInvestmentType
 		prc.mutation.SetInvestmentType(v)
 	}
+	if _, ok := prc.mutation.GoodStockMode(); !ok {
+		v := powerrental.DefaultGoodStockMode
+		prc.mutation.SetGoodStockMode(v)
+	}
 	if _, ok := prc.mutation.DurationSeconds(); !ok {
 		v := powerrental.DefaultDurationSeconds
 		prc.mutation.SetDurationSeconds(v)
@@ -510,6 +528,14 @@ func (prc *PowerRentalCreate) createSpec() (*PowerRental, *sqlgraph.CreateSpec) 
 		})
 		_node.InvestmentType = value
 	}
+	if value, ok := prc.mutation.GoodStockMode(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: powerrental.FieldGoodStockMode,
+		})
+		_node.GoodStockMode = value
+	}
 	if value, ok := prc.mutation.DurationSeconds(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
 			Type:   field.TypeUint32,
@@ -537,7 +563,6 @@ func (prc *PowerRentalCreate) createSpec() (*PowerRental, *sqlgraph.CreateSpec) 
 //			SetCreatedAt(v+v).
 //		}).
 //		Exec(ctx)
-//
 func (prc *PowerRentalCreate) OnConflict(opts ...sql.ConflictOption) *PowerRentalUpsertOne {
 	prc.conflict = opts
 	return &PowerRentalUpsertOne{
@@ -551,7 +576,6 @@ func (prc *PowerRentalCreate) OnConflict(opts ...sql.ConflictOption) *PowerRenta
 //	client.PowerRental.Create().
 //		OnConflict(sql.ConflictColumns(columns...)).
 //		Exec(ctx)
-//
 func (prc *PowerRentalCreate) OnConflictColumns(columns ...string) *PowerRentalUpsertOne {
 	prc.conflict = append(prc.conflict, sql.ConflictColumns(columns...))
 	return &PowerRentalUpsertOne{
@@ -782,6 +806,24 @@ func (u *PowerRentalUpsert) ClearInvestmentType() *PowerRentalUpsert {
 	return u
 }
 
+// SetGoodStockMode sets the "good_stock_mode" field.
+func (u *PowerRentalUpsert) SetGoodStockMode(v string) *PowerRentalUpsert {
+	u.Set(powerrental.FieldGoodStockMode, v)
+	return u
+}
+
+// UpdateGoodStockMode sets the "good_stock_mode" field to the value that was provided on create.
+func (u *PowerRentalUpsert) UpdateGoodStockMode() *PowerRentalUpsert {
+	u.SetExcluded(powerrental.FieldGoodStockMode)
+	return u
+}
+
+// ClearGoodStockMode clears the value of the "good_stock_mode" field.
+func (u *PowerRentalUpsert) ClearGoodStockMode() *PowerRentalUpsert {
+	u.SetNull(powerrental.FieldGoodStockMode)
+	return u
+}
+
 // SetDurationSeconds sets the "duration_seconds" field.
 func (u *PowerRentalUpsert) SetDurationSeconds(v uint32) *PowerRentalUpsert {
 	u.Set(powerrental.FieldDurationSeconds, v)
@@ -817,7 +859,6 @@ func (u *PowerRentalUpsert) ClearDurationSeconds() *PowerRentalUpsert {
 //			}),
 //		).
 //		Exec(ctx)
-//
 func (u *PowerRentalUpsertOne) UpdateNewValues() *PowerRentalUpsertOne {
 	u.create.conflict = append(u.create.conflict, sql.ResolveWithNewValues())
 	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(s *sql.UpdateSet) {
@@ -831,10 +872,9 @@ func (u *PowerRentalUpsertOne) UpdateNewValues() *PowerRentalUpsertOne {
 // Ignore sets each column to itself in case of conflict.
 // Using this option is equivalent to using:
 //
-//  client.PowerRental.Create().
-//      OnConflict(sql.ResolveWithIgnore()).
-//      Exec(ctx)
-//
+//	client.PowerRental.Create().
+//	    OnConflict(sql.ResolveWithIgnore()).
+//	    Exec(ctx)
 func (u *PowerRentalUpsertOne) Ignore() *PowerRentalUpsertOne {
 	u.create.conflict = append(u.create.conflict, sql.ResolveWithIgnore())
 	return u
@@ -1101,6 +1141,27 @@ func (u *PowerRentalUpsertOne) ClearInvestmentType() *PowerRentalUpsertOne {
 	})
 }
 
+// SetGoodStockMode sets the "good_stock_mode" field.
+func (u *PowerRentalUpsertOne) SetGoodStockMode(v string) *PowerRentalUpsertOne {
+	return u.Update(func(s *PowerRentalUpsert) {
+		s.SetGoodStockMode(v)
+	})
+}
+
+// UpdateGoodStockMode sets the "good_stock_mode" field to the value that was provided on create.
+func (u *PowerRentalUpsertOne) UpdateGoodStockMode() *PowerRentalUpsertOne {
+	return u.Update(func(s *PowerRentalUpsert) {
+		s.UpdateGoodStockMode()
+	})
+}
+
+// ClearGoodStockMode clears the value of the "good_stock_mode" field.
+func (u *PowerRentalUpsertOne) ClearGoodStockMode() *PowerRentalUpsertOne {
+	return u.Update(func(s *PowerRentalUpsert) {
+		s.ClearGoodStockMode()
+	})
+}
+
 // SetDurationSeconds sets the "duration_seconds" field.
 func (u *PowerRentalUpsertOne) SetDurationSeconds(v uint32) *PowerRentalUpsertOne {
 	return u.Update(func(s *PowerRentalUpsert) {
@@ -1263,7 +1324,6 @@ func (prcb *PowerRentalCreateBulk) ExecX(ctx context.Context) {
 //			SetCreatedAt(v+v).
 //		}).
 //		Exec(ctx)
-//
 func (prcb *PowerRentalCreateBulk) OnConflict(opts ...sql.ConflictOption) *PowerRentalUpsertBulk {
 	prcb.conflict = opts
 	return &PowerRentalUpsertBulk{
@@ -1277,7 +1337,6 @@ func (prcb *PowerRentalCreateBulk) OnConflict(opts ...sql.ConflictOption) *Power
 //	client.PowerRental.Create().
 //		OnConflict(sql.ConflictColumns(columns...)).
 //		Exec(ctx)
-//
 func (prcb *PowerRentalCreateBulk) OnConflictColumns(columns ...string) *PowerRentalUpsertBulk {
 	prcb.conflict = append(prcb.conflict, sql.ConflictColumns(columns...))
 	return &PowerRentalUpsertBulk{
@@ -1302,7 +1361,6 @@ type PowerRentalUpsertBulk struct {
 //			}),
 //		).
 //		Exec(ctx)
-//
 func (u *PowerRentalUpsertBulk) UpdateNewValues() *PowerRentalUpsertBulk {
 	u.create.conflict = append(u.create.conflict, sql.ResolveWithNewValues())
 	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(s *sql.UpdateSet) {
@@ -1322,7 +1380,6 @@ func (u *PowerRentalUpsertBulk) UpdateNewValues() *PowerRentalUpsertBulk {
 //	client.PowerRental.Create().
 //		OnConflict(sql.ResolveWithIgnore()).
 //		Exec(ctx)
-//
 func (u *PowerRentalUpsertBulk) Ignore() *PowerRentalUpsertBulk {
 	u.create.conflict = append(u.create.conflict, sql.ResolveWithIgnore())
 	return u
@@ -1586,6 +1643,27 @@ func (u *PowerRentalUpsertBulk) UpdateInvestmentType() *PowerRentalUpsertBulk {
 func (u *PowerRentalUpsertBulk) ClearInvestmentType() *PowerRentalUpsertBulk {
 	return u.Update(func(s *PowerRentalUpsert) {
 		s.ClearInvestmentType()
+	})
+}
+
+// SetGoodStockMode sets the "good_stock_mode" field.
+func (u *PowerRentalUpsertBulk) SetGoodStockMode(v string) *PowerRentalUpsertBulk {
+	return u.Update(func(s *PowerRentalUpsert) {
+		s.SetGoodStockMode(v)
+	})
+}
+
+// UpdateGoodStockMode sets the "good_stock_mode" field to the value that was provided on create.
+func (u *PowerRentalUpsertBulk) UpdateGoodStockMode() *PowerRentalUpsertBulk {
+	return u.Update(func(s *PowerRentalUpsert) {
+		s.UpdateGoodStockMode()
+	})
+}
+
+// ClearGoodStockMode clears the value of the "good_stock_mode" field.
+func (u *PowerRentalUpsertBulk) ClearGoodStockMode() *PowerRentalUpsertBulk {
+	return u.Update(func(s *PowerRentalUpsert) {
+		s.ClearGoodStockMode()
 	})
 }
 

@@ -27,6 +27,7 @@ import (
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/paymentbase"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/paymentcontract"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/paymenttransfer"
+	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/poolorderuser"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/powerrental"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/powerrentalstate"
 )
@@ -66,6 +67,7 @@ func columnChecker(table string) func(string) error {
 		paymentbase.Table:        paymentbase.ValidColumn,
 		paymentcontract.Table:    paymentcontract.ValidColumn,
 		paymenttransfer.Table:    paymenttransfer.ValidColumn,
+		poolorderuser.Table:      poolorderuser.ValidColumn,
 		powerrental.Table:        powerrental.ValidColumn,
 		powerrentalstate.Table:   powerrentalstate.ValidColumn,
 	}
@@ -117,7 +119,6 @@ type AggregateFunc func(*sql.Selector) string
 //	GroupBy(field1, field2).
 //	Aggregate(ent.As(ent.Sum(field1), "sum_field1"), (ent.As(ent.Sum(field2), "sum_field2")).
 //	Scan(ctx, &v)
-//
 func As(fn AggregateFunc, end string) AggregateFunc {
 	return func(s *sql.Selector) string {
 		return sql.As(fn(s), end)

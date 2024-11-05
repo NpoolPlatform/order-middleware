@@ -779,7 +779,6 @@ func (osc *OrderStateCreate) createSpec() (*OrderState, *sqlgraph.CreateSpec) {
 //			SetCreatedAt(v+v).
 //		}).
 //		Exec(ctx)
-//
 func (osc *OrderStateCreate) OnConflict(opts ...sql.ConflictOption) *OrderStateUpsertOne {
 	osc.conflict = opts
 	return &OrderStateUpsertOne{
@@ -793,7 +792,6 @@ func (osc *OrderStateCreate) OnConflict(opts ...sql.ConflictOption) *OrderStateU
 //	client.OrderState.Create().
 //		OnConflict(sql.ConflictColumns(columns...)).
 //		Exec(ctx)
-//
 func (osc *OrderStateCreate) OnConflictColumns(columns ...string) *OrderStateUpsertOne {
 	osc.conflict = append(osc.conflict, sql.ConflictColumns(columns...))
 	return &OrderStateUpsertOne{
@@ -1269,7 +1267,6 @@ func (u *OrderStateUpsert) ClearRenewNotifyAt() *OrderStateUpsert {
 //			}),
 //		).
 //		Exec(ctx)
-//
 func (u *OrderStateUpsertOne) UpdateNewValues() *OrderStateUpsertOne {
 	u.create.conflict = append(u.create.conflict, sql.ResolveWithNewValues())
 	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(s *sql.UpdateSet) {
@@ -1283,10 +1280,9 @@ func (u *OrderStateUpsertOne) UpdateNewValues() *OrderStateUpsertOne {
 // Ignore sets each column to itself in case of conflict.
 // Using this option is equivalent to using:
 //
-//  client.OrderState.Create().
-//      OnConflict(sql.ResolveWithIgnore()).
-//      Exec(ctx)
-//
+//	client.OrderState.Create().
+//	    OnConflict(sql.ResolveWithIgnore()).
+//	    Exec(ctx)
 func (u *OrderStateUpsertOne) Ignore() *OrderStateUpsertOne {
 	u.create.conflict = append(u.create.conflict, sql.ResolveWithIgnore())
 	return u
@@ -1960,7 +1956,6 @@ func (oscb *OrderStateCreateBulk) ExecX(ctx context.Context) {
 //			SetCreatedAt(v+v).
 //		}).
 //		Exec(ctx)
-//
 func (oscb *OrderStateCreateBulk) OnConflict(opts ...sql.ConflictOption) *OrderStateUpsertBulk {
 	oscb.conflict = opts
 	return &OrderStateUpsertBulk{
@@ -1974,7 +1969,6 @@ func (oscb *OrderStateCreateBulk) OnConflict(opts ...sql.ConflictOption) *OrderS
 //	client.OrderState.Create().
 //		OnConflict(sql.ConflictColumns(columns...)).
 //		Exec(ctx)
-//
 func (oscb *OrderStateCreateBulk) OnConflictColumns(columns ...string) *OrderStateUpsertBulk {
 	oscb.conflict = append(oscb.conflict, sql.ConflictColumns(columns...))
 	return &OrderStateUpsertBulk{
@@ -1999,7 +1993,6 @@ type OrderStateUpsertBulk struct {
 //			}),
 //		).
 //		Exec(ctx)
-//
 func (u *OrderStateUpsertBulk) UpdateNewValues() *OrderStateUpsertBulk {
 	u.create.conflict = append(u.create.conflict, sql.ResolveWithNewValues())
 	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(s *sql.UpdateSet) {
@@ -2019,7 +2012,6 @@ func (u *OrderStateUpsertBulk) UpdateNewValues() *OrderStateUpsertBulk {
 //	client.OrderState.Create().
 //		OnConflict(sql.ResolveWithIgnore()).
 //		Exec(ctx)
-//
 func (u *OrderStateUpsertBulk) Ignore() *OrderStateUpsertBulk {
 	u.create.conflict = append(u.create.conflict, sql.ResolveWithIgnore())
 	return u

@@ -105,7 +105,7 @@ func (h *Handler) GetOrderCoupons(ctx context.Context) ([]*npool.OrderCoupon, ui
 		return handler.scan(_ctx)
 	})
 	if err != nil {
-		return nil, 0, err
+		return nil, 0, wlog.WrapError(err)
 	}
 
 	handler.formalize()

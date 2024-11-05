@@ -48,6 +48,7 @@ func (s *Server) UpdatePowerRentalOrder(ctx context.Context, in *npool.UpdatePow
 		powerrental1.WithPaymentTransfers(req.PaymentTransfers, false),
 
 		powerrental1.WithRollback(req.Rollback, false),
+		powerrental1.WithPoolOrderUserID(req.PoolOrderUserID, false),
 	)
 	if err != nil {
 		logger.Sugar().Errorw(
@@ -98,6 +99,7 @@ func (s *Server) UpdatePowerRentalOrders(ctx context.Context, in *npool.UpdatePo
 			powerrental1.WithPaymentTransfers(req.PaymentTransfers, false),
 
 			powerrental1.WithRollback(req.Rollback, false),
+			powerrental1.WithPoolOrderUserID(req.PoolOrderUserID, false),
 		)
 		if err != nil {
 			logger.Sugar().Errorw(

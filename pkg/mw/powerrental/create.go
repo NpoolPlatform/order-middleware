@@ -6,6 +6,7 @@ import (
 
 	timedef "github.com/NpoolPlatform/go-service-framework/pkg/const/time"
 	wlog "github.com/NpoolPlatform/go-service-framework/pkg/wlog"
+	goodtypes "github.com/NpoolPlatform/message/npool/basetypes/good/v1"
 	types "github.com/NpoolPlatform/message/npool/basetypes/order/v1"
 	"github.com/NpoolPlatform/order-middleware/pkg/db"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent"
@@ -201,6 +202,7 @@ func (h *createHandler) formalizeOrderID() {
 	h.OrderStateBaseReq.OrderID = h.OrderID
 	h.PowerRentalStateReq.OrderID = h.OrderID
 	h.PaymentBaseReq.OrderID = h.OrderID
+	h.PoolOrderUserReq.OrderID = h.OrderID
 }
 
 func (h *createHandler) formalizeOrderLocks() {
@@ -372,6 +374,16 @@ func (h *createHandler) validatePayment() error {
 	return h.paymentChecker.ValidatePayment()
 }
 
+func (h *createHandler) validateGoodStockMode() error {
+	if h.OrderBaseReq.Simulate == nil || !*h.OrderBaseReq.Simulate {
+		return nil
+	}
+	if *h.GoodStockMode == goodtypes.GoodStockMode_GoodStockByMiningPool {
+		return wlog.Errorf("disable simulate order of good is goodstockbyminingpool")
+	}
+	return nil
+}
+
 func (h *createHandler) validateAppGoodStock() error {
 	if h.OrderBaseReq.Simulate != nil && *h.OrderBaseReq.Simulate {
 		return nil
@@ -438,6 +450,11 @@ func (h *Handler) CreatePowerRentalWithTx(ctx context.Context, tx *ent.Tx) error
 	if err := handler.validateAppGoodStock(); err != nil {
 		return err
 	}
+
+	if err := handler.validateGoodStockMode(); err != nil {
+		return err
+	}
+
 	if h.EntID == nil {
 		h.EntID = func() *uuid.UUID { uid := uuid.New(); return &uid }()
 	}
@@ -452,6 +469,7 @@ func (h *Handler) CreatePowerRentalWithTx(ctx context.Context, tx *ent.Tx) error
 	handler.formalizePaymentState()
 	handler.paymentChecker.PaymentType = h.OrderStateBaseReq.PaymentType
 	handler.formalizePaymentID()
+
 	if err := handler.validatePaymentType(); err != nil {
 		return wlog.WrapError(err)
 	}

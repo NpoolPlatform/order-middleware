@@ -7,6 +7,8 @@ import (
 	wlog "github.com/NpoolPlatform/go-service-framework/pkg/wlog"
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
 	types "github.com/NpoolPlatform/message/npool/basetypes/order/v1"
+	v1 "github.com/NpoolPlatform/message/npool/basetypes/v1"
+	poolorderusermwpb "github.com/NpoolPlatform/message/npool/order/mw/v1/powerrental/poolorderuser"
 	paymentbasecrud "github.com/NpoolPlatform/order-middleware/pkg/crud/payment"
 	"github.com/NpoolPlatform/order-middleware/pkg/db"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent"
@@ -18,6 +20,7 @@ import (
 	paymentbalancelock1 "github.com/NpoolPlatform/order-middleware/pkg/mw/payment/balance/lock"
 	paymentcommon "github.com/NpoolPlatform/order-middleware/pkg/mw/payment/common"
 	paymenttransfer1 "github.com/NpoolPlatform/order-middleware/pkg/mw/payment/transfer"
+	"github.com/NpoolPlatform/order-middleware/pkg/mw/powerrental/poolorderuser"
 	powerrentalstate1 "github.com/NpoolPlatform/order-middleware/pkg/mw/powerrental/state"
 	orderstm1 "github.com/NpoolPlatform/order-middleware/pkg/mw/stm"
 
@@ -31,12 +34,14 @@ type updateHandler struct {
 
 	newPayment             bool
 	newPaymentBalance      bool
+	oldPoolOrderUser       *poolorderusermwpb.PoolOrderUser
 	obseletePaymentBaseReq *paymentbasecrud.Req
 	sqlObseletePaymentBase string
 
 	sqlOrderStateBase     string
 	sqlPowerRentalState   string
 	sqlPaymentBase        string
+	sqlPoolOrderUser      string
 	sqlOrderLocks         []string
 	sqlPaymentBalanceLock string
 	sqlPaymentBalances    []string
@@ -187,6 +192,25 @@ func (h *updateHandler) constructPaymentTransferSQLs(ctx context.Context) error 
 	return nil
 }
 
+func (h *updateHandler) constructPoolOrderUserSQL(ctx context.Context) error {
+	if h.PoolOrderUserReq.PoolOrderUserID == nil {
+		return nil
+	}
+	handler, err := poolorderuser.NewHandler(ctx, poolorderuser.WithReq(h.PoolOrderUserReq, true))
+	if err != nil {
+		return wlog.WrapError(err)
+	}
+
+	if h.oldPoolOrderUser != nil {
+		handler.ID = &h.oldPoolOrderUser.ID
+		h.sqlPoolOrderUser, err = handler.ConstructUpdateSQL()
+	} else {
+		handler.EntID = func() *uuid.UUID { id := uuid.New(); return &id }()
+		h.sqlPoolOrderUser = handler.ConstructCreateSQL()
+	}
+	return wlog.WrapError(err)
+}
+
 func (h *updateHandler) execSQL(ctx context.Context, tx *ent.Tx, sql string) (int64, error) {
 	rc, err := tx.ExecContext(ctx, sql)
 	if err != nil {
@@ -314,6 +338,13 @@ func (h *updateHandler) updateObseletePaymentBase(ctx context.Context, tx *ent.T
 	return nil
 }
 
+func (h *updateHandler) upsertPoolOrderUser(ctx context.Context, tx *ent.Tx) (int64, error) {
+	if h.PoolOrderUserReq.PoolOrderUserID == nil {
+		return 0, nil
+	}
+	return h.execSQL(ctx, tx, h.sqlPoolOrderUser)
+}
+
 func (h *updateHandler) createPaymentBalances(ctx context.Context, tx *ent.Tx) error {
 	for _, sql := range h.sqlPaymentBalances {
 		n, err := h.execSQL(ctx, tx, sql)
@@ -351,6 +382,7 @@ func (h *updateHandler) formalizeOrderID() {
 	h.OrderStateBaseReq.OrderID = h.OrderID
 	h.PowerRentalStateReq.OrderID = h.OrderID
 	h.PaymentBaseReq.OrderID = h.OrderID
+	h.PoolOrderUserReq.OrderID = h.OrderID
 }
 
 func (h *updateHandler) formalizeOrderLocks() {
@@ -432,6 +464,36 @@ func (h *updateHandler) formalizePaymentID() error {
 	}
 	h.PowerRentalStateReq.PaymentID = h.PaymentBaseReq.EntID
 	h.PaymentBalanceLockReq.PaymentID = h.PaymentBaseReq.EntID
+	return nil
+}
+
+func (h *updateHandler) validatePoolOrderUser(ctx context.Context) error {
+	if h.PoolOrderUserReq.PoolOrderUserID == nil {
+		return nil
+	}
+	handler, err := poolorderuser.NewHandler(
+		ctx,
+		poolorderuser.WithConds(&poolorderusermwpb.Conds{
+			OrderID: &v1.StringVal{
+				Op:    cruder.EQ,
+				Value: h.PoolOrderUserReq.OrderID.String(),
+			},
+		}),
+		poolorderuser.WithLimit(1),
+		poolorderuser.WithOffset(0),
+	)
+	if err != nil {
+		return wlog.WrapError(err)
+	}
+
+	infos, _, err := handler.GetPoolOrderUsers(ctx)
+	if err != nil {
+		return wlog.WrapError(err)
+	}
+	if len(infos) > 0 {
+		h.oldPoolOrderUser = &infos[0]
+	}
+
 	return nil
 }
 
@@ -705,6 +767,10 @@ func (h *Handler) UpdatePowerRentalWithTx(ctx context.Context, tx *ent.Tx) error
 	}
 	handler.formalizePaidAt()
 
+	if err := handler.validatePoolOrderUser(ctx); err != nil {
+		return wlog.WrapError(err)
+	}
+
 	if err := handler.constructOrderStateBaseSQL(ctx); err != nil {
 		return wlog.WrapError(err)
 	}
@@ -725,6 +791,9 @@ func (h *Handler) UpdatePowerRentalWithTx(ctx context.Context, tx *ent.Tx) error
 	handler.constructPaymentBalanceLockSQL(ctx)
 	handler.constructPaymentBaseSQL(ctx)
 	handler.constructPaymentBalanceSQLs(ctx)
+	if err := handler.constructPoolOrderUserSQL(ctx); err != nil {
+		return wlog.WrapError(err)
+	}
 	if err := handler.constructPaymentTransferSQLs(ctx); err != nil {
 		return wlog.WrapError(err)
 	}
@@ -732,6 +801,9 @@ func (h *Handler) UpdatePowerRentalWithTx(ctx context.Context, tx *ent.Tx) error
 		return wlog.WrapError(err)
 	}
 
+	if _, err := handler.upsertPoolOrderUser(ctx, tx); err != nil {
+		return wlog.WrapError(err)
+	}
 	if err := handler.updateOrderStateBase(ctx, tx); err != nil {
 		return wlog.WrapError(err)
 	}

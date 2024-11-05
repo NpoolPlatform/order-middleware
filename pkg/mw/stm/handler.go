@@ -60,10 +60,16 @@ func WithOrderState(state *types.OrderState, must bool) func(context.Context, *H
 		case types.OrderState_OrderStatePaymentUnlockAccount:
 		case types.OrderState_OrderStatePaid:
 		case types.OrderState_OrderStateTransferGoodStockWaitStart:
+		case types.OrderState_OrderStateCreateOrderUser:
+		case types.OrderState_OrderStateSetProportion:
+		case types.OrderState_OrderStateSetRevenueAddress:
 		case types.OrderState_OrderStateInService:
 		case types.OrderState_OrderStatePaymentTimeout:
 		case types.OrderState_OrderStatePreCancel:
 		case types.OrderState_OrderStatePreExpired:
+		case types.OrderState_OrderStateDeleteProportion:
+		case types.OrderState_OrderStateCheckProportion:
+		case types.OrderState_OrderStateCheckPoolBalance:
 		case types.OrderState_OrderStateRestoreExpiredStock:
 		case types.OrderState_OrderStateRestoreCanceledStock:
 		case types.OrderState_OrderStateCancelAchievement:

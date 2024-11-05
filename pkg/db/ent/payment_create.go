@@ -449,7 +449,6 @@ func (pc *PaymentCreate) createSpec() (*Payment, *sqlgraph.CreateSpec) {
 //			SetCreatedAt(v+v).
 //		}).
 //		Exec(ctx)
-//
 func (pc *PaymentCreate) OnConflict(opts ...sql.ConflictOption) *PaymentUpsertOne {
 	pc.conflict = opts
 	return &PaymentUpsertOne{
@@ -463,7 +462,6 @@ func (pc *PaymentCreate) OnConflict(opts ...sql.ConflictOption) *PaymentUpsertOn
 //	client.Payment.Create().
 //		OnConflict(sql.ConflictColumns(columns...)).
 //		Exec(ctx)
-//
 func (pc *PaymentCreate) OnConflictColumns(columns ...string) *PaymentUpsertOne {
 	pc.conflict = append(pc.conflict, sql.ConflictColumns(columns...))
 	return &PaymentUpsertOne{
@@ -675,7 +673,6 @@ func (u *PaymentUpsert) ClearStartAmount() *PaymentUpsert {
 //			}),
 //		).
 //		Exec(ctx)
-//
 func (u *PaymentUpsertOne) UpdateNewValues() *PaymentUpsertOne {
 	u.create.conflict = append(u.create.conflict, sql.ResolveWithNewValues())
 	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(s *sql.UpdateSet) {
@@ -689,10 +686,9 @@ func (u *PaymentUpsertOne) UpdateNewValues() *PaymentUpsertOne {
 // Ignore sets each column to itself in case of conflict.
 // Using this option is equivalent to using:
 //
-//  client.Payment.Create().
-//      OnConflict(sql.ResolveWithIgnore()).
-//      Exec(ctx)
-//
+//	client.Payment.Create().
+//	    OnConflict(sql.ResolveWithIgnore()).
+//	    Exec(ctx)
 func (u *PaymentUpsertOne) Ignore() *PaymentUpsertOne {
 	u.create.conflict = append(u.create.conflict, sql.ResolveWithIgnore())
 	return u
@@ -1058,7 +1054,6 @@ func (pcb *PaymentCreateBulk) ExecX(ctx context.Context) {
 //			SetCreatedAt(v+v).
 //		}).
 //		Exec(ctx)
-//
 func (pcb *PaymentCreateBulk) OnConflict(opts ...sql.ConflictOption) *PaymentUpsertBulk {
 	pcb.conflict = opts
 	return &PaymentUpsertBulk{
@@ -1072,7 +1067,6 @@ func (pcb *PaymentCreateBulk) OnConflict(opts ...sql.ConflictOption) *PaymentUps
 //	client.Payment.Create().
 //		OnConflict(sql.ConflictColumns(columns...)).
 //		Exec(ctx)
-//
 func (pcb *PaymentCreateBulk) OnConflictColumns(columns ...string) *PaymentUpsertBulk {
 	pcb.conflict = append(pcb.conflict, sql.ConflictColumns(columns...))
 	return &PaymentUpsertBulk{
@@ -1097,7 +1091,6 @@ type PaymentUpsertBulk struct {
 //			}),
 //		).
 //		Exec(ctx)
-//
 func (u *PaymentUpsertBulk) UpdateNewValues() *PaymentUpsertBulk {
 	u.create.conflict = append(u.create.conflict, sql.ResolveWithNewValues())
 	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(s *sql.UpdateSet) {
@@ -1117,7 +1110,6 @@ func (u *PaymentUpsertBulk) UpdateNewValues() *PaymentUpsertBulk {
 //	client.Payment.Create().
 //		OnConflict(sql.ResolveWithIgnore()).
 //		Exec(ctx)
-//
 func (u *PaymentUpsertBulk) Ignore() *PaymentUpsertBulk {
 	u.create.conflict = append(u.create.conflict, sql.ResolveWithIgnore())
 	return u

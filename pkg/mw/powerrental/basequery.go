@@ -7,6 +7,7 @@ import (
 	logger "github.com/NpoolPlatform/go-service-framework/pkg/logger"
 	wlog "github.com/NpoolPlatform/go-service-framework/pkg/wlog"
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
+	goodtypes "github.com/NpoolPlatform/message/npool/basetypes/good/v1"
 	types "github.com/NpoolPlatform/message/npool/basetypes/order/v1"
 	orderbasecrud "github.com/NpoolPlatform/order-middleware/pkg/crud/order/orderbase"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent"
@@ -16,6 +17,7 @@ import (
 	entorderstatebase "github.com/NpoolPlatform/order-middleware/pkg/db/ent/orderstatebase"
 	entpaymentbalancelock "github.com/NpoolPlatform/order-middleware/pkg/db/ent/paymentbalancelock"
 	entpaymentbase "github.com/NpoolPlatform/order-middleware/pkg/db/ent/paymentbase"
+	entpoolorderuser "github.com/NpoolPlatform/order-middleware/pkg/db/ent/poolorderuser"
 	entpowerrental "github.com/NpoolPlatform/order-middleware/pkg/db/ent/powerrental"
 	entpowerrentalstate "github.com/NpoolPlatform/order-middleware/pkg/db/ent/powerrentalstate"
 
@@ -72,7 +74,7 @@ func (h *baseQueryHandler) queryJoinMyself(s *sql.Selector) {
 	)
 }
 
-//nolint:gocyclo
+//nolint:gocyclo,funlen
 func (h *baseQueryHandler) queryJoinPowerRental(s *sql.Selector) error {
 	t := sql.Table(entpowerrental.Table)
 	s.Join(t).
@@ -146,6 +148,22 @@ func (h *baseQueryHandler) queryJoinPowerRental(s *sql.Selector) error {
 			return _uids
 		}()...))
 	}
+	if h.PowerRentalConds.GoodStockMode != nil {
+		_type, ok := h.PowerRentalConds.GoodStockMode.Val.(goodtypes.GoodStockMode)
+		if !ok {
+			return wlog.Errorf("invalid goodstockmode")
+		}
+		switch h.PowerRentalConds.GoodStockMode.Op {
+		case cruder.EQ:
+			s.OnP(
+				sql.EQ(t.C(entpowerrental.FieldGoodStockMode), _type.String()),
+			)
+		case cruder.NEQ:
+			s.OnP(
+				sql.NEQ(t.C(entpowerrental.FieldGoodStockMode), _type.String()),
+			)
+		}
+	}
 	s.AppendSelect(
 		t.C(entpowerrental.FieldID),
 		t.C(entpowerrental.FieldEntID),
@@ -157,6 +175,7 @@ func (h *baseQueryHandler) queryJoinPowerRental(s *sql.Selector) error {
 		t.C(entpowerrental.FieldDiscountAmountUsd),
 		t.C(entpowerrental.FieldPromotionID),
 		t.C(entpowerrental.FieldInvestmentType),
+		t.C(entpowerrental.FieldGoodStockMode),
 		t.C(entpowerrental.FieldDurationSeconds),
 	)
 	return nil
@@ -524,6 +543,23 @@ func (h *baseQueryHandler) queryJoinOrderCoupon(s *sql.Selector) error {
 	return nil
 }
 
+func (h *baseQueryHandler) queryJoinPoolOrderUser(s *sql.Selector) {
+	t := sql.Table(entpoolorderuser.Table)
+	s.LeftJoin(t).
+		On(
+			s.C(entorderbase.FieldEntID),
+			t.C(entpoolorderuser.FieldOrderID),
+		).
+		OnP(
+			sql.And(
+				sql.EQ(t.C(entpoolorderuser.FieldDeletedAt), 0),
+			),
+		)
+	s.AppendSelect(
+		sql.As(t.C(entpoolorderuser.FieldPoolOrderUserID), "mining_pool_order_user_id"),
+	)
+}
+
 func (h *baseQueryHandler) queryJoin() {
 	h.stmSelect.Modify(func(s *sql.Selector) {
 		h.queryJoinMyself(s)
@@ -538,6 +574,7 @@ func (h *baseQueryHandler) queryJoin() {
 		}
 		h.queryJoinPaymentBase(s)
 		h.queryJoinStockLock(s)
+		h.queryJoinPoolOrderUser(s)
 		if err := h.queryJoinOrderCoupon(s); err != nil {
 			logger.Sugar().Errorw("queryJoinOrderCoupon", "Error", err)
 		}

@@ -20,6 +20,7 @@ import (
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/paymentbase"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/paymentcontract"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/paymenttransfer"
+	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/poolorderuser"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/powerrental"
 	"github.com/NpoolPlatform/order-middleware/pkg/db/ent/powerrentalstate"
 
@@ -31,7 +32,7 @@ import (
 
 // schemaGraph holds a representation of ent/schema at runtime.
 var schemaGraph = func() *sqlgraph.Schema {
-	graph := &sqlgraph.Schema{Nodes: make([]*sqlgraph.Node, 19)}
+	graph := &sqlgraph.Schema{Nodes: make([]*sqlgraph.Node, 20)}
 	graph.Nodes[0] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   appconfig.Table,
@@ -449,6 +450,25 @@ var schemaGraph = func() *sqlgraph.Schema {
 	}
 	graph.Nodes[17] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
+			Table:   poolorderuser.Table,
+			Columns: poolorderuser.Columns,
+			ID: &sqlgraph.FieldSpec{
+				Type:   field.TypeUint32,
+				Column: poolorderuser.FieldID,
+			},
+		},
+		Type: "PoolOrderUser",
+		Fields: map[string]*sqlgraph.FieldSpec{
+			poolorderuser.FieldCreatedAt:       {Type: field.TypeUint32, Column: poolorderuser.FieldCreatedAt},
+			poolorderuser.FieldUpdatedAt:       {Type: field.TypeUint32, Column: poolorderuser.FieldUpdatedAt},
+			poolorderuser.FieldDeletedAt:       {Type: field.TypeUint32, Column: poolorderuser.FieldDeletedAt},
+			poolorderuser.FieldEntID:           {Type: field.TypeUUID, Column: poolorderuser.FieldEntID},
+			poolorderuser.FieldOrderID:         {Type: field.TypeUUID, Column: poolorderuser.FieldOrderID},
+			poolorderuser.FieldPoolOrderUserID: {Type: field.TypeUUID, Column: poolorderuser.FieldPoolOrderUserID},
+		},
+	}
+	graph.Nodes[18] = &sqlgraph.Node{
+		NodeSpec: sqlgraph.NodeSpec{
 			Table:   powerrental.Table,
 			Columns: powerrental.Columns,
 			ID: &sqlgraph.FieldSpec{
@@ -470,10 +490,11 @@ var schemaGraph = func() *sqlgraph.Schema {
 			powerrental.FieldDiscountAmountUsd: {Type: field.TypeOther, Column: powerrental.FieldDiscountAmountUsd},
 			powerrental.FieldPromotionID:       {Type: field.TypeUUID, Column: powerrental.FieldPromotionID},
 			powerrental.FieldInvestmentType:    {Type: field.TypeString, Column: powerrental.FieldInvestmentType},
+			powerrental.FieldGoodStockMode:     {Type: field.TypeString, Column: powerrental.FieldGoodStockMode},
 			powerrental.FieldDurationSeconds:   {Type: field.TypeUint32, Column: powerrental.FieldDurationSeconds},
 		},
 	}
-	graph.Nodes[18] = &sqlgraph.Node{
+	graph.Nodes[19] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   powerrentalstate.Table,
 			Columns: powerrentalstate.Columns,
@@ -2163,6 +2184,76 @@ func (f *PaymentTransferFilter) WhereLiveCoinUsdCurrency(p entql.OtherP) {
 }
 
 // addPredicate implements the predicateAdder interface.
+func (pouq *PoolOrderUserQuery) addPredicate(pred func(s *sql.Selector)) {
+	pouq.predicates = append(pouq.predicates, pred)
+}
+
+// Filter returns a Filter implementation to apply filters on the PoolOrderUserQuery builder.
+func (pouq *PoolOrderUserQuery) Filter() *PoolOrderUserFilter {
+	return &PoolOrderUserFilter{config: pouq.config, predicateAdder: pouq}
+}
+
+// addPredicate implements the predicateAdder interface.
+func (m *PoolOrderUserMutation) addPredicate(pred func(s *sql.Selector)) {
+	m.predicates = append(m.predicates, pred)
+}
+
+// Filter returns an entql.Where implementation to apply filters on the PoolOrderUserMutation builder.
+func (m *PoolOrderUserMutation) Filter() *PoolOrderUserFilter {
+	return &PoolOrderUserFilter{config: m.config, predicateAdder: m}
+}
+
+// PoolOrderUserFilter provides a generic filtering capability at runtime for PoolOrderUserQuery.
+type PoolOrderUserFilter struct {
+	predicateAdder
+	config
+}
+
+// Where applies the entql predicate on the query filter.
+func (f *PoolOrderUserFilter) Where(p entql.P) {
+	f.addPredicate(func(s *sql.Selector) {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[17].Type, p, s); err != nil {
+			s.AddError(err)
+		}
+	})
+}
+
+// WhereID applies the entql uint32 predicate on the id field.
+func (f *PoolOrderUserFilter) WhereID(p entql.Uint32P) {
+	f.Where(p.Field(poolorderuser.FieldID))
+}
+
+// WhereCreatedAt applies the entql uint32 predicate on the created_at field.
+func (f *PoolOrderUserFilter) WhereCreatedAt(p entql.Uint32P) {
+	f.Where(p.Field(poolorderuser.FieldCreatedAt))
+}
+
+// WhereUpdatedAt applies the entql uint32 predicate on the updated_at field.
+func (f *PoolOrderUserFilter) WhereUpdatedAt(p entql.Uint32P) {
+	f.Where(p.Field(poolorderuser.FieldUpdatedAt))
+}
+
+// WhereDeletedAt applies the entql uint32 predicate on the deleted_at field.
+func (f *PoolOrderUserFilter) WhereDeletedAt(p entql.Uint32P) {
+	f.Where(p.Field(poolorderuser.FieldDeletedAt))
+}
+
+// WhereEntID applies the entql [16]byte predicate on the ent_id field.
+func (f *PoolOrderUserFilter) WhereEntID(p entql.ValueP) {
+	f.Where(p.Field(poolorderuser.FieldEntID))
+}
+
+// WhereOrderID applies the entql [16]byte predicate on the order_id field.
+func (f *PoolOrderUserFilter) WhereOrderID(p entql.ValueP) {
+	f.Where(p.Field(poolorderuser.FieldOrderID))
+}
+
+// WherePoolOrderUserID applies the entql [16]byte predicate on the pool_order_user_id field.
+func (f *PoolOrderUserFilter) WherePoolOrderUserID(p entql.ValueP) {
+	f.Where(p.Field(poolorderuser.FieldPoolOrderUserID))
+}
+
+// addPredicate implements the predicateAdder interface.
 func (prq *PowerRentalQuery) addPredicate(pred func(s *sql.Selector)) {
 	prq.predicates = append(prq.predicates, pred)
 }
@@ -2191,7 +2282,7 @@ type PowerRentalFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *PowerRentalFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[17].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[18].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})
@@ -2262,6 +2353,11 @@ func (f *PowerRentalFilter) WhereInvestmentType(p entql.StringP) {
 	f.Where(p.Field(powerrental.FieldInvestmentType))
 }
 
+// WhereGoodStockMode applies the entql string predicate on the good_stock_mode field.
+func (f *PowerRentalFilter) WhereGoodStockMode(p entql.StringP) {
+	f.Where(p.Field(powerrental.FieldGoodStockMode))
+}
+
 // WhereDurationSeconds applies the entql uint32 predicate on the duration_seconds field.
 func (f *PowerRentalFilter) WhereDurationSeconds(p entql.Uint32P) {
 	f.Where(p.Field(powerrental.FieldDurationSeconds))
@@ -2296,7 +2392,7 @@ type PowerRentalStateFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *PowerRentalStateFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[18].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[19].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})

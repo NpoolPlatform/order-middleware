@@ -27,7 +27,7 @@ func (h *Handler) ExistOrder(ctx context.Context) (exist bool, err error) {
 		return wlog.WrapError(err)
 	})
 	if err != nil {
-		return false, err
+		return false, wlog.WrapError(err)
 	}
 	return exist, nil
 }
@@ -48,7 +48,7 @@ func (h *Handler) ExistOrderConds(ctx context.Context) (exist bool, err error) {
 		return wlog.WrapError(err)
 	})
 	if err != nil {
-		return false, err
+		return false, wlog.WrapError(err)
 	}
 	return exist, nil
 }

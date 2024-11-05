@@ -48,6 +48,8 @@ type Tx struct {
 	PaymentContract *PaymentContractClient
 	// PaymentTransfer is the client for interacting with the PaymentTransfer builders.
 	PaymentTransfer *PaymentTransferClient
+	// PoolOrderUser is the client for interacting with the PoolOrderUser builders.
+	PoolOrderUser *PoolOrderUserClient
 	// PowerRental is the client for interacting with the PowerRental builders.
 	PowerRental *PowerRentalClient
 	// PowerRentalState is the client for interacting with the PowerRentalState builders.
@@ -204,6 +206,7 @@ func (tx *Tx) init() {
 	tx.PaymentBase = NewPaymentBaseClient(tx.config)
 	tx.PaymentContract = NewPaymentContractClient(tx.config)
 	tx.PaymentTransfer = NewPaymentTransferClient(tx.config)
+	tx.PoolOrderUser = NewPoolOrderUserClient(tx.config)
 	tx.PowerRental = NewPowerRentalClient(tx.config)
 	tx.PowerRentalState = NewPowerRentalStateClient(tx.config)
 }
